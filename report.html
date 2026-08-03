@@ -391,10 +391,13 @@
         </div>
 
         <!-- INSIGHT -->
-        <div class="insight-box">
-            <div class="title">💡 Executive Insight</div>
-            <p id="insightText">Loading your personalized insight...</p>
-        </div>
+<div class="insight-box">
+    <div class="title">💡 What Does This Mean?</div>
+    <p id="insightText">
+        <!-- This will be populated by JavaScript -->
+        Loading your personalized insight...
+    </p>
+</div>
 
         <!-- WARNING -->
         <div class="warning-box">
@@ -583,65 +586,90 @@
     }
 
     // ============================================================
-    // RENDER REPORT
+    // RENDER REPORT - UPDATED WITH DYNAMIC INSIGHT
     // ============================================================
-    function renderReport(data) {
-        // Tax Score
-        document.getElementById('taxScore').textContent = data.communicationTax + '%';
-        document.getElementById('overallBadge').textContent = '📊 Overall: ' + data.overall + '%';
+// ============================================================
+// RENDER REPORT - UPDATED WITH DYNAMIC INSIGHT
+// ============================================================
+function renderReport(data) {
+    // Tax Score
+    document.getElementById('taxScore').textContent = data.communicationTax + '%';
+    document.getElementById('overallBadge').textContent = '📊 Overall: ' + data.overall + '%';
 
-        // Name
-        document.getElementById('userName').textContent = data.name || 'Executive';
+    // Name
+    document.getElementById('userName').textContent = data.name || 'Executive';
 
-        // Strength & Blindspot
-        var scores = {
-            'Thinking': data.thinking,
-            'Structure': data.structure,
-            'Communication': data.communication,
-            'Understanding': data.understanding,
-            'Opportunity': data.opportunity
-        };
+    // Strength & Blindspot
+    var scores = {
+        'Thinking': data.thinking,
+        'Structure': data.structure,
+        'Communication': data.communication,
+        'Understanding': data.understanding,
+        'Opportunity': data.opportunity
+    };
 
-        var sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-        var highest = sorted[0];
-        var lowest = sorted[sorted.length - 1];
+    var sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    var highest = sorted[0];
+    var lowest = sorted[sorted.length - 1];
 
-        document.getElementById('strengthBadge').textContent = '🏆 Strength: ' + highest[0];
-        document.getElementById('blindspotBadge').textContent = '🎯 Blind Spot: ' + lowest[0];
+    document.getElementById('strengthBadge').textContent = '🏆 Strength: ' + highest[0];
+    document.getElementById('blindspotBadge').textContent = '🎯 Blind Spot: ' + lowest[0];
 
-        // Competency Bars
-        var competencyHTML = '';
-        var competencyNames = {
-            'Thinking': '🧠 Thinking',
-            'Structure': '📐 Structure',
-            'Communication': '💬 Communication',
-            'Understanding': '🤝 Understanding',
-            'Opportunity': '🚀 Opportunity'
-        };
+    // Competency Bars
+    var competencyHTML = '';
+    var competencyNames = {
+        'Thinking': '🧠 Thinking',
+        'Structure': '📐 Structure',
+        'Communication': '💬 Communication',
+        'Understanding': '🤝 Understanding',
+        'Opportunity': '🚀 Opportunity'
+    };
 
-        for (var key in competencyNames) {
-            var value = data[key.toLowerCase()] || 0;
-            competencyHTML += `
-                <div class="skill">
-                    <div class="label">
-                        <span>${competencyNames[key]}</span>
-                        <span class="score">${value}%</span>
-                    </div>
-                    <div class="progress">
-                        <div class="fill" style="width: ${value}%;"></div>
-                    </div>
+    for (var key in competencyNames) {
+        var value = data[key.toLowerCase()] || 0;
+        competencyHTML += `
+            <div class="skill">
+                <div class="label">
+                    <span>${competencyNames[key]}</span>
+                    <span class="score">${value}%</span>
                 </div>
-            `;
-        }
-        document.getElementById('competencyBars').innerHTML = competencyHTML;
-
-        // Insight Text
-        var tax = data.communicationTax || 0;
-        document.getElementById('insightText').innerHTML =
-            'Your Communication Tax™ of <strong>' + tax + '%</strong> means ' + tax +
-            '% of your professional value may not be fully recognised. ' +
-            'Reducing this tax by just 10% can significantly accelerate your career growth.';
+                <div class="progress">
+                    <div class="fill" style="width: ${value}%;"></div>
+                </div>
+            </div>
+        `;
     }
+    document.getElementById('competencyBars').innerHTML = competencyHTML;
+
+    // ============================================================
+    // DYNAMIC INSIGHT TEXT - Uses real data
+    // ============================================================
+    var tax = data.communicationTax || 0;
+    var perceived = 100 - tax;
+
+    var insightHTML = `
+        Your Communication Tax™ of <strong>${tax}%</strong> means that
+        <strong>${tax}%</strong> of your professional value is not being perceived.
+        <br><br>
+        In other words: for every <strong>₹100</strong> of value you create,
+        only <strong>₹${perceived}</strong> is being recognised.
+        <br><br>
+        This gap is costing you:
+        <br>
+        ➜ <strong>Promotions</strong> — Your impact isn't visible to decision-makers
+        <br>
+        ➜ <strong>Trust</strong> — Your team doesn't fully understand your direction
+        <br>
+        ➜ <strong>Influence</strong> — Senior leaders don't see your full potential
+        <br>
+        ➜ <strong>Opportunities</strong> — Others are chosen over you for key roles
+        <br><br>
+        Reducing your Communication Tax™ by just 10% can significantly
+        accelerate your career growth.
+    `;
+
+    document.getElementById('insightText').innerHTML = insightHTML;
+}
 
     // ============================================================
     // FETCH REPORT DATA
