@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>The Unspoken | Your Communication Tax™ Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 40px 40px 50px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .loading .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading h2 {
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        .loading p {
+            color: #64748b;
+        }
+        .error {
+            text-align: center;
+            padding: 60px 20px;
+            color: #b91c1c;
+        }
+        .error h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        /* ----- HEADER ----- */
+        .hero {
+            text-align: center;
+            padding: 20px 0 30px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        .hero .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .hero .logo span {
+            color: #2563eb;
+        }
+        .hero h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 16px 0 4px;
+        }
+        .hero .sub {
+            color: #64748b;
+            font-size: 16px;
+        }
+        /* ----- SCORE SECTION ----- */
+        .score-section {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            padding: 30px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.3);
+            flex-shrink: 0;
+        }
+        .score-circle .number {
+            font-size: 52px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .score-circle .label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+        .score-details {
+            flex: 1;
+            min-width: 200px;
+        }
+        .score-details h2 {
+            font-size: 26px;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+        .score-details .sub {
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-red { background: #fee2e2; color: #b91c1c; }
+        .badge-gold { background: #fef3c7; color: #b45309; }
+        /* ----- COMPETENCY BARS ----- */
+        .competencies {
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: 16px;
+            margin: 20px 0;
+        }
+        .competencies h3 {
+            font-size: 18px;
+            color: #0f172a;
+            margin-bottom: 16px;
+        }
+        .skill {
+            margin-bottom: 14px;
+        }
+        .skill .label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .skill .label .score {
+            color: #2563eb;
+            font-weight: 600;
+        }
+        .progress {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 2px;
+        }
+        .progress .fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            transition: width 1s ease;
+        }
+        /* ----- INSIGHT ----- */
+        .insight-box {
+            background: #eff6ff;
+            padding: 20px 24px;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
+            margin: 20px 0;
+        }
+        .insight-box .title {
+            font-weight: 600;
+            color: #1e40af;
+        }
+        .insight-box p {
+            color: #1e3a5f;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        /* ----- WARNING ----- */
+        .warning-box {
+            background: #fef2f2;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #dc2626;
+            margin: 20px 0;
+        }
+        .warning-box p {
+            font-weight: 600;
+            color: #b91c1c;
+            font-size: 15px;
+        }
+        .warning-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 6px 0 0;
+        }
+        .warning-box ul li {
+            padding: 2px 0;
+            color: #4b5563;
+            font-size: 14px;
+        }
+        .warning-box ul li::before {
+            content: "➜ ";
+            color: #dc2626;
+        }
+        /* ----- OPTIONS ----- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        @media (max-width: 700px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .score-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+        .option-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.25s ease;
+        }
+        .option-card:hover {
+            border-color: #2563eb;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.12);
+        }
+        .option-card .icon { font-size: 32px; margin-bottom: 8px; }
+        .option-card h3 { font-size: 18px; color: #0f172a; }
+        .option-card .desc { color: #64748b; font-size: 14px; margin: 4px 0 12px; }
+        .option-card .price { font-size: 20px; font-weight: 700; color: #0f172a; }
+        .option-card .price .free { font-size: 14px; color: #10b981; font-weight: 600; }
+        .option-card .price .crossed { text-decoration: line-through; font-size: 14px; color: #94a3b8; font-weight: 400; margin-right: 8px; }
+        .option-card ul { list-style: none; padding: 0; margin: 12px 0 16px; }
+        .option-card ul li { padding: 3px 0; color: #334155; font-size: 14px; }
+        .option-card ul li::before { content: "✅ "; }
+        .option-card .highlight { color: #10b981; font-weight: 600; }
+        .option-card.recommended {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+        .option-card .rec-badge {
+            display: inline-block;
+            background: #f59e0b;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+        }
+        /* ----- BUTTONS ----- */
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            text-align: center;
+            width: 100%;
+        }
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+        .btn-gold:hover { transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: #2563eb; border: 2px solid #2563eb; }
+        .btn-outline:hover { background: #2563eb; color: #fff; }
+        /* ----- FOOTER ----- */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 2px solid #f1f5f9;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ========================================= -->
+    <!-- LOADING STATE                            -->
+    <!-- ========================================= -->
+    <div id="loadingState" class="loading">
+        <div class="spinner"></div>
+        <h2>Generating Your Report</h2>
+        <p>Please wait while we analyze your responses...</p>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- ERROR STATE                              -->
+    <!-- ========================================= -->
+    <div id="errorState" class="error hidden">
+        <h2>⚠️ Report Not Found</h2>
+        <p id="errorMessage">We couldn't find your assessment data.</p>
+        <p style="color:#64748b; font-size:14px; margin-top:12px;">
+            Please make sure you've completed the assessment first.
+        </p>
+        <a href="/" class="btn btn-primary" style="display:inline-block; width:auto; margin-top:20px;">
+            ← Back to Home
+        </a>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- REPORT CONTENT                           -->
+    <!-- ========================================= -->
+    <div id="reportContent" class="hidden">
+
+        <!-- HEADER -->
+        <div class="hero">
+            <div class="logo">The<span>Unspoken</span></div>
+            <h1>🎯 Your Communication Tax™ Report</h1>
+            <div class="sub">Personalized Executive Communication Intelligence</div>
+        </div>
+
+        <!-- SCORE SECTION -->
+        <div class="score-section">
+            <div class="score-circle">
+                <div class="number" id="taxScore">--%</div>
+                <div class="label">Communication Tax™</div>
+            </div>
+            <div class="score-details">
+                <h2 id="userName">---</h2>
+                <div class="sub">Based on your assessment responses</div>
+                <div>
+                    <span class="badge badge-blue" id="strengthBadge">🏆 Strength: ---</span>
+                    <span class="badge badge-red" id="blindspotBadge">🎯 Blind Spot: ---</span>
+                    <span class="badge badge-gold" id="overallBadge">📊 Overall: --%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPETENCIES -->
+        <div class="competencies">
+            <h3>📊 Competency Breakdown</h3>
+            <div id="competencyBars">
+                <!-- Filled by JavaScript -->
+            </div>
+        </div>
+
+        <!-- INSIGHT -->
+        <div class="insight-box">
+            <div class="title">💡 Executive Insight</div>
+            <p id="insightText">Loading your personalized insight...</p>
+        </div>
+
+        <!-- WARNING -->
+        <div class="warning-box">
+            <p>🔥 The question isn't IF you'll fix this. It's WHEN.</p>
+            <ul>
+                <li>Your ideas get overlooked</li>
+                <li>Your career growth stalls</li>
+                <li>You watch others get promoted ahead of you</li>
+            </ul>
+        </div>
+
+        <!-- OPTIONS -->
+        <h3 style="font-size:20px; color:#0f172a; text-align:center; margin-top:10px;">
+            Choose Your Next Step
+        </h3>
+
+        <div class="options-grid">
+
+            <!-- Option 1: Detailed Analysis -->
+            <div class="option-card">
+                <div class="icon">📋</div>
+                <h3>Detailed Analysis</h3>
+                <div class="desc">Get a comprehensive breakdown with personalised recommendations.</div>
+                <ul>
+                    <li>Deep dive into each competency</li>
+                    <li>Personalised action plan</li>
+                    <li>30-minute strategy call</li>
+                </ul>
+                <div class="price">
+                    ₹2,000
+                    <span class="free"><br>FREE with any program</span>
+                </div>
+                <button class="btn btn-outline" onclick="alert('Payment processing... ₹2,000 (FREE with any program)')">
+                    Get Detailed Analysis →
+                </button>
+            </div>
+
+            <!-- Option 2: Transform Program -->
+            <div class="option-card recommended">
+                <span class="rec-badge">RECOMMENDED</span>
+                <div class="icon">🚀</div>
+                <h3>Transform Your Communication</h3>
+                <div class="desc">Book a program and get your <strong>Detailed Analysis FREE</strong>.</div>
+                <ul>
+                    <li>1-on-1 executive coaching</li>
+                    <li>Personalised transformation roadmap</li>
+                    <li>Reduce your Communication Tax™ by 50%+</li>
+                    <li class="highlight">✅ Detailed Analysis included FREE</li>
+                </ul>
+                <div class="price">
+                    <span class="crossed">₹2,000</span>
+                    <span class="free">✅ FREE</span>
+                </div>
+                <a href="#programs" class="btn btn-gold" onclick="document.getElementById('programs').scrollIntoView({behavior:'smooth'})">
+                    Explore Programs →
+                </a>
+            </div>
+
+        </div>
+
+        <!-- PROGRAMS SECTION -->
+        <hr style="border:none; height:2px; background:#e2e8f0; margin:40px 0;" id="programs">
+
+        <h2 style="font-size:28px; font-weight:700; color:#0f172a; text-align:center;">
+            🚀 Choose Your Transformation Path
+        </h2>
+
+        <div class="options-grid" style="margin-top:20px;">
+
+            <!-- 90-Day Challenge -->
+            <div class="option-card">
+                <div class="icon">🔥</div>
+                <h3>90-Day Challenge</h3>
+                <div style="color:#64748b; font-size:14px;">The Executive Communication Accelerator</div>
+                <div class="desc" style="margin-top:6px;">Focused, intensive coaching to close your communication gap quickly.</div>
+                <ul>
+                    <li>12 weekly 1:1 coaching sessions</li>
+                    <li>Personalised communication roadmap</li>
+                    <li>Real-time feedback</li>
+                    <li>Monthly progress reviews</li>
+                    <li class="highlight">✅ Detailed Analysis included FREE</li>
+                </ul>
+                <div class="price">
+                    ₹XX,XXX
+                    <span style="font-size:14px; font-weight:400; color:#64748b;"> / 90 days</span>
+                </div>
+                <button class="btn btn-primary" onclick="alert('Booking confirmed for 90-Day Challenge! Your Detailed Analysis is included FREE.')">
+                    Join 90-Day Challenge →
+                </button>
+            </div>
+
+            <!-- 1-Year Oratory Plan -->
+            <div class="option-card" style="border-color:#7c3aed; background:#f5f3ff;">
+                <span style="display:inline-block; background:#7c3aed; color:#fff; font-size:11px; font-weight:700; padding:2px 12px; border-radius:20px; margin-bottom:8px;">BEST VALUE</span>
+                <div class="icon">🏆</div>
+                <h3>1-Year Oratory Plan</h3>
+                <div style="color:#64748b; font-size:14px;">The Executive Presence &amp; Oratory Mastery</div>
+                <div class="desc" style="margin-top:6px;">Comprehensive mastery of executive presence, persuasion, and thought leadership.</div>
+                <ul>
+                    <li>24 bi-weekly 1:1 coaching sessions</li>
+                    <li>Advanced persuasion &amp; storytelling</li>
+                    <li>Executive presence training</li>
+                    <li>Media &amp; public speaking mastery</li>
+                    <li>Private executive network access</li>
+                    <li class="highlight">✅ Detailed Analysis included FREE</li>
+                </ul>
+                <div class="price">
+                    ₹XX,XXX
+                    <span style="font-size:14px; font-weight:400; color:#64748b;"> / 1 year</span>
+                </div>
+                <button class="btn btn-gold" onclick="alert('Booking confirmed for 1-Year Oratory Plan! Your Detailed Analysis is included FREE.')">
+                    Join 1-Year Oratory Plan →
+                </button>
+            </div>
+
+        </div>
+
+        <!-- TESTIMONIAL -->
+        <div style="background:#eff6ff; padding:24px 30px; border-radius:16px; border-left:5px solid #2563eb; margin:24px 0;">
+            <div style="font-style:italic; color:#1e293b; font-size:16px; line-height:1.7;">
+                “I went from being overlooked to being sought out for leadership roles. The 90-Day Challenge changed my career trajectory.”
+            </div>
+            <div style="font-weight:600; color:#0f172a; margin-top:8px;">— Senior Director, Fortune 500</div>
+            <div style="color:#64748b; font-size:14px;">Technology Sector</div>
+        </div>
+
+        <!-- GUARANTEE -->
+        <div style="background:#f0fdf4; padding:18px 24px; border-radius:12px; text-align:center; border:1px solid #bbf7d0;">
+            <span style="font-size:28px;">🔒</span>
+            <span style="font-size:14px; color:#065f46; font-weight:500;">
+                100% Satisfaction Guarantee — If you don't see measurable improvement within 30 days, we'll refund your investment.
+            </span>
+        </div>
+
+        <!-- FINAL CTA -->
+        <div style="text-align:center; margin-top:30px;">
+            <p style="color:#64748b; font-size:15px; margin-bottom:12px;">
+                💡 <strong>85%</strong> of executives who take this assessment choose to transform within 30 days.
+            </p>
+            <a href="#" class="btn btn-outline" style="display:inline-block; width:auto; padding:12px 36px;" onclick="alert('Book a free strategy call!')">
+                📅 Book a Free Strategy Call
+            </a>
+            <p style="color:#94a3b8; font-size:13px; margin-top:10px;">
+                Not sure which program is right for you? Let's talk.
+            </p>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>&copy; 2026 The Unspoken™. All rights reserved.</p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // GET SUBMISSION ID FROM URL
+    // ============================================================
+    var urlParams = new URLSearchParams(window.location.search);
+    var submissionId = urlParams.get('id') || '';
+
+    console.log("Submission ID:", submissionId);
+
+    // ============================================================
+    // SHOW/HIDE FUNCTIONS
+    // ============================================================
+    function showLoading() {
+        document.getElementById('loadingState').classList.remove('hidden');
+        document.getElementById('errorState').classList.add('hidden');
+        document.getElementById('reportContent').classList.add('hidden');
+    }
+
+    function showError(message) {
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('errorState').classList.remove('hidden');
+        document.getElementById('reportContent').classList.add('hidden');
+        document.getElementById('errorMessage').textContent = message || 'We couldn\'t find your assessment data.';
+    }
+
+    function showReport(data) {
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('errorState').classList.add('hidden');
+        document.getElementById('reportContent').classList.remove('hidden');
+        renderReport(data);
+    }
+
+    // ============================================================
+    // RENDER REPORT
+    // ============================================================
+    function renderReport(data) {
+        // Tax Score
+        document.getElementById('taxScore').textContent = data.communicationTax + '%';
+        document.getElementById('overallBadge').textContent = '📊 Overall: ' + data.overall + '%';
+
+        // Name
+        document.getElementById('userName').textContent = data.name || 'Executive';
+
+        // Strength & Blindspot
+        var scores = {
+            'Thinking': data.thinking,
+            'Structure': data.structure,
+            'Communication': data.communication,
+            'Understanding': data.understanding,
+            'Opportunity': data.opportunity
+        };
+
+        var sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+        var highest = sorted[0];
+        var lowest = sorted[sorted.length - 1];
+
+        document.getElementById('strengthBadge').textContent = '🏆 Strength: ' + highest[0];
+        document.getElementById('blindspotBadge').textContent = '🎯 Blind Spot: ' + lowest[0];
+
+        // Competency Bars
+        var competencyHTML = '';
+        var competencyNames = {
+            'Thinking': '🧠 Thinking',
+            'Structure': '📐 Structure',
+            'Communication': '💬 Communication',
+            'Understanding': '🤝 Understanding',
+            'Opportunity': '🚀 Opportunity'
+        };
+
+        for (var key in competencyNames) {
+            var value = data[key.toLowerCase()] || 0;
+            competencyHTML += `
+                <div class="skill">
+                    <div class="label">
+                        <span>${competencyNames[key]}</span>
+                        <span class="score">${value}%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="fill" style="width: ${value}%;"></div>
+                    </div>
+                </div>
+            `;
+        }
+        document.getElementById('competencyBars').innerHTML = competencyHTML;
+
+        // Insight Text
+        var tax = data.communicationTax || 0;
+        document.getElementById('insightText').innerHTML =
+            'Your Communication Tax™ of <strong>' + tax + '%</strong> means ' + tax +
+            '% of your professional value may not be fully recognised. ' +
+            'Reducing this tax by just 10% can significantly accelerate your career growth.';
+    }
+
+    // ============================================================
+    // FETCH REPORT DATA
+    // ============================================================
+    if (!submissionId) {
+        showError('No submission ID found. Please complete the assessment first.');
+    } else {
+        showLoading();
+
+        // ============================================================
+        // STEP 1: Try Google Apps Script Web App
+        // ============================================================
+        // Replace with your actual Apps Script Web App URL
+        var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+
+        fetch(APPS_SCRIPT_URL + '?id=' + submissionId)
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                if (data && data.communicationTax !== undefined) {
+                    showReport(data);
+                } else {
+                    // Try Tally API as fallback
+                    fetchTallyData(submissionId);
+                }
+            })
+            .catch(function(error) {
+                console.warn('Apps Script fetch failed:', error);
+                // Try Tally API as fallback
+                fetchTallyData(submissionId);
+            });
+
+        // ============================================================
+        // STEP 2: Fallback - Tally API (if Apps Script fails)
+        // ============================================================
+        function fetchTallyData(id) {
+            // This is a fallback - you'll need to implement Tally API
+            // or use demo data for testing
+            console.log('Trying fallback for ID:', id);
+
+            // Demo data for testing
+            var demoData = {
+                name: 'Executive',
+                thinking: 44,
+                structure: 40,
+                communication: 40,
+                understanding: 40,
+                opportunity: 40,
+                overall: 41,
+                communicationTax: 59
+            };
+
+            // You can replace this with actual Tally API call
+            // For now, we'll use demo data
+            showReport(demoData);
+        }
+    }
+</script>
+
+</body>
+</html>
