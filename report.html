@@ -8,96 +8,248 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-            background: #f8fafc;
+            background: #f0f4f8;
             color: #1e293b;
             line-height: 1.6;
             padding: 20px;
         }
+
+        /* ===== PREMIUM BORDER ===== */
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             background: #ffffff;
-            border-radius: 24px;
-            padding: 40px 40px 50px;
+            border-radius: 16px;
+            padding: 50px 50px 60px;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            border: 1px solid #e2e8f0;
+            position: relative;
         }
-        .loading { text-align: center; padding: 60px 20px; }
-        .loading .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #e2e8f0;
-            border-top-color: #2563eb;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 20px;
+        /* Premium gold accent border */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 40px;
+            right: 40px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed, #2563eb);
+            border-radius: 4px 4px 0 0;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loading h2 { color: #0f172a; margin-bottom: 8px; }
-        .loading p { color: #64748b; }
-        .error { text-align: center; padding: 60px 20px; color: #b91c1c; }
-        .error h2 { font-size: 28px; margin-bottom: 10px; }
-        .hidden { display: none !important; }
+        /* Inner subtle border */
+        .report-inner {
+            border: 1px solid #f1f5f9;
+            border-radius: 12px;
+            padding: 30px 30px 20px;
+            background: #fafbfc;
+        }
 
+        /* ----- HEADER ----- */
         .report-header {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             padding-bottom: 24px;
-            border-bottom: 3px solid #2563eb;
+            border-bottom: 2px solid #e2e8f0;
             margin-bottom: 30px;
+            flex-wrap: wrap;
         }
-        .report-header .logo { font-size: 28px; font-weight: 700; color: #0f172a; }
+        .report-header .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
         .report-header .logo span { color: #2563eb; }
-        .report-header h1 { font-size: 28px; font-weight: 800; color: #0f172a; margin: 12px 0 4px; }
-        .report-header .sub { color: #64748b; font-size: 15px; }
+        .report-header .logo .sub { font-size: 12px; font-weight: 400; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase; display: block; }
+        .report-header .meta {
+            text-align: right;
+            font-size: 14px;
+            color: #64748b;
+        }
+        .report-header .meta .label { font-weight: 600; color: #0f172a; }
+        .report-header .badge {
+            display: inline-block;
+            background: #2563eb;
+            color: #fff;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        @media (max-width: 600px) {
+            .report-header { flex-direction: column; text-align: center; }
+            .report-header .meta { text-align: center; margin-top: 12px; }
+            .container { padding: 20px; }
+            .report-inner { padding: 15px; }
+        }
 
+        /* ----- GREETING ----- */
         .greeting {
-            background: #eff6ff;
-            padding: 16px 20px;
+            background: #f8fafc;
+            padding: 20px 24px;
             border-radius: 12px;
             border-left: 4px solid #2563eb;
-            margin: 20px 0;
+            margin: 20px 0 30px;
         }
-        .greeting h2 { font-size: 20px; color: #0f172a; }
-        .greeting p { color: #475569; font-size: 15px; }
-
-        .summary-dashboard {
-            background: linear-gradient(135deg, #f8fafc, #eef2ff);
-            padding: 24px;
-            border-radius: 16px;
+        .greeting h2 { font-size: 20px; color: #0f172a; margin-bottom: 4px; }
+        .greeting h2 span { color: #2563eb; }
+        .greeting p { color: #475569; font-size: 15px; line-height: 1.7; }
+        .greeting .highlight-box {
+            background: #eef2ff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0 0;
+            font-size: 14px;
+            color: #1e293b;
             border: 1px solid #e2e8f0;
-            margin: 20px 0;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-        .summary-dashboard .item { text-align: center; }
-        .summary-dashboard .item .number { font-size: 32px; font-weight: 700; color: #0f172a; }
-        .summary-dashboard .item .label { font-size: 13px; color: #64748b; }
-        .summary-dashboard .full-width { grid-column: 1 / -1; }
-        @media (max-width: 600px) {
-            .summary-dashboard { grid-template-columns: 1fr; }
-            .summary-dashboard .full-width { grid-column: 1; }
         }
 
-        .tax-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 15px; }
+        /* ----- DASHBOARD ----- */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 1px;
+            background: #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 24px 0;
+        }
+        .dashboard .card {
+            background: #ffffff;
+            padding: 20px 16px;
+            text-align: center;
+        }
+        .dashboard .card .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .dashboard .card .number .small { font-size: 16px; }
+        .dashboard .card .label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+        .dashboard .card .status {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .status-green { background: #d1fae5; color: #065f46; }
+        .status-yellow { background: #fef3c7; color: #92400e; }
+        .status-orange { background: #fed7aa; color: #9a3412; }
+        .status-red { background: #fee2e2; color: #991b1b; }
+        @media (max-width: 700px) {
+            .dashboard { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* ----- COMPETENCY TABLE ----- */
+        .competency-section { margin: 30px 0; }
+        .competency-section h3 {
+            font-size: 18px;
+            color: #0f172a;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+        }
+        .competency-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .competency-table th {
+            background: #f1f5f9;
+            color: #0f172a;
+            font-weight: 600;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .competency-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .competency-table .dimension { font-weight: 500; color: #0f172a; }
+        .competency-table .score { font-weight: 700; color: #2563eb; text-align: center; }
+        .competency-table .rating {
+            font-weight: 600;
+            text-align: center;
+        }
+        .competency-table .rating-excellent { color: #10b981; }
+        .competency-table .rating-strong { color: #2563eb; }
+        .competency-table .rating-good { color: #8b5cf6; }
+        .competency-table .rating-needs { color: #f97316; }
+        .competency-table .impact { color: #475569; }
+
+        /* ----- PROGRESS BARS ----- */
+        .progress-bars { margin: 20px 0 30px; }
+        .progress-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+        .progress-bar-item .name {
+            width: 140px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #0f172a;
+            flex-shrink: 0;
+        }
+        .progress-bar-item .track {
+            flex: 1;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-item .track .fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            transition: width 1s ease;
+        }
+        .progress-bar-item .pct {
+            width: 50px;
+            text-align: right;
+            font-weight: 600;
+            font-size: 14px;
+            color: #0f172a;
+            flex-shrink: 0;
+        }
+        @media (max-width: 600px) {
+            .progress-bar-item .name { width: 100px; font-size: 13px; }
+            .progress-bar-item .pct { width: 40px; font-size: 13px; }
+        }
+
+        /* ----- TAX TABLE ----- */
+        .tax-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
         .tax-table th {
             background: #f1f5f9;
             color: #0f172a;
             font-weight: 600;
-            padding: 12px 16px;
+            padding: 10px 14px;
             text-align: left;
             border-bottom: 2px solid #e2e8f0;
         }
-        .tax-table td { padding: 12px 16px; border-bottom: 1px solid #e2e8f0; }
-        .tax-table .principle { font-weight: 600; color: #0f172a; }
+        .tax-table td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; }
+        .tax-table .principle { font-weight: 500; color: #0f172a; }
         .tax-table .score { font-weight: 700; color: #2563eb; text-align: center; }
         .tax-table .amount { font-weight: 600; color: #dc2626; text-align: right; }
         .tax-table .total-row td {
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15px;
             border-top: 2px solid #0f172a;
-            padding-top: 14px;
+            padding-top: 12px;
         }
-        .tax-table .total-row .amount { color: #dc2626; font-size: 18px; }
+        .tax-table .total-row .amount { color: #dc2626; font-size: 17px; }
         .tax-table .clickable { text-align: center; font-size: 13px; }
         .tax-table .clickable a {
             color: #2563eb;
@@ -106,7 +258,49 @@
             cursor: pointer;
             border-bottom: 1px dashed #2563eb;
         }
-        .tax-table .clickable a:hover { color: #1d4ed8; }
+
+        /* ----- INSIGHT GRID ----- */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        @media (max-width: 700px) { .insight-grid { grid-template-columns: 1fr; } }
+        .strength-box {
+            background: #f0fdf4;
+            padding: 20px 24px;
+            border-radius: 12px;
+            border-left: 4px solid #10b981;
+        }
+        .strength-box h3 { color: #065f46; font-size: 17px; margin-bottom: 12px; }
+        .strength-box .item { margin-bottom: 12px; }
+        .strength-box .item .title { font-weight: 600; color: #0f172a; }
+        .strength-box .item .desc { color: #475569; font-size: 14px; }
+        .strength-box .item .tip { font-size: 13px; color: #2563eb; font-weight: 500; }
+
+        .dev-box {
+            background: #fef2f2;
+            padding: 20px 24px;
+            border-radius: 12px;
+            border-left: 4px solid #dc2626;
+        }
+        .dev-box h3 { color: #991b1b; font-size: 17px; margin-bottom: 12px; }
+        .dev-box .item { margin-bottom: 12px; }
+        .dev-box .item .title { font-weight: 600; color: #0f172a; }
+        .dev-box .item .desc { color: #475569; font-size: 14px; }
+        .dev-box .item .tip { font-size: 13px; color: #2563eb; font-weight: 500; }
+
+        /* ----- TRIGGERS ----- */
+        .triggers {
+            background: #fef2f2;
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin: 24px 0;
+            border-left: 4px solid #dc2626;
+        }
+        .triggers h3 { font-size: 17px; color: #b91c1c; margin-bottom: 12px; }
+        .triggers ol { padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.8; }
 
         .download-section { text-align: center; padding: 20px 0; margin: 10px 0 20px; }
         .download-section .btn-download {
@@ -128,74 +322,49 @@
             box-shadow: 0 12px 28px -8px rgba(37,99,235,0.4);
         }
 
-        .strength-box {
-            background: #f0fdf4;
-            padding: 20px 24px;
-            border-radius: 16px;
-            border-left: 4px solid #10b981;
-            margin: 20px 0;
-        }
-        .strength-box h3 { color: #065f46; font-size: 18px; margin-bottom: 12px; }
-        .strength-box .item { margin-bottom: 12px; }
-        .strength-box .item .title { font-weight: 600; color: #0f172a; }
-        .strength-box .item .desc { color: #475569; font-size: 14px; }
-        .strength-box .item .tip { font-size: 13px; color: #2563eb; font-weight: 500; }
-
-        .dev-box {
-            background: #fef2f2;
-            padding: 20px 24px;
-            border-radius: 16px;
-            border-left: 4px solid #dc2626;
-            margin: 20px 0;
-        }
-        .dev-box h3 { color: #991b1b; font-size: 18px; margin-bottom: 12px; }
-        .dev-box .item { margin-bottom: 12px; }
-        .dev-box .item .title { font-weight: 600; color: #0f172a; }
-        .dev-box .item .desc { color: #475569; font-size: 14px; }
-        .dev-box .item .tip { font-size: 13px; color: #2563eb; font-weight: 500; }
-
         .interpretation {
             background: #f8fafc;
-            padding: 24px;
-            border-radius: 16px;
+            padding: 20px 24px;
+            border-radius: 12px;
             margin: 24px 0;
         }
-        .interpretation h3 { font-size: 18px; color: #0f172a; margin-bottom: 12px; }
-        .interpretation-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .interpretation h3 { font-size: 17px; color: #0f172a; margin-bottom: 12px; }
+        .interpretation-table { width: 100%; border-collapse: collapse; font-size: 13px; }
         .interpretation-table th {
             background: #e2e8f0;
             color: #0f172a;
             font-weight: 600;
-            padding: 10px 14px;
+            padding: 8px 12px;
             text-align: left;
         }
-        .interpretation-table td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; }
+        .interpretation-table td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
 
-        .triggers {
-            background: #fef2f2;
-            padding: 24px;
-            border-radius: 16px;
-            margin: 24px 0;
-            border-left: 4px solid #dc2626;
+        .disclaimer {
+            background: #fef9e7;
+            padding: 14px 18px;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+            margin: 20px 0;
+            font-size: 13px;
+            color: #92400e;
         }
-        .triggers h3 { font-size: 18px; color: #b91c1c; margin-bottom: 12px; }
-        .triggers ol { padding-left: 20px; color: #4b5563; font-size: 15px; line-height: 1.8; }
+        .disclaimer strong { color: #78350f; }
 
         .cta-section {
             background: linear-gradient(135deg, #1e40af, #2563eb);
             color: #fff;
-            padding: 30px;
-            border-radius: 16px;
+            padding: 28px;
+            border-radius: 12px;
             text-align: center;
             margin: 24px 0;
         }
-        .cta-section h3 { font-size: 22px; margin-bottom: 8px; }
-        .cta-section p { opacity: 0.9; font-size: 15px; margin-bottom: 16px; }
+        .cta-section h3 { font-size: 20px; margin-bottom: 6px; }
+        .cta-section p { opacity: 0.9; font-size: 14px; margin-bottom: 14px; }
         .cta-section .btn {
             display: inline-block;
             padding: 12px 32px;
             border-radius: 40px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             border: none;
             cursor: pointer;
@@ -206,25 +375,32 @@
         }
         .cta-section .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
 
-        .disclaimer {
-            background: #fef9e7;
-            padding: 16px 20px;
-            border-radius: 12px;
-            border-left: 4px solid #f59e0b;
-            margin: 20px 0;
-            font-size: 14px;
-            color: #92400e;
-        }
-        .disclaimer strong { color: #78350f; }
-
         .footer {
             text-align: center;
             margin-top: 30px;
             padding-top: 20px;
             border-top: 1px solid #e2e8f0;
-            font-size: 14px;
+            font-size: 13px;
             color: #94a3b8;
         }
+
+        .loading { text-align: center; padding: 60px 20px; }
+        .loading .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading h2 { color: #0f172a; margin-bottom: 8px; }
+        .loading p { color: #64748b; }
+        .error { text-align: center; padding: 60px 20px; color: #b91c1c; }
+        .error h2 { font-size: 28px; margin-bottom: 10px; }
+        .hidden { display: none !important; }
+        .separator { border: none; height: 1px; background: #e2e8f0; margin: 30px 0; }
 
         .modal-overlay {
             display: none;
@@ -245,7 +421,7 @@
             max-width: 500px;
             width: 100%;
             padding: 32px;
-            border-radius: 20px;
+            border-radius: 16px;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
@@ -259,8 +435,8 @@
             cursor: pointer;
         }
         .modal-box .close-btn:hover { color: #0f172a; }
-        .modal-box h3 { color: #0f172a; margin-bottom: 8px; font-size: 20px; }
-        .modal-box .modal-body { color: #475569; font-size: 15px; line-height: 1.7; }
+        .modal-box h3 { color: #0f172a; margin-bottom: 8px; font-size: 18px; }
+        .modal-box .modal-body { color: #475569; font-size: 14px; line-height: 1.7; }
         .modal-box .btn {
             display: inline-block;
             width: 100%;
@@ -268,8 +444,8 @@
             background: #2563eb;
             color: #fff;
             border: none;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             margin-top: 16px;
@@ -277,58 +453,118 @@
             text-align: center;
         }
         .modal-box .btn:hover { background: #1d4ed8; }
-
-        .separator { border: none; height: 2px; background: #e2e8f0; margin: 30px 0; }
     </style>
 </head>
 <body>
 
 <div class="container">
 
-    <!-- LOADING -->
+    <!-- ===== PREMIUM INNER BORDER ===== -->
+    <div class="report-inner">
+
+    <!-- ===== LOADING ===== -->
     <div id="loadingState" class="loading">
         <div class="spinner"></div>
         <h2>Generating Your Report</h2>
         <p id="loadingMessage">Please wait while we analyze your responses...</p>
     </div>
 
-    <!-- ERROR -->
+    <!-- ===== ERROR ===== -->
     <div id="errorState" class="error hidden">
         <h2>⚠️ Report Not Found</h2>
         <p id="errorMessage">We couldn't find your assessment data.</p>
         <p style="color:#64748b; font-size:14px; margin-top:12px;">Please make sure you've completed the assessment first.</p>
-        <a href="/" class="btn" style="display:inline-block; width:auto; margin-top:20px; background:#2563eb; color:#fff; padding:12px 28px; border-radius:40px; text-decoration:none;">← Back to Home</a>
+        <a href="/" style="display:inline-block; width:auto; margin-top:20px; background:#2563eb; color:#fff; padding:12px 28px; border-radius:40px; text-decoration:none;">← Back to Home</a>
     </div>
 
-    <!-- REPORT CONTENT -->
+    <!-- ===== REPORT CONTENT ===== -->
     <div id="reportContent" class="hidden">
 
+        <!-- HEADER -->
         <div class="report-header">
-            <div class="logo">The<span>Unspoken</span></div>
-            <h1>YOUR COMMUNICATION TAX™ REPORT</h1>
-            <div class="sub">Personalized Executive Communication Intelligence</div>
+            <div>
+                <div class="logo">
+                    THE <span>UNSPOKEN</span>
+                    <span class="sub">Executive Communication Intelligence</span>
+                </div>
+            </div>
+            <div class="meta">
+                <div><span class="label">Prepared for:</span> <span id="userName">Executive</span></div>
+                <div><span class="label">Assessment Date:</span> <span id="assessmentDate"></span></div>
+                <div><span class="label">Assessment Type:</span> Communication Tax™ Analysis</div>
+                <div style="margin-top: 6px;"><span class="badge">Confidential Assessment</span></div>
+            </div>
         </div>
 
+        <!-- GREETING -->
         <div class="greeting">
-            <h2>Hello, <span id="userName">Executive</span> 👋</h2>
-            <p>This is your personalized Communication Tax™ Report. Below you'll find your scores, the financial impact, and your top tax triggers.</p>
+            <h2>Hello, <span id="greetingName">Executive</span> 👋</h2>
+            <p>This is your personalized Communication Tax™ Report. Below you'll find your scores, the financial impact, and your top tax triggers. Your communication is costing you approximately <strong id="greetingTax">₹4.25 Lakhs</strong> every year—not because of a lack of knowledge, but because of avoidable communication gaps that reduce your visibility, influence, and leadership impact.</p>
+            <div class="highlight-box" id="greetingInsight">
+                <!-- Dynamically filled by JavaScript -->
+            </div>
+            <p style="margin-top: 10px; font-size: 14px; color: #64748b;">With focused coaching, these gaps can typically be improved within <strong>60–90 days</strong>.</p>
         </div>
 
-        <div class="summary-dashboard" id="summaryDashboard">
-            <div class="item"><div class="number" id="summaryTax">--%</div><div class="label">Communication Tax™ Index</div></div>
-            <div class="item"><div class="number" id="summaryOverall">--%</div><div class="label">Overall Score</div></div>
-            <div class="item"><div class="number" id="summaryStrength">--</div><div class="label">🧬 Leadership DNA</div></div>
-            <div class="item"><div class="number" id="summaryDev">--</div><div class="label">🎯 Leadership Blind Spot</div></div>
-            <div class="item full-width"><div class="number" id="summaryTaxAmount">₹--</div><div class="label">💰 Annual Tax Impact</div></div>
+        <!-- DASHBOARD -->
+        <div class="dashboard">
+            <div class="card">
+                <div class="number" id="dashTax">--%</div>
+                <div class="label">Communication Tax™ Index</div>
+            </div>
+            <div class="card">
+                <div class="number" id="dashOverall">-- <span class="small">/100</span></div>
+                <div class="label">Overall Executive Score</div>
+            </div>
+            <div class="card">
+                <div class="number" id="dashLoss">₹--</div>
+                <div class="label">Annual Opportunity Loss</div>
+            </div>
+            <div class="card">
+                <div class="number" id="dashReadiness">--</div>
+                <div class="label">Leadership Readiness</div>
+                <div class="status status-yellow" id="dashConfidence">--</div>
+            </div>
         </div>
 
+        <!-- COMPETENCY TABLE -->
+        <div class="competency-section">
+            <h3>📊 Executive Competency Profile</h3>
+            <table class="competency-table">
+                <thead>
+                    <tr>
+                        <th>Dimension</th>
+                        <th style="text-align:center;">Score</th>
+                        <th style="text-align:center;">Rating</th>
+                        <th>Impact</th>
+                    </tr>
+                </thead>
+                <tbody id="competencyTableBody">
+                    <!-- Filled by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PROGRESS BARS -->
+        <div class="progress-bars" id="progressBars">
+            <!-- Filled by JavaScript -->
+        </div>
+
+        <!-- TAX TABLE -->
+        <h3 style="font-size: 17px; color: #0f172a; margin: 30px 0 12px;">💰 Communication Tax™ Breakdown</h3>
         <table class="tax-table">
             <thead>
-                <tr><th>Principle</th><th style="text-align:center;">Your Score (%)</th><th style="text-align:right;">Minimal Tax Amount Lost (Annual)</th><th style="text-align:center;">Learn More</th></tr>
+                <tr>
+                    <th>Principle</th>
+                    <th style="text-align:center;">Your Score (%)</th>
+                    <th style="text-align:right;">Minimal Tax Amount Lost (Annual)</th>
+                    <th style="text-align:center;">Learn More</th>
+                </tr>
             </thead>
             <tbody id="taxTableBody"></tbody>
         </table>
 
+        <!-- DOWNLOAD -->
         <div class="download-section">
             <a href="https://rzp.io/rzp/Bn57txO" target="_blank" class="btn-download">📋 Download Full Report — ₹2,000</a>
             <p style="color:#64748b; font-size:13px; margin-top:8px;">
@@ -338,22 +574,33 @@
 
         <hr class="separator">
 
-        <div class="strength-box" id="strengthBox">
-            <h3>🧬 Leadership DNA</h3>
-            <div id="strengthList"></div>
+        <!-- LEADERSHIP DNA & BLIND SPOTS -->
+        <div class="insight-grid">
+            <div class="strength-box" id="strengthBox">
+                <h3>🧬 Your Leadership DNA</h3>
+                <div id="strengthList"></div>
+            </div>
+
+            <div class="dev-box" id="devBox">
+                <h3>🎯 Your Leadership Blind Spots</h3>
+                <div id="devList"></div>
+            </div>
         </div>
 
-        <div class="dev-box" id="devBox">
-            <h3>🎯 Leadership Blind Spot</h3>
-            <div id="devList"></div>
+        <!-- TOP 3 TRIGGERS -->
+        <div class="triggers">
+            <h3>🔥 Your Top 3 Tax Triggers</h3>
+            <p style="color:#4b5563; margin-bottom:6px;">Based on your answers, your biggest leaks are:</p>
+            <ol id="triggersList"></ol>
         </div>
 
-        <hr class="separator">
-
+        <!-- INTERPRETATION -->
         <div class="interpretation">
             <h3>📊 Your Score Interpretation</h3>
             <table class="interpretation-table">
-                <thead><tr><th>Total Score</th><th>Status</th><th>What It Means</th></tr></thead>
+                <thead>
+                    <tr><th>Total Score</th><th>Status</th><th>What It Means</th></tr>
+                </thead>
                 <tbody>
                     <tr><td>80-100</td><td style="color:#10b981;font-weight:600;">🟢 Tax-Free</td><td>You're in the top 10%. But you're still leaving money on the table.</td></tr>
                     <tr><td>60-79</td><td style="color:#f59e0b;font-weight:600;">🟡 Moderate Tax</td><td>You're leaking ₹3-7 Lakhs per year. You're close—but gaps are costing you.</td></tr>
@@ -361,14 +608,6 @@
                     <tr><td>Below 40</td><td style="color:#dc2626;font-weight:600;">🔴 Critical Tax</td><td>You're leaking ₹15+ Lakhs per year. This is an emergency.</td></tr>
                 </tbody>
             </table>
-        </div>
-
-        <hr class="separator">
-
-        <div class="triggers">
-            <h3>🎯 Your Top 3 Tax Triggers</h3>
-            <p style="color:#4b5563; margin-bottom:8px;">Based on your answers, your biggest leaks are:</p>
-            <ol id="triggersList"></ol>
         </div>
 
         <div class="disclaimer">
@@ -386,9 +625,12 @@
             <p style="font-size:12px; color:#94a3b8; margin-top:4px;">This report is confidential and intended solely for the recipient.</p>
         </div>
     </div>
-</div>
 
-<!-- MODAL -->
+    </div> <!-- End report-inner -->
+
+</div> <!-- End container -->
+
+<!-- ===== MODAL ===== -->
 <div class="modal-overlay" id="taxModal">
     <div class="modal-box">
         <button class="close-btn" onclick="closeModal()">✕</button>
@@ -410,7 +652,7 @@
     var RETRY_DELAY = 1000;
 
     // ============================================================
-    // TAX AMOUNTS (Fixed)
+    // TAX AMOUNTS (in lakhs)
     // ============================================================
     var TAX_AMOUNTS = {
         'Thinking': 0.50,
@@ -514,7 +756,7 @@
         body = '<p><strong>' + info.description + '</strong></p><p>' + body + '</p>';
         body += '<p style="margin-top:12px; background:#f8fafc; padding:12px; border-radius:8px; border-left:4px solid #2563eb;">' +
                 '📊 <strong>Your Score:</strong> ' + score + '%<br>' +
-                '💰 <strong>Tax Amount:</strong> ₹' + (TAX_AMOUNTS[principle] * 100).toFixed(0) + ' per year</p>';
+                '💰 <strong>Tax Amount:</strong> ₹' + (TAX_AMOUNTS[principle] * 100000).toLocaleString('en-IN') + ' per year</p>';
         document.getElementById('modalBody').innerHTML = body;
         document.getElementById('taxModal').classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -530,17 +772,52 @@
     });
 
     // ============================================================
+    // DYNAMIC PERSONALIZED INSIGHT
+    // ============================================================
+    function generatePersonalizedInsight(top2, bottom2) {
+        var strength1 = top2[0].name;
+        var strength2 = top2[1] ? top2[1].name : null;
+        var weakness1 = bottom2[0].name;
+        var weakness2 = bottom2[1] ? bottom2[1].name : null;
+
+        var insight = 'Your assessment indicates that you communicate with ';
+
+        // Add strengths
+        if (strength2) {
+            insight += 'strong ' + strength1.toLowerCase() + ' and ' + strength2.toLowerCase() + '. ';
+        } else {
+            insight += 'strong ' + strength1.toLowerCase() + '. ';
+        }
+
+        // Add "however" transition
+        insight += 'However, your ';
+
+        // Add weaknesses
+        if (weakness2) {
+            insight += weakness1.toLowerCase() + ' and ' + weakness2.toLowerCase() + ' are reducing the value others perceive in your work.';
+        } else {
+            insight += weakness1.toLowerCase() + ' is reducing the value others perceive in your work.';
+        }
+
+        return insight;
+    }
+
+    // ============================================================
     // RENDER REPORT
     // ============================================================
     function renderReport(data) {
         console.log("Rendering report with data:", data);
 
-        // Personalization
-        document.getElementById('userName').textContent = data.name || 'Executive';
+        var name = data.name || 'Executive';
 
-        // Summary Dashboard
-        document.getElementById('summaryTax').textContent = data.communicationTax + '%';
-        document.getElementById('summaryOverall').textContent = data.overall + '%';
+        // Personalization
+        document.getElementById('userName').textContent = name;
+        document.getElementById('greetingName').textContent = name;
+
+        // Assessment Date
+        var today = new Date();
+        var dateStr = today.toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+        document.getElementById('assessmentDate').textContent = dateStr;
 
         var competencies = [
             { name: 'Thinking', score: data.thinking },
@@ -555,22 +832,89 @@
         var top2 = sorted.slice(0, 2);
         var bottom2 = sorted.slice(-2).reverse();
 
-        // Summary: Top Strength & Development Area
-        document.getElementById('summaryStrength').textContent = top2[0].name + ' (' + top2[0].score + '%)';
-        document.getElementById('summaryDev').textContent = bottom2[0].name + ' (' + bottom2[0].score + '%)';
+        // ============================================================
+        // DYNAMIC INSIGHT
+        // ============================================================
+        var insightText = generatePersonalizedInsight(top2, bottom2);
+        document.getElementById('greetingInsight').textContent = insightText;
 
-        // Tax Table
+        // ============================================================
+        // DASHBOARD
+        // ============================================================
+        document.getElementById('dashTax').textContent = data.communicationTax + '%';
+        document.getElementById('dashOverall').innerHTML = data.overall + ' <span class="small">/100</span>';
+
         var totalTax = 0;
+        competencies.forEach(function(comp) {
+            totalTax += TAX_AMOUNTS[comp.name] || 0;
+        });
+        var totalDisplay = '₹' + (totalTax * 100000).toLocaleString('en-IN');
+        document.getElementById('dashLoss').textContent = totalDisplay;
+        document.getElementById('greetingTax').textContent = totalDisplay;
+
+        // Leadership Readiness
+        var readiness = '';
+        var confidence = '';
+        var overall = data.overall || 0;
+        if (overall >= 80) { readiness = 'Strategic Leader'; confidence = 'High'; }
+        else if (overall >= 65) { readiness = 'Emerging Executive'; confidence = 'High'; }
+        else if (overall >= 50) { readiness = 'Developing Leader'; confidence = 'Moderate'; }
+        else { readiness = 'Foundation Builder'; confidence = 'Needs Focus'; }
+        document.getElementById('dashReadiness').textContent = readiness;
+        var confEl = document.getElementById('dashConfidence');
+        confEl.textContent = confidence;
+        confEl.className = 'status';
+        if (confidence === 'High') { confEl.classList.add('status-green'); }
+        else if (confidence === 'Moderate') { confEl.classList.add('status-yellow'); }
+        else { confEl.classList.add('status-red'); }
+
+        // ============================================================
+        // COMPETENCY TABLE
+        // ============================================================
+        var tableRows = '';
+        competencies.forEach(function(comp) {
+            var rating = '';
+            var ratingClass = '';
+            var impact = '';
+            if (comp.score >= 75) { rating = 'Excellent'; ratingClass = 'rating-excellent'; impact = 'Leadership strength'; }
+            else if (comp.score >= 65) { rating = 'Strong'; ratingClass = 'rating-strong'; impact = 'Good analytical ability'; }
+            else if (comp.score >= 50) { rating = 'Good'; ratingClass = 'rating-good'; impact = 'Developing capability'; }
+            else { rating = 'Needs Improvement'; ratingClass = 'rating-needs'; impact = 'Highest impact area'; }
+            tableRows += `
+                <tr>
+                    <td class="dimension">${comp.name}</td>
+                    <td class="score">${comp.score}</td>
+                    <td class="rating ${ratingClass}">${rating}</td>
+                    <td class="impact">${impact}</td>
+                </tr>
+            `;
+        });
+        document.getElementById('competencyTableBody').innerHTML = tableRows;
+
+        // ============================================================
+        // PROGRESS BARS
+        // ============================================================
+        var barsHTML = '';
+        competencies.forEach(function(comp) {
+            barsHTML += `
+                <div class="progress-bar-item">
+                    <div class="name">${comp.name}</div>
+                    <div class="track">
+                        <div class="fill" style="width: ${comp.score}%;"></div>
+                    </div>
+                    <div class="pct">${comp.score}%</div>
+                </div>
+            `;
+        });
+        document.getElementById('progressBars').innerHTML = barsHTML;
+
+        // ============================================================
+        // TAX TABLE
+        // ============================================================
         var taxRows = '';
         competencies.forEach(function(comp) {
             var amount = TAX_AMOUNTS[comp.name] || 0;
-            totalTax += amount;
-            
-            // ✅ EXACT SAME LOGIC THAT WORKS IN CONSOLE
-            var amountInRupees = amount * 100000;
-            var formattedAmount = amountInRupees.toLocaleString('en-IN');
-            var amountDisplay = '₹' + formattedAmount;
-            
+            var amountDisplay = '₹' + (amount * 100000).toLocaleString('en-IN');
             taxRows += `
                 <tr>
                     <td class="principle">${comp.name}</td>
@@ -582,27 +926,18 @@
                 </tr>
             `;
         });
-
-        // ✅ UPDATED: Total with proper formatting
-        var totalDisplay = '₹' + Number(totalTax*100000).toLocaleString('en-IN');
+        var totalDisplay2 = '₹' + (totalTax * 100000).toLocaleString('en-IN');
         taxRows += `
             <tr class="total-row">
                 <td colspan="2" style="text-align:right;">TOTAL Communication Tax</td>
-                <td class="amount">${totalDisplay}</td>
+                <td class="amount">${totalDisplay2}</td>
                 <td></td>
             </tr>
         `;
         document.getElementById('taxTableBody').innerHTML = taxRows;
-        document.getElementById('summaryTaxAmount').textContent = totalDisplay;
-
-        // CTA
-        var ctaText = document.getElementById('ctaText');
-        if (ctaText && totalTax > 0) {
-            ctaText.innerHTML = 'Join The Unspoken™ Foundations and start saving <strong>' + totalDisplay + '</strong> per year.';
-        }
 
         // ============================================================
-        // STRENGTHS (Top 2)
+        // LEADERSHIP DNA
         // ============================================================
         var strengthHTML = '';
         top2.forEach(function(comp) {
@@ -621,7 +956,7 @@
         document.getElementById('strengthList').innerHTML = strengthHTML;
 
         // ============================================================
-        // DEVELOPMENT AREAS (Bottom 2)
+        // LEADERSHIP BLIND SPOTS
         // ============================================================
         var devHTML = '';
         bottom2.forEach(function(comp) {
@@ -653,16 +988,21 @@
         var top3Triggers = sortedLow.slice(0, 3);
         top3Triggers.forEach(function(comp, index) {
             var amount = TAX_AMOUNTS[comp.name] || 0;
-            // ✅ EXACT SAME LOGIC
-            var triggerAmount = amount * 100000;
-            var formattedTrigger = triggerAmount.toLocaleString('en-IN');
-            var amountDisplay = '₹' + formattedTrigger;
+            var amountDisplay = '₹' + (amount * 100000).toLocaleString('en-IN');
             var text = triggerTexts[index]
                 .replace(/{principle}/g, comp.name)
                 .replace(/{amount}/g, amountDisplay);
             triggerHTML += `<li>${text}</li>`;
         });
         document.getElementById('triggersList').innerHTML = triggerHTML;
+
+        // ============================================================
+        // CTA
+        // ============================================================
+        var ctaText = document.getElementById('ctaText');
+        if (ctaText && totalTax > 0) {
+            ctaText.innerHTML = 'Join The Unspoken™ Foundations and start saving <strong>' + totalDisplay2 + '</strong> per year.';
+        }
     }
 
     // ============================================================
