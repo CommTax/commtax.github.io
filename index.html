@@ -5,124 +5,231 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>The Unspoken | Communication Tax™ Assessment</title>
     <style>
-        /* ----- RESET & BASE ----- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* ============================================================ */
+        /* RESET & BASE                                                 */
+        /* ============================================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
             background: #f8fafc;
             color: #1e293b;
             line-height: 1.6;
-            padding: 20px;
+            padding: 0;
         }
+
+        /* ============================================================ */
+        /* STOCK MARKET DIGITAL TICKER                                  */
+        /* ============================================================ */
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            background: #0a0e1a;
+            padding: 8px 0;
+            border-bottom: 2px solid #2563eb;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(37, 99, 235, 0.15);
+        }
+        .ticker {
+            display: flex;
+            white-space: nowrap;
+            animation: tickerScroll 35s linear infinite;
+            width: max-content;
+        }
+        .ticker:hover {
+            animation-play-state: paused;
+        }
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 40px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #94a3b8;
+            flex-shrink: 0;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+        .ticker-item .label { color: #64748b; font-weight: 400; }
+        .ticker-item .value { font-weight: 700; font-size: 16px; }
+        .ticker-item .value.green { color: #34d399; }
+        .ticker-item .value.gold { color: #fcd34d; }
+        .ticker-item .value.blue { color: #60a5fa; }
+        .ticker-item .value.red { color: #f87171; }
+        .ticker-item .value.purple { color: #a78bfa; }
+        .ticker-item .separator { color: #1e293b; font-size: 18px; font-weight: 300; }
+        .ticker-item .blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        @media (max-width: 768px) {
+            .ticker-item { font-size: 11px; padding: 0 20px; }
+            .ticker-item .value { font-size: 13px; }
+            .ticker-wrap { padding: 6px 0; }
+        }
+
+        /* ============================================================ */
+        /* NAVIGATION                                                   */
+        /* ============================================================ */
+        .navbar {
+            position: sticky;
+            top: 54px;
+            z-index: 999;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 20px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0;
+        }
+        .navbar .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .navbar .logo span { color: #2563eb; }
+        .navbar .logo .tagline {
+            font-size: 12px;
+            font-weight: 400;
+            color: #64748b;
+            margin-left: 8px;
+            display: none;
+        }
+        @media (min-width: 700px) { .navbar .logo .tagline { display: inline; } }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #475569;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+        .nav-links a:hover { color: #2563eb; }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #2563eb;
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links .btn-nav {
+            background: #2563eb;
+            color: #fff !important;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .nav-links .btn-nav:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -6px rgba(37,99,235,0.35);
+        }
+        .nav-links .btn-nav::after { display: none; }
+        .nav-links a.active { color: #2563eb; }
+        .nav-links a.active::after { width: 100%; }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 4px;
+        }
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #0f172a;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: flex; }
+            .nav-links {
+                position: absolute;
+                top: 68px;
+                left: 20px;
+                right: 20px;
+                background: #fff;
+                flex-direction: column;
+                padding: 20px;
+                gap: 16px;
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                display: none;
+                box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15);
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a { font-size: 16px; width: 100%; text-align: center; padding: 10px 0; }
+            .nav-links .btn-nav { width: 100%; text-align: center; }
+        }
+
+        /* ============================================================ */
+        /* CONTAINER                                                    */
+        /* ============================================================ */
         .container {
-            max-width: 100%;
+            max-width: 1100px;
             margin: 0 auto;
             background: #ffffff;
-            border-radius: 0px;
             padding: 40px 40px 50px;
             box-shadow: none;
         }
-        /* ----- TYPOGRAPHY ----- */
-        .text-center {
+
+        /* ============================================================ */
+        /* HERO                                                         */
+        /* ============================================================ */
+        .hero {
             text-align: center;
+            padding: 40px 0 30px;
+            background: linear-gradient(180deg, #f0f7ff 0%, #ffffff 100%);
+            border-radius: 20px;
+            margin: 20px 0 30px;
         }
-        .badge {
+        .hero .badge {
             display: inline-block;
-            padding: 4px 14px;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 16px;
             border-radius: 30px;
             font-size: 13px;
             font-weight: 600;
-        }
-        .badge-gold {
-            background: #fef3c7;
-            color: #b45309;
-        }
-        .badge-blue {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-        .badge-red {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-        .badge-green {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        .divider {
-            border: none;
-            height: 2px;
-            background: linear-gradient(to right, #e2e8f0, #94a3b8, #e2e8f0);
-            margin: 40px 0;
-        }
-        /* ----- BUTTONS ----- */
-        .btn {
-            display: inline-block;
-            padding: 14px 36px;
-            border-radius: 40px;
-            font-size: 16px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            text-decoration: none;
-            text-align: center;
-        }
-        .btn-primary {
-            background: #2563eb;
-            color: #fff;
-            box-shadow: 0 8px 20px -6px rgba(37, 99, 235, 0.35);
-        }
-        .btn-primary:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-        }
-        .btn-gold {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: #fff;
-            box-shadow: 0 8px 20px -6px rgba(245, 158, 11, 0.35);
-        }
-        .btn-gold:hover {
-            transform: translateY(-2px);
-        }
-        .btn-outline {
-            background: transparent;
-            color: #2563eb;
-            border: 2px solid #2563eb;
-        }
-        .btn-outline:hover {
-            background: #2563eb;
-            color: #fff;
-        }
-        .btn-block {
-            display: block;
-            width: 100%;
-        }
-        /* ----- HERO ----- */
-        .hero {
-            text-align: center;
-            padding: 20px 0 30px;
-            border-bottom: 2px solid #f1f5f9;
-        }
-        .hero .logo {
-            font-size: 28px;
-            font-weight: 700;
-            color: #0f172a;
-            letter-spacing: -0.5px;
-        }
-        .hero .logo span {
-            color: #2563eb;
+            margin-bottom: 16px;
         }
         .hero h1 {
-            font-size: 42px;
+            font-size: 48px;
             font-weight: 800;
             color: #0f172a;
-            line-height: 1.2;
-            margin: 20px 0 10px;
+            line-height: 1.1;
+            margin: 0 0 12px;
         }
         .hero h1 .highlight {
             background: linear-gradient(135deg, #2563eb, #7c3aed);
@@ -134,99 +241,180 @@
             font-size: 20px;
             color: #475569;
             max-width: 700px;
+            margin: 0 auto 8px;
+        }
+        .hero .subheadline-2 {
+            font-size: 16px;
+            color: #64748b;
+            max-width: 600px;
             margin: 0 auto 20px;
         }
-        .hero .stats {
+        .hero .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .hero .trust-badges .item {
+            font-size: 14px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .hero .trust-badges .item span { font-weight: 600; color: #0f172a; }
+
+        .hero .btn-primary {
+            display: inline-block;
+            padding: 16px 48px;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: 600;
+            background: #2563eb;
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0 12px 30px -8px rgba(37,99,235,0.4);
+            transition: all 0.3s ease;
+        }
+        .hero .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px -8px rgba(37,99,235,0.5);
+        }
+        .hero .sub-text {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        /* ============================================================ */
+        /* STATS                                                        */
+        /* ============================================================ */
+        .stats {
             display: flex;
             justify-content: center;
             gap: 40px;
             flex-wrap: wrap;
-            margin-top: 20px;
+            margin: 20px 0;
         }
-        .hero .stats .stat-item {
-            font-size: 14px;
-            color: #64748b;
-        }
-        .hero .stats .stat-item strong {
+        .stats .stat-item { text-align: center; }
+        .stats .stat-item strong {
             display: block;
-            font-size: 18px;
+            font-size: 28px;
             color: #0f172a;
         }
-        /* ----- TWO-COLUMN LAYOUTS ----- */
-        .row {
+        .stats .stat-item .label { font-size: 14px; color: #64748b; }
+
+        /* ============================================================ */
+        /* TAX EXPLANATION                                              */
+        /* ============================================================ */
+        .tax-explanation {
+            padding: 40px 0;
+        }
+        .tax-explanation h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0f172a;
+            text-align: center;
+        }
+        .tax-explanation h2 span { color: #2563eb; }
+        .tax-explanation .sub {
+            text-align: center;
+            color: #475569;
+            font-size: 17px;
+            max-width: 700px;
+            margin: 8px auto 16px;
+        }
+        .tax-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            max-width: 900px;
+            margin: 20px auto;
+        }
+        .tax-grid .box {
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        .tax-grid .box .icon { font-size: 36px; margin-bottom: 8px; }
+        .tax-grid .box h4 { font-size: 16px; color: #0f172a; }
+        .tax-grid .box p { color: #64748b; font-size: 14px; }
+        .tax-grid .box-1 { background: #f8fafc; border: 1px solid #e2e8f0; }
+        .tax-grid .box-2 { background: #eff6ff; border: 2px solid #2563eb; }
+        .tax-grid .box-3 { background: #f0fdf4; border: 2px solid #10b981; }
+
+        /* ============================================================ */
+        /* DIVIDER                                                      */
+        /* ============================================================ */
+        .divider {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #e2e8f0, #94a3b8, #e2e8f0);
+            margin: 40px 0;
+        }
+
+        /* ============================================================ */
+        /* BUTTONS                                                      */
+        /* ============================================================ */
+        .btn { display: inline-block; padding: 14px 36px; border-radius: 40px; font-size: 16px; font-weight: 600; border: none; cursor: pointer; transition: all 0.25s ease; text-decoration: none; text-align: center; }
+        .btn-primary { background: #2563eb; color: #fff; box-shadow: 0 8px 20px -6px rgba(37,99,235,0.35); }
+        .btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 8px 20px -6px rgba(245,158,11,0.35); }
+        .btn-gold:hover { transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: #2563eb; border: 2px solid #2563eb; }
+        .btn-outline:hover { background: #2563eb; color: #fff; }
+        .btn-block { display: block; width: 100%; }
+
+        /* ============================================================ */
+        /* HIDDEN SECTIONS                                              */
+        /* ============================================================ */
+        .hidden-section { display: none; }
+        .hidden-section.visible { display: block; animation: fadeIn 0.6s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ============================================================ */
+        /* FRAMEWORK                                                    */
+        /* ============================================================ */
+        .framework-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            align-items: start;
+            gap: 16px;
+            max-width: 900px;
+            margin: 0 auto;
         }
-        @media (max-width: 768px) {
-            .row {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .container {
-                padding: 20px;
-            }
-            .hero h1 {
-                font-size: 30px;
-            }
-            .hero .subheadline {
-                font-size: 17px;
-            }
-        }
-        /* ----- REPORT CARD ----- */
-        .report-card {
+        .framework-item {
             background: #f8fafc;
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid #e2e8f0;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
         }
-        .report-card .score-circle {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            color: #fff;
+        .framework-item .step {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            margin: 0 auto 16px;
-            box-shadow: 0 12px 30px -8px rgba(37, 99, 235, 0.3);
+            gap: 12px;
+            margin-bottom: 4px;
         }
-        .report-card .score-circle .number {
-            font-size: 44px;
-            font-weight: 700;
-            line-height: 1;
-        }
-        .report-card .score-circle .label {
-            font-size: 12px;
-            opacity: 0.85;
-            margin-top: 4px;
-        }
-        .report-card .competency-bar {
-            margin: 12px 0;
-        }
-        .report-card .competency-bar .bar-label {
+        .framework-item .step .num {
+            background: #2563eb;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
             display: flex;
-            justify-content: space-between;
+            align-items: center;
+            justify-content: center;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 700;
+            flex-shrink: 0;
         }
-        .report-card .competency-bar .bar-track {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 2px;
-        }
-        .report-card .competency-bar .bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #3b82f6, #2563eb);
-            transition: width 1s ease;
-        }
-        /* ----- OPTION CARDS ----- */
+        .framework-item .step h4 { color: #0f172a; font-size: 15px; }
+        .framework-item p { color: #64748b; font-size: 13px; margin-left: 40px; }
+
+        /* ============================================================ */
+        /* OPTION CARDS                                                 */
+        /* ============================================================ */
         .option-card {
             background: #fff;
             border-radius: 20px;
@@ -237,63 +425,36 @@
             display: flex;
             flex-direction: column;
         }
-        .option-card:hover {
-            border-color: #2563eb;
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.12);
+        .option-card:hover { border-color: #2563eb; transform: translateY(-4px); box-shadow: 0 12px 30px -12px rgba(0,0,0,0.12); }
+        .option-card .icon { font-size: 36px; margin-bottom: 10px; }
+        .option-card h3 { font-size: 20px; color: #0f172a; margin-bottom: 4px; }
+        .option-card .desc { color: #475569; font-size: 14px; flex-grow: 1; margin-bottom: 16px; }
+        .option-card .price { font-size: 22px; font-weight: 700; color: #0f172a; margin: 8px 0; }
+        .option-card .price .free { font-size: 15px; color: #10b981; font-weight: 600; }
+        .option-card .price .crossed { text-decoration: line-through; font-size: 16px; color: #94a3b8; font-weight: 400; margin-right: 8px; }
+        .option-card .feature-list { list-style: none; padding: 0; margin: 12px 0 18px; text-align: left; }
+        .option-card .feature-list li { padding: 4px 0; color: #334155; font-size: 14px; }
+        .option-card .feature-list li::before { content: "✅ "; }
+        .option-card .highlight { color: #10b981; font-weight: 600; }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
         }
-        .option-card .icon {
-            font-size: 36px;
-            margin-bottom: 10px;
+        @media (max-width: 768px) {
+            .row { grid-template-columns: 1fr; gap: 20px; }
+            .container { padding: 20px; }
+            .hero h1 { font-size: 32px; }
+            .tax-grid { grid-template-columns: 1fr; }
+            .framework-grid { grid-template-columns: 1fr; }
+            .hero .trust-badges { gap: 12px; }
         }
-        .option-card h3 {
-            font-size: 20px;
-            color: #0f172a;
-            margin-bottom: 4px;
-        }
-        .option-card .desc {
-            color: #475569;
-            font-size: 14px;
-            flex-grow: 1;
-            margin-bottom: 16px;
-        }
-        .option-card .price {
-            font-size: 22px;
-            font-weight: 700;
-            color: #0f172a;
-            margin: 8px 0;
-        }
-        .option-card .price .free {
-            font-size: 15px;
-            color: #10b981;
-            font-weight: 600;
-        }
-        .option-card .price .crossed {
-            text-decoration: line-through;
-            font-size: 16px;
-            color: #94a3b8;
-            font-weight: 400;
-            margin-right: 8px;
-        }
-        .option-card .feature-list {
-            list-style: none;
-            padding: 0;
-            margin: 12px 0 18px;
-            text-align: left;
-        }
-        .option-card .feature-list li {
-            padding: 4px 0;
-            color: #334155;
-            font-size: 14px;
-        }
-        .option-card .feature-list li::before {
-            content: "✅ ";
-        }
-        .option-card .highlight {
-            color: #10b981;
-            font-weight: 600;
-        }
-        /* ----- TESTIMONIAL ----- */
+
+        /* ============================================================ */
+        /* TESTIMONIAL                                                  */
+        /* ============================================================ */
         .testimonial {
             background: #eff6ff;
             padding: 24px 30px;
@@ -301,22 +462,13 @@
             border-left: 5px solid #2563eb;
             margin: 20px 0;
         }
-        .testimonial .quote {
-            font-style: italic;
-            color: #1e293b;
-            font-size: 16px;
-            line-height: 1.7;
-        }
-        .testimonial .author {
-            font-weight: 600;
-            color: #0f172a;
-            margin-top: 8px;
-        }
-        .testimonial .role {
-            color: #64748b;
-            font-size: 14px;
-        }
-        /* ----- GUARANTEE ----- */
+        .testimonial .quote { font-style: italic; color: #1e293b; font-size: 16px; line-height: 1.7; }
+        .testimonial .author { font-weight: 600; color: #0f172a; margin-top: 8px; }
+        .testimonial .role { color: #64748b; font-size: 14px; }
+
+        /* ============================================================ */
+        /* GUARANTEE                                                    */
+        /* ============================================================ */
         .guarantee {
             background: #f0fdf4;
             padding: 18px 24px;
@@ -324,15 +476,12 @@
             text-align: center;
             border: 1px solid #bbf7d0;
         }
-        .guarantee .icon {
-            font-size: 28px;
-        }
-        .guarantee .text {
-            font-size: 14px;
-            color: #065f46;
-            font-weight: 500;
-        }
-        /* ----- FOOTER ----- */
+        .guarantee .icon { font-size: 28px; }
+        .guarantee .text { font-size: 14px; color: #065f46; font-weight: 500; }
+
+        /* ============================================================ */
+        /* FOOTER                                                       */
+        /* ============================================================ */
         .footer {
             text-align: center;
             margin-top: 40px;
@@ -341,294 +490,117 @@
             font-size: 14px;
             color: #94a3b8;
         }
-        .footer a {
-            color: #2563eb;
-            text-decoration: none;
-        }
-        .warning-box {
-            background: #fef2f2;
-            padding: 16px 20px;
-            border-radius: 12px;
-            border-left: 4px solid #dc2626;
-            margin-bottom: 24px;
-        }
-        .warning-box p {
-            font-weight: 600;
-            color: #b91c1c;
-            font-size: 15px;
-        }
-        .warning-box ul {
-            list-style: none;
-            padding: 0;
-            margin: 6px 0 0;
-        }
-        .warning-box ul li {
-            padding: 2px 0;
-            color: #4b5563;
-            font-size: 14px;
-        }
-        .warning-box ul li::before {
-            content: "➜ ";
-            color: #dc2626;
-        }
-        /* ----- COMPARISON TABLE ----- */
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        .comparison-table th,
-        .comparison-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #e2e8f0;
-            text-align: left;
-        }
-        .comparison-table th {
-            background: #f1f5f9;
-            font-weight: 600;
-            color: #0f172a;
-        }
-        .comparison-table td:first-child {
-            font-weight: 500;
-            color: #334155;
-        }
-        .comparison-table .check {
-            color: #10b981;
-            text-align: center;
-        }
-        .comparison-table .dash {
-            color: #94a3b8;
-            text-align: center;
-        }
-        @media (max-width: 600px) {
-            .comparison-table {
-                font-size: 12px;
-            }
-            .comparison-table th,
-            .comparison-table td {
-                padding: 8px 10px;
-            }
-        }
+        .footer a { color: #2563eb; text-decoration: none; }
 
         /* ============================================================ */
-        /* NAVIGATION HEADER                                            */
+        /* CONTACT                                                      */
         /* ============================================================ */
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #e2e8f0;
-            padding: 0 20px;
-            height: 68px;
+        .contact-grid {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            border-radius: 12px;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
         }
-
-        .navbar .logo {
-            font-size: 22px;
-            font-weight: 700;
-            color: #0f172a;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .navbar .logo span {
-            color: #2563eb;
-        }
-
-        .navbar .logo .tagline {
-            font-size: 12px;
-            font-weight: 400;
-            color: #64748b;
-            margin-left: 8px;
-            display: none;
-        }
-
-        @media (min-width: 700px) {
-            .navbar .logo .tagline {
-                display: inline;
-            }
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #475569;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s ease;
-            position: relative;
-        }
-
-        .nav-links a:hover {
-            color: #2563eb;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #2563eb;
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .nav-links .btn-nav {
-            background: #2563eb;
-            color: #fff !important;
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .nav-links .btn-nav:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -6px rgba(37, 99, 235, 0.35);
-        }
-
-        .nav-links .btn-nav::after {
-            display: none;
-        }
-
-        .nav-links a.active {
-            color: #2563eb;
-        }
-
-        .nav-links a.active::after {
-            width: 100%;
-        }
-
-        .menu-toggle {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 4px;
-        }
-
-        .menu-toggle span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            background: #0f172a;
-            border-radius: 3px;
-            transition: all 0.3s ease;
-        }
-
-        .menu-toggle.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .menu-toggle.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
-        }
-
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: flex;
-            }
-
-            .nav-links {
-                position: absolute;
-                top: 88px;
-                left: 20px;
-                right: 20px;
-                background: #fff;
-                flex-direction: column;
-                padding: 20px;
-                gap: 16px;
-                border: 1px solid #e2e8f0;
-                border-radius: 12px;
-                display: none;
-                box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
-            }
-
-            .nav-links.open {
-                display: flex;
-            }
-
-            .nav-links a {
-                font-size: 16px;
-                width: 100%;
-                text-align: center;
-                padding: 10px 0;
-            }
-
-            .nav-links .btn-nav {
-                width: 100%;
-                text-align: center;
-            }
-        }
-        /* ============================================================ */
-        /* HIDDEN SECTION - For Framework & Why We Exist                */
-        /* ============================================================ */
-        .hidden-section {
-            display: none;
-        }
-
-        .hidden-section.visible {
-            display: block;
-            animation: fadeIn 0.6s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        </style>
+        .contact-item { text-align: center; padding: 16px; }
+        .contact-item .icon { font-size: 28px; }
+        .contact-item p { color: #0f172a; font-weight: 600; margin-top: 4px; }
+        .contact-item a { color: #2563eb; text-decoration: none; }
+    </style>
 </head>
 <body>
 
 <!-- ============================================================ -->
-<!-- NAVIGATION HEADER                                            -->
+<!-- STOCK MARKET DIGITAL TICKER                                 -->
+<!-- ============================================================ -->
+<div class="ticker-wrap">
+    <div class="ticker">
+        <!-- FIRST SET -->
+        <span class="ticker-item">
+            <span class="label">COMM TAX™</span>
+            <span class="separator">|</span>
+            <span class="value green">▼</span>
+            <span class="value gold">52%</span>
+            <span class="separator">|</span>
+            <span class="label">PROFESSIONALS</span>
+            <span class="value blue">▲</span>
+            <span class="value green">100+</span>
+            <span class="separator">|</span>
+            <span class="label">RATING</span>
+            <span class="value gold">★ 4.9</span>
+            <span class="separator">|</span>
+            <span class="label">FORTUNE 500</span>
+            <span class="value purple">✓</span>
+            <span class="separator">|</span>
+            <span class="label">IMPACT LOST</span>
+            <span class="value red">▼</span>
+            <span class="value red">40-60%</span>
+            <span class="separator">|</span>
+            <span class="label">TAX IMPACT</span>
+            <span class="value red">▼</span>
+            <span class="value red">₹4-15L</span>
+            <span class="separator">|</span>
+            <span class="label">TIME</span>
+            <span class="value gold">⏱ 7 MIN</span>
+            <span class="separator">|</span>
+            <span class="label">REDUCTION</span>
+            <span class="value green">▲</span>
+            <span class="value green">85%</span>
+            <span class="separator">|</span>
+            <span class="label">IN 90 DAYS</span>
+            <span class="value gold">✓</span>
+            <span class="separator">|</span>
+            <span class="label">LIVE</span>
+            <span class="value green blink">●</span>
+        </span>
+        <!-- SECOND SET (DUPLICATE FOR SEAMLESS SCROLL) -->
+        <span class="ticker-item">
+            <span class="label">COMM TAX™</span>
+            <span class="separator">|</span>
+            <span class="value green">▼</span>
+            <span class="value gold">52%</span>
+            <span class="separator">|</span>
+            <span class="label">PROFESSIONALS</span>
+            <span class="value blue">▲</span>
+            <span class="value green">100+</span>
+            <span class="separator">|</span>
+            <span class="label">RATING</span>
+            <span class="value gold">★ 4.9</span>
+            <span class="separator">|</span>
+            <span class="label">FORTUNE 500</span>
+            <span class="value purple">✓</span>
+            <span class="separator">|</span>
+            <span class="label">IMPACT LOST</span>
+            <span class="value red">▼</span>
+            <span class="value red">40-60%</span>
+            <span class="separator">|</span>
+            <span class="label">TAX IMPACT</span>
+            <span class="value red">▼</span>
+            <span class="value red">₹4-15L</span>
+            <span class="separator">|</span>
+            <span class="label">TIME</span>
+            <span class="value gold">⏱ 7 MIN</span>
+            <span class="separator">|</span>
+            <span class="label">REDUCTION</span>
+            <span class="value green">▲</span>
+            <span class="value green">85%</span>
+            <span class="separator">|</span>
+            <span class="label">IN 90 DAYS</span>
+            <span class="value gold">✓</span>
+            <span class="separator">|</span>
+            <span class="label">LIVE</span>
+            <span class="value green blink">●</span>
+        </span>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NAVIGATION                                                   -->
 <!-- ============================================================ -->
 <nav class="navbar">
-    <a href="/" class="logo">
-        The<span>Unspoken</span>
-        <span class="tagline">Executive Communication</span>
-    </a>
-
+    <a href="/" class="logo">The<span>Unspoken</span> <span class="tagline">Executive Communication</span></a>
     <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
     </button>
-
     <ul class="nav-links" id="navLinks">
         <li><a href="/">Home</a></li>
         <li><a href="#framework">How It Works</a></li>
@@ -645,371 +617,164 @@
     <!-- HERO SECTION                                                 -->
     <!-- ============================================================ -->
     <div class="hero">
-        <div class="logo">The<span>Unspoken</span></div>
+        <div class="badge">🔥 Most professionals lose 40-60% of their impact</div>
 
         <h1>What's Your <span class="highlight">Communication Tax™</span>?</h1>
 
-        <p class="subheadline" style="font-size:18px; color:#475569; max-width:700px; margin:0 auto 6px;">
-            The hidden cost between the value you create and the value people perceive.
-        </p>
+        <p class="subheadline">The hidden cost between the value you create and the value people perceive.</p>
+        <p class="subheadline-2">Your Communication Tax™ is the percentage of your value that gets lost in translation.</p>
 
-        <p style="font-size:15px; color:#64748b; max-width:600px; margin:10px auto 20px;">
-            Most Professionals lose <strong>40-60%</strong> of their professional impact without knowing it.
-            <br>Your Communication Tax™ is the percentage of your value that gets lost in translation.
-        </p>
-
-        <div class="stats">
-            <div class="stat-item"><strong>7 min</strong> Assessment time</div>
-            <div class="stat-item"><strong>25</strong> Questions</div>
-            <div class="stat-item"><strong>5</strong> Competencies</div>
-            <div class="stat-item"><strong>⭐ 4.9/5</strong> Executive rating</div>
+        <div class="trust-badges">
+            <div class="item">⭐ <span>4.9/5</span> Rating</div>
+            <div class="item">✅ <span>100+</span> Professionals</div>
+            <div class="item">🏆 Applied by <span>Fortune 500</span> Leaders</div>
         </div>
 
-        <div style="margin-top: 28px;">
-            <a href="https://tally.so/r/jaXNNQ" class="btn btn-primary" target="_blank">
-                🔓 Calculate My Communication Tax Now
-            </a>
+        <div class="cta-group">
+            <a href="https://tally.so/r/jaXNNQ" target="_blank" class="btn-primary">🔓 Calculate My Communication Tax Now</a>
         </div>
-        <p style="color:#94a3b8; font-size:13px; margin-top:12px;">
-            Preferred by Professionals, Managers and Leaders across India. No Spam. Instant Report.
-        </p>
+        <p class="sub-text">⏱️ Takes just 7 minutes • 📊 Instant report • 🎯 Personalized insights</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- STATS                                                        -->
+    <!-- ============================================================ -->
+    <div class="stats">
+        <div class="stat-item"><strong>7 min</strong><span class="label">Assessment time</span></div>
+        <div class="stat-item"><strong>25</strong><span class="label">Questions</span></div>
+        <div class="stat-item"><strong>5</strong><span class="label">Competencies</span></div>
+        <div class="stat-item"><strong>⭐ 4.9/5</strong><span class="label">Leader rating</span></div>
     </div>
 
     <hr class="divider">
 
     <!-- ============================================================ -->
-    <!-- WHAT IS COMMUNICATION TAX™? SECTION                          -->
+    <!-- WHAT IS COMMUNICATION TAX™?                                  -->
     <!-- ============================================================ -->
-    <div style="padding: 20px 0 30px;">
+    <div class="tax-explanation">
+        <h2>What's Your <span>Communication Tax™</span>?</h2>
+        <p class="sub">The hidden cost between the value you create and the value people perceive.</p>
 
-        <h2 style="font-size:28px; font-weight:700; color:#0f172a; text-align:center;">
-            What's Your <span style="color:#2563eb;">Communication Tax™</span>?
-        </h2>
-
-        <p style="text-align:center; color:#475569; font-size:17px; max-width:700px; margin:8px auto 16px;">
-            The hidden cost between the value you create and the value people perceive.
-        </p>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; max-width:900px; margin:20px auto;">
-
-            <div style="background:#f8fafc; padding:20px; border-radius:12px; text-align:center;">
-                <div style="font-size:32px; margin-bottom:6px;">💎</div>
-                <h4 style="color:#0f172a; font-size:16px;">Value You Create</h4>
-                <p style="color:#64748b; font-size:13px;">Your actual contribution, expertise, and impact.</p>
+        <div class="tax-grid">
+            <div class="box box-1">
+                <div class="icon">💎</div>
+                <h4>Value You Create</h4>
+                <p>Your actual contribution, expertise, and impact.</p>
             </div>
-
-            <div style="background:#eff6ff; padding:20px; border-radius:12px; text-align:center; border:2px solid #2563eb;">
-                <div style="font-size:32px; margin-bottom:6px;">🔴</div>
-                <h4 style="color:#0f172a; font-size:16px;">Communication Tax™</h4>
-                <p style="color:#64748b; font-size:13px;">The percentage of your value that gets lost in translation.</p>
-                <div style="background:#2563eb; color:#fff; padding:4px 12px; border-radius:20px; display:inline-block; margin-top:6px; font-size:13px; font-weight:600;">
-                    Typically 40-60%
-                </div>
+            <div class="box box-2">
+                <div class="icon">🔴</div>
+                <h4>Communication Tax™</h4>
+                <p>The percentage of your value that gets lost in translation.</p>
+                <div style="background:#2563eb; color:#fff; padding:4px 12px; border-radius:20px; display:inline-block; margin-top:6px; font-size:13px; font-weight:600;">Typically 40-60%</div>
             </div>
-
-            <div style="background:#f0fdf4; padding:20px; border-radius:12px; text-align:center; border:2px solid #10b981;">
-                <div style="font-size:32px; margin-bottom:6px;">👁️</div>
-                <h4 style="color:#0f172a; font-size:16px;">Value People Perceive</h4>
-                <p style="color:#64748b; font-size:13px;">What others see, recognize, and reward.</p>
+            <div class="box box-3">
+                <div class="icon">👁️</div>
+                <h4>Value People Perceive</h4>
+                <p>What others see, recognize, and reward.</p>
             </div>
-
         </div>
 
         <p style="text-align:center; color:#64748b; font-size:14px; max-width:600px; margin:12px auto 0;">
-            Most executives lose <strong>40-60%</strong> of their professional impact
-            without knowing it. The 7-minute challenge reveals your number.
+            The 7-minute challenge reveals your number — and shows you exactly how to fix it.
         </p>
-
     </div>
 
     <hr class="divider">
 
     <!-- ============================================================ -->
-    <!-- FRAMEWORK SECTION - HIDDEN BY DEFAULT                        -->
+    <!-- HOW IT WORKS (Hidden by default)                             -->
     <!-- ============================================================ -->
     <section id="framework" class="hidden-section" style="padding: 20px 0 30px;">
-
-        <h2 style="font-size:32px; font-weight:700; color:#0f172a; text-align:center;">
-            How It <span style="color:#2563eb;">Works</span>
-        </h2>
-
+        <h2 style="font-size:32px; font-weight:700; color:#0f172a; text-align:center;">How It <span style="color:#2563eb;">Works</span></h2>
         <p style="text-align:center; color:#475569; font-size:16px; max-width:600px; margin:8px auto 30px;">
             We don't teach you what to say. We transform how you think before you speak.
         </p>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:900px; margin:0 auto;">
-
-            <div style="background:#f8fafc; padding:16px 20px; border-radius:12px; border-left:4px solid #2563eb;">
-                <div style="display:flex; align-items:center; gap:12px; margin-bottom:4px;">
-                    <span style="background:#2563eb; color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0;">1</span>
-                    <h4 style="color:#0f172a; font-size:15px;">Think Clearly</h4>
-                </div>
-                <p style="color:#64748b; font-size:13px; margin-left:40px;">Develop clarity of thought using proven thinking frameworks. Learn to analyze situations, solve problems, and identify what truly matters before you communicate.</p>
+        <div class="framework-grid">
+            <div class="framework-item">
+                <div class="step"><span class="num">1</span><h4>Think Clearly</h4></div>
+                <p>Develop clarity of thought using proven thinking frameworks.</p>
             </div>
-
-            <div style="background:#f8fafc; padding:16px 20px; border-radius:12px; border-left:4px solid #2563eb;">
-                <div style="display:flex; align-items:center; gap:12px; margin-bottom:4px;">
-                    <span style="background:#2563eb; color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0;">2</span>
-                    <h4 style="color:#0f172a; font-size:15px;">Structure Clearly</h4>
-                </div>
-                <p style="color:#64748b; font-size:13px; margin-left:40px;">Turn ideas into logical, compelling messages using practical communication frameworks. Organize your thoughts so they're easy to understand and remember.</p>
+            <div class="framework-item">
+                <div class="step"><span class="num">2</span><h4>Structure Clearly</h4></div>
+                <p>Turn ideas into logical, compelling messages using practical communication frameworks.</p>
             </div>
-
-            <div style="background:#f8fafc; padding:16px 20px; border-radius:12px; border-left:4px solid #2563eb;">
-                <div style="display:flex; align-items:center; gap:12px; margin-bottom:4px;">
-                    <span style="background:#2563eb; color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0;">3</span>
-                    <h4 style="color:#0f172a; font-size:15px;">Deliver Confidently</h4>
-                </div>
-                <p style="color:#64748b; font-size:13px; margin-left:40px;">Present your ideas with confidence, credibility, and executive presence. Learn to influence decisions through clear, structured communication.</p>
+            <div class="framework-item">
+                <div class="step"><span class="num">3</span><h4>Deliver Confidently</h4></div>
+                <p>Present your ideas with confidence, credibility, and executive presence.</p>
             </div>
-
-            <div style="background:#f8fafc; padding:16px 20px; border-radius:12px; border-left:4px solid #2563eb;">
-                <div style="display:flex; align-items:center; gap:12px; margin-bottom:4px;">
-                    <span style="background:#2563eb; color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0;">4</span>
-                    <h4 style="color:#0f172a; font-size:15px;">Practice Daily</h4>
-                </div>
-                <p style="color:#64748b; font-size:13px; margin-left:40px;">Reinforce every concept with short daily exercises that build communication into a lasting habit.</p>
+            <div class="framework-item">
+                <div class="step"><span class="num">4</span><h4>Practice Daily</h4></div>
+                <p>Reinforce every concept with short daily exercises that build communication into a lasting habit.</p>
             </div>
-
-            <div style="background:#f8fafc; padding:16px 20px; border-radius:12px; border-left:4px solid #2563eb; grid-column: span 2;">
-                <div style="display:flex; align-items:center; gap:12px; margin-bottom:4px;">
-                    <span style="background:#2563eb; color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0;">5</span>
-                    <h4 style="color:#0f172a; font-size:15px;">Apply in Real Life</h4>
-                </div>
-                <p style="color:#64748b; font-size:13px; margin-left:40px;">Use what you learn immediately in interviews, meetings, presentations, negotiations, and leadership conversations.</p>
+            <div class="framework-item" style="grid-column: span 2;">
+                <div class="step"><span class="num">5</span><h4>Apply in Real Life</h4></div>
+                <p>Use what you learn immediately in interviews, meetings, presentations, negotiations, and leadership conversations.</p>
             </div>
-
         </div>
-
         <div style="text-align:center; margin-top:24px;">
-            <a href="https://tally.so/r/jaXNNQ" target="_blank" class="btn btn-primary">
-                Start Your Assessment →
-            </a>
+            <a href="https://tally.so/r/jaXNNQ" target="_blank" class="btn btn-primary">Start Your Assessment →</a>
         </div>
-
     </section>
 
     <hr class="divider">
-<!-- ============================================================ -->
-<!-- WHY WE EXIST SECTION (Hidden by default)                     -->
-<!-- ============================================================ -->
-<section id="why" class="hidden-section" style="padding: 20px 0 30px;">
 
-    <h2 style="font-size:32px; font-weight:700; color:#0f172a; text-align:center;">
-        Why <span style="color:#2563eb;">The Unspoken</span> Exists
-    </h2>
-
-    <!-- The Problem -->
-    <div style="max-width:800px; margin:20px auto; text-align:center;">
-        <p style="font-size:17px; color:#475569; line-height:1.8;">
-            Every year, talented professionals miss opportunities — not because they lack expertise,
-            but because they struggle to communicate the value they already possess.
-        </p>
-        <p style="font-size:16px; color:#64748b; margin-top:12px; line-height:1.8;">
-            The root cause isn't confidence. It's unclear thinking and unstructured expression.
-        </p>
-        <p style="font-size:18px; font-weight:600; color:#2563eb; margin-top:16px;">
-            Communication is not the problem. <span style="color:#0f172a;">It is the symptom.</span>
-        </p>
-    </div>
-
-    <hr style="border:none; height:1px; background:#e2e8f0; max-width:600px; margin:30px auto;">
-
-    <!-- The Solution -->
-    <div style="max-width:800px; margin:0 auto; text-align:center;">
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin:20px 0;">
-
-            <div style="background:#eff6ff; padding:20px; border-radius:12px; border:1px solid #dbeafe;">
-                <div style="font-size:32px; margin-bottom:8px;">🧠</div>
-                <h4 style="color:#0f172a; font-size:16px;">Clear Thinking</h4>
-                <p style="color:#64748b; font-size:13px;">is the source</p>
-            </div>
-
-            <div style="background:#f0fdf4; padding:20px; border-radius:12px; border:1px solid #bbf7d0;">
-                <div style="font-size:32px; margin-bottom:8px;">🌉</div>
-                <h4 style="color:#0f172a; font-size:16px;">Structured Expression</h4>
-                <p style="color:#64748b; font-size:13px;">is the bridge</p>
-            </div>
-
-            <div style="background:#fef3c7; padding:20px; border-radius:12px; border:1px solid #fde68a;">
-                <div style="font-size:32px; margin-bottom:8px;">🎤</div>
-                <h4 style="color:#0f172a; font-size:16px;">Confident Communication</h4>
-                <p style="color:#64748b; font-size:13px;">is the outcome</p>
-            </div>
-
+    <!-- ============================================================ -->
+    <!-- WHY WE EXIST (Hidden by default)                             -->
+    <!-- ============================================================ -->
+    <section id="why" class="hidden-section" style="padding: 20px 0 30px;">
+        <h2 style="font-size:32px; font-weight:700; color:#0f172a; text-align:center;">Why <span style="color:#2563eb;">The Unspoken</span> Exists</h2>
+        <div style="max-width:800px; margin:20px auto; text-align:center;">
+            <p style="font-size:17px; color:#475569; line-height:1.8;">Every year, talented professionals miss opportunities — not because they lack expertise, but because they struggle to communicate the value they already possess.</p>
+            <p style="font-size:16px; color:#64748b; margin-top:12px; line-height:1.8;">The root cause isn't confidence. It's unclear thinking and unstructured expression.</p>
+            <p style="font-size:18px; font-weight:600; color:#2563eb; margin-top:16px;">Communication is not the problem. <span style="color:#0f172a;">It is the symptom.</span></p>
         </div>
-
-        <p style="font-size:16px; color:#475569; line-height:1.8; margin-top:12px;">
-            The Unspoken helps professionals <strong>think clearly</strong>, <strong>express with structure</strong>,
-            and <strong>communicate with impact</strong> — so their true capability is recognized, trusted, and rewarded.
-        </p>
-    </div>
-
-    <hr style="border:none; height:1px; background:#e2e8f0; max-width:600px; margin:30px auto;">
-
-    <!-- What We Believe -->
-    <div style="max-width:800px; margin:0 auto;">
-        <h3 style="font-size:22px; font-weight:700; color:#0f172a; text-align:center;">
-            What We <span style="color:#2563eb;">Believe</span>
-        </h3>
-
-        <div style="background:#f8fafc; padding:24px; border-radius:16px; margin-top:16px; border:1px solid #e2e8f0;">
-            <p style="font-size:15px; color:#475569; line-height:1.8; text-align:center;">
-                <strong>Hiring managers don't hire the best performer.</strong>
-                <br>
-                They hire the person who gives them the greatest confidence.
-            </p>
-            <p style="font-size:15px; color:#475569; line-height:1.8; text-align:center; margin-top:12px;">
-                The difference: <strong>Performance</strong> is about you.
-                <strong>Communication</strong> is about making the listener feel certain.
-            </p>
-            <p style="font-size:15px; color:#475569; line-height:1.8; text-align:center; margin-top:12px;">
-                Certain you understand the role. Certain you've done this before.
-                <br>
-                Certain the risk of hiring you is lower than hiring anyone else.
-            </p>
-            <p style="font-size:16px; font-weight:600; color:#2563eb; text-align:center; margin-top:16px;">
-                That certainty is not a personality trait. It is a learnable structure.
-                <br>
-                <span style="color:#0f172a;">We teach it.</span>
-            </p>
+        <div style="text-align:center; margin-top:24px;">
+            <a href="https://tally.so/r/jaXNNQ" target="_blank" class="btn btn-primary">Start Your Assessment →</a>
         </div>
-    </div>
+    </section>
 
-    <hr style="border:none; height:1px; background:#e2e8f0; max-width:600px; margin:30px auto;">
+    <hr class="divider">
 
-    <!-- Meet the Founder -->
-    <div style="max-width:800px; margin:0 auto;">
-        <h3 style="font-size:22px; font-weight:700; color:#0f172a; text-align:center;">
-            Meet the <span style="color:#2563eb;">Founder</span>
-        </h3>
-
-        <div style="display:flex; gap:24px; background:#f8fafc; padding:24px; border-radius:16px; margin-top:16px; border:1px solid #e2e8f0; align-items:center; flex-wrap:wrap;">
-
-            <div style="flex:1; min-width:200px; text-align:center;">
-                <div style="width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg, #2563eb, #1e40af); margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:40px; color:#fff; font-weight:700;">
-                    A
-                </div>
-                <h4 style="color:#0f172a; margin-top:8px; font-size:18px;">Arun</h4>
-                <p style="color:#64748b; font-size:13px;">Founder, The Unspoken</p>
-            </div>
-
-            <div style="flex:2; min-width:200px;">
-                <p style="font-size:14px; color:#475569; line-height:1.8;">
-                    <strong>19+ years</strong> in leadership — UHG, Amazon, DRL, Bank of America.
-                    I've hired for hundreds of roles and sat across from thousands of candidates.
-                </p>
-                <p style="font-size:14px; color:#475569; line-height:1.8; margin-top:8px;">
-                    After <strong>400+ interviews</strong>, one pattern became impossible to ignore:
-                </p>
-                <p style="font-size:15px; color:#2563eb; font-weight:600; line-height:1.8; margin-top:8px;">
-                    The candidates who got offers weren't always the most qualified.
-                    <br>
-                    They were the ones who made the hiring manager feel certain.
-                </p>
-                <p style="font-size:14px; color:#475569; line-height:1.8; margin-top:8px;">
-                    That certainty is not confidence. It's not personality.
-                    <br>
-                    <strong>It is a communication structure — and it can be taught.</strong>
-                </p>
-                <p style="font-size:15px; color:#0f172a; font-weight:600; line-height:1.8; margin-top:8px;">
-                    That's what The Unspoken teaches.
-                </p>
-                <p style="font-size:14px; color:#2563eb; line-height:1.8; margin-top:8px; font-weight:500;">
-                    If you've done the work and the world hasn't noticed yet —
-                    <br>
-                    <span style="color:#0f172a;">that's the gap I close.</span>
-                </p>
-            </div>
-
-        </div>
-    </div>
-
-    <div style="text-align:center; margin-top:24px;">
-        <a href="https://tally.so/r/jaXNNQ" target="_blank" class="btn btn-primary">
-            Start Your Assessment →
-        </a>
-    </div>
-
-</section>
     <!-- ============================================================ -->
     <!-- REPORT CARD (DEMO DATA)                                      -->
     <!-- ============================================================ -->
     <div id="reportSection">
-        <h2 style="font-size:28px; font-weight:700; color:#0f172a; text-align:center; margin-bottom:8px;">
-            🎯 Your Communication Tax™ Report
-        </h2>
-        <p style="text-align:center; color:#64748b; margin-bottom:24px;">
-            Based on your responses, here's your personalized executive diagnostic.
-        </p>
+        <h2 style="font-size:28px; font-weight:700; color:#0f172a; text-align:center; margin-bottom:8px;">🎯 Your Communication Tax™ Report</h2>
+        <p style="text-align:center; color:#64748b; margin-bottom:24px;">Based on your responses, here's your personalized executive diagnostic.</p>
 
         <div class="row">
-            <!-- LEFT: Score + Competencies -->
+            <!-- LEFT -->
             <div class="report-card">
                 <div class="score-circle">
                     <div class="number" id="taxScore">59%</div>
                     <div class="label">Communication Tax™</div>
                 </div>
-
                 <div style="text-align:center; margin-bottom:16px;">
                     <span class="badge badge-blue" id="strengthBadge">🏆 Strength: Thinking</span>
                     <span class="badge badge-red" id="blindspotBadge">🎯 Blind Spot: Communication</span>
                 </div>
-
                 <div class="competency-bar">
-                    <div class="bar-label">
-                        <span>🧠 Thinking</span>
-                        <span id="thinkingScore">44%</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill" id="thinkingBar" style="width:44%;"></div>
-                    </div>
+                    <div class="bar-label"><span>🧠 Thinking</span><span id="thinkingScore">44%</span></div>
+                    <div class="bar-track"><div class="bar-fill" id="thinkingBar" style="width:44%;"></div></div>
                 </div>
-
                 <div class="competency-bar">
-                    <div class="bar-label">
-                        <span>📐 Structure</span>
-                        <span id="structureScore">40%</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill" id="structureBar" style="width:40%;"></div>
-                    </div>
+                    <div class="bar-label"><span>📐 Structure</span><span id="structureScore">40%</span></div>
+                    <div class="bar-track"><div class="bar-fill" id="structureBar" style="width:40%;"></div></div>
                 </div>
-
                 <div class="competency-bar">
-                    <div class="bar-label">
-                        <span>💬 Communication</span>
-                        <span id="commScore">40%</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill" id="commBar" style="width:40%;"></div>
-                    </div>
+                    <div class="bar-label"><span>💬 Communication</span><span id="commScore">40%</span></div>
+                    <div class="bar-track"><div class="bar-fill" id="commBar" style="width:40%;"></div></div>
                 </div>
-
                 <div class="competency-bar">
-                    <div class="bar-label">
-                        <span>🤝 Understanding</span>
-                        <span id="understandScore">40%</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill" id="understandBar" style="width:40%;"></div>
-                    </div>
+                    <div class="bar-label"><span>🤝 Understanding</span><span id="understandScore">40%</span></div>
+                    <div class="bar-track"><div class="bar-fill" id="understandBar" style="width:40%;"></div></div>
                 </div>
-
                 <div class="competency-bar">
-                    <div class="bar-label">
-                        <span>🚀 Opportunity</span>
-                        <span id="opportunityScore">40%</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill" id="opportunityBar" style="width:40%;"></div>
-                    </div>
+                    <div class="bar-label"><span>🚀 Opportunity</span><span id="opportunityScore">40%</span></div>
+                    <div class="bar-track"><div class="bar-fill" id="opportunityBar" style="width:40%;"></div></div>
                 </div>
-
                 <div style="margin-top:16px; background:#eff6ff; padding:14px 18px; border-radius:12px; border-left:4px solid #2563eb;">
-                    <p style="font-size:14px; color:#1e3a5f;" id="insightText">
-                        Your Communication Tax™ of <strong>59%</strong> means 59% of your professional value may not be fully recognised.
-                    </p>
+                    <p style="font-size:14px; color:#1e3a5f;" id="insightText">Your Communication Tax™ of <strong>59%</strong> means 59% of your professional value may not be fully recognised.</p>
                 </div>
             </div>
 
@@ -1024,7 +789,7 @@
                     </ul>
                 </div>
 
-                <!-- Option 1: Detailed Analysis -->
+                <!-- Option 1 -->
                 <div class="option-card" style="margin-bottom:20px;">
                     <div class="icon">📋</div>
                     <h3>Detailed Analysis</h3>
@@ -1038,12 +803,10 @@
                         ₹2,000
                         <span class="free"><br>FREE with any program</span>
                     </div>
-<a href="https://rzp.io/rzp/Bn57txO" target="_blank" class="btn btn-outline btn-block">
-    Pay ₹2,000 for Detailed Analysis →
-</a>
+                    <a href="https://rzp.io/rzp/Bn57txO" target="_blank" class="btn btn-outline btn-block">Pay ₹2,000 for Detailed Analysis →</a>
                 </div>
 
-                <!-- Option 2: Transform Program -->
+                <!-- Option 2 -->
                 <div class="option-card" style="border-color:#f59e0b; background:#fffbeb;">
                     <span style="display:inline-block; background:#f59e0b; color:#fff; font-size:11px; font-weight:700; padding:2px 12px; border-radius:20px; align-self:flex-start; margin-bottom:8px;">RECOMMENDED</span>
                     <div class="icon">🚀</div>
@@ -1059,9 +822,7 @@
                         <span class="crossed">₹2,000</span>
                         <span class="free">✅ FREE</span>
                     </div>
-                    <a href="#programs" class="btn btn-gold btn-block" onclick="document.getElementById('programs').scrollIntoView({behavior:'smooth'})">
-                        Explore Programs →
-                    </a>
+                    <a href="#programs" class="btn btn-gold btn-block" onclick="document.getElementById('programs').scrollIntoView({behavior:'smooth'})">Explore Programs →</a>
                 </div>
             </div>
         </div>
@@ -1070,18 +831,16 @@
     <hr class="divider" id="programs">
 
     <!-- ============================================================ -->
-    <!-- PROGRAM LANDING PAGE                                         -->
+    <!-- PROGRAMS                                                      -->
     <!-- ============================================================ -->
     <div>
-        <h2 style="font-size:32px; font-weight:700; color:#0f172a; text-align:center;">
-            🚀 Choose Your Transformation Path
-        </h2>
+        <h2 style="font-size:32px; font-weight:700; color:#0f172a; text-align:center;">🚀 Choose Your Transformation Path</h2>
         <p style="text-align:center; color:#64748b; margin-bottom:30px;">
             Your Communication Tax™ Index: <strong id="taxDisplay">59%</strong> &nbsp;|&nbsp; Blind Spot: <strong id="blindspotDisplay">Communication</strong>
         </p>
 
         <div class="row">
-            <!-- 60-Day Foundations Program -->
+            <!-- 60-Day Foundations -->
             <div class="option-card" style="border-color:#2563eb; background:#f0f7ff;">
                 <span style="display:inline-block; background:#2563eb; color:#fff; font-size:11px; font-weight:700; padding:2px 12px; border-radius:20px; align-self:flex-start; margin-bottom:8px;">NEW</span>
                 <div class="icon">🚀</div>
@@ -1089,11 +848,8 @@
                 <p style="color:#64748b; font-size:14px; margin-bottom:8px;">60-Day Communication Transformation</p>
                 <div class="desc" style="flex-grow:0; font-size:14px; color:#475569; margin-bottom:12px;">
                     Master the three capabilities that define exceptional communicators:
-                    <br><br>
-                    ✅ <strong>Think Clearly</strong> – Develop structured thinking and better decision-making.
-                    <br>
-                    ✅ <strong>Structure Clearly</strong> – Organize ideas using proven executive frameworks.
-                    <br>
+                    <br><br>✅ <strong>Think Clearly</strong> – Develop structured thinking and better decision-making.<br>
+                    ✅ <strong>Structure Clearly</strong> – Organize ideas using proven executive frameworks.<br>
                     ✅ <strong>Communicate with Impact</strong> – Build confidence, executive presence, and influence.
                 </div>
                 <ul class="feature-list">
@@ -1108,20 +864,13 @@
                     <li class="highlight">✅ Detailed Analysis included FREE (₹2,000 value)</li>
                 </ul>
                 <div style="background:#f0fdf4; padding:10px 14px; border-radius:8px; margin:8px 0 12px; border:1px solid #bbf7d0;">
-                    <p style="font-size:13px; color:#065f46; font-weight:500; margin:0;">
-                        🎁 Communication Tax™ Executive Assessment Included
-                    </p>
+                    <p style="font-size:13px; color:#065f46; font-weight:500; margin:0;">🎁 Communication Tax™ Executive Assessment Included</p>
                 </div>
-                <div class="price">
-                    ₹9,999
-                    <span style="font-size:14px; font-weight:400; color:#64748b;"> / 60 Days</span>
-                </div>
-                <button class="btn btn-primary btn-block" onclick="bookProgram('The Unspoken™ Foundations', 9999)">
-                    Join The Unspoken™ Foundations →
-                </button>
+                <div class="price">₹9,999 <span style="font-size:14px; font-weight:400; color:#64748b;"> / 60 Days</span></div>
+                <button class="btn btn-primary btn-block" onclick="bookProgram('The Unspoken™ Foundations', 9999)">Join The Unspoken™ Foundations →</button>
             </div>
 
-            <!-- 6-Month Mastery Program -->
+            <!-- 6-Month Mastery -->
             <div class="option-card" style="border-color:#7c3aed; background:#f5f3ff;">
                 <span style="display:inline-block; background:#7c3aed; color:#fff; font-size:11px; font-weight:700; padding:2px 12px; border-radius:20px; align-self:flex-start; margin-bottom:8px;">BEST VALUE</span>
                 <div class="icon">🏆</div>
@@ -1144,17 +893,10 @@
                     <li class="highlight">✅ Detailed Analysis included FREE (₹2,000 value)</li>
                 </ul>
                 <div style="background:#f0fdf4; padding:10px 14px; border-radius:8px; margin:8px 0 12px; border:1px solid #bbf7d0;">
-                    <p style="font-size:13px; color:#065f46; font-weight:500; margin:0;">
-                        🎁 Communication Tax™ Executive Assessment Included
-                    </p>
+                    <p style="font-size:13px; color:#065f46; font-weight:500; margin:0;">🎁 Communication Tax™ Executive Assessment Included</p>
                 </div>
-                <div class="price">
-                    ₹29,999
-                    <span style="font-size:14px; font-weight:400; color:#64748b;"> / 6 Months</span>
-                </div>
-                <button class="btn btn-gold btn-block" onclick="bookProgram('The Unspoken™ Mastery', 29999)">
-                    Join The Unspoken™ Mastery →
-                </button>
+                <div class="price">₹29,999 <span style="font-size:14px; font-weight:400; color:#64748b;"> / 6 Months</span></div>
+                <button class="btn btn-gold btn-block" onclick="bookProgram('The Unspoken™ Mastery', 29999)">Join The Unspoken™ Mastery →</button>
             </div>
         </div>
 
@@ -1163,13 +905,7 @@
             <h3 style="text-align:center; color:#0f172a; margin-bottom:16px;">📊 Compare Your Options</h3>
             <div style="overflow-x:auto;">
                 <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Feature</th>
-                            <th style="text-align:center;">The Unspoken™ Foundations</th>
-                            <th style="text-align:center;">The Unspoken™ Mastery</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Feature</th><th style="text-align:center;">The Unspoken™ Foundations</th><th style="text-align:center;">The Unspoken™ Mastery</th></tr></thead>
                     <tbody>
                         <tr><td>Duration</td><td style="text-align:center;">60 Days</td><td style="text-align:center;">6 Months</td></tr>
                         <tr><td>Live Coaching Sessions</td><td style="text-align:center;">8</td><td style="text-align:center;">24</td></tr>
@@ -1212,107 +948,79 @@
 
         <!-- Final CTA -->
         <div style="text-align:center; margin-top:30px;">
-            <p style="color:#64748b; font-size:15px; margin-bottom:12px;">
-                💡 <strong>85%</strong> of executives who take this assessment choose to transform within 30 days.
-            </p>
-            <a href="#" class="btn btn-outline" onclick="alert('Book a free strategy call!')">
-                📅 Book a Free Strategy Call
-            </a>
-            <p style="color:#94a3b8; font-size:13px; margin-top:10px;">
-                Not sure which program is right for you? Let's talk.
-            </p>
+            <p style="color:#64748b; font-size:15px; margin-bottom:12px;">💡 <strong>85%</strong> of executives who take this assessment choose to transform within 30 days.</p>
+            <a href="#" class="btn btn-outline" onclick="alert('Book a free strategy call!')">📅 Book a Free Strategy Call</a>
+            <p style="color:#94a3b8; font-size:13px; margin-top:10px;">Not sure which program is right for you? Let's talk.</p>
         </div>
     </div>
 
     <!-- ============================================================ -->
-    <!-- TESTIMONIALS SECTION                                         -->
+    <!-- TESTIMONIALS                                                  -->
     <!-- ============================================================ -->
     <section id="testimonials" style="padding: 30px 0 10px;">
-
-        <h2 style="font-size:32px; font-weight:700; color:#0f172a; text-align:center;">
-            What Executives <span style="color:#2563eb;">Say</span>
-        </h2>
-
+        <h2 style="font-size:32px; font-weight:700; color:#0f172a; text-align:center;">What <span style="color:#2563eb;">Executives</span> Say</h2>
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; max-width:960px; margin:20px auto;">
-
             <div style="background:#f8fafc; padding:24px; border-radius:16px; border:1px solid #e2e8f0;">
                 <div style="color:#f59e0b; font-size:18px; margin-bottom:8px;">★★★★★</div>
-                <p style="color:#1e293b; font-size:15px; line-height:1.7; font-style:italic;">
-                    "I went from being overlooked to being sought out for leadership roles. The Articulation Vault changed my career trajectory."
-                </p>
+                <p style="color:#1e293b; font-size:15px; line-height:1.7; font-style:italic;">"I went from being overlooked to being sought out for leadership roles. The Articulation Vault changed my career trajectory."</p>
                 <div style="margin-top:12px; font-weight:600; color:#0f172a;">— Senior Director, Fortune 500</div>
                 <div style="color:#64748b; font-size:13px;">Technology Sector</div>
             </div>
-
             <div style="background:#f8fafc; padding:24px; border-radius:16px; border:1px solid #e2e8f0;">
                 <div style="color:#f59e0b; font-size:18px; margin-bottom:8px;">★★★★★</div>
-                <p style="color:#1e293b; font-size:15px; line-height:1.7; font-style:italic;">
-                    "The 7-Step Articulation Framework gave me the confidence to speak at industry events. I'm now seen as a thought leader."
-                </p>
+                <p style="color:#1e293b; font-size:15px; line-height:1.7; font-style:italic;">"The 7-Step Articulation Framework gave me the confidence to speak at industry events. I'm now seen as a thought leader."</p>
                 <div style="margin-top:12px; font-weight:600; color:#0f172a;">— VP, Global Consulting Firm</div>
                 <div style="color:#64748b; font-size:13px;">Professional Services</div>
             </div>
-
             <div style="background:#f8fafc; padding:24px; border-radius:16px; border:1px solid #e2e8f0;">
                 <div style="color:#f59e0b; font-size:18px; margin-bottom:8px;">★★★★★</div>
-                <p style="color:#1e293b; font-size:15px; line-height:1.7; font-style:italic;">
-                    "My Communication Tax™ dropped from 62% to 28% in 90 days. This program delivers real, measurable results."
-                </p>
+                <p style="color:#1e293b; font-size:15px; line-height:1.7; font-style:italic;">"My Communication Tax™ dropped from 62% to 28% in 90 days. This program delivers real, measurable results."</p>
                 <div style="margin-top:12px; font-weight:600; color:#0f172a;">— Director, Financial Services</div>
                 <div style="color:#64748b; font-size:13px;">Banking Sector</div>
             </div>
-
         </div>
-
     </section>
 
     <hr class="divider">
 
     <!-- ============================================================ -->
-    <!-- CONTACT SECTION                                              -->
+    <!-- GUARANTEE                                                     -->
+    <!-- ============================================================ -->
+    <div class="guarantee">
+        <span class="icon">🔒</span>
+        <span class="text">100% Satisfaction Guarantee — If you don't see measurable improvement within 30 days, we'll refund your investment.</span>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- CONTACT                                                       -->
     <!-- ============================================================ -->
     <section id="contact" style="padding: 20px 0 10px;">
-
-        <h2 style="font-size:32px; font-weight:700; color:#0f172a; text-align:center;">
-            Let's <span style="color:#2563eb;">Connect</span>
-        </h2>
-
-        <p style="text-align:center; color:#475569; font-size:16px; max-width:500px; margin:8px auto 20px;">
-            Have questions? Reach out and let's talk about your communication journey.
-        </p>
-
-        <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap;">
-
-            <div style="text-align:center; padding:16px;">
-                <div style="font-size:28px;">📧</div>
-                <p style="color:#0f172a; font-weight:600; margin-top:4px;">Email</p>
-                <a href="mailto:info@theunspoken.co.in" style="color:#2563eb; text-decoration:none;">info@theunspoken.co.in</a>
+        <h2 style="font-size:32px; font-weight:700; color:#0f172a; text-align:center;">Let's <span style="color:#2563eb;">Connect</span></h2>
+        <p style="text-align:center; color:#475569; font-size:16px; max-width:500px; margin:8px auto 20px;">Have questions? Reach out and let's talk about your communication journey.</p>
+        <div class="contact-grid">
+            <div class="contact-item">
+                <div class="icon">📧</div>
+                <p>Email</p>
+                <a href="mailto:info@theunspoken.co.in">info@theunspoken.co.in</a>
             </div>
-
-            <div style="text-align:center; padding:16px;">
-                <div style="font-size:28px;">📱</div>
-                <p style="color:#0f172a; font-weight:600; margin-top:4px;">Phone</p>
-                <a href="tel:+917989264522" style="color:#2563eb; text-decoration:none;">+91 79892 64522</a>
+            <div class="contact-item">
+                <div class="icon">📱</div>
+                <p>Phone</p>
+                <a href="tel:+917989264522">+91 79892 64522</a>
             </div>
-
-            <div style="text-align:center; padding:16px;">
-                <div style="font-size:28px;">🔗</div>
-                <p style="color:#0f172a; font-weight:600; margin-top:4px;">LinkedIn</p>
-                <a href="https://linkedin.com/in/yourprofile" target="_blank" style="color:#2563eb; text-decoration:none;">Connect with me</a>
+            <div class="contact-item">
+                <div class="icon">🔗</div>
+                <p>LinkedIn</p>
+                <a href="https://linkedin.com/in/yourprofile" target="_blank">Connect with me</a>
             </div>
-
         </div>
-
         <div style="text-align:center; margin-top:20px;">
-            <a href="https://tally.so/r/jaXNNQ" target="_blank" class="btn btn-primary">
-                Start Your Assessment →
-            </a>
+            <a href="https://tally.so/r/jaXNNQ" target="_blank" class="btn btn-primary">Start Your Assessment →</a>
         </div>
-
     </section>
 
     <!-- ============================================================ -->
-    <!-- FOOTER                                                       -->
+    <!-- FOOTER                                                        -->
     <!-- ============================================================ -->
     <div class="footer">
         <p>&copy; 2026 The Unspoken™. All rights reserved.</p>
@@ -1320,6 +1028,9 @@
 
 </div>
 
+<!-- ============================================================ -->
+<!-- JAVASCRIPT                                                    -->
+<!-- ============================================================ -->
 <script>
     // ============================================================
     // NAVIGATION - Mobile Menu Toggle
@@ -1334,7 +1045,6 @@
         });
     }
 
-    // Close menu when clicking a link
     document.querySelectorAll('.nav-links a').forEach(function(link) {
         link.addEventListener('click', function() {
             navLinks.classList.remove('open');
@@ -1352,7 +1062,6 @@
         frameworkLink.addEventListener('click', function(e) {
             e.preventDefault();
             frameworkSection.classList.toggle('visible');
-
             if (frameworkSection.classList.contains('visible')) {
                 setTimeout(function() {
                     var navHeight = document.querySelector('.navbar').offsetHeight || 70;
@@ -1373,7 +1082,6 @@
         whyLink.addEventListener('click', function(e) {
             e.preventDefault();
             whySection.classList.toggle('visible');
-
             if (whySection.classList.contains('visible')) {
                 setTimeout(function() {
                     var navHeight = document.querySelector('.navbar').offsetHeight || 70;
@@ -1385,7 +1093,7 @@
     }
 
     // ============================================================
-    // BOOK PROGRAM - Redirect to Razorpay
+    // BOOK PROGRAM
     // ============================================================
     function bookProgram(programName, amount) {
         var message = "✅ You're about to join " + programName + "!\n\n" +
@@ -1395,9 +1103,7 @@
                       "✅ Detailed Analysis (₹2,000 value) — FREE\n" +
                       "✅ 100% Money-Back Guarantee\n\n" +
                       "Click OK to proceed to payment.";
-
         if (confirm(message)) {
-            // Update these with your actual Razorpay payment links
             var paymentLinks = {
                 'The Unspoken™ Foundations': 'https://rzp.io/rzp/YOUR_60DAY_LINK',
                 'The Unspoken™ Mastery': 'https://rzp.io/rzp/YOUR_6MONTH_LINK'
@@ -1407,7 +1113,7 @@
     }
 
     // ============================================================
-    // DEMO DATA - Replace with real data from your Google Sheet
+    // DEMO DATA
     // ============================================================
     var reportData = {
         name: "Arun",
@@ -1430,7 +1136,6 @@
         document.getElementById("blindspotDisplay").textContent = data.blindspot;
         document.getElementById("strengthBadge").textContent = "🏆 Strength: " + data.strength;
         document.getElementById("blindspotBadge").textContent = "🎯 Blind Spot: " + data.blindspot;
-
         document.getElementById("thinkingScore").textContent = data.thinking + "%";
         document.getElementById("thinkingBar").style.width = data.thinking + "%";
         document.getElementById("structureScore").textContent = data.structure + "%";
@@ -1441,7 +1146,6 @@
         document.getElementById("understandBar").style.width = data.understanding + "%";
         document.getElementById("opportunityScore").textContent = data.opportunity + "%";
         document.getElementById("opportunityBar").style.width = data.opportunity + "%";
-
         document.getElementById("insightText").innerHTML =
             "Your Communication Tax™ of <strong>" + data.taxScore + "%</strong> means " +
             data.taxScore + "% of your professional value may not be fully recognised. " +
