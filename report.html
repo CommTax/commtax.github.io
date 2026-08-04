@@ -906,17 +906,14 @@
 
         var insight = 'Your assessment indicates that you communicate with ';
 
-        // Add strengths
         if (strength2) {
             insight += 'strong ' + strength1.toLowerCase() + ' and ' + strength2.toLowerCase() + '. ';
         } else {
             insight += 'strong ' + strength1.toLowerCase() + '. ';
         }
 
-        // Add "however" transition
         insight += 'However, your ';
 
-        // Add weaknesses
         if (weakness2) {
             insight += weakness1.toLowerCase() + ' and ' + weakness2.toLowerCase() + ' are reducing the value others perceive in your work.';
         } else {
@@ -924,6 +921,48 @@
         }
 
         return insight;
+    }
+
+    // ============================================================
+    // RECOMMENDATIONS FUNCTION (moved outside renderReport)
+    // ============================================================
+    function getRecommendations(competencies) {
+        var recommendations = [];
+        var sortedLow = [...competencies].sort((a, b) => a.score - b.score);
+        
+        if (sortedLow[0]) {
+            var comp = sortedLow[0];
+            if (comp.name === 'Communication') {
+                recommendations.push('Start every update with the business outcome.');
+            } else if (comp.name === 'Structure') {
+                recommendations.push('End every recommendation with a decision.');
+            } else if (comp.name === 'Thinking') {
+                recommendations.push('Replace technical explanations with executive summaries.');
+            } else if (comp.name === 'Understanding') {
+                recommendations.push('Quantify impact before explaining effort.');
+            } else if (comp.name === 'Opportunity') {
+                recommendations.push('Always articulate the business value before explaining the effort.');
+            }
+        }
+        
+        if (recommendations.length < 4) {
+            var allRecommendations = [
+                'Start every update with the business outcome.',
+                'End every recommendation with a decision.',
+                'Replace technical explanations with executive summaries.',
+                'Quantify impact before explaining effort.',
+                'Always articulate the business value before explaining the effort.',
+                'Pause and ask clarifying questions to ensure alignment.',
+                'Use the "Situation → Analysis → Recommendation" framework.'
+            ];
+            for (var i = 0; i < allRecommendations.length && recommendations.length < 4; i++) {
+                if (recommendations.indexOf(allRecommendations[i]) === -1) {
+                    recommendations.push(allRecommendations[i]);
+                }
+            }
+        }
+        
+        return recommendations.slice(0, 4);
     }
 
     // ============================================================
@@ -1032,89 +1071,48 @@
         });
         document.getElementById('progressBars').innerHTML = barsHTML;
 
-         // ============================================================  <-- ADD HERE
-        // EXECUTIVE RECOMMENDATIONS                                    <-- ADD HERE
-        // ============================================================  <-- ADD HERE
-        function getRecommendations(competencies) {                    <-- ADD HERE
-            var recommendations = [];                                  <-- ADD HERE
-            var sortedLow = [...competencies].sort((a, b) => a.score - b.score);  <-- ADD HERE
-                                                                         <-- ADD HERE
-            if (sortedLow[0]) {                                          <-- ADD HERE
-                var comp = sortedLow[0];                                <-- ADD HERE
-                if (comp.name === 'Communication') {                    <-- ADD HERE
-                    recommendations.push('Start every update with the business outcome.');  <-- ADD HERE
-                } else if (comp.name === 'Structure') {                <-- ADD HERE
-                    recommendations.push('End every recommendation with a decision.');  <-- ADD HERE
-                } else if (comp.name === 'Thinking') {                 <-- ADD HERE
-                    recommendations.push('Replace technical explanations with executive summaries.');  <-- ADD HERE
-                } else if (comp.name === 'Understanding') {            <-- ADD HERE
-                    recommendations.push('Quantify impact before explaining effort.');  <-- ADD HERE
-                } else if (comp.name === 'Opportunity') {              <-- ADD HERE
-                    recommendations.push('Always articulate the business value before explaining the effort.');  <-- ADD HERE
-                }                                                       <-- ADD HERE
-            }                                                           <-- ADD HERE
-                                                                         <-- ADD HERE
-            if (recommendations.length < 4) {                           <-- ADD HERE
-                var allRecommendations = [                             <-- ADD HERE
-                    'Start every update with the business outcome.',   <-- ADD HERE
-                    'End every recommendation with a decision.',       <-- ADD HERE
-                    'Replace technical explanations with executive summaries.',  <-- ADD HERE
-                    'Quantify impact before explaining effort.',       <-- ADD HERE
-                    'Always articulate the business value before explaining the effort.',  <-- ADD HERE
-                    'Pause and ask clarifying questions to ensure alignment.',  <-- ADD HERE
-                    'Use the "Situation → Analysis → Recommendation" framework.'  <-- ADD HERE
-                ];                                                      <-- ADD HERE
-                for (var i = 0; i < allRecommendations.length && recommendations.length < 4; i++) {  <-- ADD HERE
-                    if (recommendations.indexOf(allRecommendations[i]) === -1) {  <-- ADD HERE
-                        recommendations.push(allRecommendations[i]);   <-- ADD HERE
-                    }                                                   <-- ADD HERE
-                }                                                       <-- ADD HERE
-            }                                                           <-- ADD HERE
-                                                                         <-- ADD HERE
-            return recommendations.slice(0, 4);                        <-- ADD HERE
-        }                                                               <-- ADD HERE
-                                                                         <-- ADD HERE
-        var recs = getRecommendations(competencies);                   <-- ADD HERE
-        var recHTML = '';                                              <-- ADD HERE
-        recs.forEach(function(rec) {                                   <-- ADD HERE
-            recHTML += `                                                <-- ADD HERE
-                <div class="rec-item">                                 <-- ADD HERE
-                    <span class="check">✓</span>                       <-- ADD HERE
-                    <span>${rec}</span>                                <-- ADD HERE
-                </div>                                                  <-- ADD HERE
-            `;                                                          <-- ADD HERE
-        });                                                             <-- ADD HERE
-        document.getElementById('recommendationsList').innerHTML = recHTML;  <-- ADD HERE
+        // ============================================================
+        // EXECUTIVE RECOMMENDATIONS
+        // ============================================================
+        var recs = getRecommendations(competencies);
+        var recHTML = '';
+        recs.forEach(function(rec) {
+            recHTML += `
+                <div class="rec-item">
+                    <span class="check">✓</span>
+                    <span>${rec}</span>
+                </div>
+            `;
+        });
+        document.getElementById('recommendationsList').innerHTML = recHTML;
 
-            document.getElementById('recommendationsList').innerHTML = recHTML;
+        // ============================================================
+        // EXECUTIVE POTENTIAL SCORE
+        // ============================================================
+        var currentScore = data.overall || 0;
+        var projectedScore = Math.min(currentScore + 10, 95);
+        var leadershipReadiness = '';
+        if (currentScore >= 80) { leadershipReadiness = 'High'; }
+        else if (currentScore >= 65) { leadershipReadiness = 'High'; }
+        else if (currentScore >= 50) { leadershipReadiness = 'Moderate'; }
+        else { leadershipReadiness = 'Needs Focus'; }
 
-        // ============================================================  <-- ADD HERE
-        // EXECUTIVE POTENTIAL SCORE                                    <-- ADD HERE
-        // ============================================================  <-- ADD HERE
-        var currentScore = data.overall || 0;                           <-- ADD HERE
-        var projectedScore = Math.min(currentScore + 10, 95);           <-- ADD HERE
-        var leadershipReadiness = '';                                  <-- ADD HERE
-        if (currentScore >= 80) { leadershipReadiness = 'High'; }      <-- ADD HERE
-        else if (currentScore >= 65) { leadershipReadiness = 'High'; } <-- ADD HERE
-        else if (currentScore >= 50) { leadershipReadiness = 'Moderate'; }  <-- ADD HERE
-        else { leadershipReadiness = 'Needs Focus'; }                 <-- ADD HERE
-
-        document.getElementById('currentScore').textContent = currentScore + '/100';  <-- ADD HERE
-        document.getElementById('projectedScore').textContent = projectedScore + '/100';  <-- ADD HERE
+        document.getElementById('currentScore').textContent = currentScore + '/100';
+        document.getElementById('projectedScore').textContent = projectedScore + '/100';
         
-        var taxAmount = totalTax * 100000;                             <-- ADD HERE
-        var reduction = Math.round(taxAmount * 0.73);                  <-- ADD HERE
-        document.getElementById('taxReduction').textContent = '₹' + reduction.toLocaleString('en-IN') + '/year';  <-- ADD HERE
-        document.getElementById('leadershipReadiness').textContent = leadershipReadiness;  <-- ADD HERE
-        document.getElementById('leadershipReadiness').className = 'number';  <-- ADD HERE
-        if (leadershipReadiness === 'High') {                          <-- ADD HERE
-            document.getElementById('leadershipReadiness').style.color = '#10b981';  <-- ADD HERE
-        } else if (leadershipReadiness === 'Moderate') {              <-- ADD HERE
-            document.getElementById('leadershipReadiness').style.color = '#f59e0b';  <-- ADD HERE
-        } else {                                                       <-- ADD HERE
-            document.getElementById('leadershipReadiness').style.color = '#dc2626';  <-- ADD HERE
-        }                                                               <-- ADD HERE
-    
+        var taxAmount = totalTax * 100000;
+        var reduction = Math.round(taxAmount * 0.73);
+        document.getElementById('taxReduction').textContent = '₹' + reduction.toLocaleString('en-IN') + '/year';
+        document.getElementById('leadershipReadiness').textContent = leadershipReadiness;
+        document.getElementById('leadershipReadiness').className = 'number';
+        if (leadershipReadiness === 'High') {
+            document.getElementById('leadershipReadiness').style.color = '#10b981';
+        } else if (leadershipReadiness === 'Moderate') {
+            document.getElementById('leadershipReadiness').style.color = '#f59e0b';
+        } else {
+            document.getElementById('leadershipReadiness').style.color = '#dc2626';
+        }
+
         // ============================================================
         // TAX TABLE
         // ============================================================
