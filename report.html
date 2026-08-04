@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>The Unspoken | Your Communication Tax™ Report</title>
     <style>
+        /* ----- RESET & BASE ----- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
@@ -38,6 +39,7 @@
         .error h2 { font-size: 28px; margin-bottom: 10px; }
         .hidden { display: none !important; }
 
+        /* ----- HEADER ----- */
         .report-header {
             text-align: center;
             padding-bottom: 24px;
@@ -49,6 +51,59 @@
         .report-header h1 { font-size: 28px; font-weight: 800; color: #0f172a; margin: 12px 0 4px; }
         .report-header .sub { color: #64748b; font-size: 15px; }
 
+        /* ----- GREETING ----- */
+        .greeting {
+            background: #eff6ff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
+            margin: 20px 0;
+        }
+        .greeting h2 { font-size: 20px; color: #0f172a; }
+        .greeting p { color: #475569; font-size: 15px; }
+
+        /* ----- EXECUTIVE SUMMARY ----- */
+        .summary-dashboard {
+            background: linear-gradient(135deg, #f8fafc, #eef2ff);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .summary-dashboard .item {
+            text-align: center;
+        }
+        .summary-dashboard .item .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .summary-dashboard .item .label {
+            font-size: 13px;
+            color: #64748b;
+        }
+        .summary-dashboard .item .badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .badge-green { background: #d1fae5; color: #065f46; }
+        .badge-yellow { background: #fef3c7; color: #92400e; }
+        .badge-orange { background: #fed7aa; color: #9a3412; }
+        .badge-red { background: #fee2e2; color: #991b1b; }
+        .summary-dashboard .full-width { grid-column: 1 / -1; }
+
+        @media (max-width: 600px) {
+            .summary-dashboard { grid-template-columns: 1fr; }
+            .summary-dashboard .full-width { grid-column: 1; }
+        }
+
+        /* ----- TAX TABLE ----- */
         .tax-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 15px; }
         .tax-table th {
             background: #f1f5f9;
@@ -60,6 +115,7 @@
         }
         .tax-table td { padding: 12px 16px; border-bottom: 1px solid #e2e8f0; }
         .tax-table .principle { font-weight: 600; color: #0f172a; }
+        .tax-table .principle .icon { margin-right: 6px; }
         .tax-table .score { font-weight: 700; color: #2563eb; text-align: center; }
         .tax-table .amount { font-weight: 600; color: #dc2626; text-align: right; }
         .tax-table .total-row td {
@@ -69,10 +125,7 @@
             padding-top: 14px;
         }
         .tax-table .total-row .amount { color: #dc2626; font-size: 18px; }
-        .tax-table .clickable {
-            text-align: center;
-            font-size: 13px;
-        }
+        .tax-table .clickable { text-align: center; font-size: 13px; }
         .tax-table .clickable a {
             color: #2563eb;
             text-decoration: none;
@@ -82,6 +135,88 @@
         }
         .tax-table .clickable a:hover { color: #1d4ed8; }
 
+        /* ----- PROGRESS BAR (in table) ----- */
+        .score-bar {
+            width: 100px;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        .score-bar .fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        .score-bar .fill-green { background: #10b981; }
+        .score-bar .fill-yellow { background: #f59e0b; }
+        .score-bar .fill-orange { background: #f97316; }
+        .score-bar .fill-red { background: #ef4444; }
+
+        /* ----- STRENGTHS & DEVELOPMENT ----- */
+        .strength-box {
+            background: #f0fdf4;
+            padding: 20px 24px;
+            border-radius: 16px;
+            border-left: 4px solid #10b981;
+            margin: 20px 0;
+        }
+        .strength-box h3 { color: #065f46; font-size: 18px; margin-bottom: 12px; }
+        .strength-box .item { margin-bottom: 12px; }
+        .strength-box .item .title { font-weight: 600; color: #0f172a; }
+        .strength-box .item .desc { color: #475569; font-size: 14px; }
+        .strength-box .item .tip {
+            font-size: 13px;
+            color: #2563eb;
+            font-weight: 500;
+        }
+
+        .dev-box {
+            background: #fef2f2;
+            padding: 20px 24px;
+            border-radius: 16px;
+            border-left: 4px solid #dc2626;
+            margin: 20px 0;
+        }
+        .dev-box h3 { color: #991b1b; font-size: 18px; margin-bottom: 12px; }
+        .dev-box .item { margin-bottom: 12px; }
+        .dev-box .item .title { font-weight: 600; color: #0f172a; }
+        .dev-box .item .desc { color: #475569; font-size: 14px; }
+        .dev-box .item .tip {
+            font-size: 13px;
+            color: #2563eb;
+            font-weight: 500;
+        }
+
+        /* ----- DOWNLOAD ----- */
+        .download-section {
+            text-align: center;
+            padding: 20px 0;
+            margin: 10px 0 20px;
+        }
+        .download-section .btn-download {
+            display: inline-block;
+            padding: 14px 40px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+            border: none;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 8px 20px -6px rgba(37,99,235,0.35);
+            transition: all 0.3s ease;
+        }
+        .download-section .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px -8px rgba(37,99,235,0.4);
+        }
+
+        /* ----- INTERPRETATION ----- */
         .interpretation {
             background: #f8fafc;
             padding: 24px;
@@ -102,8 +237,8 @@
         .interpretation-table .status-moderate { color: #f59e0b; font-weight: 600; }
         .interpretation-table .status-high { color: #f97316; font-weight: 600; }
         .interpretation-table .status-critical { color: #dc2626; font-weight: 600; }
-        .interpretation-table .status-emergency { color: #7f1d1d; font-weight: 600; }
 
+        /* ----- TRIGGERS ----- */
         .triggers {
             background: #fef2f2;
             padding: 24px;
@@ -115,6 +250,7 @@
         .triggers ol { padding-left: 20px; color: #4b5563; font-size: 15px; line-height: 1.8; }
         .triggers ol li strong { color: #0f172a; }
 
+        /* ----- CTA ----- */
         .cta-section {
             background: linear-gradient(135deg, #1e40af, #2563eb);
             color: #fff;
@@ -140,6 +276,7 @@
         }
         .cta-section .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
 
+        /* ----- DISCLAIMER ----- */
         .disclaimer {
             background: #fef9e7;
             padding: 16px 20px;
@@ -160,7 +297,7 @@
             color: #94a3b8;
         }
 
-        /* Modal */
+        /* ----- MODAL ----- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -214,14 +351,6 @@
         }
         .modal-box .btn:hover { background: #1d4ed8; }
 
-        @media (max-width: 600px) {
-            .container { padding: 20px; }
-            .tax-table { font-size: 13px; }
-            .tax-table th, .tax-table td { padding: 8px 10px; }
-            .interpretation-table { font-size: 12px; }
-            .interpretation-table th, .interpretation-table td { padding: 6px 10px; }
-        }
-
         .separator { border: none; height: 2px; background: #e2e8f0; margin: 30px 0; }
     </style>
 </head>
@@ -229,6 +358,7 @@
 
 <div class="container">
 
+    <!-- ===== LOADING ===== -->
     <div id="loadingState" class="loading">
         <div class="spinner"></div>
         <h2>Generating Your Report</h2>
@@ -236,6 +366,7 @@
         <div id="retryCount" style="font-size:13px; color:#94a3b8; margin-top:10px;"></div>
     </div>
 
+    <!-- ===== ERROR ===== -->
     <div id="errorState" class="error hidden">
         <h2>⚠️ Report Not Found</h2>
         <p id="errorMessage">We couldn't find your assessment data.</p>
@@ -243,15 +374,48 @@
         <a href="/" class="btn" style="display:inline-block; width:auto; margin-top:20px; background:#2563eb; color:#fff; padding:12px 28px; border-radius:40px; text-decoration:none;">← Back to Home</a>
     </div>
 
+    <!-- ===== REPORT CONTENT ===== -->
     <div id="reportContent" class="hidden">
 
+        <!-- HEADER -->
         <div class="report-header">
             <div class="logo">The<span>Unspoken</span></div>
             <h1>YOUR COMMUNICATION TAX™ REPORT</h1>
             <div class="sub">Personalized Executive Communication Intelligence</div>
         </div>
 
-        <table class="tax-table" id="taxTable">
+        <!-- GREETING -->
+        <div class="greeting" id="greetingSection">
+            <h2>Hello, <span id="userName">Executive</span> 👋</h2>
+            <p id="greetingMessage">This is your personalized Communication Tax™ Report. Below you'll find your scores, the financial impact, and your top tax triggers. Understanding these numbers is the first step toward reclaiming your value.</p>
+        </div>
+
+        <!-- ===== EXECUTIVE SUMMARY ===== -->
+        <div class="summary-dashboard" id="summaryDashboard">
+            <div class="item">
+                <div class="number" id="summaryTax">--%</div>
+                <div class="label">Communication Tax™ Index</div>
+            </div>
+            <div class="item">
+                <div class="number" id="summaryOverall">--%</div>
+                <div class="label">Overall Score</div>
+            </div>
+            <div class="item">
+                <div class="number" id="summaryStrength">--</div>
+                <div class="label">🏆 Top Strength</div>
+            </div>
+            <div class="item">
+                <div class="number" id="summaryDev">--</div>
+                <div class="label">🎯 Development Area</div>
+            </div>
+            <div class="item full-width">
+                <div class="number" id="summaryTaxAmount">₹--</div>
+                <div class="label">💰 Annual Tax Impact</div>
+            </div>
+        </div>
+
+        <!-- ===== TAX TABLE ===== -->
+        <table class="tax-table">
             <thead>
                 <tr>
                     <th>Principle</th>
@@ -260,13 +424,36 @@
                     <th style="text-align:center;">Learn More</th>
                 </tr>
             </thead>
-            <tbody id="taxTableBody">
-                <!-- Filled by JavaScript -->
-            </tbody>
+            <tbody id="taxTableBody"></tbody>
         </table>
+
+        <!-- ===== DOWNLOAD ===== -->
+        <div class="download-section">
+            <a href="https://rzp.io/rzp/Bn57txO" target="_blank" class="btn-download">
+                📋 Download Full Report — ₹2,000
+            </a>
+            <p style="color:#64748b; font-size:13px; margin-top:8px;">
+                <a href="#programs" style="color:#2563eb; text-decoration:none;">🚀 Or, get it FREE with any program →</a>
+            </p>
+        </div>
 
         <hr class="separator">
 
+        <!-- ===== STRENGTHS ===== -->
+        <div class="strength-box" id="strengthBox">
+            <h3>🏆 Your Top Strengths</h3>
+            <div id="strengthList"></div>
+        </div>
+
+        <!-- ===== DEVELOPMENT AREAS ===== -->
+        <div class="dev-box" id="devBox">
+            <h3>🎯 Your Development Areas</h3>
+            <div id="devList"></div>
+        </div>
+
+        <hr class="separator">
+
+        <!-- ===== INTERPRETATION ===== -->
         <div class="interpretation">
             <h3>📊 Your Score Interpretation</h3>
             <table class="interpretation-table">
@@ -284,24 +471,28 @@
 
         <hr class="separator">
 
-        <div class="triggers" id="triggersSection">
+        <!-- ===== TOP 3 TRIGGERS ===== -->
+        <div class="triggers">
             <h3>🎯 Your Top 3 Tax Triggers</h3>
             <p style="color:#4b5563; margin-bottom:8px;">Based on your answers, your biggest leaks are:</p>
             <ol id="triggersList"></ol>
         </div>
 
+        <!-- ===== DISCLAIMER ===== -->
         <div class="disclaimer">
             <strong>📌 Financial Disclaimer:</strong>
             The tax amounts shown are based on an average earning of <strong>₹8 Lakhs per annum (LPA)</strong>.
             Your actual tax amount may vary based on your current CTC. The values represent the <strong>minimum</strong> impact you're likely experiencing.
         </div>
 
+        <!-- ===== CTA ===== -->
         <div class="cta-section">
             <h3>🚀 Ready to Reduce Your Communication Tax™?</h3>
             <p id="ctaText">Join The Unspoken™ Foundations and start saving ₹XX Lakhs per year.</p>
             <a href="https://theunspoken.co.in/#programs" class="btn">Explore Programs →</a>
         </div>
 
+        <!-- ===== FOOTER ===== -->
         <div class="footer">
             <p>&copy; 2026 The Unspoken™. All rights reserved.</p>
             <p style="font-size:12px; color:#94a3b8; margin-top:4px;">This report is confidential and intended solely for the recipient.</p>
@@ -309,9 +500,7 @@
     </div>
 </div>
 
-<!-- ============================================================ -->
-<!-- MODAL                                                        -->
-<!-- ============================================================ -->
+<!-- ===== MODAL ===== -->
 <div class="modal-overlay" id="taxModal">
     <div class="modal-box">
         <button class="close-btn" onclick="closeModal()">✕</button>
@@ -333,15 +522,70 @@
     var RETRY_DELAY = 1500;
 
     // ============================================================
-    // FIXED TAX AMOUNTS (in ₹ Lakhs)
+    // TAX AMOUNTS & MESSAGES
     // ============================================================
     var TAX_AMOUNTS = {
-        'Thinking': 0.5,        // ₹50,000
-        'Structure': 0.75,      // ₹75,000
-        'Communication': 1.0,   // ₹1,00,000
-        'Understanding': 0.5,   // ₹50,000
-        'Opportunity': 1.5      // ₹1,50,000
+        'Thinking': 0.50,
+        'Structure': 0.75,
+        'Communication': 1.00,
+        'Understanding': 0.50,
+        'Opportunity': 1.50
     };
+
+    var COMPETENCY_ICONS = {
+        'Thinking': '🧠',
+        'Structure': '📐',
+        'Communication': '💬',
+        'Understanding': '🤝',
+        'Opportunity': '🚀'
+    };
+
+    // ============================================================
+    // STRENGTH & DEVELOPMENT MESSAGES
+    // ============================================================
+    function getStrengthMessage(score, name) {
+        if (score >= 70) {
+            return 'Exceptional strength — you naturally excel here. This is your leadership superpower.';
+        } else if (score >= 50) {
+            return 'Solid foundation — you have good capability here. With focused effort, you can turn this into a standout strength.';
+        } else {
+            return 'Emerging — you have room to grow here. This isn\'t a weakness, it\'s an opportunity.';
+        }
+    }
+
+    function getStrengthTip(name) {
+        var tips = {
+            'Thinking': 'Practice articulating your thought process out loud to sharpen your clarity.',
+            'Structure': 'Use the "Situation → Analysis → Recommendation" framework for all executive communications.',
+            'Communication': 'Lead with business outcomes, not technical details. Executives care about "what" and "why".',
+            'Understanding': 'Pause often and verify understanding. Ask "Does that make sense?" to ensure alignment.',
+            'Opportunity': 'Start every project update with "The business outcome was..." to make your impact visible.'
+        };
+        return tips[name] || 'Focus on developing this competency further.';
+    }
+
+    function getDevMessage(score, name) {
+        if (score < 30) {
+            return 'Critical gap — this is your biggest opportunity for transformation.';
+        } else if (score < 50) {
+            return 'Significant gap — addressing this will have the highest ROI for your career.';
+        } else if (score < 70) {
+            return 'Room for improvement — small changes here will yield noticeable results.';
+        } else {
+            return 'This is already a strength, but even small improvements here will compound your impact.';
+        }
+    }
+
+    function getDevTip(name) {
+        var tips = {
+            'Thinking': 'Before every important conversation, decide on ONE key message. This will sharpen your impact.',
+            'Structure': 'Present using Situation → Analysis → Recommendation. This framework builds executive credibility.',
+            'Communication': 'Focus on business outcomes rather than technical details. Your audience cares about results.',
+            'Understanding': 'Develop the habit of pausing to verify understanding. Ask "Does that make sense?"',
+            'Opportunity': 'Always articulate the business value before explaining the effort required.'
+        };
+        return tips[name] || 'Focus on developing this competency further.';
+    }
 
     // ============================================================
     // TAX EXPLANATIONS (for modal)
@@ -375,11 +619,10 @@
     };
 
     // ============================================================
-    // GET SUBMISSION ID FROM URL
+    // GET SUBMISSION ID
     // ============================================================
     var urlParams = new URLSearchParams(window.location.search);
     var submissionId = urlParams.get('id') || '';
-
     console.log("Submission ID:", submissionId);
 
     // ============================================================
@@ -434,160 +677,4 @@
         document.body.style.overflow = '';
     }
 
-    // Close modal on overlay click
-    document.getElementById('taxModal').addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
-    });
-
-    // ============================================================
-    // RENDER REPORT
-    // ============================================================
-    function renderReport(data) {
-        console.log("Rendering report with data:", data);
-
-        var competencies = [
-            { name: 'Thinking', score: data.thinking },
-            { name: 'Structure', score: data.structure },
-            { name: 'Communication', score: data.communication },
-            { name: 'Understanding', score: data.understanding },
-            { name: 'Opportunity', score: data.opportunity }
-        ];
-
-        var totalTax = 0;
-        var taxRows = '';
-        competencies.forEach(function(comp) {
-            var amount = TAX_AMOUNTS[comp.name] || 0;
-            totalTax += amount;
-            var amountDisplay = '₹' + (amount * 100).toFixed(0);
-            taxRows += `
-                <tr>
-                    <td class="principle">${comp.name}</td>
-                    <td class="score">${comp.score}%</td>
-                    <td class="amount">${amountDisplay}</td>
-                    <td class="clickable">
-                        <a onclick="openModal('${comp.name}', ${comp.score})">📖 Read More</a>
-                    </td>
-                </tr>
-            `;
-        });
-
-        // Add total row
-        var totalDisplay = '₹' + (totalTax * 100).toFixed(0);
-        taxRows += `
-            <tr class="total-row">
-                <td colspan="2" style="text-align:right;">TOTAL Communication Tax</td>
-                <td class="amount">${totalDisplay}</td>
-                <td></td>
-            </tr>
-        `;
-
-        document.getElementById('taxTableBody').innerHTML = taxRows;
-
-        // ============================================================
-        // TOP 3 TAX TRIGGERS
-        // ============================================================
-        var sorted = [...competencies].sort((a, b) => a.score - b.score);
-        var top3 = sorted.slice(0, 3);
-
-        var triggerHTML = '';
-        var triggerTexts = [
-            '1. <strong>{principle}</strong> – This is costing you <strong>{amount}</strong> per year.',
-            '2. <strong>{principle}</strong> – This is costing you <strong>{amount}</strong> per year.',
-            '3. <strong>{principle}</strong> – This is costing you <strong>{amount}</strong> per year.'
-        ];
-
-        top3.forEach(function(comp, index) {
-            var amount = TAX_AMOUNTS[comp.name] || 0;
-            var amountDisplay = '₹' + (amount * 100).toFixed(0);
-            var text = triggerTexts[index]
-                .replace(/{principle}/g, comp.name)
-                .replace(/{amount}/g, amountDisplay);
-            triggerHTML += `<li>${text}</li>`;
-        });
-
-        document.getElementById('triggersList').innerHTML = triggerHTML;
-
-        // ============================================================
-        // UPDATE CTA
-        // ============================================================
-        var ctaText = document.getElementById('ctaText');
-        if (ctaText && totalTax > 0) {
-            var totalDisplayCTA = '₹' + (totalTax * 100).toFixed(0);
-            ctaText.innerHTML = 'Join The Unspoken™ Foundations and start saving <strong>' + totalDisplayCTA + '</strong> per year.';
-        }
-    }
-
-    // ============================================================
-    // FETCH REPORT DATA WITH RETRY
-    // ============================================================
-    function fetchReport(attempt) {
-        if (attempt > MAX_RETRIES) {
-            showError('Your report is taking longer than expected. Please refresh the page in a few seconds.');
-            return;
-        }
-
-        var apiUrl = APPS_SCRIPT_URL + '?id=' + submissionId;
-        console.log("Fetching attempt " + attempt + " from:", apiUrl);
-
-        if (attempt === 1) {
-            loadingMessage.textContent = 'Processing your assessment...';
-        } else {
-            loadingMessage.textContent = 'Your report is being prepared... (Attempt ' + attempt + '/' + MAX_RETRIES + ')';
-        }
-        retryCountEl.textContent = '⏳ Please wait...';
-
-        fetch(apiUrl)
-            .then(function(response) {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(function(data) {
-                console.log("Data received:", data);
-                if (data && data.communicationTax !== undefined) {
-                    showReport(data);
-                } else if (data && data.error) {
-                    if (data.error === 'Report not found' && attempt < MAX_RETRIES) {
-                        console.log("Report not found yet, retrying in " + RETRY_DELAY + "ms...");
-                        setTimeout(function() {
-                            fetchReport(attempt + 1);
-                        }, RETRY_DELAY);
-                    } else {
-                        showError(data.message || data.error);
-                    }
-                } else {
-                    if (attempt < MAX_RETRIES) {
-                        setTimeout(function() {
-                            fetchReport(attempt + 1);
-                        }, RETRY_DELAY);
-                    } else {
-                        showError('No report data found for this submission.');
-                    }
-                }
-            })
-            .catch(function(error) {
-                console.error('Error fetching report:', error);
-                if (attempt < MAX_RETRIES) {
-                    setTimeout(function() {
-                        fetchReport(attempt + 1);
-                    }, RETRY_DELAY);
-                } else {
-                    showError('Unable to load report. Please try again later.');
-                }
-            });
-    }
-
-    // ============================================================
-    // START
-    // ============================================================
-    if (!submissionId) {
-        showError('No submission ID found. Please complete the assessment first.');
-    } else {
-        showLoading();
-        fetchReport(1);
-    }
-</script>
-
-</body>
-</html>
+    document.getElementById('taxModal').addEventListener('click
