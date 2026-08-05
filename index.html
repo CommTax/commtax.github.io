@@ -2448,8 +2448,8 @@
         blindspot: "Communication"
     };
 
-        // ============================================================
-    // CORE OFFERINGS CAROUSEL
+     // ============================================================
+    // CORE OFFERINGS CAROUSEL - FIXED
     // ============================================================
     (function() {
         var wrapper = document.getElementById('carouselWrapper');
@@ -2458,16 +2458,26 @@
         var nextBtn = document.getElementById('nextSlide');
         var currentIndex = 0;
         var totalSlides = dots.length;
+        var autoPlayInterval;
+
+        // If carousel elements don't exist, exit
+        if (!wrapper || totalSlides === 0) {
+            console.log('Carousel elements not found - skipping carousel initialization');
+            return;
+        }
 
         function goToSlide(index) {
             if (index < 0) index = totalSlides - 1;
             if (index >= totalSlides) index = 0;
             currentIndex = index;
-            wrapper.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+            if (wrapper) {
+                wrapper.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+            }
             
-            // Update dots
             dots.forEach(function(dot, i) {
-                dot.style.background = i === currentIndex ? '#2563eb' : '#d1d5db';
+                if (dot) {
+                    dot.classList.toggle('active', i === currentIndex);
+                }
             });
         }
 
@@ -2479,36 +2489,57 @@
             goToSlide(currentIndex - 1);
         }
 
+        function startAutoPlay() {
+            if (autoPlayInterval) clearInterval(autoPlayInterval);
+            autoPlayInterval = setInterval(nextSlide, 5000);
+        }
+
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+        }
+
         // Dot clicks
-        dots.forEach(function(dot) {
-            dot.addEventListener('click', function() {
-                var index = parseInt(this.getAttribute('data-index'));
-                goToSlide(index);
-            });
+        dots.forEach(function(dot, index) {
+            if (dot) {
+                dot.addEventListener('click', function() {
+                    goToSlide(index);
+                    stopAutoPlay();
+                    startAutoPlay();
+                });
+            }
         });
 
         // Arrow clicks
-        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-
-        // Auto-play every 5 seconds
-        var autoPlay = setInterval(nextSlide, 5000);
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+                nextSlide();
+                stopAutoPlay();
+                startAutoPlay();
+            });
+        }
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function() {
+                prevSlide();
+                stopAutoPlay();
+                startAutoPlay();
+            });
+        }
 
         // Pause on hover
-        var carouselContainer = document.querySelector('.carousel-container');
-        if (carouselContainer) {
-            carouselContainer.addEventListener('mouseenter', function() {
-                clearInterval(autoPlay);
-            });
-            carouselContainer.addEventListener('mouseleave', function() {
-                autoPlay = setInterval(nextSlide, 5000);
-            });
+        var container = document.querySelector('.carousel-container');
+        if (container) {
+            container.addEventListener('mouseenter', stopAutoPlay);
+            container.addEventListener('mouseleave', startAutoPlay);
         }
 
         // Initialize
         goToSlide(0);
+        startAutoPlay();
     })();
-
+    
     // ============================================================
     // ANIMATE NUMBERS ON ASSESSMENT CARD
     // ============================================================
