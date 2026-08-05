@@ -3194,9 +3194,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
-    // ============================================================
-// PRICING CAROUSEL
+// ============================================================
+// PRICING CAROUSEL - FIXED
 // ============================================================
 (function() {
     const track = document.getElementById('pricingTrack');
@@ -3204,20 +3203,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextBtn = document.getElementById('nextCard');
     const indicators = document.querySelectorAll('.indicator');
     
+    if (!track || !prevBtn || !nextBtn) return;
+    
     let currentIndex = 0;
-    let cardsPerView = getCardsPerView();
+    let cardsPerView = 3;
     let totalCards = document.querySelectorAll('.pricing-card').length;
     let maxIndex = totalCards - cardsPerView;
+    let cardWidth = 0;
 
     function getCardsPerView() {
-        if (window.innerWidth <= 480) return 1;
-        if (window.innerWidth <= 1024) return 2;
+        const width = window.innerWidth;
+        if (width <= 480) return 1;
+        if (width <= 1024) return 2;
         return 3;
     }
 
+    function calculateCardWidth() {
+        const firstCard = document.querySelector('.pricing-card');
+        if (!firstCard) return 0;
+        const gap = 24; // gap between cards
+        const containerWidth = track.parentElement.offsetWidth;
+        cardsPerView = getCardsPerView();
+        cardWidth = (containerWidth - (gap * (cardsPerView - 1))) / cardsPerView;
+        return cardWidth;
+    }
+
     function updateCarousel() {
-        const cardWidth = document.querySelector('.pricing-card').offsetWidth + 24; // width + gap
-        const offset = currentIndex * cardWidth;
+        const width = calculateCardWidth();
+        if (width === 0) return;
+        
+        const gap = 24;
+        const offset = currentIndex * (width + gap);
         track.style.transform = `translateX(-${offset}px)`;
         
         // Update indicators
@@ -3231,13 +3247,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function goToSlide(index) {
-        const cardsPerView = getCardsPerView();
-        const maxIndex = totalCards - cardsPerView;
+        cardsPerView = getCardsPerView();
+        maxIndex = totalCards - cardsPerView;
         currentIndex = Math.max(0, Math.min(index, maxIndex));
         updateCarousel();
     }
 
     function nextSlide() {
+        cardsPerView = getCardsPerView();
+        maxIndex = totalCards - cardsPerView;
         if (currentIndex < maxIndex) {
             goToSlide(currentIndex + 1);
         }
@@ -3260,19 +3278,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Touch/swipe support
     let touchStartX = 0;
     let touchEndX = 0;
+    let isSwiping = false;
 
     track.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
+        isSwiping = true;
+    }, { passive: true });
+
+    track.addEventListener('touchmove', (e) => {
+        if (!isSwiping) return;
+        touchEndX = e.changedTouches[0].screenX;
     }, { passive: true });
 
     track.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
-
-    function handleSwipe() {
-        const swipeThreshold = 50;
+        if (!isSwiping) return;
+        isSwiping = false;
         const diff = touchStartX - touchEndX;
+        const swipeThreshold = 50;
         
         if (Math.abs(diff) > swipeThreshold) {
             if (diff > 0) {
@@ -3281,136 +3303,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 prevSlide();
             }
         }
-    }
+    }, { passive: true });
 
     // Handle window resize
     let resizeTimeout;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            const newCardsPerView = getCardsPerView();
-            if (newCardsPerView !== cardsPerView) {
-                cardsPerView = newCardsPerView;
-                maxIndex = totalCards - cardsPerView;
-                if (currentIndex > maxIndex) {
-                    currentIndex = maxIndex;
-                }
-                updateCarousel();
+            cardsPerView = getCardsPerView();
+            maxIndex = totalCards - cardsPerView;
+            if (currentIndex > maxIndex) {
+                currentIndex = Math.max(0, maxIndex);
             }
+            updateCarousel();
         }, 200);
     });
 
-    // Initialize
-    setTimeout(updateCarousel, 100);
-})();// ============================================================
-// PRICING CAROUSEL
-// ============================================================
-(function() {
-    const track = document.getElementById('pricingTrack');
-    const prevBtn = document.getElementById('prevCard');
-    const nextBtn = document.getElementById('nextCard');
-    const indicators = document.querySelectorAll('.indicator');
-    
-    let currentIndex = 0;
-    let cardsPerView = getCardsPerView();
-    let totalCards = document.querySelectorAll('.pricing-card').length;
-    let maxIndex = totalCards - cardsPerView;
-
-    function getCardsPerView() {
-        if (window.innerWidth <= 480) return 1;
-        if (window.innerWidth <= 1024) return 2;
-        return 3;
-    }
-
-    function updateCarousel() {
-        const cardWidth = document.querySelector('.pricing-card').offsetWidth + 24; // width + gap
-        const offset = currentIndex * cardWidth;
-        track.style.transform = `translateX(-${offset}px)`;
-        
-        // Update indicators
-        indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === currentIndex);
-        });
-        
-        // Update button states
-        prevBtn.disabled = currentIndex === 0;
-        nextBtn.disabled = currentIndex >= maxIndex;
-    }
-
-    function goToSlide(index) {
-        const cardsPerView = getCardsPerView();
-        const maxIndex = totalCards - cardsPerView;
-        currentIndex = Math.max(0, Math.min(index, maxIndex));
+    // Initialize carousel
+    function initCarousel() {
+        cardsPerView = getCardsPerView();
+        maxIndex = totalCards - cardsPerView;
+        currentIndex = 0;
         updateCarousel();
     }
 
-    function nextSlide() {
-        if (currentIndex < maxIndex) {
-            goToSlide(currentIndex + 1);
-        }
+    // Run after DOM is fully loaded
+    if (document.readyState === 'complete') {
+        setTimeout(initCarousel, 300);
+    } else {
+        window.addEventListener('load', function() {
+            setTimeout(initCarousel, 300);
+        });
     }
 
-    function prevSlide() {
-        if (currentIndex > 0) {
-            goToSlide(currentIndex - 1);
-        }
-    }
+    // Also re-run after any layout shifts
+    setTimeout(initCarousel, 500);
+    setTimeout(initCarousel, 1000);
 
-    // Event listeners
-    prevBtn.addEventListener('click', prevSlide);
-    nextBtn.addEventListener('click', nextSlide);
-
-    indicators.forEach((indicator, index) => {
-        indicator.addEventListener('click', () => goToSlide(index));
-    });
-
-    // Touch/swipe support
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    track.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    track.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
-
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
-        
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                nextSlide();
-            } else {
-                prevSlide();
-            }
-        }
-    }
-
-    // Handle window resize
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            const newCardsPerView = getCardsPerView();
-            if (newCardsPerView !== cardsPerView) {
-                cardsPerView = newCardsPerView;
-                maxIndex = totalCards - cardsPerView;
-                if (currentIndex > maxIndex) {
-                    currentIndex = maxIndex;
-                }
-                updateCarousel();
-            }
-        }, 200);
-    });
-
-    // Initialize
-    setTimeout(updateCarousel, 100);
+    console.log('Carousel initialized with', totalCards, 'cards');
 })();
-    
+     
 </script>
 
 </body>
