@@ -2493,6 +2493,40 @@
         goToSlide(0);
     })();
 
+    // ============================================================
+    // ANIMATE NUMBERS ON ASSESSMENT CARD
+    // ============================================================
+    function animateNumber(element, target, duration) {
+        var start = 0;
+        var startTime = null;
+        
+        function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            var progress = Math.min((timestamp - startTime) / duration, 1);
+            var current = Math.round(progress * target);
+            element.textContent = current;
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                element.textContent = target;
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+
+    // Run animation when page loads
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            var minutesEl = document.getElementById('minutesCount');
+            var questionsEl = document.getElementById('questionsCount');
+            var competenciesEl = document.getElementById('competenciesCount');
+            
+            if (minutesEl) animateNumber(minutesEl, 7, 800);
+            if (questionsEl) animateNumber(questionsEl, 25, 1000);
+            if (competenciesEl) animateNumber(competenciesEl, 5, 600);
+        }, 500);
+    });
+    
 </script>
 
 </body>
