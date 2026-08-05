@@ -2309,6 +2309,67 @@
         blindspot: "Communication"
     };
 
+        // ============================================================
+    // CORE OFFERINGS CAROUSEL
+    // ============================================================
+    (function() {
+        var wrapper = document.getElementById('carouselWrapper');
+        var dots = document.querySelectorAll('.carousel-dot');
+        var prevBtn = document.getElementById('prevSlide');
+        var nextBtn = document.getElementById('nextSlide');
+        var currentIndex = 0;
+        var totalSlides = dots.length;
+
+        function goToSlide(index) {
+            if (index < 0) index = totalSlides - 1;
+            if (index >= totalSlides) index = 0;
+            currentIndex = index;
+            wrapper.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+            
+            // Update dots
+            dots.forEach(function(dot, i) {
+                dot.style.background = i === currentIndex ? '#2563eb' : '#d1d5db';
+            });
+        }
+
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentIndex - 1);
+        }
+
+        // Dot clicks
+        dots.forEach(function(dot) {
+            dot.addEventListener('click', function() {
+                var index = parseInt(this.getAttribute('data-index'));
+                goToSlide(index);
+            });
+        });
+
+        // Arrow clicks
+        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+
+        // Auto-play every 5 seconds
+        var autoPlay = setInterval(nextSlide, 5000);
+
+        // Pause on hover
+        var carouselContainer = document.querySelector('.carousel-container');
+        if (carouselContainer) {
+            carouselContainer.addEventListener('mouseenter', function() {
+                clearInterval(autoPlay);
+            });
+            carouselContainer.addEventListener('mouseleave', function() {
+                autoPlay = setInterval(nextSlide, 5000);
+            });
+        }
+
+        // Initialize
+        goToSlide(0);
+    })();
+
 </script>
 
 </body>
