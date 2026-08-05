@@ -2111,8 +2111,8 @@
             window.open(paymentLinks[programName], '_blank');
         }
     }
-    // ============================================================
-    // COMMUNICATION TAX™ ESTIMATOR (WEIGHTED MODEL - IP)
+        // ============================================================
+    // COMMUNICATION TAX™ ESTIMATOR (WITH ANIMATED NUMBERS)
     // ============================================================
     // 
     // WEIGHTS (Hidden IP):
@@ -2124,86 +2124,117 @@
     // Total: 100%
     // ============================================================
 
-        function calculateCommunicationTax() {
-            console.log("Calculate button clicked!");
-            
-            // Get values
-            var ctc = parseInt(document.getElementById('ctcSlider').value);
-            var thinking = parseInt(document.getElementById('thinkingSlider').value);
-            var structure = parseInt(document.getElementById('structureSlider').value);
-            var efficiency = parseInt(document.getElementById('efficiencySlider').value);
-            var exposure = parseInt(document.getElementById('exposureSelect').value);
-            var career = parseInt(document.getElementById('careerSelect').value);
+    var animationRunning = false;
 
-            // Convert 1-5 scale to percentage
-            var thinkingPct = (thinking / 5) * 100;
-            var structurePct = (structure / 5) * 100;
-            var efficiencyPct = (efficiency / 5) * 100;
-            var exposurePct = (exposure / 4) * 100;
-            var careerPct = (career / 4) * 100;
-
-            // Apply weights
-            var weightedThinking = thinkingPct * 0.20;
-            var weightedStructure = structurePct * 0.20;
-            var weightedEfficiency = efficiencyPct * 0.25;
-            var weightedExposure = exposurePct * 0.15;
-            var weightedCareer = careerPct * 0.20;
-
-            var effectivenessScore = weightedThinking + weightedStructure + weightedEfficiency + weightedExposure + weightedCareer;
-            var taxRate = Math.round(100 - effectivenessScore);
-
-            // ---- FINANCIAL CALCULATIONS ----
-            // CTC is in Lakhs, convert to rupees
-            var ctcInRupees = ctc * 100000;
+    function animateNumber(element, target, prefix, suffix, duration) {
+        var start = 0;
+        var startTime = null;
+        
+        // Check if target is a number
+        var isNumeric = typeof target === 'number';
+        
+        function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            var progress = Math.min((timestamp - startTime) / duration, 1);
+            var current = Math.round(progress * target);
             
-            // Impact multiplier
-            var impactMultiplier = 0.65;
-            
-            // Calculate annual loss
-            var annualLossAmount = Math.round((ctcInRupees * taxRate * impactMultiplier) / 100);
-            
-            // Format properly with Indian number formatting
-            var annualLossFormatted = annualLossAmount.toLocaleString('en-IN');
-            var annualLossFull = '₹' + annualLossFormatted;
-
-            // Lifetime Impact
-            var yearsRemaining = 25;
-            var lifetimeImpactAmount = Math.round(annualLossAmount * yearsRemaining * 1.5);
-            
-            // Format lifetime impact (show in Crores for larger numbers)
-            var lifetimeDisplay = '';
-            if (lifetimeImpactAmount >= 10000000) {
-                lifetimeDisplay = '₹' + (lifetimeImpactAmount / 10000000).toFixed(1) + ' Cr';
+            if (isNumeric) {
+                element.textContent = prefix + current.toLocaleString('en-IN') + suffix;
             } else {
-                lifetimeDisplay = '₹' + lifetimeImpactAmount.toLocaleString('en-IN');
+                element.textContent = prefix + target + suffix;
             }
-
-            // ---- UPDATE UI ----
-            document.getElementById('effectivenessScore').textContent = Math.round(effectivenessScore) + '%';
-            document.getElementById('taxScore').textContent = taxRate + '%';
-            document.getElementById('annualLoss').textContent = annualLossFull;
-            document.getElementById('lifetimeImpact').textContent = lifetimeDisplay;
-
-            document.getElementById('estimatorResults').style.display = 'block';
-            document.getElementById('estimatorResults').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                if (isNumeric) {
+                    element.textContent = prefix + target.toLocaleString('en-IN') + suffix;
+                }
+            }
         }
+        
+        requestAnimationFrame(animate);
+    }
+
+    function calculateCommunicationTax() {
+        // Get values
+        var ctc = parseInt(document.getElementById('ctcSlider').value);
+        var thinking = parseInt(document.getElementById('thinkingSlider').value);
+        var structure = parseInt(document.getElementById('structureSlider').value);
+        var efficiency = parseInt(document.getElementById('efficiencySlider').value);
+        var exposure = parseInt(document.getElementById('exposureSelect').value);
+        var career = parseInt(document.getElementById('careerSelect').value);
+
+        // Convert to percentages
+        var thinkingPct = (thinking / 5) * 100;
+        var structurePct = (structure / 5) * 100;
+        var efficiencyPct = (efficiency / 5) * 100;
+        var exposurePct = (exposure / 4) * 100;
+        var careerPct = (career / 4) * 100;
+
+        // Apply weights
+        var weightedThinking = thinkingPct * 0.20;
+        var weightedStructure = structurePct * 0.20;
+        var weightedEfficiency = efficiencyPct * 0.25;
+        var weightedExposure = exposurePct * 0.15;
+        var weightedCareer = careerPct * 0.20;
+
+        var effectivenessScore = weightedThinking + weightedStructure + weightedEfficiency + weightedExposure + weightedCareer;
+        var taxRate = Math.round(100 - effectivenessScore);
+
+        // Financial calculations
+        var ctcInRupees = ctc * 100000;
+        var impactMultiplier = 0.65;
+        var annualLossAmount = Math.round((ctcInRupees * taxRate * impactMultiplier) / 100);
+        var yearsRemaining = 25;
+        var lifetimeImpactAmount = Math.round(annualLossAmount * yearsRemaining * 1.5);
+
+        // Show results
+        var resultsDiv = document.getElementById('estimatorResults');
+        resultsDiv.style.display = 'block';
+
+        // Animate the numbers
+        var taxEl = document.getElementById('taxScore');
+        var annualEl = document.getElementById('annualLoss');
+        var lifetimeEl = document.getElementById('lifetimeImpact');
+
+        // Set initial values to 0
+        taxEl.textContent = '0%';
+        annualEl.textContent = '₹0';
+        lifetimeEl.textContent = '₹0';
+
+        // Animate with different durations
+        setTimeout(function() {
+            animateNumber(taxEl, taxRate, '', '%', 800);
+        }, 100);
+
+        setTimeout(function() {
+            animateNumber(annualEl, annualLossAmount, '₹', '', 1000);
+        }, 300);
+
+        setTimeout(function() {
+            var lifetimeDisplay = lifetimeImpactAmount >= 10000000 ? 
+                (lifetimeImpactAmount / 10000000).toFixed(1) + ' Cr' : 
+                lifetimeImpactAmount.toLocaleString('en-IN');
+            animateNumber(lifetimeEl, lifetimeDisplay, '₹', '', 1000);
+        }, 600);
+
+        // Scroll to results
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 
     // ---- REAL-TIME UPDATES ----
     function updateLabels() {
-        // CTC
         var ctc = parseInt(document.getElementById('ctcSlider').value);
         document.getElementById('ctcDisplay').textContent = '₹' + (ctc * 100000).toLocaleString('en-IN');
         document.getElementById('ctcLabel').textContent = '₹' + ctc + ' Lakhs';
 
-        // Thinking
         var thinking = parseInt(document.getElementById('thinkingSlider').value);
         document.getElementById('thinkingLabel').textContent = thinking + '/5';
 
-        // Structure
         var structure = parseInt(document.getElementById('structureSlider').value);
         document.getElementById('structureLabel').textContent = structure + '/5';
 
-        // Efficiency
         var efficiency = parseInt(document.getElementById('efficiencySlider').value);
         document.getElementById('efficiencyLabel').textContent = efficiency + '/5';
     }
@@ -2217,8 +2248,7 @@
 
     // Initialize labels
     updateLabels();
-    
-    
+        
     // ============================================================
     // DEMO DATA
     // ============================================================
