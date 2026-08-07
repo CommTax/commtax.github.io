@@ -1909,11 +1909,15 @@ function renderDNA(data) {
     // ============================================================
     function displayNarrative(competency, containerId) {
         var container = document.getElementById(containerId);
-        if (!container) return;
+        if (!container) {
+        console.warn('Container not found:', containerId);
+        return;
+    }
 
+    console.log('📝 Displaying narrative for:', competency, 'in:', containerId);
+        
         if (!narrativesData) {
-            container.innerHTML =
-                `<div class="narrative-error">⚠️ Insights temporarily unavailable. Please refresh.</div>`;
+            container.innerHTML = `<div class="narrative-error">⚠️ Insights temporarily unavailable. Please refresh.</div>`;
             return;
         }
 
@@ -1957,13 +1961,17 @@ function renderDNA(data) {
     // LOAD ALL NARRATIVES
     // ============================================================
     async function loadAllNarratives(submissionId) {
+        console.log('📥 loadAllNarratives called for:', submissionId);
         var narratives = await fetchNarratives(submissionId);
+        console.log('📦 narratives data:', narratives);
         if (narratives) {
             displayNarrative('Thinking', 'thinkingNarrative');
             displayNarrative('Structure', 'structureNarrative');
             displayNarrative('Communication', 'communicationNarrative');
             displayNarrative('Understanding', 'understandingNarrative');
             displayNarrative('Opportunity', 'opportunityNarrative');
+        }else {
+            console.warn('⚠️ No narratives data available');
         }
     }
 
