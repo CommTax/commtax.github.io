@@ -1788,7 +1788,100 @@
             container.appendChild(div);
         }
     }
+// ============================================================
+// RENDER DNA
+// ============================================================
+function renderDNA(data) {
+    var labels = ['Strategic Thinking', 'Executive Presence', 'Influence', 'Persuasion', 'Confidence',
+        'Listening', 'Adaptability'
+    ];
 
+    var thinkingPct = Math.round((data.thinkingPct || 0) * 100);
+    var structurePct = Math.round((data.structurePct || 0) * 100);
+    var communicationPct = Math.round((data.communicationPct || 0) * 100);
+    var understandingPct = Math.round((data.understandingPct || 0) * 100);
+    var opportunityPct = Math.round((data.opportunityPct || 0) * 100);
+
+    var scores = [
+        thinkingPct || 75,
+        Math.min(100, (communicationPct || 54) + 10),
+        Math.min(100, (opportunityPct || 75) - 5),
+        Math.min(100, (communicationPct || 54) + 4),
+        Math.min(100, (structurePct || 70) + 5),
+        Math.min(100, (understandingPct || 58) + 12),
+        Math.min(100, (thinkingPct || 75) - 8)
+    ];
+
+    // DNA List
+    var listContainer = document.getElementById('dnaList');
+    if (listContainer) {
+        listContainer.innerHTML = '';
+        var dnaItems = [
+            { label: 'Strategic Thinking', value: scores[0] },
+            { label: 'Executive Presence', value: scores[1] },
+            { label: 'Influence', value: scores[2] },
+            { label: 'Persuasion', value: scores[3] },
+            { label: 'Confidence', value: scores[4] },
+            { label: 'Listening', value: scores[5] },
+            { label: 'Adaptability', value: scores[6] }
+        ];
+        dnaItems.forEach(function(item) {
+            var color = getScoreColor(item.value);
+            var div = document.createElement('div');
+            div.className = 'dna-item';
+            div.innerHTML =
+                '<div class="dna-label">' + item.label + '</div>' +
+                '<div class="dna-value" style="color:' + color + ';">' + item.value + '%</div>';
+            listContainer.appendChild(div);
+        });
+    }
+
+    // Radar Chart
+    var ctx = document.getElementById('dnaChart');
+    if (!ctx) {
+        console.warn('DNA Chart canvas not found');
+        return;
+    }
+
+    if (dnaChart) {
+        dnaChart.destroy();
+    }
+
+    dnaChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Executive Communication DNA',
+                data: scores,
+                backgroundColor: 'rgba(0, 196, 167, 0.15)',
+                borderColor: '#00C4A7',
+                borderWidth: 2,
+                pointBackgroundColor: '#00C4A7',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                r: {
+                    min: 0,
+                    max: 100,
+                    ticks: { stepSize: 20, backdropColor: 'transparent' },
+                    grid: { color: 'rgba(0,0,0,0.06)' },
+                    angleLines: { color: 'rgba(0,0,0,0.06)' },
+                    pointLabels: { font: { size: 10, family: 'Inter' }, color: '#6B7280' }
+                }
+            }
+        }
+    });
+}
     // ============================================================
     // FETCH NARRATIVES
     // ============================================================
