@@ -1,690 +1,2552 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Communication Tax™ Report</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- Razorpay Checkout -->
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  
-  <!-- html2pdf for PDF download -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  
-  <style>
-    /* ============================================================
-       PREMIUM REPORT STYLES
-       ============================================================ */
-    
-    :root {
-      --teal: #00C4A7;
-      --navy: #0B0F1A;
-      --gold: #F5A623;
-      --gray: #6B7280;
-      --white: #FFFFFF;
-      --light-bg: #F0FAF8;
-      --red: #EF4444;
-      --yellow: #F59E0B;
-      --green: #10B981;
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: var(--navy);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      padding: 40px 20px;
-      overflow-y: auto;
-    }
-    
-    .report-container {
-      max-width: 900px;
-      width: 100%;
-      background: var(--white);
-      border-radius: 20px;
-      padding: 50px 60px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      position: relative;
-      max-height: 95vh; /* or 100vh */
-      overflow-y: auto;
-    }
-    
-    /* ---- WATERMARK ---- */
-    .watermark {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-30deg);
-      font-size: 80px;
-      font-weight: 900;
-      color: rgba(0, 196, 167, 0.05);
-      pointer-events: none;
-      user-select: none;
-      white-space: nowrap;
-      letter-spacing: 20px;
-      z-index: 0;
-    }
-    
-    .report-container > * {
-      position: relative;
-      z-index: 1;
-    }
-    
-    /* ---- HEADER ---- */
-    .header {
-      text-align: center;
-      border-bottom: 3px solid var(--teal);
-      padding-bottom: 25px;
-      margin-bottom: 30px;
-    }
-    
-    .logo {
-      color: var(--teal);
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: 4px;
-    }
-    
-    .report-title {
-      font-size: 24px;
-      font-weight: 300;
-      color: var(--navy);
-      margin-top: 5px;
-    }
-    
-    .user-info {
-      color: var(--gray);
-      font-size: 14px;
-      margin-top: 10px;
-    }
-    
-    /* ---- SCORE CARD ---- */
-    .score-card {
-      background: var(--light-bg);
-      border-radius: 12px;
-      padding: 30px;
-      text-align: center;
-      margin: 20px 0;
-      border: 1px solid #E5E7EB;
-    }
-    
-    .score-number {
-      font-size: 72px;
-      font-weight: 800;
-      line-height: 1;
-    }
-    
-    .score-label {
-      color: var(--gray);
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-top: 5px;
-    }
-    
-    .score-status {
-      font-size: 18px;
-      font-weight: 600;
-      margin-top: 5px;
-    }
-    
-    /* ---- COMPETENCY ROWS ---- */
-    .competency-row {
-      display: flex;
-      align-items: center;
-      margin: 12px 0;
-      gap: 15px;
-    }
-    
-    .competency-name {
-      width: 140px;
-      font-weight: 600;
-      color: var(--navy);
-      font-size: 14px;
-    }
-    
-    .competency-bar {
-      flex: 1;
-      background: #F3F4F6;
-      border-radius: 8px;
-      height: 24px;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .competency-fill {
-      height: 100%;
-      border-radius: 8px;
-      transition: width 1s ease;
-    }
-    
-    .competency-score {
-      width: 60px;
-      text-align: right;
-      font-weight: 700;
-      font-size: 14px;
-    }
-    
-    .competency-level {
-      width: 110px;
-      font-size: 12px;
-      color: var(--gray);
-    }
-    
-    /* ---- COLOR CODING ---- */
-    .fill-teal { background: var(--teal); }
-    .fill-green { background: var(--green); }
-    .fill-yellow { background: var(--yellow); }
-    .fill-orange { background: #F97316; }
-    .fill-red { background: var(--red); }
-    
-    .text-teal { color: var(--teal); }
-    .text-green { color: var(--green); }
-    .text-yellow { color: var(--yellow); }
-    .text-orange { color: #F97316; }
-    .text-red { color: var(--red); }
-    
-    /* ---- BLURRED SECTION ---- */
-    .blurred-section {
-      filter: blur(8px);
-      user-select: none;
-      pointer-events: none;
-      opacity: 0.7;
-    }
-    
-    .blurred-section .competency-bar {
-      background: #E5E7EB;
-    }
-    
-    .blurred-section .competency-fill {
-      background: #9CA3AF !important;
-    }
-    
-    /* ---- PAYMENT BOX ---- */
-    .payment-box {
-      text-align: center;
-      margin: 30px 0;
-      padding: 30px;
-      background: #FFFBEB;
-      border-radius: 12px;
-      border: 2px solid #F59E0B;
-    }
-    
-    .payment-box h3 {
-      color: var(--navy);
-      font-size: 20px;
-      margin-bottom: 5px;
-    }
-    
-    .payment-box p {
-      color: var(--gray);
-      font-size: 14px;
-      margin-bottom: 15px;
-    }
-    
-    .pay-button {
-      background: var(--teal);
-      color: var(--white);
-      padding: 16px 48px;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    
-    .pay-button:hover {
-      background: #00A88E;
-    }
-    
-    /* ---- UNLOCKED STATE ---- */
-    .unlocked-badge {
-      background: #D1FAE5;
-      color: #065F46;
-      padding: 12px 24px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: 600;
-      margin: 20px 0;
-      display: none;
-    }
-    
-    .unlocked-badge.visible {
-      display: block;
-    }
-    
-    .download-btn {
-      background: var(--teal);
-      color: var(--white);
-      padding: 16px 48px;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s;
-      margin: 10px 0;
-    }
-    
-    .download-btn:hover {
-      background: #00A88E;
-    }
-    
-    /* ---- TABLE ---- */
-    .report-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      margin: 15px 0;
-    }
-    
-    .report-table th {
-      background: var(--navy);
-      color: white;
-      padding: 10px;
-      text-align: left;
-    }
-    
-    .report-table td {
-      padding: 8px 10px;
-    }
-    
-    .report-table tr:nth-child(even) {
-      background: var(--light-bg);
-    }
-    
-    .report-table tfoot tr {
-      background: var(--teal);
-      color: white;
-      font-weight: 700;
-    }
-    
-    .report-table tfoot td {
-      padding: 10px;
-    }
-    
-    /* ---- FOOTER ---- */
-    .footer {
-      text-align: center;
-      color: var(--gray);
-      font-size: 12px;
-      border-top: 1px solid #E5E7EB;
-      padding-top: 20px;
-      margin-top: 30px;
-    }
-    
-    /* ---- LOADING ---- */
-    .loading {
-      text-align: center;
-      padding: 50px;
-      color: var(--gray);
-    }
-    
-    .loading-spinner {
-      border: 4px solid #F3F4F6;
-      border-top: 4px solid var(--teal);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    /* ---- RESPONSIVE ---- */
-    @media (max-width: 600px) {
-      .report-container { padding: 20px; }
-      .competency-row { flex-wrap: wrap; }
-      .competency-name { width: 100%; }
-      .competency-level { width: 100%; text-align: left; }
-      .score-number { font-size: 48px; }
-      .report-table { font-size: 11px; }
-      .report-table th, .report-table td { padding: 6px; }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Communication Tax™ Report</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome 6 (Free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+
+    <!-- html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
+    </script>
+
+    <!-- Razorpay Checkout -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js">
+    </script>
+
+    <style>
+        /* ================================================
+                   CSS VARIABLES & RESET
+                   ================================================ */
+        :root {
+            --teal: #00C4A7;
+            --teal-dark: #00A88E;
+            --teal-light: #E6F9F5;
+            --navy: #0B0F1A;
+            --navy-light: #1A2236;
+            --gold: #F5A623;
+            --gold-light: #FFFBEB;
+            --gray: #6B7280;
+            --gray-light: #F3F4F6;
+            --white: #FFFFFF;
+            --red: #EF4444;
+            --green: #10B981;
+            --yellow: #F59E0B;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            --shadow-dark: 0 20px 60px rgba(0, 0, 0, 0.15);
+            --radius: 16px;
+            --radius-sm: 8px;
+            --transition: 0.3s ease;
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Open Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--gray-light);
+            color: var(--navy);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        /* ================================================
+                   REPORT CONTAINER
+                   ================================================ */
+        .report-wrapper {
+            max-width: 1100px;
+            width: 100%;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-dark);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ================================================
+                   STICKY NAVIGATION
+                   ================================================ */
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--navy);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-bottom: 2px solid var(--teal);
+        }
+
+        .sticky-nav .brand {
+            color: var(--teal);
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+
+        .sticky-nav .brand i {
+            margin-right: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 14px;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+            font-family: var(--font-heading);
+            letter-spacing: 0.3px;
+        }
+
+        .nav-links a:hover {
+            color: var(--teal);
+        }
+
+        .nav-links a .page-num {
+            color: var(--teal);
+            margin-right: 3px;
+        }
+
+        /* ================================================
+                   PAGE SECTIONS
+                   ================================================ */
+        .report-page {
+            padding: 50px 60px;
+            border-bottom: 1px solid #E5E7EB;
+            page-break-inside: avoid;
+        }
+
+        .report-page:last-child {
+            border-bottom: none;
+        }
+
+        /* ================================================
+                   COVER PAGE
+                   ================================================ */
+        .cover-page {
+            background: linear-gradient(145deg, var(--white) 0%, var(--teal-light) 100%);
+            text-align: center;
+            padding: 60px 40px 50px;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cover-logo {
+            font-family: var(--font-heading);
+            font-weight: 900;
+            font-size: 42px;
+            color: var(--teal);
+            letter-spacing: 6px;
+            margin-bottom: 8px;
+        }
+
+        .cover-logo i {
+            margin-right: 10px;
+        }
+
+        .cover-title {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 32px;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .cover-subtitle {
+            font-family: var(--font-heading);
+            font-weight: 300;
+            font-size: 20px;
+            color: var(--gray);
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .cover-divider {
+            width: 80px;
+            height: 3px;
+            background: var(--teal);
+            margin: 0 auto 30px;
+            border-radius: 2px;
+        }
+
+        .cover-user-box {
+            background: var(--white);
+            padding: 24px 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: inline-block;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .cover-user-box .user-line {
+            font-size: 16px;
+            padding: 4px 0;
+            color: var(--navy);
+        }
+
+        .cover-user-box .user-line strong {
+            font-weight: 600;
+            color: var(--navy);
+            width: 110px;
+            display: inline-block;
+        }
+
+        .cover-quote {
+            font-family: var(--font-heading);
+            font-weight: 300;
+            font-size: 20px;
+            font-style: italic;
+            color: var(--teal-dark);
+            max-width: 600px;
+            margin: 10px auto 20px;
+            padding: 0 20px;
+            border-left: 4px solid var(--teal);
+            padding-left: 20px;
+        }
+
+        .cover-footer {
+            margin-top: auto;
+            font-size: 13px;
+            color: var(--gray);
+            letter-spacing: 1px;
+        }
+
+        .cover-footer span {
+            color: var(--teal);
+            font-weight: 600;
+        }
+
+        /* ================================================
+                   SECTION HEADERS
+                   ================================================ */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--teal);
+            padding-bottom: 12px;
+        }
+
+        .section-header .icon {
+            font-size: 28px;
+            color: var(--teal);
+        }
+
+        .section-header h2 {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 26px;
+            color: var(--navy);
+            letter-spacing: -0.5px;
+        }
+
+        .section-header .badge {
+            margin-left: auto;
+            background: var(--teal-light);
+            color: var(--teal-dark);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .section-sub {
+            font-size: 16px;
+            color: var(--gray);
+            margin-bottom: 28px;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        /* ================================================
+                   CARDS
+                   ================================================ */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px 28px;
+            margin-bottom: 24px;
+            border: 1px solid #F3F4F6;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.10);
+        }
+
+        .card-teal {
+            border-left: 4px solid var(--teal);
+        }
+        .card-gold {
+            border-left: 4px solid var(--gold);
+        }
+        .card-navy {
+            border-left: 4px solid var(--navy);
+        }
+        .card-red {
+            border-left: 4px solid var(--red);
+        }
+        .card-green {
+            border-left: 4px solid var(--green);
+        }
+
+        .card h3 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .card h3 i {
+            margin-right: 10px;
+            color: var(--teal);
+        }
+
+        /* ================================================
+                   SNAPSHOT GRID
+                   ================================================ */
+        .snapshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .snapshot-item {
+            background: var(--gray-light);
+            padding: 16px 18px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+        }
+
+        .snapshot-item .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .snapshot-item .value {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 22px;
+            color: var(--navy);
+            margin-top: 4px;
+        }
+
+        .snapshot-item .value .teal {
+            color: var(--teal);
+        }
+        .snapshot-item .value .gold {
+            color: var(--gold);
+        }
+        .snapshot-item .value .red {
+            color: var(--red);
+        }
+        .snapshot-item .value .green {
+            color: var(--green);
+        }
+
+        /* ================================================
+                   COMPETENCY BARS
+                   ================================================ */
+        .comp-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 12px 0;
+        }
+
+        .comp-row .comp-label {
+            font-weight: 600;
+            width: 130px;
+            font-size: 14px;
+        }
+
+        .comp-row .comp-bar-track {
+            flex: 1;
+            height: 22px;
+            background: var(--gray-light);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .comp-row .comp-bar-fill {
+            height: 100%;
+            border-radius: 20px;
+            width: 0%;
+            transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            background: var(--teal);
+        }
+
+        .comp-row .comp-bar-fill.teal {
+            background: var(--teal);
+        }
+        .comp-row .comp-bar-fill.green {
+            background: var(--green);
+        }
+        .comp-row .comp-bar-fill.yellow {
+            background: var(--yellow);
+        }
+        .comp-row .comp-bar-fill.orange {
+            background: #F97316;
+        }
+        .comp-row .comp-bar-fill.red {
+            background: var(--red);
+        }
+
+        .comp-row .comp-score {
+            font-weight: 700;
+            font-size: 15px;
+            min-width: 52px;
+            text-align: right;
+        }
+
+        .comp-row .comp-level {
+            font-size: 13px;
+            color: var(--gray);
+            min-width: 110px;
+            text-align: right;
+        }
+
+        /* ================================================
+                   TABLES
+                   ================================================ */
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .premium-table thead th {
+            background: var(--navy);
+            color: var(--white);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+        }
+
+        .premium-table tbody td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .premium-table tbody tr:nth-child(even) {
+            background: #FAFBFC;
+        }
+
+        .premium-table tbody tr:hover {
+            background: var(--teal-light);
+        }
+
+        .premium-table tfoot td {
+            background: var(--teal);
+            color: var(--white);
+            font-weight: 700;
+            padding: 12px 16px;
+        }
+
+        /* ================================================
+                   BLURRED SECTIONS (locked state)
+                   ================================================ */
+        .blurred-section {
+            filter: blur(6px);
+            user-select: none;
+            pointer-events: none;
+            opacity: 0.6;
+            transition: filter 0.5s ease, opacity 0.5s ease;
+        }
+
+        .blurred-section .card,
+        .blurred-section .comp-row,
+        .blurred-section .premium-table {
+            filter: blur(6px);
+        }
+
+        /* ================================================
+                   PAYMENT BOX
+                   ================================================ */
+        .payment-box {
+            text-align: center;
+            padding: 32px 28px;
+            background: var(--gold-light);
+            border-radius: var(--radius);
+            border: 2px solid var(--gold);
+            margin: 28px 0;
+        }
+
+        .payment-box h3 {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 22px;
+            color: var(--navy);
+        }
+
+        .payment-box h3 i {
+            color: var(--gold);
+            margin-right: 10px;
+        }
+
+        .payment-box p {
+            color: var(--gray);
+            margin: 8px 0 18px;
+            font-size: 15px;
+        }
+
+        .btn-pay {
+            background: var(--teal);
+            color: var(--white);
+            border: none;
+            padding: 14px 48px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: var(--font-heading);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 8px 24px rgba(0, 196, 167, 0.35);
+        }
+
+        .btn-pay:hover {
+            background: var(--teal-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 196, 167, 0.45);
+        }
+
+        .btn-pay i {
+            margin-right: 10px;
+        }
+
+        .btn-download {
+            background: var(--navy);
+            color: var(--white);
+            border: none;
+            padding: 14px 48px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: var(--font-heading);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 8px 24px rgba(11, 15, 26, 0.3);
+        }
+
+        .btn-download:hover {
+            background: var(--navy-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-download i {
+            margin-right: 10px;
+        }
+
+        .unlock-badge {
+            display: none;
+            background: #D1FAE5;
+            color: #065F46;
+            padding: 14px 24px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 16px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .unlock-badge i {
+            margin-right: 10px;
+        }
+
+        /* ================================================
+                   PERSONA CARD
+                   ================================================ */
+        .persona-card {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(145deg, var(--teal-light), var(--white));
+            border-radius: var(--radius);
+            border: 1px solid var(--teal);
+        }
+
+        .persona-card .emoji {
+            font-size: 64px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .persona-card .name {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 28px;
+            color: var(--navy);
+        }
+
+        .persona-card .desc {
+            color: var(--gray);
+            max-width: 500px;
+            margin: 8px auto 0;
+            font-size: 15px;
+        }
+
+        .journey-steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            margin: 16px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .journey-steps .step {
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--gray-light);
+        }
+
+        .journey-steps .step.active {
+            background: var(--teal);
+            color: var(--white);
+        }
+
+        .journey-steps .arrow {
+            color: var(--gray);
+        }
+
+        /* ================================================
+                   TAX TRIGGER CARDS
+                   ================================================ */
+        .trigger-card {
+            border-left: 4px solid var(--red);
+            padding: 18px 22px;
+            background: #FEF2F2;
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+        }
+
+        .trigger-card .trigger-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--red);
+        }
+
+        .trigger-card .trigger-competency {
+            font-size: 14px;
+            color: var(--navy);
+            font-weight: 600;
+        }
+
+        .trigger-card .trigger-tax {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .trigger-card .trigger-desc {
+            margin: 6px 0 10px;
+            font-size: 14px;
+            color: var(--navy);
+        }
+
+        .trigger-card .trigger-fix {
+            background: var(--white);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            border: 1px solid #E5E7EB;
+        }
+
+        .trigger-card .trigger-fix i {
+            color: var(--teal);
+            margin-right: 6px;
+        }
+
+        /* ================================================
+                   INSIGHT CARDS
+                   ================================================ */
+        .insight-card {
+            padding: 18px 22px;
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            border: 1px solid #E5E7EB;
+            margin-bottom: 14px;
+            transition: var(--transition);
+        }
+
+        .insight-card:hover {
+            border-color: var(--teal);
+            box-shadow: var(--shadow);
+        }
+
+        .insight-card .insight-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--navy);
+        }
+
+        .insight-card .insight-title i {
+            color: var(--teal);
+            margin-right: 8px;
+        }
+
+        .insight-card .insight-text {
+            font-size: 14px;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        /* ================================================
+                   EXERCISE / FRAMEWORK CARDS
+                   ================================================ */
+        .exercise-card,
+        .framework-card {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            border: 1px solid #E5E7EB;
+            padding: 18px 22px;
+            margin-bottom: 14px;
+            transition: var(--transition);
+        }
+
+        .exercise-card:hover,
+        .framework-card:hover {
+            border-color: var(--teal);
+            box-shadow: var(--shadow);
+        }
+
+        .exercise-card .ex-title,
+        .framework-card .fw-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--navy);
+        }
+
+        .exercise-card .ex-title i,
+        .framework-card .fw-title i {
+            color: var(--teal);
+            margin-right: 8px;
+        }
+
+        .exercise-card .ex-goal,
+        .framework-card .fw-desc {
+            font-size: 14px;
+            color: var(--gray);
+            margin: 4px 0 8px;
+        }
+
+        .exercise-card .ex-steps,
+        .framework-card .fw-steps {
+            font-size: 14px;
+            padding-left: 20px;
+            color: var(--navy);
+        }
+
+        .exercise-card .ex-meta {
+            font-size: 13px;
+            color: var(--gray);
+            margin-top: 6px;
+        }
+
+        .exercise-card .ex-meta i {
+            margin-right: 4px;
+            color: var(--teal);
+        }
+
+        /* ================================================
+                   ROADMAP
+                   ================================================ */
+        .roadmap-week {
+            background: var(--gray-light);
+            border-radius: var(--radius-sm);
+            padding: 18px 22px;
+            margin-bottom: 14px;
+            border-left: 4px solid var(--teal);
+        }
+
+        .roadmap-week .week-title {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--navy);
+        }
+
+        .roadmap-week .week-goal {
+            font-size: 14px;
+            color: var(--gray);
+            margin: 4px 0 8px;
+        }
+
+        .roadmap-week .week-actions {
+            font-size: 14px;
+            padding-left: 20px;
+            color: var(--navy);
+        }
+
+        .roadmap-week .week-milestone {
+            font-size: 14px;
+            color: var(--teal-dark);
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        /* ================================================
+                   OPTIONS GRID
+                   ================================================ */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .option-card {
+            background: var(--gray-light);
+            border-radius: var(--radius-sm);
+            padding: 20px 16px;
+            text-align: center;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .option-card:hover {
+            border-color: var(--teal);
+        }
+
+        .option-card .opt-icon {
+            font-size: 32px;
+            color: var(--teal);
+            margin-bottom: 6px;
+        }
+
+        .option-card .opt-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--navy);
+        }
+
+        .option-card .opt-desc {
+            font-size: 13px;
+            color: var(--gray);
+            margin: 4px 0 8px;
+        }
+
+        .option-card .opt-price {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--teal);
+        }
+
+        /* ================================================
+                   TESTIMONIAL
+                   ================================================ */
+        .testimonial {
+            background: var(--teal-light);
+            border-radius: var(--radius-sm);
+            padding: 18px 22px;
+            margin: 12px 0;
+            border-left: 4px solid var(--teal);
+        }
+
+        .testimonial .quote {
+            font-size: 15px;
+            font-style: italic;
+            color: var(--navy);
+        }
+
+        .testimonial .author {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        /* ================================================
+                   FOOTER
+                   ================================================ */
+        .report-footer {
+            background: var(--navy);
+            color: rgba(255, 255, 255, 0.6);
+            padding: 30px 40px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .report-footer .brand {
+            color: var(--teal);
+            font-weight: 800;
+            font-size: 18px;
+            font-family: var(--font-heading);
+        }
+
+        .report-footer .brand i {
+            margin-right: 6px;
+        }
+
+        .report-footer .links {
+            margin: 8px 0;
+        }
+
+        .report-footer .links a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            margin: 0 12px;
+            transition: var(--transition);
+        }
+
+        .report-footer .links a:hover {
+            color: var(--teal);
+        }
+
+        .report-footer .copy {
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        /* ================================================
+                   RESPONSIVE
+                   ================================================ */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .report-page {
+                padding: 24px 18px;
+            }
+            .cover-page {
+                padding: 30px 18px;
+                min-height: auto;
+            }
+            .cover-logo {
+                font-size: 28px;
+            }
+            .cover-title {
+                font-size: 24px;
+            }
+            .cover-subtitle {
+                font-size: 16px;
+            }
+            .cover-user-box {
+                padding: 16px 20px;
+                width: 100%;
+            }
+            .cover-user-box .user-line {
+                font-size: 14px;
+            }
+            .cover-user-box .user-line strong {
+                width: 80px;
+            }
+            .cover-quote {
+                font-size: 16px;
+            }
+            .sticky-nav {
+                padding: 10px 16px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .nav-links {
+                justify-content: center;
+                gap: 4px 10px;
+            }
+            .nav-links a {
+                font-size: 10px;
+            }
+            .section-header h2 {
+                font-size: 20px;
+            }
+            .comp-row {
+                flex-wrap: wrap;
+                gap: 6px 10px;
+            }
+            .comp-row .comp-label {
+                width: 100%;
+            }
+            .comp-row .comp-level {
+                min-width: auto;
+                text-align: left;
+            }
+            .snapshot-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .premium-table {
+                font-size: 12px;
+            }
+            .premium-table thead th,
+            .premium-table tbody td {
+                padding: 6px 8px;
+            }
+            .btn-pay,
+            .btn-download {
+                padding: 12px 28px;
+                font-size: 16px;
+                width: 100%;
+            }
+            .journey-steps {
+                font-size: 12px;
+                gap: 4px 8px;
+            }
+            .report-footer {
+                padding: 20px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .snapshot-grid {
+                grid-template-columns: 1fr;
+            }
+            .cover-logo {
+                font-size: 22px;
+            }
+            .cover-title {
+                font-size: 20px;
+            }
+        }
+
+        /* ================================================
+                   PRINT STYLES
+                   ================================================ */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .report-wrapper {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .sticky-nav {
+                display: none;
+            }
+            .report-page {
+                padding: 40px 50px;
+                page-break-after: always;
+                border-bottom: none;
+            }
+            .cover-page {
+                min-height: 100vh;
+                page-break-after: always;
+            }
+            .card,
+            .trigger-card,
+            .insight-card,
+            .exercise-card,
+            .framework-card {
+                box-shadow: none;
+                border: 1px solid #E5E7EB;
+            }
+            .btn-pay,
+            .btn-download,
+            .payment-box {
+                display: none !important;
+            }
+            .unlock-badge {
+                display: none !important;
+            }
+            .blurred-section {
+                filter: none !important;
+                user-select: auto !important;
+                pointer-events: auto !important;
+                opacity: 1 !important;
+            }
+            .blurred-section .card,
+            .blurred-section .comp-row,
+            .blurred-section .premium-table {
+                filter: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="report-container" id="reportContainer">
-  <!-- Watermark -->
-  <div class="watermark">PREVIEW</div>
-  
-  <!-- Content -->
-  <div id="reportContent">
-    <div class="loading">
-      <div class="loading-spinner"></div>
-      <p>Loading your report...</p>
-    </div>
-  </div>
-</div>
+    <div class="report-wrapper" id="reportContainer">
 
-<script>
-  // ============================================================
-  // CONFIGURATION
-  // ============================================================
-  
-  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8LTKljYm34158-yH_-h9SLmMZwAdsBfgfKpCDPU8JitHT9li7yMgxIoRSggQu1fEp/exec' // ← REPLACE THIS
-  var RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID'; // ← REPLACE THIS
-  
-  // Get submission ID from URL
-  var urlParams = new URLSearchParams(window.location.search);
-  var submissionId = urlParams.get('id');
-  var paymentId = urlParams.get('payment_id');
-  
-  // ============================================================
-  // MAIN: LOAD REPORT
-  // ============================================================
-  
-  async function loadReport() {
-    if (!submissionId) {
-      document.getElementById('reportContent').innerHTML = `
-        <div style="text-align: center; padding: 40px; color: #991B1B;">
-          <h3>⚠️ Missing Submission ID</h3>
-          <p>Please add <code>?id=YOUR_SUBMISSION_ID</code> to the URL.</p>
+        <!-- ============================================
+        STICKY NAVIGATION
+        ============================================ -->
+        <nav class="sticky-nav" id="stickyNav">
+            <div class="brand"><i class="fas fa-brain"></i> THE UNSPOKEN</div>
+            <div class="nav-links" id="navLinks">
+                <a href="#page-cover"><span class="page-num">01</span> Cover</a>
+                <a href="#page-summary"><span class="page-num">02</span> Summary</a>
+                <a href="#page-persona"><span class="page-num">03</span> Persona</a>
+                <a href="#page-scores"><span class="page-num">04</span> Scores</a>
+                <a href="#page-thinking"><span class="page-num">05</span> Thinking</a>
+                <a href="#page-structure"><span class="page-num">06</span> Structure</a>
+                <a href="#page-communication"><span class="page-num">07</span> Communication</a>
+                <a href="#page-understanding"><span class="page-num">08</span> Understanding</a>
+                <a href="#page-opportunity"><span class="page-num">09</span> Opportunity</a>
+                <a href="#page-triggers"><span class="page-num">10</span> Triggers</a>
+                <a href="#page-insights"><span class="page-num">11</span> Insights</a>
+                <a href="#page-frameworks"><span class="page-num">12</span> Frameworks</a>
+                <a href="#page-exercises"><span class="page-num">13</span> Exercises</a>
+                <a href="#page-roadmap"><span class="page-num">14</span> Roadmap</a>
+                <a href="#page-next"><span class="page-num">15</span> Next</a>
+            </div>
+        </nav>
+
+        <!-- ============================================
+        PAGE 1: COVER
+        ============================================ -->
+        <section class="report-page cover-page" id="page-cover">
+            <div class="cover-logo"><i class="fas fa-brain"></i> THE UNSPOKEN</div>
+            <div class="cover-title">COMMUNICATION TAX™</div>
+            <div class="cover-subtitle">INTELLIGENCE REPORT</div>
+            <div class="cover-divider"></div>
+            <div class="cover-user-box">
+                <div class="user-line"><strong>Prepared For:</strong> <span id="displayName">John Doe</span></div>
+                <div class="user-line"><strong>Designation:</strong> <span id="displayRole">Senior Analyst</span></div>
+                <div class="user-line"><strong>Date:</strong> <span id="displayDate">07 Aug 2026</span></div>
+            </div>
+            <div class="cover-quote">
+                "Your value is worth millions. Don't lose lakhs in translation."
+            </div>
+            <div class="cover-footer">
+                CONFIDENTIAL &amp; PERSONALIZED &nbsp;·&nbsp; <span>© The Unspoken</span>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 2: EXECUTIVE SUMMARY
+        ============================================ -->
+        <section class="report-page" id="page-summary">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-file-alt"></i></span>
+                <h2>Executive Summary</h2>
+                <span class="badge">Your Snapshot</span>
+            </div>
+
+            <p style="font-size: 16px; color: var(--gray); margin-bottom: 20px;">
+                Dear <strong id="summaryName">John Doe</strong>,
+            </p>
+            <p style="font-size: 15px; color: var(--navy); margin-bottom: 24px; line-height: 1.7;">
+                This report is your personalized Communication Tax™ Assessment. It reveals exactly where you're leaking value,
+                losing money, and missing opportunities. Your communication is costing you approximately
+                <strong id="summaryAnnualTax">₹7,00,000</strong> every year—not because of a lack of knowledge, but because of
+                avoidable communication gaps that reduce your visibility, influence and leadership impact.
+            </p>
+
+            <div class="snapshot-grid">
+                <div class="snapshot-item">
+                    <div class="label">Total Score</div>
+                    <div class="value"><span class="teal" id="snapshotCiScore">67%</span></div>
+                </div>
+                <div class="snapshot-item">
+                    <div class="label">Persona</div>
+                    <div class="value" id="snapshotPersona">The Articulator</div>
+                </div>
+                <div class="snapshot-item">
+                    <div class="label">Annual Tax</div>
+                    <div class="value"><span class="red" id="snapshotAnnualTax">₹7,00,000</span></div>
+                </div>
+                <div class="snapshot-item">
+                    <div class="label">Weakest</div>
+                    <div class="value" id="snapshotWeakest">Communication</div>
+                </div>
+                <div class="snapshot-item">
+                    <div class="label">Strongest</div>
+                    <div class="value" id="snapshotStrongest">Thinking</div>
+                </div>
+            </div>
+
+            <div class="card card-teal">
+                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
+                <p style="font-size: 15px; color: var(--navy);">
+                    Your biggest gap is not a skill gap — it's a <strong>translation gap</strong>.
+                    Your value exists. We just need to translate it better.
+                </p>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
+                    <i class="fas fa-list-check" style="color: var(--teal); margin-right: 8px;"></i>Your Top 3 Priorities
+                </h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 8px 14px; background: var(--gray-light); border-radius: var(--radius-sm); margin-bottom: 6px; font-weight: 600;">
+                        <span style="color: var(--teal);">1.</span> <span id="priority1">Logical Flow (2/4)</span> — Fix this first
+                    </li>
+                    <li style="padding: 8px 14px; background: var(--gray-light); border-radius: var(--radius-sm); margin-bottom: 6px; font-weight: 600;">
+                        <span style="color: var(--teal);">2.</span> <span id="priority2">Interview Conversion (2/4)</span> — Fix this second
+                    </li>
+                    <li style="padding: 8px 14px; background: var(--gray-light); border-radius: var(--radius-sm); margin-bottom: 6px; font-weight: 600;">
+                        <span style="color: var(--teal);">3.</span> <span id="priority3">Completeness of Communication (3/4)</span> — Fix this third
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 3: PERSONA
+        ============================================ -->
+        <section class="report-page" id="page-persona">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-user-tag"></i></span>
+                <h2>Your Communication Persona</h2>
+                <span class="badge">Who You Are</span>
+            </div>
+
+            <div class="persona-card">
+                <span class="emoji" id="personaEmoji">🟢</span>
+                <div class="name" id="personaName">The Articulator</div>
+                <div class="desc" id="personaDesc">
+                    You're clear and confident. Some gaps in translation are costing you momentum.
+                    You communicate well, but nuance is sometimes lost. Your ideas are solid — they just don't always
+                    land with the impact they deserve.
+                </div>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 8px;">Persona Journey</h4>
+                <div class="journey-steps">
+                    <span class="step">🔴 Disconnected</span>
+                    <span class="arrow">→</span>
+                    <span class="step">🟠 Ghost</span>
+                    <span class="arrow">→</span>
+                    <span class="step">🟡 Interpreter</span>
+                    <span class="arrow">→</span>
+                    <span class="step active" id="journeyCurrent">🟢 Articulator</span>
+                    <span class="arrow">→</span>
+                    <span class="step">🟢 Amplifier</span>
+                    <span class="arrow">→</span>
+                    <span class="step">🟢 Translator</span>
+                </div>
+                <div style="text-align: center; font-size: 14px; color: var(--gray);">
+                    <span style="font-weight: 600;">You are here:</span> <span id="journeyYouAre" style="color: var(--teal); font-weight: 700;">The Articulator</span>
+                    &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <span style="font-weight: 600;">Destination:</span> <span id="journeyDestination" style="color: var(--gold); font-weight: 700;">The Translator</span>
+                    &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <span style="font-weight: 600;">The Gap:</span> 4 weeks of coaching
+                </div>
+            </div>
+
+            <div class="card card-gold">
+                <h3><i class="fas fa-arrow-right"></i> Where You Are vs Where You Can Be</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 6px;">
+                    <span style="font-weight: 600;">Where You Are:</span>
+                    <span style="background: var(--gray-light); padding: 4px 16px; border-radius: 20px;" id="whereYouAre">The Articulator</span>
+                    <span style="color: var(--gray);">← You are here</span>
+                    <span style="font-weight: 600;">Where You Can Be:</span>
+                    <span style="background: var(--teal-light); color: var(--teal-dark); padding: 4px 16px; border-radius: 20px; font-weight: 700;">The Translator</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 4: COMPETENCY SCORES
+        ============================================ -->
+        <section class="report-page" id="page-scores">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-chart-simple"></i></span>
+                <h2>Competency Scores</h2>
+                <span class="badge">5 Core Competencies</span>
+            </div>
+
+            <p style="color: var(--gray); margin-bottom: 20px;">Your scores across the 5 core communication competencies:</p>
+
+            <div id="competencyBars">
+                <div class="comp-row">
+                    <span class="comp-label">Thinking</span>
+                    <div class="comp-bar-track">
+                        <div class="comp-bar-fill teal" id="barThinking" style="width: 75%;"></div>
+                    </div>
+                    <span class="comp-score" id="scoreThinking">75%</span>
+                    <span class="comp-level" id="levelThinking">Proficient</span>
+                </div>
+                <div class="comp-row">
+                    <span class="comp-label">Structure</span>
+                    <div class="comp-bar-track">
+                        <div class="comp-bar-fill green" id="barStructure" style="width: 70%;"></div>
+                    </div>
+                    <span class="comp-score" id="scoreStructure">70%</span>
+                    <span class="comp-level" id="levelStructure">Proficient</span>
+                </div>
+                <div class="comp-row">
+                    <span class="comp-label">Communication</span>
+                    <div class="comp-bar-track">
+                        <div class="comp-bar-fill yellow" id="barCommunication" style="width: 54%;"></div>
+                    </div>
+                    <span class="comp-score" id="scoreCommunication">54%</span>
+                    <span class="comp-level" id="levelCommunication">Needs Attention</span>
+                </div>
+                <div class="comp-row">
+                    <span class="comp-label">Understanding</span>
+                    <div class="comp-bar-track">
+                        <div class="comp-bar-fill orange" id="barUnderstanding" style="width: 58%;"></div>
+                    </div>
+                    <span class="comp-score" id="scoreUnderstanding">58%</span>
+                    <span class="comp-level" id="levelUnderstanding">Needs Attention</span>
+                </div>
+                <div class="comp-row">
+                    <span class="comp-label">Opportunity</span>
+                    <div class="comp-bar-track">
+                        <div class="comp-bar-fill teal" id="barOpportunity" style="width: 75%;"></div>
+                    </div>
+                    <span class="comp-score" id="scoreOpportunity">75%</span>
+                    <span class="comp-level" id="levelOpportunity">Proficient</span>
+                </div>
+            </div>
+
+            <!-- Detailed Breakdown Table -->
+            <div style="margin-top: 28px;">
+                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
+                    <i class="fas fa-table" style="color: var(--teal); margin-right: 8px;"></i>Detailed Breakdown
+                </h4>
+                <table class="premium-table" id="breakdownTable">
+                    <thead>
+                        <tr>
+                            <th>Competency</th>
+                            <th>Score</th>
+                            <th>Max Score</th>
+                            <th>Points Below 60%</th>
+                            <th>Annual Tax</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breakdownBody">
+                        <!-- dynamically filled -->
+                    </tbody>
+                    <tfoot id="breakdownFoot">
+                        <!-- dynamically filled -->
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="card card-teal" style="margin-top: 16px;">
+                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
+                <p style="font-size: 15px;">
+                    Your highest score is <strong id="insightHighest">Thinking (75%)</strong> — build on this.
+                    Your lowest score is <strong id="insightLowest">Communication (54%)</strong> — fix this first.
+                </p>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 5: THINKING (Deep Dive)
+        ============================================ -->
+        <section class="report-page" id="page-thinking">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-brain"></i></span>
+                <h2>Section 1: Thinking</h2>
+                <span class="badge">Deep Dive</span>
+            </div>
+
+            <p class="section-sub">💡 "Do you know what you want to say — before you start saying it?"</p>
+
+            <div class="card card-teal">
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <span style="font-weight: 700;">Score: <span id="thinkingScore">75%</span></span>
+                    <span style="font-weight: 700;">Level: <span id="thinkingLevel" style="color: var(--teal);">Proficient</span></span>
+                    <span style="font-weight: 700;">Annual Tax Impact: <span style="color: var(--red);">₹0</span></span>
+                </div>
+            </div>
+
+            <div style="margin: 16px 0;">
+                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
+                    <i class="fas fa-list" style="color: var(--teal); margin-right: 8px;"></i>Sub-Competency Breakdown
+                </h4>
+                <div id="thinkingSubComps">
+                    <!-- dynamically filled -->
+                </div>
+            </div>
+
+            <div class="card card-green">
+                <h3><i class="fas fa-star"></i> Your Strengths in Thinking</h3>
+                <p id="thinkingStrengths">Your message clarity is exceptional. You know what you want to say before you say it. This is why people trust your judgment.</p>
+            </div>
+
+            <div class="card card-red">
+                <h3><i class="fas fa-exclamation-triangle"></i> Your Gaps in Thinking</h3>
+                <p id="thinkingGaps">Your conversational preparation is inconsistent. You don't always prepare for high-stakes conversations, which means you're often caught off guard.</p>
+            </div>
+
+            <div class="card card-gold">
+                <h3><i class="fas fa-lightbulb"></i> 3 Actionable Tips to Improve</h3>
+                <ul style="padding-left: 20px; font-size: 14px; color: var(--navy);">
+                    <li>Before every meeting, write down your ONE message in one sentence.</li>
+                    <li>Pause for 10 seconds before responding to any unexpected question.</li>
+                    <li>Prepare 5 possible questions before every high-stakes conversation.</li>
+                </ul>
+                <p style="margin-top: 10px; font-size: 14px; color: var(--teal-dark); font-weight: 600;">
+                    <i class="fas fa-arrow-right"></i> Key Insight: Improving this section by just 1 point saves you ₹50,000 annually.
+                </p>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 6: STRUCTURE (Deep Dive)
+        ============================================ -->
+        <section class="report-page" id="page-structure">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-layer-group"></i></span>
+                <h2>Section 2: Structure</h2>
+                <span class="badge">Deep Dive</span>
+            </div>
+
+            <p class="section-sub">🏗️ "Do your ideas land in the order you intended?"</p>
+
+            <div class="card card-teal">
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <span style="font-weight: 700;">Score: <span id="structureScore">70%</span></span>
+                    <span style="font-weight: 700;">Level: <span id="structureLevel" style="color: var(--teal);">Proficient</span></span>
+                    <span style="font-weight: 700;">Annual Tax Impact: <span style="color: var(--red);">₹0</span></span>
+                </div>
+            </div>
+
+            <div style="margin: 16px 0;">
+                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
+                    <i class="fas fa-list" style="color: var(--teal); margin-right: 8px;"></i>Sub-Competency Breakdown
+                </h4>
+                <div id="structureSubComps">
+                    <!-- dynamically filled -->
+                </div>
+            </div>
+
+            <div class="card card-green">
+                <h3><i class="fas fa-star"></i> Your Strengths in Structure</h3>
+                <p id="structureStrengths">You have good structure, but sometimes lose the thread. Your logic is sound — your delivery needs to match.</p>
+            </div>
+
+            <div class="card card-red">
+                <h3><i class="fas fa-exclamation-triangle"></i> Your Gaps in Structure</h3>
+                <p id="structureGaps">Your ideas are strong, but your structure is weak. Your audience has to work hard to follow you — and most won't.</p>
+            </div>
+
+            <div class="card card-gold">
+                <h3><i class="fas fa-lightbulb"></i> 3 Actionable Tips to Improve</h3>
+                <ul style="padding-left: 20px; font-size: 14px; color: var(--navy);">
+                    <li>Start every email with your main point first.</li>
+                    <li>Use the Problem → Solution → Outcome framework.</li>
+                    <li>Before speaking, ask: "What's the one thing I want them to remember?"</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 7: COMMUNICATION (Deep Dive)
+        ============================================ -->
+        <section class="report-page" id="page-communication">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-comment-dots"></i></span>
+                <h2>Section 3: Communication</h2>
+                <span class="badge">Deep Dive</span>
+            </div>
+
+            <p class="section-sub">🗣️ "Does your delivery match the quality of your thinking?"</p>
+
+            <div class="card card-teal">
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <span style="font-weight: 700;">Score: <span id="communicationScore">54%</span></span>
+                    <span style="font-weight: 700;">Level: <span id="communicationLevel" style="color: var(--yellow);">Needs Attention</span></span>
+                    <span style="font-weight: 700;">Annual Tax Impact: <span style="color: var(--red);">₹6,00,000</span></span>
+                </div>
+            </div>
+
+            <div style="margin: 16px 0;">
+                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
+                    <i class="fas fa-list" style="color: var(--teal); margin-right: 8px;"></i>Sub-Competency Breakdown
+                </h4>
+                <div id="communicationSubComps">
+                    <!-- dynamically filled -->
+                </div>
+            </div>
+
+            <div class="card card-green">
+                <h3><i class="fas fa-star"></i> Your Strengths in Communication</h3>
+                <p id="communicationStrengths">You're a master translator. You adapt complex ideas to any audience. This is why you're trusted as a communicator.</p>
+            </div>
+
+            <div class="card card-red">
+                <h3><i class="fas fa-exclamation-triangle"></i> Your Gaps in Communication</h3>
+                <p id="communicationGaps">Your communication is often incomplete. You leave gaps that others have to fill — and it's costing you credibility.</p>
+            </div>
+
+            <div class="card card-gold">
+                <h3><i class="fas fa-lightbulb"></i> 3 Actionable Tips to Improve</h3>
+                <ul style="padding-left: 20px; font-size: 14px; color: var(--navy);">
+                    <li>Translate everything into simple language. If a 10-year-old can't understand it, rewrite it.</li>
+                    <li>Before sending any email, read it once from the receiver's perspective.</li>
+                    <li>Always state what you want the person to do or decide.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 8: UNDERSTANDING (Deep Dive)
+        ============================================ -->
+        <section class="report-page" id="page-understanding">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-ears"></i></span>
+                <h2>Section 4: Understanding</h2>
+                <span class="badge">Deep Dive</span>
+            </div>
+
+            <p class="section-sub">👂 "Do you read the room — or does the room read you?"</p>
+
+            <div class="card card-teal">
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <span style="font-weight: 700;">Score: <span id="understandingScore">58%</span></span>
+                    <span style="font-weight: 700;">Level: <span id="understandingLevel" style="color: var(--yellow);">Needs Attention</span></span>
+                    <span style="font-weight: 700;">Annual Tax Impact: <span style="color: var(--red);">₹1,00,000</span></span>
+                </div>
+            </div>
+
+            <div style="margin: 16px 0;">
+                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
+                    <i class="fas fa-list" style="color: var(--teal); margin-right: 8px;"></i>Sub-Competency Breakdown
+                </h4>
+                <div id="understandingSubComps">
+                    <!-- dynamically filled -->
+                </div>
+            </div>
+
+            <div class="card card-green">
+                <h3><i class="fas fa-star"></i> Your Strengths in Understanding</h3>
+                <p id="understandingStrengths">Your situational awareness is your superpower. You sense the room and guide it. This makes you magnetic.</p>
+            </div>
+
+            <div class="card card-red">
+                <h3><i class="fas fa-exclamation-triangle"></i> Your Gaps in Understanding</h3>
+                <p id="understandingGaps">You can't adjust in real time. Your conversations go off the rails and you don't even notice until it's too late.</p>
+            </div>
+
+            <div class="card card-gold">
+                <h3><i class="fas fa-lightbulb"></i> 3 Actionable Tips to Improve</h3>
+                <ul style="padding-left: 20px; font-size: 14px; color: var(--navy);">
+                    <li>Before any conversation, ask: Who am I speaking to? What do they care about?</li>
+                    <li>Pause for 5 seconds after someone speaks. It signals you're listening.</li>
+                    <li>Listen for what's NOT being said — their tone, body language, silence.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 9: OPPORTUNITY (Deep Dive)
+        ============================================ -->
+        <section class="report-page" id="page-opportunity">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-rocket"></i></span>
+                <h2>Section 5: Opportunity</h2>
+                <span class="badge">Deep Dive</span>
+            </div>
+
+            <p class="section-sub">🚀 "Are you converting your communication into real career outcomes?"</p>
+
+            <div class="card card-teal">
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <span style="font-weight: 700;">Score: <span id="opportunityScore">75%</span></span>
+                    <span style="font-weight: 700;">Level: <span id="opportunityLevel" style="color: var(--teal);">Proficient</span></span>
+                    <span style="font-weight: 700;">Annual Tax Impact: <span style="color: var(--red);">₹0</span></span>
+                </div>
+            </div>
+
+            <div style="margin: 16px 0;">
+                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
+                    <i class="fas fa-list" style="color: var(--teal); margin-right: 8px;"></i>Sub-Competency Breakdown
+                </h4>
+                <div id="opportunitySubComps">
+                    <!-- dynamically filled -->
+                </div>
+            </div>
+
+            <div class="card card-green">
+                <h3><i class="fas fa-star"></i> Your Strengths in Opportunity</h3>
+                <p id="opportunityStrengths">Your goal clarity is exceptional. You know exactly what you want — and you're going after it.</p>
+            </div>
+
+            <div class="card card-red">
+                <h3><i class="fas fa-exclamation-triangle"></i> Your Gaps in Opportunity</h3>
+                <p id="opportunityGaps">Your interview conversion is weak. You struggle to articulate your worth in interviews.</p>
+            </div>
+
+            <div class="card card-gold">
+                <h3><i class="fas fa-lightbulb"></i> 3 Actionable Tips to Improve</h3>
+                <ul style="padding-left: 20px; font-size: 14px; color: var(--navy);">
+                    <li>Practice your 60-second value pitch every morning.</li>
+                    <li>Structure interview answers as: Challenge → Action → Result.</li>
+                    <li>Map 3 actions you can take this month to increase visibility.</li>
+                </ul>
+                <p style="margin-top: 10px; font-size: 14px; color: var(--teal-dark); font-weight: 600;">
+                    <i class="fas fa-arrow-right"></i> Key Insight: For every point below 60% in Opportunity, you lose ₹1,50,000 annually.
+                </p>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 10: TOP 3 TAX TRIGGERS
+        ============================================ -->
+        <section class="report-page" id="page-triggers">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-fire"></i></span>
+                <h2>Your Top 3 Tax Triggers</h2>
+                <span class="badge">Priority Gaps</span>
+            </div>
+
+            <p style="color: var(--gray); margin-bottom: 20px;">
+                These are your biggest communication gaps — costing you the most money and holding you back from your potential.
+            </p>
+
+            <div id="triggerList">
+                <div class="trigger-card">
+                    <div class="trigger-title"><i class="fas fa-1"></i> Tax Trigger</div>
+                    <div class="trigger-competency">Competency: <span id="trigger1Name">Communication (54%)</span></div>
+                    <div class="trigger-tax">Annual Tax: <span id="trigger1Tax">₹6,00,000</span></div>
+                    <div class="trigger-desc" id="trigger1Desc">
+                        Your biggest gap is Communication. When you explain complex ideas, you don't structure them clearly.
+                        Your audience has to work to follow you — and most won't. This is costing you ₹6 Lakhs annually in lost deals and approvals.
+                    </div>
+                    <div class="trigger-fix"><i class="fas fa-check-circle"></i> <span id="trigger1Fix">Practice the "Translate, Don't Explain" framework daily.</span></div>
+                </div>
+
+                <div class="trigger-card">
+                    <div class="trigger-title"><i class="fas fa-2"></i> Tax Trigger</div>
+                    <div class="trigger-competency">Competency: <span id="trigger2Name">Opportunity (Interview Conversion)</span></div>
+                    <div class="trigger-tax">Annual Tax: <span id="trigger2Tax">₹3,00,000</span></div>
+                    <div class="trigger-desc" id="trigger2Desc">
+                        Your interview conversion rate is low. You struggle to articulate your value under pressure,
+                        which means you're losing out on career-defining opportunities.
+                    </div>
+                    <div class="trigger-fix"><i class="fas fa-check-circle"></i> <span id="trigger2Fix">Practice your 60-second value pitch every morning.</span></div>
+                </div>
+
+                <div class="trigger-card">
+                    <div class="trigger-title"><i class="fas fa-3"></i> Tax Trigger</div>
+                    <div class="trigger-competency">Competency: <span id="trigger3Name">Structure (Logical Flow)</span></div>
+                    <div class="trigger-tax">Annual Tax: <span id="trigger3Tax">₹1,50,000</span></div>
+                    <div class="trigger-desc" id="trigger3Desc">
+                        Your logical flow needs improvement. You start talking and organise as you go — which confuses your audience.
+                        A clear structure would save you ₹1.5 Lakhs annually.
+                    </div>
+                    <div class="trigger-fix"><i class="fas fa-check-circle"></i> <span id="trigger3Fix">Use the Problem → Solution → Outcome framework.</span></div>
+                </div>
+            </div>
+
+            <div class="card card-teal">
+                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
+                <p style="font-size: 15px;">
+                    Fixing just your <strong>#1 tax trigger</strong> saves you the most money — <strong>80% of your total tax</strong>.
+                    Focus here first.
+                </p>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 11: PERSONALIZED INSIGHTS
+        ============================================ -->
+        <section class="report-page" id="page-insights">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-lightbulb"></i></span>
+                <h2>Personalized Insights</h2>
+                <span class="badge">5 Insights</span>
+            </div>
+
+            <p style="color: var(--gray); margin-bottom: 20px;">5 tailored insights based on your specific communication profile:</p>
+
+            <div id="insightsList">
+                <div class="insight-card">
+                    <div class="insight-title"><i class="fas fa-1"></i> Your Biggest Gap</div>
+                    <div class="insight-text" id="insight1Text">
+                        Your ideas are brilliant. Your structure is weak. You're the smartest person in the room,
+                        but no one follows your logic. The result? Your ideas don't get approved. Your career is moving
+                        slower than your potential.
+                    </div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title"><i class="fas fa-2"></i> Your Hidden Strength</div>
+                    <div class="insight-text" id="insight2Text">
+                        Your thinking is exceptional. You have a natural ability to clarify complex ideas.
+                        This is your superpower — and it's why people trust you. If you could match this clarity in
+                        your delivery, you'd be unstoppable.
+                    </div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title"><i class="fas fa-3"></i> Your Quick Win</div>
+                    <div class="insight-text" id="insight3Text">
+                        Your quick win is Structural Self-Awareness. By spending 5 minutes before every meeting to
+                        structure your points, you can immediately improve your clarity. This small shift will save
+                        you ₹75,000 per year.
+                    </div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title"><i class="fas fa-4"></i> Your Career Risk</div>
+                    <div class="insight-text" id="insight4Text">
+                        Your career is at moderate risk. You've been passed over for promotion. Your ideas are
+                        sometimes ignored. If you don't fix this, you could be stuck in the same role for years.
+                    </div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title"><i class="fas fa-5"></i> Your Opportunity</div>
+                    <div class="insight-text" id="insight5Text">
+                        The opportunity is enormous. By fixing your communication gaps, you can: double your CTC,
+                        get promoted in the next cycle, and become a trusted voice in your organisation. The gap is
+                        fixable. The ROI is 1000%. The only question is: will you fix it?
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 12: FRAMEWORK RECOMMENDATIONS
+        ============================================ -->
+        <section class="report-page" id="page-frameworks">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-sitemap"></i></span>
+                <h2>Framework Recommendations</h2>
+                <span class="badge">3 Frameworks</span>
+            </div>
+
+            <p style="color: var(--gray); margin-bottom: 20px;">These frameworks are specifically recommended for your gaps:</p>
+
+            <div id="frameworkList">
+                <div class="framework-card">
+                    <div class="fw-title"><i class="fas fa-1"></i> Headline First Framework</div>
+                    <div class="fw-desc">Lead with your main point, then support it with evidence. This ensures your audience follows you.</div>
+                    <div style="font-size: 14px; color: var(--gray); margin: 4px 0 8px;"><i class="fas fa-clock"></i> Duration: 7 days challenge</div>
+                    <div class="fw-steps">
+                        <strong>How to use:</strong>
+                        <ol style="padding-left: 20px;">
+                            <li>Start every email with your main point first</li>
+                            <li>No context, no preamble — get straight to the point</li>
+                            <li>Support with evidence in the next sentences</li>
+                        </ol>
+                    </div>
+                    <div style="font-size: 14px; color: var(--gray); margin-top: 6px;">
+                        <i class="fas fa-check-circle" style="color: var(--teal);"></i>
+                        <strong>Why it works for you:</strong> Your Logical Flow score is low. This framework will help you structure your ideas clearly.
+                    </div>
+                </div>
+
+                <div class="framework-card">
+                    <div class="fw-title"><i class="fas fa-2"></i> Interview Narrative Framework</div>
+                    <div class="fw-desc">Structure answers using: The Challenge, The Action, The Result.</div>
+                    <div style="font-size: 14px; color: var(--gray); margin: 4px 0 8px;"><i class="fas fa-clock"></i> Duration: 1 hour preparation</div>
+                    <div class="fw-steps">
+                        <strong>How to use:</strong>
+                        <ol style="padding-left: 20px;">
+                            <li>Identify a challenge you faced</li>
+                            <li>Describe the action you took</li>
+                            <li>Explain the result you achieved</li>
+                        </ol>
+                    </div>
+                    <div style="font-size: 14px; color: var(--gray); margin-top: 6px;">
+                        <i class="fas fa-check-circle" style="color: var(--teal);"></i>
+                        <strong>Why it works for you:</strong> Your Interview Conversion score needs improvement. This framework will help you articulate your value in interviews.
+                    </div>
+                </div>
+
+                <div class="framework-card">
+                    <div class="fw-title"><i class="fas fa-3"></i> Completeness-Check Framework</div>
+                    <div class="fw-desc">Before ending any conversation, ask: "Is there anything I haven't covered that you need?"</div>
+                    <div style="font-size: 14px; color: var(--gray); margin: 4px 0 8px;"><i class="fas fa-clock"></i> Duration: 1 minute</div>
+                    <div class="fw-steps">
+                        <strong>How to use:</strong>
+                        <ol style="padding-left: 20px;">
+                            <li>Before ending any conversation, ask the question</li>
+                            <li>Wait for their response</li>
+                            <li>Address any gaps immediately</li>
+                        </ol>
+                    </div>
+                    <div style="font-size: 14px; color: var(--gray); margin-top: 6px;">
+                        <i class="fas fa-check-circle" style="color: var(--teal);"></i>
+                        <strong>Why it works for you:</strong> Your Completeness of Communication score is low. This framework will ensure nothing is left unclear.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-teal">
+                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
+                <p style="font-size: 15px;">
+                    Start with <strong>Framework 1</strong>. It targets your biggest gap and delivers the fastest ROI.
+                </p>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 13: PRACTICE EXERCISES
+        ============================================ -->
+        <section class="report-page" id="page-exercises">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-dumbbell"></i></span>
+                <h2>Practice Exercises</h2>
+                <span class="badge">5 Exercises</span>
+            </div>
+
+            <p style="color: var(--gray); margin-bottom: 20px;">Start practicing immediately with these exercises:</p>
+
+            <div id="exerciseList">
+                <div class="exercise-card">
+                    <div class="ex-title"><i class="fas fa-1"></i> The 1-Minute Clarity Drill</div>
+                    <div class="ex-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve your message clarity</div>
+                    <div class="ex-steps">
+                        <strong>Instructions:</strong>
+                        <ol style="padding-left: 20px;">
+                            <li>Before every meeting, write down your ONE message</li>
+                            <li>Keep it to ONE sentence</li>
+                            <li>Read it out loud before the meeting</li>
+                        </ol>
+                    </div>
+                    <div class="ex-meta">
+                        <i class="fas fa-clock"></i> Duration: 1 minute &nbsp;|&nbsp;
+                        <i class="fas fa-calendar-day"></i> Frequency: Daily, before each meeting
+                    </div>
+                    <div style="font-size: 14px; color: var(--teal-dark); margin-top: 6px;">
+                        <i class="fas fa-lightbulb"></i> Pro Tip: Share your message with someone before the meeting to test if it's clear.
+                    </div>
+                </div>
+
+                <div class="exercise-card">
+                    <div class="ex-title"><i class="fas fa-2"></i> The Headline-First Drill</div>
+                    <div class="ex-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve your logical flow</div>
+                    <div class="ex-steps">
+                        <strong>Instructions:</strong>
+                        <ol style="padding-left: 20px;">
+                            <li>For one week, start every email with your main point</li>
+                            <li>No context, no preamble</li>
+                            <li>Support with evidence in the next sentences</li>
+                        </ol>
+                    </div>
+                    <div class="ex-meta">
+                        <i class="fas fa-clock"></i> Duration: 2 minutes per email &nbsp;|&nbsp;
+                        <i class="fas fa-calendar-day"></i> Frequency: 7 days challenge
+                    </div>
+                </div>
+
+                <div class="exercise-card">
+                    <div class="ex-title"><i class="fas fa-3"></i> The Completeness-Check Drill</div>
+                    <div class="ex-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve your communication completeness</div>
+                    <div class="ex-steps">
+                        <strong>Instructions:</strong>
+                        <ol style="padding-left: 20px;">
+                            <li>Before ending any conversation, ask: "Is there anything I haven't covered?"</li>
+                            <li>Wait for their response</li>
+                            <li>Address any gaps immediately</li>
+                        </ol>
+                    </div>
+                    <div class="ex-meta">
+                        <i class="fas fa-clock"></i> Duration: 1 minute &nbsp;|&nbsp;
+                        <i class="fas fa-calendar-day"></i> Frequency: After every conversation
+                    </div>
+                </div>
+
+                <div class="exercise-card">
+                    <div class="ex-title"><i class="fas fa-4"></i> The 60-Second Pitch Drill</div>
+                    <div class="ex-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve your value articulation</div>
+                    <div class="ex-steps">
+                        <strong>Instructions:</strong>
+                        <ol style="padding-left: 20px;">
+                            <li>Practice your 60-second value pitch every morning</li>
+                            <li>Record yourself and listen back</li>
+                            <li>Refine until it's compelling</li>
+                        </ol>
+                    </div>
+                    <div class="ex-meta">
+                        <i class="fas fa-clock"></i> Duration: 60 seconds &nbsp;|&nbsp;
+                        <i class="fas fa-calendar-day"></i> Frequency: Daily
+                    </div>
+                </div>
+
+                <div class="exercise-card">
+                    <div class="ex-title"><i class="fas fa-5"></i> The Audience Mapping Drill</div>
+                    <div class="ex-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve your audience awareness</div>
+                    <div class="ex-steps">
+                        <strong>Instructions:</strong>
+                        <ol style="padding-left: 20px;">
+                            <li>Before any conversation, write down: Who am I speaking to?</li>
+                            <li>What do they care about?</li>
+                            <li>What's their context?</li>
+                        </ol>
+                    </div>
+                    <div class="ex-meta">
+                        <i class="fas fa-clock"></i> Duration: 3 minutes &nbsp;|&nbsp;
+                        <i class="fas fa-calendar-day"></i> Frequency: Before each meeting
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-teal">
+                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
+                <p style="font-size: 15px;">
+                    Start with <strong>Exercise 1</strong>. It takes 5 minutes and delivers immediate improvement.
+                </p>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 14: 30-DAY ROADMAP
+        ============================================ -->
+        <section class="report-page" id="page-roadmap">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-road"></i></span>
+                <h2>30-Day Roadmap</h2>
+                <span class="badge">4 Weeks</span>
+            </div>
+
+            <p style="color: var(--gray); margin-bottom: 20px;">Your personalized 4-week plan to eliminate your Communication Tax™:</p>
+
+            <div class="roadmap-week">
+                <div class="week-title"><i class="fas fa-1" style="color: var(--teal); margin-right: 8px;"></i> Week 1: Awareness</div>
+                <div class="week-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Identify your patterns</div>
+                <div class="week-actions">
+                    <strong>Daily Actions:</strong>
+                    <ul style="padding-left: 20px;">
+                        <li>Track every important conversation. Note when you lose the room.</li>
+                        <li>Complete Exercise 1: The 1-Minute Clarity Drill</li>
+                        <li>Practice Framework 1: Headline First Framework</li>
+                    </ul>
+                </div>
+                <div class="week-milestone"><i class="fas fa-check-circle"></i> Milestone: Identify your top 3 patterns of communication failure.</div>
+            </div>
+
+            <div class="roadmap-week">
+                <div class="week-title"><i class="fas fa-2" style="color: var(--teal); margin-right: 8px;"></i> Week 2: Thinking &amp; Structure</div>
+                <div class="week-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Fix your thinking and structure gaps</div>
+                <div class="week-actions">
+                    <strong>Daily Actions:</strong>
+                    <ul style="padding-left: 20px;">
+                        <li>Practice "Message First" daily — write your ONE message before every meeting.</li>
+                        <li>Practice "Headline First" — start every email/update with your main point.</li>
+                        <li>Complete Exercise 2: The Headline-First Drill</li>
+                    </ul>
+                </div>
+                <div class="week-milestone"><i class="fas fa-check-circle"></i> Milestone: Your messages become clearer. People start remembering your points.</div>
+            </div>
+
+            <div class="roadmap-week">
+                <div class="week-title"><i class="fas fa-3" style="color: var(--teal); margin-right: 8px;"></i> Week 3: Communication &amp; Understanding</div>
+                <div class="week-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve delivery and audience awareness</div>
+                <div class="week-actions">
+                    <strong>Daily Actions:</strong>
+                    <ul style="padding-left: 20px;">
+                        <li>Practice "Translate, Don't Explain" in every conversation.</li>
+                        <li>Practice "Audience Mapping" before every meeting.</li>
+                        <li>Complete Exercise 3 &amp; 4: The Completeness-Check Drill &amp; The 60-Second Pitch Drill</li>
+                    </ul>
+                </div>
+                <div class="week-milestone"><i class="fas fa-check-circle"></i> Milestone: Your value starts landing. People begin seeing your potential.</div>
+            </div>
+
+            <div class="roadmap-week">
+                <div class="week-title"><i class="fas fa-4" style="color: var(--teal); margin-right: 8px;"></i> Week 4: Opportunity &amp; Integration</div>
+                <div class="week-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Convert your new skills into real outcomes</div>
+                <div class="week-actions">
+                    <strong>Daily Actions:</strong>
+                    <ul style="padding-left: 20px;">
+                        <li>Practice "Value Articulation" daily — your 60-second pitch.</li>
+                        <li>Apply all frameworks in real conversations.</li>
+                        <li>Complete Exercise 5: The Audience Mapping Drill</li>
+                    </ul>
+                </div>
+                <div class="week-milestone"><i class="fas fa-check-circle"></i> Milestone: Your interviews, promotions, and deals start converting.</div>
+            </div>
+
+            <div class="card card-teal">
+                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
+                <p style="font-size: 15px;">
+                    The most important week is <strong>Week 1</strong>. Get the awareness right, and everything else follows.
+                </p>
+            </div>
+        </section>
+
+        <!-- ============================================
+        PAGE 15: NEXT STEPS & PROGRAM RECOMMENDATION
+        ============================================ -->
+        <section class="report-page" id="page-next">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-flag-checkered"></i></span>
+                <h2>Next Steps &amp; Program Recommendation</h2>
+                <span class="badge">Your Path Forward</span>
+            </div>
+
+            <p style="font-size: 15px; color: var(--gray); margin-bottom: 20px;">
+                Your Communication Tax™ Assessment is complete. Here's what happens next:
+            </p>
+
+            <div class="card card-teal">
+                <h3><i class="fas fa-rocket"></i> Your Program Recommendation</h3>
+                <p style="font-size: 15px; margin: 8px 0;">
+                    Based on your scores, we recommend:
+                </p>
+                <div style="background: var(--navy); color: var(--white); padding: 18px 24px; border-radius: var(--radius-sm); text-align: center;">
+                    <div style="font-family: var(--font-heading); font-weight: 800; font-size: 22px; color: var(--teal);">
+                        🚀 Professional Program
+                    </div>
+                    <div style="font-size: 18px; font-weight: 600; margin: 4px 0;">₹9,999 — 4 Weeks</div>
+                    <div style="font-size: 14px; color: rgba(255,255,255,0.7);">
+                        Executive Potential Score: 72/100 &nbsp;|&nbsp; Projected Score: 82/100 (+10 points)
+                    </div>
+                    <div style="font-size: 14px; color: var(--teal); font-weight: 600; margin-top: 4px;">
+                        Estimated Tax Reduction: ₹3,10,250/year
+                    </div>
+                </div>
+                <p style="font-size: 15px; margin-top: 12px; color: var(--gray);" id="programDesc">
+                    The Professional Program is perfect for you. Your scores show you're close to the next level — but your
+                    communication gaps are holding you back. In 4 weeks, we'll fix your structure, refine your thinking,
+                    and help you articulate your value. The ROI is 1000%.
+                </p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">Your 3 Options</h4>
+                <div class="options-grid">
+                    <div class="option-card">
+                        <div class="opt-icon"><i class="fas fa-file-pdf"></i></div>
+                        <div class="opt-title">Free Report</div>
+                        <div class="opt-desc">Download your full 15-page PDF. Keep it for reference.</div>
+                        <div class="opt-price">₹0</div>
+                    </div>
+                    <div class="option-card">
+                        <div class="opt-icon"><i class="fas fa-phone"></i></div>
+                        <div class="opt-title">Free 15-Min Call</div>
+                        <div class="opt-desc">Book your slot with Arun to review your report and get a custom roadmap.</div>
+                        <div class="opt-price">₹0</div>
+                    </div>
+                    <div class="option-card" style="border-color: var(--teal);">
+                        <div class="opt-icon"><i class="fas fa-rocket"></i></div>
+                        <div class="opt-title">Join The Program</div>
+                        <div class="opt-desc">Enroll in 4-week coaching program. Start immediately.</div>
+                        <div class="opt-price" style="color: var(--teal);">₹9,999</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAYMENT / UNLOCK SECTION -->
+            <div id="paymentSection">
+                <div class="unlock-badge" id="unlockBadge">
+                    <i class="fas fa-check-circle"></i> Report Unlocked! You can now download the full PDF.
+                </div>
+
+                <div class="payment-box" id="paymentBox">
+                    <h3><i class="fas fa-lock"></i> Unlock Your Full Report</h3>
+                    <p>Get your complete 15-page report with detailed insights, frameworks, and personalized recommendations.</p>
+                    <button class="btn-pay" id="payButton"><i class="fas fa-rupee-sign"></i> Pay ₹999 – Unlock Full Report</button>
+                    <p style="font-size: 12px; color: var(--gray); margin-top: 10px;">
+                        <i class="fas fa-shield-alt"></i> One-time payment. Instant access. 100% satisfaction guaranteed.
+                    </p>
+                </div>
+
+                <div style="text-align: center; margin: 20px 0;">
+                    <button class="btn-download" id="downloadButton" style="display: none;">
+                        <i class="fas fa-download"></i> Download Full Report as PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- THE ₹ LAKH QUESTION -->
+            <div class="card card-gold">
+                <h3><i class="fas fa-calculator"></i> The ₹ Lakh Question</h3>
+                <p style="font-size: 15px; color: var(--navy);">
+                    Your annual Communication Tax is <strong id="finalAnnualTax">₹7,00,000</strong>.
+                    <br>Your program costs <strong>₹9,999</strong>.
+                </p>
+                <div style="font-size: 18px; font-weight: 700; color: var(--teal); margin: 8px 0;">
+                    ₹9,999 vs ₹7,00,000. Do the math.
+                </div>
+                <p style="font-size: 15px; font-style: italic; color: var(--gray);">
+                    The question isn't "can you afford this?" It's "can you afford to keep paying the Communication Tax™?"
+                </p>
+            </div>
+
+            <!-- TESTIMONIALS -->
+            <div style="margin: 20px 0;">
+                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">What Clients Say</h4>
+                <div class="testimonial">
+                    <div class="quote">"After The Unspoken, I cracked Amazon in 4 weeks. I literally doubled my salary."</div>
+                    <div class="author">— Rahul S., Senior Analyst, Bengaluru</div>
+                </div>
+                <div class="testimonial">
+                    <div class="quote">"I'd been passed over for promotion twice. After 4 weeks, I got the promotion and a 30% hike."</div>
+                    <div class="author">— Priya M., Manager, Mumbai</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; font-size: 18px; font-weight: 700; color: var(--teal); margin: 20px 0;">
+                Your value is worth millions. Don't lose lakhs in translation.
+            </div>
+        </section>
+
+        <!-- ============================================
+        REPORT FOOTER
+        ============================================ -->
+        <div class="report-footer">
+            <div class="brand"><i class="fas fa-brain"></i> THE UNSPOKEN</div>
+            <div class="links">
+                <a href="#">theunspoken.co.in</a>
+                <a href="#">@riseeq.k</a>
+                <a href="#">Topmate 5★</a>
+            </div>
+            <div class="copy">
+                © The Unspoken. All rights reserved. Communication Tax™ is a proprietary framework.
+            </div>
         </div>
-      `;
-      return;
-    }
-    
-    try {
-      var response = await fetch(APPS_SCRIPT_URL + '?action=getReportData&id=' + submissionId);
-      var result = await response.json();
-      
-      if (!result.success) {
-        throw new Error(result.error || 'Report not found');
-      }
-      
-      var data = result.data;
-      renderReport(data);
-      
-    } catch (error) {
-      document.getElementById('reportContent').innerHTML = `
-        <div style="text-align: center; padding: 40px; color: #991B1B;">
-          <h3>⚠️ Error Loading Report</h3>
-          <p>${error.message}</p>
-          <p style="font-size: 12px; color: #6B7280;">Please try again or contact support.</p>
-        </div>
-      `;
-    }
-  }
-  
-  // ============================================================
-  // RENDER REPORT
-  // ============================================================
-  
-  function renderReport(data) {
-    var html = '';
-    
-    // ---- HEADER ----
-    html += `
-      <div class="header">
-        <div class="logo">THE UNSPOKEN</div>
-        <div class="report-title">Communication Tax™ Report</div>
-        <div class="user-info">Prepared for: ${data.name} · ${data.role}</div>
-        <div class="user-info">Date: ${new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
-      </div>
-    `;
-    
-    // ---- EXECUTIVE SUMMARY ----
-    var scoreColor = getScoreColor(data.ciScore);
-    var scoreStatus = getScoreStatus(data.ciScore);
-    
-    html += `
-      <div style="margin: 20px 0;">
-        <div class="score-card">
-          <div class="score-label">Communication Intelligence Score</div>
-          <div class="score-number" style="color: ${scoreColor};">${Math.round(data.ciScore * 100)}%</div>
-          <div class="score-status" style="color: ${scoreColor};">${scoreStatus}</div>
-        </div>
-      </div>
-    `;
-    
-    // ---- COMPETENCY SCORES ----
-    html += `
-      <div style="margin: 25px 0;">
-        <h3 style="color: var(--navy); font-size: 18px;">🎯 Competency Scores</h3>
-    `;
-    
-var competencies = [
-  { name: 'Thinking', score: Math.round(data.thinkingPct * 100), level: data.thinkingLevel },
-  { name: 'Structure', score: Math.round(data.structurePct * 100), level: data.structureLevel },
-  { name: 'Communication', score: Math.round(data.communicationPct * 100), level: data.communicationLevel },
-  { name: 'Understanding', score: Math.round(data.understandingPct * 100), level: data.understandingLevel },
-  { name: 'Opportunity', score: Math.round(data.opportunityPct * 100), level: data.opportunityLevel }
-];
-    
-    for (var i = 0; i < competencies.length; i++) {
-      var comp = competencies[i];
-      var fillColor = getFillColor(comp.score);
-      var scoreColorText = getScoreColor(comp.score);
-      html += `
-        <div class="competency-row">
-          <div class="competency-name">${comp.name}</div>
-          <div class="competency-bar">
-            <div class="competency-fill ${fillColor}" style="width: ${comp.score}%;"></div>
-          </div>
-          <div class="competency-score" style="color: ${scoreColorText};">${comp.score}%</div>
-          <div class="competency-level">${comp.level}</div>
-        </div>
-      `;
-    }
-    
-    html += `</div>`;
-    
-    // ---- BLURRED SECTION ----
-    html += `
-      <div class="blurred-section" id="blurredSection">
-        <div style="margin: 25px 0;">
-          <h3 style="color: var(--navy); font-size: 18px;">🔒 Detailed Breakdown</h3>
-          <p style="color: var(--gray); font-size: 13px; margin-bottom: 15px;">This section is blurred until you unlock the full report.</p>
-          
-          <table class="report-table">
-            <thead>
-              <tr>
-                <th>Competency</th>
-                <th style="text-align: center;">Score</th>
-                <th style="text-align: center;">Points Below 60%</th>
-                <th style="text-align: center;">Annual Tax</th>
-              </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    var breakdown = [
-      ['Thinking', data.thinkingPct, Math.max(0, 60 - data.thinkingPct), Math.max(0, 60 - data.thinkingPct) * 50000],
-      ['Structure', data.structurePct, Math.max(0, 60 - data.structurePct), Math.max(0, 60 - data.structurePct) * 75000],
-      ['Communication', data.communicationPct, Math.max(0, 60 - data.communicationPct), Math.max(0, 60 - data.communicationPct) * 100000],
-      ['Understanding', data.understandingPct, Math.max(0, 60 - data.understandingPct), Math.max(0, 60 - data.understandingPct) * 50000],
-      ['Opportunity', data.opportunityPct, Math.max(0, 60 - data.opportunityPct), Math.max(0, 60 - data.opportunityPct) * 150000]
-    ];
-    
-    var totalPoints = 0;
-    var totalTax = 0;
-    
-    for (var i = 0; i < breakdown.length; i++) {
-      var row = breakdown[i];
-      totalPoints += row[2];
-      totalTax += row[3];
-      var pointsColor = row[2] > 0 ? '#EF4444' : '#00C4A7';
-      var pointsWeight = row[2] > 0 ? '700' : '400';
-      html += `
-        <tr>
-          <td style="font-weight: 600;">${row[0]}</td>
-          <td style="text-align: center;">${row[1]}%</td>
-          <td style="text-align: center; color: ${pointsColor}; font-weight: ${pointsWeight};">${row[2] > 0 ? row[2] + '%' : '0%'}</td>
-          <td style="text-align: center;">₹${formatNumber(row[3])}</td>
-        </tr>
-      `;
-    }
-    
-    html += `
-            </tbody>
-            <tfoot>
-              <tr>
-                <td>TOTAL</td>
-                <td style="text-align: center;">${data.ciScore}%</td>
-                <td style="text-align: center;">${totalPoints}%</td>
-                <td style="text-align: center;">₹${formatNumber(totalTax)}</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
-    `;
-    
-    // ---- PERSONALIZED INSIGHTS (Blurred) ----
-    html += `
-      <div class="blurred-section">
-        <div style="margin: 25px 0;">
-          <h3 style="color: var(--navy); font-size: 18px;">💡 Personalized Insights</h3>
-          <p style="color: var(--gray); font-size: 13px; margin-bottom: 15px;">Unlock to see your personalized recommendations.</p>
-          <div style="background: #F9FAFB; padding: 20px; border-radius: 8px; border: 1px solid #E5E7EB;">
-            <p style="color: #6B7280;">🔒 Your biggest gap: <strong>${data.weakestCompetency}</strong></p>
-            <p style="color: #6B7280;">🔒 Your hidden strength: <strong>${data.highestCompetency}</strong></p>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    // ---- PAYMENT BOX / UNLOCKED STATE ----
-    var isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
-    
-    if (isUnlocked) {
-      html += `
-        <div class="unlocked-badge visible">
-          ✅ Report Unlocked! You can now download the full PDF.
-        </div>
-        <div style="text-align: center; margin: 20px 0;">
-          <button class="download-btn" onclick="downloadPDF()">📥 Download Full Report as PDF</button>
-        </div>
-      `;
-    } else {
-      html += `
-        <div class="payment-box">
-          <h3>🔒 Unlock Your Full Report</h3>
-          <p>Get your complete 15-page report with detailed insights, frameworks, and personalized recommendations.</p>
-          <button class="pay-button" onclick="initiatePayment()">Pay ₹999 – Unlock Full Report</button>
-          <p style="font-size: 12px; color: var(--gray); margin-top: 10px;">One-time payment. Instant access. 100% satisfaction guaranteed.</p>
-        </div>
-      `;
-    }
-    
-    // ---- FOOTER ----
-    html += `
-      <div class="footer">
-        © The Unspoken. All rights reserved. Communication Tax™ is a proprietary framework.
-        <br>theunspoken.co.in · @riseeq.k
-      </div>
-    `;
-    
-    document.getElementById('reportContent').innerHTML = html;
-    
-    // If unlocked, remove blur
-    if (isUnlocked) {
-      var blurredElements = document.querySelectorAll('.blurred-section');
-      for (var i = 0; i < blurredElements.length; i++) {
-        blurredElements[i].classList.remove('blurred-section');
-      }
-      document.querySelector('.watermark').textContent = 'UNLOCKED';
-      document.querySelector('.watermark').style.color = 'rgba(0, 196, 167, 0.08)';
-    }
-  }
-  
-  // ============================================================
-  // PAYMENT HANDLER
-  // ============================================================
-  
-  function initiatePayment() {
-    var options = {
-      "key": RAZORPAY_KEY_ID,
-      "amount": 99900,
-      "currency": "INR",
-      "name": "The Unspoken",
-      "description": "Communication Tax™ Full Report",
-      "notes": {
-        "submissionId": submissionId
-      },
-      "handler": function(response) {
-        window.location.href = window.location.pathname + '?id=' + submissionId + '&payment_id=' + response.razorpay_payment_id;
-      }
-    };
-    
-    var rzp = new Razorpay(options);
-    rzp.open();
-  }
-  
-  // ============================================================
-  // PDF DOWNLOAD
-  // ============================================================
-  
-  function downloadPDF() {
-    var element = document.querySelector('.report-container');
-    var opt = {
-      margin: 10,
-      filename: 'Communication_Tax_Report.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().set(opt).from(element).save();
-  }
-  
-  // ============================================================
-  // HELPER FUNCTIONS
-  // ============================================================
-  
-  function getScoreColor(score) {
-    if (score >= 70) return '#00C4A7';
-    if (score >= 50) return '#F59E0B';
-    return '#EF4444';
-  }
-  
-  function getFillColor(score) {
-    if (score >= 70) return 'fill-teal';
-    if (score >= 50) return 'fill-yellow';
-    return 'fill-red';
-  }
-  
-  function getScoreStatus(score) {
-    if (score >= 91) return '🟢 Tax-Free';
-    if (score >= 76) return '🟡 Moderate Tax';
-    if (score >= 51) return '🟠 High Tax';
-    return '🔴 Critical Tax';
-  }
-  
-  function formatNumber(num) {
-    if (!num) return '0';
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  }
-  
-  // ============================================================
-  // INIT
-  // ============================================================
-  
-  // If payment_id exists, mark as unlocked
-  if (paymentId) {
-    sessionStorage.setItem('unlocked_' + submissionId, 'true');
-    if (window.history && window.history.replaceState) {
-      var newUrl = window.location.pathname + '?id=' + submissionId;
-      window.history.replaceState({}, document.title, newUrl);
-    }
-  }
-  
-  // Load the report
-  loadReport();
-</script>
+
+    </div>
+    <!-- end report-wrapper -->
+
+    <!-- ============================================
+    JAVASCRIPT
+    ============================================ -->
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        var APPS_SCRIPT_URL =
+            'https://script.google.com/macros/s/AKfycbx8LTKljYm34158-yH_-h9SLmMZwAdsBfgfKpCDPU8JitHT9li7yMgxIoRSggQu1fEp/exec';
+        var RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID'; // <-- REPLACE THIS
+
+        // Get submission ID from URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var submissionId = urlParams.get('id');
+        var paymentId = urlParams.get('payment_id');
+
+        // ============================================
+        // DATA STORE
+        // ============================================
+        var reportData = null;
+        var isUnlocked = false;
+
+        // ============================================
+        // HELPERS
+        // ============================================
+        function getScoreColor(score) {
+            if (score >= 70) return '#00C4A7';
+            if (score >= 50) return '#F59E0B';
+            return '#EF4444';
+        }
+
+        function getFillClass(score) {
+            if (score >= 70) return 'teal';
+            if (score >= 50) return 'yellow';
+            return 'red';
+        }
+
+        function getScoreStatus(score) {
+            if (score >= 91) return '🟢 Tax-Free';
+            if (score >= 76) return '🟡 Moderate Tax';
+            if (score >= 51) return '🟠 High Tax';
+            return '🔴 Critical Tax';
+        }
+
+        function formatNumber(num) {
+            if (!num) return '0';
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // ============================================
+        // FETCH DATA FROM APPS SCRIPT
+        // ============================================
+        async function fetchReportData() {
+            if (!submissionId) {
+                document.getElementById('reportContainer').innerHTML = `
+                    <div style="padding:60px 20px;text-align:center;font-family:var(--font-body);">
+                        <h2 style="color:#991B1B;">⚠️ Missing Submission ID</h2>
+                        <p style="color:var(--gray);">Please add <code>?id=YOUR_SUBMISSION_ID</code> to the URL.</p>
+                    </div>
+                `;
+                return null;
+            }
+
+            try {
+                var url = APPS_SCRIPT_URL + '?action=getReportData&id=' + encodeURIComponent(submissionId);
+                var response = await fetch(url);
+                var result = await response.json();
+
+                if (result.success && result.data) {
+                    return result.data;
+                } else {
+                    throw new Error(result.error || 'Report not found');
+                }
+            } catch (error) {
+                document.getElementById('reportContainer').innerHTML = `
+                    <div style="padding:60px 20px;text-align:center;font-family:var(--font-body);">
+                        <h2 style="color:#991B1B;">⚠️ Error Loading Report</h2>
+                        <p style="color:var(--gray);">${error.message}</p>
+                        <p style="font-size:12px;color:var(--gray);margin-top:8px;">Please try again or contact support.</p>
+                    </div>
+                `;
+                return null;
+            }
+        }
+
+        // ============================================
+        // RENDER REPORT
+        // ============================================
+        function renderReport(data) {
+            reportData = data;
+
+            // Convert decimals to percentages
+            var ciScore = Math.round(data.ciScore || 0);
+            var thinking = Math.round(data.thinkingPct || 0);
+            var structure = Math.round(data.structurePct || 0);
+            var communication = Math.round(data.communicationPct || 0);
+            var understanding = Math.round(data.understandingPct || 0);
+            var opportunity = Math.round(data.opportunityPct || 0);
+
+            var annualTax = data.annualTax || 0;
+
+            // ---- PERSONAL INFO ----
+            document.getElementById('displayName').textContent = data.name || 'Executive';
+            document.getElementById('displayRole').textContent = data.role || 'Professional';
+            document.getElementById('displayDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit',
+                month: 'short', year: 'numeric' });
+            document.getElementById('summaryName').textContent = data.name || 'Executive';
+            document.getElementById('summaryAnnualTax').textContent = '₹' + formatNumber(annualTax);
+
+            // ---- SNAPSHOT ----
+            document.getElementById('snapshotCiScore').textContent = ciScore + '%';
+            document.getElementById('snapshotPersona').textContent = data.persona || 'The Translator';
+            document.getElementById('snapshotAnnualTax').textContent = '₹' + formatNumber(annualTax);
+            document.getElementById('snapshotWeakest').textContent = data.weakestCompetency || 'Communication';
+            document.getElementById('snapshotStrongest').textContent = data.highestCompetency || 'Thinking';
+
+            // ---- TOP PRIORITIES ----
+            var gaps = data.topGaps || ['No gaps identified', 'No gaps identified', 'No gaps identified'];
+            document.getElementById('priority1').textContent = gaps[0];
+            document.getElementById('priority2').textContent = gaps[1];
+            document.getElementById('priority3').textContent = gaps[2];
+
+            // ---- PERSONA ----
+            var persona = data.persona || 'The Articulator';
+            var personaEmoji = data.personaEmoji || '🟢';
+            document.getElementById('personaEmoji').textContent = personaEmoji;
+            document.getElementById('personaName').textContent = persona;
+            document.getElementById('personaDesc').textContent = data.personaDescription ||
+                "You're clear and confident. Some gaps in translation are costing you momentum.";
+
+            document.getElementById('journeyCurrent').textContent = persona;
+            document.getElementById('journeyYouAre').textContent = persona;
+            document.getElementById('whereYouAre').textContent = persona;
+
+            // ---- COMPETENCY BARS ----
+            var comps = [
+                { id: 'Thinking', score: thinking, level: data.thinkingLevel || 'Proficient' },
+                { id: 'Structure', score: structure, level: data.structureLevel || 'Proficient' },
+                { id: 'Communication', score: communication, level: data.communicationLevel || 'Needs Attention' },
+                { id: 'Understanding', score: understanding, level: data.understandingLevel || 'Needs Attention' },
+                { id: 'Opportunity', score: opportunity, level: data.opportunityLevel || 'Proficient' }
+            ];
+
+            comps.forEach(function(comp) {
+                var barId = 'bar' + comp.id;
+                var scoreId = 'score' + comp.id;
+                var levelId = 'level' + comp.id;
+                var el = document.getElementById(barId);
+                if (el) {
+                    el.style.width = comp.score + '%';
+                    el.className = 'comp-bar-fill ' + getFillClass(comp.score);
+                }
+                document.getElementById(scoreId).textContent = comp.score + '%';
+                var levelEl = document.getElementById(levelId);
+                if (levelEl) {
+                    levelEl.textContent = comp.level;
+                    var color = getScoreColor(comp.score);
+                    levelEl.style.color = color;
+                }
+            });
+
+            // ---- DETAILED BREAKDOWN TABLE ----
+            var breakdownData = [
+                { name: 'Thinking', score: thinking, taxRate: 50000 },
+                { name: 'Structure', score: structure, taxRate: 75000 },
+                { name: 'Communication', score: communication, taxRate: 100000 },
+                { name: 'Understanding', score: understanding, taxRate: 50000 },
+                { name: 'Opportunity', score: opportunity, taxRate: 150000 }
+            ];
+
+            var tbody = document.getElementById('breakdownBody');
+            var totalPoints = 0;
+            var totalTax = 0;
+            tbody.innerHTML = '';
+
+            breakdownData.forEach(function(item) {
+                var pointsBelow = Math.max(0, 60 - item.score);
+                var tax = pointsBelow * item.taxRate;
+                totalPoints += pointsBelow;
+                totalTax += tax;
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${item.name}</strong></td>
+                    <td>${item.score}%</td>
+                    <td>100%</td>
+                    <td style="color:${pointsBelow > 0 ? '#EF4444' : '#00C4A7'};font-weight:${pointsBelow > 0 ? '700' : '400'};">
+                        ${pointsBelow > 0 ? pointsBelow + '%' : '0%'}
+                    </td>
+                    <td>₹${formatNumber(tax)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('breakdownFoot').innerHTML = `
+                <tr>
+                    <td><strong>TOTAL</strong></td>
+                    <td><strong>${ciScore}%</strong></td>
+                    <td><strong>100%</strong></td>
+                    <td><strong>${totalPoints}%</strong></td>
+                    <td><strong>₹${formatNumber(totalTax)}</strong></td>
+                </tr>
+            `;
+
+            // ---- KEY INSIGHTS ----
+            document.getElementById('insightHighest').textContent = data.highestCompetency || 'Thinking (75%)';
+            document.getElementById('insightLowest').textContent = data.weakestCompetency || 'Communication (54%)';
+
+            // ---- SECTION DEEP DIVES: SUB-COMPETENCIES ----
+            var subScores = data.subScores || [];
+            var subCompNames = [
+                'Message Clarity', 'Thought-Expression Alignment', 'Thinking Under Pressure',
+                'Adaptability Under Pressure', 'Conversational Preparation', 'Message Preparation',
+                'Explanation Effectiveness', 'Logical Flow', 'Opening Impact',
+                'Update Clarity', 'Structural Self-Awareness', 'Structural Framing',
+                'Translation Ability', 'Written Clarity', 'Completeness of Communication',
+                'Value Articulation', 'Outcome Orientation', 'Audience Adaptation',
+                'Audience Adaptation (Understanding)', 'Stakeholder EQ', 'Situational Awareness',
+                'Real-Time Adjustment', 'Listening Quality', 'Real-Time Adaptation',
+                'Interview Conversion', 'Client Conversion', 'Idea Conversion',
+                'Promotion Conversion', 'Relationship Diagnosis', 'Goal Clarity'
+            ];
+
+            var sectionMap = {
+                thinking: { start: 0, end: 5, container: 'thinkingSubComps', scoreId: 'thinkingScore',
+                    levelId: 'thinkingLevel', strengths: 'thinkingStrengths', gaps: 'thinkingGaps' },
+                structure: { start: 6, end: 11, container: 'structureSubComps', scoreId: 'structureScore',
+                    levelId: 'structureLevel', strengths: 'structureStrengths', gaps: 'structureGaps' },
+                communication: { start: 12, end: 17, container: 'communicationSubComps', scoreId: 'communicationScore',
+                    levelId: 'communicationLevel', strengths: 'communicationStrengths', gaps: 'communicationGaps' },
+                understanding: { start: 18, end: 23, container: 'understandingSubComps', scoreId: 'understandingScore',
+                    levelId: 'understandingLevel', strengths: 'understandingStrengths', gaps: 'understandingGaps' },
+                opportunity: { start: 24, end: 29, container: 'opportunitySubComps', scoreId: 'opportunityScore',
+                    levelId: 'opportunityLevel', strengths: 'opportunityStrengths', gaps: 'opportunityGaps' }
+            };
+
+            function renderSubComps(sectionKey, sectionData) {
+                var container = document.getElementById(sectionData.container);
+                if (!container) return;
+                container.innerHTML = '';
+                var subNames = subCompNames.slice(sectionData.start, sectionData.end + 1);
+                var scores = subScores.slice(sectionData.start, sectionData.end + 1);
+                for (var i = 0; i < subNames.length; i++) {
+                    var s = scores[i] || 0;
+                    var level = s >= 4 ? 'Exceptional' : s >= 3 ? 'Proficient' : s >= 2 ? 'Developing' : 'Needs Attention';
+                    var color = s >= 3 ? '#00C4A7' : s >= 2 ? '#F59E0B' : '#EF4444';
+                    var div = document.createElement('div');
+                    div.className = 'comp-row';
+                    div.innerHTML = `
+                        <span class="comp-label" style="width:auto;font-weight:400;font-size:13px;">${subNames[i]}</span>
+                        <div class="comp-bar-track" style="flex:0 0 60%;">
+                            <div class="comp-bar-fill ${getFillClass(s*25)}" style="width:${s*25}%;"></div>
+                        </div>
+                        <span style="font-weight:700;font-size:13px;min-width:40px;text-align:right;color:${color};">${s}/4</span>
+                        <span style="font-size:12px;color:${color};min-width:90px;text-align:right;">${level}</span>
+                    `;
+                    container.appendChild(div);
+                }
+            }
+
+            renderSubComps('thinking', sectionMap.thinking);
+            renderSubComps('structure', sectionMap.structure);
+            renderSubComps('communication', sectionMap.communication);
+            renderSubComps('understanding', sectionMap.understanding);
+            renderSubComps('opportunity', sectionMap.opportunity);
+
+            // ---- SECTION SCORES & LEVELS ----
+            document.getElementById('thinkingScore').textContent = thinking + '%';
+            document.getElementById('thinkingLevel').textContent = data.thinkingLevel || 'Proficient';
+            document.getElementById('structureScore').textContent = structure + '%';
+            document.getElementById('structureLevel').textContent = data.structureLevel || 'Proficient';
+            document.getElementById('communicationScore').textContent = communication + '%';
+            document.getElementById('communicationLevel').textContent = data.communicationLevel || 'Needs Attention';
+            document.getElementById('understandingScore').textContent = understanding + '%';
+            document.getElementById('understandingLevel').textContent = data.understandingLevel || 'Needs Attention';
+            document.getElementById('opportunityScore').textContent = opportunity + '%';
+            document.getElementById('opportunityLevel').textContent = data.opportunityLevel || 'Proficient';
+
+            // ---- FINAL ANNUAL TAX ----
+            document.getElementById('finalAnnualTax').textContent = '₹' + formatNumber(annualTax);
+
+            // ---- TRIGGERS ----
+            var triggerNames = ['Communication (54%)', 'Opportunity (Interview Conversion)', 'Structure (Logical Flow)'];
+            var triggerTaxes = ['₹6,00,000', '₹3,00,000', '₹1,50,000'];
+            var triggerDescs = [
+                'Your biggest gap is Communication. When you explain complex ideas, you don\'t structure them clearly. Your audience has to work to follow you — and most won\'t. This is costing you ₹6 Lakhs annually.',
+                'Your interview conversion rate is low. You struggle to articulate your value under pressure, which means you\'re losing out on career-defining opportunities.',
+                'Your logical flow needs improvement. You start talking and organise as you go — which confuses your audience. A clear structure would save you ₹1.5 Lakhs annually.'
+            ];
+            var triggerFixes = [
+                'Practice the "Translate, Don\'t Explain" framework daily.',
+                'Practice your 60-second value pitch every morning.',
+                'Use the Problem → Solution → Outcome framework.'
+            ];
+            for (var i = 0; i < 3; i++) {
+                document.getElementById('trigger' + (i + 1) + 'Name').textContent = triggerNames[i];
+                document.getElementById('trigger' + (i + 1) + 'Tax').textContent = triggerTaxes[i];
+                document.getElementById('trigger' + (i + 1) + 'Desc').textContent = triggerDescs[i];
+                document.getElementById('trigger' + (i + 1) + 'Fix').textContent = triggerFixes[i];
+            }
+
+            // ---- INSIGHTS ----
+            var insights = [
+                'Your ideas are brilliant. Your structure is weak. You\'re the smartest person in the room, but no one follows your logic. The result? Your ideas don\'t get approved. Your career is moving slower than your potential.',
+                'Your thinking is exceptional. You have a natural ability to clarify complex ideas. This is your superpower — and it\'s why people trust you. If you could match this clarity in your delivery, you\'d be unstoppable.',
+                'Your quick win is Structural Self-Awareness. By spending 5 minutes before every meeting to structure your points, you can immediately improve your clarity. This small shift will save you ₹75,000 per year.',
+                'Your career is at moderate risk. You\'ve been passed over for promotion. Your ideas are sometimes ignored. If you don\'t fix this, you could be stuck in the same role for years.',
+                'The opportunity is enormous. By fixing your communication gaps, you can: double your CTC, get promoted in the next cycle, and become a trusted voice in your organisation. The gap is fixable. The ROI is 1000%.'
+            ];
+            for (var i = 0; i < 5; i++) {
+                document.getElementById('insight' + (i + 1) + 'Text').textContent = insights[i];
+            }
+
+            // ---- PAYMENT / UNLOCK STATE ----
+            var isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
+            if (isUnlocked) {
+                document.getElementById('unlockBadge').style.display = 'block';
+                document.getElementById('paymentBox').style.display = 'none';
+                document.getElementById('downloadButton').style.display = 'inline-block';
+                // Remove blur from all blurred sections
+                document.querySelectorAll('.blurred-section').forEach(function(el) {
+                    el.classList.remove('blurred-section');
+                });
+            } else {
+                document.getElementById('unlockBadge').style.display = 'none';
+                document.getElementById('paymentBox').style.display = 'block';
+                document.getElementById('downloadButton').style.display = 'none';
+            }
+
+            // ---- HIDE LOADING ----
+            // (already rendered)
+        }
+
+        // ============================================
+        // PAYMENT HANDLER
+        // ============================================
+        function initiatePayment() {
+            if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID === 'YOUR_RAZORPAY_KEY_ID') {
+                alert('Please set your Razorpay Key ID in the JavaScript configuration.');
+                return;
+            }
+            var options = {
+                key: RAZORPAY_KEY_ID,
+                amount: 99900,
+                currency: 'INR',
+                name: 'The Unspoken',
+                description: 'Communication Tax™ Full Report',
+                prefill: {
+                    email: reportData ? reportData.email : ''
+                },
+                notes: {
+                    submissionId: submissionId
+                },
+                handler: function(response) {
+                    window.location.href = window.location.pathname + '?id=' + submissionId + '&payment_id=' + response
+                    .razorpay_payment_id;
+                },
+                modal: {
+                    ondismiss: function() {
+                        // user closed modal
+                    }
+                }
+            };
+            var rzp = new Razorpay(options);
+            rzp.open();
+        }
+
+        // ============================================
+        // PDF DOWNLOAD
+        // ============================================
+        function downloadPDF() {
+            var element = document.getElementById('reportContainer');
+            var opt = {
+                margin: 10,
+                filename: 'Communication_Tax_Report.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // ============================================
+        // INIT
+        // ============================================
+        async function init() {
+            // Check if already unlocked via session or payment
+            if (paymentId) {
+                sessionStorage.setItem('unlocked_' + submissionId, 'true');
+                // Clean URL
+                if (window.history && window.history.replaceState) {
+                    var newUrl = window.location.pathname + '?id=' + submissionId;
+                    window.history.replaceState({}, document.title, newUrl);
+                }
+            }
+
+            var data = await fetchReportData();
+            if (data) {
+                renderReport(data);
+            }
+
+            // Wire up buttons
+            var payBtn = document.getElementById('payButton');
+            if (payBtn) payBtn.addEventListener('click', initiatePayment);
+
+            var downloadBtn = document.getElementById('downloadButton');
+            if (downloadBtn) downloadBtn.addEventListener('click', downloadPDF);
+
+            // Also add download to any other download buttons (in print)
+            document.querySelectorAll('.btn-download').forEach(function(btn) {
+                btn.addEventListener('click', downloadPDF);
+            });
+        }
+
+        // Run when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+        // Also expose functions globally for inline onclick
+        window.initiatePayment = initiatePayment;
+        window.downloadPDF = downloadPDF;
+    </script>
 
 </body>
 </html>
