@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Communication Tax™ Report</title>
+    <title>Executive Communication Intelligence</title>
 
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
-
-    <!-- Font Awesome 6 (Free) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
@@ -21,35 +19,38 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
     </script>
 
-    <!-- Razorpay Checkout -->
+    <!-- Razorpay -->
     <script src="https://checkout.razorpay.com/v1/checkout.js">
     </script>
 
     <style>
-        /* ================================================
-                   CSS VARIABLES & RESET
-                   ================================================ */
+        /* ============================================================
+                   ROOT & RESET
+                   ============================================================ */
         :root {
             --teal: #00C4A7;
-            --teal-dark: #00A88E;
+            --teal-dark: #009B84;
             --teal-light: #E6F9F5;
-            --navy: #0B0F1A;
+            --navy: #0A0E1A;
             --navy-light: #1A2236;
             --gold: #F5A623;
             --gold-light: #FFFBEB;
-            --gray: #6B7280;
-            --gray-light: #F3F4F6;
             --white: #FFFFFF;
+            --gray-50: #F8FAFC;
+            --gray-100: #F3F4F6;
+            --gray-300: #D1D5DB;
+            --gray-500: #6B7280;
+            --gray-700: #374151;
+            --gray-900: #111827;
             --red: #EF4444;
             --green: #10B981;
             --yellow: #F59E0B;
-            --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            --shadow-dark: 0 20px 60px rgba(0, 0, 0, 0.15);
-            --radius: 16px;
-            --radius-sm: 8px;
-            --transition: 0.3s ease;
-            --font-heading: 'Inter', sans-serif;
-            --font-body: 'Open Sans', sans-serif;
+            --orange: #F97316;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --radius: 20px;
+            --radius-sm: 10px;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         * {
@@ -59,51 +60,46 @@
         }
 
         body {
-            font-family: var(--font-body);
-            background: var(--gray-light);
-            color: var(--navy);
+            font-family: var(--font);
+            background: var(--gray-50);
+            color: var(--gray-900);
             padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
             min-height: 100vh;
         }
 
-        /* ================================================
-                   REPORT CONTAINER
-                   ================================================ */
         .report-wrapper {
             max-width: 1100px;
             width: 100%;
             background: var(--white);
             border-radius: var(--radius);
-            box-shadow: var(--shadow-dark);
+            box-shadow: var(--shadow);
             overflow: hidden;
             position: relative;
         }
 
-        /* ================================================
-                   STICKY NAVIGATION
-                   ================================================ */
+        /* ============================================================
+                   STICKY NAV
+                   ============================================================ */
         .sticky-nav {
             position: sticky;
             top: 0;
             z-index: 100;
             background: var(--navy);
-            padding: 12px 30px;
+            padding: 10px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             border-bottom: 2px solid var(--teal);
         }
 
         .sticky-nav .brand {
             color: var(--teal);
-            font-family: var(--font-heading);
             font-weight: 800;
-            font-size: 18px;
+            font-size: 16px;
             letter-spacing: 1px;
         }
 
@@ -114,163 +110,188 @@
         .nav-links {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px 14px;
+            gap: 4px 12px;
         }
 
         .nav-links a {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.6);
             text-decoration: none;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
-            transition: var(--transition);
-            font-family: var(--font-heading);
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
+            transition: 0.3s;
         }
 
         .nav-links a:hover {
             color: var(--teal);
         }
-
-        .nav-links a .page-num {
+        .nav-links a .num {
             color: var(--teal);
-            margin-right: 3px;
         }
 
-        /* ================================================
+        @media (max-width: 768px) {
+            .sticky-nav {
+                padding: 8px 16px;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .nav-links {
+                justify-content: center;
+            }
+            .nav-links a {
+                font-size: 8px;
+            }
+        }
+
+        /* ============================================================
+                   COVER PAGE — LUXURY
+                   ============================================================ */
+        .cover-page {
+            background: var(--navy);
+            color: var(--white);
+            padding: 60px 50px 50px;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover-page::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 196, 167, 0.08), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .cover-page .top-tag {
+            font-size: 12px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--teal);
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .cover-page .main-title {
+            font-size: 64px;
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            max-width: 700px;
+        }
+
+        .cover-page .main-title span {
+            color: var(--teal);
+        }
+
+        .cover-page .sub-title {
+            font-size: 22px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+
+        .cover-page .divider-line {
+            width: 60px;
+            height: 3px;
+            background: var(--teal);
+            margin: 30px 0 20px;
+            border-radius: 2px;
+        }
+
+        .cover-page .executive-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 40px;
+            margin-top: 10px;
+        }
+
+        .cover-page .executive-box .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+        }
+
+        .cover-page .executive-box .value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .cover-page .confidential-tag {
+            margin-top: auto;
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .cover-page {
+                padding: 40px 24px 30px;
+                min-height: auto;
+            }
+            .cover-page .main-title {
+                font-size: 36px;
+            }
+            .cover-page .sub-title {
+                font-size: 16px;
+            }
+            .cover-page .executive-box .value {
+                font-size: 16px;
+            }
+        }
+
+        /* ============================================================
                    PAGE SECTIONS
-                   ================================================ */
+                   ============================================================ */
         .report-page {
             padding: 50px 60px;
-            border-bottom: 1px solid #E5E7EB;
-            page-break-inside: avoid;
+            border-bottom: 1px solid var(--gray-100);
         }
 
         .report-page:last-child {
             border-bottom: none;
         }
 
-        /* ================================================
-                   COVER PAGE
-                   ================================================ */
-        .cover-page {
-            background: linear-gradient(145deg, var(--white) 0%, var(--teal-light) 100%);
-            text-align: center;
-            padding: 60px 40px 50px;
-            min-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        @media (max-width: 768px) {
+            .report-page {
+                padding: 30px 20px;
+            }
         }
 
-        .cover-logo {
-            font-family: var(--font-heading);
-            font-weight: 900;
-            font-size: 42px;
-            color: var(--teal);
-            letter-spacing: 6px;
-            margin-bottom: 8px;
-        }
-
-        .cover-logo i {
-            margin-right: 10px;
-        }
-
-        .cover-title {
-            font-family: var(--font-heading);
-            font-weight: 800;
-            font-size: 32px;
-            color: var(--navy);
-            margin-bottom: 4px;
-        }
-
-        .cover-subtitle {
-            font-family: var(--font-heading);
-            font-weight: 300;
-            font-size: 20px;
-            color: var(--gray);
-            margin-bottom: 30px;
-            letter-spacing: 2px;
-        }
-
-        .cover-divider {
-            width: 80px;
-            height: 3px;
-            background: var(--teal);
-            margin: 0 auto 30px;
-            border-radius: 2px;
-        }
-
-        .cover-user-box {
-            background: var(--white);
-            padding: 24px 40px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            display: inline-block;
-            text-align: left;
-            margin-bottom: 30px;
-        }
-
-        .cover-user-box .user-line {
-            font-size: 16px;
-            padding: 4px 0;
-            color: var(--navy);
-        }
-
-        .cover-user-box .user-line strong {
-            font-weight: 600;
-            color: var(--navy);
-            width: 110px;
-            display: inline-block;
-        }
-
-        .cover-quote {
-            font-family: var(--font-heading);
-            font-weight: 300;
-            font-size: 20px;
-            font-style: italic;
-            color: var(--teal-dark);
-            max-width: 600px;
-            margin: 10px auto 20px;
-            padding: 0 20px;
-            border-left: 4px solid var(--teal);
-            padding-left: 20px;
-        }
-
-        .cover-footer {
-            margin-top: auto;
-            font-size: 13px;
-            color: var(--gray);
-            letter-spacing: 1px;
-        }
-
-        .cover-footer span {
-            color: var(--teal);
-            font-weight: 600;
-        }
-
-        /* ================================================
+        /* ============================================================
                    SECTION HEADERS
-                   ================================================ */
+                   ============================================================ */
         .section-header {
             display: flex;
             align-items: center;
-            gap: 14px;
-            margin-bottom: 24px;
+            gap: 12px;
+            margin-bottom: 28px;
             border-bottom: 2px solid var(--teal);
             padding-bottom: 12px;
         }
 
         .section-header .icon {
-            font-size: 28px;
+            font-size: 24px;
             color: var(--teal);
         }
 
         .section-header h2 {
-            font-family: var(--font-heading);
+            font-size: 22px;
             font-weight: 800;
-            font-size: 26px;
-            color: var(--navy);
             letter-spacing: -0.5px;
         }
 
@@ -278,260 +299,612 @@
             margin-left: auto;
             background: var(--teal-light);
             color: var(--teal-dark);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             padding: 4px 14px;
             border-radius: 20px;
+            letter-spacing: 0.5px;
         }
 
-        .section-sub {
-            font-size: 16px;
-            color: var(--gray);
-            margin-bottom: 28px;
-            font-style: italic;
-            font-weight: 300;
-        }
-
-        /* ================================================
-                   CARDS
-                   ================================================ */
-        .card {
+        /* ============================================================
+                   CARDS — LUXURY
+                   ============================================================ */
+        .card-premium {
             background: var(--white);
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 24px 28px;
-            margin-bottom: 24px;
-            border: 1px solid #F3F4F6;
-            transition: var(--transition);
+            box-shadow: var(--shadow-light);
+            padding: 28px 32px;
+            margin-bottom: 20px;
+            border: 1px solid var(--gray-100);
+            transition: 0.3s;
         }
 
-        .card:hover {
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.10);
+        .card-premium:hover {
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.08);
         }
 
-        .card-teal {
-            border-left: 4px solid var(--teal);
-        }
-        .card-gold {
-            border-left: 4px solid var(--gold);
-        }
-        .card-navy {
-            border-left: 4px solid var(--navy);
-        }
-        .card-red {
-            border-left: 4px solid var(--red);
-        }
-        .card-green {
-            border-left: 4px solid var(--green);
-        }
-
-        .card h3 {
-            font-family: var(--font-heading);
+        .card-premium .card-title {
+            font-size: 14px;
             font-weight: 700;
-            font-size: 18px;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 1px;
             margin-bottom: 6px;
         }
 
-        .card h3 i {
-            margin-right: 10px;
-            color: var(--teal);
+        .card-premium .card-value {
+            font-size: 38px;
+            font-weight: 900;
+            letter-spacing: -1px;
         }
 
-        /* ================================================
-                   SNAPSHOT GRID
-                   ================================================ */
-        .snapshot-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin: 16px 0;
-        }
-
-        .snapshot-item {
-            background: var(--gray-light);
-            padding: 16px 18px;
-            border-radius: var(--radius-sm);
-            text-align: center;
-        }
-
-        .snapshot-item .label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--gray);
-            font-weight: 600;
-        }
-
-        .snapshot-item .value {
-            font-family: var(--font-heading);
-            font-weight: 800;
-            font-size: 22px;
-            color: var(--navy);
+        .card-premium .card-sub {
+            font-size: 14px;
+            color: var(--gray-500);
             margin-top: 4px;
         }
 
-        .snapshot-item .value .teal {
+        /* ============================================================
+                   SNAPSHOT GRID — EXECUTIVE MRI
+                   ============================================================ */
+        .mri-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 16px 0 24px;
+        }
+
+        .mri-card {
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
+            padding: 20px 18px;
+            text-align: center;
+            border: 1px solid var(--gray-100);
+            transition: 0.3s;
+        }
+
+        .mri-card:hover {
+            border-color: var(--teal);
+        }
+
+        .mri-card .mri-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-500);
+        }
+
+        .mri-card .mri-value {
+            font-size: 32px;
+            font-weight: 900;
+            margin-top: 4px;
+            letter-spacing: -1px;
+        }
+
+        .mri-card .mri-sub {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        .mri-card .teal {
             color: var(--teal);
         }
-        .snapshot-item .value .gold {
+        .mri-card .gold {
             color: var(--gold);
         }
-        .snapshot-item .value .red {
+        .mri-card .red {
             color: var(--red);
         }
-        .snapshot-item .value .green {
+        .mri-card .green {
             color: var(--green);
         }
 
-        /* ================================================
-                   COMPETENCY BARS
-                   ================================================ */
-        .comp-row {
+        /* ============================================================
+                   COMMUNICATION TAX — EMOTIONAL
+                   ============================================================ */
+        .tax-hero {
+            background: linear-gradient(145deg, var(--navy), var(--navy-light));
+            color: var(--white);
+            border-radius: var(--radius);
+            padding: 32px 36px;
+            margin: 16px 0 24px;
+            text-align: center;
+        }
+
+        .tax-hero .tax-label {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .tax-hero .tax-amount {
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--teal);
+            letter-spacing: -2px;
+            margin: 4px 0;
+        }
+
+        .tax-hero .tax-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .tax-hero .tax-breakdown span {
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        @media (max-width: 600px) {
+            .tax-hero .tax-amount {
+                font-size: 36px;
+            }
+            .tax-hero .tax-breakdown {
+                font-size: 12px;
+                gap: 12px;
+            }
+        }
+
+        /* ============================================================
+                   PERSONA — TIMELINE
+                   ============================================================ */
+        .persona-timeline {
             display: flex;
             align-items: center;
-            gap: 14px;
-            margin: 12px 0;
-        }
-
-        .comp-row .comp-label {
-            font-weight: 600;
-            width: 130px;
-            font-size: 14px;
-        }
-
-        .comp-row .comp-bar-track {
-            flex: 1;
-            height: 22px;
-            background: var(--gray-light);
-            border-radius: 20px;
-            overflow: hidden;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 4px 0;
+            margin: 16px 0 20px;
+            padding: 20px 0;
             position: relative;
         }
 
-        .comp-row .comp-bar-fill {
-            height: 100%;
+        .persona-timeline .step {
+            padding: 6px 16px;
             border-radius: 20px;
-            width: 0%;
-            transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-            background: var(--teal);
-        }
-
-        .comp-row .comp-bar-fill.teal {
-            background: var(--teal);
-        }
-        .comp-row .comp-bar-fill.green {
-            background: var(--green);
-        }
-        .comp-row .comp-bar-fill.yellow {
-            background: var(--yellow);
-        }
-        .comp-row .comp-bar-fill.orange {
-            background: #F97316;
-        }
-        .comp-row .comp-bar-fill.red {
-            background: var(--red);
-        }
-
-        .comp-row .comp-score {
-            font-weight: 700;
-            font-size: 15px;
-            min-width: 52px;
-            text-align: right;
-        }
-
-        .comp-row .comp-level {
             font-size: 13px;
-            color: var(--gray);
-            min-width: 110px;
-            text-align: right;
+            font-weight: 600;
+            background: var(--gray-100);
+            color: var(--gray-500);
+            white-space: nowrap;
+            transition: 0.3s;
         }
 
-        /* ================================================
-                   TABLES
-                   ================================================ */
-        .premium-table {
-            width: 100%;
-            border-collapse: collapse;
+        .persona-timeline .step.active {
+            background: var(--teal);
+            color: var(--white);
+            box-shadow: 0 4px 16px rgba(0, 196, 167, 0.35);
+            transform: scale(1.05);
+        }
+
+        .persona-timeline .step .emoji {
+            margin-right: 4px;
+        }
+
+        .persona-timeline .arrow {
+            color: var(--gray-300);
             font-size: 14px;
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-            margin: 12px 0;
+            padding: 0 4px;
         }
 
-        .premium-table thead th {
+        .persona-timeline .you-here {
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--teal);
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .persona-timeline .step {
+                font-size: 10px;
+                padding: 4px 10px;
+            }
+            .persona-timeline .arrow {
+                font-size: 10px;
+            }
+        }
+
+        /* ============================================================
+                   CIRCULAR PROGRESS RINGS
+                   ============================================================ */
+        .rings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+            margin: 16px 0 24px;
+        }
+
+        .ring-item {
+            text-align: center;
+        }
+
+        .ring-item canvas {
+            max-width: 120px;
+            max-height: 120px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .ring-item .ring-label {
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .ring-item .ring-level {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        /* ============================================================
+                   BEHAVIOUR FLOW
+                   ============================================================ */
+        .behaviour-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 12px 0 16px;
+        }
+
+        .behaviour-flow .bf-item {
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            border-left: 3px solid var(--teal);
+        }
+
+        .behaviour-flow .bf-item .bf-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-500);
+        }
+
+        .behaviour-flow .bf-item .bf-text {
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        /* ============================================================
+                   WATERFALL FINANCIAL
+                   ============================================================ */
+        .waterfall {
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
+            padding: 20px 24px;
+            margin: 12px 0 20px;
+        }
+
+        .waterfall .wf-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .waterfall .wf-row:last-child {
+            border-bottom: none;
+        }
+
+        .waterfall .wf-row .wf-label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .waterfall .wf-row .wf-amount {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .waterfall .wf-row .wf-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            margin: 0 16px;
+            overflow: hidden;
+        }
+
+        .waterfall .wf-row .wf-bar .wf-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--teal);
+            transition: width 1s ease;
+        }
+
+        .waterfall .wf-total {
             background: var(--navy);
             color: var(--white);
             padding: 12px 16px;
-            text-align: left;
+            border-radius: var(--radius-sm);
+            display: flex;
+            justify-content: space-between;
             font-weight: 700;
+            font-size: 18px;
+            margin-top: 8px;
+        }
+
+        .waterfall .wf-total .wf-total-amount {
+            color: var(--teal);
+        }
+
+        /* ============================================================
+                   FRAMEWORK PLAYBOOKS
+                   ============================================================ */
+        .playbook {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--gray-100);
+            padding: 18px 22px;
+            margin-bottom: 14px;
+            transition: 0.3s;
+        }
+
+        .playbook:hover {
+            border-color: var(--teal);
+            box-shadow: var(--shadow-light);
+        }
+
+        .playbook .pb-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .playbook .pb-header .pb-title {
+            font-weight: 700;
+            font-size: 17px;
+        }
+
+        .playbook .pb-meta {
+            display: flex;
+            gap: 16px;
             font-size: 13px;
-            letter-spacing: 0.3px;
+            color: var(--gray-500);
         }
 
-        .premium-table tbody td {
-            padding: 10px 16px;
-            border-bottom: 1px solid #F3F4F6;
+        .playbook .pb-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .premium-table tbody tr:nth-child(even) {
-            background: #FAFBFC;
-        }
-
-        .premium-table tbody tr:hover {
-            background: var(--teal-light);
-        }
-
-        .premium-table tfoot td {
-            background: var(--teal);
-            color: var(--white);
+        .playbook .pb-meta .high {
+            color: var(--teal);
             font-weight: 700;
+        }
+        .playbook .pb-meta .medium {
+            color: var(--gold);
+            font-weight: 700;
+        }
+        .playbook .pb-meta .low {
+            color: var(--gray-500);
+            font-weight: 700;
+        }
+
+        .playbook .pb-desc {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin: 6px 0 10px;
+        }
+
+        .playbook .pb-steps {
+            font-size: 14px;
+            padding-left: 20px;
+            color: var(--gray-700);
+        }
+
+        /* ============================================================
+                   ROADMAP — VISUAL
+                   ============================================================ */
+        .roadmap-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .roadmap-visual .rm-week {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .roadmap-visual .rm-week .rm-label {
+            font-weight: 700;
+            font-size: 14px;
+            min-width: 80px;
+        }
+
+        .roadmap-visual .rm-week .rm-track {
+            flex: 1;
+            height: 12px;
+            background: var(--gray-100);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .roadmap-visual .rm-week .rm-track .rm-fill {
+            height: 100%;
+            border-radius: 20px;
+            background: var(--teal);
+            transition: width 1s ease;
+        }
+
+        .roadmap-visual .rm-week .rm-milestone {
+            font-size: 12px;
+            color: var(--gray-500);
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* ============================================================
+                   DNA RADAR PAGE
+                   ============================================================ */
+        .dna-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .dna-grid .dna-chart {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .dna-grid .dna-chart canvas {
+            width: 100%;
+            height: auto;
+        }
+
+        .dna-grid .dna-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .dna-grid .dna-list .dna-item {
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
             padding: 12px 16px;
+            text-align: center;
+            border: 1px solid var(--gray-100);
         }
 
-        /* ================================================
-                   BLURRED SECTIONS (locked state)
-                   ================================================ */
-        .blurred-section {
-            filter: blur(6px);
-            user-select: none;
-            pointer-events: none;
-            opacity: 0.6;
-            transition: filter 0.5s ease, opacity 0.5s ease;
+        .dna-grid .dna-list .dna-item .dna-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-500);
+            font-weight: 600;
         }
 
-        .blurred-section .card,
-        .blurred-section .comp-row,
-        .blurred-section .premium-table {
-            filter: blur(6px);
+        .dna-grid .dna-list .dna-item .dna-value {
+            font-size: 20px;
+            font-weight: 800;
+            margin-top: 2px;
         }
 
-        /* ================================================
-                   PAYMENT BOX
-                   ================================================ */
+        @media (max-width: 768px) {
+            .dna-grid {
+                grid-template-columns: 1fr;
+            }
+            .dna-grid .dna-list {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dna-grid .dna-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============================================================
+                   PROGRAM RECOMMENDATION
+                   ============================================================ */
+        .program-card {
+            background: linear-gradient(145deg, var(--navy), var(--navy-light));
+            color: var(--white);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            text-align: center;
+        }
+
+        .program-card .prog-name {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--teal);
+            letter-spacing: -1px;
+        }
+
+        .program-card .prog-price {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 4px 0;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .program-card .prog-price span {
+            color: var(--white);
+        }
+
+        .program-card .prog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 16px 0 20px;
+        }
+
+        .program-card .prog-grid .pg-item {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+        }
+
+        .program-card .prog-grid .pg-item .pg-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .program-card .prog-grid .pg-item .pg-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--teal);
+        }
+
+        .program-card .prog-desc {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto 16px;
+            line-height: 1.6;
+        }
+
+        /* ============================================================
+                   PAYMENT / UNLOCK
+                   ============================================================ */
         .payment-box {
             text-align: center;
             padding: 32px 28px;
             background: var(--gold-light);
             border-radius: var(--radius);
             border: 2px solid var(--gold);
-            margin: 28px 0;
+            margin: 20px 0;
         }
 
         .payment-box h3 {
-            font-family: var(--font-heading);
+            font-size: 20px;
             font-weight: 800;
-            font-size: 22px;
-            color: var(--navy);
         }
 
         .payment-box h3 i {
             color: var(--gold);
-            margin-right: 10px;
+            margin-right: 8px;
         }
 
         .payment-box p {
-            color: var(--gray);
-            margin: 8px 0 18px;
+            color: var(--gray-500);
+            margin: 8px 0 16px;
             font-size: 15px;
         }
 
@@ -543,16 +916,15 @@
             border-radius: 50px;
             font-size: 18px;
             font-weight: 700;
-            font-family: var(--font-heading);
+            font-family: var(--font);
             cursor: pointer;
-            transition: var(--transition);
+            transition: 0.3s;
             box-shadow: 0 8px 24px rgba(0, 196, 167, 0.35);
         }
 
         .btn-pay:hover {
             background: var(--teal-dark);
             transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(0, 196, 167, 0.45);
         }
 
         .btn-pay i {
@@ -567,10 +939,9 @@
             border-radius: 50px;
             font-size: 18px;
             font-weight: 700;
-            font-family: var(--font-heading);
+            font-family: var(--font);
             cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 8px 24px rgba(11, 15, 26, 0.3);
+            transition: 0.3s;
         }
 
         .btn-download:hover {
@@ -591,321 +962,37 @@
             font-weight: 700;
             font-size: 16px;
             text-align: center;
-            margin: 20px 0;
+            margin: 16px 0;
         }
 
         .unlock-badge i {
             margin-right: 10px;
         }
 
-        /* ================================================
-                   PERSONA CARD
-                   ================================================ */
-        .persona-card {
-            text-align: center;
-            padding: 30px 20px;
-            background: linear-gradient(145deg, var(--teal-light), var(--white));
-            border-radius: var(--radius);
-            border: 1px solid var(--teal);
+        /* ============================================================
+                   BLURRED (locked)
+                   ============================================================ */
+        .blurred-section {
+            filter: blur(6px);
+            user-select: none;
+            pointer-events: none;
+            opacity: 0.6;
+            transition: filter 0.5s, opacity 0.5s;
         }
 
-        .persona-card .emoji {
-            font-size: 64px;
-            display: block;
-            margin-bottom: 8px;
+        .blurred-section .card-premium,
+        .blurred-section .mri-card,
+        .blurred-section .ring-item,
+        .blurred-section .waterfall {
+            filter: blur(6px);
         }
 
-        .persona-card .name {
-            font-family: var(--font-heading);
-            font-weight: 800;
-            font-size: 28px;
-            color: var(--navy);
-        }
-
-        .persona-card .desc {
-            color: var(--gray);
-            max-width: 500px;
-            margin: 8px auto 0;
-            font-size: 15px;
-        }
-
-        .journey-steps {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 6px 12px;
-            margin: 16px 0;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .journey-steps .step {
-            padding: 4px 12px;
-            border-radius: 20px;
-            background: var(--gray-light);
-        }
-
-        .journey-steps .step.active {
-            background: var(--teal);
-            color: var(--white);
-        }
-
-        .journey-steps .arrow {
-            color: var(--gray);
-        }
-
-        /* ================================================
-                   TAX TRIGGER CARDS
-                   ================================================ */
-        .trigger-card {
-            border-left: 4px solid var(--red);
-            padding: 18px 22px;
-            background: #FEF2F2;
-            border-radius: var(--radius-sm);
-            margin-bottom: 16px;
-        }
-
-        .trigger-card .trigger-title {
-            font-weight: 700;
-            font-size: 16px;
-            color: var(--red);
-        }
-
-        .trigger-card .trigger-competency {
-            font-size: 14px;
-            color: var(--navy);
-            font-weight: 600;
-        }
-
-        .trigger-card .trigger-tax {
-            font-size: 14px;
-            color: var(--gray);
-        }
-
-        .trigger-card .trigger-desc {
-            margin: 6px 0 10px;
-            font-size: 14px;
-            color: var(--navy);
-        }
-
-        .trigger-card .trigger-fix {
-            background: var(--white);
-            padding: 8px 14px;
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            border: 1px solid #E5E7EB;
-        }
-
-        .trigger-card .trigger-fix i {
-            color: var(--teal);
-            margin-right: 6px;
-        }
-
-        /* ================================================
-                   INSIGHT CARDS
-                   ================================================ */
-        .insight-card {
-            padding: 18px 22px;
-            background: var(--white);
-            border-radius: var(--radius-sm);
-            border: 1px solid #E5E7EB;
-            margin-bottom: 14px;
-            transition: var(--transition);
-        }
-
-        .insight-card:hover {
-            border-color: var(--teal);
-            box-shadow: var(--shadow);
-        }
-
-        .insight-card .insight-title {
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--navy);
-        }
-
-        .insight-card .insight-title i {
-            color: var(--teal);
-            margin-right: 8px;
-        }
-
-        .insight-card .insight-text {
-            font-size: 14px;
-            color: var(--gray);
-            margin-top: 4px;
-        }
-
-        /* ================================================
-                   EXERCISE / FRAMEWORK CARDS
-                   ================================================ */
-        .exercise-card,
-        .framework-card {
-            background: var(--white);
-            border-radius: var(--radius-sm);
-            border: 1px solid #E5E7EB;
-            padding: 18px 22px;
-            margin-bottom: 14px;
-            transition: var(--transition);
-        }
-
-        .exercise-card:hover,
-        .framework-card:hover {
-            border-color: var(--teal);
-            box-shadow: var(--shadow);
-        }
-
-        .exercise-card .ex-title,
-        .framework-card .fw-title {
-            font-weight: 700;
-            font-size: 16px;
-            color: var(--navy);
-        }
-
-        .exercise-card .ex-title i,
-        .framework-card .fw-title i {
-            color: var(--teal);
-            margin-right: 8px;
-        }
-
-        .exercise-card .ex-goal,
-        .framework-card .fw-desc {
-            font-size: 14px;
-            color: var(--gray);
-            margin: 4px 0 8px;
-        }
-
-        .exercise-card .ex-steps,
-        .framework-card .fw-steps {
-            font-size: 14px;
-            padding-left: 20px;
-            color: var(--navy);
-        }
-
-        .exercise-card .ex-meta {
-            font-size: 13px;
-            color: var(--gray);
-            margin-top: 6px;
-        }
-
-        .exercise-card .ex-meta i {
-            margin-right: 4px;
-            color: var(--teal);
-        }
-
-        /* ================================================
-                   ROADMAP
-                   ================================================ */
-        .roadmap-week {
-            background: var(--gray-light);
-            border-radius: var(--radius-sm);
-            padding: 18px 22px;
-            margin-bottom: 14px;
-            border-left: 4px solid var(--teal);
-        }
-
-        .roadmap-week .week-title {
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--navy);
-        }
-
-        .roadmap-week .week-goal {
-            font-size: 14px;
-            color: var(--gray);
-            margin: 4px 0 8px;
-        }
-
-        .roadmap-week .week-actions {
-            font-size: 14px;
-            padding-left: 20px;
-            color: var(--navy);
-        }
-
-        .roadmap-week .week-milestone {
-            font-size: 14px;
-            color: var(--teal-dark);
-            font-weight: 600;
-            margin-top: 6px;
-        }
-
-        /* ================================================
-                   OPTIONS GRID
-                   ================================================ */
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin: 16px 0;
-        }
-
-        .option-card {
-            background: var(--gray-light);
-            border-radius: var(--radius-sm);
-            padding: 20px 16px;
-            text-align: center;
-            transition: var(--transition);
-            border: 2px solid transparent;
-        }
-
-        .option-card:hover {
-            border-color: var(--teal);
-        }
-
-        .option-card .opt-icon {
-            font-size: 32px;
-            color: var(--teal);
-            margin-bottom: 6px;
-        }
-
-        .option-card .opt-title {
-            font-weight: 700;
-            font-size: 16px;
-            color: var(--navy);
-        }
-
-        .option-card .opt-desc {
-            font-size: 13px;
-            color: var(--gray);
-            margin: 4px 0 8px;
-        }
-
-        .option-card .opt-price {
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--teal);
-        }
-
-        /* ================================================
-                   TESTIMONIAL
-                   ================================================ */
-        .testimonial {
-            background: var(--teal-light);
-            border-radius: var(--radius-sm);
-            padding: 18px 22px;
-            margin: 12px 0;
-            border-left: 4px solid var(--teal);
-        }
-
-        .testimonial .quote {
-            font-size: 15px;
-            font-style: italic;
-            color: var(--navy);
-        }
-
-        .testimonial .author {
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--gray);
-            margin-top: 4px;
-        }
-
-        /* ================================================
+        /* ============================================================
                    FOOTER
-                   ================================================ */
+                   ============================================================ */
         .report-footer {
             background: var(--navy);
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.4);
             padding: 30px 40px;
             text-align: center;
             font-size: 13px;
@@ -914,8 +1001,7 @@
         .report-footer .brand {
             color: var(--teal);
             font-weight: 800;
-            font-size: 18px;
-            font-family: var(--font-heading);
+            font-size: 16px;
         }
 
         .report-footer .brand i {
@@ -927,128 +1013,63 @@
         }
 
         .report-footer .links a {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.3);
             text-decoration: none;
             margin: 0 12px;
-            transition: var(--transition);
+            transition: 0.3s;
         }
 
         .report-footer .links a:hover {
             color: var(--teal);
         }
 
-        .report-footer .copy {
-            font-size: 12px;
-            opacity: 0.6;
-        }
-
-        /* ================================================
+        /* ============================================================
                    RESPONSIVE
-                   ================================================ */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
+                   ============================================================ */
+        @media (max-width: 600px) {
+            .rings-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
             }
-            .report-page {
-                padding: 24px 18px;
+            .ring-item canvas {
+                max-width: 80px;
+                max-height: 80px;
             }
-            .cover-page {
-                padding: 30px 18px;
-                min-height: auto;
+            .mri-grid {
+                grid-template-columns: 1fr 1fr;
             }
-            .cover-logo {
-                font-size: 28px;
+            .waterfall .wf-row {
+                flex-wrap: wrap;
+                gap: 4px;
             }
-            .cover-title {
-                font-size: 24px;
+            .waterfall .wf-row .wf-bar {
+                order: 3;
+                flex-basis: 100%;
+                margin: 4px 0;
             }
-            .cover-subtitle {
-                font-size: 16px;
-            }
-            .cover-user-box {
-                padding: 16px 20px;
-                width: 100%;
-            }
-            .cover-user-box .user-line {
-                font-size: 14px;
-            }
-            .cover-user-box .user-line strong {
-                width: 80px;
-            }
-            .cover-quote {
-                font-size: 16px;
-            }
-            .sticky-nav {
-                padding: 10px 16px;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 6px;
-            }
-            .nav-links {
-                justify-content: center;
-                gap: 4px 10px;
-            }
-            .nav-links a {
-                font-size: 10px;
-            }
-            .section-header h2 {
+            .program-card .prog-name {
                 font-size: 20px;
             }
-            .comp-row {
-                flex-wrap: wrap;
-                gap: 6px 10px;
-            }
-            .comp-row .comp-label {
-                width: 100%;
-            }
-            .comp-row .comp-level {
-                min-width: auto;
-                text-align: left;
-            }
-            .snapshot-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .options-grid {
+            .behaviour-flow {
                 grid-template-columns: 1fr;
-            }
-            .premium-table {
-                font-size: 12px;
-            }
-            .premium-table thead th,
-            .premium-table tbody td {
-                padding: 6px 8px;
-            }
-            .btn-pay,
-            .btn-download {
-                padding: 12px 28px;
-                font-size: 16px;
-                width: 100%;
-            }
-            .journey-steps {
-                font-size: 12px;
-                gap: 4px 8px;
-            }
-            .report-footer {
-                padding: 20px;
-                font-size: 12px;
             }
         }
 
         @media (max-width: 480px) {
-            .snapshot-grid {
+            .rings-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .mri-grid {
                 grid-template-columns: 1fr;
             }
-            .cover-logo {
-                font-size: 22px;
-            }
-            .cover-title {
-                font-size: 20px;
+            .dna-grid .dna-list {
+                grid-template-columns: 1fr 1fr;
             }
         }
 
-        /* ================================================
-                   PRINT STYLES
-                   ================================================ */
+        /* ============================================================
+                   PRINT
+                   ============================================================ */
         @media print {
             body {
                 background: white;
@@ -1068,15 +1089,12 @@
             }
             .cover-page {
                 min-height: 100vh;
-                page-break-after: always;
             }
-            .card,
-            .trigger-card,
-            .insight-card,
-            .exercise-card,
-            .framework-card {
+            .card-premium,
+            .playbook,
+            .waterfall {
                 box-shadow: none;
-                border: 1px solid #E5E7EB;
+                border: 1px solid var(--gray-100);
             }
             .btn-pay,
             .btn-download,
@@ -1092,10 +1110,14 @@
                 pointer-events: auto !important;
                 opacity: 1 !important;
             }
-            .blurred-section .card,
-            .blurred-section .comp-row,
-            .blurred-section .premium-table {
+            .blurred-section .card-premium,
+            .blurred-section .mri-card,
+            .blurred-section .ring-item,
+            .blurred-section .waterfall {
                 filter: none !important;
+            }
+            .dna-grid .dna-chart canvas {
+                max-width: 300px;
             }
         }
     </style>
@@ -1104,257 +1126,246 @@
 
     <div class="report-wrapper" id="reportContainer">
 
-        <!-- ============================================
-        STICKY NAVIGATION
-        ============================================ -->
+        <!-- ============================================================
+        STICKY NAV
+        ============================================================ -->
         <nav class="sticky-nav" id="stickyNav">
-            <div class="brand"><i class="fas fa-brain"></i> THE UNSPOKEN</div>
+            <div class="brand"><i class="fas fa-brain"></i> EXECUTIVE INTELLIGENCE</div>
             <div class="nav-links" id="navLinks">
-                <a href="#page-cover"><span class="page-num">01</span> Cover</a>
-                <a href="#page-summary"><span class="page-num">02</span> Summary</a>
-                <a href="#page-persona"><span class="page-num">03</span> Persona</a>
-                <a href="#page-scores"><span class="page-num">04</span> Scores</a>
-                <a href="#page-thinking"><span class="page-num">05</span> Thinking</a>
-                <a href="#page-structure"><span class="page-num">06</span> Structure</a>
-                <a href="#page-communication"><span class="page-num">07</span> Communication</a>
-                <a href="#page-understanding"><span class="page-num">08</span> Understanding</a>
-                <a href="#page-opportunity"><span class="page-num">09</span> Opportunity</a>
-                <a href="#page-triggers"><span class="page-num">10</span> Triggers</a>
-                <a href="#page-insights"><span class="page-num">11</span> Insights</a>
-                <a href="#page-frameworks"><span class="page-num">12</span> Frameworks</a>
-                <a href="#page-exercises"><span class="page-num">13</span> Exercises</a>
-                <a href="#page-roadmap"><span class="page-num">14</span> Roadmap</a>
-                <a href="#page-next"><span class="page-num">15</span> Next</a>
+                <a href="#page-cover"><span class="num">01</span> Cover</a>
+                <a href="#page-mri"><span class="num">02</span> MRI</a>
+                <a href="#page-tax"><span class="num">03</span> Tax</a>
+                <a href="#page-persona"><span class="num">04</span> Persona</a>
+                <a href="#page-scores"><span class="num">05</span> Scores</a>
+                <a href="#page-thinking"><span class="num">06</span> Thinking</a>
+                <a href="#page-structure"><span class="num">07</span> Structure</a>
+                <a href="#page-communication"><span class="num">08</span> Communication</a>
+                <a href="#page-understanding"><span class="num">09</span> Understanding</a>
+                <a href="#page-opportunity"><span class="num">10</span> Opportunity</a>
+                <a href="#page-dna"><span class="num">11</span> DNA</a>
+                <a href="#page-waterfall"><span class="num">12</span> Financial</a>
+                <a href="#page-frameworks"><span class="num">13</span> Playbooks</a>
+                <a href="#page-roadmap"><span class="num">14</span> Roadmap</a>
+                <a href="#page-next"><span class="num">15</span> Next</a>
             </div>
         </nav>
 
-        <!-- ============================================
-        PAGE 1: COVER
-        ============================================ -->
-        <section class="report-page cover-page" id="page-cover">
-            <div class="cover-logo"><i class="fas fa-brain"></i> THE UNSPOKEN</div>
-            <div class="cover-title">COMMUNICATION TAX™</div>
-            <div class="cover-subtitle">INTELLIGENCE REPORT</div>
-            <div class="cover-divider"></div>
-            <div class="cover-user-box">
-                <div class="user-line"><strong>Prepared For:</strong> <span id="displayName">John Doe</span></div>
-                <div class="user-line"><strong>Designation:</strong> <span id="displayRole">Senior Analyst</span></div>
-                <div class="user-line"><strong>Date:</strong> <span id="displayDate">07 Aug 2026</span></div>
+        <!-- ============================================================
+        PAGE 1: COVER — LUXURY
+        ============================================================ -->
+        <section class="cover-page report-page" id="page-cover">
+            <div class="top-tag">Executive Intelligence · 2026</div>
+            <div class="main-title">
+                COMMUNICATION<br />
+                <span>INTELLIGENCE</span>
             </div>
-            <div class="cover-quote">
-                "Your value is worth millions. Don't lose lakhs in translation."
+            <div class="sub-title">Executive Diagnostic</div>
+            <div class="divider-line"></div>
+
+            <div style="margin-top: 10px;">
+                <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.3);">
+                    Prepared Exclusively For
+                </div>
+                <div style="font-size: 32px; font-weight: 700; margin-top: 4px;" id="coverName">John Smith</div>
+                <div style="font-size: 18px; color: rgba(255,255,255,0.5);" id="coverRole">Director</div>
             </div>
-            <div class="cover-footer">
-                CONFIDENTIAL &amp; PERSONALIZED &nbsp;·&nbsp; <span>© The Unspoken</span>
+
+            <div style="margin-top: 20px; display: flex; gap: 30px; flex-wrap: wrap;">
+                <div>
+                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.2);">
+                        Report Date
+                    </div>
+                    <div style="font-size: 14px; font-weight: 600;" id="coverDate">07 Aug 2026</div>
+                </div>
+                <div>
+                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.2);">
+                        Status
+                    </div>
+                    <div style="font-size: 14px; font-weight: 600; color: var(--teal);">CONFIDENTIAL</div>
+                </div>
             </div>
+
+            <div class="confidential-tag">© The Unspoken · Communication Tax™ · Proprietary</div>
         </section>
 
-        <!-- ============================================
-        PAGE 2: EXECUTIVE SUMMARY
-        ============================================ -->
-        <section class="report-page" id="page-summary">
+        <!-- ============================================================
+        PAGE 2: EXECUTIVE MRI
+        ============================================================ -->
+        <section class="report-page" id="page-mri">
             <div class="section-header">
-                <span class="icon"><i class="fas fa-file-alt"></i></span>
-                <h2>Executive Summary</h2>
-                <span class="badge">Your Snapshot</span>
+                <span class="icon"><i class="fas fa-heart-pulse"></i></span>
+                <h2>Executive MRI</h2>
+                <span class="badge">One Glance</span>
             </div>
 
-            <p style="font-size: 16px; color: var(--gray); margin-bottom: 20px;">
-                Dear <strong id="summaryName">John Doe</strong>,
-            </p>
-            <p style="font-size: 15px; color: var(--navy); margin-bottom: 24px; line-height: 1.7;">
-                This report is your personalized Communication Tax™ Assessment. It reveals exactly where you're leaking value,
-                losing money, and missing opportunities. Your communication is costing you approximately
-                <strong id="summaryAnnualTax">₹7,00,000</strong> every year—not because of a lack of knowledge, but because of
-                avoidable communication gaps that reduce your visibility, influence and leadership impact.
+            <p style="color: var(--gray-500); margin-bottom: 16px; font-size: 15px;">
+                Your communication health at a glance.
             </p>
 
-            <div class="snapshot-grid">
-                <div class="snapshot-item">
-                    <div class="label">Total Score</div>
-                    <div class="value"><span class="teal" id="snapshotCiScore">67%</span></div>
+            <div class="mri-grid">
+                <div class="mri-card">
+                    <div class="mri-label">Overall Score</div>
+                    <div class="mri-value teal" id="mriScore">74%</div>
+                    <div class="mri-sub">Communication Intelligence</div>
                 </div>
-                <div class="snapshot-item">
-                    <div class="label">Persona</div>
-                    <div class="value" id="snapshotPersona">The Articulator</div>
+                <div class="mri-card">
+                    <div class="mri-label">Communication Tax</div>
+                    <div class="mri-value red" id="mriTax">₹7.0 Lakh</div>
+                    <div class="mri-sub">Annual leakage</div>
                 </div>
-                <div class="snapshot-item">
-                    <div class="label">Annual Tax</div>
-                    <div class="value"><span class="red" id="snapshotAnnualTax">₹7,00,000</span></div>
+                <div class="mri-card">
+                    <div class="mri-label">Persona</div>
+                    <div class="mri-value" id="mriPersona" style="font-size:24px;">The Articulator</div>
+                    <div class="mri-sub">Communication style</div>
                 </div>
-                <div class="snapshot-item">
-                    <div class="label">Weakest</div>
-                    <div class="value" id="snapshotWeakest">Communication</div>
-                </div>
-                <div class="snapshot-item">
-                    <div class="label">Strongest</div>
-                    <div class="value" id="snapshotStrongest">Thinking</div>
+                <div class="mri-card">
+                    <div class="mri-label">ROI Potential</div>
+                    <div class="mri-value gold" id="mriROI">4.5x</div>
+                    <div class="mri-sub">If gaps are fixed</div>
                 </div>
             </div>
 
-            <div class="card card-teal">
-                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
-                <p style="font-size: 15px; color: var(--navy);">
-                    Your biggest gap is not a skill gap — it's a <strong>translation gap</strong>.
-                    Your value exists. We just need to translate it better.
+            <div class="card-premium" style="border-left: 4px solid var(--teal);">
+                <div class="card-title">Executive Summary</div>
+                <p style="font-size: 15px; color: var(--gray-700); line-height: 1.7;">
+                    Your <strong>thinking quality</strong> is significantly higher than your <strong>translation ability</strong>.
+                    The result: <span style="color: var(--red); font-weight: 600;">people underestimate your expertise.</span>
+                    You're leaking <strong id="summaryTax">₹7,00,000</strong> annually. The good news?
+                    This is fixable in <strong>4 weeks</strong>.
                 </p>
             </div>
 
-            <div style="margin-top: 20px;">
-                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
-                    <i class="fas fa-list-check" style="color: var(--teal); margin-right: 8px;"></i>Your Top 3 Priorities
-                </h4>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="padding: 8px 14px; background: var(--gray-light); border-radius: var(--radius-sm); margin-bottom: 6px; font-weight: 600;">
-                        <span style="color: var(--teal);">1.</span> <span id="priority1">Logical Flow (2/4)</span> — Fix this first
-                    </li>
-                    <li style="padding: 8px 14px; background: var(--gray-light); border-radius: var(--radius-sm); margin-bottom: 6px; font-weight: 600;">
-                        <span style="color: var(--teal);">2.</span> <span id="priority2">Interview Conversion (2/4)</span> — Fix this second
-                    </li>
-                    <li style="padding: 8px 14px; background: var(--gray-light); border-radius: var(--radius-sm); margin-bottom: 6px; font-weight: 600;">
-                        <span style="color: var(--teal);">3.</span> <span id="priority3">Completeness of Communication (3/4)</span> — Fix this third
-                    </li>
-                </ul>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; border-left: 3px solid var(--red);">
+                    <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--red);">
+                        <i class="fas fa-exclamation-triangle"></i> Biggest Gap
+                    </div>
+                    <div style="font-weight: 600; font-size: 16px;" id="mriBiggestGap">Communication (54%)</div>
+                    <div style="font-size: 13px; color: var(--gray-500);">Translation ability</div>
+                </div>
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; border-left: 3px solid var(--teal);">
+                    <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--teal);">
+                        <i class="fas fa-star"></i> Hidden Strength
+                    </div>
+                    <div style="font-weight: 600; font-size: 16px;" id="mriHiddenStrength">Thinking (75%)</div>
+                    <div style="font-size: 13px; color: var(--gray-500);">Message clarity</div>
+                </div>
             </div>
         </section>
 
-        <!-- ============================================
-        PAGE 3: PERSONA
-        ============================================ -->
+        <!-- ============================================================
+        PAGE 3: COMMUNICATION TAX — EMOTIONAL
+        ============================================================ -->
+        <section class="report-page" id="page-tax">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-coins"></i></span>
+                <h2>Communication Tax</h2>
+                <span class="badge">The Real Cost</span>
+            </div>
+
+            <div class="tax-hero">
+                <div class="tax-label">Estimated Annual Communication Tax</div>
+                <div class="tax-amount" id="taxHeroAmount">₹7,00,000</div>
+                <div class="tax-breakdown">
+                    <span>≈ <span id="taxPerMonth">₹58,333</span> / month</span>
+                    <span>≈ <span id="taxPerDay">₹1,918</span> / day</span>
+                    <span>≈ <span id="taxPerHour">₹80</span> / hour</span>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; text-align: center;">
+                    <div style="font-size: 12px; text-transform: uppercase; color: var(--gray-500); font-weight: 600;">Lost Interviews</div>
+                    <div style="font-size: 24px; font-weight: 800; color: var(--red);" id="taxInterviews">₹3,00,000</div>
+                </div>
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; text-align: center;">
+                    <div style="font-size: 12px; text-transform: uppercase; color: var(--gray-500); font-weight: 600;">Missed Promotions</div>
+                    <div style="font-size: 24px; font-weight: 800; color: var(--orange);" id="taxPromotions">₹1,50,000</div>
+                </div>
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; text-align: center;">
+                    <div style="font-size: 12px; text-transform: uppercase; color: var(--gray-500); font-weight: 600;">Lost Clients</div>
+                    <div style="font-size: 24px; font-weight: 800; color: var(--red);" id="taxClients">₹6,00,000</div>
+                </div>
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; text-align: center;">
+                    <div style="font-size: 12px; text-transform: uppercase; color: var(--gray-500); font-weight: 600;">Team Friction</div>
+                    <div style="font-size: 24px; font-weight: 800; color: var(--yellow);" id="taxTeam">₹50,000</div>
+                </div>
+            </div>
+
+            <div class="card-premium" style="margin-top: 16px; border-left: 4px solid var(--gold);">
+                <div class="card-title">The ₹ Lakh Question</div>
+                <p style="font-size: 15px;">
+                    <strong id="taxQuestion">₹9,999</strong> vs <strong id="taxQuestionAmount">₹7,00,000</strong>.
+                    Do the math.
+                </p>
+            </div>
+        </section>
+
+        <!-- ============================================================
+        PAGE 4: PERSONA — TIMELINE
+        ============================================================ -->
         <section class="report-page" id="page-persona">
             <div class="section-header">
                 <span class="icon"><i class="fas fa-user-tag"></i></span>
-                <h2>Your Communication Persona</h2>
-                <span class="badge">Who You Are</span>
+                <h2>Communication Maturity Journey</h2>
+                <span class="badge">Persona</span>
             </div>
 
-            <div class="persona-card">
-                <span class="emoji" id="personaEmoji">🟢</span>
-                <div class="name" id="personaName">The Articulator</div>
-                <div class="desc" id="personaDesc">
+            <div style="text-align: center; margin-bottom: 12px;">
+                <div style="font-size: 48px;" id="personaEmoji">🟢</div>
+                <div style="font-size: 28px; font-weight: 800;" id="personaName">The Articulator</div>
+                <div style="font-size: 15px; color: var(--gray-500); max-width: 500px; margin: 4px auto;" id="personaDesc">
                     You're clear and confident. Some gaps in translation are costing you momentum.
-                    You communicate well, but nuance is sometimes lost. Your ideas are solid — they just don't always
-                    land with the impact they deserve.
                 </div>
             </div>
 
-            <div style="margin: 20px 0;">
-                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 8px;">Persona Journey</h4>
-                <div class="journey-steps">
-                    <span class="step">🔴 Disconnected</span>
-                    <span class="arrow">→</span>
-                    <span class="step">🟠 Ghost</span>
-                    <span class="arrow">→</span>
-                    <span class="step">🟡 Interpreter</span>
-                    <span class="arrow">→</span>
-                    <span class="step active" id="journeyCurrent">🟢 Articulator</span>
-                    <span class="arrow">→</span>
-                    <span class="step">🟢 Amplifier</span>
-                    <span class="arrow">→</span>
-                    <span class="step">🟢 Translator</span>
-                </div>
-                <div style="text-align: center; font-size: 14px; color: var(--gray);">
-                    <span style="font-weight: 600;">You are here:</span> <span id="journeyYouAre" style="color: var(--teal); font-weight: 700;">The Articulator</span>
-                    &nbsp;&nbsp;|&nbsp;&nbsp;
-                    <span style="font-weight: 600;">Destination:</span> <span id="journeyDestination" style="color: var(--gold); font-weight: 700;">The Translator</span>
-                    &nbsp;&nbsp;|&nbsp;&nbsp;
-                    <span style="font-weight: 600;">The Gap:</span> 4 weeks of coaching
-                </div>
+            <div class="persona-timeline" id="personaTimeline">
+                <span class="step"><span class="emoji">🔴</span> Disconnected</span>
+                <span class="arrow">→</span>
+                <span class="step"><span class="emoji">🟠</span> Ghost</span>
+                <span class="arrow">→</span>
+                <span class="step"><span class="emoji">🟡</span> Interpreter</span>
+                <span class="arrow">→</span>
+                <span class="step active" id="journeyCurrent"><span class="emoji">🟢</span> Articulator</span>
+                <span class="arrow">→</span>
+                <span class="step"><span class="emoji">🟢</span> Amplifier</span>
+                <span class="arrow">→</span>
+                <span class="step"><span class="emoji">🟢</span> Translator</span>
+                <div class="you-here">▼ YOU ARE HERE</div>
             </div>
 
-            <div class="card card-gold">
-                <h3><i class="fas fa-arrow-right"></i> Where You Are vs Where You Can Be</h3>
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 6px;">
-                    <span style="font-weight: 600;">Where You Are:</span>
-                    <span style="background: var(--gray-light); padding: 4px 16px; border-radius: 20px;" id="whereYouAre">The Articulator</span>
-                    <span style="color: var(--gray);">← You are here</span>
-                    <span style="font-weight: 600;">Where You Can Be:</span>
-                    <span style="background: var(--teal-light); color: var(--teal-dark); padding: 4px 16px; border-radius: 20px; font-weight: 700;">The Translator</span>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px;">
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 14px 16px; text-align: center;">
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--gray-500);">Current</div>
+                    <div style="font-weight: 700; color: var(--teal);" id="whereYouAre">The Articulator</div>
+                </div>
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 14px 16px; text-align: center;">
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--gray-500);">Destination</div>
+                    <div style="font-weight: 700; color: var(--gold);">The Translator</div>
+                </div>
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 14px 16px; text-align: center;">
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--gray-500);">The Gap</div>
+                    <div style="font-weight: 700; color: var(--navy);">4 weeks</div>
                 </div>
             </div>
         </section>
 
-        <!-- ============================================
-        PAGE 4: COMPETENCY SCORES
-        ============================================ -->
+        <!-- ============================================================
+        PAGE 5: COMPETENCY SCORES — CIRCULAR RINGS
+        ============================================================ -->
         <section class="report-page" id="page-scores">
             <div class="section-header">
-                <span class="icon"><i class="fas fa-chart-simple"></i></span>
-                <h2>Competency Scores</h2>
-                <span class="badge">5 Core Competencies</span>
+                <span class="icon"><i class="fas fa-chart-pie"></i></span>
+                <h2>Competency DNA</h2>
+                <span class="badge">5 Capabilities</span>
             </div>
 
-            <p style="color: var(--gray); margin-bottom: 20px;">Your scores across the 5 core communication competencies:</p>
-
-            <div id="competencyBars">
-                <div class="comp-row">
-                    <span class="comp-label">Thinking</span>
-                    <div class="comp-bar-track">
-                        <div class="comp-bar-fill teal" id="barThinking" style="width: 75%;"></div>
-                    </div>
-                    <span class="comp-score" id="scoreThinking">75%</span>
-                    <span class="comp-level" id="levelThinking">Proficient</span>
-                </div>
-                <div class="comp-row">
-                    <span class="comp-label">Structure</span>
-                    <div class="comp-bar-track">
-                        <div class="comp-bar-fill green" id="barStructure" style="width: 70%;"></div>
-                    </div>
-                    <span class="comp-score" id="scoreStructure">70%</span>
-                    <span class="comp-level" id="levelStructure">Proficient</span>
-                </div>
-                <div class="comp-row">
-                    <span class="comp-label">Communication</span>
-                    <div class="comp-bar-track">
-                        <div class="comp-bar-fill yellow" id="barCommunication" style="width: 54%;"></div>
-                    </div>
-                    <span class="comp-score" id="scoreCommunication">54%</span>
-                    <span class="comp-level" id="levelCommunication">Needs Attention</span>
-                </div>
-                <div class="comp-row">
-                    <span class="comp-label">Understanding</span>
-                    <div class="comp-bar-track">
-                        <div class="comp-bar-fill orange" id="barUnderstanding" style="width: 58%;"></div>
-                    </div>
-                    <span class="comp-score" id="scoreUnderstanding">58%</span>
-                    <span class="comp-level" id="levelUnderstanding">Needs Attention</span>
-                </div>
-                <div class="comp-row">
-                    <span class="comp-label">Opportunity</span>
-                    <div class="comp-bar-track">
-                        <div class="comp-bar-fill teal" id="barOpportunity" style="width: 75%;"></div>
-                    </div>
-                    <span class="comp-score" id="scoreOpportunity">75%</span>
-                    <span class="comp-level" id="levelOpportunity">Proficient</span>
-                </div>
+            <div class="rings-grid" id="ringsGrid">
+                <!-- Dynamically rendered -->
             </div>
 
-            <!-- Detailed Breakdown Table -->
-            <div style="margin-top: 28px;">
-                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
-                    <i class="fas fa-table" style="color: var(--teal); margin-right: 8px;"></i>Detailed Breakdown
-                </h4>
-                <table class="premium-table" id="breakdownTable">
-                    <thead>
-                        <tr>
-                            <th>Competency</th>
-                            <th>Score</th>
-                            <th>Max Score</th>
-                            <th>Points Below 60%</th>
-                            <th>Annual Tax</th>
-                        </tr>
-                    </thead>
-                    <tbody id="breakdownBody">
-                        <!-- dynamically filled -->
-                    </tbody>
-                    <tfoot id="breakdownFoot">
-                        <!-- dynamically filled -->
-                    </tfoot>
-                </table>
-            </div>
-
-            <div class="card card-teal" style="margin-top: 16px;">
-                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
+            <div class="card-premium" style="border-left: 4px solid var(--teal); margin-top: 8px;">
+                <div class="card-title">Key Insight</div>
                 <p style="font-size: 15px;">
                     Your highest score is <strong id="insightHighest">Thinking (75%)</strong> — build on this.
                     Your lowest score is <strong id="insightLowest">Communication (54%)</strong> — fix this first.
@@ -1362,100 +1373,58 @@
             </div>
         </section>
 
-        <!-- ============================================
-        PAGE 5: THINKING (Deep Dive)
-        ============================================ -->
+        <!-- ============================================================
+        PAGES 6-10: DEEP DIVE (Thinking, Structure, Communication, Understanding, Opportunity)
+        ============================================================ -->
         <section class="report-page" id="page-thinking">
             <div class="section-header">
                 <span class="icon"><i class="fas fa-brain"></i></span>
-                <h2>Section 1: Thinking</h2>
-                <span class="badge">Deep Dive</span>
+                <h2>Thinking</h2>
+                <span class="badge" id="thinkingBadge">Proficient</span>
             </div>
-
-            <p class="section-sub">💡 "Do you know what you want to say — before you start saying it?"</p>
-
-            <div class="card card-teal">
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <span style="font-weight: 700;">Score: <span id="thinkingScore">75%</span></span>
-                    <span style="font-weight: 700;">Level: <span id="thinkingLevel" style="color: var(--teal);">Proficient</span></span>
-                    <span style="font-weight: 700;">Annual Tax Impact: <span style="color: var(--red);">₹0</span></span>
-                </div>
+            <p style="color: var(--gray-500); font-style: italic; margin-bottom: 16px;">"Do you know what you want to say — before you start saying it?"</p>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px;">
+                <span style="font-weight: 700;">Score: <span id="thinkingScoreDisplay" style="color: var(--teal);">75%</span></span>
+                <span style="font-weight: 700;">Tax Impact: <span id="thinkingTaxImpact" style="color: var(--red);">₹0</span></span>
             </div>
-
-            <div style="margin: 16px 0;">
-                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
-                    <i class="fas fa-list" style="color: var(--teal); margin-right: 8px;"></i>Sub-Competency Breakdown
-                </h4>
-                <div id="thinkingSubComps">
-                    <!-- dynamically filled -->
-                </div>
+            <div id="thinkingSubComps"></div>
+            <div class="behaviour-flow">
+                <div class="bf-item"><div class="bf-label">Behaviour</div><div class="bf-text" id="thinkBehaviour">You think clearly but don't always prepare</div></div>
+                <div class="bf-item"><div class="bf-label">Impact</div><div class="bf-text" id="thinkImpact">Ideas don't land with full force</div></div>
+                <div class="bf-item"><div class="bf-label">Perception</div><div class="bf-text" id="thinkPerception">People see you as smart but not always ready</div></div>
+                <div class="bf-item"><div class="bf-label">Action</div><div class="bf-text" id="thinkAction">Write your ONE message before every meeting</div></div>
             </div>
-
-            <div class="card card-green">
-                <h3><i class="fas fa-star"></i> Your Strengths in Thinking</h3>
-                <p id="thinkingStrengths">Your message clarity is exceptional. You know what you want to say before you say it. This is why people trust your judgment.</p>
-            </div>
-
-            <div class="card card-red">
-                <h3><i class="fas fa-exclamation-triangle"></i> Your Gaps in Thinking</h3>
-                <p id="thinkingGaps">Your conversational preparation is inconsistent. You don't always prepare for high-stakes conversations, which means you're often caught off guard.</p>
-            </div>
-
-            <div class="card card-gold">
-                <h3><i class="fas fa-lightbulb"></i> 3 Actionable Tips to Improve</h3>
-                <ul style="padding-left: 20px; font-size: 14px; color: var(--navy);">
+            <div class="card-premium" style="border-left: 4px solid var(--gold);">
+                <div class="card-title">3 Actionable Tips</div>
+                <ul style="padding-left: 20px; font-size: 14px; color: var(--gray-700);">
                     <li>Before every meeting, write down your ONE message in one sentence.</li>
                     <li>Pause for 10 seconds before responding to any unexpected question.</li>
                     <li>Prepare 5 possible questions before every high-stakes conversation.</li>
                 </ul>
-                <p style="margin-top: 10px; font-size: 14px; color: var(--teal-dark); font-weight: 600;">
-                    <i class="fas fa-arrow-right"></i> Key Insight: Improving this section by just 1 point saves you ₹50,000 annually.
-                </p>
             </div>
         </section>
 
-        <!-- ============================================
-        PAGE 6: STRUCTURE (Deep Dive)
-        ============================================ -->
         <section class="report-page" id="page-structure">
             <div class="section-header">
                 <span class="icon"><i class="fas fa-layer-group"></i></span>
-                <h2>Section 2: Structure</h2>
-                <span class="badge">Deep Dive</span>
+                <h2>Structure</h2>
+                <span class="badge" id="structureBadge">Proficient</span>
             </div>
-
-            <p class="section-sub">🏗️ "Do your ideas land in the order you intended?"</p>
-
-            <div class="card card-teal">
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <span style="font-weight: 700;">Score: <span id="structureScore">70%</span></span>
-                    <span style="font-weight: 700;">Level: <span id="structureLevel" style="color: var(--teal);">Proficient</span></span>
-                    <span style="font-weight: 700;">Annual Tax Impact: <span style="color: var(--red);">₹0</span></span>
-                </div>
+            <p style="color: var(--gray-500); font-style: italic; margin-bottom: 16px;">"Do your ideas land in the order you intended?"</p>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px;">
+                <span style="font-weight: 700;">Score: <span id="structureScoreDisplay" style="color: var(--teal);">70%</span></span>
+                <span style="font-weight: 700;">Tax Impact: <span id="structureTaxImpact" style="color: var(--red);">₹0</span></span>
             </div>
-
-            <div style="margin: 16px 0;">
-                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
-                    <i class="fas fa-list" style="color: var(--teal); margin-right: 8px;"></i>Sub-Competency Breakdown
-                </h4>
-                <div id="structureSubComps">
-                    <!-- dynamically filled -->
-                </div>
+            <div id="structureSubComps"></div>
+            <div class="behaviour-flow">
+                <div class="bf-item"><div class="bf-label">Behaviour</div><div class="bf-text" id="structBehaviour">You structure as you go</div></div>
+                <div class="bf-item"><div class="bf-label">Impact</div><div class="bf-text" id="structImpact">Audience has to work to follow you</div></div>
+                <div class="bf-item"><div class="bf-label">Perception</div><div class="bf-text" id="structPerception">Seen as disorganised</div></div>
+                <div class="bf-item"><div class="bf-label">Action</div><div class="bf-text" id="structAction">Start with headline first</div></div>
             </div>
-
-            <div class="card card-green">
-                <h3><i class="fas fa-star"></i> Your Strengths in Structure</h3>
-                <p id="structureStrengths">You have good structure, but sometimes lose the thread. Your logic is sound — your delivery needs to match.</p>
-            </div>
-
-            <div class="card card-red">
-                <h3><i class="fas fa-exclamation-triangle"></i> Your Gaps in Structure</h3>
-                <p id="structureGaps">Your ideas are strong, but your structure is weak. Your audience has to work hard to follow you — and most won't.</p>
-            </div>
-
-            <div class="card card-gold">
-                <h3><i class="fas fa-lightbulb"></i> 3 Actionable Tips to Improve</h3>
-                <ul style="padding-left: 20px; font-size: 14px; color: var(--navy);">
+            <div class="card-premium" style="border-left: 4px solid var(--gold);">
+                <div class="card-title">3 Actionable Tips</div>
+                <ul style="padding-left: 20px; font-size: 14px; color: var(--gray-700);">
                     <li>Start every email with your main point first.</li>
                     <li>Use the Problem → Solution → Outcome framework.</li>
                     <li>Before speaking, ask: "What's the one thing I want them to remember?"</li>
@@ -1463,48 +1432,27 @@
             </div>
         </section>
 
-        <!-- ============================================
-        PAGE 7: COMMUNICATION (Deep Dive)
-        ============================================ -->
         <section class="report-page" id="page-communication">
             <div class="section-header">
                 <span class="icon"><i class="fas fa-comment-dots"></i></span>
-                <h2>Section 3: Communication</h2>
-                <span class="badge">Deep Dive</span>
+                <h2>Communication</h2>
+                <span class="badge" id="communicationBadge">Needs Attention</span>
             </div>
-
-            <p class="section-sub">🗣️ "Does your delivery match the quality of your thinking?"</p>
-
-            <div class="card card-teal">
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <span style="font-weight: 700;">Score: <span id="communicationScore">54%</span></span>
-                    <span style="font-weight: 700;">Level: <span id="communicationLevel" style="color: var(--yellow);">Needs Attention</span></span>
-                    <span style="font-weight: 700;">Annual Tax Impact: <span style="color: var(--red);">₹6,00,000</span></span>
-                </div>
+            <p style="color: var(--gray-500); font-style: italic; margin-bottom: 16px;">"Does your delivery match the quality of your thinking?"</p>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px;">
+                <span style="font-weight: 700;">Score: <span id="communicationScoreDisplay" style="color: var(--yellow);">54%</span></span>
+                <span style="font-weight: 700;">Tax Impact: <span id="communicationTaxImpact" style="color: var(--red);">₹6,00,000</span></span>
             </div>
-
-            <div style="margin: 16px 0;">
-                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
-                    <i class="fas fa-list" style="color: var(--teal); margin-right: 8px;"></i>Sub-Competency Breakdown
-                </h4>
-                <div id="communicationSubComps">
-                    <!-- dynamically filled -->
-                </div>
+            <div id="communicationSubComps"></div>
+            <div class="behaviour-flow">
+                <div class="bf-item"><div class="bf-label">Behaviour</div><div class="bf-text" id="commBehaviour">You explain as you understand it</div></div>
+                <div class="bf-item"><div class="bf-label">Impact</div><div class="bf-text" id="commImpact">Value is lost in translation</div></div>
+                <div class="bf-item"><div class="bf-label">Perception</div><div class="bf-text" id="commPerception">People underestimate your expertise</div></div>
+                <div class="bf-item"><div class="bf-label">Action</div><div class="bf-text" id="commAction">Translate, don't explain</div></div>
             </div>
-
-            <div class="card card-green">
-                <h3><i class="fas fa-star"></i> Your Strengths in Communication</h3>
-                <p id="communicationStrengths">You're a master translator. You adapt complex ideas to any audience. This is why you're trusted as a communicator.</p>
-            </div>
-
-            <div class="card card-red">
-                <h3><i class="fas fa-exclamation-triangle"></i> Your Gaps in Communication</h3>
-                <p id="communicationGaps">Your communication is often incomplete. You leave gaps that others have to fill — and it's costing you credibility.</p>
-            </div>
-
-            <div class="card card-gold">
-                <h3><i class="fas fa-lightbulb"></i> 3 Actionable Tips to Improve</h3>
-                <ul style="padding-left: 20px; font-size: 14px; color: var(--navy);">
+            <div class="card-premium" style="border-left: 4px solid var(--gold);">
+                <div class="card-title">3 Actionable Tips</div>
+                <ul style="padding-left: 20px; font-size: 14px; color: var(--gray-700);">
                     <li>Translate everything into simple language. If a 10-year-old can't understand it, rewrite it.</li>
                     <li>Before sending any email, read it once from the receiver's perspective.</li>
                     <li>Always state what you want the person to do or decide.</li>
@@ -1512,48 +1460,27 @@
             </div>
         </section>
 
-        <!-- ============================================
-        PAGE 8: UNDERSTANDING (Deep Dive)
-        ============================================ -->
         <section class="report-page" id="page-understanding">
             <div class="section-header">
                 <span class="icon"><i class="fas fa-ears"></i></span>
-                <h2>Section 4: Understanding</h2>
-                <span class="badge">Deep Dive</span>
+                <h2>Understanding</h2>
+                <span class="badge" id="understandingBadge">Needs Attention</span>
             </div>
-
-            <p class="section-sub">👂 "Do you read the room — or does the room read you?"</p>
-
-            <div class="card card-teal">
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <span style="font-weight: 700;">Score: <span id="understandingScore">58%</span></span>
-                    <span style="font-weight: 700;">Level: <span id="understandingLevel" style="color: var(--yellow);">Needs Attention</span></span>
-                    <span style="font-weight: 700;">Annual Tax Impact: <span style="color: var(--red);">₹1,00,000</span></span>
-                </div>
+            <p style="color: var(--gray-500); font-style: italic; margin-bottom: 16px;">"Do you read the room — or does the room read you?"</p>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px;">
+                <span style="font-weight: 700;">Score: <span id="understandingScoreDisplay" style="color: var(--yellow);">58%</span></span>
+                <span style="font-weight: 700;">Tax Impact: <span id="understandingTaxImpact" style="color: var(--red);">₹1,00,000</span></span>
             </div>
-
-            <div style="margin: 16px 0;">
-                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
-                    <i class="fas fa-list" style="color: var(--teal); margin-right: 8px;"></i>Sub-Competency Breakdown
-                </h4>
-                <div id="understandingSubComps">
-                    <!-- dynamically filled -->
-                </div>
+            <div id="understandingSubComps"></div>
+            <div class="behaviour-flow">
+                <div class="bf-item"><div class="bf-label">Behaviour</div><div class="bf-text" id="underBehaviour">You don't adjust in real time</div></div>
+                <div class="bf-item"><div class="bf-label">Impact</div><div class="bf-text" id="underImpact">You lose the room</div></div>
+                <div class="bf-item"><div class="bf-label">Perception</div><div class="bf-text" id="underPerception">Seen as unaware</div></div>
+                <div class="bf-item"><div class="bf-label">Action</div><div class="bf-text" id="underAction">Pause and read the room</div></div>
             </div>
-
-            <div class="card card-green">
-                <h3><i class="fas fa-star"></i> Your Strengths in Understanding</h3>
-                <p id="understandingStrengths">Your situational awareness is your superpower. You sense the room and guide it. This makes you magnetic.</p>
-            </div>
-
-            <div class="card card-red">
-                <h3><i class="fas fa-exclamation-triangle"></i> Your Gaps in Understanding</h3>
-                <p id="understandingGaps">You can't adjust in real time. Your conversations go off the rails and you don't even notice until it's too late.</p>
-            </div>
-
-            <div class="card card-gold">
-                <h3><i class="fas fa-lightbulb"></i> 3 Actionable Tips to Improve</h3>
-                <ul style="padding-left: 20px; font-size: 14px; color: var(--navy);">
+            <div class="card-premium" style="border-left: 4px solid var(--gold);">
+                <div class="card-title">3 Actionable Tips</div>
+                <ul style="padding-left: 20px; font-size: 14px; color: var(--gray-700);">
                     <li>Before any conversation, ask: Who am I speaking to? What do they care about?</li>
                     <li>Pause for 5 seconds after someone speaks. It signals you're listening.</li>
                     <li>Listen for what's NOT being said — their tone, body language, silence.</li>
@@ -1561,360 +1488,102 @@
             </div>
         </section>
 
-        <!-- ============================================
-        PAGE 9: OPPORTUNITY (Deep Dive)
-        ============================================ -->
         <section class="report-page" id="page-opportunity">
             <div class="section-header">
                 <span class="icon"><i class="fas fa-rocket"></i></span>
-                <h2>Section 5: Opportunity</h2>
-                <span class="badge">Deep Dive</span>
+                <h2>Opportunity</h2>
+                <span class="badge" id="opportunityBadge">Proficient</span>
             </div>
-
-            <p class="section-sub">🚀 "Are you converting your communication into real career outcomes?"</p>
-
-            <div class="card card-teal">
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <span style="font-weight: 700;">Score: <span id="opportunityScore">75%</span></span>
-                    <span style="font-weight: 700;">Level: <span id="opportunityLevel" style="color: var(--teal);">Proficient</span></span>
-                    <span style="font-weight: 700;">Annual Tax Impact: <span style="color: var(--red);">₹0</span></span>
-                </div>
+            <p style="color: var(--gray-500); font-style: italic; margin-bottom: 16px;">"Are you converting your communication into real career outcomes?"</p>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px;">
+                <span style="font-weight: 700;">Score: <span id="opportunityScoreDisplay" style="color: var(--teal);">75%</span></span>
+                <span style="font-weight: 700;">Tax Impact: <span id="opportunityTaxImpact" style="color: var(--red);">₹0</span></span>
             </div>
-
-            <div style="margin: 16px 0;">
-                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">
-                    <i class="fas fa-list" style="color: var(--teal); margin-right: 8px;"></i>Sub-Competency Breakdown
-                </h4>
-                <div id="opportunitySubComps">
-                    <!-- dynamically filled -->
-                </div>
+            <div id="opportunitySubComps"></div>
+            <div class="behaviour-flow">
+                <div class="bf-item"><div class="bf-label">Behaviour</div><div class="bf-text" id="oppBehaviour">You articulate your goals well</div></div>
+                <div class="bf-item"><div class="bf-label">Impact</div><div class="bf-text" id="oppImpact">You know where you're going</div></div>
+                <div class="bf-item"><div class="bf-label">Perception</div><div class="bf-text" id="oppPerception">Seen as focused</div></div>
+                <div class="bf-item"><div class="bf-label">Action</div><div class="bf-text" id="oppAction">Practice your 60-second pitch</div></div>
             </div>
-
-            <div class="card card-green">
-                <h3><i class="fas fa-star"></i> Your Strengths in Opportunity</h3>
-                <p id="opportunityStrengths">Your goal clarity is exceptional. You know exactly what you want — and you're going after it.</p>
-            </div>
-
-            <div class="card card-red">
-                <h3><i class="fas fa-exclamation-triangle"></i> Your Gaps in Opportunity</h3>
-                <p id="opportunityGaps">Your interview conversion is weak. You struggle to articulate your worth in interviews.</p>
-            </div>
-
-            <div class="card card-gold">
-                <h3><i class="fas fa-lightbulb"></i> 3 Actionable Tips to Improve</h3>
-                <ul style="padding-left: 20px; font-size: 14px; color: var(--navy);">
+            <div class="card-premium" style="border-left: 4px solid var(--gold);">
+                <div class="card-title">3 Actionable Tips</div>
+                <ul style="padding-left: 20px; font-size: 14px; color: var(--gray-700);">
                     <li>Practice your 60-second value pitch every morning.</li>
                     <li>Structure interview answers as: Challenge → Action → Result.</li>
                     <li>Map 3 actions you can take this month to increase visibility.</li>
                 </ul>
-                <p style="margin-top: 10px; font-size: 14px; color: var(--teal-dark); font-weight: 600;">
-                    <i class="fas fa-arrow-right"></i> Key Insight: For every point below 60% in Opportunity, you lose ₹1,50,000 annually.
-                </p>
             </div>
         </section>
 
-        <!-- ============================================
-        PAGE 10: TOP 3 TAX TRIGGERS
-        ============================================ -->
-        <section class="report-page" id="page-triggers">
+        <!-- ============================================================
+        PAGE 11: EXECUTIVE COMMUNICATION DNA
+        ============================================================ -->
+        <section class="report-page" id="page-dna">
             <div class="section-header">
-                <span class="icon"><i class="fas fa-fire"></i></span>
-                <h2>Your Top 3 Tax Triggers</h2>
-                <span class="badge">Priority Gaps</span>
+                <span class="icon"><i class="fas fa-dna"></i></span>
+                <h2>Executive Communication DNA</h2>
+                <span class="badge">Radar</span>
             </div>
 
-            <p style="color: var(--gray); margin-bottom: 20px;">
-                These are your biggest communication gaps — costing you the most money and holding you back from your potential.
-            </p>
-
-            <div id="triggerList">
-                <div class="trigger-card">
-                    <div class="trigger-title"><i class="fas fa-1"></i> Tax Trigger</div>
-                    <div class="trigger-competency">Competency: <span id="trigger1Name">Communication (54%)</span></div>
-                    <div class="trigger-tax">Annual Tax: <span id="trigger1Tax">₹6,00,000</span></div>
-                    <div class="trigger-desc" id="trigger1Desc">
-                        Your biggest gap is Communication. When you explain complex ideas, you don't structure them clearly.
-                        Your audience has to work to follow you — and most won't. This is costing you ₹6 Lakhs annually in lost deals and approvals.
-                    </div>
-                    <div class="trigger-fix"><i class="fas fa-check-circle"></i> <span id="trigger1Fix">Practice the "Translate, Don't Explain" framework daily.</span></div>
+            <div class="dna-grid">
+                <div class="dna-chart">
+                    <canvas id="dnaChart"></canvas>
                 </div>
-
-                <div class="trigger-card">
-                    <div class="trigger-title"><i class="fas fa-2"></i> Tax Trigger</div>
-                    <div class="trigger-competency">Competency: <span id="trigger2Name">Opportunity (Interview Conversion)</span></div>
-                    <div class="trigger-tax">Annual Tax: <span id="trigger2Tax">₹3,00,000</span></div>
-                    <div class="trigger-desc" id="trigger2Desc">
-                        Your interview conversion rate is low. You struggle to articulate your value under pressure,
-                        which means you're losing out on career-defining opportunities.
-                    </div>
-                    <div class="trigger-fix"><i class="fas fa-check-circle"></i> <span id="trigger2Fix">Practice your 60-second value pitch every morning.</span></div>
-                </div>
-
-                <div class="trigger-card">
-                    <div class="trigger-title"><i class="fas fa-3"></i> Tax Trigger</div>
-                    <div class="trigger-competency">Competency: <span id="trigger3Name">Structure (Logical Flow)</span></div>
-                    <div class="trigger-tax">Annual Tax: <span id="trigger3Tax">₹1,50,000</span></div>
-                    <div class="trigger-desc" id="trigger3Desc">
-                        Your logical flow needs improvement. You start talking and organise as you go — which confuses your audience.
-                        A clear structure would save you ₹1.5 Lakhs annually.
-                    </div>
-                    <div class="trigger-fix"><i class="fas fa-check-circle"></i> <span id="trigger3Fix">Use the Problem → Solution → Outcome framework.</span></div>
+                <div class="dna-list" id="dnaList">
+                    <!-- dynamically rendered -->
                 </div>
             </div>
+        </section>
 
-            <div class="card card-teal">
-                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
+        <!-- ============================================================
+        PAGE 12: FINANCIAL WATERFALL
+        ============================================================ -->
+        <section class="report-page" id="page-waterfall">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                <h2>Financial Impact</h2>
+                <span class="badge">Waterfall</span>
+            </div>
+
+            <div class="waterfall" id="waterfallContainer">
+                <!-- dynamically rendered -->
+            </div>
+
+            <div class="card-premium" style="border-left: 4px solid var(--red);">
+                <div class="card-title">Key Insight</div>
                 <p style="font-size: 15px;">
-                    Fixing just your <strong>#1 tax trigger</strong> saves you the most money — <strong>80% of your total tax</strong>.
-                    Focus here first.
+                    For every point below 60% in Opportunity, you lose <strong>₹1,50,000</strong> annually.
+                    This is the highest tax rate — fixing this has the <strong>biggest ROI</strong>.
                 </p>
             </div>
         </section>
 
-        <!-- ============================================
-        PAGE 11: PERSONALIZED INSIGHTS
-        ============================================ -->
-        <section class="report-page" id="page-insights">
-            <div class="section-header">
-                <span class="icon"><i class="fas fa-lightbulb"></i></span>
-                <h2>Personalized Insights</h2>
-                <span class="badge">5 Insights</span>
-            </div>
-
-            <p style="color: var(--gray); margin-bottom: 20px;">5 tailored insights based on your specific communication profile:</p>
-
-            <div id="insightsList">
-                <div class="insight-card">
-                    <div class="insight-title"><i class="fas fa-1"></i> Your Biggest Gap</div>
-                    <div class="insight-text" id="insight1Text">
-                        Your ideas are brilliant. Your structure is weak. You're the smartest person in the room,
-                        but no one follows your logic. The result? Your ideas don't get approved. Your career is moving
-                        slower than your potential.
-                    </div>
-                </div>
-                <div class="insight-card">
-                    <div class="insight-title"><i class="fas fa-2"></i> Your Hidden Strength</div>
-                    <div class="insight-text" id="insight2Text">
-                        Your thinking is exceptional. You have a natural ability to clarify complex ideas.
-                        This is your superpower — and it's why people trust you. If you could match this clarity in
-                        your delivery, you'd be unstoppable.
-                    </div>
-                </div>
-                <div class="insight-card">
-                    <div class="insight-title"><i class="fas fa-3"></i> Your Quick Win</div>
-                    <div class="insight-text" id="insight3Text">
-                        Your quick win is Structural Self-Awareness. By spending 5 minutes before every meeting to
-                        structure your points, you can immediately improve your clarity. This small shift will save
-                        you ₹75,000 per year.
-                    </div>
-                </div>
-                <div class="insight-card">
-                    <div class="insight-title"><i class="fas fa-4"></i> Your Career Risk</div>
-                    <div class="insight-text" id="insight4Text">
-                        Your career is at moderate risk. You've been passed over for promotion. Your ideas are
-                        sometimes ignored. If you don't fix this, you could be stuck in the same role for years.
-                    </div>
-                </div>
-                <div class="insight-card">
-                    <div class="insight-title"><i class="fas fa-5"></i> Your Opportunity</div>
-                    <div class="insight-text" id="insight5Text">
-                        The opportunity is enormous. By fixing your communication gaps, you can: double your CTC,
-                        get promoted in the next cycle, and become a trusted voice in your organisation. The gap is
-                        fixable. The ROI is 1000%. The only question is: will you fix it?
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================================
-        PAGE 12: FRAMEWORK RECOMMENDATIONS
-        ============================================ -->
+        <!-- ============================================================
+        PAGE 13: FRAMEWORK PLAYBOOKS
+        ============================================================ -->
         <section class="report-page" id="page-frameworks">
             <div class="section-header">
                 <span class="icon"><i class="fas fa-sitemap"></i></span>
-                <h2>Framework Recommendations</h2>
+                <h2>Playbooks</h2>
                 <span class="badge">3 Frameworks</span>
             </div>
 
-            <p style="color: var(--gray); margin-bottom: 20px;">These frameworks are specifically recommended for your gaps:</p>
-
             <div id="frameworkList">
-                <div class="framework-card">
-                    <div class="fw-title"><i class="fas fa-1"></i> Headline First Framework</div>
-                    <div class="fw-desc">Lead with your main point, then support it with evidence. This ensures your audience follows you.</div>
-                    <div style="font-size: 14px; color: var(--gray); margin: 4px 0 8px;"><i class="fas fa-clock"></i> Duration: 7 days challenge</div>
-                    <div class="fw-steps">
-                        <strong>How to use:</strong>
-                        <ol style="padding-left: 20px;">
-                            <li>Start every email with your main point first</li>
-                            <li>No context, no preamble — get straight to the point</li>
-                            <li>Support with evidence in the next sentences</li>
-                        </ol>
-                    </div>
-                    <div style="font-size: 14px; color: var(--gray); margin-top: 6px;">
-                        <i class="fas fa-check-circle" style="color: var(--teal);"></i>
-                        <strong>Why it works for you:</strong> Your Logical Flow score is low. This framework will help you structure your ideas clearly.
-                    </div>
-                </div>
-
-                <div class="framework-card">
-                    <div class="fw-title"><i class="fas fa-2"></i> Interview Narrative Framework</div>
-                    <div class="fw-desc">Structure answers using: The Challenge, The Action, The Result.</div>
-                    <div style="font-size: 14px; color: var(--gray); margin: 4px 0 8px;"><i class="fas fa-clock"></i> Duration: 1 hour preparation</div>
-                    <div class="fw-steps">
-                        <strong>How to use:</strong>
-                        <ol style="padding-left: 20px;">
-                            <li>Identify a challenge you faced</li>
-                            <li>Describe the action you took</li>
-                            <li>Explain the result you achieved</li>
-                        </ol>
-                    </div>
-                    <div style="font-size: 14px; color: var(--gray); margin-top: 6px;">
-                        <i class="fas fa-check-circle" style="color: var(--teal);"></i>
-                        <strong>Why it works for you:</strong> Your Interview Conversion score needs improvement. This framework will help you articulate your value in interviews.
-                    </div>
-                </div>
-
-                <div class="framework-card">
-                    <div class="fw-title"><i class="fas fa-3"></i> Completeness-Check Framework</div>
-                    <div class="fw-desc">Before ending any conversation, ask: "Is there anything I haven't covered that you need?"</div>
-                    <div style="font-size: 14px; color: var(--gray); margin: 4px 0 8px;"><i class="fas fa-clock"></i> Duration: 1 minute</div>
-                    <div class="fw-steps">
-                        <strong>How to use:</strong>
-                        <ol style="padding-left: 20px;">
-                            <li>Before ending any conversation, ask the question</li>
-                            <li>Wait for their response</li>
-                            <li>Address any gaps immediately</li>
-                        </ol>
-                    </div>
-                    <div style="font-size: 14px; color: var(--gray); margin-top: 6px;">
-                        <i class="fas fa-check-circle" style="color: var(--teal);"></i>
-                        <strong>Why it works for you:</strong> Your Completeness of Communication score is low. This framework will ensure nothing is left unclear.
-                    </div>
-                </div>
+                <!-- dynamically rendered -->
             </div>
 
-            <div class="card card-teal">
-                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
+            <div class="card-premium" style="border-left: 4px solid var(--teal);">
+                <div class="card-title">Key Insight</div>
                 <p style="font-size: 15px;">
-                    Start with <strong>Framework 1</strong>. It targets your biggest gap and delivers the fastest ROI.
+                    Start with <strong>Playbook 1</strong>. It targets your biggest gap and delivers the fastest ROI.
                 </p>
             </div>
         </section>
 
-        <!-- ============================================
-        PAGE 13: PRACTICE EXERCISES
-        ============================================ -->
-        <section class="report-page" id="page-exercises">
-            <div class="section-header">
-                <span class="icon"><i class="fas fa-dumbbell"></i></span>
-                <h2>Practice Exercises</h2>
-                <span class="badge">5 Exercises</span>
-            </div>
-
-            <p style="color: var(--gray); margin-bottom: 20px;">Start practicing immediately with these exercises:</p>
-
-            <div id="exerciseList">
-                <div class="exercise-card">
-                    <div class="ex-title"><i class="fas fa-1"></i> The 1-Minute Clarity Drill</div>
-                    <div class="ex-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve your message clarity</div>
-                    <div class="ex-steps">
-                        <strong>Instructions:</strong>
-                        <ol style="padding-left: 20px;">
-                            <li>Before every meeting, write down your ONE message</li>
-                            <li>Keep it to ONE sentence</li>
-                            <li>Read it out loud before the meeting</li>
-                        </ol>
-                    </div>
-                    <div class="ex-meta">
-                        <i class="fas fa-clock"></i> Duration: 1 minute &nbsp;|&nbsp;
-                        <i class="fas fa-calendar-day"></i> Frequency: Daily, before each meeting
-                    </div>
-                    <div style="font-size: 14px; color: var(--teal-dark); margin-top: 6px;">
-                        <i class="fas fa-lightbulb"></i> Pro Tip: Share your message with someone before the meeting to test if it's clear.
-                    </div>
-                </div>
-
-                <div class="exercise-card">
-                    <div class="ex-title"><i class="fas fa-2"></i> The Headline-First Drill</div>
-                    <div class="ex-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve your logical flow</div>
-                    <div class="ex-steps">
-                        <strong>Instructions:</strong>
-                        <ol style="padding-left: 20px;">
-                            <li>For one week, start every email with your main point</li>
-                            <li>No context, no preamble</li>
-                            <li>Support with evidence in the next sentences</li>
-                        </ol>
-                    </div>
-                    <div class="ex-meta">
-                        <i class="fas fa-clock"></i> Duration: 2 minutes per email &nbsp;|&nbsp;
-                        <i class="fas fa-calendar-day"></i> Frequency: 7 days challenge
-                    </div>
-                </div>
-
-                <div class="exercise-card">
-                    <div class="ex-title"><i class="fas fa-3"></i> The Completeness-Check Drill</div>
-                    <div class="ex-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve your communication completeness</div>
-                    <div class="ex-steps">
-                        <strong>Instructions:</strong>
-                        <ol style="padding-left: 20px;">
-                            <li>Before ending any conversation, ask: "Is there anything I haven't covered?"</li>
-                            <li>Wait for their response</li>
-                            <li>Address any gaps immediately</li>
-                        </ol>
-                    </div>
-                    <div class="ex-meta">
-                        <i class="fas fa-clock"></i> Duration: 1 minute &nbsp;|&nbsp;
-                        <i class="fas fa-calendar-day"></i> Frequency: After every conversation
-                    </div>
-                </div>
-
-                <div class="exercise-card">
-                    <div class="ex-title"><i class="fas fa-4"></i> The 60-Second Pitch Drill</div>
-                    <div class="ex-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve your value articulation</div>
-                    <div class="ex-steps">
-                        <strong>Instructions:</strong>
-                        <ol style="padding-left: 20px;">
-                            <li>Practice your 60-second value pitch every morning</li>
-                            <li>Record yourself and listen back</li>
-                            <li>Refine until it's compelling</li>
-                        </ol>
-                    </div>
-                    <div class="ex-meta">
-                        <i class="fas fa-clock"></i> Duration: 60 seconds &nbsp;|&nbsp;
-                        <i class="fas fa-calendar-day"></i> Frequency: Daily
-                    </div>
-                </div>
-
-                <div class="exercise-card">
-                    <div class="ex-title"><i class="fas fa-5"></i> The Audience Mapping Drill</div>
-                    <div class="ex-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve your audience awareness</div>
-                    <div class="ex-steps">
-                        <strong>Instructions:</strong>
-                        <ol style="padding-left: 20px;">
-                            <li>Before any conversation, write down: Who am I speaking to?</li>
-                            <li>What do they care about?</li>
-                            <li>What's their context?</li>
-                        </ol>
-                    </div>
-                    <div class="ex-meta">
-                        <i class="fas fa-clock"></i> Duration: 3 minutes &nbsp;|&nbsp;
-                        <i class="fas fa-calendar-day"></i> Frequency: Before each meeting
-                    </div>
-                </div>
-            </div>
-
-            <div class="card card-teal">
-                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
-                <p style="font-size: 15px;">
-                    Start with <strong>Exercise 1</strong>. It takes 5 minutes and delivers immediate improvement.
-                </p>
-            </div>
-        </section>
-
-        <!-- ============================================
-        PAGE 14: 30-DAY ROADMAP
-        ============================================ -->
+        <!-- ============================================================
+        PAGE 14: ROADMAP — VISUAL
+        ============================================================ -->
         <section class="report-page" id="page-roadmap">
             <div class="section-header">
                 <span class="icon"><i class="fas fa-road"></i></span>
@@ -1922,192 +1591,105 @@
                 <span class="badge">4 Weeks</span>
             </div>
 
-            <p style="color: var(--gray); margin-bottom: 20px;">Your personalized 4-week plan to eliminate your Communication Tax™:</p>
-
-            <div class="roadmap-week">
-                <div class="week-title"><i class="fas fa-1" style="color: var(--teal); margin-right: 8px;"></i> Week 1: Awareness</div>
-                <div class="week-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Identify your patterns</div>
-                <div class="week-actions">
-                    <strong>Daily Actions:</strong>
-                    <ul style="padding-left: 20px;">
-                        <li>Track every important conversation. Note when you lose the room.</li>
-                        <li>Complete Exercise 1: The 1-Minute Clarity Drill</li>
-                        <li>Practice Framework 1: Headline First Framework</li>
-                    </ul>
-                </div>
-                <div class="week-milestone"><i class="fas fa-check-circle"></i> Milestone: Identify your top 3 patterns of communication failure.</div>
+            <div class="roadmap-visual" id="roadmapVisual">
+                <!-- dynamically rendered -->
             </div>
 
-            <div class="roadmap-week">
-                <div class="week-title"><i class="fas fa-2" style="color: var(--teal); margin-right: 8px;"></i> Week 2: Thinking &amp; Structure</div>
-                <div class="week-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Fix your thinking and structure gaps</div>
-                <div class="week-actions">
-                    <strong>Daily Actions:</strong>
-                    <ul style="padding-left: 20px;">
-                        <li>Practice "Message First" daily — write your ONE message before every meeting.</li>
-                        <li>Practice "Headline First" — start every email/update with your main point.</li>
-                        <li>Complete Exercise 2: The Headline-First Drill</li>
-                    </ul>
-                </div>
-                <div class="week-milestone"><i class="fas fa-check-circle"></i> Milestone: Your messages become clearer. People start remembering your points.</div>
-            </div>
-
-            <div class="roadmap-week">
-                <div class="week-title"><i class="fas fa-3" style="color: var(--teal); margin-right: 8px;"></i> Week 3: Communication &amp; Understanding</div>
-                <div class="week-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Improve delivery and audience awareness</div>
-                <div class="week-actions">
-                    <strong>Daily Actions:</strong>
-                    <ul style="padding-left: 20px;">
-                        <li>Practice "Translate, Don't Explain" in every conversation.</li>
-                        <li>Practice "Audience Mapping" before every meeting.</li>
-                        <li>Complete Exercise 3 &amp; 4: The Completeness-Check Drill &amp; The 60-Second Pitch Drill</li>
-                    </ul>
-                </div>
-                <div class="week-milestone"><i class="fas fa-check-circle"></i> Milestone: Your value starts landing. People begin seeing your potential.</div>
-            </div>
-
-            <div class="roadmap-week">
-                <div class="week-title"><i class="fas fa-4" style="color: var(--teal); margin-right: 8px;"></i> Week 4: Opportunity &amp; Integration</div>
-                <div class="week-goal"><i class="fas fa-bullseye" style="color: var(--teal);"></i> Goal: Convert your new skills into real outcomes</div>
-                <div class="week-actions">
-                    <strong>Daily Actions:</strong>
-                    <ul style="padding-left: 20px;">
-                        <li>Practice "Value Articulation" daily — your 60-second pitch.</li>
-                        <li>Apply all frameworks in real conversations.</li>
-                        <li>Complete Exercise 5: The Audience Mapping Drill</li>
-                    </ul>
-                </div>
-                <div class="week-milestone"><i class="fas fa-check-circle"></i> Milestone: Your interviews, promotions, and deals start converting.</div>
-            </div>
-
-            <div class="card card-teal">
-                <h3><i class="fas fa-lightbulb"></i> Key Insight</h3>
+            <div class="card-premium" style="border-left: 4px solid var(--teal);">
+                <div class="card-title">Key Insight</div>
                 <p style="font-size: 15px;">
                     The most important week is <strong>Week 1</strong>. Get the awareness right, and everything else follows.
                 </p>
             </div>
         </section>
 
-        <!-- ============================================
-        PAGE 15: NEXT STEPS & PROGRAM RECOMMENDATION
-        ============================================ -->
+        <!-- ============================================================
+        PAGE 15: NEXT STEPS
+        ============================================================ -->
         <section class="report-page" id="page-next">
             <div class="section-header">
                 <span class="icon"><i class="fas fa-flag-checkered"></i></span>
-                <h2>Next Steps &amp; Program Recommendation</h2>
-                <span class="badge">Your Path Forward</span>
+                <h2>Recommended Growth Journey</h2>
+                <span class="badge">Next Steps</span>
             </div>
 
-            <p style="font-size: 15px; color: var(--gray); margin-bottom: 20px;">
-                Your Communication Tax™ Assessment is complete. Here's what happens next:
-            </p>
-
-            <div class="card card-teal">
-                <h3><i class="fas fa-rocket"></i> Your Program Recommendation</h3>
-                <p style="font-size: 15px; margin: 8px 0;">
-                    Based on your scores, we recommend:
-                </p>
-                <div style="background: var(--navy); color: var(--white); padding: 18px 24px; border-radius: var(--radius-sm); text-align: center;">
-                    <div style="font-family: var(--font-heading); font-weight: 800; font-size: 22px; color: var(--teal);">
-                        🚀 Professional Program
+            <div class="program-card">
+                <div class="prog-name">Professional Accelerator</div>
+                <div class="prog-price"><span>₹9,999</span> — 4 Weeks</div>
+                <div class="prog-grid">
+                    <div class="pg-item">
+                        <div class="pg-label">Current Score</div>
+                        <div class="pg-value" id="progCurrentScore">72</div>
                     </div>
-                    <div style="font-size: 18px; font-weight: 600; margin: 4px 0;">₹9,999 — 4 Weeks</div>
-                    <div style="font-size: 14px; color: rgba(255,255,255,0.7);">
-                        Executive Potential Score: 72/100 &nbsp;|&nbsp; Projected Score: 82/100 (+10 points)
+                    <div class="pg-item">
+                        <div class="pg-label">Projected Score</div>
+                        <div class="pg-value" id="progProjectedScore">82</div>
                     </div>
-                    <div style="font-size: 14px; color: var(--teal); font-weight: 600; margin-top: 4px;">
-                        Estimated Tax Reduction: ₹3,10,250/year
+                    <div class="pg-item">
+                        <div class="pg-label">Tax Saved</div>
+                        <div class="pg-value" id="progTaxSaved">₹3,10,250</div>
+                    </div>
+                    <div class="pg-item">
+                        <div class="pg-label">ROI</div>
+                        <div class="pg-value" id="progROI">1000%</div>
                     </div>
                 </div>
-                <p style="font-size: 15px; margin-top: 12px; color: var(--gray);" id="programDesc">
-                    The Professional Program is perfect for you. Your scores show you're close to the next level — but your
-                    communication gaps are holding you back. In 4 weeks, we'll fix your structure, refine your thinking,
-                    and help you articulate your value. The ROI is 1000%.
-                </p>
-            </div>
-
-            <div style="margin: 20px 0;">
-                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">Your 3 Options</h4>
-                <div class="options-grid">
-                    <div class="option-card">
-                        <div class="opt-icon"><i class="fas fa-file-pdf"></i></div>
-                        <div class="opt-title">Free Report</div>
-                        <div class="opt-desc">Download your full 15-page PDF. Keep it for reference.</div>
-                        <div class="opt-price">₹0</div>
-                    </div>
-                    <div class="option-card">
-                        <div class="opt-icon"><i class="fas fa-phone"></i></div>
-                        <div class="opt-title">Free 15-Min Call</div>
-                        <div class="opt-desc">Book your slot with Arun to review your report and get a custom roadmap.</div>
-                        <div class="opt-price">₹0</div>
-                    </div>
-                    <div class="option-card" style="border-color: var(--teal);">
-                        <div class="opt-icon"><i class="fas fa-rocket"></i></div>
-                        <div class="opt-title">Join The Program</div>
-                        <div class="opt-desc">Enroll in 4-week coaching program. Start immediately.</div>
-                        <div class="opt-price" style="color: var(--teal);">₹9,999</div>
-                    </div>
+                <div class="prog-desc" id="programDesc">
+                    Your scores show you're close to the next level — but your communication gaps are holding you back.
+                    In 4 weeks, we'll fix your structure, refine your thinking, and help you articulate your value.
                 </div>
             </div>
 
-            <!-- PAYMENT / UNLOCK SECTION -->
+            <!-- PAYMENT SECTION -->
             <div id="paymentSection">
                 <div class="unlock-badge" id="unlockBadge">
-                    <i class="fas fa-check-circle"></i> Report Unlocked! You can now download the full PDF.
+                    <i class="fas fa-check-circle"></i> Report Unlocked! Download now.
                 </div>
 
                 <div class="payment-box" id="paymentBox">
                     <h3><i class="fas fa-lock"></i> Unlock Your Full Report</h3>
                     <p>Get your complete 15-page report with detailed insights, frameworks, and personalized recommendations.</p>
-                    <button class="btn-pay" id="payButton"><i class="fas fa-rupee-sign"></i> Pay ₹999 – Unlock Full Report</button>
-                    <p style="font-size: 12px; color: var(--gray); margin-top: 10px;">
-                        <i class="fas fa-shield-alt"></i> One-time payment. Instant access. 100% satisfaction guaranteed.
+                    <button class="btn-pay" id="payButton"><i class="fas fa-rupee-sign"></i> Pay ₹999 – Unlock Now</button>
+                    <p style="font-size: 12px; color: var(--gray-500); margin-top: 10px;">
+                        <i class="fas fa-shield-alt"></i> One-time payment. Instant access.
                     </p>
                 </div>
 
-                <div style="text-align: center; margin: 20px 0;">
+                <div style="text-align: center; margin: 16px 0;">
                     <button class="btn-download" id="downloadButton" style="display: none;">
-                        <i class="fas fa-download"></i> Download Full Report as PDF
+                        <i class="fas fa-download"></i> Download Full PDF
                     </button>
                 </div>
             </div>
 
-            <!-- THE ₹ LAKH QUESTION -->
-            <div class="card card-gold">
-                <h3><i class="fas fa-calculator"></i> The ₹ Lakh Question</h3>
-                <p style="font-size: 15px; color: var(--navy);">
-                    Your annual Communication Tax is <strong id="finalAnnualTax">₹7,00,000</strong>.
-                    <br>Your program costs <strong>₹9,999</strong>.
-                </p>
-                <div style="font-size: 18px; font-weight: 700; color: var(--teal); margin: 8px 0;">
-                    ₹9,999 vs ₹7,00,000. Do the math.
+            <!-- Testimonials -->
+            <div style="margin: 20px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div style="background: var(--teal-light); border-radius: var(--radius-sm); padding: 16px 20px; border-left: 4px solid var(--teal);">
+                    <div style="font-style: italic; font-size: 14px; color: var(--gray-700);">
+                        "After The Unspoken, I cracked Amazon in 4 weeks. I literally doubled my salary."
+                    </div>
+                    <div style="font-weight: 700; font-size: 13px; margin-top: 6px; color: var(--navy);">
+                        — Rahul S., Senior Analyst
+                    </div>
                 </div>
-                <p style="font-size: 15px; font-style: italic; color: var(--gray);">
-                    The question isn't "can you afford this?" It's "can you afford to keep paying the Communication Tax™?"
-                </p>
-            </div>
-
-            <!-- TESTIMONIALS -->
-            <div style="margin: 20px 0;">
-                <h4 style="font-family: var(--font-heading); font-weight: 700; margin-bottom: 12px;">What Clients Say</h4>
-                <div class="testimonial">
-                    <div class="quote">"After The Unspoken, I cracked Amazon in 4 weeks. I literally doubled my salary."</div>
-                    <div class="author">— Rahul S., Senior Analyst, Bengaluru</div>
-                </div>
-                <div class="testimonial">
-                    <div class="quote">"I'd been passed over for promotion twice. After 4 weeks, I got the promotion and a 30% hike."</div>
-                    <div class="author">— Priya M., Manager, Mumbai</div>
+                <div style="background: var(--teal-light); border-radius: var(--radius-sm); padding: 16px 20px; border-left: 4px solid var(--teal);">
+                    <div style="font-style: italic; font-size: 14px; color: var(--gray-700);">
+                        "I'd been passed over for promotion twice. After 4 weeks, I got the promotion and a 30% hike."
+                    </div>
+                    <div style="font-weight: 700; font-size: 13px; margin-top: 6px; color: var(--navy);">
+                        — Priya M., Manager
+                    </div>
                 </div>
             </div>
 
-            <div style="text-align: center; font-size: 18px; font-weight: 700; color: var(--teal); margin: 20px 0;">
+            <div style="text-align: center; font-size: 20px; font-weight: 800; color: var(--teal); padding: 16px 0;">
                 Your value is worth millions. Don't lose lakhs in translation.
             </div>
         </section>
 
-        <!-- ============================================
-        REPORT FOOTER
-        ============================================ -->
+        <!-- ============================================================
+        FOOTER
+        ============================================================ -->
         <div class="report-footer">
             <div class="brand"><i class="fas fa-brain"></i> THE UNSPOKEN</div>
             <div class="links">
@@ -2115,72 +1697,61 @@
                 <a href="#">@riseeq.k</a>
                 <a href="#">Topmate 5★</a>
             </div>
-            <div class="copy">
-                © The Unspoken. All rights reserved. Communication Tax™ is a proprietary framework.
-            </div>
+            <div>© The Unspoken. Communication Tax™ is a proprietary framework.</div>
         </div>
 
     </div>
     <!-- end report-wrapper -->
 
-    <!-- ============================================
+    <!-- ============================================================
     JAVASCRIPT
-    ============================================ -->
+    ============================================================ -->
     <script>
-        // ============================================
+        // ============================================================
         // CONFIGURATION
-        // ============================================
+        // ============================================================
         var APPS_SCRIPT_URL =
             'https://script.google.com/macros/s/AKfycbx8LTKljYm34158-yH_-h9SLmMZwAdsBfgfKpCDPU8JitHT9li7yMgxIoRSggQu1fEp/exec';
-        var RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID'; // <-- REPLACE THIS
+        var RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID'; // <-- REPLACE
 
-        // Get submission ID from URL
         var urlParams = new URLSearchParams(window.location.search);
         var submissionId = urlParams.get('id');
         var paymentId = urlParams.get('payment_id');
 
-        // ============================================
-        // DATA STORE
-        // ============================================
         var reportData = null;
         var isUnlocked = false;
+        var dnaChart = null;
 
-        // ============================================
+        // ============================================================
         // HELPERS
-        // ============================================
+        // ============================================================
+        function formatNumber(num) {
+            if (!num) return '0';
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
         function getScoreColor(score) {
             if (score >= 70) return '#00C4A7';
             if (score >= 50) return '#F59E0B';
             return '#EF4444';
         }
 
-        function getFillClass(score) {
-            if (score >= 70) return 'teal';
-            if (score >= 50) return 'yellow';
-            return 'red';
-        }
-
         function getScoreStatus(score) {
-            if (score >= 91) return '🟢 Tax-Free';
-            if (score >= 76) return '🟡 Moderate Tax';
-            if (score >= 51) return '🟠 High Tax';
-            return '🔴 Critical Tax';
+            if (score >= 91) return 'Tax-Free';
+            if (score >= 76) return 'Moderate Tax';
+            if (score >= 51) return 'High Tax';
+            return 'Critical Tax';
         }
 
-        function formatNumber(num) {
-            if (!num) return '0';
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        }
-
-        // ============================================
-        // FETCH DATA FROM APPS SCRIPT
-        // ============================================
+        // ============================================================
+        // FETCH DATA
+        // ============================================================
         async function fetchReportData() {
             if (!submissionId) {
                 document.getElementById('reportContainer').innerHTML = `
-                    <div style="padding:60px 20px;text-align:center;font-family:var(--font-body);">
+                    <div style="padding:60px 20px;text-align:center;font-family:var(--font);">
                         <h2 style="color:#991B1B;">⚠️ Missing Submission ID</h2>
-                        <p style="color:var(--gray);">Please add <code>?id=YOUR_SUBMISSION_ID</code> to the URL.</p>
+                        <p style="color:var(--gray-500);">Please add <code>?id=YOUR_SUBMISSION_ID</code> to the URL.</p>
                     </div>
                 `;
                 return null;
@@ -2198,141 +1769,89 @@
                 }
             } catch (error) {
                 document.getElementById('reportContainer').innerHTML = `
-                    <div style="padding:60px 20px;text-align:center;font-family:var(--font-body);">
+                    <div style="padding:60px 20px;text-align:center;font-family:var(--font);">
                         <h2 style="color:#991B1B;">⚠️ Error Loading Report</h2>
-                        <p style="color:var(--gray);">${error.message}</p>
-                        <p style="font-size:12px;color:var(--gray);margin-top:8px;">Please try again or contact support.</p>
+                        <p style="color:var(--gray-500);">${error.message}</p>
                     </div>
                 `;
                 return null;
             }
         }
 
-        // ============================================
-        // RENDER REPORT
-        // ============================================
-        function renderReport(data) {
-            reportData = data;
+        // ============================================================
+        // RENDER COMPETENCY RINGS
+        // ============================================================
+        function renderRings(containerId, data) {
+            var container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
 
-            // Convert decimals to percentages
-            var ciScore = Math.round(data.ciScore || 0);
-            var thinking = Math.round(data.thinkingPct || 0);
-            var structure = Math.round(data.structurePct || 0);
-            var communication = Math.round(data.communicationPct || 0);
-            var understanding = Math.round(data.understandingPct || 0);
-            var opportunity = Math.round(data.opportunityPct || 0);
-
-            var annualTax = data.annualTax || 0;
-
-            // ---- PERSONAL INFO ----
-            document.getElementById('displayName').textContent = data.name || 'Executive';
-            document.getElementById('displayRole').textContent = data.role || 'Professional';
-            document.getElementById('displayDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit',
-                month: 'short', year: 'numeric' });
-            document.getElementById('summaryName').textContent = data.name || 'Executive';
-            document.getElementById('summaryAnnualTax').textContent = '₹' + formatNumber(annualTax);
-
-            // ---- SNAPSHOT ----
-            document.getElementById('snapshotCiScore').textContent = ciScore + '%';
-            document.getElementById('snapshotPersona').textContent = data.persona || 'The Translator';
-            document.getElementById('snapshotAnnualTax').textContent = '₹' + formatNumber(annualTax);
-            document.getElementById('snapshotWeakest').textContent = data.weakestCompetency || 'Communication';
-            document.getElementById('snapshotStrongest').textContent = data.highestCompetency || 'Thinking';
-
-            // ---- TOP PRIORITIES ----
-            var gaps = data.topGaps || ['No gaps identified', 'No gaps identified', 'No gaps identified'];
-            document.getElementById('priority1').textContent = gaps[0];
-            document.getElementById('priority2').textContent = gaps[1];
-            document.getElementById('priority3').textContent = gaps[2];
-
-            // ---- PERSONA ----
-            var persona = data.persona || 'The Articulator';
-            var personaEmoji = data.personaEmoji || '🟢';
-            document.getElementById('personaEmoji').textContent = personaEmoji;
-            document.getElementById('personaName').textContent = persona;
-            document.getElementById('personaDesc').textContent = data.personaDescription ||
-                "You're clear and confident. Some gaps in translation are costing you momentum.";
-
-            document.getElementById('journeyCurrent').textContent = persona;
-            document.getElementById('journeyYouAre').textContent = persona;
-            document.getElementById('whereYouAre').textContent = persona;
-
-            // ---- COMPETENCY BARS ----
-            var comps = [
-                { id: 'Thinking', score: thinking, level: data.thinkingLevel || 'Proficient' },
-                { id: 'Structure', score: structure, level: data.structureLevel || 'Proficient' },
-                { id: 'Communication', score: communication, level: data.communicationLevel || 'Needs Attention' },
-                { id: 'Understanding', score: understanding, level: data.understandingLevel || 'Needs Attention' },
-                { id: 'Opportunity', score: opportunity, level: data.opportunityLevel || 'Proficient' }
+            var competencies = [
+                { id: 'Thinking', score: Math.round(data.thinkingPct || 0), level: data.thinkingLevel || 'Proficient' },
+                { id: 'Structure', score: Math.round(data.structurePct || 0), level: data.structureLevel || 'Proficient' },
+                { id: 'Communication', score: Math.round(data.communicationPct || 0), level: data.communicationLevel ||
+                        'Needs Attention' },
+                { id: 'Understanding', score: Math.round(data.understandingPct || 0), level: data.understandingLevel ||
+                        'Needs Attention' },
+                { id: 'Opportunity', score: Math.round(data.opportunityPct || 0), level: data.opportunityLevel ||
+                        'Proficient' }
             ];
 
-            comps.forEach(function(comp) {
-                var barId = 'bar' + comp.id;
-                var scoreId = 'score' + comp.id;
-                var levelId = 'level' + comp.id;
-                var el = document.getElementById(barId);
-                if (el) {
-                    el.style.width = comp.score + '%';
-                    el.className = 'comp-bar-fill ' + getFillClass(comp.score);
-                }
-                document.getElementById(scoreId).textContent = comp.score + '%';
-                var levelEl = document.getElementById(levelId);
-                if (levelEl) {
-                    levelEl.textContent = comp.level;
-                    var color = getScoreColor(comp.score);
-                    levelEl.style.color = color;
-                }
-            });
-
-            // ---- DETAILED BREAKDOWN TABLE ----
-            var breakdownData = [
-                { name: 'Thinking', score: thinking, taxRate: 50000 },
-                { name: 'Structure', score: structure, taxRate: 75000 },
-                { name: 'Communication', score: communication, taxRate: 100000 },
-                { name: 'Understanding', score: understanding, taxRate: 50000 },
-                { name: 'Opportunity', score: opportunity, taxRate: 150000 }
-            ];
-
-            var tbody = document.getElementById('breakdownBody');
-            var totalPoints = 0;
-            var totalTax = 0;
-            tbody.innerHTML = '';
-
-            breakdownData.forEach(function(item) {
-                var pointsBelow = Math.max(0, 60 - item.score);
-                var tax = pointsBelow * item.taxRate;
-                totalPoints += pointsBelow;
-                totalTax += tax;
-                var row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><strong>${item.name}</strong></td>
-                    <td>${item.score}%</td>
-                    <td>100%</td>
-                    <td style="color:${pointsBelow > 0 ? '#EF4444' : '#00C4A7'};font-weight:${pointsBelow > 0 ? '700' : '400'};">
-                        ${pointsBelow > 0 ? pointsBelow + '%' : '0%'}
-                    </td>
-                    <td>₹${formatNumber(tax)}</td>
+            competencies.forEach(function(comp) {
+                var color = getScoreColor(comp.score);
+                var div = document.createElement('div');
+                div.className = 'ring-item';
+                div.innerHTML = `
+                    <canvas id="ring_${comp.id}" width="120" height="120"></canvas>
+                    <div class="ring-label" style="color:${color};">${comp.score}%</div>
+                    <div class="ring-level">${comp.level}</div>
                 `;
-                tbody.appendChild(row);
+                container.appendChild(div);
+
+                // Draw ring
+                setTimeout(function() {
+                    var canvas = document.getElementById('ring_' + comp.id);
+                    if (!canvas) return;
+                    var ctx = canvas.getContext('2d');
+                    var cx = 60,
+                        cy = 60,
+                        radius = 48,
+                        startAngle = -Math.PI / 2;
+                    var endAngle = startAngle + (comp.score / 100) * 2 * Math.PI;
+
+                    ctx.clearRect(0, 0, 120, 120);
+                    // Background
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+                    ctx.strokeStyle = '#F3F4F6';
+                    ctx.lineWidth = 8;
+                    ctx.stroke();
+                    // Foreground
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, radius, startAngle, endAngle);
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 8;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                    // Center text
+                    ctx.fillStyle = color;
+                    ctx.font = 'bold 18px Inter, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(comp.score + '%', cx, cy);
+                }, 100);
             });
+        }
 
-            document.getElementById('breakdownFoot').innerHTML = `
-                <tr>
-                    <td><strong>TOTAL</strong></td>
-                    <td><strong>${ciScore}%</strong></td>
-                    <td><strong>100%</strong></td>
-                    <td><strong>${totalPoints}%</strong></td>
-                    <td><strong>₹${formatNumber(totalTax)}</strong></td>
-                </tr>
-            `;
+        // ============================================================
+        // RENDER SUB-COMPETENCIES
+        // ============================================================
+        function renderSubComps(containerId, subScores, start, end) {
+            var container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
 
-            // ---- KEY INSIGHTS ----
-            document.getElementById('insightHighest').textContent = data.highestCompetency || 'Thinking (75%)';
-            document.getElementById('insightLowest').textContent = data.weakestCompetency || 'Communication (54%)';
-
-            // ---- SECTION DEEP DIVES: SUB-COMPETENCIES ----
-            var subScores = data.subScores || [];
-            var subCompNames = [
+            var subNames = [
                 'Message Clarity', 'Thought-Expression Alignment', 'Thinking Under Pressure',
                 'Adaptability Under Pressure', 'Conversational Preparation', 'Message Preparation',
                 'Explanation Effectiveness', 'Logical Flow', 'Opening Impact',
@@ -2345,103 +1864,387 @@
                 'Promotion Conversion', 'Relationship Diagnosis', 'Goal Clarity'
             ];
 
-            var sectionMap = {
-                thinking: { start: 0, end: 5, container: 'thinkingSubComps', scoreId: 'thinkingScore',
-                    levelId: 'thinkingLevel', strengths: 'thinkingStrengths', gaps: 'thinkingGaps' },
-                structure: { start: 6, end: 11, container: 'structureSubComps', scoreId: 'structureScore',
-                    levelId: 'structureLevel', strengths: 'structureStrengths', gaps: 'structureGaps' },
-                communication: { start: 12, end: 17, container: 'communicationSubComps', scoreId: 'communicationScore',
-                    levelId: 'communicationLevel', strengths: 'communicationStrengths', gaps: 'communicationGaps' },
-                understanding: { start: 18, end: 23, container: 'understandingSubComps', scoreId: 'understandingScore',
-                    levelId: 'understandingLevel', strengths: 'understandingStrengths', gaps: 'understandingGaps' },
-                opportunity: { start: 24, end: 29, container: 'opportunitySubComps', scoreId: 'opportunityScore',
-                    levelId: 'opportunityLevel', strengths: 'opportunityStrengths', gaps: 'opportunityGaps' }
-            };
+            for (var i = start; i <= end; i++) {
+                var s = subScores[i] || 0;
+                var name = subNames[i] || 'Unknown';
+                var level = s >= 4 ? 'Exceptional' : s >= 3 ? 'Proficient' : s >= 2 ? 'Developing' : 'Needs Attention';
+                var color = s >= 3 ? '#00C4A7' : s >= 2 ? '#F59E0B' : '#EF4444';
 
-            function renderSubComps(sectionKey, sectionData) {
-                var container = document.getElementById(sectionData.container);
-                if (!container) return;
-                container.innerHTML = '';
-                var subNames = subCompNames.slice(sectionData.start, sectionData.end + 1);
-                var scores = subScores.slice(sectionData.start, sectionData.end + 1);
-                for (var i = 0; i < subNames.length; i++) {
-                    var s = scores[i] || 0;
-                    var level = s >= 4 ? 'Exceptional' : s >= 3 ? 'Proficient' : s >= 2 ? 'Developing' : 'Needs Attention';
-                    var color = s >= 3 ? '#00C4A7' : s >= 2 ? '#F59E0B' : '#EF4444';
-                    var div = document.createElement('div');
-                    div.className = 'comp-row';
-                    div.innerHTML = `
-                        <span class="comp-label" style="width:auto;font-weight:400;font-size:13px;">${subNames[i]}</span>
-                        <div class="comp-bar-track" style="flex:0 0 60%;">
-                            <div class="comp-bar-fill ${getFillClass(s*25)}" style="width:${s*25}%;"></div>
-                        </div>
-                        <span style="font-weight:700;font-size:13px;min-width:40px;text-align:right;color:${color};">${s}/4</span>
-                        <span style="font-size:12px;color:${color};min-width:90px;text-align:right;">${level}</span>
-                    `;
-                    container.appendChild(div);
+                var div = document.createElement('div');
+                div.className = 'comp-row';
+                div.style.cssText =
+                    'display:flex;align-items:center;gap:12px;margin:6px 0;padding:4px 0;border-bottom:1px solid #F3F4F6;';
+                div.innerHTML = `
+                    <span style="font-weight:400;font-size:13px;min-width:140px;">${name}</span>
+                    <div style="flex:1;height:18px;background:#F3F4F6;border-radius:20px;overflow:hidden;">
+                        <div style="height:100%;width:${s*25}%;background:${color};border-radius:20px;"></div>
+                    </div>
+                    <span style="font-weight:700;font-size:13px;min-width:40px;text-align:right;color:${color};">${s}/4</span>
+                    <span style="font-size:12px;color:${color};min-width:90px;text-align:right;">${level}</span>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        // ============================================================
+        // RENDER DNA RADAR
+        // ============================================================
+        function renderDNA(data) {
+            var labels = ['Strategic Thinking', 'Executive Presence', 'Influence', 'Persuasion', 'Confidence',
+                'Listening', 'Adaptability'
+            ];
+            // Map scores from data or use defaults
+            var scores = [
+                Math.round(data.thinkingPct || 75),
+                Math.round((data.communicationPct || 54) + 10),
+                Math.round((data.opportunityPct || 75) - 5),
+                Math.round((data.communicationPct || 54) + 4),
+                Math.round((data.structurePct || 70) + 5),
+                Math.round((data.understandingPct || 58) + 12),
+                Math.round((data.thinkingPct || 75) - 8)
+            ];
+
+            // DNA List
+            var listContainer = document.getElementById('dnaList');
+            listContainer.innerHTML = '';
+            var dnaItems = [
+                { label: 'Strategic Thinking', value: scores[0] },
+                { label: 'Executive Presence', value: scores[1] },
+                { label: 'Influence', value: scores[2] },
+                { label: 'Persuasion', value: scores[3] },
+                { label: 'Confidence', value: scores[4] },
+                { label: 'Listening', value: scores[5] },
+                { label: 'Adaptability', value: scores[6] }
+            ];
+            dnaItems.forEach(function(item) {
+                var color = getScoreColor(item.value);
+                var div = document.createElement('div');
+                div.className = 'dna-item';
+                div.innerHTML = `
+                    <div class="dna-label">${item.label}</div>
+                    <div class="dna-value" style="color:${color};">${item.value}%</div>
+                `;
+                listContainer.appendChild(div);
+            });
+
+            // Radar Chart
+            if (dnaChart) { dnaChart.destroy(); }
+            var ctx = document.getElementById('dnaChart').getContext('2d');
+            dnaChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Executive Communication DNA',
+                        data: scores,
+                        backgroundColor: 'rgba(0, 196, 167, 0.15)',
+                        borderColor: '#00C4A7',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#00C4A7',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 100,
+                            ticks: { stepSize: 20, backdropColor: 'transparent' },
+                            grid: { color: 'rgba(0,0,0,0.06)' },
+                            angleLines: { color: 'rgba(0,0,0,0.06)' },
+                            pointLabels: { font: { size: 10, family: 'Inter' }, color: '#6B7280' }
+                        }
+                    }
                 }
-            }
+            });
+        }
 
-            renderSubComps('thinking', sectionMap.thinking);
-            renderSubComps('structure', sectionMap.structure);
-            renderSubComps('communication', sectionMap.communication);
-            renderSubComps('understanding', sectionMap.understanding);
-            renderSubComps('opportunity', sectionMap.opportunity);
+        // ============================================================
+        // RENDER WATERFALL
+        // ============================================================
+        function renderWaterfall(data) {
+            var container = document.getElementById('waterfallContainer');
+            if (!container) return;
 
-            // ---- SECTION SCORES & LEVELS ----
-            document.getElementById('thinkingScore').textContent = thinking + '%';
-            document.getElementById('thinkingLevel').textContent = data.thinkingLevel || 'Proficient';
-            document.getElementById('structureScore').textContent = structure + '%';
-            document.getElementById('structureLevel').textContent = data.structureLevel || 'Proficient';
-            document.getElementById('communicationScore').textContent = communication + '%';
-            document.getElementById('communicationLevel').textContent = data.communicationLevel || 'Needs Attention';
-            document.getElementById('understandingScore').textContent = understanding + '%';
-            document.getElementById('understandingLevel').textContent = data.understandingLevel || 'Needs Attention';
-            document.getElementById('opportunityScore').textContent = opportunity + '%';
-            document.getElementById('opportunityLevel').textContent = data.opportunityLevel || 'Proficient';
+            var thinking = Math.round(data.thinkingPct || 0);
+            var structure = Math.round(data.structurePct || 0);
+            var communication = Math.round(data.communicationPct || 0);
+            var understanding = Math.round(data.understandingPct || 0);
+            var opportunity = Math.round(data.opportunityPct || 0);
 
-            // ---- FINAL ANNUAL TAX ----
-            document.getElementById('finalAnnualTax').textContent = '₹' + formatNumber(annualTax);
-
-            // ---- TRIGGERS ----
-            var triggerNames = ['Communication (54%)', 'Opportunity (Interview Conversion)', 'Structure (Logical Flow)'];
-            var triggerTaxes = ['₹6,00,000', '₹3,00,000', '₹1,50,000'];
-            var triggerDescs = [
-                'Your biggest gap is Communication. When you explain complex ideas, you don\'t structure them clearly. Your audience has to work to follow you — and most won\'t. This is costing you ₹6 Lakhs annually.',
-                'Your interview conversion rate is low. You struggle to articulate your value under pressure, which means you\'re losing out on career-defining opportunities.',
-                'Your logical flow needs improvement. You start talking and organise as you go — which confuses your audience. A clear structure would save you ₹1.5 Lakhs annually.'
+            var items = [
+                { label: 'Communication', value: Math.max(0, 60 - communication) * 100000, color: '#EF4444' },
+                { label: 'Promotion', value: Math.max(0, 60 - opportunity) * 150000, color: '#F97316' },
+                { label: 'Interviews', value: Math.max(0, 60 - communication) * 50000, color: '#F59E0B' },
+                { label: 'Meetings', value: Math.max(0, 60 - understanding) * 50000, color: '#00C4A7' }
             ];
-            var triggerFixes = [
-                'Practice the "Translate, Don\'t Explain" framework daily.',
-                'Practice your 60-second value pitch every morning.',
-                'Use the Problem → Solution → Outcome framework.'
-            ];
-            for (var i = 0; i < 3; i++) {
-                document.getElementById('trigger' + (i + 1) + 'Name').textContent = triggerNames[i];
-                document.getElementById('trigger' + (i + 1) + 'Tax').textContent = triggerTaxes[i];
-                document.getElementById('trigger' + (i + 1) + 'Desc').textContent = triggerDescs[i];
-                document.getElementById('trigger' + (i + 1) + 'Fix').textContent = triggerFixes[i];
-            }
+
+            var total = 0;
+            items.forEach(function(item) { total += item.value; });
+
+            var maxVal = Math.max(total, 1);
+            var html = '';
+            items.forEach(function(item) {
+                var pct = (item.value / maxVal) * 100;
+                html += `
+                    <div class="wf-row">
+                        <span class="wf-label">${item.label}</span>
+                        <div class="wf-bar"><div class="wf-fill" style="width:${Math.min(pct, 100)}%;background:${item.color};"></div></div>
+                        <span class="wf-amount" style="color:${item.color};">₹${formatNumber(item.value)}</span>
+                    </div>
+                `;
+            });
+            html += `
+                <div class="wf-total">
+                    <span>TOTAL ANNUAL TAX</span>
+                    <span class="wf-total-amount">₹${formatNumber(total)}</span>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // RENDER FRAMEWORKS
+        // ============================================================
+        function renderFrameworks() {
+            var container = document.getElementById('frameworkList');
+            if (!container) return;
+
+            var frameworks = [{
+                title: 'Headline First',
+                difficulty: 'Medium',
+                time: '7 days',
+                roi: 'High',
+                desc: 'Lead with your main point, then support it with evidence.',
+                steps: ['Start every email with your main point', 'No context, no preamble',
+                    'Support with evidence in the next sentences'
+                ],
+                why: 'Your Logical Flow score is low. This will help you structure ideas clearly.'
+            }, {
+                title: 'Interview Narrative',
+                difficulty: 'Medium',
+                time: '1 hour',
+                roi: 'Very High',
+                desc: 'Structure answers using: The Challenge, The Action, The Result.',
+                steps: ['Identify a challenge you faced', 'Describe the action you took',
+                    'Explain the result you achieved'
+                ],
+                why: 'Your Interview Conversion score needs improvement.'
+            }, {
+                title: 'Completeness-Check',
+                difficulty: 'Easy',
+                time: '1 minute',
+                roi: 'High',
+                desc: 'Before ending any conversation, ask: "Is there anything I haven\'t covered?"',
+                steps: ['Ask the question before ending the conversation', 'Wait for their response',
+                    'Address any gaps immediately'
+                ],
+                why: 'Your Completeness of Communication score is low.'
+            }];
+
+            var html = '';
+            frameworks.forEach(function(fw) {
+                var diffClass = fw.difficulty === 'Easy' ? 'low' : fw.difficulty === 'Medium' ? 'medium' : 'high';
+                var roiClass = fw.roi === 'High' ? 'high' : fw.roi === 'Very High' ? 'high' : 'medium';
+                html += `
+                    <div class="playbook">
+                        <div class="pb-header">
+                            <div class="pb-title"><i class="fas fa-play" style="color:var(--teal);margin-right:8px;"></i> ${fw.title}</div>
+                            <div class="pb-meta">
+                                <span><i class="fas fa-gauge-high"></i> Difficulty: <span class="${diffClass}">${fw.difficulty}</span></span>
+                                <span><i class="fas fa-clock"></i> ${fw.time}</span>
+                                <span><i class="fas fa-arrow-trend-up"></i> ROI: <span class="${roiClass}">${fw.roi}</span></span>
+                            </div>
+                        </div>
+                        <div class="pb-desc">${fw.desc}</div>
+                        <div class="pb-steps">
+                            <strong>How to use:</strong>
+                            <ol style="padding-left:20px;">
+                                ${fw.steps.map(function(s){ return '<li>'+s+'</li>'; }).join('')}
+                            </ol>
+                        </div>
+                        <div style="font-size:13px;color:var(--teal);margin-top:6px;">
+                            <i class="fas fa-check-circle"></i> Why it works for you: ${fw.why}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // RENDER ROADMAP
+        // ============================================================
+        function renderRoadmap() {
+            var container = document.getElementById('roadmapVisual');
+            if (!container) return;
+
+            var weeks = [{
+                label: 'Week 1',
+                fill: 25,
+                milestone: 'Identify your top 3 patterns'
+            }, {
+                label: 'Week 2',
+                fill: 50,
+                milestone: 'Messages become clearer'
+            }, {
+                label: 'Week 3',
+                fill: 75,
+                milestone: 'Your value starts landing'
+            }, {
+                label: 'Week 4',
+                fill: 100,
+                milestone: 'Interviews, promotions convert'
+            }];
+
+            var html = '';
+            weeks.forEach(function(w) {
+                html += `
+                    <div class="rm-week">
+                        <span class="rm-label">${w.label}</span>
+                        <div class="rm-track">
+                            <div class="rm-fill" style="width:${w.fill}%;"></div>
+                        </div>
+                        <span class="rm-milestone"><i class="fas fa-flag" style="color:var(--teal);"></i> ${w.milestone}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // MAIN RENDER
+        // ============================================================
+        function renderReport(data) {
+            reportData = data;
+
+            // Percentages
+            var thinking = Math.round(data.thinkingPct || 0);
+            var structure = Math.round(data.structurePct || 0);
+            var communication = Math.round(data.communicationPct || 0);
+            var understanding = Math.round(data.understandingPct || 0);
+            var opportunity = Math.round(data.opportunityPct || 0);
+            var ciScore = Math.round(data.ciScore || 0);
+            var annualTax = data.annualTax || 700000;
+
+            // ---- COVER ----
+            document.getElementById('coverName').textContent = data.name || 'John Smith';
+            document.getElementById('coverRole').textContent = data.role || 'Director';
+            document.getElementById('coverDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit',
+                month: 'short', year: 'numeric' });
+
+            // ---- MRI ----
+            document.getElementById('mriScore').textContent = ciScore + '%';
+            document.getElementById('mriTax').textContent = '₹' + (annualTax / 100000).toFixed(1) + ' Lakh';
+            document.getElementById('mriPersona').textContent = data.persona || 'The Articulator';
+            document.getElementById('mriROI').textContent = (ciScore > 50 ? (100 / ciScore).toFixed(1) : '2.0') + 'x';
+            document.getElementById('mriBiggestGap').textContent = data.weakestCompetency || 'Communication (54%)';
+            document.getElementById('mriHiddenStrength').textContent = data.highestCompetency || 'Thinking (75%)';
+
+            // ---- TAX HERO ----
+            var perMonth = Math.round(annualTax / 12);
+            var perDay = Math.round(annualTax / 365);
+            var perHour = Math.round(annualTax / (365 * 8));
+            document.getElementById('taxHeroAmount').textContent = '₹' + formatNumber(annualTax);
+            document.getElementById('taxPerMonth').textContent = '₹' + formatNumber(perMonth);
+            document.getElementById('taxPerDay').textContent = '₹' + formatNumber(perDay);
+            document.getElementById('taxPerHour').textContent = '₹' + formatNumber(perHour);
+
+            // ---- TAX BREAKDOWN ----
+            document.getElementById('taxInterviews').textContent = '₹' + formatNumber(Math.round(annualTax * 0.25));
+            document.getElementById('taxPromotions').textContent = '₹' + formatNumber(Math.round(annualTax * 0.15));
+            document.getElementById('taxClients').textContent = '₹' + formatNumber(Math.round(annualTax * 0.5));
+            document.getElementById('taxTeam').textContent = '₹' + formatNumber(Math.round(annualTax * 0.1));
+            document.getElementById('taxQuestionAmount').textContent = '₹' + formatNumber(annualTax);
+
+            // ---- PERSONA ----
+            var persona = data.persona || 'The Articulator';
+            document.getElementById('personaEmoji').textContent = '🟢';
+            document.getElementById('personaName').textContent = persona;
+            document.getElementById('personaDesc').textContent = data.personaDescription ||
+                "You're clear and confident. Some gaps in translation are costing you momentum.";
+            document.getElementById('journeyCurrent').textContent = persona;
+            document.getElementById('whereYouAre').textContent = persona;
+
+            // ---- RINGS ----
+            renderRings('ringsGrid', data);
+
+            // ---- SUB-COMPS ----
+            var subScores = data.subScores || [];
+            renderSubComps('thinkingSubComps', subScores, 0, 5);
+            renderSubComps('structureSubComps', subScores, 6, 11);
+            renderSubComps('communicationSubComps', subScores, 12, 17);
+            renderSubComps('understandingSubComps', subScores, 18, 23);
+            renderSubComps('opportunitySubComps', subScores, 24, 29);
+
+            // ---- DEEP DIVE SCORES ----
+            document.getElementById('thinkingScoreDisplay').textContent = thinking + '%';
+            document.getElementById('structureScoreDisplay').textContent = structure + '%';
+            document.getElementById('communicationScoreDisplay').textContent = communication + '%';
+            document.getElementById('understandingScoreDisplay').textContent = understanding + '%';
+            document.getElementById('opportunityScoreDisplay').textContent = opportunity + '%';
+
+            var thinkingTax = Math.max(0, 60 - thinking) * 0;
+            var structureTax = Math.max(0, 60 - structure) * 0;
+            var communicationTax = Math.max(0, 60 - communication) * 100000;
+            var understandingTax = Math.max(0, 60 - understanding) * 50000;
+            var opportunityTax = Math.max(0, 60 - opportunity) * 0;
+
+            document.getElementById('thinkingTaxImpact').textContent = '₹' + formatNumber(thinkingTax);
+            document.getElementById('structureTaxImpact').textContent = '₹' + formatNumber(structureTax);
+            document.getElementById('communicationTaxImpact').textContent = '₹' + formatNumber(communicationTax);
+            document.getElementById('understandingTaxImpact').textContent = '₹' + formatNumber(understandingTax);
+            document.getElementById('opportunityTaxImpact').textContent = '₹' + formatNumber(opportunityTax);
+
+            // ---- BADGES ----
+            document.getElementById('thinkingBadge').textContent = data.thinkingLevel || 'Proficient';
+            document.getElementById('structureBadge').textContent = data.structureLevel || 'Proficient';
+            document.getElementById('communicationBadge').textContent = data.communicationLevel || 'Needs Attention';
+            document.getElementById('understandingBadge').textContent = data.understandingLevel || 'Needs Attention';
+            document.getElementById('opportunityBadge').textContent = data.opportunityLevel || 'Proficient';
+
+            // ---- DNA ----
+            renderDNA(data);
+
+            // ---- WATERFALL ----
+            renderWaterfall(data);
+
+            // ---- FRAMEWORKS ----
+            renderFrameworks();
+
+            // ---- ROADMAP ----
+            renderRoadmap();
+
+            // ---- PROGRAM ----
+            var currentScore = ciScore;
+            var projectedScore = Math.min(95, currentScore + 10);
+            var taxSaved = Math.round(annualTax * 0.4);
+            var roi = ((taxSaved / 9999) * 100).toFixed(0);
+            document.getElementById('progCurrentScore').textContent = currentScore;
+            document.getElementById('progProjectedScore').textContent = projectedScore;
+            document.getElementById('progTaxSaved').textContent = '₹' + formatNumber(taxSaved);
+            document.getElementById('progROI').textContent = roi + '%';
+
+            // ---- SUMMARY TAX ----
+            document.getElementById('summaryTax').textContent = '₹' + formatNumber(annualTax);
 
             // ---- INSIGHTS ----
-            var insights = [
-                'Your ideas are brilliant. Your structure is weak. You\'re the smartest person in the room, but no one follows your logic. The result? Your ideas don\'t get approved. Your career is moving slower than your potential.',
-                'Your thinking is exceptional. You have a natural ability to clarify complex ideas. This is your superpower — and it\'s why people trust you. If you could match this clarity in your delivery, you\'d be unstoppable.',
-                'Your quick win is Structural Self-Awareness. By spending 5 minutes before every meeting to structure your points, you can immediately improve your clarity. This small shift will save you ₹75,000 per year.',
-                'Your career is at moderate risk. You\'ve been passed over for promotion. Your ideas are sometimes ignored. If you don\'t fix this, you could be stuck in the same role for years.',
-                'The opportunity is enormous. By fixing your communication gaps, you can: double your CTC, get promoted in the next cycle, and become a trusted voice in your organisation. The gap is fixable. The ROI is 1000%.'
-            ];
-            for (var i = 0; i < 5; i++) {
-                document.getElementById('insight' + (i + 1) + 'Text').textContent = insights[i];
-            }
+            document.getElementById('insightHighest').textContent = data.highestCompetency || 'Thinking (75%)';
+            document.getElementById('insightLowest').textContent = data.weakestCompetency || 'Communication (54%)';
 
-            // ---- PAYMENT / UNLOCK STATE ----
-            var isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
+            // ---- UNLOCK STATE ----
+            isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
             if (isUnlocked) {
                 document.getElementById('unlockBadge').style.display = 'block';
                 document.getElementById('paymentBox').style.display = 'none';
                 document.getElementById('downloadButton').style.display = 'inline-block';
-                // Remove blur from all blurred sections
                 document.querySelectorAll('.blurred-section').forEach(function(el) {
                     el.classList.remove('blurred-section');
                 });
@@ -2450,17 +2253,14 @@
                 document.getElementById('paymentBox').style.display = 'block';
                 document.getElementById('downloadButton').style.display = 'none';
             }
-
-            // ---- HIDE LOADING ----
-            // (already rendered)
         }
 
-        // ============================================
-        // PAYMENT HANDLER
-        // ============================================
+        // ============================================================
+        // PAYMENT
+        // ============================================================
         function initiatePayment() {
             if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID === 'YOUR_RAZORPAY_KEY_ID') {
-                alert('Please set your Razorpay Key ID in the JavaScript configuration.');
+                alert('Please set your Razorpay Key ID.');
                 return;
             }
             var options = {
@@ -2469,34 +2269,22 @@
                 currency: 'INR',
                 name: 'The Unspoken',
                 description: 'Communication Tax™ Full Report',
-                prefill: {
-                    email: reportData ? reportData.email : ''
-                },
-                notes: {
-                    submissionId: submissionId
-                },
+                prefill: { email: reportData ? reportData.email : '' },
+                notes: { submissionId: submissionId },
                 handler: function(response) {
                     window.location.href = window.location.pathname + '?id=' + submissionId + '&payment_id=' + response
-                    .razorpay_payment_id;
-                },
-                modal: {
-                    ondismiss: function() {
-                        // user closed modal
-                    }
+                        .razorpay_payment_id;
                 }
             };
             var rzp = new Razorpay(options);
             rzp.open();
         }
 
-        // ============================================
-        // PDF DOWNLOAD
-        // ============================================
         function downloadPDF() {
             var element = document.getElementById('reportContainer');
             var opt = {
                 margin: 10,
-                filename: 'Communication_Tax_Report.pdf',
+                filename: 'Executive_Communication_Report.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -2504,14 +2292,12 @@
             html2pdf().set(opt).from(element).save();
         }
 
-        // ============================================
+        // ============================================================
         // INIT
-        // ============================================
+        // ============================================================
         async function init() {
-            // Check if already unlocked via session or payment
             if (paymentId) {
                 sessionStorage.setItem('unlocked_' + submissionId, 'true');
-                // Clean URL
                 if (window.history && window.history.replaceState) {
                     var newUrl = window.location.pathname + '?id=' + submissionId;
                     window.history.replaceState({}, document.title, newUrl);
@@ -2523,27 +2309,19 @@
                 renderReport(data);
             }
 
-            // Wire up buttons
-            var payBtn = document.getElementById('payButton');
-            if (payBtn) payBtn.addEventListener('click', initiatePayment);
-
-            var downloadBtn = document.getElementById('downloadButton');
-            if (downloadBtn) downloadBtn.addEventListener('click', downloadPDF);
-
-            // Also add download to any other download buttons (in print)
+            document.getElementById('payButton').addEventListener('click', initiatePayment);
+            document.getElementById('downloadButton').addEventListener('click', downloadPDF);
             document.querySelectorAll('.btn-download').forEach(function(btn) {
                 btn.addEventListener('click', downloadPDF);
             });
         }
 
-        // Run when DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
             init();
         }
 
-        // Also expose functions globally for inline onclick
         window.initiatePayment = initiatePayment;
         window.downloadPDF = downloadPDF;
     </script>
