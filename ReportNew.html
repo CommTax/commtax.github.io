@@ -2712,6 +2712,49 @@ body {
         document.getElementById('journeyCurrent').innerHTML = '<span class="emoji">🟢</span> ' + persona;
         document.getElementById('whereYouAre').textContent = persona;
 
+// ---- SUB-COMPS ----
+var subScores = data.subScores || [];
+renderSubComps('thinkingSubComps', subScores, 0, 5);
+renderSubComps('structureSubComps', subScores, 6, 11);
+renderSubComps('communicationSubComps', subScores, 12, 17);
+renderSubComps('understandingSubComps', subScores, 18, 23);
+renderSubComps('opportunitySubComps', subScores, 24, 29);
+
+// ---- DEEP DIVE SCORES ----
+document.getElementById('thinkingScoreDisplay').textContent = thinking + '%';
+document.getElementById('structureScoreDisplay').textContent = structure + '%';
+document.getElementById('communicationScoreDisplay').textContent = communication + '%';
+document.getElementById('understandingScoreDisplay').textContent = understanding + '%';
+document.getElementById('opportunityScoreDisplay').textContent = opportunity + '%';
+
+// ---- TAX IMPACT CALCULATIONS ----
+// Calculate tax impact for each competency (amount of money lost per point below 60%)
+function calculateTaxImpact(score, multiplier) {
+    if (score >= 60) return '₹0';
+    var loss = (60 - score) * multiplier;
+    return '₹' + formatNumber(Math.round(loss));
+}
+
+// Different multipliers for each competency based on impact
+document.getElementById('thinkingTaxImpact').textContent = calculateTaxImpact(thinking, 5000);
+document.getElementById('structureTaxImpact').textContent = calculateTaxImpact(structure, 5000);
+document.getElementById('communicationTaxImpact').textContent = calculateTaxImpact(communication, 15000);
+document.getElementById('understandingTaxImpact').textContent = calculateTaxImpact(understanding, 8000);
+document.getElementById('opportunityTaxImpact').textContent = calculateTaxImpact(opportunity, 20000);
+
+document.getElementById('thinkingBadge').textContent = data.thinkingLevel || 'Proficient';
+document.getElementById('structureBadge').textContent = data.structureLevel || 'Proficient';
+document.getElementById('communicationBadge').textContent = data.communicationLevel || 'Needs Attention';
+document.getElementById('understandingBadge').textContent = data.understandingLevel || 'Needs Attention';
+document.getElementById('opportunityBadge').textContent = data.opportunityLevel || 'Proficient';
+
+// ---- INSIGHT ----
+document.getElementById('insightText').innerHTML =
+    'Your highest score is <strong>' + (data.highestCompetency || 'Thinking (75%)') +
+    '</strong> — build on this. Your lowest score is <strong>' + (data.weakestCompetency ||
+        'Communication (54%)') + '</strong> — fix this first.';
+
+        
         // ---- RINGS ----
         renderRings(data);
 
