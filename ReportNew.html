@@ -2479,15 +2479,37 @@ PAGE 16: WHY YOU CAN'T FIX THIS ALONE (NEW)
         document.getElementById('mriPersona').textContent = data.persona || 'The Articulator';
         document.getElementById('mriROI').textContent = (ciScore > 50 ? (100 / ciScore).toFixed(1) : '2.0') + 'x';
 
-        // ---- EXECUTIVE BLIND SPOT & LEADERSHIP ADVANTAGE ----
-var weakest = data.weakestCompetency || 'Communication';
-var weakestScore = Math.round((data.communicationPct || 0) * 100);
-var highest = data.highestCompetency || 'Thinking';
-var highestScore = Math.round((data.thinkingPct || 0) * 100);
+ // ---- EXECUTIVE BLIND SPOT & LEADERSHIP ADVANTAGE ----
+// Get the competency names without percentages
+var competencyNames = {
+    'Thinking': 'Thinking',
+    'Structure': 'Structure', 
+    'Communication': 'Communication',
+    'Understanding': 'Understanding',
+    'Opportunity': 'Opportunity'
+};
 
-document.getElementById('mriBiggestGap').textContent = weakest + ' (' + weakestScore + '%)';
-document.getElementById('mriHiddenStrength').textContent = highest + ' (' + highestScore + '%)';
-        
+// Find weakest and highest competencies from data
+var competencies = [
+    { name: 'Thinking', score: Math.round((data.thinkingPct || 0) * 100) },
+    { name: 'Structure', score: Math.round((data.structurePct || 0) * 100) },
+    { name: 'Communication', score: Math.round((data.communicationPct || 0) * 100) },
+    { name: 'Understanding', score: Math.round((data.understandingPct || 0) * 100) },
+    { name: 'Opportunity', score: Math.round((data.opportunityPct || 0) * 100) }
+];
+
+// Find weakest (lowest score)
+var weakest = competencies.reduce(function(a, b) {
+    return a.score < b.score ? a : b;
+});
+
+// Find highest (highest score)
+var highest = competencies.reduce(function(a, b) {
+    return a.score > b.score ? a : b;
+});
+
+document.getElementById('mriBiggestGap').textContent = weakest.name + ' (' + weakest.score + '%)';
+document.getElementById('mriHiddenStrength').textContent = highest.name + ' (' + highest.score + '%)';
 
         // ---- SUMMARY (DYNAMIC) ----
         var thinking = Math.round((data.thinkingPct || 0) * 100);
