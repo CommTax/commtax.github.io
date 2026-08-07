@@ -2471,7 +2471,166 @@ async function loadAllNarratives(submissionId) {
             };
             html2pdf().set(opt).from(element).save();
         }
+// ============================================================
+// NARRATIVES FUNCTIONS
+// ============================================================
 
+var narrativesData = null;
+
+// Fetch narratives from Apps Script
+async function fetchNarratives(submissionId) {
+    if (!submissionId) {
+        console.warn('No submission ID provided');
+        return null;
+    }
+
+    try {
+        var url = APPS_SCRIPT_URL + '?action=getNarratives&id=' + encodeURIComponent(submissionId);
+        var response = await fetch(url);
+        var result = await response.json();
+
+        if (result.success && result.data) {
+            narrativesData = result.data;
+            console.log('✅ Narratives loaded:', Object.keys(narrativesData));
+            return narrativesData;
+        } else {
+            console.warn('No narratives found:', result.error);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error fetching narratives:', error);
+        return null;
+    }
+}
+
+// Display narrative for a specific competency
+function displayNarrative(competency, containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) {
+        console.warn('Container not found:', containerId);
+        return;
+    }
+
+    // Show loading state
+    container.innerHTML = `
+        <div class="narrative-loading">
+            <span class="spinner"></span> Loading insights...
+        </div>
+    `;
+
+    if (!narrativesData) {
+        container.innerHTML = `
+            <div class="narrative-error">
+                ⚠️ Insights temporarily unavailable. Please refresh.
+            </div>
+        `;
+        return;
+    }
+
+    var data = narrativesData[competency];
+    if (!data) {
+        container.innerHTML = `
+            <div class="narrative-error">
+                ⚠️ Insights not available for this competency.
+            </div>
+        `;
+        return;
+    }
+
+    // Check if all fields are empty
+    var hasData = data.executiveNarrative || data.whatsWorking || data.whatsHoldingYouBack ||
+        data.howOthersExperienceYou || data.professionalImpact || data.highestROIImprovement;
+
+    if (!hasData) {
+        container.innerHTML = `
+            <div class="narrative-error">
+                ⚠️ No insights available for this competency.
+            </div>
+        `;
+        return;
+    }
+
+    // Build the narrative HTML
+    var html = '';
+    html += '<div class="narrative-container">';
+
+    // 1. Executive Narrative
+    if (data.executiveNarrative) {
+        html += `
+            <div class="narrative-block executive">
+                <div class="label"><span class="icon">🎯</span> Executive Narrative</div>
+                <p class="text">${data.executiveNarrative}</p>
+            </div>
+        `;
+    }
+
+    // 2. What's Working
+    if (data.whatsWorking) {
+        html += `
+            <div class="narrative-block working">
+                <div class="label"><span class="icon">✅</span> What's Working</div>
+                <p class="text">${data.whatsWorking}</p>
+            </div>
+        `;
+    }
+
+    // 3. What's Holding You Back
+    if (data.whatsHoldingYouBack) {
+        html += `
+            <div class="narrative-block holding">
+                <div class="label"><span class="icon">⚠️</span> What's Holding You Back</div>
+                <p class="text">${data.whatsHoldingYouBack}</p>
+            </div>
+        `;
+    }
+
+    // 4. How Others Experience You
+    if (data.howOthersExperienceYou) {
+        html += `
+            <div class="narrative-block experience">
+                <div class="label"><span class="icon">👥</span> How Others Experience You</div>
+                <p class="text">${data.howOthersExperienceYou}</p>
+            </div>
+        `;
+    }
+
+    // 5. Professional Impact
+    if (data.professionalImpact) {
+        html += `
+            <div class="narrative-block impact">
+                <div class="label"><span class="icon">💼</span> Professional Impact</div>
+                <p class="text">${data.professionalImpact}</p>
+            </div>
+        `;
+    }
+
+    // 6. Highest-ROI Improvement
+    if (data.highestROIImprovement) {
+        html += `
+            <div class="narrative-block roi">
+                <div class="label"><span class="icon">🚀</span> Highest-ROI Improvement</div>
+                <p class="text">${data.highestROIImprovement}</p>
+            </div>
+        `;
+    }
+
+    html += '</div>';
+
+    container.innerHTML = html;
+}
+
+// Load all narratives
+async function loadAllNarratives(submissionId) {
+    console.log('📥 Loading narratives for:', submissionId);
+    var narratives = await fetchNarratives(submissionId);
+    if (narratives) {
+        displayNarrative('Thinking', 'thinkingNarrative');
+        displayNarrative('Structure', 'structureNarrative');
+        displayNarrative('Communication', 'communicationNarrative');
+        displayNarrative('Understanding', 'understandingNarrative');
+        displayNarrative('Opportunity', 'opportunityNarrative');
+    }
+}
         // ============================================================
         // INIT
         // ============================================================
