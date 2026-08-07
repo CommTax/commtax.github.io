@@ -1921,72 +1921,84 @@
             document.getElementById('mriBiggestGap').textContent = data.weakestCompetency || 'Communication (54%)';
             document.getElementById('mriHiddenStrength').textContent = data.highestCompetency || 'Thinking (75%)';
 
-// ---- SUMMARY (DYNAMIC) ----
-var thinking = Math.round((data.thinkingPct || 0) * 100);
-var communication = Math.round((data.communicationPct || 0) * 100);
-var ciScore = Math.round((data.ciScore || 0) * 100);
-var annualTax = data.annualTax || 700000;
+// ---- SUMMARY (DYNAMIC WITH ERROR HANDLING) ----
+try {
+    var thinking = Math.round((data.thinkingPct || 0) * 100);
+    var communication = Math.round((data.communicationPct || 0) * 100);
+    var ciScore = Math.round((data.ciScore || 0) * 100);
+    var annualTax = data.annualTax || 700000;
 
-// ---- PEER COMPARISON ----
-function getPercentile(score) {
-    if (score >= 91) return '97th';
-    if (score >= 85) return '93rd';
-    if (score >= 80) return '88th';
-    if (score >= 75) return '82nd';
-    if (score >= 70) return '74th';
-    if (score >= 65) return '65th';
-    if (score >= 60) return '55th';
-    if (score >= 55) return '45th';
-    if (score >= 50) return '35th';
-    if (score >= 40) return '20th';
-    if (score >= 30) return '10th';
-    return '5th';
+    function getPercentile(score) {
+        if (score >= 91) return '97th';
+        if (score >= 85) return '93rd';
+        if (score >= 80) return '88th';
+        if (score >= 75) return '82nd';
+        if (score >= 70) return '74th';
+        if (score >= 65) return '65th';
+        if (score >= 60) return '55th';
+        if (score >= 55) return '45th';
+        if (score >= 50) return '35th';
+        if (score >= 40) return '20th';
+        if (score >= 30) return '10th';
+        return '5th';
+    }
+
+    var percentile = getPercentile(ciScore);
+    var taxInLakhs = (annualTax / 100000).toFixed(1);
+
+    var summaryParts = [];
+
+    // Part 1: Peer Comparison
+    summaryParts.push('Your Communication Tax Intelligence places you above the ' + percentile + ' percentile of working professionals.');
+
+    // Part 2: Financial Impact
+    summaryParts.push('However, your current communication patterns are estimated to reduce your professional impact by approximately ₹' + taxInLakhs + ' Lakhs annually.');
+
+    // Part 3: Thinking vs Communication Gap
+    if (thinking > communication + 15) {
+        summaryParts.push('Your thinking quality is significantly higher than your translation ability.');
+    } else if (thinking > communication + 5) {
+        summaryParts.push('Your thinking quality is higher than your translation ability.');
+    } else if (communication > thinking + 5) {
+        summaryParts.push('Your translation ability is stronger than your thinking clarity.');
+    } else {
+        summaryParts.push('Your thinking and translation abilities are well aligned.');
+    }
+
+    // Part 4: The Consequence
+    if (communication < 50) {
+        summaryParts.push('People significantly underestimate your expertise.');
+    } else if (communication < 65) {
+        summaryParts.push('People sometimes miss the full extent of your expertise.');
+    } else if (communication < 80) {
+        summaryParts.push('Your expertise is generally recognised but could be amplified.');
+    } else {
+        summaryParts.push('Your expertise comes through clearly and consistently.');
+    }
+
+    // Part 5: The Opportunity
+    if (annualTax > 500000) {
+        summaryParts.push('The good news? This is fixable in 8 weeks.');
+    } else if (annualTax > 200000) {
+        summaryParts.push('The good news? This is fixable in 8 weeks with focused effort.');
+    } else {
+        summaryParts.push('The best part? This is completely fixable.');
+    }
+
+    var summaryEl = document.getElementById('summaryText');
+    if (summaryEl) {
+        summaryEl.textContent = summaryParts.join(' ');
+    } else {
+        console.warn('summaryText element not found');
+    }
+
+} catch (error) {
+    console.error('Summary generation error:', error);
+    var summaryEl = document.getElementById('summaryText');
+    if (summaryEl) {
+        summaryEl.textContent = 'Your executive summary is being generated. Please refresh if this persists.';
+    }
 }
-
-var percentile = getPercentile(ciScore);
-var taxInLakhs = (annualTax / 100000).toFixed(1);
-
-var summaryParts = [];
-
-// Part 1: Peer Comparison
-summaryParts.push('Your Communication Tax Intelligence places you above the ' + percentile + ' percentile of working professionals.');
-
-// Part 2: Financial Impact
-summaryParts.push('However, your current communication patterns are estimated to reduce your professional impact by approximately ₹' + taxInLakhs + ' Lakhs annually.');
-
-// Part 3: Thinking vs Communication Gap
-if (thinking > communication + 15) {
-    summaryParts.push('Your thinking quality is significantly higher than your translation ability.');
-} else if (thinking > communication + 5) {
-    summaryParts.push('Your thinking quality is higher than your translation ability.');
-} else if (communication > thinking + 5) {
-    summaryParts.push('Your translation ability is stronger than your thinking clarity.');
-} else {
-    summaryParts.push('Your thinking and translation abilities are well aligned.');
-}
-
-// Part 4: The Consequence
-if (communication < 50) {
-    summaryParts.push('People significantly underestimate your expertise.');
-} else if (communication < 65) {
-    summaryParts.push('People sometimes miss the full extent of your expertise.');
-} else if (communication < 80) {
-    summaryParts.push('Your expertise is generally recognised but could be amplified.');
-} else {
-    summaryParts.push('Your expertise comes through clearly and consistently.');
-}
-
-// Part 5: The Opportunity
-if (annualTax > 500000) {
-    summaryParts.push('The good news? This is fixable in 4 weeks.');
-} else if (annualTax > 200000) {
-    summaryParts.push('The good news? This is fixable in 4 weeks with focused effort.');
-} else {
-    summaryParts.push('The best part? This is completely fixable.');
-}
-
-document.getElementById('summaryText').textContent = summaryParts.join(' ');
-
             // ---- TAX ----
             var perMonth = Math.round(annualTax / 12);
             var perDay = Math.round(annualTax / 365);
