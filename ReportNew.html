@@ -2478,8 +2478,16 @@ PAGE 16: WHY YOU CAN'T FIX THIS ALONE (NEW)
         document.getElementById('mriTax').textContent = '₹' + (annualTax / 100000).toFixed(1) + ' Lakh';
         document.getElementById('mriPersona').textContent = data.persona || 'The Articulator';
         document.getElementById('mriROI').textContent = (ciScore > 50 ? (100 / ciScore).toFixed(1) : '2.0') + 'x';
-        document.getElementById('mriBiggestGap').textContent = data.weakestCompetency || 'Communication (54%)';
-        document.getElementById('mriHiddenStrength').textContent = data.highestCompetency || 'Thinking (75%)';
+
+        // ---- EXECUTIVE BLIND SPOT & LEADERSHIP ADVANTAGE ----
+var weakest = data.weakestCompetency || 'Communication';
+var weakestScore = Math.round((data.communicationPct || 0) * 100);
+var highest = data.highestCompetency || 'Thinking';
+var highestScore = Math.round((data.thinkingPct || 0) * 100);
+
+document.getElementById('mriBiggestGap').textContent = weakest + ' (' + weakestScore + '%)';
+document.getElementById('mriHiddenStrength').textContent = highest + ' (' + highestScore + '%)';
+        
 
         // ---- SUMMARY (DYNAMIC) ----
         var thinking = Math.round((data.thinkingPct || 0) * 100);
