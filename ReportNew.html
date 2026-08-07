@@ -2351,20 +2351,32 @@ function renderRings(data) {
     // ============================================================
     // RENDER PROFILE BARS
     // ============================================================
-    function renderProfileBars(data) {
-        var thinking = Math.round((data.thinkingPct || 0) * 100);
-        var structure = Math.round((data.structurePct || 0) * 100);
-        var communication = Math.round((data.communicationPct || 0) * 100);
-        var understanding = Math.round((data.understandingPct || 0) * 100);
-        var opportunity = Math.round((data.opportunityPct || 0) * 100);
+function renderProfileBars(data) {
+    function parsePct(value) {
+        if (!value) return 0;
+        if (typeof value === 'string') {
+            var cleaned = value.replace('%', '').trim();
+            return parseFloat(cleaned) || 0;
+        }
+        return Number(value) || 0;
+    }
 
-        var profileData = {
-            thinking: thinking,
-            structure: structure,
-            translation: communication,
-            presence: Math.round((understanding + communication) / 2),
-            influence: Math.round((opportunity + communication) / 2)
-        };
+    var thinking = parsePct(data.thinkingPct);
+    var structure = parsePct(data.structurePct);
+    var communication = parsePct(data.communicationPct);
+    var understanding = parsePct(data.understandingPct);
+    var opportunity = parsePct(data.opportunityPct);
+
+    var profileData = {
+        thinking: thinking,
+        structure: structure,
+        translation: communication,
+        presence: Math.round((understanding + communication) / 2),
+        influence: Math.round((opportunity + communication) / 2)
+    };
+
+    // ... rest of the function
+}
 
         document.getElementById('profileThinking').textContent = profileData.thinking + '%';
         document.getElementById('profileStructure').textContent = profileData.structure + '%';
