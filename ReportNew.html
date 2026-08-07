@@ -2269,18 +2269,27 @@ body {
     // ============================================================
     // RENDER RINGS
     // ============================================================
-    function renderRings(data) {
-        var container = document.getElementById('ringsGrid');
-        if (!container) return;
-        container.innerHTML = '';
+function renderRings(data) {
+    var container = document.getElementById('ringsGrid');
+    if (!container) return;
+    container.innerHTML = '';
 
-        var competencies = [
-            { id: 'Thinking', score: Math.round((data.thinkingPct || 0) * 100), level: data.thinkingLevel || 'Proficient' },
-            { id: 'Structure', score: Math.round((data.structurePct || 0) * 100), level: data.structureLevel || 'Proficient' },
-            { id: 'Communication', score: Math.round((data.communicationPct || 0) * 100), level: data.communicationLevel || 'Needs Attention' },
-            { id: 'Understanding', score: Math.round((data.understandingPct || 0) * 100), level: data.understandingLevel || 'Needs Attention' },
-            { id: 'Opportunity', score: Math.round((data.opportunityPct || 0) * 100), level: data.opportunityLevel || 'Proficient' }
-        ];
+    function parsePct(value) {
+        if (!value) return 0;
+        if (typeof value === 'string') {
+            var cleaned = value.replace('%', '').trim();
+            return parseFloat(cleaned) || 0;
+        }
+        return Number(value) || 0;
+    }
+
+    var competencies = [
+        { id: 'Thinking', score: parsePct(data.thinkingPct), level: data.thinkingLevel || 'Proficient' },
+        { id: 'Structure', score: parsePct(data.structurePct), level: data.structureLevel || 'Proficient' },
+        { id: 'Communication', score: parsePct(data.communicationPct), level: data.communicationLevel || 'Needs Attention' },
+        { id: 'Understanding', score: parsePct(data.understandingPct), level: data.understandingLevel || 'Needs Attention' },
+        { id: 'Opportunity', score: parsePct(data.opportunityPct), level: data.opportunityLevel || 'Proficient' }
+    ];
 
         competencies.forEach(function(comp) {
             var color = getScoreColor(comp.score);
