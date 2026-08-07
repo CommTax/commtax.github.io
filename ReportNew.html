@@ -2591,188 +2591,233 @@ body {
     function renderReport(data) {
     console.log('🔍 renderReport START');
     console.log('📦 data received:', data);
-    console.log('📦 data type:', typeof data);
     console.log('📦 data.ciScore:', data?.ciScore);
-    console.log('📦 Full data:', JSON.stringify(data, null, 2));
+    console.log('📦 Executive Summary:', data?.executiveSummary);
+    console.log('📦 Narratives:', data?.narratives);
+    
+    reportData = data;
+
+    // ---- PARSE PERCENTAGES (handle strings with % sign) ----
+    function parsePct(value) {
+        if (!value) return 0;
+        if (typeof value === 'string') {
+            return parseFloat(value.replace('%', '')) || 0;
+        }
+        return Number(value) || 0;
+    }
+
+    var thinking = parsePct(data.thinkingPct);
+    var structure = parsePct(data.structurePct);
+    var communication = parsePct(data.communicationPct);
+    var understanding = parsePct(data.understandingPct);
+    var opportunity = parsePct(data.opportunityPct);
+    var ciScore = parsePct(data.ciScore);
+    var annualTax = data.annualTax || 700000;
+
+    // ---- COVER ----
+    document.getElementById('coverName').textContent = data.name || 'Executive';
+    document.getElementById('coverRole').textContent = data.role || 'Professional';
+    document.getElementById('coverDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    // ---- MRI ----
+    document.getElementById('mriScore').textContent = ciScore + '%';
+    document.getElementById('mriTax').textContent = '₹' + (annualTax / 100000).toFixed(1) + ' Lakh';
+    document.getElementById('mriPersona').textContent = data.persona || 'The Articulator';
+    document.getElementById('mriROI').textContent = (ciScore > 50 ? (100 / ciScore).toFixed(1) : '2.0') + 'x';
+
+    // ---- EXECUTIVE BLIND SPOT & LEADERSHIP ADVANTAGE ----
+    var competencies = [
+        { name: 'Thinking', score: parsePct(data.thinkingPct) },
+        { name: 'Structure', score: parsePct(data.structurePct) },
+        { name: 'Communication', score: parsePct(data.communicationPct) },
+        { name: 'Understanding', score: parsePct(data.understandingPct) },
+        { name: 'Opportunity', score: parsePct(data.opportunityPct) }
+    ];
+
+    var weakest = competencies.reduce(function(a, b) { return a.score < b.score ? a : b; });
+    var highest = competencies.reduce(function(a, b) { return a.score > b.score ? a : b; });
+
+    document.getElementById('mriBiggestGap').textContent = weakest.name + ' (' + weakest.score + '%)';
+    document.getElementById('mriHiddenStrength').textContent = highest.name + ' (' + highest.score + '%)';
+
+    // ---- SUMMARY (DYNAMIC) ----
+    function getPercentile(score) {
+        if (score >= 91) return '97th';
+        if (score >= 85) return '93rd';
+        if (score >= 80) return '88th';
+        if (score >= 75) return '82nd';
+        if (score >= 70) return '74th';
+        if (score >= 65) return '65th';
+        if (score >= 60) return '55th';
+        if (score >= 55) return '45th';
+        if (score >= 50) return '35th';
+        if (score >= 40) return '20th';
+        if (score >= 30) return '10th';
+        return '5th';
+    }
+
+    var percentile = getPercentile(ciScore);
+    var taxInLakhs = (annualTax / 100000).toFixed(1);
+    var summaryParts = [];
+
+    summaryParts.push('Your Communication Tax Intelligence places you above the ' + percentile + ' percentile of working professionals.');
+    summaryParts.push('However, your current communication patterns are estimated to reduce your professional impact by approximately ₹' + taxInLakhs + ' Lakhs annually.');
+
+    if (thinking > communication + 15) {
+        summaryParts.push('Your thinking quality is significantly higher than your translation ability.');
+    } else if (thinking > communication + 5) {
+        summaryParts.push('Your thinking quality is higher than your translation ability.');
+    } else if (communication > thinking + 5) {
+        summaryParts.push('Your translation ability is stronger than your thinking clarity.');
+    } else {
+        summaryParts.push('Your thinking and translation abilities are well aligned.');
+    }
+
+    if (communication < 50) {
+        summaryParts.push('People significantly underestimate your expertise.');
+    } else if (communication < 65) {
+        summaryParts.push('People sometimes miss the full extent of your expertise.');
+    } else if (communication < 80) {
+        summaryParts.push('Your expertise is generally recognised but could be amplified.');
+    } else {
+        summaryParts.push('Your expertise comes through clearly and consistently.');
+    }
+
+    if (annualTax > 500000) {
+        summaryParts.push('The good news? This is fixable in 6 weeks.');
+    } else if (annualTax > 200000) {
+        summaryParts.push('The good news? This is fixable in 4 weeks with focused effort.');
+    } else {
+        summaryParts.push('The best part? This is completely fixable.');
+    }
+
+    document.getElementById('summaryText').textContent = summaryParts.join(' ');
+
+    // ---- EXECUTIVE SUMMARY (FROM APP SCRIPT) ----
+    // Use the executiveSummary from App Script instead of hardcoded combinations
+    var executiveSummary = data.executiveSummary || {};
+    
+    if (executiveSummary.statement) {
+        // Use the statement from the Executive Summary sheet
+        var summaryTitle = executiveSummary.executiveEdge + ' + ' + executiveSummary.blindSpot;
+        document.getElementById('summaryTitle').textContent = summaryTitle;
+        document.getElementById('summaryInsight').textContent = executiveSummary.statement;
         
-        reportData = data;
-
-        var thinking = Math.round((data.thinkingPct || 0) * 100);
-        var structure = Math.round((data.structurePct || 0) * 100);
-        var communication = Math.round((data.communicationPct || 0) * 100);
-        var understanding = Math.round((data.understandingPct || 0) * 100);
-        var opportunity = Math.round((data.opportunityPct || 0) * 100);
-        var ciScore = Math.round((data.ciScore || 0) * 100);
-        var annualTax = data.annualTax || 700000;
-
-        // ---- COVER ----
-        document.getElementById('coverName').textContent = data.name || 'Executive';
-        document.getElementById('coverRole').textContent = data.role || 'Professional';
-        document.getElementById('coverDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-
-        // ---- MRI ----
-        document.getElementById('mriScore').textContent = ciScore + '%';
-        document.getElementById('mriTax').textContent = '₹' + (annualTax / 100000).toFixed(1) + ' Lakh';
-        document.getElementById('mriPersona').textContent = data.persona || 'The Articulator';
-        document.getElementById('mriROI').textContent = (ciScore > 50 ? (100 / ciScore).toFixed(1) : '2.0') + 'x';
-
-        // ---- EXECUTIVE BLIND SPOT & LEADERSHIP ADVANTAGE ----
-        var competencies = [
-            { name: 'Thinking', score: Math.round((data.thinkingPct || 0) * 100) },
-            { name: 'Structure', score: Math.round((data.structurePct || 0) * 100) },
-            { name: 'Communication', score: Math.round((data.communicationPct || 0) * 100) },
-            { name: 'Understanding', score: Math.round((data.understandingPct || 0) * 100) },
-            { name: 'Opportunity', score: Math.round((data.opportunityPct || 0) * 100) }
-        ];
-
-        var weakest = competencies.reduce(function(a, b) { return a.score < b.score ? a : b; });
-        var highest = competencies.reduce(function(a, b) { return a.score > b.score ? a : b; });
-
-        document.getElementById('mriBiggestGap').textContent = weakest.name + ' (' + weakest.score + '%)';
-        document.getElementById('mriHiddenStrength').textContent = highest.name + ' (' + highest.score + '%)';
-
-        // ---- SUMMARY (DYNAMIC) ----
-        function getPercentile(score) {
-            if (score >= 91) return '97th';
-            if (score >= 85) return '93rd';
-            if (score >= 80) return '88th';
-            if (score >= 75) return '82nd';
-            if (score >= 70) return '74th';
-            if (score >= 65) return '65th';
-            if (score >= 60) return '55th';
-            if (score >= 55) return '45th';
-            if (score >= 50) return '35th';
-            if (score >= 40) return '20th';
-            if (score >= 30) return '10th';
-            return '5th';
-        }
-
-        var percentile = getPercentile(ciScore);
-        var taxInLakhs = (annualTax / 100000).toFixed(1);
-        var summaryParts = [];
-
-        summaryParts.push('Your Communication Tax Intelligence places you above the ' + percentile + ' percentile of working professionals.');
-        summaryParts.push('However, your current communication patterns are estimated to reduce your professional impact by approximately ₹' + taxInLakhs + ' Lakhs annually.');
-
-        if (thinking > communication + 15) {
-            summaryParts.push('Your thinking quality is significantly higher than your translation ability.');
-        } else if (thinking > communication + 5) {
-            summaryParts.push('Your thinking quality is higher than your translation ability.');
-        } else if (communication > thinking + 5) {
-            summaryParts.push('Your translation ability is stronger than your thinking clarity.');
-        } else {
-            summaryParts.push('Your thinking and translation abilities are well aligned.');
-        }
-
-        if (communication < 50) {
-            summaryParts.push('People significantly underestimate your expertise.');
-        } else if (communication < 65) {
-            summaryParts.push('People sometimes miss the full extent of your expertise.');
-        } else if (communication < 80) {
-            summaryParts.push('Your expertise is generally recognised but could be amplified.');
-        } else {
-            summaryParts.push('Your expertise comes through clearly and consistently.');
-        }
-
-        if (annualTax > 500000) {
-            summaryParts.push('The good news? This is fixable in 6 weeks.');
-        } else if (annualTax > 200000) {
-            summaryParts.push('The good news? This is fixable in 4 weeks with focused effort.');
-        } else {
-            summaryParts.push('The best part? This is completely fixable.');
-        }
-
-        document.getElementById('summaryText').textContent = summaryParts.join(' ');
-
-        // ---- EXECUTIVE SUMMARY (Combination-Based) ----
+        // Set blind spot and advantage insights based on the data
+        document.getElementById('summaryBlindSpot').textContent = 'Your ' + executiveSummary.blindSpot + ' is your biggest opportunity for growth. Focus on improving this area to unlock your full potential.';
+        document.getElementById('summaryAdvantage').textContent = 'Your ' + executiveSummary.executiveEdge + ' is your greatest strength. Leverage this to accelerate your career growth.';
+    } else {
+        // Fallback to hardcoded combinations if executiveSummary is not available
         var weakestFormatted = weakest.name + ' (' + weakest.score + '%)';
         var highestFormatted = highest.name + ' (' + highest.score + '%)';
         var summaryData = getExecutiveSummary(weakestFormatted, highestFormatted);
-
+        
         if (summaryData) {
             document.getElementById('summaryTitle').textContent = summaryData.title;
             document.getElementById('summaryInsight').textContent = summaryData.summary;
             document.getElementById('summaryBlindSpot').textContent = summaryData.blindSpot;
             document.getElementById('summaryAdvantage').textContent = summaryData.advantage;
         }
-
-        // ---- TAX ----
-        var perMonth = Math.round(annualTax / 12);
-        var perDay = Math.round(annualTax / 365);
-        var perHour = Math.round(annualTax / (365 * 8));
-        document.getElementById('taxHeroAmount').textContent = '₹' + formatNumber(annualTax);
-        document.getElementById('taxPerMonth').textContent = '₹' + formatNumber(perMonth);
-        document.getElementById('taxPerDay').textContent = '₹' + formatNumber(perDay);
-        document.getElementById('taxPerHour').textContent = '₹' + formatNumber(perHour);
-        document.getElementById('taxInterviews').textContent = '₹' + formatNumber(Math.round(annualTax * 0.25));
-        document.getElementById('taxPromotions').textContent = '₹' + formatNumber(Math.round(annualTax * 0.15));
-        document.getElementById('taxClients').textContent = '₹' + formatNumber(Math.round(annualTax * 0.5));
-        document.getElementById('taxTeam').textContent = '₹' + formatNumber(Math.round(annualTax * 0.1));
-
-        // ---- PERSONA ----
-        var persona = data.persona || 'The Articulator';
-        document.getElementById('personaEmoji').textContent = '🟢';
-        document.getElementById('personaName').textContent = persona;
-        document.getElementById('personaDesc').textContent = data.personaDescription ||
-            "You're clear and confident. Some gaps in translation are costing you momentum.";
-        document.getElementById('journeyCurrent').innerHTML = '<span class="emoji">🟢</span> ' + persona;
-        document.getElementById('whereYouAre').textContent = persona;
-
-        // ---- RINGS ----
-        renderRings(data);
-
-        // ---- PROFILE BARS ----
-        renderProfileBars(data);
-
-        // ---- DNA ----
-        renderDNA(data);
-
-        // ---- WATERFALL ----
-        renderWaterfall(data);
-
-        // ---- SUB-COMPS ----
-        var subScores = data.subScores || [];
-        renderSubComps('thinkingSubComps', subScores, 0, 5);
-        renderSubComps('structureSubComps', subScores, 6, 11);
-        renderSubComps('communicationSubComps', subScores, 12, 17);
-        renderSubComps('understandingSubComps', subScores, 18, 23);
-        renderSubComps('opportunitySubComps', subScores, 24, 29);
-
-        // ---- DEEP DIVE SCORES ----
-        document.getElementById('thinkingScoreDisplay').textContent = thinking + '%';
-        document.getElementById('structureScoreDisplay').textContent = structure + '%';
-        document.getElementById('communicationScoreDisplay').textContent = communication + '%';
-        document.getElementById('understandingScoreDisplay').textContent = understanding + '%';
-        document.getElementById('opportunityScoreDisplay').textContent = opportunity + '%';
-
-        document.getElementById('thinkingBadge').textContent = data.thinkingLevel || 'Proficient';
-        document.getElementById('structureBadge').textContent = data.structureLevel || 'Proficient';
-        document.getElementById('communicationBadge').textContent = data.communicationLevel || 'Needs Attention';
-        document.getElementById('understandingBadge').textContent = data.understandingLevel || 'Needs Attention';
-        document.getElementById('opportunityBadge').textContent = data.opportunityLevel || 'Proficient';
-
-        // ---- INSIGHT ----
-        document.getElementById('insightText').innerHTML =
-            'Your highest score is <strong>' + (data.highestCompetency || 'Thinking (75%)') +
-            '</strong> — build on this. Your lowest score is <strong>' + (data.weakestCompetency ||
-                'Communication (54%)') + '</strong> — fix this first.';
-
-        // ---- UNLOCK ----
-        isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
-        if (isUnlocked) {
-            document.getElementById('unlockBadge').style.display = 'block';
-            document.getElementById('paymentBox').style.display = 'none';
-            document.getElementById('downloadButton').style.display = 'inline-block';
-            document.querySelectorAll('.blurred-section').forEach(function(el) {
-                el.classList.remove('blurred-section');
-            });
-        } else {
-            document.getElementById('unlockBadge').style.display = 'none';
-            document.getElementById('paymentBox').style.display = 'block';
-            document.getElementById('downloadButton').style.display = 'none';
-        }
     }
 
+    // ---- TAX ----
+    var perMonth = Math.round(annualTax / 12);
+    var perDay = Math.round(annualTax / 365);
+    var perHour = Math.round(annualTax / (365 * 8));
+    document.getElementById('taxHeroAmount').textContent = '₹' + formatNumber(annualTax);
+    document.getElementById('taxPerMonth').textContent = '₹' + formatNumber(perMonth);
+    document.getElementById('taxPerDay').textContent = '₹' + formatNumber(perDay);
+    document.getElementById('taxPerHour').textContent = '₹' + formatNumber(perHour);
+    document.getElementById('taxInterviews').textContent = '₹' + formatNumber(Math.round(annualTax * 0.25));
+    document.getElementById('taxPromotions').textContent = '₹' + formatNumber(Math.round(annualTax * 0.15));
+    document.getElementById('taxClients').textContent = '₹' + formatNumber(Math.round(annualTax * 0.5));
+    document.getElementById('taxTeam').textContent = '₹' + formatNumber(Math.round(annualTax * 0.1));
+
+    // ---- PERSONA ----
+    var persona = data.persona || 'The Articulator';
+    document.getElementById('personaEmoji').textContent = '🟢';
+    document.getElementById('personaName').textContent = persona;
+    document.getElementById('personaDesc').textContent = data.personaDescription ||
+        "You're clear and confident. Some gaps in translation are costing you momentum.";
+    document.getElementById('journeyCurrent').innerHTML = '<span class="emoji">🟢</span> ' + persona;
+    document.getElementById('whereYouAre').textContent = persona;
+
+    // ---- NARRATIVES (FROM APP SCRIPT) ----
+    // Store narratives in reportData for use in displayNarrative function
+    if (data.narratives) {
+        reportData.narratives = data.narratives;
+        console.log('📝 Narratives loaded:', Object.keys(data.narratives));
+    }
+
+    // ---- RINGS ----
+    renderRings(data);
+
+    // ---- PROFILE BARS ----
+    renderProfileBars(data);
+
+    // ---- DNA ----
+    renderDNA(data);
+
+    // ---- WATERFALL ----
+    renderWaterfall(data);
+
+    // ---- SUB-COMPS ----
+    var subScores = data.subScores || [];
+    renderSubComps('thinkingSubComps', subScores, 0, 5);
+    renderSubComps('structureSubComps', subScores, 6, 11);
+    renderSubComps('communicationSubComps', subScores, 12, 17);
+    renderSubComps('understandingSubComps', subScores, 18, 23);
+    renderSubComps('opportunitySubComps', subScores, 24, 29);
+
+    // ---- DEEP DIVE SCORES ----
+    document.getElementById('thinkingScoreDisplay').textContent = thinking + '%';
+    document.getElementById('structureScoreDisplay').textContent = structure + '%';
+    document.getElementById('communicationScoreDisplay').textContent = communication + '%';
+    document.getElementById('understandingScoreDisplay').textContent = understanding + '%';
+    document.getElementById('opportunityScoreDisplay').textContent = opportunity + '%';
+
+    // ---- TAX IMPACT CALCULATIONS ----
+    function calculateTaxImpact(score, multiplier) {
+        if (score >= 60) return '₹0';
+        var loss = (60 - score) * multiplier;
+        return '₹' + formatNumber(Math.round(loss));
+    }
+
+    document.getElementById('thinkingTaxImpact').textContent = calculateTaxImpact(thinking, 5000);
+    document.getElementById('structureTaxImpact').textContent = calculateTaxImpact(structure, 5000);
+    document.getElementById('communicationTaxImpact').textContent = calculateTaxImpact(communication, 15000);
+    document.getElementById('understandingTaxImpact').textContent = calculateTaxImpact(understanding, 8000);
+    document.getElementById('opportunityTaxImpact').textContent = calculateTaxImpact(opportunity, 20000);
+
+    document.getElementById('thinkingBadge').textContent = data.thinkingLevel || 'Proficient';
+    document.getElementById('structureBadge').textContent = data.structureLevel || 'Proficient';
+    document.getElementById('communicationBadge').textContent = data.communicationLevel || 'Needs Attention';
+    document.getElementById('understandingBadge').textContent = data.understandingLevel || 'Needs Attention';
+    document.getElementById('opportunityBadge').textContent = data.opportunityLevel || 'Proficient';
+
+    // ---- INSIGHT ----
+    document.getElementById('insightText').innerHTML =
+        'Your highest score is <strong>' + (data.highestCompetency || 'Thinking (75%)') +
+        '</strong> — build on this. Your lowest score is <strong>' + (data.weakestCompetency ||
+            'Communication (54%)') + '</strong> — fix this first.';
+
+    // ---- UNLOCK ----
+    isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
+    if (isUnlocked) {
+        document.getElementById('unlockBadge').style.display = 'block';
+        document.getElementById('paymentBox').style.display = 'none';
+        document.getElementById('downloadButton').style.display = 'inline-block';
+        document.querySelectorAll('.blurred-section').forEach(function(el) {
+            el.classList.remove('blurred-section');
+        });
+    } else {
+        document.getElementById('unlockBadge').style.display = 'none';
+        document.getElementById('paymentBox').style.display = 'block';
+        document.getElementById('downloadButton').style.display = 'none';
+    }
+    
+    console.log('✅ renderReport COMPLETE');
+}
     // ============================================================
     // PAYMENT
     // ============================================================
