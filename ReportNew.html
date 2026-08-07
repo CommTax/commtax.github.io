@@ -1617,1062 +1617,451 @@
     JAVASCRIPT
     ============================================================ -->
     <script>
-        // ============================================================
-        // CONFIGURATION
-        // ============================================================
-        var APPS_SCRIPT_URL =
-            'https://script.google.com/macros/s/AKfycbx8LTKljYm34158-yH_-h9SLmMZwAdsBfgfKpCDPU8JitHT9li7yMgxIoRSggQu1fEp/exec';
-        var RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID';
+        <script>
+    // ============================================================
+    // CONFIGURATION
+    // ============================================================
+    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8LTKljYm34158-yH_-h9SLmMZwAdsBfgfKpCDPU8JitHT9li7yMgxIoRSggQu1fEp/exec';
+    var RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID';
 
-        var urlParams = new URLSearchParams(window.location.search);
-        var submissionId = urlParams.get('id');
-        var paymentId = urlParams.get('payment_id');
+    var urlParams = new URLSearchParams(window.location.search);
+    var submissionId = urlParams.get('id');
+    var paymentId = urlParams.get('payment_id');
 
-        var reportData = null;
-        var isUnlocked = false;
-        var dnaChart = null;
-        var ringsRendered = false;
+    var reportData = null;
+    var isUnlocked = false;
+    var dnaChart = null;
+    var ringsRendered = false;
+    var narrativesData = null;
 
-        // ============================================================
-        // HELPERS
-        // ============================================================
-        function formatNumber(num) {
-            if (!num) return '0';
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    function formatNumber(num) {
+        if (!num) return '0';
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function getScoreColor(score) {
+        if (score >= 70) return '#00C4A7';
+        if (score >= 50) return '#F59E0B';
+        return '#EF4444';
+    }
+
+    function getScoreStatus(score) {
+        if (score >= 91) return 'Tax-Free';
+        if (score >= 76) return 'Moderate Tax';
+        if (score >= 51) return 'High Tax';
+        return 'Critical Tax';
+    }
+
+    // ============================================================
+    // FETCH REPORT DATA
+    // ============================================================
+    async function fetchReportData() {
+        if (!submissionId) {
+            document.getElementById('reportContainer').innerHTML =
+                '<div style="padding:60px 20px;text-align:center;"><h2 style="color:#991B1B;">⚠️ Missing Submission ID</h2><p style="color:var(--gray-500);">Please add <code>?id=YOUR_SUBMISSION_ID</code> to the URL.</p></div>';
+            return null;
         }
 
-        function getScoreColor(score) {
-            if (score >= 70) return '#00C4A7';
-            if (score >= 50) return '#F59E0B';
-            return '#EF4444';
-        }
+        try {
+            var url = APPS_SCRIPT_URL + '?action=getReportData&id=' + encodeURIComponent(submissionId);
+            var response = await fetch(url);
+            var result = await response.json();
 
-        function getScoreStatus(score) {
-            if (score >= 91) return 'Tax-Free';
-            if (score >= 76) return 'Moderate Tax';
-            if (score >= 51) return 'High Tax';
-            return 'Critical Tax';
-        }
-
-        // ============================================================
-        // FETCH DATA
-        // ============================================================
-        async function fetchReportData() {
-            if (!submissionId) {
-                document.getElementById('reportContainer').innerHTML =
-                    `<div style="padding:60px 20px;text-align:center;"><h2 style="color:#991B1B;">⚠️ Missing Submission ID</h2><p style="color:var(--gray-500);">Please add <code>?id=YOUR_SUBMISSION_ID</code> to the URL.</p></div>`;
-                return null;
+            if (result.success && result.data) {
+                return result.data;
+            } else {
+                throw new Error(result.error || 'Report not found');
             }
-
-            try {
-                var url = APPS_SCRIPT_URL + '?action=getReportData&id=' + encodeURIComponent(submissionId);
-                var response = await fetch(url);
-                var result = await response.json();
-
-                if (result.success && result.data) {
-                    return result.data;
-                } else {
-                    throw new Error(result.error || 'Report not found');
-                }
-            } catch (error) {
-                document.getElementById('reportContainer').innerHTML =
-                    `<div style="padding:60px 20px;text-align:center;"><h2 style="color:#991B1B;">⚠️ Error Loading Report</h2><p style="color:var(--gray-500);">${error.message}</p></div>`;
-                return null;
-            }
+        } catch (error) {
+            document.getElementById('reportContainer').innerHTML =
+                '<div style="padding:60px 20px;text-align:center;"><h2 style="color:#991B1B;">⚠️ Error Loading Report</h2><p style="color:var(--gray-500);">' +
+                error.message + '</p></div>';
+            return null;
         }
+    }
 
-        // ============================================================
-        // RENDER RINGS
-        // ============================================================
-        function renderRings(data) {
-    var container = document.getElementById('ringsGrid');
-    if (!container) return;
-    container.innerHTML = '';
+    // ============================================================
+    // DRAW RING
+    // ============================================================
+    function drawRing(canvasId, score, color) {
+        var canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var cx = 60,
+            cy = 60,
+            radius = 48;
+        var startAngle = -Math.PI / 2;
+        var endAngle = startAngle + (score / 100) * 2 * Math.PI;
 
-    var competencies = [
-        { id: 'Thinking', score: Math.round((data.thinkingPct || 0) * 100), level: data.thinkingLevel || 'Proficient' },
-        { id: 'Structure', score: Math.round((data.structurePct || 0) * 100), level: data.structureLevel || 'Proficient' },
-        { id: 'Communication', score: Math.round((data.communicationPct || 0) * 100), level: data.communicationLevel || 'Needs Attention' },
-        { id: 'Understanding', score: Math.round((data.understandingPct || 0) * 100), level: data.understandingLevel || 'Needs Attention' },
-        { id: 'Opportunity', score: Math.round((data.opportunityPct || 0) * 100), level: data.opportunityLevel || 'Proficient' }
-    ];
+        ctx.clearRect(0, 0, 120, 120);
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#F3F4F6';
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, startAngle, endAngle);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        ctx.fillStyle = color;
+        ctx.font = 'bold 18px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(score + '%', cx, cy);
+    }
 
-    competencies.forEach(function(comp) {
-        var color = getScoreColor(comp.score);
-        var div = document.createElement('div');
-        div.className = 'ring-item';
-        div.style.textAlign = 'center';
-        div.innerHTML = `
-            <canvas id="ringCanvas_${comp.id}" width="120" height="120"></canvas>
-            <div style="font-weight:700;font-size:14px;margin-top:6px;color:#0B0F1A;">${comp.id}</div>
-            <div style="font-weight:700;font-size:16px;color:${color};">${comp.score}%</div>
-            <div style="font-size:12px;color:#6B7280;">${comp.level}</div>
-        `;
-        container.appendChild(div);
+    // ============================================================
+    // RENDER RINGS
+    // ============================================================
+    function renderRings(data) {
+        var container = document.getElementById('ringsGrid');
+        if (!container) return;
+        container.innerHTML = '';
 
-               // Draw the ring with a small delay to ensure DOM is ready
-                setTimeout(function() {
-                    drawRing('ringCanvas_' + comp.id, comp.score, color);
-                }, 100);
-            });
+        var competencies = [
+            { id: 'Thinking', score: Math.round((data.thinkingPct || 0) * 100), level: data.thinkingLevel || 'Proficient' },
+            { id: 'Structure', score: Math.round((data.structurePct || 0) * 100), level: data.structureLevel || 'Proficient' },
+            { id: 'Communication', score: Math.round((data.communicationPct || 0) * 100), level: data.communicationLevel || 'Needs Attention' },
+            { id: 'Understanding', score: Math.round((data.understandingPct || 0) * 100), level: data.understandingLevel || 'Needs Attention' },
+            { id: 'Opportunity', score: Math.round((data.opportunityPct || 0) * 100), level: data.opportunityLevel || 'Proficient' }
+        ];
 
-            ringsRendered = true;
-        }
+        competencies.forEach(function(comp) {
+            var color = getScoreColor(comp.score);
+            var div = document.createElement('div');
+            div.className = 'ring-item';
+            div.style.textAlign = 'center';
+            div.innerHTML =
+                `<canvas id="ringCanvas_${comp.id}" width="120" height="120"></canvas>
+                                <div style="font-weight:700;font-size:14px;margin-top:6px;color:#0B0F1A;">${comp.id}</div>
+                                <div style="font-weight:700;font-size:16px;color:${color};">${comp.score}%</div>
+                                <div style="font-size:12px;color:#6B7280;">${comp.level}</div>`;
+            container.appendChild(div);
+            setTimeout(function() {
+                drawRing('ringCanvas_' + comp.id, comp.score, color);
+            }, 150);
+        });
+        ringsRendered = true;
+    }
 
-        function drawRing(canvasId, score, color) {
-            var canvas = document.getElementById(canvasId);
-            if (!canvas) return;
-            var ctx = canvas.getContext('2d');
-            var cx = 60,
-                cy = 60,
-                radius = 48;
-            var startAngle = -Math.PI / 2;
-            var endAngle = startAngle + (score / 100) * 2 * Math.PI;
+    // ============================================================
+    // RENDER SUB-COMPETENCIES
+    // ============================================================
+    function renderSubComps(containerId, subScores, start, end) {
+        var container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
 
-            ctx.clearRect(0, 0, 120, 120);
+        var subNames = [
+            'Message Clarity', 'Thought-Expression Alignment', 'Thinking Under Pressure',
+            'Adaptability Under Pressure', 'Conversational Preparation', 'Message Preparation',
+            'Explanation Effectiveness', 'Logical Flow', 'Opening Impact',
+            'Update Clarity', 'Structural Self-Awareness', 'Structural Framing',
+            'Translation Ability', 'Written Clarity', 'Completeness of Communication',
+            'Value Articulation', 'Outcome Orientation', 'Audience Adaptation',
+            'Audience Adaptation (Understanding)', 'Stakeholder EQ', 'Situational Awareness',
+            'Real-Time Adjustment', 'Listening Quality', 'Real-Time Adaptation',
+            'Interview Conversion', 'Client Conversion', 'Idea Conversion',
+            'Promotion Conversion', 'Relationship Diagnosis', 'Goal Clarity'
+        ];
 
-            // Background ring
-            ctx.beginPath();
-            ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
-            ctx.strokeStyle = '#F3F4F6';
-            ctx.lineWidth = 8;
-            ctx.stroke();
-
-            // Foreground ring
-            ctx.beginPath();
-            ctx.arc(cx, cy, radius, startAngle, endAngle);
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 8;
-            ctx.lineCap = 'round';
-            ctx.stroke();
-
-            // Center text
-            ctx.fillStyle = color;
-            ctx.font = 'bold 18px Inter, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(score + '%', cx, cy);
-        }
-
-        // ============================================================
-        // RENDER SUB-COMPETENCIES
-        // ============================================================
-        function renderSubComps(containerId, subScores, start, end) {
-            var container = document.getElementById(containerId);
-            if (!container) return;
-            container.innerHTML = '';
-
-            var subNames = [
-                'Message Clarity', 'Thought-Expression Alignment', 'Thinking Under Pressure',
-                'Adaptability Under Pressure', 'Conversational Preparation', 'Message Preparation',
-                'Explanation Effectiveness', 'Logical Flow', 'Opening Impact',
-                'Update Clarity', 'Structural Self-Awareness', 'Structural Framing',
-                'Translation Ability', 'Written Clarity', 'Completeness of Communication',
-                'Value Articulation', 'Outcome Orientation', 'Audience Adaptation',
-                'Audience Adaptation (Understanding)', 'Stakeholder EQ', 'Situational Awareness',
-                'Real-Time Adjustment', 'Listening Quality', 'Real-Time Adaptation',
-                'Interview Conversion', 'Client Conversion', 'Idea Conversion',
-                'Promotion Conversion', 'Relationship Diagnosis', 'Goal Clarity'
-            ];
-
-            for (var i = start; i <= end; i++) {
-                var s = subScores[i] || 0;
-                var name = subNames[i] || 'Unknown';
-                var level = s >= 4 ? 'Exceptional' : s >= 3 ? 'Proficient' : s >= 2 ? 'Developing' : 'Needs Attention';
-                var color = s >= 3 ? '#00C4A7' : s >= 2 ? '#F59E0B' : '#EF4444';
-
-                var div = document.createElement('div');
-                div.className = 'comp-row';
-                div.innerHTML =
-                    `
-                    <span style="font-weight:400;font-size:13px;min-width:140px;">${name}</span>
-                    <div style="flex:1;height:18px;background:#F3F4F6;border-radius:20px;overflow:hidden;">
-                        <div style="height:100%;width:${s*25}%;background:${color};border-radius:20px;"></div>
-                    </div>
-                    <span style="font-weight:700;font-size:13px;min-width:40px;text-align:right;color:${color};">${s}/4</span>
-                    <span style="font-size:12px;color:${color};min-width:90px;text-align:right;">${level}</span>
-                `;
-                container.appendChild(div);
-            }
-        }
-
-        // ============================================================
-        // RENDER DNA
-        // ============================================================
-        function renderDNA(data) {
-            var labels = ['Strategic Thinking', 'Executive Presence', 'Influence', 'Persuasion', 'Confidence',
-                'Listening', 'Adaptability'
-            ];
-
-            var thinkingPct = Math.round((data.thinkingPct || 0) * 100);
-            var structurePct = Math.round((data.structurePct || 0) * 100);
-            var communicationPct = Math.round((data.communicationPct || 0) * 100);
-            var understandingPct = Math.round((data.understandingPct || 0) * 100);
-            var opportunityPct = Math.round((data.opportunityPct || 0) * 100);
-
-            var scores = [
-                thinkingPct || 75,
-                Math.min(100, (communicationPct || 54) + 10),
-                Math.min(100, (opportunityPct || 75) - 5),
-                Math.min(100, (communicationPct || 54) + 4),
-                Math.min(100, (structurePct || 70) + 5),
-                Math.min(100, (understandingPct || 58) + 12),
-                Math.min(100, (thinkingPct || 75) - 8)
-            ];
-
-            // DNA List
-            var listContainer = document.getElementById('dnaList');
-            listContainer.innerHTML = '';
-            var dnaItems = [
-                { label: 'Strategic Thinking', value: scores[0] },
-                { label: 'Executive Presence', value: scores[1] },
-                { label: 'Influence', value: scores[2] },
-                { label: 'Persuasion', value: scores[3] },
-                { label: 'Confidence', value: scores[4] },
-                { label: 'Listening', value: scores[5] },
-                { label: 'Adaptability', value: scores[6] }
-            ];
-            dnaItems.forEach(function(item) {
-                var color = getScoreColor(item.value);
-                var div = document.createElement('div');
-                div.className = 'dna-item';
-                div.innerHTML =
-                    `
-                    <div class="dna-label">${item.label}</div>
-                    <div class="dna-value" style="color:${color};">${item.value}%</div>
-                `;
-                listContainer.appendChild(div);
-            });
-
-            // Radar Chart
-            if (dnaChart) { dnaChart.destroy(); }
-            var ctx = document.getElementById('dnaChart').getContext('2d');
-            dnaChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Executive Communication DNA',
-                        data: scores,
-                        backgroundColor: 'rgba(0, 196, 167, 0.15)',
-                        borderColor: '#00C4A7',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#00C4A7',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        r: {
-                            min: 0,
-                            max: 100,
-                            ticks: { stepSize: 20, backdropColor: 'transparent' },
-                            grid: { color: 'rgba(0,0,0,0.06)' },
-                            angleLines: { color: 'rgba(0,0,0,0.06)' },
-                            pointLabels: { font: { size: 10, family: 'Inter' }, color: '#6B7280' }
-                        }
-                    }
-                }
-            });
-        }
-
-        // ============================================================
-        // RENDER WATERFALL
-        // ============================================================
-        function renderWaterfall(data) {
-            var container = document.getElementById('waterfallContainer');
-            if (!container) return;
-
-            var communication = Math.round((data.communicationPct || 0) * 100);
-            var understanding = Math.round((data.understandingPct || 0) * 100);
-            var opportunity = Math.round((data.opportunityPct || 0) * 100);
-
-            var items = [
-                { label: 'Communication', value: Math.max(0, 60 - communication) * 100000, color: '#EF4444' },
-                { label: 'Promotion', value: Math.max(0, 60 - opportunity) * 150000, color: '#F97316' },
-                { label: 'Interviews', value: Math.max(0, 60 - communication) * 50000, color: '#F59E0B' },
-                { label: 'Meetings', value: Math.max(0, 60 - understanding) * 50000, color: '#00C4A7' }
-            ];
-
-            var total = 0;
-            items.forEach(function(item) { total += item.value; });
-            var maxVal = Math.max(total, 1);
-
-            var html = '';
-            items.forEach(function(item) {
-                var pct = (item.value / maxVal) * 100;
-                html +=
-                    `
-                    <div class="wf-row">
-                        <span class="wf-label">${item.label}</span>
-                        <div class="wf-bar"><div class="wf-fill" style="width:${Math.min(pct, 100)}%;background:${item.color};"></div></div>
-                        <span class="wf-amount" style="color:${item.color};">₹${formatNumber(item.value)}</span>
-                    </div>
-                `;
-            });
-            html +=
+        for (var i = start; i <= end; i++) {
+            var s = subScores[i] || 0;
+            var name = subNames[i] || 'Unknown';
+            var level = s >= 4 ? 'Exceptional' : s >= 3 ? 'Proficient' : s >= 2 ? 'Developing' : 'Needs Attention';
+            var color = s >= 3 ? '#00C4A7' : s >= 2 ? '#F59E0B' : '#EF4444';
+            var div = document.createElement('div');
+            div.className = 'comp-row';
+            div.innerHTML =
                 `
-                <div class="wf-total">
-                    <span>TOTAL ANNUAL TAX</span>
-                    <span class="wf-total-amount">₹${formatNumber(total)}</span>
-                </div>
-            `;
-            container.innerHTML = html;
-        }
-
-        // ============================================================
-        // RENDER FRAMEWORKS
-        // ============================================================
-        function renderFrameworks() {
-            var container = document.getElementById('frameworkList');
-            if (!container) return;
-
-            var frameworks = [{
-                title: 'Headline First',
-                difficulty: 'Medium',
-                time: '7 days',
-                roi: 'High',
-                desc: 'Lead with your main point, then support it with evidence.',
-                steps: ['Start every email with your main point', 'No context, no preamble',
-                    'Support with evidence in the next sentences'
-                ],
-                why: 'Your Logical Flow score is low. This will help you structure ideas clearly.'
-            }, {
-                title: 'Interview Narrative',
-                difficulty: 'Medium',
-                time: '1 hour',
-                roi: 'Very High',
-                desc: 'Structure answers using: The Challenge, The Action, The Result.',
-                steps: ['Identify a challenge you faced', 'Describe the action you took',
-                    'Explain the result you achieved'
-                ],
-                why: 'Your Interview Conversion score needs improvement.'
-            }, {
-                title: 'Completeness-Check',
-                difficulty: 'Easy',
-                time: '1 minute',
-                roi: 'High',
-                desc: 'Before ending any conversation, ask: "Is there anything I haven\'t covered?"',
-                steps: ['Ask the question before ending the conversation', 'Wait for their response',
-                    'Address any gaps immediately'
-                ],
-                why: 'Your Completeness of Communication score is low.'
-            }];
-
-            var html = '';
-            frameworks.forEach(function(fw) {
-                var diffClass = fw.difficulty === 'Easy' ? 'low' : fw.difficulty === 'Medium' ? 'medium' : 'high';
-                var roiClass = fw.roi === 'High' ? 'high' : 'medium';
-                html +=
-                    `
-                    <div class="playbook">
-                        <div class="pb-header">
-                            <div class="pb-title"><i class="fas fa-play" style="color:var(--teal);margin-right:8px;"></i> ${fw.title}</div>
-                            <div class="pb-meta">
-                                <span><i class="fas fa-gauge-high"></i> Difficulty: <span class="${diffClass}">${fw.difficulty}</span></span>
-                                <span><i class="fas fa-clock"></i> ${fw.time}</span>
-                                <span><i class="fas fa-arrow-trend-up"></i> ROI: <span class="${roiClass}">${fw.roi}</span></span>
+                            <span style="font-weight:400;font-size:13px;min-width:140px;">${name}</span>
+                            <div style="flex:1;height:18px;background:#F3F4F6;border-radius:20px;overflow:hidden;">
+                                <div style="height:100%;width:${s*25}%;background:${color};border-radius:20px;"></div>
                             </div>
-                        </div>
-                        <div class="pb-desc">${fw.desc}</div>
-                        <div class="pb-steps">
-                            <strong>How to use:</strong>
-                            <ol style="padding-left:20px;">
-                                ${fw.steps.map(function(s){ return '<li>'+s+'</li>'; }).join('')}
-                            </ol>
-                        </div>
-                        <div style="font-size:13px;color:var(--teal);margin-top:6px;">
-                            <i class="fas fa-check-circle"></i> Why it works for you: ${fw.why}
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
+                            <span style="font-weight:700;font-size:13px;min-width:40px;text-align:right;color:${color};">${s}/4</span>
+                            <span style="font-size:12px;color:${color};min-width:90px;text-align:right;">${level}</span>
+                        `;
+            container.appendChild(div);
+        }
+    }
+
+    // ============================================================
+    // FETCH NARRATIVES
+    // ============================================================
+    async function fetchNarratives(submissionId) {
+        if (!submissionId) return null;
+        try {
+            var url = APPS_SCRIPT_URL + '?action=getNarratives&id=' + encodeURIComponent(submissionId);
+            var response = await fetch(url);
+            var result = await response.json();
+            if (result.success && result.data) {
+                narrativesData = result.data;
+                return narrativesData;
+            } else {
+                console.warn('No narratives found:', result.error);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error fetching narratives:', error);
+            return null;
+        }
+    }
+
+    // ============================================================
+    // DISPLAY NARRATIVE
+    // ============================================================
+    function displayNarrative(competency, containerId) {
+        var container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (!narrativesData) {
+            container.innerHTML =
+                `<div class="narrative-error">⚠️ Insights temporarily unavailable. Please refresh.</div>`;
+            return;
         }
 
-        // ============================================================
-        // RENDER ROADMAP
-        // ============================================================
-        function renderRoadmap() {
-            var container = document.getElementById('roadmapVisual');
-            if (!container) return;
-
-            var weeks = [
-                { label: 'Week 1', fill: 25, milestone: 'Identify your top 3 patterns' },
-                { label: 'Week 2', fill: 50, milestone: 'Messages become clearer' },
-                { label: 'Week 3', fill: 75, milestone: 'Your value starts landing' },
-                { label: 'Week 4', fill: 100, milestone: 'Interviews, promotions convert' }
-            ];
-
-            var html = '';
-            weeks.forEach(function(w) {
-                html +=
-                    `
-                    <div class="rm-week">
-                        <span class="rm-label">${w.label}</span>
-                        <div class="rm-track">
-                            <div class="rm-fill" style="width:${w.fill}%;"></div>
-                        </div>
-                        <span class="rm-milestone"><i class="fas fa-flag" style="color:var(--teal);"></i> ${w.milestone}</span>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
+        var data = narrativesData[competency];
+        if (!data || !data.executiveNarrative) {
+            container.innerHTML =
+                `<div class="narrative-error">⚠️ Insights not available for this competency.</div>`;
+            return;
         }
 
-        // ============================================================
-        // MAIN RENDER
-        // ============================================================
-        function renderReport(data) {
-            reportData = data;
-
-            // ---- CONVERT DECIMALS TO PERCENTAGES ----
-            var thinking = Math.round((data.thinkingPct || 0) * 100);
-            var structure = Math.round((data.structurePct || 0) * 100);
-            var communication = Math.round((data.communicationPct || 0) * 100);
-            var understanding = Math.round((data.understandingPct || 0) * 100);
-            var opportunity = Math.round((data.opportunityPct || 0) * 100);
-            var ciScore = Math.round((data.ciScore || 0) * 100);
-            var annualTax = data.annualTax || 700000;
-
-            // ---- COVER ----
-            document.getElementById('coverName').textContent = data.name || 'Executive';
-            document.getElementById('coverRole').textContent = data.role || 'Professional';
-            document.getElementById('coverDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit',
-                month: 'short', year: 'numeric' });
-
-            // ---- MRI ----
-            document.getElementById('mriScore').textContent = ciScore + '%';
-            document.getElementById('mriTax').textContent = '₹' + (annualTax / 100000).toFixed(1) + ' Lakh';
-            document.getElementById('mriPersona').textContent = data.persona || 'The Articulator';
-            document.getElementById('mriROI').textContent = (ciScore > 50 ? (100 / ciScore).toFixed(1) : '2.0') + 'x';
-            document.getElementById('mriBiggestGap').textContent = data.weakestCompetency || 'Communication (54%)';
-            document.getElementById('mriHiddenStrength').textContent = data.highestCompetency || 'Thinking (75%)';
-
-// ---- SUMMARY (DYNAMIC WITH ERROR HANDLING) ----
-try {
-    var thinking = Math.round((data.thinkingPct || 0) * 100);
-    var communication = Math.round((data.communicationPct || 0) * 100);
-    var ciScore = Math.round((data.ciScore || 0) * 100);
-    var annualTax = data.annualTax || 700000;
-
-    function getPercentile(score) {
-        if (score >= 91) return '97th';
-        if (score >= 85) return '93rd';
-        if (score >= 80) return '88th';
-        if (score >= 75) return '82nd';
-        if (score >= 70) return '74th';
-        if (score >= 65) return '65th';
-        if (score >= 60) return '55th';
-        if (score >= 55) return '45th';
-        if (score >= 50) return '35th';
-        if (score >= 40) return '20th';
-        if (score >= 30) return '10th';
-        return '5th';
+        var html = '<div class="narrative-container">';
+        if (data.executiveNarrative) {
+            html +=
+                `<div class="narrative-block executive"><div class="label">🎯 Executive Narrative</div><p class="text">${data.executiveNarrative}</p></div>`;
+        }
+        if (data.whatsWorking) {
+            html +=
+                `<div class="narrative-block working"><div class="label">✅ What's Working</div><p class="text">${data.whatsWorking}</p></div>`;
+        }
+        if (data.whatsHoldingYouBack) {
+            html +=
+                `<div class="narrative-block holding"><div class="label">⚠️ What's Holding You Back</div><p class="text">${data.whatsHoldingYouBack}</p></div>`;
+        }
+        if (data.howOthersExperienceYou) {
+            html +=
+                `<div class="narrative-block experience"><div class="label">👥 How Others Experience You</div><p class="text">${data.howOthersExperienceYou}</p></div>`;
+        }
+        if (data.professionalImpact) {
+            html +=
+                `<div class="narrative-block impact"><div class="label">💼 Professional Impact</div><p class="text">${data.professionalImpact}</p></div>`;
+        }
+        if (data.highestROIImprovement) {
+            html +=
+                `<div class="narrative-block roi"><div class="label">🚀 Highest-ROI Improvement</div><p class="text">${data.highestROIImprovement}</p></div>`;
+        }
+        html += '</div>';
+        container.innerHTML = html;
     }
 
-    var percentile = getPercentile(ciScore);
-    var taxInLakhs = (annualTax / 100000).toFixed(1);
-
-    var summaryParts = [];
-
-    // Part 1: Peer Comparison
-    summaryParts.push('Your Communication Tax Intelligence places you above the ' + percentile + ' percentile of working professionals.');
-
-    // Part 2: Financial Impact
-    summaryParts.push('However, your current communication patterns are estimated to reduce your professional impact by approximately ₹' + taxInLakhs + ' Lakhs annually.');
-
-    // Part 3: Thinking vs Communication Gap
-    if (thinking > communication + 15) {
-        summaryParts.push('Your thinking quality is significantly higher than your translation ability.');
-    } else if (thinking > communication + 5) {
-        summaryParts.push('Your thinking quality is higher than your translation ability.');
-    } else if (communication > thinking + 5) {
-        summaryParts.push('Your translation ability is stronger than your thinking clarity.');
-    } else {
-        summaryParts.push('Your thinking and translation abilities are well aligned.');
+    // ============================================================
+    // LOAD ALL NARRATIVES
+    // ============================================================
+    async function loadAllNarratives(submissionId) {
+        var narratives = await fetchNarratives(submissionId);
+        if (narratives) {
+            displayNarrative('Thinking', 'thinkingNarrative');
+            displayNarrative('Structure', 'structureNarrative');
+            displayNarrative('Communication', 'communicationNarrative');
+            displayNarrative('Understanding', 'understandingNarrative');
+            displayNarrative('Opportunity', 'opportunityNarrative');
+        }
     }
 
-    // Part 4: The Consequence
-    if (communication < 50) {
-        summaryParts.push('People significantly underestimate your expertise.');
-    } else if (communication < 65) {
-        summaryParts.push('People sometimes miss the full extent of your expertise.');
-    } else if (communication < 80) {
-        summaryParts.push('Your expertise is generally recognised but could be amplified.');
-    } else {
-        summaryParts.push('Your expertise comes through clearly and consistently.');
-    }
+    // ============================================================
+    // RENDER REPORT
+    // ============================================================
+    function renderReport(data) {
+        reportData = data;
 
-    // Part 5: The Opportunity
-    if (annualTax > 500000) {
-        summaryParts.push('The good news? This is fixable in 8 weeks.');
-    } else if (annualTax > 200000) {
-        summaryParts.push('The good news? This is fixable in 8 weeks with focused effort.');
-    } else {
-        summaryParts.push('The best part? This is completely fixable.');
-    }
+        var thinking = Math.round((data.thinkingPct || 0) * 100);
+        var structure = Math.round((data.structurePct || 0) * 100);
+        var communication = Math.round((data.communicationPct || 0) * 100);
+        var understanding = Math.round((data.understandingPct || 0) * 100);
+        var opportunity = Math.round((data.opportunityPct || 0) * 100);
+        var ciScore = Math.round((data.ciScore || 0) * 100);
+        var annualTax = data.annualTax || 700000;
 
-    var summaryEl = document.getElementById('summaryText');
-    if (summaryEl) {
-        summaryEl.textContent = summaryParts.join(' ');
-    } else {
-        console.warn('summaryText element not found');
-    }
+        // ---- COVER ----
+        document.getElementById('coverName').textContent = data.name || 'Executive';
+        document.getElementById('coverRole').textContent = data.role || 'Professional';
+        document.getElementById('coverDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit',
+            month: 'short', year: 'numeric' });
 
-} catch (error) {
-    console.error('Summary generation error:', error);
-    var summaryEl = document.getElementById('summaryText');
-    if (summaryEl) {
-        summaryEl.textContent = 'Your executive summary is being generated. Please refresh if this persists.';
-    }
-}
-            // ---- TAX ----
-            var perMonth = Math.round(annualTax / 12);
-            var perDay = Math.round(annualTax / 365);
-            var perHour = Math.round(annualTax / (365 * 8));
-            document.getElementById('taxHeroAmount').textContent = '₹' + formatNumber(annualTax);
-            document.getElementById('taxPerMonth').textContent = '₹' + formatNumber(perMonth);
-            document.getElementById('taxPerDay').textContent = '₹' + formatNumber(perDay);
-            document.getElementById('taxPerHour').textContent = '₹' + formatNumber(perHour);
-            document.getElementById('taxInterviews').textContent = '₹' + formatNumber(Math.round(annualTax * 0.25));
-            document.getElementById('taxPromotions').textContent = '₹' + formatNumber(Math.round(annualTax * 0.15));
-            document.getElementById('taxClients').textContent = '₹' + formatNumber(Math.round(annualTax * 0.5));
-            document.getElementById('taxTeam').textContent = '₹' + formatNumber(Math.round(annualTax * 0.1));
+        // ---- MRI ----
+        document.getElementById('mriScore').textContent = ciScore + '%';
+        document.getElementById('mriTax').textContent = '₹' + (annualTax / 100000).toFixed(1) + ' Lakh';
+        document.getElementById('mriPersona').textContent = data.persona || 'The Articulator';
+        document.getElementById('mriROI').textContent = (ciScore > 50 ? (100 / ciScore).toFixed(1) : '2.0') + 'x';
+        document.getElementById('mriBiggestGap').textContent = data.weakestCompetency || 'Communication (54%)';
+        document.getElementById('mriHiddenStrength').textContent = data.highestCompetency || 'Thinking (75%)';
 
-            // ---- PERSONA ----
-            var persona = data.persona || 'The Articulator';
-            document.getElementById('personaEmoji').textContent = '🟢';
-            document.getElementById('personaName').textContent = persona;
-            document.getElementById('personaDesc').textContent = data.personaDescription ||
-                "You're clear and confident. Some gaps in translation are costing you momentum.";
-            document.getElementById('journeyCurrent').innerHTML = '<span class="emoji">🟢</span> ' + persona;
-            document.getElementById('whereYouAre').textContent = persona;
+        // ---- SUMMARY ----
+        document.getElementById('summaryText').textContent =
+            'Your thinking quality is significantly higher than your translation ability. ' +
+            'The result: people underestimate your expertise. You\'re leaking ₹' + formatNumber(annualTax) +
+            ' annually. The good news? This is fixable in 4 weeks.';
 
-            // ---- RINGS ----
-            renderRings(data);
+        // ---- TAX ----
+        var perMonth = Math.round(annualTax / 12);
+        var perDay = Math.round(annualTax / 365);
+        var perHour = Math.round(annualTax / (365 * 8));
+        document.getElementById('taxHeroAmount').textContent = '₹' + formatNumber(annualTax);
+        document.getElementById('taxPerMonth').textContent = '₹' + formatNumber(perMonth);
+        document.getElementById('taxPerDay').textContent = '₹' + formatNumber(perDay);
+        document.getElementById('taxPerHour').textContent = '₹' + formatNumber(perHour);
+        document.getElementById('taxInterviews').textContent = '₹' + formatNumber(Math.round(annualTax * 0.25));
+        document.getElementById('taxPromotions').textContent = '₹' + formatNumber(Math.round(annualTax * 0.15));
+        document.getElementById('taxClients').textContent = '₹' + formatNumber(Math.round(annualTax * 0.5));
+        document.getElementById('taxTeam').textContent = '₹' + formatNumber(Math.round(annualTax * 0.1));
 
-            // ---- SUB-COMPS ----
-            var subScores = data.subScores || [];
-            renderSubComps('thinkingSubComps', subScores, 0, 5);
-            renderSubComps('structureSubComps', subScores, 6, 11);
-            renderSubComps('communicationSubComps', subScores, 12, 17);
-            renderSubComps('understandingSubComps', subScores, 18, 23);
-            renderSubComps('opportunitySubComps', subScores, 24, 29);
+        // ---- PERSONA ----
+        var persona = data.persona || 'The Articulator';
+        document.getElementById('personaEmoji').textContent = '🟢';
+        document.getElementById('personaName').textContent = persona;
+        document.getElementById('personaDesc').textContent = data.personaDescription ||
+            "You're clear and confident. Some gaps in translation are costing you momentum.";
+        document.getElementById('journeyCurrent').innerHTML = '<span class="emoji">🟢</span> ' + persona;
+        document.getElementById('whereYouAre').textContent = persona;
 
-            // ---- DEEP DIVE SCORES ----
-            document.getElementById('thinkingScoreDisplay').textContent = thinking + '%';
-            document.getElementById('structureScoreDisplay').textContent = structure + '%';
-            document.getElementById('communicationScoreDisplay').textContent = communication + '%';
-            document.getElementById('understandingScoreDisplay').textContent = understanding + '%';
-            document.getElementById('opportunityScoreDisplay').textContent = opportunity + '%';
+        // ---- RINGS ----
+        renderRings(data);
 
-            document.getElementById('thinkingBadge').textContent = data.thinkingLevel || 'Proficient';
-            document.getElementById('structureBadge').textContent = data.structureLevel || 'Proficient';
-            document.getElementById('communicationBadge').textContent = data.communicationLevel || 'Needs Attention';
-            document.getElementById('understandingBadge').textContent = data.understandingLevel || 'Needs Attention';
-            document.getElementById('opportunityBadge').textContent = data.opportunityLevel || 'Proficient';
+        // ---- SUB-COMPS ----
+        var subScores = data.subScores || [];
+        renderSubComps('thinkingSubComps', subScores, 0, 5);
+        renderSubComps('structureSubComps', subScores, 6, 11);
+        renderSubComps('communicationSubComps', subScores, 12, 17);
+        renderSubComps('understandingSubComps', subScores, 18, 23);
+        renderSubComps('opportunitySubComps', subScores, 24, 29);
 
-            // ---- BEHAVIOUR FLOW ----
-            var behaviours = {
-                thinking: { behaviour: 'You think clearly but don\'t always prepare', impact: 'Ideas don\'t land with full force',
-                    perception: 'People see you as smart but not always ready',
-                    action: 'Write your ONE message before every meeting' },
-                structure: { behaviour: 'You structure as you go', impact: 'Audience has to work to follow you',
-                    perception: 'Seen as disorganised', action: 'Start with headline first' },
-                communication: { behaviour: 'You explain as you understand it', impact: 'Value is lost in translation',
-                    perception: 'People underestimate your expertise',
-                    action: 'Translate, don\'t explain' },
-                understanding: { behaviour: 'You don\'t adjust in real time', impact: 'You lose the room',
-                    perception: 'Seen as unaware', action: 'Pause and read the room' },
-                opportunity: { behaviour: 'You articulate your goals well', impact: 'You know where you\'re going',
-                    perception: 'Seen as focused', action: 'Practice your 60-second pitch' }
-            };
+        // ---- DEEP DIVE SCORES ----
+        document.getElementById('thinkingScoreDisplay').textContent = thinking + '%';
+        document.getElementById('structureScoreDisplay').textContent = structure + '%';
+        document.getElementById('communicationScoreDisplay').textContent = communication + '%';
+        document.getElementById('understandingScoreDisplay').textContent = understanding + '%';
+        document.getElementById('opportunityScoreDisplay').textContent = opportunity + '%';
 
-            var b = behaviours;
-            document.getElementById('thinkBehaviour').textContent = b.thinking.behaviour;
-            document.getElementById('thinkImpact').textContent = b.thinking.impact;
-            document.getElementById('thinkPerception').textContent = b.thinking.perception;
-            document.getElementById('thinkAction').textContent = b.thinking.action;
+        document.getElementById('thinkingBadge').textContent = data.thinkingLevel || 'Proficient';
+        document.getElementById('structureBadge').textContent = data.structureLevel || 'Proficient';
+        document.getElementById('communicationBadge').textContent = data.communicationLevel || 'Needs Attention';
+        document.getElementById('understandingBadge').textContent = data.understandingLevel || 'Needs Attention';
+        document.getElementById('opportunityBadge').textContent = data.opportunityLevel || 'Proficient';
 
-            document.getElementById('structBehaviour').textContent = b.structure.behaviour;
-            document.getElementById('structImpact').textContent = b.structure.impact;
-            document.getElementById('structPerception').textContent = b.structure.perception;
-            document.getElementById('structAction').textContent = b.structure.action;
-
-            document.getElementById('commBehaviour').textContent = b.communication.behaviour;
-            document.getElementById('commImpact').textContent = b.communication.impact;
-            document.getElementById('commPerception').textContent = b.communication.perception;
-            document.getElementById('commAction').textContent = b.communication.action;
-
-            document.getElementById('underBehaviour').textContent = b.understanding.behaviour;
-            document.getElementById('underImpact').textContent = b.understanding.impact;
-            document.getElementById('underPerception').textContent = b.understanding.perception;
-            document.getElementById('underAction').textContent = b.understanding.action;
-
-            document.getElementById('oppBehaviour').textContent = b.opportunity.behaviour;
-            document.getElementById('oppImpact').textContent = b.opportunity.impact;
-            document.getElementById('oppPerception').textContent = b.opportunity.perception;
-            document.getElementById('oppAction').textContent = b.opportunity.action;
-
-            // ---- TAX IMPACT ----
-            document.getElementById('thinkingTaxImpact').textContent = '₹' + formatNumber(Math.max(0, 60 - thinking) * 0);
-            document.getElementById('structureTaxImpact').textContent = '₹' + formatNumber(Math.max(0, 60 - structure) * 0);
-            document.getElementById('communicationTaxImpact').textContent = '₹' + formatNumber(Math.max(0, 60 - communication) *
-            100000);
-            document.getElementById('understandingTaxImpact').textContent = '₹' + formatNumber(Math.max(0, 60 - understanding) *
-            50000);
-            document.getElementById('opportunityTaxImpact').textContent = '₹' + formatNumber(Math.max(0, 60 - opportunity) * 0);
-
-            // ---- DNA ----
-            renderDNA(data);
-
-            // ---- WATERFALL ----
-            renderWaterfall(data);
-
-            // ---- FRAMEWORKS ----
-            renderFrameworks();
-
-            // ---- ROADMAP ----
-            renderRoadmap();
-
-            // ---- PROGRAM ----
-            var currentScore = ciScore;
-            var projectedScore = Math.min(95, currentScore + 10);
-            var taxSaved = Math.round(annualTax * 0.4);
-            var roi = ((taxSaved / 9999) * 100).toFixed(0);
-            document.getElementById('progCurrentScore').textContent = currentScore;
-            document.getElementById('progProjectedScore').textContent = projectedScore;
-            document.getElementById('progTaxSaved').textContent = '₹' + formatNumber(taxSaved);
-            document.getElementById('progROI').textContent = roi + '%';
-            document.getElementById('programDesc').textContent =
-                'Your scores show you\'re close to the next level — but your communication gaps are holding you back. In 4 weeks, we\'ll fix your structure, refine your thinking, and help you articulate your value.';
-
-            // ---- INSIGHT ----
-            document.getElementById('insightText').innerHTML =
-                'Your highest score is <strong>' + (data.highestCompetency || 'Thinking (75%)') +
-                '</strong> — build on this. Your lowest score is <strong>' + (data.weakestCompetency ||
+        // ---- INSIGHT ----
+        document.getElementById('insightText').innerHTML =
+            'Your highest score is <strong>' + (data.highestCompetency || 'Thinking (75%)') +
+            '</strong> — build on this. Your lowest score is <strong>' + (data.weakestCompetency ||
                 'Communication (54%)') + '</strong> — fix this first.';
 
-            // ---- UNLOCK ----
-            isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
-            if (isUnlocked) {
-                document.getElementById('unlockBadge').style.display = 'block';
-                document.getElementById('paymentBox').style.display = 'none';
-                document.getElementById('downloadButton').style.display = 'inline-block';
-                document.querySelectorAll('.blurred-section').forEach(function(el) {
-                    el.classList.remove('blurred-section');
-                });
-            } else {
-                document.getElementById('unlockBadge').style.display = 'none';
-                document.getElementById('paymentBox').style.display = 'block';
-                document.getElementById('downloadButton').style.display = 'none';
-            }
-
-            // If rings were rendered but not visible, redraw them
-            if (!ringsRendered) {
-                renderRings(data);
-            }
-        }
-// ============================================================
-// NARRATIVES
-// ============================================================
-
-var narrativesData = null;
-
-// Fetch narratives from Apps Script
-async function fetchNarratives(submissionId) {
-    console.log('🔍 fetchNarratives called with:', submissionId); // ✅ ADD THIS LINE
-    if (!submissionId){
-        console.warn('❌ No submissionId provided');
-        return null;
-    
-    try {
-        var url = APPS_SCRIPT_URL + '?action=getNarratives&id=' + encodeURIComponent(submissionId);
-        console.log('📡 Fetching from:', url); // ✅ ADD THIS LINE
-        var response = await fetch(url);
-        var result = await response.json();
-
-        console.log('📦 Response received:', result); // ✅ ADD THIS LINE
-        
-        if (result.success && result.data) {
-            narrativesData = result.data;
-            console.log('✅ Narratives loaded:', Object.keys(narrativesData));
-            return narrativesData;
-        } else {
-            console.warn('No narratives found:', result.error);
-            return null;
-        }
-    } catch (error) {
-        console.error('Error fetching narratives:', error);
-        return null;
-    }
-}
-
-// Display narrative for a specific competency
-function displayNarrative(competency, containerId) {
-    var container = document.getElementById(containerId);
-    if (!container) {
-        console.warn('Container not found:', containerId);
-        return;
-    }
-    
-    // Show loading state
-    container.innerHTML = `
-        <div class="narrative-loading">
-            <span class="spinner"></span> Loading insights...
-        </div>
-    `;
-    
-    if (!narrativesData) {
-        container.innerHTML = `
-            <div class="narrative-error">
-                ⚠️ Insights temporarily unavailable. Please refresh.
-            </div>
-        `;
-        return;
-    }
-    
-    var data = narrativesData[competency];
-    if (!data) {
-        container.innerHTML = `
-            <div class="narrative-error">
-                ⚠️ Insights not available for this competency.
-            </div>
-        `;
-        return;
-    }
-    
-    // Check if all fields are empty
-    var hasData = data.executiveNarrative || data.whatsWorking || data.whatsHoldingYouBack || 
-                  data.howOthersExperienceYou || data.professionalImpact || data.highestROIImprovement;
-    
-    if (!hasData) {
-        container.innerHTML = `
-            <div class="narrative-error">
-                ⚠️ No insights available for this competency.
-            </div>
-        `;
-        return;
-    }
-    
-    // Build the narrative HTML
-    var html = '';
-    html += '<div class="narrative-container">';
-    
-    // 1. Executive Narrative
-    if (data.executiveNarrative) {
-        html += `
-            <div class="narrative-block executive">
-                <div class="label"><span class="icon">🎯</span> Executive Narrative</div>
-                <p class="text">${data.executiveNarrative}</p>
-            </div>
-        `;
-    }
-    
-    // 2. What's Working
-    if (data.whatsWorking) {
-        html += `
-            <div class="narrative-block working">
-                <div class="label"><span class="icon">✅</span> What's Working</div>
-                <p class="text">${data.whatsWorking}</p>
-            </div>
-        `;
-    }
-    
-    // 3. What's Holding You Back
-    if (data.whatsHoldingYouBack) {
-        html += `
-            <div class="narrative-block holding">
-                <div class="label"><span class="icon">⚠️</span> What's Holding You Back</div>
-                <p class="text">${data.whatsHoldingYouBack}</p>
-            </div>
-        `;
-    }
-    
-    // 4. How Others Experience You
-    if (data.howOthersExperienceYou) {
-        html += `
-            <div class="narrative-block experience">
-                <div class="label"><span class="icon">👥</span> How Others Experience You</div>
-                <p class="text">${data.howOthersExperienceYou}</p>
-            </div>
-        `;
-    }
-    
-    // 5. Professional Impact
-    if (data.professionalImpact) {
-        html += `
-            <div class="narrative-block impact">
-                <div class="label"><span class="icon">💼</span> Professional Impact</div>
-                <p class="text">${data.professionalImpact}</p>
-            </div>
-        `;
-    }
-    
-    // 6. Highest-ROI Improvement
-    if (data.highestROIImprovement) {
-        html += `
-            <div class="narrative-block roi">
-                <div class="label"><span class="icon">🚀</span> Highest-ROI Improvement</div>
-                <p class="text">${data.highestROIImprovement}</p>
-            </div>
-        `;
-    }
-    
-    html += '</div>';
-    
-    container.innerHTML = html;
-}
-
-// Load all narratives
-async function loadAllNarratives(submissionId) {
-    var narratives = await fetchNarratives(submissionId);
-    if (narratives) {
-        displayNarrative('Thinking', 'thinkingNarrative');
-        displayNarrative('Structure', 'structureNarrative');
-        displayNarrative('Communication', 'communicationNarrative');
-        displayNarrative('Understanding', 'understandingNarrative');
-        displayNarrative('Opportunity', 'opportunityNarrative');
-    }
-}
-        
-        // ============================================================
-        // PAYMENT & DOWNLOAD
-        // ============================================================
-        function initiatePayment() {
-            if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID === 'YOUR_RAZORPAY_KEY_ID') {
-                alert('Please set your Razorpay Key ID in the JavaScript configuration.');
-                return;
-            }
-            var options = {
-                key: RAZORPAY_KEY_ID,
-                amount: 99900,
-                currency: 'INR',
-                name: 'The Unspoken',
-                description: 'Communication Tax™ Full Report',
-                prefill: { email: reportData ? reportData.email : '' },
-                notes: { submissionId: submissionId },
-                handler: function(response) {
-                    window.location.href = window.location.pathname + '?id=' + submissionId + '&payment_id=' + response
-                        .razorpay_payment_id;
-                }
-            };
-            var rzp = new Razorpay(options);
-            rzp.open();
-        }
-
-        function downloadPDF() {
-            var element = document.getElementById('reportContainer');
-            var opt = {
-                margin: 10,
-                filename: 'Executive_Communication_Report.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
-        }
-// ============================================================
-// NARRATIVES FUNCTIONS
-// ============================================================
-
-var narrativesData = null;
-
-// Fetch narratives from Apps Script
-async function fetchNarratives(submissionId) {
-    if (!submissionId) {
-        console.warn('No submission ID provided');
-        return null;
-    }
-
-    try {
-        var url = APPS_SCRIPT_URL + '?action=getNarratives&id=' + encodeURIComponent(submissionId);
-        var response = await fetch(url);
-        var result = await response.json();
-
-        if (result.success && result.data) {
-            narrativesData = result.data;
-            console.log('✅ Narratives loaded:', Object.keys(narrativesData));
-            return narrativesData;
-        } else {
-            console.warn('No narratives found:', result.error);
-            return null;
-        }
-    } catch (error) {
-        console.error('Error fetching narratives:', error);
-        return null;
-    }
-}
-
-// Display narrative for a specific competency
-function displayNarrative(competency, containerId) {
-    var container = document.getElementById(containerId);
-    if (!container) {
-        console.warn('Container not found:', containerId);
-        return;
-    }
-
-    // Show loading state
-    container.innerHTML = `
-        <div class="narrative-loading">
-            <span class="spinner"></span> Loading insights...
-        </div>
-    `;
-
-    if (!narrativesData) {
-        container.innerHTML = `
-            <div class="narrative-error">
-                ⚠️ Insights temporarily unavailable. Please refresh.
-            </div>
-        `;
-        return;
-    }
-
-    var data = narrativesData[competency];
-    if (!data) {
-        container.innerHTML = `
-            <div class="narrative-error">
-                ⚠️ Insights not available for this competency.
-            </div>
-        `;
-        return;
-    }
-
-    // Check if all fields are empty
-    var hasData = data.executiveNarrative || data.whatsWorking || data.whatsHoldingYouBack ||
-        data.howOthersExperienceYou || data.professionalImpact || data.highestROIImprovement;
-
-    if (!hasData) {
-        container.innerHTML = `
-            <div class="narrative-error">
-                ⚠️ No insights available for this competency.
-            </div>
-        `;
-        return;
-    }
-
-    // Build the narrative HTML
-    var html = '';
-    html += '<div class="narrative-container">';
-
-    // 1. Executive Narrative
-    if (data.executiveNarrative) {
-        html += `
-            <div class="narrative-block executive">
-                <div class="label"><span class="icon">🎯</span> Executive Narrative</div>
-                <p class="text">${data.executiveNarrative}</p>
-            </div>
-        `;
-    }
-
-    // 2. What's Working
-    if (data.whatsWorking) {
-        html += `
-            <div class="narrative-block working">
-                <div class="label"><span class="icon">✅</span> What's Working</div>
-                <p class="text">${data.whatsWorking}</p>
-            </div>
-        `;
-    }
-
-    // 3. What's Holding You Back
-    if (data.whatsHoldingYouBack) {
-        html += `
-            <div class="narrative-block holding">
-                <div class="label"><span class="icon">⚠️</span> What's Holding You Back</div>
-                <p class="text">${data.whatsHoldingYouBack}</p>
-            </div>
-        `;
-    }
-
-    // 4. How Others Experience You
-    if (data.howOthersExperienceYou) {
-        html += `
-            <div class="narrative-block experience">
-                <div class="label"><span class="icon">👥</span> How Others Experience You</div>
-                <p class="text">${data.howOthersExperienceYou}</p>
-            </div>
-        `;
-    }
-
-    // 5. Professional Impact
-    if (data.professionalImpact) {
-        html += `
-            <div class="narrative-block impact">
-                <div class="label"><span class="icon">💼</span> Professional Impact</div>
-                <p class="text">${data.professionalImpact}</p>
-            </div>
-        `;
-    }
-
-    // 6. Highest-ROI Improvement
-    if (data.highestROIImprovement) {
-        html += `
-            <div class="narrative-block roi">
-                <div class="label"><span class="icon">🚀</span> Highest-ROI Improvement</div>
-                <p class="text">${data.highestROIImprovement}</p>
-            </div>
-        `;
-    }
-
-    html += '</div>';
-
-    container.innerHTML = html;
-}
-
-// Load all narratives
-async function loadAllNarratives(submissionId) {
-    console.log('📥 Loading narratives for:', submissionId);
-    var narratives = await fetchNarratives(submissionId);
-    if (narratives) {
-        displayNarrative('Thinking', 'thinkingNarrative');
-        displayNarrative('Structure', 'structureNarrative');
-        displayNarrative('Communication', 'communicationNarrative');
-        displayNarrative('Understanding', 'understandingNarrative');
-        displayNarrative('Opportunity', 'opportunityNarrative');
-    }
-}
-        // ============================================================
-        // INIT
-        // ============================================================
-        async function init() {
-            console.log('🚀 Initializing report...');
-            if (paymentId) {
-                sessionStorage.setItem('unlocked_' + submissionId, 'true');
-                if (window.history && window.history.replaceState) {
-                    var newUrl = window.location.pathname + '?id=' + submissionId;
-                    window.history.replaceState({}, document.title, newUrl);
-                }
-            }
-
-            var data = await fetchReportData();
-            if (data) {
-                renderReport(data);
-                    await loadAllNarratives(submissionId);
-    }
-        
-            document.getElementById('payButton').addEventListener('click', initiatePayment);
-            document.getElementById('downloadButton').addEventListener('click', downloadPDF);
-            document.querySelectorAll('.btn-download').forEach(function(btn) {
-                btn.addEventListener('click', downloadPDF);
+        // ---- UNLOCK ----
+        isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
+        if (isUnlocked) {
+            document.getElementById('unlockBadge').style.display = 'block';
+            document.getElementById('paymentBox').style.display = 'none';
+            document.getElementById('downloadButton').style.display = 'inline-block';
+            document.querySelectorAll('.blurred-section').forEach(function(el) {
+                el.classList.remove('blurred-section');
             });
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
         } else {
-            init();
+            document.getElementById('unlockBadge').style.display = 'none';
+            document.getElementById('paymentBox').style.display = 'block';
+            document.getElementById('downloadButton').style.display = 'none';
+        }
+    }
+
+    // ============================================================
+    // PAYMENT
+    // ============================================================
+    function initiatePayment() {
+        if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID === 'YOUR_RAZORPAY_KEY_ID') {
+            alert('Please set your Razorpay Key ID.');
+            return;
+        }
+        var options = {
+            key: RAZORPAY_KEY_ID,
+            amount: 99900,
+            currency: 'INR',
+            name: 'The Unspoken',
+            description: 'Communication Tax™ Full Report',
+            prefill: { email: reportData ? reportData.email : '' },
+            notes: { submissionId: submissionId },
+            handler: function(response) {
+                window.location.href = window.location.pathname + '?id=' + submissionId + '&payment_id=' + response
+                    .razorpay_payment_id;
+            }
+        };
+        var rzp = new Razorpay(options);
+        rzp.open();
+    }
+
+    // ============================================================
+    // DOWNLOAD PDF
+    // ============================================================
+    function downloadPDF() {
+        var element = document.getElementById('reportContainer');
+        var opt = {
+            margin: 10,
+            filename: 'Executive_Communication_Report.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    async function init() {
+        console.log('🚀 Initializing report...');
+
+        if (paymentId) {
+            sessionStorage.setItem('unlocked_' + submissionId, 'true');
+            if (window.history && window.history.replaceState) {
+                var newUrl = window.location.pathname + '?id=' + submissionId;
+                window.history.replaceState({}, document.title, newUrl);
+            }
         }
 
-        window.initiatePayment = initiatePayment;
-        window.downloadPDF = downloadPDF;
-    </script>
+        var data = await fetchReportData();
+        if (data) {
+            renderReport(data);
+            await loadAllNarratives(submissionId);
+        }
 
+        var payBtn = document.getElementById('payButton');
+        if (payBtn) payBtn.addEventListener('click', initiatePayment);
+
+        var downloadBtn = document.getElementById('downloadButton');
+        if (downloadBtn) downloadBtn.addEventListener('click', downloadPDF);
+
+        document.querySelectorAll('.btn-download').forEach(function(btn) {
+            btn.addEventListener('click', downloadPDF);
+        });
+    }
+
+    // ============================================================
+    // START THE APP
+    // ============================================================
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    // ============================================================
+    // EXPOSE GLOBALLY
+    // ============================================================
+    window.initiatePayment = initiatePayment;
+    window.downloadPDF = downloadPDF;
+</script>
 </body>
 </html>
