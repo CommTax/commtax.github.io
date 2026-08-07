@@ -1,1 +1,687 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Communication Tax™ Report</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Razorpay Checkout -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  
+  <!-- html2pdf for PDF download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
+  <style>
+    /* ============================================================
+       PREMIUM REPORT STYLES
+       ============================================================ */
+    
+    :root {
+      --teal: #00C4A7;
+      --navy: #0B0F1A;
+      --gold: #F5A623;
+      --gray: #6B7280;
+      --white: #FFFFFF;
+      --light-bg: #F0FAF8;
+      --red: #EF4444;
+      --yellow: #F59E0B;
+      --green: #10B981;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--navy);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    
+    .report-container {
+      max-width: 900px;
+      width: 100%;
+      background: var(--white);
+      border-radius: 20px;
+      padding: 50px 60px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    
+    /* ---- WATERMARK ---- */
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 80px;
+      font-weight: 900;
+      color: rgba(0, 196, 167, 0.05);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      letter-spacing: 20px;
+      z-index: 0;
+    }
+    
+    .report-container > * {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* ---- HEADER ---- */
+    .header {
+      text-align: center;
+      border-bottom: 3px solid var(--teal);
+      padding-bottom: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .logo {
+      color: var(--teal);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 4px;
+    }
+    
+    .report-title {
+      font-size: 24px;
+      font-weight: 300;
+      color: var(--navy);
+      margin-top: 5px;
+    }
+    
+    .user-info {
+      color: var(--gray);
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    /* ---- SCORE CARD ---- */
+    .score-card {
+      background: var(--light-bg);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      margin: 20px 0;
+      border: 1px solid #E5E7EB;
+    }
+    
+    .score-number {
+      font-size: 72px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    
+    .score-label {
+      color: var(--gray);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 5px;
+    }
+    
+    .score-status {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+    
+    /* ---- COMPETENCY ROWS ---- */
+    .competency-row {
+      display: flex;
+      align-items: center;
+      margin: 12px 0;
+      gap: 15px;
+    }
+    
+    .competency-name {
+      width: 140px;
+      font-weight: 600;
+      color: var(--navy);
+      font-size: 14px;
+    }
+    
+    .competency-bar {
+      flex: 1;
+      background: #F3F4F6;
+      border-radius: 8px;
+      height: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .competency-fill {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 1s ease;
+    }
+    
+    .competency-score {
+      width: 60px;
+      text-align: right;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    
+    .competency-level {
+      width: 110px;
+      font-size: 12px;
+      color: var(--gray);
+    }
+    
+    /* ---- COLOR CODING ---- */
+    .fill-teal { background: var(--teal); }
+    .fill-green { background: var(--green); }
+    .fill-yellow { background: var(--yellow); }
+    .fill-orange { background: #F97316; }
+    .fill-red { background: var(--red); }
+    
+    .text-teal { color: var(--teal); }
+    .text-green { color: var(--green); }
+    .text-yellow { color: var(--yellow); }
+    .text-orange { color: #F97316; }
+    .text-red { color: var(--red); }
+    
+    /* ---- BLURRED SECTION ---- */
+    .blurred-section {
+      filter: blur(8px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    
+    .blurred-section .competency-bar {
+      background: #E5E7EB;
+    }
+    
+    .blurred-section .competency-fill {
+      background: #9CA3AF !important;
+    }
+    
+    /* ---- PAYMENT BOX ---- */
+    .payment-box {
+      text-align: center;
+      margin: 30px 0;
+      padding: 30px;
+      background: #FFFBEB;
+      border-radius: 12px;
+      border: 2px solid #F59E0B;
+    }
+    
+    .payment-box h3 {
+      color: var(--navy);
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+    
+    .payment-box p {
+      color: var(--gray);
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+    
+    .pay-button {
+      background: var(--teal);
+      color: var(--white);
+      padding: 16px 48px;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    
+    .pay-button:hover {
+      background: #00A88E;
+    }
+    
+    /* ---- UNLOCKED STATE ---- */
+    .unlocked-badge {
+      background: #D1FAE5;
+      color: #065F46;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      margin: 20px 0;
+      display: none;
+    }
+    
+    .unlocked-badge.visible {
+      display: block;
+    }
+    
+    .download-btn {
+      background: var(--teal);
+      color: var(--white);
+      padding: 16px 48px;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin: 10px 0;
+    }
+    
+    .download-btn:hover {
+      background: #00A88E;
+    }
+    
+    /* ---- TABLE ---- */
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 15px 0;
+    }
+    
+    .report-table th {
+      background: var(--navy);
+      color: white;
+      padding: 10px;
+      text-align: left;
+    }
+    
+    .report-table td {
+      padding: 8px 10px;
+    }
+    
+    .report-table tr:nth-child(even) {
+      background: var(--light-bg);
+    }
+    
+    .report-table tfoot tr {
+      background: var(--teal);
+      color: white;
+      font-weight: 700;
+    }
+    
+    .report-table tfoot td {
+      padding: 10px;
+    }
+    
+    /* ---- FOOTER ---- */
+    .footer {
+      text-align: center;
+      color: var(--gray);
+      font-size: 12px;
+      border-top: 1px solid #E5E7EB;
+      padding-top: 20px;
+      margin-top: 30px;
+    }
+    
+    /* ---- LOADING ---- */
+    .loading {
+      text-align: center;
+      padding: 50px;
+      color: var(--gray);
+    }
+    
+    .loading-spinner {
+      border: 4px solid #F3F4F6;
+      border-top: 4px solid var(--teal);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 600px) {
+      .report-container { padding: 20px; }
+      .competency-row { flex-wrap: wrap; }
+      .competency-name { width: 100%; }
+      .competency-level { width: 100%; text-align: left; }
+      .score-number { font-size: 48px; }
+      .report-table { font-size: 11px; }
+      .report-table th, .report-table td { padding: 6px; }
+    }
+  </style>
+</head>
+<body>
 
+<div class="report-container" id="reportContainer">
+  <!-- Watermark -->
+  <div class="watermark">PREVIEW</div>
+  
+  <!-- Content -->
+  <div id="reportContent">
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      <p>Loading your report...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  // CONFIGURATION
+  // ============================================================
+  
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec'; // ← REPLACE THIS
+  var RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID'; // ← REPLACE THIS
+  
+  // Get submission ID from URL
+  var urlParams = new URLSearchParams(window.location.search);
+  var submissionId = urlParams.get('id');
+  var paymentId = urlParams.get('payment_id');
+  
+  // ============================================================
+  // MAIN: LOAD REPORT
+  // ============================================================
+  
+  async function loadReport() {
+    if (!submissionId) {
+      document.getElementById('reportContent').innerHTML = `
+        <div style="text-align: center; padding: 40px; color: #991B1B;">
+          <h3>⚠️ Missing Submission ID</h3>
+          <p>Please add <code>?id=YOUR_SUBMISSION_ID</code> to the URL.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    try {
+      var response = await fetch(APPS_SCRIPT_URL + '?action=getReportData&id=' + submissionId);
+      var result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Report not found');
+      }
+      
+      var data = result.data;
+      renderReport(data);
+      
+    } catch (error) {
+      document.getElementById('reportContent').innerHTML = `
+        <div style="text-align: center; padding: 40px; color: #991B1B;">
+          <h3>⚠️ Error Loading Report</h3>
+          <p>${error.message}</p>
+          <p style="font-size: 12px; color: #6B7280;">Please try again or contact support.</p>
+        </div>
+      `;
+    }
+  }
+  
+  // ============================================================
+  // RENDER REPORT
+  // ============================================================
+  
+  function renderReport(data) {
+    var html = '';
+    
+    // ---- HEADER ----
+    html += `
+      <div class="header">
+        <div class="logo">THE UNSPOKEN</div>
+        <div class="report-title">Communication Tax™ Report</div>
+        <div class="user-info">Prepared for: ${data.name} · ${data.role}</div>
+        <div class="user-info">Date: ${new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+      </div>
+    `;
+    
+    // ---- EXECUTIVE SUMMARY ----
+    var scoreColor = getScoreColor(data.ciScore);
+    var scoreStatus = getScoreStatus(data.ciScore);
+    
+    html += `
+      <div style="margin: 20px 0;">
+        <div class="score-card">
+          <div class="score-label">Communication Intelligence Score</div>
+          <div class="score-number" style="color: ${scoreColor};">${data.ciScore}%</div>
+          <div class="score-status" style="color: ${scoreColor};">${scoreStatus}</div>
+        </div>
+      </div>
+    `;
+    
+    // ---- COMPETENCY SCORES ----
+    html += `
+      <div style="margin: 25px 0;">
+        <h3 style="color: var(--navy); font-size: 18px;">🎯 Competency Scores</h3>
+    `;
+    
+    var competencies = [
+      { name: 'Thinking', score: data.thinkingPct, level: data.thinkingLevel },
+      { name: 'Structure', score: data.structurePct, level: data.structureLevel },
+      { name: 'Communication', score: data.communicationPct, level: data.communicationLevel },
+      { name: 'Understanding', score: data.understandingPct, level: data.understandingLevel },
+      { name: 'Opportunity', score: data.opportunityPct, level: data.opportunityLevel }
+    ];
+    
+    for (var i = 0; i < competencies.length; i++) {
+      var comp = competencies[i];
+      var fillColor = getFillColor(comp.score);
+      var scoreColorText = getScoreColor(comp.score);
+      html += `
+        <div class="competency-row">
+          <div class="competency-name">${comp.name}</div>
+          <div class="competency-bar">
+            <div class="competency-fill ${fillColor}" style="width: ${comp.score}%;"></div>
+          </div>
+          <div class="competency-score" style="color: ${scoreColorText};">${comp.score}%</div>
+          <div class="competency-level">${comp.level}</div>
+        </div>
+      `;
+    }
+    
+    html += `</div>`;
+    
+    // ---- BLURRED SECTION ----
+    html += `
+      <div class="blurred-section" id="blurredSection">
+        <div style="margin: 25px 0;">
+          <h3 style="color: var(--navy); font-size: 18px;">🔒 Detailed Breakdown</h3>
+          <p style="color: var(--gray); font-size: 13px; margin-bottom: 15px;">This section is blurred until you unlock the full report.</p>
+          
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Competency</th>
+                <th style="text-align: center;">Score</th>
+                <th style="text-align: center;">Points Below 60%</th>
+                <th style="text-align: center;">Annual Tax</th>
+              </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    var breakdown = [
+      ['Thinking', data.thinkingPct, Math.max(0, 60 - data.thinkingPct), Math.max(0, 60 - data.thinkingPct) * 50000],
+      ['Structure', data.structurePct, Math.max(0, 60 - data.structurePct), Math.max(0, 60 - data.structurePct) * 75000],
+      ['Communication', data.communicationPct, Math.max(0, 60 - data.communicationPct), Math.max(0, 60 - data.communicationPct) * 100000],
+      ['Understanding', data.understandingPct, Math.max(0, 60 - data.understandingPct), Math.max(0, 60 - data.understandingPct) * 50000],
+      ['Opportunity', data.opportunityPct, Math.max(0, 60 - data.opportunityPct), Math.max(0, 60 - data.opportunityPct) * 150000]
+    ];
+    
+    var totalPoints = 0;
+    var totalTax = 0;
+    
+    for (var i = 0; i < breakdown.length; i++) {
+      var row = breakdown[i];
+      totalPoints += row[2];
+      totalTax += row[3];
+      var pointsColor = row[2] > 0 ? '#EF4444' : '#00C4A7';
+      var pointsWeight = row[2] > 0 ? '700' : '400';
+      html += `
+        <tr>
+          <td style="font-weight: 600;">${row[0]}</td>
+          <td style="text-align: center;">${row[1]}%</td>
+          <td style="text-align: center; color: ${pointsColor}; font-weight: ${pointsWeight};">${row[2] > 0 ? row[2] + '%' : '0%'}</td>
+          <td style="text-align: center;">₹${formatNumber(row[3])}</td>
+        </tr>
+      `;
+    }
+    
+    html += `
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>TOTAL</td>
+                <td style="text-align: center;">${data.ciScore}%</td>
+                <td style="text-align: center;">${totalPoints}%</td>
+                <td style="text-align: center;">₹${formatNumber(totalTax)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    `;
+    
+    // ---- PERSONALIZED INSIGHTS (Blurred) ----
+    html += `
+      <div class="blurred-section">
+        <div style="margin: 25px 0;">
+          <h3 style="color: var(--navy); font-size: 18px;">💡 Personalized Insights</h3>
+          <p style="color: var(--gray); font-size: 13px; margin-bottom: 15px;">Unlock to see your personalized recommendations.</p>
+          <div style="background: #F9FAFB; padding: 20px; border-radius: 8px; border: 1px solid #E5E7EB;">
+            <p style="color: #6B7280;">🔒 Your biggest gap: <strong>${data.weakestCompetency}</strong></p>
+            <p style="color: #6B7280;">🔒 Your hidden strength: <strong>${data.highestCompetency}</strong></p>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    // ---- PAYMENT BOX / UNLOCKED STATE ----
+    var isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
+    
+    if (isUnlocked) {
+      html += `
+        <div class="unlocked-badge visible">
+          ✅ Report Unlocked! You can now download the full PDF.
+        </div>
+        <div style="text-align: center; margin: 20px 0;">
+          <button class="download-btn" onclick="downloadPDF()">📥 Download Full Report as PDF</button>
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="payment-box">
+          <h3>🔒 Unlock Your Full Report</h3>
+          <p>Get your complete 15-page report with detailed insights, frameworks, and personalized recommendations.</p>
+          <button class="pay-button" onclick="initiatePayment()">Pay ₹999 – Unlock Full Report</button>
+          <p style="font-size: 12px; color: var(--gray); margin-top: 10px;">One-time payment. Instant access. 100% satisfaction guaranteed.</p>
+        </div>
+      `;
+    }
+    
+    // ---- FOOTER ----
+    html += `
+      <div class="footer">
+        © The Unspoken. All rights reserved. Communication Tax™ is a proprietary framework.
+        <br>theunspoken.co.in · @riseeq.k
+      </div>
+    `;
+    
+    document.getElementById('reportContent').innerHTML = html;
+    
+    // If unlocked, remove blur
+    if (isUnlocked) {
+      var blurredElements = document.querySelectorAll('.blurred-section');
+      for (var i = 0; i < blurredElements.length; i++) {
+        blurredElements[i].classList.remove('blurred-section');
+      }
+      document.querySelector('.watermark').textContent = 'UNLOCKED';
+      document.querySelector('.watermark').style.color = 'rgba(0, 196, 167, 0.08)';
+    }
+  }
+  
+  // ============================================================
+  // PAYMENT HANDLER
+  // ============================================================
+  
+  function initiatePayment() {
+    var options = {
+      "key": RAZORPAY_KEY_ID,
+      "amount": 99900,
+      "currency": "INR",
+      "name": "The Unspoken",
+      "description": "Communication Tax™ Full Report",
+      "notes": {
+        "submissionId": submissionId
+      },
+      "handler": function(response) {
+        window.location.href = window.location.pathname + '?id=' + submissionId + '&payment_id=' + response.razorpay_payment_id;
+      }
+    };
+    
+    var rzp = new Razorpay(options);
+    rzp.open();
+  }
+  
+  // ============================================================
+  // PDF DOWNLOAD
+  // ============================================================
+  
+  function downloadPDF() {
+    var element = document.querySelector('.report-container');
+    var opt = {
+      margin: 10,
+      filename: 'Communication_Tax_Report.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+  
+  // ============================================================
+  // HELPER FUNCTIONS
+  // ============================================================
+  
+  function getScoreColor(score) {
+    if (score >= 70) return '#00C4A7';
+    if (score >= 50) return '#F59E0B';
+    return '#EF4444';
+  }
+  
+  function getFillColor(score) {
+    if (score >= 70) return 'fill-teal';
+    if (score >= 50) return 'fill-yellow';
+    return 'fill-red';
+  }
+  
+  function getScoreStatus(score) {
+    if (score >= 91) return '🟢 Tax-Free';
+    if (score >= 76) return '🟡 Moderate Tax';
+    if (score >= 51) return '🟠 High Tax';
+    return '🔴 Critical Tax';
+  }
+  
+  function formatNumber(num) {
+    if (!num) return '0';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  
+  // ============================================================
+  // INIT
+  // ============================================================
+  
+  // If payment_id exists, mark as unlocked
+  if (paymentId) {
+    sessionStorage.setItem('unlocked_' + submissionId, 'true');
+    if (window.history && window.history.replaceState) {
+      var newUrl = window.location.pathname + '?id=' + submissionId;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }
+  
+  // Load the report
+  loadReport();
+</script>
+
+</body>
+</html>
