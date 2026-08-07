@@ -2591,9 +2591,6 @@ body {
     function renderReport(data) {
     console.log('🔍 renderReport START');
     console.log('📦 data received:', data);
-    console.log('📦 data.ciScore:', data?.ciScore);
-    console.log('📦 Executive Summary:', data?.executiveSummary);
-    console.log('📦 Narratives:', data?.narratives);
     
     reportData = data;
 
@@ -2601,11 +2598,14 @@ body {
     function parsePct(value) {
         if (!value) return 0;
         if (typeof value === 'string') {
-            return parseFloat(value.replace('%', '')) || 0;
+            // Remove % sign and convert to number
+            var cleaned = value.replace('%', '').trim();
+            return parseFloat(cleaned) || 0;
         }
         return Number(value) || 0;
     }
 
+    // Use parsePct for ALL percentage values
     var thinking = parsePct(data.thinkingPct);
     var structure = parsePct(data.structurePct);
     var communication = parsePct(data.communicationPct);
@@ -2613,6 +2613,15 @@ body {
     var opportunity = parsePct(data.opportunityPct);
     var ciScore = parsePct(data.ciScore);
     var annualTax = data.annualTax || 700000;
+
+    console.log('📊 Parsed Scores:', {
+        thinking: thinking,
+        structure: structure,
+        communication: communication,
+        understanding: understanding,
+        opportunity: opportunity,
+        ciScore: ciScore
+    });
 
     // ---- COVER ----
     document.getElementById('coverName').textContent = data.name || 'Executive';
