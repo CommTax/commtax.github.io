@@ -2287,15 +2287,22 @@ var narrativesData = null;
 
 // Fetch narratives from Apps Script
 async function fetchNarratives(submissionId) {
-    if (!submissionId) return null;
+    console.log('🔍 fetchNarratives called with:', submissionId); // ✅ ADD THIS LINE
+    if (!submissionId){
+        console.warn('❌ No submissionId provided');
+        return null;
     
     try {
         var url = APPS_SCRIPT_URL + '?action=getNarratives&id=' + encodeURIComponent(submissionId);
+        console.log('📡 Fetching from:', url); // ✅ ADD THIS LINE
         var response = await fetch(url);
         var result = await response.json();
+
+        console.log('📦 Response received:', result); // ✅ ADD THIS LINE
         
         if (result.success && result.data) {
             narrativesData = result.data;
+            console.log('✅ Narratives loaded:', Object.keys(narrativesData));
             return narrativesData;
         } else {
             console.warn('No narratives found:', result.error);
