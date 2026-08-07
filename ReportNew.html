@@ -2476,7 +2476,21 @@ function renderProfileBars(data) {
     // ============================================================
     // RENDER WATERFALL
     // ============================================================
-    function renderWaterfall(data) {
+   function parsePercent(value) {
+    if (value === null || value === undefined || value === '') return 0;
+
+    if (typeof value === 'string') {
+        value = value.replace('%', '').trim();
+    }
+
+    var num = parseFloat(value);
+
+    if (isNaN(num)) return 0;
+
+    // Handles both 54 and 0.54
+    return num <= 1 ? Math.round(num * 100) : Math.round(num);
+}   
+      function renderWaterfall(data) {
         var container = document.getElementById('waterfallContainer');
         if (!container) return;
 
