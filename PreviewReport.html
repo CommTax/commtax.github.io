@@ -15,7 +15,7 @@
 
 <style>
 /* ============================================================
-   ALL EXISTING CSS - COPY FROM YOUR FULL VERSION
+   ALL EXISTING CSS FROM YOUR FULL VERSION
    ============================================================ */
 :root {
     --teal: #00C4A7;
@@ -65,132 +65,127 @@ body {
     box-shadow: var(--shadow);
     overflow: hidden;
     position: relative;
+    padding-bottom: 100px;
+}
+
+@media (max-width: 768px) {
+    .report-wrapper {
+        padding-bottom: 160px;
+    }
 }
 
 /* ============================================================
-   STICKY PAYMENT OVERLAY - FLOATING
+   STICKY PAYMENT BAR - PREMIUM
    ============================================================ */
-.sticky-payment-overlay {
+.sticky-payment-bar {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(180deg, rgba(10, 14, 26, 0.8) 0%, var(--navy) 100%);
-    padding: 20px 30px;
+    background: rgba(10, 14, 26, 0.95);
+    backdrop-filter: blur(16px);
+    padding: 16px 40px;
     z-index: 9999;
-    backdrop-filter: blur(12px);
-    border-top: 3px solid var(--teal);
+    border-top: 2px solid var(--teal);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
-    transform: translateY(0);
-    transition: transform 0.3s ease;
+    gap: 12px;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.3);
 }
 
-.sticky-payment-overlay .payment-content {
+.sticky-payment-bar .left {
     display: flex;
     align-items: center;
-    gap: 24px;
-    flex-wrap: wrap;
+    gap: 16px;
 }
 
-.sticky-payment-overlay .payment-content .lock-icon {
+.sticky-payment-bar .left .lock-icon {
+    font-size: 24px;
     color: var(--gold);
-    font-size: 28px;
 }
 
-.sticky-payment-overlay .payment-content .payment-text {
-    color: var(--white);
-}
-
-.sticky-payment-overlay .payment-content .payment-text .title {
-    font-size: 18px;
+.sticky-payment-bar .left .text .title {
+    font-size: 16px;
     font-weight: 700;
     color: var(--white);
 }
 
-.sticky-payment-overlay .payment-content .payment-text .sub {
+.sticky-payment-bar .left .text .sub {
     font-size: 13px;
     color: rgba(255,255,255,0.5);
 }
 
-.sticky-payment-overlay .payment-content .payment-text .highlight {
+.sticky-payment-bar .left .text .sub span {
     color: var(--teal);
-    font-weight: 700;
+    font-weight: 600;
 }
 
-.sticky-payment-overlay .payment-actions {
+.sticky-payment-bar .right {
     display: flex;
     align-items: center;
     gap: 16px;
-    flex-wrap: wrap;
 }
 
-.sticky-payment-overlay .payment-actions .price {
-    font-size: 28px;
+.sticky-payment-bar .right .price {
+    font-size: 24px;
     font-weight: 900;
     color: var(--teal);
 }
 
-.sticky-payment-overlay .btn-pay-sticky {
+.sticky-payment-bar .btn-unlock {
     background: var(--teal);
     color: var(--white);
     border: none;
-    padding: 14px 40px;
+    padding: 12px 36px;
     border-radius: 50px;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     transition: 0.3s;
-    box-shadow: 0 8px 32px rgba(0, 196, 167, 0.4);
+    box-shadow: 0 4px 24px rgba(0, 196, 167, 0.35);
     white-space: nowrap;
 }
 
-.sticky-payment-overlay .btn-pay-sticky:hover {
+.sticky-payment-bar .btn-unlock:hover {
     background: var(--teal-dark);
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0, 196, 167, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 196, 167, 0.5);
 }
 
-.sticky-payment-overlay .btn-pay-sticky i {
+.sticky-payment-bar .btn-unlock i {
     margin-right: 8px;
 }
 
-.sticky-payment-overlay .btn-pay-sticky:disabled {
+.sticky-payment-bar .btn-unlock:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
 }
 
-/* Hide sticky payment when unlocked */
-.sticky-payment-overlay.hidden {
+.sticky-payment-bar.hidden {
     display: none;
 }
 
 @media (max-width: 768px) {
-    .sticky-payment-overlay {
+    .sticky-payment-bar {
         padding: 16px 20px;
         flex-direction: column;
         text-align: center;
     }
-    .sticky-payment-overlay .payment-content {
+    .sticky-payment-bar .left {
         flex-direction: column;
-        gap: 8px;
         text-align: center;
     }
-    .sticky-payment-overlay .payment-actions {
+    .sticky-payment-bar .right {
         width: 100%;
         justify-content: center;
+        flex-wrap: wrap;
     }
-    .sticky-payment-overlay .btn-pay-sticky {
+    .sticky-payment-bar .btn-unlock {
         width: 100%;
-        padding: 12px 24px;
-        font-size: 15px;
-    }
-    .sticky-payment-overlay .payment-content .payment-text .title {
-        font-size: 15px;
+        padding: 14px;
     }
 }
 
@@ -198,10 +193,10 @@ body {
    BLUR STYLES
    ============================================================ */
 .blurred-section {
-    filter: blur(8px);
+    filter: blur(6px);
     user-select: none;
     pointer-events: none;
-    opacity: 0.6;
+    opacity: 0.5;
     transition: filter 0.5s, opacity 0.5s;
 }
 
@@ -214,82 +209,407 @@ body {
 .blurred-section .cost-grid,
 .blurred-section .fix-grid,
 .blurred-section .learning-grid,
-.blurred-section .blueprint-container {
-    filter: blur(8px);
+.blurred-section .blueprint-container,
+.blurred-section .tax-hero,
+.blurred-section .persona-timeline {
+    filter: blur(6px);
 }
 
-/* Don't blur the DNA chart itself */
+/* Keep DNA chart visible */
 .blurred-section .dna-chart {
     filter: none !important;
 }
 
-/* ============================================================
-   Remove blur from visible sections
-   ============================================================ */
-#page-cover,
-#page-mri,
-#page-dna .dna-chart {
+/* Keep headings and section headers visible */
+.blurred-section .section-header {
     filter: none !important;
-    user-select: auto !important;
-    pointer-events: auto !important;
-    opacity: 1 !important;
 }
 
-/* Override blur for MRI page */
-#page-mri.blurred-section {
+.blurred-section .section-header h2,
+.blurred-section .section-header .icon,
+.blurred-section .section-header .badge {
     filter: none !important;
-    user-select: auto !important;
-    pointer-events: auto !important;
-    opacity: 1 !important;
 }
 
-#page-mri.blurred-section .card-premium,
-#page-mri.blurred-section .mri-card {
+/* Keep descriptive text visible */
+.blurred-section .section-header + p {
     filter: none !important;
 }
 
 /* ============================================================
-   COPY ALL OTHER EXISTING STYLES FROM YOUR FULL VERSION
+   STICKY NAV - COPY FROM FULL VERSION
    ============================================================ */
-/* ... (copy all other styles from your full version) ... */
+.sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--navy);
+    padding: 10px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-bottom: 2px solid var(--teal);
+}
 
-/* Add padding at bottom for sticky overlay */
-.report-wrapper {
-    padding-bottom: 100px;
+.sticky-nav .brand {
+    color: var(--teal);
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.sticky-nav .brand i { margin-right: 8px; }
+
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+}
+
+.nav-links a {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: 0.3s;
+}
+
+.nav-links a:hover { color: var(--teal); }
+.nav-links a .num { color: var(--teal); }
+
+@media (max-width: 768px) {
+    .sticky-nav {
+        padding: 8px 16px;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .nav-links {
+        justify-content: center;
+    }
+    .nav-links a { font-size: 8px; }
+}
+
+/* ============================================================
+   COVER PAGE - FULLY VISIBLE
+   ============================================================ */
+.cover-page {
+    background: var(--navy);
+    color: var(--white);
+    padding: 60px 50px 50px;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.cover-page::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,196,167,0.08), transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.cover-page .top-tag {
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.cover-page .main-title {
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    max-width: 700px;
+}
+
+.cover-page .main-title span { color: var(--teal); }
+.cover-page .sub-title {
+    font-size: 22px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    margin-top: 8px;
+    letter-spacing: 2px;
+}
+.cover-page .divider-line {
+    width: 60px;
+    height: 3px;
+    background: var(--teal);
+    margin: 30px 0 20px;
+    border-radius: 2px;
+}
+.cover-page .confidential-tag {
+    margin-top: auto;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.2);
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 20px;
 }
 
 @media (max-width: 768px) {
-    .report-wrapper {
-        padding-bottom: 160px;
+    .cover-page {
+        padding: 40px 24px 30px;
+        min-height: auto;
+    }
+    .cover-page .main-title { font-size: 36px; }
+    .cover-page .sub-title { font-size: 16px; }
+}
+
+/* ============================================================
+   REPORT PAGES
+   ============================================================ */
+.report-page {
+    padding: 50px 60px;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.report-page:last-child { border-bottom: none; }
+
+@media (max-width: 768px) {
+    .report-page { padding: 30px 20px; }
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    border-bottom: 2px solid var(--teal);
+    padding-bottom: 12px;
+}
+
+.section-header .icon {
+    font-size: 24px;
+    color: var(--teal);
+}
+
+.section-header h2 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.section-header .badge {
+    margin-left: auto;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+/* ============================================================
+   MRI GRID - FULLY VISIBLE
+   ============================================================ */
+.mri-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 16px 0 24px;
+}
+
+.mri-card {
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    padding: 20px 18px;
+    text-align: center;
+    border: 1px solid var(--gray-100);
+    transition: 0.3s;
+}
+
+.mri-card:hover { border-color: var(--teal); }
+
+.mri-card .mri-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-500);
+}
+
+.mri-card .mri-value {
+    font-size: 32px;
+    font-weight: 900;
+    margin-top: 4px;
+    letter-spacing: -1px;
+}
+
+.mri-card .mri-sub {
+    font-size: 13px;
+    color: var(--gray-500);
+}
+
+.mri-card .teal { color: var(--teal); }
+.mri-card .gold { color: var(--gold); }
+.mri-card .red { color: var(--red); }
+
+.card-premium {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-light);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    border: 1px solid var(--gray-100);
+    transition: 0.3s;
+}
+
+.card-premium:hover {
+    box-shadow: 0 12px 48px rgba(0,0,0,0.08);
+}
+
+.card-premium .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+/* ============================================================
+   DNA CHART - FULLY VISIBLE
+   ============================================================ */
+.dna-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: center;
+}
+
+.dna-grid .dna-chart {
+    max-width: 400px;
+    margin: 0 auto;
+}
+.dna-grid .dna-chart canvas {
+    width: 100%;
+    height: auto;
+}
+.dna-grid .dna-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.dna-grid .dna-list .dna-item {
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    text-align: center;
+    border: 1px solid var(--gray-100);
+}
+.dna-grid .dna-list .dna-item .dna-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-500);
+    font-weight: 600;
+}
+.dna-grid .dna-list .dna-item .dna-value {
+    font-size: 20px;
+    font-weight: 800;
+    margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+    .dna-grid {
+        grid-template-columns: 1fr;
+    }
+    .dna-grid .dna-list {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ============================================================
+   OTHER COMPONENTS - COPY FROM FULL VERSION
+   ============================================================ */
+/* Add all other styles from your full version here */
+/* ... (tax-hero, persona-timeline, rings-grid, etc.) ... */
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.report-footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.4);
+    padding: 30px 40px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.report-footer .brand {
+    color: var(--teal);
+    font-weight: 800;
+    font-size: 16px;
+}
+
+/* ============================================================
+   PREVIEW WATERMARK
+   ============================================================ */
+.preview-watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-size: 120px;
+    font-weight: 900;
+    color: rgba(0, 196, 167, 0.05);
+    pointer-events: none;
+    z-index: 0;
+    letter-spacing: 10px;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .preview-watermark {
+        font-size: 60px;
     }
 }
 </style>
 </head>
 <body>
 
+    <!-- PREVIEW WATERMARK -->
+    <div class="preview-watermark">PREVIEW</div>
+
     <div class="report-wrapper" id="reportContainer">
 
         <!-- ============================================================
-        STICKY PAYMENT OVERLAY (FLOATING AT BOTTOM)
+        STICKY PAYMENT BAR
         ============================================================ -->
-        <div class="sticky-payment-overlay" id="stickyPaymentOverlay">
-            <div class="payment-content">
+        <div class="sticky-payment-bar" id="stickyPaymentBar">
+            <div class="left">
                 <div class="lock-icon"><i class="fas fa-lock"></i></div>
-                <div class="payment-text">
-                    <div class="title">🔓 Unlock Your Complete Report</div>
-                    <div class="sub">Get full access to all <span class="highlight">18 pages</span> of personalized insights</div>
+                <div class="text">
+                    <div class="title">🔓 Unlock Your Full Report</div>
+                    <div class="sub">Get complete access to all <span>18 pages</span> of personalized insights</div>
                 </div>
             </div>
-            <div class="payment-actions">
+            <div class="right">
                 <span class="price">₹999</span>
-                <button class="btn-pay-sticky" id="payButtonSticky">
+                <button class="btn-unlock" id="payButtonSticky">
                     <i class="fas fa-unlock"></i> Unlock Now
                 </button>
             </div>
         </div>
 
         <!-- ============================================================
-        STICKY NAV - SAME AS FULL VERSION
+        STICKY NAV
         ============================================================ -->
         <nav class="sticky-nav" id="stickyNav">
             <div class="brand"><i class="fas fa-brain"></i> THE UNSPOKEN</div>
@@ -317,7 +637,7 @@ body {
         </nav>
 
         <!-- ============================================================
-        PAGE 1: COVER (FULLY VISIBLE)
+        PAGE 1: COVER - FULLY VISIBLE
         ============================================================ -->
         <section class="cover-page report-page" id="page-cover">
             <div class="top-tag">Executive Intelligence · 2026</div>
@@ -352,7 +672,7 @@ body {
         </section>
 
         <!-- ============================================================
-        PAGE 2: MRI (FULLY VISIBLE - EXECUTIVE SUMMARY VISIBLE)
+        PAGE 2: MRI - FULLY VISIBLE
         ============================================================ -->
         <section class="report-page" id="page-mri">
             <div class="section-header">
@@ -362,7 +682,6 @@ body {
             </div>
             <p style="color: var(--gray-500); margin-bottom: 16px; font-size: 15px;">Your communication health at a glance.</p>
             
-            <!-- MRI Grid -->
             <div class="mri-grid" id="mriGrid">
                 <div class="mri-card">
                     <div class="mri-label">Overall Score</div>
@@ -386,7 +705,6 @@ body {
                 </div>
             </div>
 
-            <!-- Strength & Weakness Cards -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
                 <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; border-left: 3px solid var(--red);">
                     <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--red);">
@@ -404,7 +722,6 @@ body {
                 </div>
             </div>
 
-            <!-- Executive Summary Card - FULLY VISIBLE -->
             <div class="card-premium" style="border-left: 4px solid var(--teal);">
                 <div class="card-title"><i class="fas fa-file-alt" style="color: var(--teal);"></i> Executive Summary</div>
                 <p style="font-size: 15px; color: var(--gray-700); line-height: 1.8; margin-bottom: 16px;" id="summaryText">
@@ -432,9 +749,8 @@ body {
         </section>
 
         <!-- ============================================================
-        PAGES 3-18: BLURRED CONTENT
+        PAGE 3: TAX - BLURRED
         ============================================================ -->
-        <!-- PAGE 3: TAX (BLURRED) -->
         <section class="report-page blurred-section" id="page-tax">
             <div class="section-header">
                 <span class="icon"><i class="fas fa-coins"></i></span>
@@ -471,10 +787,14 @@ body {
         </section>
 
         <!-- ============================================================
-        PAGE 4-10: ALL BLURRED (Copy from full version with blurred-section class)
+        PAGE 4: PERSONA - BLURRED
         ============================================================ -->
         <section class="report-page blurred-section" id="page-persona">
-            <div class="section-header"><span class="icon"><i class="fas fa-user-tag"></i></span><h2>Communication Maturity Journey</h2><span class="badge">Persona</span></div>
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-user-tag"></i></span>
+                <h2>Communication Maturity Journey</h2>
+                <span class="badge">Persona</span>
+            </div>
             <div style="text-align: center; margin-bottom: 12px;">
                 <div style="font-size: 48px;" id="personaEmoji">🟢</div>
                 <div style="font-size: 28px; font-weight: 800;" id="personaName">--</div>
@@ -496,9 +816,15 @@ body {
             </div>
         </section>
 
-        <!-- PAGE 5: COMPETENCY SCORES (BLURRED) -->
+        <!-- ============================================================
+        PAGE 5: COMPETENCY SCORES - BLURRED
+        ============================================================ -->
         <section class="report-page blurred-section" id="page-scores">
-            <div class="section-header"><span class="icon"><i class="fas fa-chart-pie"></i></span><h2>Competency DNA</h2><span class="badge">5 Capabilities</span></div>
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-chart-pie"></i></span>
+                <h2>Competency DNA</h2>
+                <span class="badge">5 Capabilities</span>
+            </div>
             <div class="rings-grid" id="ringsGrid"></div>
             <div class="card-premium" style="border-left: 4px solid var(--teal); margin-top: 8px;">
                 <div class="card-title">Key Insight</div>
@@ -507,7 +833,45 @@ body {
         </section>
 
         <!-- ============================================================
-        PAGE 11: DNA (CHART VISIBLE, LIST BLURRED)
+        PAGE 6-10: DEEP DIVES - BLURRED
+        ============================================================ -->
+        <section class="report-page blurred-section" id="page-thinking">
+            <div class="section-header"><span class="icon"><i class="fas fa-brain"></i></span><h2>Thinking</h2><span class="badge" id="thinkingBadge">--</span></div>
+            <p style="color: var(--gray-500); font-style: italic; margin-bottom: 16px;">"Do you know what you want to say — before you start saying it?"</p>
+            <div id="thinkingSubComps"></div>
+            <div id="thinkingNarrative" class="narrative-container"></div>
+        </section>
+
+        <section class="report-page blurred-section" id="page-structure">
+            <div class="section-header"><span class="icon"><i class="fas fa-layer-group"></i></span><h2>Structure</h2><span class="badge" id="structureBadge">--</span></div>
+            <p style="color: var(--gray-500); font-style: italic; margin-bottom: 16px;">"Do your ideas land in the order you intended?"</p>
+            <div id="structureSubComps"></div>
+            <div id="structureNarrative" class="narrative-container"></div>
+        </section>
+
+        <section class="report-page blurred-section" id="page-communication">
+            <div class="section-header"><span class="icon"><i class="fas fa-comment-dots"></i></span><h2>Communication</h2><span class="badge" id="communicationBadge">--</span></div>
+            <p style="color: var(--gray-500); font-style: italic; margin-bottom: 16px;">"Does your delivery match the quality of your thinking?"</p>
+            <div id="communicationSubComps"></div>
+            <div id="communicationNarrative" class="narrative-container"></div>
+        </section>
+
+        <section class="report-page blurred-section" id="page-understanding">
+            <div class="section-header"><span class="icon"><i class="fas fa-ears"></i></span><h2>Understanding</h2><span class="badge" id="understandingBadge">--</span></div>
+            <p style="color: var(--gray-500); font-style: italic; margin-bottom: 16px;">"Do you read the room — or does the room read you?"</p>
+            <div id="understandingSubComps"></div>
+            <div id="understandingNarrative" class="narrative-container"></div>
+        </section>
+
+        <section class="report-page blurred-section" id="page-opportunity">
+            <div class="section-header"><span class="icon"><i class="fas fa-rocket"></i></span><h2>Opportunity</h2><span class="badge" id="opportunityBadge">--</span></div>
+            <p style="color: var(--gray-500); font-style: italic; margin-bottom: 16px;">"Are you converting your communication into real career outcomes?"</p>
+            <div id="opportunitySubComps"></div>
+            <div id="opportunityNarrative" class="narrative-container"></div>
+        </section>
+
+        <!-- ============================================================
+        PAGE 11: DNA - CHART VISIBLE, LIST BLURRED
         ============================================================ -->
         <section class="report-page" id="page-dna">
             <div class="section-header">
@@ -524,15 +888,26 @@ body {
         </section>
 
         <!-- ============================================================
-        PAGES 12-18: BLURRED (Copy from full version)
+        PAGE 12: FINANCIAL - BLURRED
         ============================================================ -->
         <section class="report-page blurred-section" id="page-waterfall">
-            <div class="section-header"><span class="icon"><i class="fas fa-chart-bar"></i></span><h2>Financial Impact</h2><span class="badge">Waterfall</span></div>
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                <h2>Financial Impact</h2>
+                <span class="badge">Waterfall</span>
+            </div>
             <div class="waterfall" id="waterfallContainer"></div>
         </section>
 
+        <!-- ============================================================
+        PAGE 13: PROFILE - BLURRED
+        ============================================================ -->
         <section class="report-page blurred-section" id="page-profile">
-            <div class="section-header"><span class="icon"><i class="fas fa-user-circle"></i></span><h2>Your Executive Communication Profile™</h2><span class="badge">The Diagnosis</span></div>
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-user-circle"></i></span>
+                <h2>Your Executive Communication Profile™</h2>
+                <span class="badge">The Diagnosis</span>
+            </div>
             <div class="profile-bars" id="profileBars">
                 <div class="bar-item"><div class="bar-label"><span>Thinking</span><span class="bar-score" id="profileThinking">--</span></div><div class="bar-track"><div class="bar-fill teal" id="profileThinkingBar"></div></div></div>
                 <div class="bar-item"><div class="bar-label"><span>Structure</span><span class="bar-score" id="profileStructure">--</span></div><div class="bar-track"><div class="bar-fill gold" id="profileStructureBar"></div></div></div>
@@ -542,17 +917,13 @@ body {
             </div>
         </section>
 
-        <!-- PAGE 13.5: COMMUNICATION TAX™ (BLURRED) -->
+        <!-- ============================================================
+        PAGE 13.5-18: BLURRED
+        ============================================================ -->
         <section class="report-page blurred-section" id="page-communication-tax">
             <div class="section-header"><span class="icon"><i class="fas fa-calculator"></i></span><h2>Your Communication Tax™</h2><span class="badge">The Truth</span></div>
-            <div style="max-width: 800px; margin: 0 auto; padding: 20px 0;">
-                <div style="background: var(--navy); border-radius: var(--radius); padding: 40px 36px; color: var(--white);">
-                    <p style="font-size: 18px; line-height: 1.8; color: var(--gray-300);">Your Communication Tax is <strong style="color: var(--teal);">not a reflection of your intelligence...</strong></p>
-                </div>
-            </div>
         </section>
 
-        <!-- PAGE 14-18: BLURRED -->
         <section class="report-page blurred-section" id="page-cost">
             <div class="section-header"><span class="icon"><i class="fas fa-calculator"></i></span><h2>Cost of Doing Nothing</h2><span class="badge">The Real Price</span></div>
             <div class="cost-grid"><div class="cost-negative"><div class="cost-title"><i class="fas fa-exclamation-circle"></i> If Nothing Changes...</div></div><div class="cost-positive"><div class="cost-title"><i class="fas fa-rocket"></i> Imagine If...</div></div></div>
@@ -565,15 +936,15 @@ body {
 
         <section class="report-page blurred-section" id="page-fix">
             <div class="section-header"><span class="icon"><i class="fas fa-question-circle"></i></span><h2>Why You Can't Fix This Alone</h2><span class="badge">The Reality</span></div>
-            <div class="fix-grid"><div class="fix-traditional"><div class="fix-title">Every conversation follows an invisible sequence.</div></div><div class="fix-gaps"><div class="fix-title">Your real gaps</div></div></div>
         </section>
 
         <section class="report-page blurred-section" id="page-learning">
             <div class="section-header"><span class="icon"><i class="fas fa-graduation-cap"></i></span><h2>Your Personalized Learning Plan</h2><span class="badge">5 of 100</span></div>
-            <div class="learning-grid"><div class="learning-card recommended"><div class="learning-name">Executive Headline™</div></div></div>
         </section>
 
-        <!-- PAGE 18: NEXT (PARTIALLY VISIBLE WITH PAYMENT CTA) -->
+        <!-- ============================================================
+        PAGE 18: NEXT
+        ============================================================ -->
         <section class="report-page" id="page-next">
             <div class="section-header">
                 <span class="icon"><i class="fas fa-flag-checkered"></i></span>
@@ -606,14 +977,14 @@ body {
     </div>
 
     <!-- ============================================================
-    JAVASCRIPT - SAME AS FULL VERSION WITH PAYMENT HANDLING
+    JAVASCRIPT - SAME AS FULL VERSION
     ============================================================ -->
     <script>
     // ============================================================
     // CONFIGURATION
     // ============================================================
     var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyz95HXs81Z9dyfkOrGpiSChjX-1ON3UhRI4AvkT2lAWvDJM2YhBd2h-lGtSRrs5WJr/exec';
-    var RAZORPAY_KEY_ID = 'rzp_live_TN9VVH5DwiHx0L';
+    var RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID'; // <-- UPDATE THIS!
 
     var urlParams = new URLSearchParams(window.location.search);
     var submissionId = urlParams.get('id');
@@ -624,7 +995,7 @@ body {
     var dnaChart = null;
 
     // ============================================================
-    // HELPER FUNCTIONS (Copy from full version)
+    // HELPER FUNCTIONS
     // ============================================================
     function formatNumber(num) {
         if (!num) return '0';
@@ -663,17 +1034,17 @@ body {
     }
 
     // ============================================================
-    // TOGGLE PAYMENT OVERLAY AND BLUR
+    // TOGGLE PAYMENT BAR AND BLUR
     // ============================================================
-    function togglePaymentOverlay() {
-        var overlay = document.getElementById('stickyPaymentOverlay');
+    function togglePaymentBar() {
+        var bar = document.getElementById('stickyPaymentBar');
         if (isUnlocked) {
-            overlay.classList.add('hidden');
+            bar.classList.add('hidden');
             document.querySelectorAll('.blurred-section').forEach(function(el) {
                 el.classList.remove('blurred-section');
             });
         } else {
-            overlay.classList.remove('hidden');
+            bar.classList.remove('hidden');
         }
     }
 
@@ -706,7 +1077,7 @@ body {
     }
 
     // ============================================================
-    // DRAW RING - Copy from full version
+    // DRAW RING
     // ============================================================
     function drawRing(canvasId, score, color) {
         var canvas = document.getElementById(canvasId);
@@ -736,7 +1107,7 @@ body {
     }
 
     // ============================================================
-    // RENDER RINGS - Copy from full version
+    // RENDER RINGS
     // ============================================================
     function renderRings(data) {
         var container = document.getElementById('ringsGrid');
@@ -769,7 +1140,7 @@ body {
     }
 
     // ============================================================
-    // RENDER PROFILE BARS - Copy from full version
+    // RENDER PROFILE BARS
     // ============================================================
     function renderProfileBars(data) {
         var thinking = parsePct(data.thinkingPct);
@@ -802,7 +1173,7 @@ body {
     }
 
     // ============================================================
-    // RENDER DNA - Copy from full version
+    // RENDER DNA
     // ============================================================
     function renderDNA(data) {
         var labels = ['Strategic Thinking', 'Executive Presence', 'Influence', 'Persuasion', 'Confidence', 'Listening', 'Adaptability'];
@@ -885,7 +1256,7 @@ body {
     }
 
     // ============================================================
-    // RENDER WATERFALL - Copy from full version
+    // RENDER WATERFALL
     // ============================================================
     function renderWaterfall(data) {
         var container = document.getElementById('waterfallContainer');
@@ -938,7 +1309,7 @@ body {
     }
 
     // ============================================================
-    // RENDER REPORT - MAIN FUNCTION
+    // RENDER REPORT
     // ============================================================
     function renderReport(data) {
         console.log('🔍 renderReport START');
@@ -1097,7 +1468,7 @@ body {
 
         // ---- CHECK UNLOCK STATUS ----
         checkUnlockStatus();
-        togglePaymentOverlay();
+        togglePaymentBar();
 
         console.log('✅ renderReport COMPLETE');
     }
@@ -1124,7 +1495,8 @@ body {
             prefill: { email: reportData ? reportData.email : '' },
             notes: { submissionId: submissionId },
             handler: function(response) {
-                window.location.href = window.location.pathname + '?id=' + submissionId + '&payment_id=' + response.razorpay_payment_id;
+                // Redirect to full report with payment confirmation
+                window.location.href = 'ReportNew.html?id=' + submissionId + '&payment_id=' + response.razorpay_payment_id;
             },
             modal: {
                 ondismiss: function() {
@@ -1181,6 +1553,6 @@ body {
     // EXPOSE GLOBALLY
     // ============================================================
     window.initiatePayment = initiatePayment;
-</script>
+    </script>
 </body>
 </html>
