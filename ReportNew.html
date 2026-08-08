@@ -3141,18 +3141,141 @@ body {
     // ============================================================
     // DOWNLOAD PDF
     // ============================================================
-function downloadPDF() {
-    var element = document.getElementById('reportContainer');
+async function downloadPDF() {
 
-    var opt = {
-        margin: 10,
-        filename: 'Executive_Communication_Report.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+    console.log('🚀 PDF button clicked');
 
-    html2pdf().set(opt).from(element).save();
+    const original = document.getElementById('reportContainer');
+
+    if (!original) {
+        alert('Report container not found');
+        return;
+    }
+
+    const btn = document.getElementById('downloadButton');
+    const originalText = btn ? btn.innerHTML : '';
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Generating PDF...';
+    }
+
+    let pdfWrapper = null;
+
+    try {
+
+        // ============================================================
+        // CREATE A CLEAN COPY OF THE REPORT
+        // This removes the page's existing scroll/layout position
+        // ============================================================
+
+        pdfWrapper = document.createElement('div');
+
+        pdfWrapper.id = 'pdfTemporaryContainer';
+
+        pdfWrapper.style.cssText = `
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: ${original.offsetWidth}px;
+            background: #ffffff;
+            z-index: -9999;
+            visibility: visible;
+        `;
+
+        const clone = original.cloneNode(true);
+
+        clone.id = 'pdfReportClone';
+
+        // Reset positioning that may cause blank pages
+        clone.style.position = 'static';
+        clone.style.top = 'auto';
+        clone.style.left = 'auto';
+        clone.style.margin = '0';
+        clone.style.transform = 'none';
+        clone.style.display = 'block';
+        clone.style.visibility = 'visible';
+
+        pdfWrapper.appendChild(clone);
+
+        document.body.appendChild(pdfWrapper);
+
+        console.log('📄 Clean PDF clone created');
+
+        // Wait for browser to render the clone
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // ============================================================
+        // GENERATE PDF
+        // ============================================================
+
+        const options = {
+
+            margin: [5, 5, 5, 5],
+
+            filename: 'Executive_Communication_Report.pdf',
+
+            image: {
+                type: 'jpeg',
+                quality: 0.95
+            },
+
+            html2canvas: {
+                scale: 1.5,
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: '#ffffff',
+                logging: false,
+                scrollX: 0,
+                scrollY: 0,
+
+                ignoreElements: function(el) {
+                    return (
+                        el.id === 'downloadButton' ||
+                        el.classList.contains('no-pdf')
+                    );
+                }
+            },
+
+            jsPDF: {
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait'
+            },
+
+            pagebreak: {
+                mode: ['css', 'legacy']
+            }
+        };
+
+        console.log('📸 Starting PDF from clean clone...');
+
+        await html2pdf()
+            .set(options)
+            .from(clone)
+            .save();
+
+        console.log('✅ PDF downloaded successfully');
+
+    } catch (error) {
+
+        console.error('❌ PDF generation failed:', error);
+
+        alert('PDF generation failed. Check the browser console.');
+
+    } finally {
+
+        // Remove temporary clone
+        if (pdfWrapper && pdfWrapper.parentNode) {
+            pdfWrapper.parentNode.removeChild(pdfWrapper);
+        }
+
+        // Restore button
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
 }
 
 // ============================================================
