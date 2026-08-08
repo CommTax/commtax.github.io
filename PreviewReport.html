@@ -1849,14 +1849,14 @@ body {
     </div>
 
     <!-- ============================================================
-    JAVASCRIPT - SAME AS FULL VERSION
+    JAVASCRIPT - COMPLETE PAYMENT-ENABLED VERSION
     ============================================================ -->
     <script>
     // ============================================================
     // CONFIGURATION
     // ============================================================
     var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyz95HXs81Z9dyfkOrGpiSChjX-1ON3UhRI4AvkT2lAWvDJM2YhBd2h-lGtSRrs5WJr/exec';
-    var RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID'; // <-- UPDATE THIS!
+    var RAZORPAY_KEY_ID = 'rzp_live_xxxxxxxxxxxxx'; // <-- UPDATE THIS WITH YOUR ACTUAL KEY!
 
     var urlParams = new URLSearchParams(window.location.search);
     var submissionId = urlParams.get('id');
@@ -2016,7 +2016,7 @@ body {
     }
 
     // ============================================================
-    // RENDER PROFILE BARS
+    // RENDER PROFILE BARS - FIXED (safely handles missing elements)
     // ============================================================
     function renderProfileBars(data) {
         var thinking = parsePct(data.thinkingPct);
@@ -2033,18 +2033,33 @@ body {
             influence: Math.round((opportunity + communication) / 2)
         };
 
-        document.getElementById('profileThinking').textContent = profileData.thinking + '%';
-        document.getElementById('profileStructure').textContent = profileData.structure + '%';
-        document.getElementById('profileTranslation').textContent = profileData.translation + '%';
-        document.getElementById('profilePresence').textContent = profileData.presence + '%';
-        document.getElementById('profileInfluence').textContent = profileData.influence + '%';
+        // Safe update function
+        function safeSetText(id, value) {
+            var el = document.getElementById(id);
+            if (el) {
+                el.textContent = value;
+            }
+        }
+
+        function safeSetWidth(id, width) {
+            var el = document.getElementById(id);
+            if (el) {
+                el.style.width = width + '%';
+            }
+        }
+
+        safeSetText('profileThinking', profileData.thinking + '%');
+        safeSetText('profileStructure', profileData.structure + '%');
+        safeSetText('profileTranslation', profileData.translation + '%');
+        safeSetText('profilePresence', profileData.presence + '%');
+        safeSetText('profileInfluence', profileData.influence + '%');
 
         setTimeout(function() {
-            document.getElementById('profileThinkingBar').style.width = profileData.thinking + '%';
-            document.getElementById('profileStructureBar').style.width = profileData.structure + '%';
-            document.getElementById('profileTranslationBar').style.width = profileData.translation + '%';
-            document.getElementById('profilePresenceBar').style.width = profileData.presence + '%';
-            document.getElementById('profileInfluenceBar').style.width = profileData.influence + '%';
+            safeSetWidth('profileThinkingBar', profileData.thinking);
+            safeSetWidth('profileStructureBar', profileData.structure);
+            safeSetWidth('profileTranslationBar', profileData.translation);
+            safeSetWidth('profilePresenceBar', profileData.presence);
+            safeSetWidth('profileInfluenceBar', profileData.influence);
         }, 300);
     }
 
@@ -2185,7 +2200,7 @@ body {
     }
 
     // ============================================================
-    // RENDER REPORT
+    // RENDER REPORT - COMPLETE VERSION
     // ============================================================
     function renderReport(data) {
         console.log('🔍 renderReport START');
@@ -2380,10 +2395,11 @@ body {
     }
 
     // ============================================================
-    // INITIATE PAYMENT
+    // INITIATE PAYMENT - COMPLETE PAYMENT-ENABLED VERSION
     // ============================================================
     function initiatePayment() {
-        if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID === 'YOUR_RAZORPAY_KEY_ID') {
+        // Check if Razorpay key is set
+        if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID === 'rzp_live_xxxxxxxxxxxxx' || RAZORPAY_KEY_ID === 'YOUR_RAZORPAY_KEY_ID') {
             alert('Payment system is being configured. Please contact support.');
             return;
         }
@@ -2397,7 +2413,7 @@ body {
 
         var options = {
             key: RAZORPAY_KEY_ID,
-            amount: 99900,
+            amount: 99900, // ₹999 in paise
             currency: 'INR',
             name: 'The Unspoken',
             description: 'Communication Tax™ Full Report',
@@ -2408,6 +2424,7 @@ body {
                 submissionId: submissionId 
             },
             handler: function(response) {
+                // Redirect to full report with payment confirmation
                 window.location.href = 'ReportNew.html?id=' + submissionId + '&payment_id=' + response.razorpay_payment_id;
             },
             modal: {
@@ -2434,7 +2451,7 @@ body {
     }
 
     // ============================================================
-    // DOWNLOAD PDF
+    // DOWNLOAD PDF (placeholder)
     // ============================================================
     function downloadPDF() {
         alert('Download functionality will be available after payment.');
@@ -2447,6 +2464,7 @@ body {
     async function init() {
         console.log('🚀 Initializing preview report...');
 
+        // Check if already unlocked via payment
         if (paymentId) {
             sessionStorage.setItem('unlocked_' + submissionId, 'true');
             if (window.history && window.history.replaceState) {
@@ -2455,12 +2473,13 @@ body {
             }
         }
 
+        // Fetch report data
         var data = await fetchReportData();
         if (data) {
             renderReport(data);
         }
 
-        // ---- PAYMENT BUTTONS ----
+        // ---- ATTACH PAYMENT BUTTONS ----
         var payBtnSticky = document.getElementById('payButtonSticky');
         if (payBtnSticky) {
             payBtnSticky.addEventListener('click', initiatePayment);
@@ -2499,6 +2518,7 @@ body {
     // ============================================================
     window.initiatePayment = initiatePayment;
     window.downloadPDF = downloadPDF;
-   </script>
+
+</script>
 </body>
 </html>
