@@ -3201,44 +3201,67 @@ body {
 // DOWNLOAD PDF - Using Print Dialog (Most Reliable)
 // ============================================================
 function downloadPDF() {
-    console.log('📄 Opening print dialog for PDF...');
-    
     var btn = document.getElementById('downloadButton');
     var originalText = btn ? btn.textContent : 'Download PDF';
     
-    // Show loading state
     if (btn) {
-        btn.textContent = '🖨️ Opening Print Dialog...';
+        btn.textContent = '⏳ Processing...';
         btn.disabled = true;
-        btn.style.opacity = '0.7';
     }
     
-    // Brief delay to let UI update
-    setTimeout(function() {
-        try {
-            // Open the print dialog
-            window.print();
+    // Try html2canvas + jsPDF first
+    if (typeof html2canvas !== 'undefined' && typeof jspdf !== 'undefined') {
+        var element = document.getElementById('reportContainer');
+        
+        html2canvas(element, {
+            scale: 2,
+            useCORS: true,
+            logging: false
+        }).then(function(canvas) {
+            var imgData = canvas.toDataURL('image/png');
+            var { jsPDF } = window.jspdf;
+            var doc = new jsPDF('p', 'mm', 'a4');
+            var imgWidth = 210;
+            var pageHeight = 297;
+            var imgHeight = (canvas.height * imgWidth) / canvas.width;
+            var heightLeft = imgHeight;
+            var position = 0;
             
-            // Reset button after print dialog closes
-            setTimeout(function() {
-                if (btn) {
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                }
-                console.log('✅ Print dialog closed');
-            }, 1500);
+            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
             
-        } catch (error) {
-            console.error('❌ Print error:', error);
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                doc.addPage();
+                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            
+            doc.save('Executive_Communication_Report.pdf');
+            
             if (btn) {
                 btn.textContent = originalText;
                 btn.disabled = false;
-                btn.style.opacity = '1';
             }
-            alert('Could not open print dialog. Please try again.');
+        }).catch(function() {
+            // Fallback to print
+            if (confirm('PDF generation failed. Use Print to PDF instead?')) {
+                window.print();
+            }
+            if (btn) {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+    } else {
+        // Fallback to print
+        alert('PDF library not loaded. Using print dialog.\n\nSelect "Save as PDF" as the destination.');
+        window.print();
+        if (btn) {
+            btn.textContent = originalText;
+            btn.disabled = false;
         }
-    }, 300);
+    }
 }
     // ============================================================
     // INIT
