@@ -3197,79 +3197,48 @@ body {
     // ============================================================
     // DOWNLOAD PDF
     // ============================================================
+// ============================================================
+// DOWNLOAD PDF - Using Print Dialog (Most Reliable)
+// ============================================================
 function downloadPDF() {
-    console.log('📄 Download PDF clicked');
+    console.log('📄 Opening print dialog for PDF...');
     
     var btn = document.getElementById('downloadButton');
     var originalText = btn ? btn.textContent : 'Download PDF';
     
+    // Show loading state
     if (btn) {
-        btn.textContent = '⏳ Generating PDF...';
+        btn.textContent = '🖨️ Opening Print Dialog...';
         btn.disabled = true;
+        btn.style.opacity = '0.7';
     }
     
-    var element = document.getElementById('reportContainer');
-    if (!element) {
-        alert('Report content not found!');
-        if (btn) {
-            btn.textContent = originalText;
-            btn.disabled = false;
-        }
-        return;
-    }
-    
-    // Try html2pdf first
-    try {
-        var opt = {
-            margin: 10,
-            filename: 'Executive_Communication_Report.pdf',
-            image: { type: 'jpeg', quality: 0.95 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true,
-                logging: false
-            },
-            jsPDF: { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: 'portrait' 
+    // Brief delay to let UI update
+    setTimeout(function() {
+        try {
+            // Open the print dialog
+            window.print();
+            
+            // Reset button after print dialog closes
+            setTimeout(function() {
+                if (btn) {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                }
+                console.log('✅ Print dialog closed');
+            }, 1500);
+            
+        } catch (error) {
+            console.error('❌ Print error:', error);
+            if (btn) {
+                btn.textContent = originalText;
+                btn.disabled = false;
+                btn.style.opacity = '1';
             }
-        };
-        
-        html2pdf()
-            .set(opt)
-            .from(element)
-            .save()
-            .then(function() {
-                console.log('✅ PDF saved successfully!');
-                if (btn) {
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                }
-            })
-            .catch(function(error) {
-                console.error('PDF Error:', error);
-                // Fallback to print
-                if (btn) {
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                }
-                usePrintFallback();
-            });
-    } catch(e) {
-        console.error('Exception:', e);
-        if (btn) {
-            btn.textContent = originalText;
-            btn.disabled = false;
+            alert('Could not open print dialog. Please try again.');
         }
-        usePrintFallback();
-    }
-}
-
-function usePrintFallback() {
-    if (confirm('PDF generation failed. Would you like to use Print to PDF instead?\n\nClick OK to open print dialog, then select "Save as PDF".')) {
-        window.print();
-    }
+    }, 300);
 }
     // ============================================================
     // INIT
