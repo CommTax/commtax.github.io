@@ -2306,7 +2306,26 @@ async function checkPaymentWithRetry(maxRetries = 5) {
             if (badge) {
                 badge.style.display = 'block';
             }
-            
+                    // ✅ FIX: Get the report data from the nested data property
+        // The payment check returns: { verified: true, data: { data: { ...reportData... } } }
+        var reportData = result.data && result.data.data ? result.data.data : result.data;
+        console.log('📊 Report data to render:', reportData);
+        
+        renderReport(reportData);
+        await loadAllNarratives(submissionId);
+        
+        var downloadBtn = document.getElementById('downloadButton');
+        if (downloadBtn) {
+            downloadBtn.style.display = 'inline-block';
+        }
+                } else if (result.error) {
+        console.error('❌ Error:', result.error);
+        showError('Error verifying payment: ' + result.error);
+    } else {
+        console.log('❌ Not paid, redirecting...');
+        showNotPaid();
+    }
+}
             renderReport(result.data);
             await loadAllNarratives(submissionId);
             
