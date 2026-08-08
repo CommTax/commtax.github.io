@@ -2186,93 +2186,103 @@ body {
     // ============================================================
     // PAYMENT VERIFICATION FUNCTIONS
     // ============================================================
-
+    /**
+     * Check payment status from Payment Sheet
+     * Returns: { verified: boolean, data: object, error: string }
+     */
+        
+        
     async function checkPaymentStatus() {
         if (!submissionId) {
             return { verified: false, error: 'Missing submission ID' };
         }
 
         try {
-            var url = APPS_SCRIPT_URL + '?action=getReportData&id=' + encodeURIComponent(submissionId);
+            // ✅ CORRECT: Call checkPayment action (reads from Payment sheet)
+            var url = APPS_SCRIPT_URL + '?action=checkPayment&id=' + encodeURIComponent(submissionId);
+            console.log('📞 Checking payment via:', url);
             var response = await fetch(url);
             var result = await response.json();
+            console.log('📦 Payment check response:', result);
 
-            if (result.success && result.data) {
-                var data = result.data;
-                
-                if (data.paymentStatus === 'completed' || 
-                    data.paymentStatus === 'captured' ||
-                    data.paymentStatus === 'paid') {
-                    return { verified: true, data: data };
+            if (result.success) {
+                // Check if payment is completed
+                var isPaid = result.isPaid === true;
+
+                        // Also check paymentStatus field
+                if (!isPaid && result.paymentStatus) {
+                    var paidStatuses = ['completed', 'captured', 'paid', 'success', 'Completed', 'Captured', 'Paid', 'Success'];
+                    isPaid = paidStatuses.indexOf(result.paymentStatus.toLowerCase()) > -1;
                 }
                 
-                if (data.isPaid === true) {
-                    return { verified: true, data: data };
+                // Also check if paymentId exists
+                if (!isPaid && result.paymentId && result.paymentId !== '' && result.paymentId !== 'pending' && result.paymentId !== 'null') {
+                    isPaid = true;
                 }
                 
-                if (data.paymentId && 
-                    data.paymentId !== '' && 
-                    data.paymentId !== 'pending' &&
-                    data.paymentId !== 'null') {
-                    return { verified: true, data: data };
-                }
-                
-                return { verified: false, data: data };
+                console.log('✅ isPaid:', isPaid);
+
+                                // Return the result with data
+                return {
+                    verified: isPaid,
+                    data: result,
+                    paymentStatus: result.paymentStatus,
+                    paymentId: result.paymentId
+                };
             } else {
-                throw new Error(result.error || 'Report not found');
+                throw new Error(result.error || 'Payment check failed');
             }
         } catch (error) {
-            console.error('Error checking payment:', error);
+            console.error('❌ Error checking payment:', error);
             return { verified: false, error: error.message };
         }
     }
 
-    async function checkPaymentWithRetry(maxRetries = 5) {
-        var lastResult = null;
-        
-        for (var attempt = 1; attempt <= maxRetries; attempt++) {
-            var attemptEl = document.getElementById('verifyAttempt');
-            if (attemptEl) {
-                attemptEl.textContent = attempt;
-            }
-            
-            var result = await checkPaymentStatus();
-            
-            if (result.verified) {
-                return result;
-            }
-            
-            if (result.data && (
-                result.data.paymentStatus === 'processing' || 
-                result.data.paymentStatus === 'pending' ||
-                result.data.paymentStatus === 'initiated'
-            )) {
-                console.log(`Attempt ${attempt}: Payment still processing, waiting...`);
-                await sleep(2000 * attempt);
-                continue;
-            }
-            
-            if (result.error) {
-                console.log(`Attempt ${attempt}: Error, retrying...`);
-                await sleep(1000 * attempt);
-                lastResult = result;
-                continue;
-            }
-            
-            if (!result.verified && !result.error) {
-                return result;
-            }
-            
-            lastResult = result;
+async function checkPaymentWithRetry(maxRetries = 5) {
+    var lastResult = null;
+    
+    for (var attempt = 1; attempt <= maxRetries; attempt++) {
+        var attemptEl = document.getElementById('verifyAttempt');
+        if (attemptEl) {
+            attemptEl.textContent = attempt;
         }
         
-        return lastResult || { verified: false, error: 'Max retries exceeded' };
+        var result = await checkPaymentStatus();
+        console.log(`Attempt ${attempt}:`, result);
+        
+        if (result.verified) {
+            return result; // ✅ Payment verified
+        }
+        
+        // If payment is still processing, wait and retry
+        if (result.paymentStatus === 'processing' || 
+            result.paymentStatus === 'pending' ||
+            result.paymentStatus === 'initiated') {
+            console.log(`Attempt ${attempt}: Payment still processing, waiting...`);
+            await sleep(2000 * attempt);
+            continue;
+        }
+        
+        // If there's an error, retry
+        if (result.error && attempt < maxRetries) {
+            console.log(`Attempt ${attempt}: Error, retrying...`);
+            await sleep(1000 * attempt);
+            lastResult = result;
+            continue;
+        }
+        
+        // If not paid, no need to retry
+        if (!result.verified && !result.error) {
+            return result;
+        }
+        
+        lastResult = result;
     }
+    
+    return lastResult || { verified: false, error: 'Max retries exceeded' };
+}
 
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
+        
     // ============================================================
     // VERIFY AND LOAD REPORT - ✅ FIXED
     // ============================================================
