@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,6 +67,102 @@ body {
     position: relative;
 }
 
+/* ============================================================
+   PAYMENT VERIFICATION LOADING OVERLAY
+   ============================================================ */
+#paymentVerificationOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.95);
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--font);
+}
+
+#paymentVerificationOverlay .content {
+    text-align: center;
+    max-width: 500px;
+    padding: 40px;
+}
+
+#paymentVerificationOverlay .icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+#paymentVerificationOverlay h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 8px;
+}
+
+#paymentVerificationOverlay p {
+    color: var(--gray-500);
+    font-size: 16px;
+    margin-bottom: 24px;
+}
+
+#paymentVerificationOverlay .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--gray-100);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+#paymentVerificationOverlay .progress-bar .fill {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 4px;
+    animation: progressAnim 2s ease-in-out infinite;
+}
+
+@keyframes progressAnim {
+    0% { width: 0%; }
+    50% { width: 70%; }
+    100% { width: 100%; }
+}
+
+#paymentVerificationOverlay .status-text {
+    font-size: 14px;
+    color: var(--gray-400);
+}
+
+#paymentVerificationOverlay .status-text .attempt {
+    color: var(--teal);
+    font-weight: 600;
+}
+
+/* ============================================================
+   UNLOCKED BADGE
+   ============================================================ */
+.unlocked-badge {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--teal);
+    color: var(--white);
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 13px;
+    box-shadow: 0 4px 16px rgba(0,196,167,0.4);
+    z-index: 9998;
+    display: none;
+}
+
+.unlocked-badge i {
+    margin-right: 8px;
+}
+
+   
 .sticky-nav {
     position: sticky;
     top: 0;
@@ -1240,6 +1337,33 @@ body {
 </head>
 <body>
 
+    <!-- ============================================================
+    PAYMENT VERIFICATION OVERLAY
+    ============================================================ -->
+    <div id="paymentVerificationOverlay">
+        <div class="content">
+            <div class="icon">🔐</div>
+            <h2>Verifying Your Access</h2>
+            <p>Please wait while we confirm your payment status</p>
+            <div class="progress-bar">
+                <div class="fill"></div>
+            </div>
+            <div class="status-text">
+                Attempt <span class="attempt" id="verifyAttempt">1</span> of 5
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    UNLOCKED BADGE (Shown after payment verification)
+    ============================================================ -->
+    <div class="unlocked-badge" id="unlockedBadge">
+        <i class="fas fa-check-circle"></i> FULL REPORT UNLOCKED
+    </div>
+
+    <!-- ============================================================
+    YOUR MAIN REPORT CONTENT
+    ============================================================ -->
     <div class="report-wrapper" id="reportContainer">
 
         <!-- ============================================================
@@ -2035,6 +2159,204 @@ body {
     var ringsRendered = false;
     var narrativesData = null;
 
+// ============================================================
+    // PAYMENT VERIFICATION FUNCTIONS
+    // ============================================================
+
+    /**
+     * Check payment status from Pably/Google Sheets
+     * Returns: { verified: boolean, data: object, error: string }
+     */
+    async function checkPaymentStatus() {
+        if (!submissionId) {
+            return { verified: false, error: 'Missing submission ID' };
+        }
+
+        try {
+            // Call Pably's API to get report data with payment status
+            var url = APPS_SCRIPT_URL + '?action=getReportData&id=' + encodeURIComponent(submissionId);
+            var response = await fetch(url);
+            var result = await response.json();
+
+            if (result.success && result.data) {
+                var data = result.data;
+                
+                // 🔍 CHECK FOR PAYMENT STATUS - ADJUST BASED ON YOUR PABLY FIELDS
+                // Option 1: Check paymentStatus field
+                if (data.paymentStatus === 'completed' || 
+                    data.paymentStatus === 'captured' ||
+                    data.paymentStatus === 'paid') {
+                    return { verified: true, data: data };
+                }
+                
+                // Option 2: Check isPaid boolean
+                if (data.isPaid === true) {
+                    return { verified: true, data: data };
+                }
+                
+                // Option 3: Check if paymentId exists and is not empty
+                if (data.paymentId && 
+                    data.paymentId !== '' && 
+                    data.paymentId !== 'pending' &&
+                    data.paymentId !== 'null') {
+                    return { verified: true, data: data };
+                }
+                
+                // Option 4: Check payment object
+                if (data.payment && data.payment.status === 'captured') {
+                    return { verified: true, data: data };
+                }
+                
+                // ❌ Not paid - but still return the data for reference
+                return { verified: false, data: data };
+            } else {
+                throw new Error(result.error || 'Report not found');
+            }
+        } catch (error) {
+            console.error('Error checking payment:', error);
+            return { verified: false, error: error.message };
+        }
+    }
+
+    /**
+     * Check payment with retry logic (for concurrent payments)
+     */
+    async function checkPaymentWithRetry(maxRetries = 5) {
+        var lastResult = null;
+        
+        for (var attempt = 1; attempt <= maxRetries; attempt++) {
+            // Update attempt number in UI
+            var attemptEl = document.getElementById('verifyAttempt');
+            if (attemptEl) {
+                attemptEl.textContent = attempt;
+            }
+            
+            var result = await checkPaymentStatus();
+            
+            if (result.verified) {
+                return result; // ✅ Payment verified
+            }
+            
+            // If payment is still processing, wait and retry
+            if (result.data && (
+                result.data.paymentStatus === 'processing' || 
+                result.data.paymentStatus === 'pending' ||
+                result.data.paymentStatus === 'initiated'
+            )) {
+                console.log(`Attempt ${attempt}: Payment still processing, waiting...`);
+                await sleep(2000 * attempt); // Wait 2s, 4s, 6s, 8s, 10s
+                continue;
+            }
+            
+            // If there's an error, retry
+            if (result.error) {
+                console.log(`Attempt ${attempt}: Error, retrying...`);
+                await sleep(1000 * attempt);
+                lastResult = result;
+                continue;
+            }
+            
+            // If not paid, no need to retry
+            if (!result.verified && !result.error) {
+                return result; // ❌ Not paid
+            }
+            
+            lastResult = result;
+        }
+        
+        // All retries exhausted
+        return lastResult || { verified: false, error: 'Max retries exceeded' };
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // ============================================================
+    // VERIFY AND LOAD REPORT
+    // ============================================================
+    async function verifyPaymentAndLoadReport() {
+        // Show verification overlay
+        var overlay = document.getElementById('paymentVerificationOverlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
+        }
+
+        // Check payment with retry
+        var result = await checkPaymentWithRetry(5);
+
+        // Hide overlay
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+
+        if (result.verified) {
+            // ✅ Payment verified - Show full report
+            isUnlocked = true;
+            sessionStorage.setItem('unlocked_' + submissionId, 'true');
+            
+            // Show unlocked badge
+            var badge = document.getElementById('unlockedBadge');
+            if (badge) {
+                badge.style.display = 'block';
+            }
+            
+            // Render the report
+            renderReport(result.data);
+            await loadAllNarratives(submissionId);
+            
+            // Show download button
+            var downloadBtn = document.getElementById('downloadButton');
+            if (downloadBtn) {
+                downloadBtn.style.display = 'inline-block';
+            }
+            
+        } else if (result.error) {
+            // ❌ Error occurred
+            showError('Error verifying payment: ' + result.error);
+        } else {
+            // ❌ Not paid - Redirect to preview
+            showNotPaid();
+        }
+    }
+
+    // ============================================================
+    // ERROR / REDIRECT FUNCTIONS
+    // ============================================================
+    function showError(message) {
+        document.getElementById('reportContainer').innerHTML = `
+            <div style="padding:80px 20px;text-align:center;max-width:600px;margin:0 auto;">
+                <div style="font-size:64px;margin-bottom:20px;">⚠️</div>
+                <h2 style="font-weight:800;color:var(--red);font-size:28px;">Verification Error</h2>
+                <p style="color:var(--gray-500);margin:16px 0;font-size:16px;">${message}</p>
+                <p style="color:var(--gray-400);font-size:14px;">Please contact support with your submission ID: <strong>${submissionId}</strong></p>
+                <button onclick="window.location.href='PreviewReport.html?id=${submissionId}'" 
+                        style="margin-top:24px;padding:14px 40px;background:var(--teal);color:white;border:none;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;">
+                    ← Go Back to Preview
+                </button>
+            </div>
+        `;
+    }
+
+    function showNotPaid() {
+        document.getElementById('reportContainer').innerHTML = `
+            <div style="padding:80px 20px;text-align:center;max-width:600px;margin:0 auto;">
+                <div style="font-size:64px;margin-bottom:20px;">🔒</div>
+                <h2 style="font-weight:800;color:var(--navy);font-size:28px;">Payment Required</h2>
+                <p style="color:var(--gray-500);margin:16px 0;font-size:16px;">
+                    This full report requires payment. Please purchase the report to access your complete Communication Tax™ analysis.
+                </p>
+                <p style="color:var(--gray-400);font-size:14px;">
+                    Submission ID: <strong>${submissionId}</strong>
+                </p>
+                <button onclick="window.location.href='PreviewReport.html?id=${submissionId}'" 
+                        style="margin-top:24px;padding:14px 40px;background:var(--teal);color:white;border:none;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;">
+                    <i class="fas fa-unlock"></i> Purchase Report
+                </button>
+            </div>
+        `;
+    }
+        
     // ============================================================
     // HELPER FUNCTIONS
     // ============================================================
