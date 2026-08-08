@@ -2308,11 +2308,74 @@ async function checkPaymentWithRetry(maxRetries = 5) {
             }
                     // ✅ FIX: Get the report data from the nested data property
         // The payment check returns: { verified: true, data: { data: { ...reportData... } } }
-        var reportData = result.data && result.data.data ? result.data.data : result.data;
-        console.log('📊 Report data to render:', reportData);
-        
-        renderReport(reportData);
-        await loadAllNarratives(submissionId);
+// ============================================================
+// PAYMENT VERIFIED → NOW FETCH COMPLETE REPORT
+// ============================================================
+
+console.log('✅ Payment verified! Loading complete report...');
+
+try {
+    var reportUrl = APPS_SCRIPT_URL +
+        '?action=getReportData&id=' +
+        encodeURIComponent(submissionId);
+
+    console.log('📞 Fetching complete report from:', reportUrl);
+
+    var reportResponse = await fetch(reportUrl);
+
+    if (!reportResponse.ok) {
+        throw new Error('Report API returned HTTP ' + reportResponse.status);
+    }
+
+    var reportResult = await reportResponse.json();
+
+    console.log('📦 Complete report response:', reportResult);
+    console.log('📦 FULL REPORT JSON:');
+    console.log(JSON.stringify(reportResult, null, 2));
+
+    if (!reportResult.success || !reportResult.data) {
+        throw new Error(
+            reportResult.error || 'Complete report data not found'
+        );
+    }
+
+    // This is the actual report object
+    var completeReportData = reportResult.data;
+
+    console.log('📊 Complete report data to render:', completeReportData);
+
+    // Verify the critical values before rendering
+    console.log('💳 Payment Status:', completeReportData.paymentStatus);
+    console.log('💳 Is Paid:', completeReportData.isPaid);
+    console.log('💳 Payment ID:', completeReportData.paymentId);
+
+    console.log('📊 CI Score:', completeReportData.ciScore);
+    console.log('📊 Projected Score:', completeReportData.projectedScore);
+    console.log('📊 Tax Saved:', completeReportData.communicationTaxSaved);
+    console.log('📊 ROI:', completeReportData.roi);
+
+    // Store complete report
+    reportData = completeReportData;
+
+    // Render COMPLETE report
+    renderReport(completeReportData);
+
+    await loadAllNarratives(submissionId);
+
+    var downloadBtn = document.getElementById('downloadButton');
+
+    if (downloadBtn) {
+        downloadBtn.style.display = 'inline-block';
+    }
+
+} catch (error) {
+
+    console.error('❌ Error loading complete report:', error);
+
+    showError(
+        'Payment verified, but we could not load your report. Please refresh the page.'
+    );
+}
         
         var downloadBtn = document.getElementById('downloadButton');
         if (downloadBtn) {
