@@ -2342,6 +2342,21 @@ body {
         var roi = data.roi || '0X';
         document.getElementById('progROI').textContent = roi;
 
+    // ⭐ FIX: Update badge elements safely
+    var badgeElements = {
+        'thinkingBadge': data.thinkingLevel || 'Proficient',
+        'structureBadge': data.structureLevel || 'Proficient',
+        'communicationBadge': data.communicationLevel || 'Needs Attention',
+        'understandingBadge': data.understandingLevel || 'Needs Attention',
+        'opportunityBadge': data.opportunityLevel || 'Proficient'
+    };
+    
+    for (var badgeId in badgeElements) {
+        var el = document.getElementById(badgeId);
+        if (el) {
+            el.textContent = badgeElements[badgeId];
+        }
+        
         // ---- CHECK UNLOCK STATUS ----
         checkUnlockStatus();
         togglePaymentBar();
