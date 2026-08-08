@@ -3141,55 +3141,123 @@ body {
     // ============================================================
     // DOWNLOAD PDF
     // ============================================================
-    function downloadPDF() {
-        var element = document.getElementById('reportContainer');
-        var opt = {
-            margin: 10,
-            filename: 'Executive_Communication_Report.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(element).save();
+function downloadPDF() {
+    var element = document.getElementById('reportContainer');
+
+    var opt = {
+        margin: 10,
+        filename: 'Executive_Communication_Report.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+}
+
+// ============================================================
+// BIND REPORT BUTTONS
+// ============================================================
+function bindReportButtons() {
+
+    // PAYMENT BUTTON
+    var payBtn = document.getElementById('payButton');
+
+    if (payBtn && !payBtn.dataset.bound) {
+
+        payBtn.dataset.bound = 'true';
+
+        payBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            console.log('💳 Payment button clicked');
+
+            initiatePayment();
+        });
+
+        console.log('✅ Payment button connected');
     }
 
+
+    // DOWNLOAD BUTTON
+    var downloadBtn = document.getElementById('downloadButton');
+
+    if (downloadBtn && !downloadBtn.dataset.bound) {
+
+        downloadBtn.dataset.bound = 'true';
+
+        downloadBtn.type = 'button';
+
+        downloadBtn.addEventListener('click', function(event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            console.log('🖱️ Download button clicked');
+
+            downloadPDF();
+        });
+
+        console.log('✅ PDF download button connected');
+
+    } else if (!downloadBtn) {
+
+        console.warn('⚠️ downloadButton not found yet');
+    }
+}
+
+
+
+        
     // ============================================================
     // INIT
     // ============================================================
-    async function init() {
-        console.log('🚀 Initializing report...');
+async function init() {
+    console.log('🚀 Initializing report...');
 
-        if (paymentId) {
-            sessionStorage.setItem('unlocked_' + submissionId, 'true');
-            if (window.history && window.history.replaceState) {
-                var newUrl = window.location.pathname + '?id=' + submissionId;
-                window.history.replaceState({}, document.title, newUrl);
-            }
+    // Payment return handling
+    if (paymentId) {
+        sessionStorage.setItem('unlocked_' + submissionId, 'true');
+
+        if (window.history && window.history.replaceState) {
+            var newUrl = window.location.pathname + '?id=' + submissionId;
+            window.history.replaceState({}, document.title, newUrl);
         }
-
-        if (sessionStorage.getItem('unlocked_' + submissionId) === 'true') {
-            isUnlocked = true;
-            var data = await fetchReportData();
-            if (data) {
-                hideVerificationOverlay();
-                renderReport(data);
-                await loadAllNarratives(submissionId);
-            }
-            return;
-        }
-
-        await verifyPaymentAndLoadReport();
-
-        var payBtn = document.getElementById('payButton');
-        if (payBtn) payBtn.addEventListener('click', initiatePayment);
-
-        var downloadBtn = document.getElementById('downloadButton');
-        if (downloadBtn) downloadBtn.addEventListener('click', downloadPDF);
-
-        document.querySelectorAll('.btn-download').forEach(function(btn) {
-            btn.addEventListener('click', downloadPDF);
-        });
     }
+
+    // ------------------------------------------------------------
+    // Already unlocked
+    // ------------------------------------------------------------
+    if (sessionStorage.getItem('unlocked_' + submissionId) === 'true') {
+
+        console.log('🔓 Report already unlocked');
+
+        isUnlocked = true;
+
+        var data = await fetchReportData();
+
+        if (data) {
+            hideVerificationOverlay();
+
+            renderReport(data);
+
+            await loadAllNarratives(submissionId);
+
+            // Wait for dynamically rendered buttons
+            bindReportButtons();
+        }
+
+        return;
+    }
+
+    // ------------------------------------------------------------
+    // Verify payment and load report
+    // ------------------------------------------------------------
+    await verifyPaymentAndLoadReport();
+
+    // Bind buttons after report/payment processing
+    bindReportButtons();
+}
 
     // ============================================================
     // START THE APP
