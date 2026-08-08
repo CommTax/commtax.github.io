@@ -1235,176 +1235,6 @@ body {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
-
-    /* ============================================================
-   BLUR EFFECT - Headings Visible, Content Blurred
-   ============================================================ */
-
-.blurred-section {
-    position: relative;
-}
-
-/* Keep the section header visible and clear */
-.blurred-section .section-header {
-    filter: blur(0px) !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    position: relative;
-    z-index: 5;
-}
-
-/* Blur only the content inside the section (everything after the header) */
-.blurred-section .section-header ~ * {
-    filter: blur(6px);
-    user-select: none;
-    pointer-events: none;
-    opacity: 0.4;
-    transition: filter 0.8s ease, opacity 0.8s ease;
-}
-
-/* When unlocked, remove blur from all content */
-.blurred-section.unlocked .section-header ~ * {
-    filter: blur(0px);
-    user-select: auto;
-    pointer-events: auto;
-    opacity: 1;
-}
-
-/* Lock overlay on the content area (not on header) */
-.blurred-section .section-header ~ *::after {
-    content: '🔒';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 48px;
-    color: var(--teal);
-    background: rgba(10, 14, 26, 0.85);
-    padding: 16px 24px;
-    border-radius: 12px;
-    z-index: 10;
-    font-weight: 700;
-    letter-spacing: 2px;
-    border: 2px solid var(--teal);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    pointer-events: none;
-}
-
-/* But don't show overlay on the header itself */
-.blurred-section .section-header::after {
-    display: none !important;
-}
-
-/* ============================================================
-   SPECIAL: MRI SECTION - More Visibility
-   ============================================================ */
-
-/* MRI section - Keep the grid cards more visible (less blur) */
-#page-mri .mri-grid .mri-card {
-    filter: blur(0px) !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transition: none !important;
-}
-
-/* MRI section - Keep the Executive Blind Spot & Leadership Advantage cards visible */
-#page-mri .mri-grid + div .mri-card,
-#page-mri .mri-grid + div div[style*="grid"] div {
-    filter: blur(0px) !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transition: none !important;
-}
-
-/* MRI section - Keep Executive Summary card visible */
-#page-mri .card-premium {
-    filter: blur(0px) !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transition: none !important;
-}
-
-/* Only blur the content inside MRI that we want to hide (like the detailed breakdowns) */
-#page-mri .card-premium .card-title {
-    filter: blur(0px) !important;
-    opacity: 1 !important;
-}
-
-/* ============================================================
-   SPECIAL: TAX SECTION - More Visibility
-   ============================================================ */
-
-/* Tax section - Keep the hero card and breakdown grid visible */
-#page-tax .tax-hero {
-    filter: blur(0px) !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transition: none !important;
-}
-
-#page-tax #taxBreakdownGrid {
-    filter: blur(0px) !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transition: none !important;
-}
-
-#page-tax #taxBreakdownGrid div {
-    filter: blur(0px) !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transition: none !important;
-}
-
-/* ============================================================
-   LOCKED CONTENT OVERRIDE - Remove lock overlay from visible sections
-   ============================================================ */
-
-/* Remove lock overlay from MRI visible content */
-#page-mri .mri-grid .mri-card::after,
-#page-mri .mri-grid + div div[style*="grid"] div::after,
-#page-mri .card-premium::after {
-    display: none !important;
-}
-
-/* Remove lock overlay from Tax visible content */
-#page-tax .tax-hero::after,
-#page-tax #taxBreakdownGrid div::after {
-    display: none !important;
-}
-
-/* ============================================================
-   PREVIEW BADGE
-   ============================================================ */
-
-.preview-badge {
-    background: var(--gold);
-    color: var(--navy);
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 12px;
-    border-radius: 20px;
-    letter-spacing: 0.5px;
-    margin-left: auto;
-    text-transform: uppercase;
-}
-
-/* Lock badge on blurred sections */
-.blurred-section .badge {
-    background: var(--gray-500) !important;
-    color: var(--white) !important;
-}
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-
-@media (max-width: 600px) {
-    .blurred-section .section-header ~ *::after {
-        font-size: 32px;
-        padding: 10px 16px;
-    }
-}
 }
 </style>
 </head>
@@ -1482,7 +1312,7 @@ body {
             <div class="section-header">
                 <span class="icon"><i class="fas fa-heart-pulse"></i></span>
                 <h2>Executive MRI</h2>
-                <span class="preview-badge">Preview</span>
+                <span class="badge">One Glance</span>
             </div>
             <p style="color: var(--gray-500); margin-bottom: 16px; font-size: 15px;">Your communication health at a glance.</p>
             
@@ -1567,7 +1397,7 @@ body {
             <div class="section-header">
                 <span class="icon"><i class="fas fa-coins"></i></span>
                 <h2>Communication Tax</h2>
-                <span class="preview-badge">The Real Cost</span>
+                <span class="badge">The Real Cost</span>
             </div>
             <div class="tax-hero">
                 <div class="tax-label">Estimated Annual Communication Tax</div>
@@ -2403,7 +2233,7 @@ body {
             return null;
         }
     }
-       
+
     // ============================================================
     // DRAW RING
     // ============================================================
@@ -2646,29 +2476,15 @@ function renderProfileBars(data) {
     // ============================================================
     // RENDER WATERFALL
     // ============================================================
-   function parsePercent(value) {
-    if (value === null || value === undefined || value === '') return 0;
-
-    if (typeof value === 'string') {
-        value = value.replace('%', '').trim();
-    }
-
-    var num = parseFloat(value);
-
-    if (isNaN(num)) return 0;
-
-    // Handles both 54 and 0.54
-    return num <= 1 ? Math.round(num * 100) : Math.round(num);
-}   
-      function renderWaterfall(data) {
+    function renderWaterfall(data) {
         var container = document.getElementById('waterfallContainer');
         if (!container) return;
 
-var communication = parsePercent(data.communicationPct);
-var understanding = parsePercent(data.understandingPct);
-var opportunity = parsePercent(data.opportunityPct);
-var thinking = parsePercent(data.thinkingPct);
-var structure = parsePercent(data.structurePct);
+        var communication = Math.round((data.communicationPct || 0) * 100);
+        var understanding = Math.round((data.understandingPct || 0) * 100);
+        var opportunity = Math.round((data.opportunityPct || 0) * 100);
+        var thinking = Math.round((data.thinkingPct || 0) * 100);
+        var structure = Math.round((data.structurePct || 0) * 100);
 
         var items = [
             { label: 'Communication', value: Math.max(0, 60 - communication) * 100000, color: '#EF4444' },
