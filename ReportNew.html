@@ -9,12 +9,26 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+</script>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
     </script>
     <script src="https://checkout.razorpay.com/v1/checkout.js">
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+
+        
+    </script>
+    
 
 <style>
 :root {
@@ -3201,67 +3215,93 @@ body {
 // DOWNLOAD PDF - Using Print Dialog (Most Reliable)
 // ============================================================
 function downloadPDF() {
+    console.log('📄 Download PDF started');
+    
     var btn = document.getElementById('downloadButton');
     var originalText = btn ? btn.textContent : 'Download PDF';
     
     if (btn) {
-        btn.textContent = '⏳ Processing...';
+        btn.textContent = '⏳ Generating PDF...';
         btn.disabled = true;
     }
     
-    // Try html2canvas + jsPDF first
-    if (typeof html2canvas !== 'undefined' && typeof jspdf !== 'undefined') {
-        var element = document.getElementById('reportContainer');
-        
-        html2canvas(element, {
-            scale: 2,
-            useCORS: true,
-            logging: false
-        }).then(function(canvas) {
-            var imgData = canvas.toDataURL('image/png');
-            var { jsPDF } = window.jspdf;
-            var doc = new jsPDF('p', 'mm', 'a4');
-            var imgWidth = 210;
-            var pageHeight = 297;
-            var imgHeight = (canvas.height * imgWidth) / canvas.width;
-            var heightLeft = imgHeight;
-            var position = 0;
-            
-            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-            
-            while (heightLeft > 0) {
-                position = heightLeft - imgHeight;
-                doc.addPage();
-                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-            }
-            
-            doc.save('Executive_Communication_Report.pdf');
-            
-            if (btn) {
-                btn.textContent = originalText;
-                btn.disabled = false;
-            }
-        }).catch(function() {
-            // Fallback to print
-            if (confirm('PDF generation failed. Use Print to PDF instead?')) {
-                window.print();
-            }
-            if (btn) {
-                btn.textContent = originalText;
-                btn.disabled = false;
-            }
-        });
-    } else {
-        // Fallback to print
-        alert('PDF library not loaded. Using print dialog.\n\nSelect "Save as PDF" as the destination.');
-        window.print();
+    var element = document.getElementById('reportContainer');
+    if (!element) {
+        alert('Report content not found!');
         if (btn) {
             btn.textContent = originalText;
             btn.disabled = false;
         }
+        return;
     }
+    
+    // Show loading message
+    var loadingMsg = document.createElement('div');
+    loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px 50px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.2);z-index:999999;text-align:center;';
+    loadingMsg.innerHTML = '<h2 style="margin:0 0 10px 0;color:#00C4A7;">📄 Generating PDF</h2><p style="margin:0;color:#666;">Please wait...</p><div style="margin-top:15px;width:200px;height:4px;background:#e0e0e0;border-radius:2px;overflow:hidden;"><div style="width:0%;height:100%;background:#00C4A7;border-radius:2px;animation:pdfProgress 2s ease-in-out infinite;"></div></div><style>@keyframes pdfProgress{0%{width:0%}50%{width:70%}100%{width:100%}}</style>';
+    document.body.appendChild(loadingMsg);
+    
+    // Use html2canvas to capture the report
+    html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        allowTaint: true,
+        width: element.scrollWidth,
+        height: element.scrollHeight,
+        windowHeight: element.scrollHeight,
+        windowWidth: element.scrollWidth,
+        onclone: function(clonedDoc, clonedElement) {
+            // Ensure all content is rendered
+            clonedElement.style.display = 'block';
+        }
+    }).then(function(canvas) {
+        // Remove loading message
+        document.body.removeChild(loadingMsg);
+        
+        // Get image data
+        var imgData = canvas.toDataURL('image/jpeg', 0.95);
+        
+        // Create PDF
+        var { jsPDF } = window.jspdf;
+        var doc = new jsPDF('p', 'mm', 'a4');
+        var pageWidth = doc.internal.pageSize.getWidth();
+        var pageHeight = doc.internal.pageSize.getHeight();
+        var margin = 5;
+        var imgWidth = pageWidth - (margin * 2);
+        var imgHeight = (canvas.height / canvas.width) * imgWidth;
+        var totalPages = Math.ceil(imgHeight / (pageHeight - margin * 2));
+        
+        // Add each page
+        for (var i = 0; i < totalPages; i++) {
+            if (i > 0) {
+                doc.addPage();
+            }
+            var yOffset = -i * (pageHeight - margin * 2);
+            doc.addImage(imgData, 'JPEG', margin, margin + yOffset, imgWidth, imgHeight);
+        }
+        
+        // Save the PDF
+        doc.save('Executive_Communication_Report.pdf');
+        
+        console.log('✅ PDF saved successfully!');
+        if (btn) {
+            btn.textContent = originalText;
+            btn.disabled = false;
+        }
+        
+    }).catch(function(error) {
+        console.error('PDF Error:', error);
+        document.body.removeChild(loadingMsg);
+        if (btn) {
+            btn.textContent = originalText;
+            btn.disabled = false;
+        }
+        // Fallback to print
+        if (confirm('PDF generation failed. Would you like to use Print to PDF instead?\n\nClick OK to open print dialog, then select "Save as PDF".')) {
+            window.print();
+        }
+    });
 }
     // ============================================================
     // INIT
