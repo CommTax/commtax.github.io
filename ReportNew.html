@@ -2832,17 +2832,21 @@ function renderProfileBars(data) {
     // Set Current Score
     document.getElementById('progCurrentScore').textContent = ciScore + '%';
 
-    // Set Projected Score (from new field)
-    var projectedScore = data.projectedScore || '0%';
-    document.getElementById('progProjectedScore').textContent = projectedScore;
+// Set Projected Score - Convert if it's a number
+var projectedScore = data.projectedScore || '0%';
+// If it's a number (like 0.737), convert to percentage
+if (typeof projectedScore === 'number') {
+    projectedScore = Math.round(projectedScore * 100) + '%';
+}
+document.getElementById('progProjectedScore').textContent = projectedScore;
 
-    // Set Tax Saved (from new field)
-    var taxSaved = data.communicationTaxSaved || '₹0';
-    document.getElementById('progTaxSaved').textContent = taxSaved;
+// Set Tax Saved (already a string with ₹ symbol)
+var taxSaved = data.communicationTaxSaved || '₹0';
+document.getElementById('progTaxSaved').textContent = taxSaved;
 
-    // Set ROI (from new field)
-    var roi = data.roi || '0X';
-    document.getElementById('progROI').textContent = roi;
+// Set ROI (already a string with X)
+var roi = data.roi || '0X';
+document.getElementById('progROI').textContent = roi;
         
     // ---- UNLOCK ----
     isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
