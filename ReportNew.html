@@ -3216,94 +3216,156 @@ body {
 // ============================================================
 // DOWNLOAD PDF - Using Print Dialog (Most Reliable)
 // ============================================================
-function downloadPDF() {
-    console.log('📄 Download PDF started');
-    
-    var btn = document.getElementById('downloadButton');
-    var originalText = btn ? btn.textContent : 'Download PDF';
-    
+async function downloadPDF() {
+    console.log('📄 Starting PDF generation...');
+
+    const btn = document.getElementById('downloadButton');
+    const originalText = btn ? btn.textContent : 'Download PDF';
+
+    const element = document.getElementById('reportContainer');
+
+    if (!element) {
+        console.error('❌ #reportContainer not found');
+        alert('Report content not found!');
+        return;
+    }
+
+    if (typeof html2pdf === 'undefined') {
+        console.error('❌ html2pdf is not loaded');
+        alert('PDF library is not loaded. Please refresh the page and try again.');
+        return;
+    }
+
+    // Disable button
     if (btn) {
         btn.textContent = '⏳ Generating PDF...';
         btn.disabled = true;
+        btn.style.opacity = '0.7';
+        btn.style.cursor = 'wait';
     }
-    
-    var element = document.getElementById('reportContainer');
-    if (!element) {
-        alert('Report content not found!');
-        if (btn) {
-            btn.textContent = originalText;
-            btn.disabled = false;
-        }
-        return;
-    }
-    
-    // Show loading message
-    var loadingMsg = document.createElement('div');
-    loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px 50px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.2);z-index:999999;text-align:center;';
-    loadingMsg.innerHTML = '<h2 style="margin:0 0 10px 0;color:#00C4A7;">📄 Generating PDF</h2><p style="margin:0;color:#666;">Please wait...</p><div style="margin-top:15px;width:200px;height:4px;background:#e0e0e0;border-radius:2px;overflow:hidden;"><div style="width:0%;height:100%;background:#00C4A7;border-radius:2px;animation:pdfProgress 2s ease-in-out infinite;"></div></div><style>@keyframes pdfProgress{0%{width:0%}50%{width:70%}100%{width:100%}}</style>';
-    document.body.appendChild(loadingMsg);
-    
-    // Use html2canvas to capture the report
-    html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        allowTaint: true,
-        width: element.scrollWidth,
-        height: element.scrollHeight,
-        windowHeight: element.scrollHeight,
-        windowWidth: element.scrollWidth,
-        onclone: function(clonedDoc, clonedElement) {
-            // Ensure all content is rendered
-            clonedElement.style.display = 'block';
-        }
-    }).then(function(canvas) {
-        // Remove loading message
-        document.body.removeChild(loadingMsg);
-        
-        // Get image data
-        var imgData = canvas.toDataURL('image/jpeg', 0.95);
-        
-        // Create PDF
-        var { jsPDF } = window.jspdf;
-        var doc = new jsPDF('p', 'mm', 'a4');
-        var pageWidth = doc.internal.pageSize.getWidth();
-        var pageHeight = doc.internal.pageSize.getHeight();
-        var margin = 5;
-        var imgWidth = pageWidth - (margin * 2);
-        var imgHeight = (canvas.height / canvas.width) * imgWidth;
-        var totalPages = Math.ceil(imgHeight / (pageHeight - margin * 2));
-        
-        // Add each page
-        for (var i = 0; i < totalPages; i++) {
-            if (i > 0) {
-                doc.addPage();
+
+    // Create loading overlay
+    const loadingMsg = document.createElement('div');
+
+    loadingMsg.id = 'pdfLoadingOverlay';
+
+    loadingMsg.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #ffffff;
+        padding: 30px 50px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+        z-index: 999999;
+        text-align: center;
+        font-family: Inter, sans-serif;
+        min-width: 300px;
+    `;
+
+    loadingMsg.innerHTML = `
+        <div style="font-size:48px;margin-bottom:10px;">📄</div>
+
+        <h2 style="margin:0 0 10px;color:#00C4A7;">
+            Generating PDF
+        </h2>
+
+        <p style="margin:0;color:#666;">
+            Please wait while we create your report...
+        </p>
+
+        <div style="
+            margin-top:20px;
+            width:250px;
+            height:5px;
+            background:#e5e7eb;
+            border-radius:10px;
+            overflow:hidden;
+        ">
+            <div style="
+                width:70%;
+                height:100%;
+                background:#00C4A7;
+                border-radius:10px;
+                animation:pdfPulse 1.5s ease-in-out infinite;
+            "></div>
+        </div>
+
+        <style>
+            @keyframes pdfPulse {
+                0%   { transform: translateX(-100%); }
+                100% { transform: translateX(250%); }
             }
-            var yOffset = -i * (pageHeight - margin * 2);
-            doc.addImage(imgData, 'JPEG', margin, margin + yOffset, imgWidth, imgHeight);
-        }
-        
-        // Save the PDF
-        doc.save('Executive_Communication_Report.pdf');
-        
+        </style>
+    `;
+
+    document.body.appendChild(loadingMsg);
+
+    try {
+
+        // Give the loading overlay time to render
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        const options = {
+            margin: [5, 5, 5, 5],
+
+            filename: 'Executive_Communication_Report.pdf',
+
+            image: {
+                type: 'jpeg',
+                quality: 0.98
+            },
+
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                logging: false
+            },
+
+            jsPDF: {
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait'
+            },
+
+            pagebreak: {
+                mode: ['css', 'legacy']
+            }
+        };
+
+        await html2pdf()
+            .set(options)
+            .from(element)
+            .save();
+
         console.log('✅ PDF saved successfully!');
+
+    } catch (error) {
+
+        console.error('❌ PDF Error:', error);
+
+        alert(
+            'PDF generation failed. Please try again or use your browser Print option.'
+        );
+
+    } finally {
+
+        // Remove loading overlay safely
+        if (loadingMsg && loadingMsg.parentNode) {
+            loadingMsg.parentNode.removeChild(loadingMsg);
+        }
+
+        // Restore button
         if (btn) {
             btn.textContent = originalText;
             btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
         }
-        
-    }).catch(function(error) {
-        console.error('PDF Error:', error);
-        document.body.removeChild(loadingMsg);
-        if (btn) {
-            btn.textContent = originalText;
-            btn.disabled = false;
-        }
-        // Fallback to print
-        if (confirm('PDF generation failed. Would you like to use Print to PDF instead?\n\nClick OK to open print dialog, then select "Save as PDF".')) {
-            window.print();
-        }
-    });
+    }
 }
     // ============================================================
     // INIT
