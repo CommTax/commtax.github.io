@@ -1,10 +1,10 @@
-html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Executive Communication Tax Intelligence</title>
+    
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
@@ -68,7 +68,7 @@ body {
 }
 
 /* ============================================================
-   PAYMENT VERIFICATION LOADING OVERLAY
+   PAYMENT VERIFICATION LOADING OVERLAY - FIXED
    ============================================================ */
 #paymentVerificationOverlay {
     position: fixed;
@@ -76,12 +76,20 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255,255,255,0.95);
+    background: rgba(255,255,255,0.98);
     z-index: 99999;
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: var(--font);
+    transition: opacity 0.5s ease;
+}
+
+/* ✅ When hidden - completely removed from view */
+#paymentVerificationOverlay.hidden {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 #paymentVerificationOverlay .content {
@@ -162,7 +170,6 @@ body {
     margin-right: 8px;
 }
 
-   
 .sticky-nav {
     position: sticky;
     top: 0;
@@ -1355,14 +1362,14 @@ body {
     </div>
 
     <!-- ============================================================
-    UNLOCKED BADGE (Shown after payment verification)
+    UNLOCKED BADGE
     ============================================================ -->
     <div class="unlocked-badge" id="unlockedBadge">
         <i class="fas fa-check-circle"></i> FULL REPORT UNLOCKED
     </div>
 
     <!-- ============================================================
-    YOUR MAIN REPORT CONTENT
+    REPORT WRAPPER
     ============================================================ -->
     <div class="report-wrapper" id="reportContainer">
 
@@ -1440,7 +1447,6 @@ body {
             </div>
             <p style="color: var(--gray-500); margin-bottom: 16px; font-size: 15px;">Your communication health at a glance.</p>
             
-            <!-- MRI Grid -->
             <div class="mri-grid" id="mriGrid">
                 <div class="mri-card">
                     <div class="mri-label">Overall Score</div>
@@ -1464,7 +1470,6 @@ body {
                 </div>
             </div>
 
-            <!-- Strength & Weakness Cards -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
                 <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; border-left: 3px solid var(--red);">
                     <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--red);">
@@ -1482,20 +1487,14 @@ body {
                 </div>
             </div>
 
-            <!-- Executive Summary Card -->
             <div class="card-premium" style="border-left: 4px solid var(--teal);">
                 <div class="card-title"><i class="fas fa-file-alt" style="color: var(--teal);"></i> Executive Summary</div>
-                
-                <!-- Dynamic Summary -->
                 <p style="font-size: 15px; color: var(--gray-700); line-height: 1.8; margin-bottom: 16px;" id="summaryText">
                     Loading your executive summary...
                 </p>
-                
-                <!-- Combination-Based Summary -->
                 <div style="background: var(--teal-light); border-radius: var(--radius-sm); padding: 20px 24px; margin-top: 4px;">
                     <h3 style="font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 8px;" id="summaryTitle">--</h3>
                     <p style="font-size: 15px; color: var(--gray-700); line-height: 1.7; margin-bottom: 12px;" id="summaryInsight">--</p>
-                    
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 12px; border-top: 1px solid rgba(0, 196, 167, 0.2);">
                         <div>
                             <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--red); margin-bottom: 4px;">
@@ -2140,7 +2139,7 @@ body {
     </div>
 
     <!-- ============================================================
-    JAVASCRIPT
+    JAVASCRIPT - COMPLETE WITH FIXES
     ============================================================ -->
     <script>
     // ============================================================
@@ -2159,21 +2158,41 @@ body {
     var ringsRendered = false;
     var narrativesData = null;
 
-// ============================================================
+    // ============================================================
+    // HIDE OVERLAY FUNCTION - ✅ FIXED
+    // ============================================================
+    function hideVerificationOverlay() {
+        var overlay = document.getElementById('paymentVerificationOverlay');
+        if (overlay) {
+            console.log('🔐 Hiding verification overlay');
+            overlay.style.display = 'none';
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+            overlay.classList.add('hidden');
+        }
+    }
+
+    function showVerificationOverlay() {
+        var overlay = document.getElementById('paymentVerificationOverlay');
+        if (overlay) {
+            console.log('🔐 Showing verification overlay');
+            overlay.style.display = 'flex';
+            overlay.style.opacity = '1';
+            overlay.style.pointerEvents = 'auto';
+            overlay.classList.remove('hidden');
+        }
+    }
+
+    // ============================================================
     // PAYMENT VERIFICATION FUNCTIONS
     // ============================================================
 
-    /**
-     * Check payment status from Pably/Google Sheets
-     * Returns: { verified: boolean, data: object, error: string }
-     */
     async function checkPaymentStatus() {
         if (!submissionId) {
             return { verified: false, error: 'Missing submission ID' };
         }
 
         try {
-            // Call Pably's API to get report data with payment status
             var url = APPS_SCRIPT_URL + '?action=getReportData&id=' + encodeURIComponent(submissionId);
             var response = await fetch(url);
             var result = await response.json();
@@ -2181,20 +2200,16 @@ body {
             if (result.success && result.data) {
                 var data = result.data;
                 
-                // 🔍 CHECK FOR PAYMENT STATUS - ADJUST BASED ON YOUR PABLY FIELDS
-                // Option 1: Check paymentStatus field
                 if (data.paymentStatus === 'completed' || 
                     data.paymentStatus === 'captured' ||
                     data.paymentStatus === 'paid') {
                     return { verified: true, data: data };
                 }
                 
-                // Option 2: Check isPaid boolean
                 if (data.isPaid === true) {
                     return { verified: true, data: data };
                 }
                 
-                // Option 3: Check if paymentId exists and is not empty
                 if (data.paymentId && 
                     data.paymentId !== '' && 
                     data.paymentId !== 'pending' &&
@@ -2202,12 +2217,6 @@ body {
                     return { verified: true, data: data };
                 }
                 
-                // Option 4: Check payment object
-                if (data.payment && data.payment.status === 'captured') {
-                    return { verified: true, data: data };
-                }
-                
-                // ❌ Not paid - but still return the data for reference
                 return { verified: false, data: data };
             } else {
                 throw new Error(result.error || 'Report not found');
@@ -2218,14 +2227,10 @@ body {
         }
     }
 
-    /**
-     * Check payment with retry logic (for concurrent payments)
-     */
     async function checkPaymentWithRetry(maxRetries = 5) {
         var lastResult = null;
         
         for (var attempt = 1; attempt <= maxRetries; attempt++) {
-            // Update attempt number in UI
             var attemptEl = document.getElementById('verifyAttempt');
             if (attemptEl) {
                 attemptEl.textContent = attempt;
@@ -2234,21 +2239,19 @@ body {
             var result = await checkPaymentStatus();
             
             if (result.verified) {
-                return result; // ✅ Payment verified
+                return result;
             }
             
-            // If payment is still processing, wait and retry
             if (result.data && (
                 result.data.paymentStatus === 'processing' || 
                 result.data.paymentStatus === 'pending' ||
                 result.data.paymentStatus === 'initiated'
             )) {
                 console.log(`Attempt ${attempt}: Payment still processing, waiting...`);
-                await sleep(2000 * attempt); // Wait 2s, 4s, 6s, 8s, 10s
+                await sleep(2000 * attempt);
                 continue;
             }
             
-            // If there's an error, retry
             if (result.error) {
                 console.log(`Attempt ${attempt}: Error, retrying...`);
                 await sleep(1000 * attempt);
@@ -2256,15 +2259,13 @@ body {
                 continue;
             }
             
-            // If not paid, no need to retry
             if (!result.verified && !result.error) {
-                return result; // ❌ Not paid
+                return result;
             }
             
             lastResult = result;
         }
         
-        // All retries exhausted
         return lastResult || { verified: false, error: 'Max retries exceeded' };
     }
 
@@ -2273,90 +2274,304 @@ body {
     }
 
     // ============================================================
-    // VERIFY AND LOAD REPORT
+    // VERIFY AND LOAD REPORT - ✅ FIXED
     // ============================================================
     async function verifyPaymentAndLoadReport() {
-        // Show verification overlay
-        var overlay = document.getElementById('paymentVerificationOverlay');
-        if (overlay) {
-            overlay.style.display = 'flex';
-        }
+        console.log('🔐 Starting payment verification...');
+        
+        showVerificationOverlay();
 
-        // Check payment with retry
         var result = await checkPaymentWithRetry(5);
+        console.log('📊 Verification result:', result);
 
-        // Hide overlay
-        if (overlay) {
-            overlay.style.display = 'none';
-        }
+        // ✅ HIDE OVERLAY IMMEDIATELY
+        hideVerificationOverlay();
 
         if (result.verified) {
-            // ✅ Payment verified - Show full report
+            console.log('✅ Payment verified! Loading report...');
             isUnlocked = true;
             sessionStorage.setItem('unlocked_' + submissionId, 'true');
             
-            // Show unlocked badge
             var badge = document.getElementById('unlockedBadge');
             if (badge) {
                 badge.style.display = 'block';
             }
             
-            // Render the report
             renderReport(result.data);
             await loadAllNarratives(submissionId);
             
-            // Show download button
             var downloadBtn = document.getElementById('downloadButton');
             if (downloadBtn) {
                 downloadBtn.style.display = 'inline-block';
             }
             
         } else if (result.error) {
-            // ❌ Error occurred
+            console.error('❌ Error:', result.error);
             showError('Error verifying payment: ' + result.error);
         } else {
-            // ❌ Not paid - Redirect to preview
+            console.log('❌ Not paid, redirecting...');
             showNotPaid();
         }
     }
 
     // ============================================================
-    // ERROR / REDIRECT FUNCTIONS
+    // RENDER REPORT - ✅ FIXED
     // ============================================================
-    function showError(message) {
-        document.getElementById('reportContainer').innerHTML = `
-            <div style="padding:80px 20px;text-align:center;max-width:600px;margin:0 auto;">
-                <div style="font-size:64px;margin-bottom:20px;">⚠️</div>
-                <h2 style="font-weight:800;color:var(--red);font-size:28px;">Verification Error</h2>
-                <p style="color:var(--gray-500);margin:16px 0;font-size:16px;">${message}</p>
-                <p style="color:var(--gray-400);font-size:14px;">Please contact support with your submission ID: <strong>${submissionId}</strong></p>
-                <button onclick="window.location.href='PreviewReport.html?id=${submissionId}'" 
-                        style="margin-top:24px;padding:14px 40px;background:var(--teal);color:white;border:none;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;">
-                    ← Go Back to Preview
-                </button>
-            </div>
-        `;
+    function renderReport(data) {
+        console.log('🔍 renderReport START');
+        
+        // ✅ HIDE OVERLAY AT THE VERY START
+        hideVerificationOverlay();
+        
+        console.log('📦 data received:', data);
+        reportData = data;
+
+        function parsePct(value) {
+            if (!value) return 0;
+            if (typeof value === 'string') {
+                var cleaned = value.replace('%', '').trim();
+                return parseFloat(cleaned) || 0;
+            }
+            return Number(value) || 0;
+        }
+
+        var thinking = parsePct(data.thinkingPct);
+        var structure = parsePct(data.structurePct);
+        var communication = parsePct(data.communicationPct);
+        var understanding = parsePct(data.understandingPct);
+        var opportunity = parsePct(data.opportunityPct);
+        var ciScore = parsePct(data.ciScore);
+        var annualTax = data.annualTax || 700000;
+
+        console.log('📊 Parsed Scores:', {
+            thinking: thinking,
+            structure: structure,
+            communication: communication,
+            understanding: understanding,
+            opportunity: opportunity,
+            ciScore: ciScore
+        });
+
+        // ---- COVER ----
+        document.getElementById('coverName').textContent = data.name || 'Executive';
+        document.getElementById('coverRole').textContent = data.role || 'Professional';
+        document.getElementById('coverDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        // ---- MRI ----
+        document.getElementById('mriScore').textContent = ciScore + '%';
+        document.getElementById('mriTax').textContent = '₹' + (annualTax / 100000).toFixed(1) + ' Lakh';
+        document.getElementById('mriPersona').textContent = data.persona || 'The Articulator';
+        document.getElementById('mriROI').textContent = (ciScore > 50 ? (100 / ciScore).toFixed(1) : '2.0') + 'x';
+
+        // ---- EXECUTIVE BLIND SPOT & LEADERSHIP ADVANTAGE ----
+        var competencies = [
+            { name: 'Thinking', score: parsePct(data.thinkingPct) },
+            { name: 'Structure', score: parsePct(data.structurePct) },
+            { name: 'Communication', score: parsePct(data.communicationPct) },
+            { name: 'Understanding', score: parsePct(data.understandingPct) },
+            { name: 'Opportunity', score: parsePct(data.opportunityPct) }
+        ];
+
+        var weakest = competencies.reduce(function(a, b) { return a.score < b.score ? a : b; });
+        var highest = competencies.reduce(function(a, b) { return a.score > b.score ? a : b; });
+
+        document.getElementById('mriBiggestGap').textContent = weakest.name + ' (' + weakest.score + '%)';
+        document.getElementById('mriHiddenStrength').textContent = highest.name + ' (' + highest.score + '%)';
+
+        // ---- SUMMARY ----
+        function getPercentile(score) {
+            if (score >= 91) return '97th';
+            if (score >= 85) return '93rd';
+            if (score >= 80) return '88th';
+            if (score >= 75) return '82nd';
+            if (score >= 70) return '74th';
+            if (score >= 65) return '65th';
+            if (score >= 60) return '55th';
+            if (score >= 55) return '45th';
+            if (score >= 50) return '35th';
+            if (score >= 40) return '20th';
+            if (score >= 30) return '10th';
+            return '5th';
+        }
+
+        var percentile = getPercentile(ciScore);
+        var taxInLakhs = (annualTax / 100000).toFixed(1);
+        var summaryParts = [];
+
+        summaryParts.push('Your Communication Tax Intelligence places you above the ' + percentile + ' percentile of working professionals.');
+        summaryParts.push('However, your current communication patterns are estimated to reduce your professional impact by approximately ₹' + taxInLakhs + ' Lakhs annually.');
+
+        if (thinking > communication + 15) {
+            summaryParts.push('Your thinking quality is significantly higher than your translation ability.');
+        } else if (thinking > communication + 5) {
+            summaryParts.push('Your thinking quality is higher than your translation ability.');
+        } else if (communication > thinking + 5) {
+            summaryParts.push('Your translation ability is stronger than your thinking clarity.');
+        } else {
+            summaryParts.push('Your thinking and translation abilities are well aligned.');
+        }
+
+        if (communication < 50) {
+            summaryParts.push('People significantly underestimate your expertise.');
+        } else if (communication < 65) {
+            summaryParts.push('People sometimes miss the full extent of your expertise.');
+        } else if (communication < 80) {
+            summaryParts.push('Your expertise is generally recognised but could be amplified.');
+        } else {
+            summaryParts.push('Your expertise comes through clearly and consistently.');
+        }
+
+        if (annualTax > 500000) {
+            summaryParts.push('The good news? This is fixable in 6 weeks.');
+        } else if (annualTax > 200000) {
+            summaryParts.push('The good news? This is fixable in 4 weeks with focused effort.');
+        } else {
+            summaryParts.push('The best part? This is completely fixable.');
+        }
+
+        document.getElementById('summaryText').textContent = summaryParts.join(' ');
+
+        // ---- EXECUTIVE SUMMARY ----
+        var executiveSummary = data.executiveSummary || {};
+        
+        if (executiveSummary.statement) {
+            var summaryTitle = executiveSummary.executiveEdge + ' + ' + executiveSummary.blindSpot;
+            document.getElementById('summaryTitle').textContent = summaryTitle;
+            document.getElementById('summaryInsight').textContent = executiveSummary.statement;
+            document.getElementById('summaryBlindSpot').textContent = 'Your ' + executiveSummary.blindSpot + ' is your biggest opportunity for growth. Focus on improving this area to unlock your full potential.';
+            document.getElementById('summaryAdvantage').textContent = 'Your ' + executiveSummary.executiveEdge + ' is your greatest strength. Leverage this to accelerate your career growth.';
+        } else {
+            var weakestFormatted = weakest.name + ' (' + weakest.score + '%)';
+            var highestFormatted = highest.name + ' (' + highest.score + '%)';
+            var summaryData = getExecutiveSummary(weakestFormatted, highestFormatted);
+            
+            if (summaryData) {
+                document.getElementById('summaryTitle').textContent = summaryData.title;
+                document.getElementById('summaryInsight').textContent = summaryData.summary;
+                document.getElementById('summaryBlindSpot').textContent = summaryData.blindSpot;
+                document.getElementById('summaryAdvantage').textContent = summaryData.advantage;
+            }
+        }
+
+        // ---- TAX ----
+        var perMonth = Math.round(annualTax / 12);
+        var perDay = Math.round(annualTax / 365);
+        var perHour = Math.round(annualTax / (365 * 8));
+        document.getElementById('taxHeroAmount').textContent = '₹' + formatNumber(annualTax);
+        document.getElementById('taxPerMonth').textContent = '₹' + formatNumber(perMonth);
+        document.getElementById('taxPerDay').textContent = '₹' + formatNumber(perDay);
+        document.getElementById('taxPerHour').textContent = '₹' + formatNumber(perHour);
+        document.getElementById('taxInterviews').textContent = '₹' + formatNumber(Math.round(annualTax * 0.25));
+        document.getElementById('taxPromotions').textContent = '₹' + formatNumber(Math.round(annualTax * 0.15));
+        document.getElementById('taxClients').textContent = '₹' + formatNumber(Math.round(annualTax * 0.5));
+        document.getElementById('taxTeam').textContent = '₹' + formatNumber(Math.round(annualTax * 0.1));
+
+        // ---- PERSONA ----
+        var persona = data.persona || 'The Articulator';
+        document.getElementById('personaEmoji').textContent = '🟢';
+        document.getElementById('personaName').textContent = persona;
+        document.getElementById('personaDesc').textContent = data.personaDescription ||
+            "You're clear and confident. Some gaps in translation are costing you momentum.";
+        document.getElementById('journeyCurrent').innerHTML = '<span class="emoji">🟢</span> ' + persona;
+        document.getElementById('whereYouAre').textContent = persona;
+
+        // ---- NARRATIVES ----
+        if (data.narratives) {
+            reportData.narratives = data.narratives;
+            console.log('📝 Narratives loaded:', Object.keys(data.narratives));
+        }
+
+        // ---- RINGS ----
+        renderRings(data);
+
+        // ---- PROFILE BARS ----
+        renderProfileBars(data);
+
+        // ---- DNA ----
+        renderDNA(data);
+
+        // ---- WATERFALL ----
+        renderWaterfall(data);
+
+        // ---- SUB-COMPS ----
+        var subScores = data.subScores || [];
+        renderSubComps('thinkingSubComps', subScores, 0, 5);
+        renderSubComps('structureSubComps', subScores, 6, 11);
+        renderSubComps('communicationSubComps', subScores, 12, 17);
+        renderSubComps('understandingSubComps', subScores, 18, 23);
+        renderSubComps('opportunitySubComps', subScores, 24, 29);
+
+        // ---- DEEP DIVE SCORES ----
+        document.getElementById('thinkingScoreDisplay').textContent = thinking + '%';
+        document.getElementById('structureScoreDisplay').textContent = structure + '%';
+        document.getElementById('communicationScoreDisplay').textContent = communication + '%';
+        document.getElementById('understandingScoreDisplay').textContent = understanding + '%';
+        document.getElementById('opportunityScoreDisplay').textContent = opportunity + '%';
+
+        // ---- TAX IMPACT ----
+        function calculateTaxImpact(score, multiplier) {
+            if (score >= 60) return '₹0';
+            var loss = (60 - score) * multiplier;
+            return '₹' + formatNumber(Math.round(loss));
+        }
+
+        document.getElementById('thinkingTaxImpact').textContent = calculateTaxImpact(thinking, 5000);
+        document.getElementById('structureTaxImpact').textContent = calculateTaxImpact(structure, 5000);
+        document.getElementById('communicationTaxImpact').textContent = calculateTaxImpact(communication, 15000);
+        document.getElementById('understandingTaxImpact').textContent = calculateTaxImpact(understanding, 8000);
+        document.getElementById('opportunityTaxImpact').textContent = calculateTaxImpact(opportunity, 20000);
+
+        document.getElementById('thinkingBadge').textContent = data.thinkingLevel || 'Proficient';
+        document.getElementById('structureBadge').textContent = data.structureLevel || 'Proficient';
+        document.getElementById('communicationBadge').textContent = data.communicationLevel || 'Needs Attention';
+        document.getElementById('understandingBadge').textContent = data.understandingLevel || 'Needs Attention';
+        document.getElementById('opportunityBadge').textContent = data.opportunityLevel || 'Proficient';
+
+        // ---- INSIGHT ----
+        document.getElementById('insightText').innerHTML =
+            'Your highest score is <strong>' + (data.highestCompetency || 'Thinking (75%)') +
+            '</strong> — build on this. Your lowest score is <strong>' + (data.weakestCompetency ||
+                'Communication (54%)') + '</strong> — fix this first.';
+
+        // ---- PROGRAM CARD ----
+        console.log('🔄 Updating Program Card...');
+        
+        document.getElementById('progCurrentScore').textContent = ciScore + '%';
+        console.log('✅ Current Score:', ciScore + '%');
+
+        var projectedScore = data.projectedScore || '0%';
+        if (typeof projectedScore === 'number') {
+            projectedScore = Math.round(projectedScore * 100) + '%';
+        }
+        document.getElementById('progProjectedScore').textContent = projectedScore;
+        console.log('✅ Projected Score:', projectedScore);
+
+        var taxSaved = data.communicationTaxSaved || '₹0';
+        document.getElementById('progTaxSaved').textContent = taxSaved;
+        console.log('✅ Tax Saved:', taxSaved);
+
+        var roi = data.roi || '0X';
+        document.getElementById('progROI').textContent = roi;
+        console.log('✅ ROI:', roi);
+        
+        // ---- UNLOCK ----
+        isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
+        if (isUnlocked) {
+            document.getElementById('unlockBadge').style.display = 'block';
+            document.getElementById('paymentBox').style.display = 'none';
+            document.getElementById('downloadButton').style.display = 'inline-block';
+            document.querySelectorAll('.blurred-section').forEach(function(el) {
+                el.classList.remove('blurred-section');
+            });
+        } else {
+            document.getElementById('unlockBadge').style.display = 'none';
+            document.getElementById('paymentBox').style.display = 'block';
+            document.getElementById('downloadButton').style.display = 'none';
+        }
+        
+        console.log('✅ renderReport COMPLETE');
     }
 
-    function showNotPaid() {
-        document.getElementById('reportContainer').innerHTML = `
-            <div style="padding:80px 20px;text-align:center;max-width:600px;margin:0 auto;">
-                <div style="font-size:64px;margin-bottom:20px;">🔒</div>
-                <h2 style="font-weight:800;color:var(--navy);font-size:28px;">Payment Required</h2>
-                <p style="color:var(--gray-500);margin:16px 0;font-size:16px;">
-                    This full report requires payment. Please purchase the report to access your complete Communication Tax™ analysis.
-                </p>
-                <p style="color:var(--gray-400);font-size:14px;">
-                    Submission ID: <strong>${submissionId}</strong>
-                </p>
-                <button onclick="window.location.href='PreviewReport.html?id=${submissionId}'" 
-                        style="margin-top:24px;padding:14px 40px;background:var(--teal);color:white;border:none;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;">
-                    <i class="fas fa-unlock"></i> Purchase Report
-                </button>
-            </div>
-        `;
-    }
-        
     // ============================================================
     // HELPER FUNCTIONS
     // ============================================================
@@ -2371,16 +2586,6 @@ body {
         return '#EF4444';
     }
 
-    function getScoreStatus(score) {
-        if (score >= 91) return 'Tax-Free';
-        if (score >= 76) return 'Moderate Tax';
-        if (score >= 51) return 'High Tax';
-        return 'Critical Tax';
-    }
-
-    // ============================================================
-    // EXECUTIVE SUMMARY COMBINATIONS
-    // ============================================================
     function extractCompetencyName(compString) {
         if (!compString) return '';
         var cleaned = compString.replace(/[🔴🟢🟡🟠🔵🌟💪✅📈⚠️]/g, '').trim();
@@ -2589,27 +2794,27 @@ body {
     // ============================================================
     // RENDER RINGS
     // ============================================================
-function renderRings(data) {
-    var container = document.getElementById('ringsGrid');
-    if (!container) return;
-    container.innerHTML = '';
+    function renderRings(data) {
+        var container = document.getElementById('ringsGrid');
+        if (!container) return;
+        container.innerHTML = '';
 
-    function parsePct(value) {
-        if (!value) return 0;
-        if (typeof value === 'string') {
-            var cleaned = value.replace('%', '').trim();
-            return parseFloat(cleaned) || 0;
+        function parsePct(value) {
+            if (!value) return 0;
+            if (typeof value === 'string') {
+                var cleaned = value.replace('%', '').trim();
+                return parseFloat(cleaned) || 0;
+            }
+            return Number(value) || 0;
         }
-        return Number(value) || 0;
-    }
 
-    var competencies = [
-        { id: 'Thinking', score: parsePct(data.thinkingPct), level: data.thinkingLevel || 'Proficient' },
-        { id: 'Structure', score: parsePct(data.structurePct), level: data.structureLevel || 'Proficient' },
-        { id: 'Communication', score: parsePct(data.communicationPct), level: data.communicationLevel || 'Needs Attention' },
-        { id: 'Understanding', score: parsePct(data.understandingPct), level: data.understandingLevel || 'Needs Attention' },
-        { id: 'Opportunity', score: parsePct(data.opportunityPct), level: data.opportunityLevel || 'Proficient' }
-    ];
+        var competencies = [
+            { id: 'Thinking', score: parsePct(data.thinkingPct), level: data.thinkingLevel || 'Proficient' },
+            { id: 'Structure', score: parsePct(data.structurePct), level: data.structureLevel || 'Proficient' },
+            { id: 'Communication', score: parsePct(data.communicationPct), level: data.communicationLevel || 'Needs Attention' },
+            { id: 'Understanding', score: parsePct(data.understandingPct), level: data.understandingLevel || 'Needs Attention' },
+            { id: 'Opportunity', score: parsePct(data.opportunityPct), level: data.opportunityLevel || 'Proficient' }
+        ];
 
         competencies.forEach(function(comp) {
             var color = getScoreColor(comp.score);
@@ -2671,44 +2876,45 @@ function renderRings(data) {
     // ============================================================
     // RENDER PROFILE BARS
     // ============================================================
-function renderProfileBars(data) {
-    function parsePct(value) {
-        if (!value) return 0;
-        if (typeof value === 'string') {
-            var cleaned = value.replace('%', '').trim();
-            return parseFloat(cleaned) || 0;
+    function renderProfileBars(data) {
+        function parsePct(value) {
+            if (!value) return 0;
+            if (typeof value === 'string') {
+                var cleaned = value.replace('%', '').trim();
+                return parseFloat(cleaned) || 0;
+            }
+            return Number(value) || 0;
         }
-        return Number(value) || 0;
+
+        var thinking = parsePct(data.thinkingPct);
+        var structure = parsePct(data.structurePct);
+        var communication = parsePct(data.communicationPct);
+        var understanding = parsePct(data.understandingPct);
+        var opportunity = parsePct(data.opportunityPct);
+
+        var profileData = {
+            thinking: thinking,
+            structure: structure,
+            translation: communication,
+            presence: Math.round((understanding + communication) / 2),
+            influence: Math.round((opportunity + communication) / 2)
+        };
+
+        document.getElementById('profileThinking').textContent = profileData.thinking + '%';
+        document.getElementById('profileStructure').textContent = profileData.structure + '%';
+        document.getElementById('profileTranslation').textContent = profileData.translation + '%';
+        document.getElementById('profilePresence').textContent = profileData.presence + '%';
+        document.getElementById('profileInfluence').textContent = profileData.influence + '%';
+
+        setTimeout(function() {
+            document.getElementById('profileThinkingBar').style.width = profileData.thinking + '%';
+            document.getElementById('profileStructureBar').style.width = profileData.structure + '%';
+            document.getElementById('profileTranslationBar').style.width = profileData.translation + '%';
+            document.getElementById('profilePresenceBar').style.width = profileData.presence + '%';
+            document.getElementById('profileInfluenceBar').style.width = profileData.influence + '%';
+        }, 300);
     }
 
-    var thinking = parsePct(data.thinkingPct);
-    var structure = parsePct(data.structurePct);
-    var communication = parsePct(data.communicationPct);
-    var understanding = parsePct(data.understandingPct);
-    var opportunity = parsePct(data.opportunityPct);
-
-    var profileData = {
-        thinking: thinking,
-        structure: structure,
-        translation: communication,
-        presence: Math.round((understanding + communication) / 2),
-        influence: Math.round((opportunity + communication) / 2)
-    };
-
-    document.getElementById('profileThinking').textContent = profileData.thinking + '%';
-    document.getElementById('profileStructure').textContent = profileData.structure + '%';
-    document.getElementById('profileTranslation').textContent = profileData.translation + '%';
-    document.getElementById('profilePresence').textContent = profileData.presence + '%';
-    document.getElementById('profileInfluence').textContent = profileData.influence + '%';
-
-    setTimeout(function() {
-        document.getElementById('profileThinkingBar').style.width = profileData.thinking + '%';
-        document.getElementById('profileStructureBar').style.width = profileData.structure + '%';
-        document.getElementById('profileTranslationBar').style.width = profileData.translation + '%';
-        document.getElementById('profilePresenceBar').style.width = profileData.presence + '%';
-        document.getElementById('profileInfluenceBar').style.width = profileData.influence + '%';
-    }, 300);
-}
     // ============================================================
     // RENDER DNA
     // ============================================================
@@ -2923,286 +3129,44 @@ function renderProfileBars(data) {
     }
 
     // ============================================================
-    // RENDER REPORT
+    // ERROR FUNCTIONS
     // ============================================================
-function renderReport(data) {
-    console.log('🔍 renderReport START');
-    
-    // ✅ HIDE THE VERIFICATION OVERLAY - ADD THIS AT THE TOP
-    var overlay = document.getElementById('paymentVerificationOverlay');
-    if (overlay) {
-        console.log('🔐 Hiding verification overlay from renderReport');
-        overlay.style.display = 'none';
-    }
-    
-    // Also hide any loading containers
-    var loadingContainer = document.querySelector('.loading-container');
-    if (loadingContainer) {
-        loadingContainer.style.display = 'none';
-    }
-    
-    console.log('📦 data received:', data);
-    
-    reportData = data;
-
-    // ---- PARSE PERCENTAGES (handle strings with % sign) ----
-    function parsePct(value) {
-        if (!value) return 0;
-        if (typeof value === 'string') {
-            // Remove % sign and convert to number
-            var cleaned = value.replace('%', '').trim();
-            return parseFloat(cleaned) || 0;
-        }
-        return Number(value) || 0;
+    function showError(message) {
+        hideVerificationOverlay();
+        document.getElementById('reportContainer').innerHTML = `
+            <div style="padding:80px 20px;text-align:center;max-width:600px;margin:0 auto;">
+                <div style="font-size:64px;margin-bottom:20px;">⚠️</div>
+                <h2 style="font-weight:800;color:var(--red);font-size:28px;">Verification Error</h2>
+                <p style="color:var(--gray-500);margin:16px 0;font-size:16px;">${message}</p>
+                <p style="color:var(--gray-400);font-size:14px;">Please contact support with your submission ID: <strong>${submissionId}</strong></p>
+                <button onclick="window.location.href='PreviewReport.html?id=${submissionId}'" 
+                        style="margin-top:24px;padding:14px 40px;background:var(--teal);color:white;border:none;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;">
+                    ← Go Back to Preview
+                </button>
+            </div>
+        `;
     }
 
-    // Use parsePct for ALL percentage values
-    var thinking = parsePct(data.thinkingPct);
-    var structure = parsePct(data.structurePct);
-    var communication = parsePct(data.communicationPct);
-    var understanding = parsePct(data.understandingPct);
-    var opportunity = parsePct(data.opportunityPct);
-    var ciScore = parsePct(data.ciScore);
-    var annualTax = data.annualTax || 700000;
-
-    console.log('📊 Parsed Scores:', {
-        thinking: thinking,
-        structure: structure,
-        communication: communication,
-        understanding: understanding,
-        opportunity: opportunity,
-        ciScore: ciScore
-    });
-
-    // ---- COVER ----
-    document.getElementById('coverName').textContent = data.name || 'Executive';
-    document.getElementById('coverRole').textContent = data.role || 'Professional';
-    document.getElementById('coverDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-
-    // ---- MRI ----
-    document.getElementById('mriScore').textContent = ciScore + '%';
-    document.getElementById('mriTax').textContent = '₹' + (annualTax / 100000).toFixed(1) + ' Lakh';
-    document.getElementById('mriPersona').textContent = data.persona || 'The Articulator';
-    document.getElementById('mriROI').textContent = (ciScore > 50 ? (100 / ciScore).toFixed(1) : '2.0') + 'x';
-
-    // ---- EXECUTIVE BLIND SPOT & LEADERSHIP ADVANTAGE ----
-    var competencies = [
-        { name: 'Thinking', score: parsePct(data.thinkingPct) },
-        { name: 'Structure', score: parsePct(data.structurePct) },
-        { name: 'Communication', score: parsePct(data.communicationPct) },
-        { name: 'Understanding', score: parsePct(data.understandingPct) },
-        { name: 'Opportunity', score: parsePct(data.opportunityPct) }
-    ];
-
-    var weakest = competencies.reduce(function(a, b) { return a.score < b.score ? a : b; });
-    var highest = competencies.reduce(function(a, b) { return a.score > b.score ? a : b; });
-
-    document.getElementById('mriBiggestGap').textContent = weakest.name + ' (' + weakest.score + '%)';
-    document.getElementById('mriHiddenStrength').textContent = highest.name + ' (' + highest.score + '%)';
-
-    // ---- SUMMARY (DYNAMIC) ----
-    function getPercentile(score) {
-        if (score >= 91) return '97th';
-        if (score >= 85) return '93rd';
-        if (score >= 80) return '88th';
-        if (score >= 75) return '82nd';
-        if (score >= 70) return '74th';
-        if (score >= 65) return '65th';
-        if (score >= 60) return '55th';
-        if (score >= 55) return '45th';
-        if (score >= 50) return '35th';
-        if (score >= 40) return '20th';
-        if (score >= 30) return '10th';
-        return '5th';
+    function showNotPaid() {
+        hideVerificationOverlay();
+        document.getElementById('reportContainer').innerHTML = `
+            <div style="padding:80px 20px;text-align:center;max-width:600px;margin:0 auto;">
+                <div style="font-size:64px;margin-bottom:20px;">🔒</div>
+                <h2 style="font-weight:800;color:var(--navy);font-size:28px;">Payment Required</h2>
+                <p style="color:var(--gray-500);margin:16px 0;font-size:16px;">
+                    This full report requires payment. Please purchase the report to access your complete Communication Tax™ analysis.
+                </p>
+                <p style="color:var(--gray-400);font-size:14px;">
+                    Submission ID: <strong>${submissionId}</strong>
+                </p>
+                <button onclick="window.location.href='PreviewReport.html?id=${submissionId}'" 
+                        style="margin-top:24px;padding:14px 40px;background:var(--teal);color:white;border:none;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;">
+                    <i class="fas fa-unlock"></i> Purchase Report
+                </button>
+            </div>
+        `;
     }
 
-    var percentile = getPercentile(ciScore);
-    var taxInLakhs = (annualTax / 100000).toFixed(1);
-    var summaryParts = [];
-
-    summaryParts.push('Your Communication Tax Intelligence places you above the ' + percentile + ' percentile of working professionals.');
-    summaryParts.push('However, your current communication patterns are estimated to reduce your professional impact by approximately ₹' + taxInLakhs + ' Lakhs annually.');
-
-    if (thinking > communication + 15) {
-        summaryParts.push('Your thinking quality is significantly higher than your translation ability.');
-    } else if (thinking > communication + 5) {
-        summaryParts.push('Your thinking quality is higher than your translation ability.');
-    } else if (communication > thinking + 5) {
-        summaryParts.push('Your translation ability is stronger than your thinking clarity.');
-    } else {
-        summaryParts.push('Your thinking and translation abilities are well aligned.');
-    }
-
-    if (communication < 50) {
-        summaryParts.push('People significantly underestimate your expertise.');
-    } else if (communication < 65) {
-        summaryParts.push('People sometimes miss the full extent of your expertise.');
-    } else if (communication < 80) {
-        summaryParts.push('Your expertise is generally recognised but could be amplified.');
-    } else {
-        summaryParts.push('Your expertise comes through clearly and consistently.');
-    }
-
-    if (annualTax > 500000) {
-        summaryParts.push('The good news? This is fixable in 6 weeks.');
-    } else if (annualTax > 200000) {
-        summaryParts.push('The good news? This is fixable in 4 weeks with focused effort.');
-    } else {
-        summaryParts.push('The best part? This is completely fixable.');
-    }
-
-    document.getElementById('summaryText').textContent = summaryParts.join(' ');
-
-    // ---- EXECUTIVE SUMMARY (FROM APP SCRIPT) ----
-    // Use the executiveSummary from App Script instead of hardcoded combinations
-    var executiveSummary = data.executiveSummary || {};
-    
-    if (executiveSummary.statement) {
-        // Use the statement from the Executive Summary sheet
-        var summaryTitle = executiveSummary.executiveEdge + ' + ' + executiveSummary.blindSpot;
-        document.getElementById('summaryTitle').textContent = summaryTitle;
-        document.getElementById('summaryInsight').textContent = executiveSummary.statement;
-        
-        // Set blind spot and advantage insights based on the data
-        document.getElementById('summaryBlindSpot').textContent = 'Your ' + executiveSummary.blindSpot + ' is your biggest opportunity for growth. Focus on improving this area to unlock your full potential.';
-        document.getElementById('summaryAdvantage').textContent = 'Your ' + executiveSummary.executiveEdge + ' is your greatest strength. Leverage this to accelerate your career growth.';
-    } else {
-        // Fallback to hardcoded combinations if executiveSummary is not available
-        var weakestFormatted = weakest.name + ' (' + weakest.score + '%)';
-        var highestFormatted = highest.name + ' (' + highest.score + '%)';
-        var summaryData = getExecutiveSummary(weakestFormatted, highestFormatted);
-        
-        if (summaryData) {
-            document.getElementById('summaryTitle').textContent = summaryData.title;
-            document.getElementById('summaryInsight').textContent = summaryData.summary;
-            document.getElementById('summaryBlindSpot').textContent = summaryData.blindSpot;
-            document.getElementById('summaryAdvantage').textContent = summaryData.advantage;
-        }
-    }
-
-    // ---- TAX ----
-    var perMonth = Math.round(annualTax / 12);
-    var perDay = Math.round(annualTax / 365);
-    var perHour = Math.round(annualTax / (365 * 8));
-    document.getElementById('taxHeroAmount').textContent = '₹' + formatNumber(annualTax);
-    document.getElementById('taxPerMonth').textContent = '₹' + formatNumber(perMonth);
-    document.getElementById('taxPerDay').textContent = '₹' + formatNumber(perDay);
-    document.getElementById('taxPerHour').textContent = '₹' + formatNumber(perHour);
-    document.getElementById('taxInterviews').textContent = '₹' + formatNumber(Math.round(annualTax * 0.25));
-    document.getElementById('taxPromotions').textContent = '₹' + formatNumber(Math.round(annualTax * 0.15));
-    document.getElementById('taxClients').textContent = '₹' + formatNumber(Math.round(annualTax * 0.5));
-    document.getElementById('taxTeam').textContent = '₹' + formatNumber(Math.round(annualTax * 0.1));
-
-    // ---- PERSONA ----
-    var persona = data.persona || 'The Articulator';
-    document.getElementById('personaEmoji').textContent = '🟢';
-    document.getElementById('personaName').textContent = persona;
-    document.getElementById('personaDesc').textContent = data.personaDescription ||
-        "You're clear and confident. Some gaps in translation are costing you momentum.";
-    document.getElementById('journeyCurrent').innerHTML = '<span class="emoji">🟢</span> ' + persona;
-    document.getElementById('whereYouAre').textContent = persona;
-
-    // ---- NARRATIVES (FROM APP SCRIPT) ----
-    // Store narratives in reportData for use in displayNarrative function
-    if (data.narratives) {
-        reportData.narratives = data.narratives;
-        console.log('📝 Narratives loaded:', Object.keys(data.narratives));
-    }
-
-    // ---- RINGS ----
-    renderRings(data);
-
-    // ---- PROFILE BARS ----
-    renderProfileBars(data);
-
-    // ---- DNA ----
-    renderDNA(data);
-
-    // ---- WATERFALL ----
-    renderWaterfall(data);
-
-    // ---- SUB-COMPS ----
-    var subScores = data.subScores || [];
-    renderSubComps('thinkingSubComps', subScores, 0, 5);
-    renderSubComps('structureSubComps', subScores, 6, 11);
-    renderSubComps('communicationSubComps', subScores, 12, 17);
-    renderSubComps('understandingSubComps', subScores, 18, 23);
-    renderSubComps('opportunitySubComps', subScores, 24, 29);
-
-    // ---- DEEP DIVE SCORES ----
-    document.getElementById('thinkingScoreDisplay').textContent = thinking + '%';
-    document.getElementById('structureScoreDisplay').textContent = structure + '%';
-    document.getElementById('communicationScoreDisplay').textContent = communication + '%';
-    document.getElementById('understandingScoreDisplay').textContent = understanding + '%';
-    document.getElementById('opportunityScoreDisplay').textContent = opportunity + '%';
-
-    // ---- TAX IMPACT CALCULATIONS ----
-    function calculateTaxImpact(score, multiplier) {
-        if (score >= 60) return '₹0';
-        var loss = (60 - score) * multiplier;
-        return '₹' + formatNumber(Math.round(loss));
-    }
-
-    document.getElementById('thinkingTaxImpact').textContent = calculateTaxImpact(thinking, 5000);
-    document.getElementById('structureTaxImpact').textContent = calculateTaxImpact(structure, 5000);
-    document.getElementById('communicationTaxImpact').textContent = calculateTaxImpact(communication, 15000);
-    document.getElementById('understandingTaxImpact').textContent = calculateTaxImpact(understanding, 8000);
-    document.getElementById('opportunityTaxImpact').textContent = calculateTaxImpact(opportunity, 20000);
-
-    document.getElementById('thinkingBadge').textContent = data.thinkingLevel || 'Proficient';
-    document.getElementById('structureBadge').textContent = data.structureLevel || 'Proficient';
-    document.getElementById('communicationBadge').textContent = data.communicationLevel || 'Needs Attention';
-    document.getElementById('understandingBadge').textContent = data.understandingLevel || 'Needs Attention';
-    document.getElementById('opportunityBadge').textContent = data.opportunityLevel || 'Proficient';
-
-    // ---- INSIGHT ----
-    document.getElementById('insightText').innerHTML =
-        'Your highest score is <strong>' + (data.highestCompetency || 'Thinking (75%)') +
-        '</strong> — build on this. Your lowest score is <strong>' + (data.weakestCompetency ||
-            'Communication (54%)') + '</strong> — fix this first.';
-
-    // ---- PROGRAM CARD ----
-    console.log('🔄 Updating Program Card...');
-        
-// 1. Current Score
-    document.getElementById('progCurrentScore').textContent = ciScore + '%';
-    console.log('✅ Current Score:', ciScore + '%');
-
-    // 2. Projected Score - Convert if it's a number
-    var projectedScore = data.projectedScore || '0%';
-    if (typeof projectedScore === 'number') {
-        projectedScore = Math.round(projectedScore * 100) + '%';
-    }
-    document.getElementById('progProjectedScore').textContent = projectedScore;
-    console.log('✅ Projected Score:', projectedScore);
-
-    // 3. Tax Saved
-    var taxSaved = data.communicationTaxSaved || '₹0';
-    document.getElementById('progTaxSaved').textContent = taxSaved;
-    console.log('✅ Tax Saved:', taxSaved);
-
-    // 4. ROI
-    var roi = data.roi || '0X';
-    document.getElementById('progROI').textContent = roi;
-    console.log('✅ ROI:', roi);
-        
-    // ---- UNLOCK ----
-    isUnlocked = sessionStorage.getItem('unlocked_' + submissionId) === 'true' || paymentId;
-    if (isUnlocked) {
-        document.getElementById('unlockBadge').style.display = 'block';
-        document.getElementById('paymentBox').style.display = 'none';
-        document.getElementById('downloadButton').style.display = 'inline-block';
-        document.querySelectorAll('.blurred-section').forEach(function(el) {
-            el.classList.remove('blurred-section');
-        });
-    } else {
-        document.getElementById('unlockBadge').style.display = 'none';
-        document.getElementById('paymentBox').style.display = 'block';
-        document.getElementById('downloadButton').style.display = 'none';
-    }
-    
-    console.log('✅ renderReport COMPLETE');
-}
     // ============================================================
     // PAYMENT
     // ============================================================
@@ -3256,11 +3220,18 @@ function renderReport(data) {
             }
         }
 
-        var data = await fetchReportData();
-        if (data) {
-            renderReport(data);
-            await loadAllNarratives(submissionId);
+        if (sessionStorage.getItem('unlocked_' + submissionId) === 'true') {
+            isUnlocked = true;
+            var data = await fetchReportData();
+            if (data) {
+                hideVerificationOverlay();
+                renderReport(data);
+                await loadAllNarratives(submissionId);
+            }
+            return;
         }
+
+        await verifyPaymentAndLoadReport();
 
         var payBtn = document.getElementById('payButton');
         if (payBtn) payBtn.addEventListener('click', initiatePayment);
@@ -3287,6 +3258,7 @@ function renderReport(data) {
     // ============================================================
     window.initiatePayment = initiatePayment;
     window.downloadPDF = downloadPDF;
-</script>
+    window.hideVerificationOverlay = hideVerificationOverlay;
+    </script>
 </body>
 </html>
