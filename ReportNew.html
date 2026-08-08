@@ -3217,251 +3217,142 @@ body {
 // DOWNLOAD PDF - Using Print Dialog (Most Reliable)
 // ============================================================
 async function downloadPDF() {
-    console.log('📄 Starting PDF generation...');
-
-    const btn = document.getElementById('downloadButton');
-    const originalText = btn ? btn.textContent : 'Download PDF';
+    console.log('🚀 PDF button clicked');
 
     const element = document.getElementById('reportContainer');
 
     if (!element) {
+        console.error('❌ reportContainer not found');
         alert('Report content not found!');
         return;
     }
 
-    if (btn) {
-        btn.textContent = '⏳ Generating PDF...';
-        btn.disabled = true;
-        btn.style.opacity = '0.7';
+    if (typeof html2canvas !== 'function') {
+        console.error('❌ html2canvas not loaded');
+        alert('html2canvas is not loaded');
+        return;
     }
 
-    let loadingMsg;
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        console.error('❌ jsPDF not loaded');
+        alert('jsPDF is not loaded');
+        return;
+    }
+
+    console.log('📦 Report found');
+    console.log('📏 Size:', element.scrollWidth, 'x', element.scrollHeight);
+
+    const btn = document.getElementById('downloadButton');
+    const originalText = btn ? btn.innerHTML : '';
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Generating PDF...';
+    }
 
     try {
-        // Loading overlay
-        loadingMsg = document.createElement('div');
 
-        loadingMsg.style.cssText = `
-            position:fixed;
-            top:50%;
-            left:50%;
-            transform:translate(-50%,-50%);
-            background:#ffffff;
-            padding:30px 50px;
-            border-radius:12px;
-            box-shadow:0 10px 40px rgba(0,0,0,0.25);
-            z-index:999999;
-            text-align:center;
-            font-family:Inter,sans-serif;
-        `;
+        // Small delay so button update is visible
+        await new Promise(resolve => setTimeout(resolve, 200));
 
-        loadingMsg.innerHTML = `
-            <div style="font-size:48px;margin-bottom:10px;">📄</div>
-            <h2 style="margin:0 0 10px;color:#00C4A7;">
-                Generating PDF
-            </h2>
-            <p style="margin:0;color:#666;">
-                Please wait while we prepare your report...
-            </p>
-        `;
-
-        document.body.appendChild(loadingMsg);
-
-        // Allow overlay to render
-        await new Promise(resolve => setTimeout(resolve, 300));
-
-        console.log('📸 Capturing report...');
+        console.log('📸 Starting html2canvas...');
 
         const canvas = await html2canvas(element, {
-            scale: 1.5,
+            scale: 1,
             useCORS: true,
-            allowTaint: false,
             backgroundColor: '#ffffff',
-            logging: false,
+            logging: true,
             scrollX: 0,
             scrollY: -window.scrollY,
-            windowWidth: document.documentElement.scrollWidth,
-            windowHeight: document.documentElement.scrollHeight,
+            windowWidth: element.scrollWidth,
+            windowHeight: element.scrollHeight,
 
             ignoreElements: function(el) {
-                return el.id === 'downloadButton' ||
-                       el.classList.contains('no-pdf');
+                return el.id === 'downloadButton';
             }
         });
 
-        console.log(
-            '✅ Canvas created:',
-            canvas.width,
-            'x',
-            canvas.height
-        );
+        console.log('✅ Canvas generated:', canvas.width, canvas.height);
 
         const { jsPDF } = window.jspdf;
 
         const pdf = new jsPDF({
-            orientation: 'p',
+            orientation: 'portrait',
             unit: 'mm',
-            format: 'a4',
-            compress: true
+            format: 'a4'
         });
 
         const pageWidth = 210;
         const pageHeight = 297;
-
         const margin = 5;
 
-        const usableWidth = pageWidth - (margin * 2);
-        const usableHeight = pageHeight - (margin * 2);
+        const contentWidth = pageWidth - (margin * 2);
+        const contentHeight = pageHeight - (margin * 2);
 
-        // Ratio between canvas pixels and PDF width
-        const scaleFactor = canvas.width / usableWidth;
+        // Convert canvas dimensions proportionally
+        const imageHeight =
+            (canvas.height * contentWidth) / canvas.width;
 
-        // Number of canvas pixels that fit on one PDF page
-        const pageHeightPixels = Math.floor(
-            usableHeight * scaleFactor
+        console.log('📄 PDF image height:', imageHeight);
+
+        const imageData = canvas.toDataURL('image/jpeg', 0.9);
+
+        let heightLeft = imageHeight;
+        let position = margin;
+
+        // First page
+        pdf.addImage(
+            imageData,
+            'JPEG',
+            margin,
+            position,
+            contentWidth,
+            imageHeight
         );
 
-        const totalPages = Math.ceil(
-            canvas.height / pageHeightPixels
-        );
+        heightLeft -= contentHeight;
 
-        console.log('📄 Total pages:', totalPages);
+        // Additional pages
+        while (heightLeft > 0) {
 
-        // Create a temporary canvas for each page
-        const pageCanvas = document.createElement('canvas');
-        const pageContext = pageCanvas.getContext('2d');
+            position = heightLeft - imageHeight + margin;
 
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = pageHeightPixels;
-
-        for (let page = 0; page < totalPages; page++) {
-
-            const sourceY = page * pageHeightPixels;
-
-            const sourceHeight = Math.min(
-                pageHeightPixels,
-                canvas.height - sourceY
-            );
-
-            // Resize canvas for last page
-            pageCanvas.width = canvas.width;
-            pageCanvas.height = sourceHeight;
-
-            // White background
-            pageContext.fillStyle = '#ffffff';
-            pageContext.fillRect(
-                0,
-                0,
-                pageCanvas.width,
-                pageCanvas.height
-            );
-
-            // Copy only this page's portion
-            pageContext.drawImage(
-                canvas,
-
-                0,
-                sourceY,
-                canvas.width,
-                sourceHeight,
-
-                0,
-                0,
-                canvas.width,
-                sourceHeight
-            );
-
-            const pageImage = pageCanvas.toDataURL(
-                'image/jpeg',
-                0.92
-            );
-
-            const pageImageHeight =
-                (sourceHeight / canvas.width) * usableWidth;
-
-            if (page > 0) {
-                pdf.addPage();
-            }
+            pdf.addPage();
 
             pdf.addImage(
-                pageImage,
+                imageData,
                 'JPEG',
                 margin,
-                margin,
-                usableWidth,
-                pageImageHeight,
-                undefined,
-                'FAST'
+                position,
+                contentWidth,
+                imageHeight
             );
 
-            console.log(
-                `📄 Added page ${page + 1} of ${totalPages}`
-            );
+            heightLeft -= contentHeight;
         }
+
+        console.log('💾 Saving PDF...');
 
         pdf.save('Executive_Communication_Report.pdf');
 
-        console.log('🎉 PDF downloaded successfully!');
+        console.log('🎉 PDF saved successfully!');
 
     } catch (error) {
 
-        console.error('❌ PDF generation failed:', error);
+        console.error('❌ COMPLETE PDF ERROR:', error);
 
         alert(
-            'PDF generation failed. Please check the browser console for details.'
+            'PDF generation failed. Open Console (F12) and check the error.'
         );
 
     } finally {
 
-        if (loadingMsg && loadingMsg.parentNode) {
-            loadingMsg.parentNode.removeChild(loadingMsg);
-        }
-
         if (btn) {
-            btn.textContent = originalText;
             btn.disabled = false;
-            btn.style.opacity = '1';
+            btn.innerHTML = originalText;
         }
     }
 }
-    // ============================================================
-    // INIT
-    // ============================================================
-    async function init() {
-        console.log('🚀 Initializing report...');
-
-        if (paymentId) {
-            sessionStorage.setItem('unlocked_' + submissionId, 'true');
-            if (window.history && window.history.replaceState) {
-                var newUrl = window.location.pathname + '?id=' + submissionId;
-                window.history.replaceState({}, document.title, newUrl);
-            }
-        }
-
-        if (sessionStorage.getItem('unlocked_' + submissionId) === 'true') {
-            isUnlocked = true;
-            var data = await fetchReportData();
-            if (data) {
-                hideVerificationOverlay();
-                renderReport(data);
-                await loadAllNarratives(submissionId);
-            }
-            return;
-        }
-
-        await verifyPaymentAndLoadReport();
-
-        var payBtn = document.getElementById('payButton');
-        if (payBtn) payBtn.addEventListener('click', initiatePayment);
-
-        var downloadBtn = document.getElementById('downloadButton');
-        if (downloadBtn) downloadBtn.addEventListener('click', downloadPDF);
-
-        document.querySelectorAll('.btn-download').forEach(function(btn) {
-            btn.addEventListener('click', downloadPDF);
-        });
-    }
-
     // ============================================================
     // START THE APP
     // ============================================================
