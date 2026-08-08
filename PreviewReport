@@ -1,1 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Executive Communication Tax Intelligence - Preview</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js">
+    </script>
 
+<style>
+/* ============================================================
+   ALL EXISTING CSS - COPY FROM YOUR FULL VERSION
+   ============================================================ */
+:root {
+    --teal: #00C4A7;
+    --teal-dark: #009B84;
+    --teal-light: #E6F9F5;
+    --navy: #0A0E1A;
+    --navy-light: #1A2236;
+    --gold: #F5A623;
+    --gold-light: #FFFBEB;
+    --white: #FFFFFF;
+    --gray-50: #F8FAFC;
+    --gray-100: #F3F4F6;
+    --gray-300: #D1D5DB;
+    --gray-500: #6B7280;
+    --gray-700: #374151;
+    --gray-900: #111827;
+    --red: #EF4444;
+    --green: #10B981;
+    --yellow: #F59E0B;
+    --orange: #F97316;
+    --purple: #8B5CF6;
+    --pink: #EC4899;
+    --shadow: 0 20px 60px rgba(0,0,0,0.15);
+    --shadow-light: 0 4px 20px rgba(0,0,0,0.06);
+    --radius: 20px;
+    --radius-sm: 10px;
+    --font: 'Inter', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font);
+    background: var(--gray-50);
+    color: var(--gray-900);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.report-wrapper {
+    max-width: 1100px;
+    width: 100%;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: relative;
+}
+
+/* ============================================================
+   STICKY PAYMENT OVERLAY - FLOATING
+   ============================================================ */
+.sticky-payment-overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, rgba(10, 14, 26, 0.8) 0%, var(--navy) 100%);
+    padding: 20px 30px;
+    z-index: 9999;
+    backdrop-filter: blur(12px);
+    border-top: 3px solid var(--teal);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+.sticky-payment-overlay .payment-content {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.sticky-payment-overlay .payment-content .lock-icon {
+    color: var(--gold);
+    font-size: 28px;
+}
+
+.sticky-payment-overlay .payment-content .payment-text {
+    color: var(--white);
+}
+
+.sticky-payment-overlay .payment-content .payment-text .title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.sticky-payment-overlay .payment-content .payment-text .sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+}
+
+.sticky-payment-overlay .payment-content .payment-text .highlight {
+    color: var(--teal);
+    font-weight: 700;
+}
+
+.sticky-payment-overlay .payment-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.sticky-payment-overlay .payment-actions .price {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--teal);
+}
+
+.sticky-payment-overlay .btn-pay-sticky {
+    background: var(--teal);
+    color: var(--white);
+    border: none;
+    padding: 14px 40px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 8px 32px rgba(0, 196, 167, 0.4);
+    white-space: nowrap;
+}
+
+.sticky-payment-overlay .btn-pay-sticky:hover {
+    background: var(--teal-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 196, 167, 0.5);
+}
+
+.sticky-payment-overlay .btn-pay-sticky i {
+    margin-right: 8px;
+}
+
+.sticky-payment-overlay .btn-pay-sticky:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Hide sticky payment when unlocked */
+.sticky-payment-overlay.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .sticky-payment-overlay {
+        padding: 16px 20px;
+        flex-direction: column;
+        text-align: center;
+    }
+    .sticky-payment-overlay .payment-content {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+    .sticky-payment-overlay .payment-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    .sticky-payment-overlay .btn-pay-sticky {
+        width: 100%;
+        padding: 12px 24px;
+        font-size: 15px;
+    }
+    .sticky-payment-overlay .payment-content .payment-text .title {
+        font-size: 15px;
+    }
+}
+
+/* ============================================================
+   BLUR STYLES
+   ============================================================ */
+.blurred-section {
+    filter: blur(8px);
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: filter 0.5s, opacity 0.5s;
+}
+
+.blurred-section .card-premium,
+.blurred-section .mri-card,
+.blurred-section .ring-item,
+.blurred-section .waterfall,
+.blurred-section .profile-bars,
+.blurred-section .dna-list,
+.blurred-section .cost-grid,
+.blurred-section .fix-grid,
+.blurred-section .learning-grid,
+.blurred-section .blueprint-container {
+    filter: blur(8px);
+}
+
+/* Don't blur the DNA chart itself */
+.blurred-section .dna-chart {
+    filter: none !important;
+}
+
+/* ============================================================
+   Remove blur from visible sections
+   ============================================================ */
+#page-cover,
+#page-mri,
+#page-dna .dna-chart {
+    filter: none !important;
+    user-select: auto !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+}
+
+/* Override blur for MRI page */
+#page-mri.blurred-section {
+    filter: none !important;
+    user-select: auto !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+}
+
+#page-mri.blurred-section .card-premium,
+#page-mri.blurred-section .mri-card {
+    filter: none !important;
+}
+
+/* ============================================================
+   COPY ALL OTHER EXISTING STYLES FROM YOUR FULL VERSION
+   ============================================================ */
+/* ... (copy all other styles from your full version) ... */
+
+/* Add padding at bottom for sticky overlay */
+.report-wrapper {
+    padding-bottom: 100px;
+}
+
+@media (max-width: 768px) {
+    .report-wrapper {
+        padding-bottom: 160px;
+    }
+}
+</style>
+</head>
+<body>
+
+    <div class="report-wrapper" id="reportContainer">
+
+        <!-- ============================================================
+        STICKY PAYMENT OVERLAY (FLOATING AT BOTTOM)
+        ============================================================ -->
+        <div class="sticky-payment-overlay" id="stickyPaymentOverlay">
+            <div class="payment-content">
+                <div class="lock-icon"><i class="fas fa-lock"></i></div>
+                <div class="payment-text">
+                    <div class="title">🔓 Unlock Your Complete Report</div>
+                    <div class="sub">Get full access to all <span class="highlight">18 pages</span> of personalized insights</div>
+                </div>
+            </div>
+            <div class="payment-actions">
+                <span class="price">₹999</span>
+                <button class="btn-pay-sticky" id="payButtonSticky">
+                    <i class="fas fa-unlock"></i> Unlock Now
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        STICKY NAV - SAME AS FULL VERSION
+        ============================================================ -->
+        <nav class="sticky-nav" id="stickyNav">
+            <div class="brand"><i class="fas fa-brain"></i> THE UNSPOKEN</div>
+            <div class="nav-links">
+                <a href="#page-cover"><span class="num">01</span> Cover</a>
+                <a href="#page-mri"><span class="num">02</span> MRI</a>
+                <a href="#page-tax"><span class="num">03</span> Tax</a>
+                <a href="#page-persona"><span class="num">04</span> Persona</a>
+                <a href="#page-scores"><span class="num">05</span> Scores</a>
+                <a href="#page-thinking"><span class="num">06</span> Thinking</a>
+                <a href="#page-structure"><span class="num">07</span> Structure</a>
+                <a href="#page-communication"><span class="num">08</span> Communication</a>
+                <a href="#page-understanding"><span class="num">09</span> Understanding</a>
+                <a href="#page-opportunity"><span class="num">10</span> Opportunity</a>
+                <a href="#page-dna"><span class="num">11</span> DNA</a>
+                <a href="#page-waterfall"><span class="num">12</span> Financial</a>
+                <a href="#page-profile"><span class="num">13</span> Profile</a>
+                <a href="#page-communication-tax"><span class="num">13.5</span> Tax™</a>
+                <a href="#page-cost"><span class="num">14</span> Cost</a>
+                <a href="#page-blueprint"><span class="num">15</span> Blueprint</a>
+                <a href="#page-fix"><span class="num">16</span> Why Can't Fix</a>
+                <a href="#page-learning"><span class="num">17</span> Learning Plan</a>
+                <a href="#page-next"><span class="num">18</span> Next</a>
+            </div>
+        </nav>
+
+        <!-- ============================================================
+        PAGE 1: COVER (FULLY VISIBLE)
+        ============================================================ -->
+        <section class="cover-page report-page" id="page-cover">
+            <div class="top-tag">Executive Intelligence · 2026</div>
+            <div class="main-title">
+                COMMUNICATION TAX<br />
+                <span>INTELLIGENCE</span>
+            </div>
+            <div class="sub-title">Executive Diagnostic</div>
+            <div class="divider-line"></div>
+            <div style="margin-top: 10px;">
+                <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.3);">
+                    Prepared Exclusively For
+                </div>
+                <div style="font-size: 32px; font-weight: 700; margin-top: 4px;" id="coverName">Loading...</div>
+                <div style="font-size: 18px; color: rgba(255,255,255,0.5);" id="coverRole">---</div>
+            </div>
+            <div style="margin-top: 20px; display: flex; gap: 30px; flex-wrap: wrap;">
+                <div>
+                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.2);">
+                        Report Date
+                    </div>
+                    <div style="font-size: 14px; font-weight: 600;" id="coverDate">---</div>
+                </div>
+                <div>
+                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.2);">
+                        Status
+                    </div>
+                    <div style="font-size: 14px; font-weight: 600; color: var(--teal);">CONFIDENTIAL</div>
+                </div>
+            </div>
+            <div class="confidential-tag">© The Unspoken · Communication Tax™ · Proprietary</div>
+        </section>
+
+        <!-- ============================================================
+        PAGE 2: MRI (FULLY VISIBLE - EXECUTIVE SUMMARY VISIBLE)
+        ============================================================ -->
+        <section class="report-page" id="page-mri">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-heart-pulse"></i></span>
+                <h2>Executive MRI</h2>
+                <span class="badge">One Glance</span>
+            </div>
+            <p style="color: var(--gray-500); margin-bottom: 16px; font-size: 15px;">Your communication health at a glance.</p>
+            
+            <!-- MRI Grid -->
+            <div class="mri-grid" id="mriGrid">
+                <div class="mri-card">
+                    <div class="mri-label">Overall Score</div>
+                    <div class="mri-value teal" id="mriScore">--%</div>
+                    <div class="mri-sub">Communication Intelligence</div>
+                </div>
+                <div class="mri-card">
+                    <div class="mri-label">Communication Tax</div>
+                    <div class="mri-value red" id="mriTax">--</div>
+                    <div class="mri-sub">Annual leakage</div>
+                </div>
+                <div class="mri-card">
+                    <div class="mri-label">Persona</div>
+                    <div class="mri-value" id="mriPersona" style="font-size:24px;">--</div>
+                    <div class="mri-sub">Communication style</div>
+                </div>
+                <div class="mri-card">
+                    <div class="mri-label">ROI Potential</div>
+                    <div class="mri-value gold" id="mriROI">--</div>
+                    <div class="mri-sub">If gaps are fixed</div>
+                </div>
+            </div>
+
+            <!-- Strength & Weakness Cards -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; border-left: 3px solid var(--red);">
+                    <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--red);">
+                        <i class="fas fa-exclamation-triangle"></i> Executive Blind Spot
+                    </div>
+                    <div style="font-weight: 600; font-size: 16px;" id="mriBiggestGap">--</div>
+                    <div style="font-size: 13px; color: var(--gray-500);">Your biggest opportunity for growth</div>
+                </div>
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; border-left: 3px solid var(--teal);">
+                    <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--teal);">
+                        <i class="fas fa-star"></i> Leadership Advantage
+                    </div>
+                    <div style="font-weight: 600; font-size: 16px;" id="mriHiddenStrength">--</div>
+                    <div style="font-size: 13px; color: var(--gray-500);">Your key strength to build on</div>
+                </div>
+            </div>
+
+            <!-- Executive Summary Card - FULLY VISIBLE -->
+            <div class="card-premium" style="border-left: 4px solid var(--teal);">
+                <div class="card-title"><i class="fas fa-file-alt" style="color: var(--teal);"></i> Executive Summary</div>
+                <p style="font-size: 15px; color: var(--gray-700); line-height: 1.8; margin-bottom: 16px;" id="summaryText">
+                    Loading your executive summary...
+                </p>
+                <div style="background: var(--teal-light); border-radius: var(--radius-sm); padding: 20px 24px; margin-top: 4px;">
+                    <h3 style="font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 8px;" id="summaryTitle">--</h3>
+                    <p style="font-size: 15px; color: var(--gray-700); line-height: 1.7; margin-bottom: 12px;" id="summaryInsight">--</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 12px; border-top: 1px solid rgba(0, 196, 167, 0.2);">
+                        <div>
+                            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--red); margin-bottom: 4px;">
+                                <i class="fas fa-exclamation-circle"></i> Blind Spot
+                            </div>
+                            <div style="font-size: 14px; color: var(--gray-700);" id="summaryBlindSpot">--</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--teal); margin-bottom: 4px;">
+                                <i class="fas fa-lightbulb"></i> Advantage
+                            </div>
+                            <div style="font-size: 14px; color: var(--gray-700);" id="summaryAdvantage">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+        PAGES 3-18: BLURRED CONTENT
+        ============================================================ -->
+        <!-- PAGE 3: TAX (BLURRED) -->
+        <section class="report-page blurred-section" id="page-tax">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-coins"></i></span>
+                <h2>Communication Tax</h2>
+                <span class="badge">The Real Cost</span>
+            </div>
+            <div class="tax-hero">
+                <div class="tax-label">Estimated Annual Communication Tax</div>
+                <div class="tax-amount" id="taxHeroAmount">--</div>
+                <div class="tax-breakdown">
+                    <span>≈ <span id="taxPerMonth">--</span> / month</span>
+                    <span>≈ <span id="taxPerDay">--</span> / day</span>
+                    <span>≈ <span id="taxPerHour">--</span> / hour</span>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;" id="taxBreakdownGrid">
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; text-align: center;">
+                    <div style="font-size: 12px; text-transform: uppercase; color: var(--gray-500); font-weight: 600;">Lost Interviews</div>
+                    <div style="font-size: 24px; font-weight: 800; color: var(--red);" id="taxInterviews">--</div>
+                </div>
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; text-align: center;">
+                    <div style="font-size: 12px; text-transform: uppercase; color: var(--gray-500); font-weight: 600;">Missed Promotions</div>
+                    <div style="font-size: 24px; font-weight: 800; color: var(--orange);" id="taxPromotions">--</div>
+                </div>
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; text-align: center;">
+                    <div style="font-size: 12px; text-transform: uppercase; color: var(--gray-500); font-weight: 600;">Lost Clients</div>
+                    <div style="font-size: 24px; font-weight: 800; color: var(--red);" id="taxClients">--</div>
+                </div>
+                <div style="background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px 20px; text-align: center;">
+                    <div style="font-size: 12px; text-transform: uppercase; color: var(--gray-500); font-weight: 600;">Team Friction</div>
+                    <div style="font-size: 24px; font-weight: 800; color: var(--yellow);" id="taxTeam">--</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+        PAGE 4-10: ALL BLURRED (Copy from full version with blurred-section class)
+        ============================================================ -->
+        <section class="report-page blurred-section" id="page-persona">
+            <div class="section-header"><span class="icon"><i class="fas fa-user-tag"></i></span><h2>Communication Maturity Journey</h2><span class="badge">Persona</span></div>
+            <div style="text-align: center; margin-bottom: 12px;">
+                <div style="font-size: 48px;" id="personaEmoji">🟢</div>
+                <div style="font-size: 28px; font-weight: 800;" id="personaName">--</div>
+                <div style="font-size: 15px; color: var(--gray-500); max-width: 500px; margin: 4px auto;" id="personaDesc">--</div>
+            </div>
+            <div class="persona-timeline" id="personaTimeline">
+                <span class="step"><span class="emoji">🔴</span> Unclear Thinker</span>
+                <span class="arrow">→</span>
+                <span class="step"><span class="emoji">🟠</span> Hidden Contributor</span>
+                <span class="arrow">→</span>
+                <span class="step"><span class="emoji">🟡</span> Emerging Communicator</span>
+                <span class="arrow">→</span>
+                <span class="step active" id="journeyCurrent"><span class="emoji">🟢</span> --</span>
+                <span class="arrow">→</span>
+                <span class="step"><span class="emoji">🟢</span> Influential Communicator</span>
+                <span class="arrow">→</span>
+                <span class="step"><span class="emoji">🟢</span> Strategic Influencer</span>
+                <div class="you-here">▼ YOU ARE HERE</div>
+            </div>
+        </section>
+
+        <!-- PAGE 5: COMPETENCY SCORES (BLURRED) -->
+        <section class="report-page blurred-section" id="page-scores">
+            <div class="section-header"><span class="icon"><i class="fas fa-chart-pie"></i></span><h2>Competency DNA</h2><span class="badge">5 Capabilities</span></div>
+            <div class="rings-grid" id="ringsGrid"></div>
+            <div class="card-premium" style="border-left: 4px solid var(--teal); margin-top: 8px;">
+                <div class="card-title">Key Insight</div>
+                <p style="font-size: 15px;" id="insightText">Loading insights...</p>
+            </div>
+        </section>
+
+        <!-- ============================================================
+        PAGE 11: DNA (CHART VISIBLE, LIST BLURRED)
+        ============================================================ -->
+        <section class="report-page" id="page-dna">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-dna"></i></span>
+                <h2>Executive Communication DNA</h2>
+                <span class="badge">Radar</span>
+            </div>
+            <div class="dna-grid">
+                <div class="dna-chart">
+                    <canvas id="dnaChart"></canvas>
+                </div>
+                <div class="dna-list blurred-section" id="dnaList"></div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+        PAGES 12-18: BLURRED (Copy from full version)
+        ============================================================ -->
+        <section class="report-page blurred-section" id="page-waterfall">
+            <div class="section-header"><span class="icon"><i class="fas fa-chart-bar"></i></span><h2>Financial Impact</h2><span class="badge">Waterfall</span></div>
+            <div class="waterfall" id="waterfallContainer"></div>
+        </section>
+
+        <section class="report-page blurred-section" id="page-profile">
+            <div class="section-header"><span class="icon"><i class="fas fa-user-circle"></i></span><h2>Your Executive Communication Profile™</h2><span class="badge">The Diagnosis</span></div>
+            <div class="profile-bars" id="profileBars">
+                <div class="bar-item"><div class="bar-label"><span>Thinking</span><span class="bar-score" id="profileThinking">--</span></div><div class="bar-track"><div class="bar-fill teal" id="profileThinkingBar"></div></div></div>
+                <div class="bar-item"><div class="bar-label"><span>Structure</span><span class="bar-score" id="profileStructure">--</span></div><div class="bar-track"><div class="bar-fill gold" id="profileStructureBar"></div></div></div>
+                <div class="bar-item"><div class="bar-label"><span>Translation</span><span class="bar-score" id="profileTranslation">--</span></div><div class="bar-track"><div class="bar-fill orange" id="profileTranslationBar"></div></div></div>
+                <div class="bar-item"><div class="bar-label"><span>Presence</span><span class="bar-score" id="profilePresence">--</span></div><div class="bar-track"><div class="bar-fill purple" id="profilePresenceBar"></div></div></div>
+                <div class="bar-item"><div class="bar-label"><span>Influence</span><span class="bar-score" id="profileInfluence">--</span></div><div class="bar-track"><div class="bar-fill red" id="profileInfluenceBar"></div></div></div>
+            </div>
+        </section>
+
+        <!-- PAGE 13.5: COMMUNICATION TAX™ (BLURRED) -->
+        <section class="report-page blurred-section" id="page-communication-tax">
+            <div class="section-header"><span class="icon"><i class="fas fa-calculator"></i></span><h2>Your Communication Tax™</h2><span class="badge">The Truth</span></div>
+            <div style="max-width: 800px; margin: 0 auto; padding: 20px 0;">
+                <div style="background: var(--navy); border-radius: var(--radius); padding: 40px 36px; color: var(--white);">
+                    <p style="font-size: 18px; line-height: 1.8; color: var(--gray-300);">Your Communication Tax is <strong style="color: var(--teal);">not a reflection of your intelligence...</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 14-18: BLURRED -->
+        <section class="report-page blurred-section" id="page-cost">
+            <div class="section-header"><span class="icon"><i class="fas fa-calculator"></i></span><h2>Cost of Doing Nothing</h2><span class="badge">The Real Price</span></div>
+            <div class="cost-grid"><div class="cost-negative"><div class="cost-title"><i class="fas fa-exclamation-circle"></i> If Nothing Changes...</div></div><div class="cost-positive"><div class="cost-title"><i class="fas fa-rocket"></i> Imagine If...</div></div></div>
+        </section>
+
+        <section class="report-page blurred-section" id="page-blueprint">
+            <div class="section-header"><span class="icon"><i class="fas fa-map-signs"></i></span><h2>Your Growth Blueprint™</h2><span class="badge">The Journey</span></div>
+            <div class="blueprint-container"><div class="blueprint-title">Your Transformation Roadmap™</div></div>
+        </section>
+
+        <section class="report-page blurred-section" id="page-fix">
+            <div class="section-header"><span class="icon"><i class="fas fa-question-circle"></i></span><h2>Why You Can't Fix This Alone</h2><span class="badge">The Reality</span></div>
+            <div class="fix-grid"><div class="fix-traditional"><div class="fix-title">Every conversation follows an invisible sequence.</div></div><div class="fix-gaps"><div class="fix-title">Your real gaps</div></div></div>
+        </section>
+
+        <section class="report-page blurred-section" id="page-learning">
+            <div class="section-header"><span class="icon"><i class="fas fa-graduation-cap"></i></span><h2>Your Personalized Learning Plan</h2><span class="badge">5 of 100</span></div>
+            <div class="learning-grid"><div class="learning-card recommended"><div class="learning-name">Executive Headline™</div></div></div>
+        </section>
+
+        <!-- PAGE 18: NEXT (PARTIALLY VISIBLE WITH PAYMENT CTA) -->
+        <section class="report-page" id="page-next">
+            <div class="section-header">
+                <span class="icon"><i class="fas fa-flag-checkered"></i></span>
+                <h2>Recommended Growth Journey</h2>
+                <span class="badge">Next Steps</span>
+            </div>
+            <div class="program-card">
+                <div class="prog-name">Professional Accelerator</div>
+                <div class="prog-price"><span>₹9,999</span> — 6 Weeks</div>
+                <div class="prog-grid">
+                    <div class="pg-item"><div class="pg-label">Current Score</div><div class="pg-value" id="progCurrentScore">--</div></div>
+                    <div class="pg-item"><div class="pg-label">Projected Score</div><div class="pg-value" id="progProjectedScore">--</div></div>
+                    <div class="pg-item"><div class="pg-label">Tax Saved</div><div class="pg-value" id="progTaxSaved">--</div></div>
+                    <div class="pg-item"><div class="pg-label">ROI</div><div class="pg-value" id="progROI">--</div></div>
+                </div>
+            </div>
+            <div style="text-align: center; font-size: 20px; font-weight: 800; color: var(--teal); padding: 16px 0;">
+                Your value is worth millions. Don't lose lakhs in translation.
+            </div>
+        </section>
+
+        <!-- ============================================================
+        FOOTER
+        ============================================================ -->
+        <div class="report-footer">
+            <div class="brand"><i class="fas fa-brain"></i> THE UNSPOKEN</div>
+            <div style="margin-top: 4px;">© The Unspoken. Communication Tax™ is a proprietary framework.</div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================
+    JAVASCRIPT - SAME AS FULL VERSION WITH PAYMENT HANDLING
+    ============================================================ -->
+    <script>
+    // ============================================================
+    // CONFIGURATION
+    // ============================================================
+    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyz95HXs81Z9dyfkOrGpiSChjX-1ON3UhRI4AvkT2lAWvDJM2YhBd2h-lGtSRrs5WJr/exec';
+    var RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID';
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var submissionId = urlParams.get('id');
+    var paymentId = urlParams.get('payment_id');
+
+    var reportData = null;
+    var isUnlocked = false;
+    var dnaChart = null;
+
+    // ============================================================
+    // HELPER FUNCTIONS (Copy from full version)
+    // ============================================================
+    function formatNumber(num) {
+        if (!num) return '0';
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function getScoreColor(score) {
+        if (score >= 70) return '#00C4A7';
+        if (score >= 50) return '#F59E0B';
+        return '#EF4444';
+    }
+
+    function parsePct(value) {
+        if (!value) return 0;
+        if (typeof value === 'string') {
+            var cleaned = value.replace('%', '').trim();
+            return parseFloat(cleaned) || 0;
+        }
+        return Number(value) || 0;
+    }
+
+    // ============================================================
+    // CHECK UNLOCK STATUS
+    // ============================================================
+    function checkUnlockStatus() {
+        if (paymentId) {
+            isUnlocked = true;
+            sessionStorage.setItem('unlocked_' + submissionId, 'true');
+            return true;
+        }
+        if (sessionStorage.getItem('unlocked_' + submissionId) === 'true') {
+            isUnlocked = true;
+            return true;
+        }
+        return false;
+    }
+
+    // ============================================================
+    // TOGGLE PAYMENT OVERLAY AND BLUR
+    // ============================================================
+    function togglePaymentOverlay() {
+        var overlay = document.getElementById('stickyPaymentOverlay');
+        if (isUnlocked) {
+            overlay.classList.add('hidden');
+            document.querySelectorAll('.blurred-section').forEach(function(el) {
+                el.classList.remove('blurred-section');
+            });
+        } else {
+            overlay.classList.remove('hidden');
+        }
+    }
+
+    // ============================================================
+    // FETCH REPORT DATA
+    // ============================================================
+    async function fetchReportData() {
+        if (!submissionId) {
+            document.getElementById('reportContainer').innerHTML =
+                '<div style="padding:60px 20px;text-align:center;"><h2 style="color:#991B1B;">⚠️ Missing Submission ID</h2><p style="color:var(--gray-500);">Please add <code>?id=YOUR_SUBMISSION_ID</code> to the URL.</p></div>';
+            return null;
+        }
+
+        try {
+            var url = APPS_SCRIPT_URL + '?action=getReportData&id=' + encodeURIComponent(submissionId);
+            var response = await fetch(url);
+            var result = await response.json();
+
+            if (result.success && result.data) {
+                return result.data;
+            } else {
+                throw new Error(result.error || 'Report not found');
+            }
+        } catch (error) {
+            document.getElementById('reportContainer').innerHTML =
+                '<div style="padding:60px 20px;text-align:center;"><h2 style="color:#991B1B;">⚠️ Error Loading Report</h2><p style="color:var(--gray-500);">' +
+                error.message + '</p></div>';
+            return null;
+        }
+    }
+
+    // ============================================================
+    // DRAW RING - Copy from full version
+    // ============================================================
+    function drawRing(canvasId, score, color) {
+        var canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var cx = 60, cy = 60, radius = 48;
+        var startAngle = -Math.PI / 2;
+        var endAngle = startAngle + (score / 100) * 2 * Math.PI;
+
+        ctx.clearRect(0, 0, 120, 120);
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#F3F4F6';
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, startAngle, endAngle);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        ctx.fillStyle = color;
+        ctx.font = 'bold 18px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(score + '%', cx, cy);
+    }
+
+    // ============================================================
+    // RENDER RINGS - Copy from full version
+    // ============================================================
+    function renderRings(data) {
+        var container = document.getElementById('ringsGrid');
+        if (!container) return;
+        container.innerHTML = '';
+
+        var competencies = [
+            { id: 'Thinking', score: parsePct(data.thinkingPct), level: data.thinkingLevel || 'Proficient' },
+            { id: 'Structure', score: parsePct(data.structurePct), level: data.structureLevel || 'Proficient' },
+            { id: 'Communication', score: parsePct(data.communicationPct), level: data.communicationLevel || 'Needs Attention' },
+            { id: 'Understanding', score: parsePct(data.understandingPct), level: data.understandingLevel || 'Needs Attention' },
+            { id: 'Opportunity', score: parsePct(data.opportunityPct), level: data.opportunityLevel || 'Proficient' }
+        ];
+
+        competencies.forEach(function(comp) {
+            var color = getScoreColor(comp.score);
+            var div = document.createElement('div');
+            div.className = 'ring-item';
+            div.style.textAlign = 'center';
+            div.innerHTML =
+                `<canvas id="ringCanvas_${comp.id}" width="120" height="120"></canvas>
+                <div style="font-weight:700;font-size:14px;margin-top:6px;color:#0B0F1A;">${comp.id}</div>
+                <div style="font-weight:700;font-size:16px;color:${color};">${comp.score}%</div>
+                <div style="font-size:12px;color:#6B7280;">${comp.level}</div>`;
+            container.appendChild(div);
+            setTimeout(function() {
+                drawRing('ringCanvas_' + comp.id, comp.score, color);
+            }, 150);
+        });
+    }
+
+    // ============================================================
+    // RENDER PROFILE BARS - Copy from full version
+    // ============================================================
+    function renderProfileBars(data) {
+        var thinking = parsePct(data.thinkingPct);
+        var structure = parsePct(data.structurePct);
+        var communication = parsePct(data.communicationPct);
+        var understanding = parsePct(data.understandingPct);
+        var opportunity = parsePct(data.opportunityPct);
+
+        var profileData = {
+            thinking: thinking,
+            structure: structure,
+            translation: communication,
+            presence: Math.round((understanding + communication) / 2),
+            influence: Math.round((opportunity + communication) / 2)
+        };
+
+        document.getElementById('profileThinking').textContent = profileData.thinking + '%';
+        document.getElementById('profileStructure').textContent = profileData.structure + '%';
+        document.getElementById('profileTranslation').textContent = profileData.translation + '%';
+        document.getElementById('profilePresence').textContent = profileData.presence + '%';
+        document.getElementById('profileInfluence').textContent = profileData.influence + '%';
+
+        setTimeout(function() {
+            document.getElementById('profileThinkingBar').style.width = profileData.thinking + '%';
+            document.getElementById('profileStructureBar').style.width = profileData.structure + '%';
+            document.getElementById('profileTranslationBar').style.width = profileData.translation + '%';
+            document.getElementById('profilePresenceBar').style.width = profileData.presence + '%';
+            document.getElementById('profileInfluenceBar').style.width = profileData.influence + '%';
+        }, 300);
+    }
+
+    // ============================================================
+    // RENDER DNA - Copy from full version
+    // ============================================================
+    function renderDNA(data) {
+        var labels = ['Strategic Thinking', 'Executive Presence', 'Influence', 'Persuasion', 'Confidence', 'Listening', 'Adaptability'];
+
+        var thinkingPct = parsePct(data.thinkingPct);
+        var structurePct = parsePct(data.structurePct);
+        var communicationPct = parsePct(data.communicationPct);
+        var understandingPct = parsePct(data.understandingPct);
+        var opportunityPct = parsePct(data.opportunityPct);
+
+        var scores = [
+            thinkingPct || 75,
+            Math.min(100, (communicationPct || 54) + 10),
+            Math.min(100, (opportunityPct || 75) - 5),
+            Math.min(100, (communicationPct || 54) + 4),
+            Math.min(100, (structurePct || 70) + 5),
+            Math.min(100, (understandingPct || 58) + 12),
+            Math.min(100, (thinkingPct || 75) - 8)
+        ];
+
+        var listContainer = document.getElementById('dnaList');
+        if (listContainer) {
+            listContainer.innerHTML = '';
+            var dnaItems = [
+                { label: 'Strategic Thinking', value: scores[0] },
+                { label: 'Executive Presence', value: scores[1] },
+                { label: 'Influence', value: scores[2] },
+                { label: 'Persuasion', value: scores[3] },
+                { label: 'Confidence', value: scores[4] },
+                { label: 'Listening', value: scores[5] },
+                { label: 'Adaptability', value: scores[6] }
+            ];
+            dnaItems.forEach(function(item) {
+                var color = getScoreColor(item.value);
+                var div = document.createElement('div');
+                div.className = 'dna-item';
+                div.innerHTML =
+                    '<div class="dna-label">' + item.label + '</div>' +
+                    '<div class="dna-value" style="color:' + color + ';">' + item.value + '%</div>';
+                listContainer.appendChild(div);
+            });
+        }
+
+        var ctx = document.getElementById('dnaChart');
+        if (!ctx) return;
+        if (dnaChart) dnaChart.destroy();
+
+        dnaChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Executive Communication DNA',
+                    data: scores,
+                    backgroundColor: 'rgba(0, 196, 167, 0.15)',
+                    borderColor: '#00C4A7',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#00C4A7',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 100,
+                        ticks: { stepSize: 20, backdropColor: 'transparent' },
+                        grid: { color: 'rgba(0,0,0,0.06)' },
+                        angleLines: { color: 'rgba(0,0,0,0.06)' },
+                        pointLabels: { font: { size: 10, family: 'Inter' }, color: '#6B7280' }
+                    }
+                }
+            }
+        });
+    }
+
+    // ============================================================
+    // RENDER WATERFALL - Copy from full version
+    // ============================================================
+    function renderWaterfall(data) {
+        var container = document.getElementById('waterfallContainer');
+        if (!container) return;
+
+        var communication = parsePct(data.communicationPct);
+        var understanding = parsePct(data.understandingPct);
+        var opportunity = parsePct(data.opportunityPct);
+        var thinking = parsePct(data.thinkingPct);
+        var structure = parsePct(data.structurePct);
+
+        var items = [
+            { label: 'Communication', value: Math.max(0, 60 - communication) * 100000, color: '#EF4444' },
+            { label: 'Opportunity', value: Math.max(0, 60 - opportunity) * 150000, color: '#F97316' },
+            { label: 'Understanding', value: Math.max(0, 60 - understanding) * 50000, color: '#F59E0B' },
+            { label: 'Thinking', value: Math.max(0, 60 - thinking) * 0, color: '#00C4A7' },
+            { label: 'Structure', value: Math.max(0, 60 - structure) * 0, color: '#10B981' }
+        ];
+
+        var total = 0;
+        items.forEach(function(item) { total += item.value; });
+
+        if (total === 0) {
+            container.innerHTML = '<div style="text-align:center;padding:20px;color:#6B7280;">✅ No significant tax leakage detected.</div>';
+            return;
+        }
+
+        var maxVal = Math.max(total, 1);
+        var html = '';
+
+        items.forEach(function(item) {
+            if (item.value > 0) {
+                var pct = (item.value / maxVal) * 100;
+                html +=
+                    '<div class="wf-row">' +
+                    '<span class="wf-label">' + item.label + '</span>' +
+                    '<div class="wf-bar"><div class="wf-fill" style="width:' + Math.min(pct, 100) + '%;background:' + item.color + ';"></div></div>' +
+                    '<span class="wf-amount" style="color:' + item.color + ';">₹' + formatNumber(item.value) + '</span>' +
+                    '</div>';
+            }
+        });
+
+        html +=
+            '<div class="wf-total">' +
+            '<span>TOTAL ANNUAL TAX</span>' +
+            '<span class="wf-total-amount">₹' + formatNumber(total) + '</span>' +
+            '</div>';
+
+        container.innerHTML = html;
+    }
+
+    // ============================================================
+    // RENDER REPORT - MAIN FUNCTION
+    // ============================================================
+    function renderReport(data) {
+        console.log('🔍 renderReport START');
+        reportData = data;
+
+        var thinking = parsePct(data.thinkingPct);
+        var structure = parsePct(data.structurePct);
+        var communication = parsePct(data.communicationPct);
+        var understanding = parsePct(data.understandingPct);
+        var opportunity = parsePct(data.opportunityPct);
+        var ciScore = parsePct(data.ciScore);
+        var annualTax = data.annualTax || 700000;
+
+        // ---- COVER ----
+        document.getElementById('coverName').textContent = data.name || 'Executive';
+        document.getElementById('coverRole').textContent = data.role || 'Professional';
+        document.getElementById('coverDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        // ---- MRI ----
+        document.getElementById('mriScore').textContent = ciScore + '%';
+        document.getElementById('mriTax').textContent = '₹' + (annualTax / 100000).toFixed(1) + ' Lakh';
+        document.getElementById('mriPersona').textContent = data.persona || 'The Articulator';
+        document.getElementById('mriROI').textContent = (ciScore > 50 ? (100 / ciScore).toFixed(1) : '2.0') + 'x';
+
+        // ---- EXECUTIVE BLIND SPOT & LEADERSHIP ADVANTAGE ----
+        var competencies = [
+            { name: 'Thinking', score: parsePct(data.thinkingPct) },
+            { name: 'Structure', score: parsePct(data.structurePct) },
+            { name: 'Communication', score: parsePct(data.communicationPct) },
+            { name: 'Understanding', score: parsePct(data.understandingPct) },
+            { name: 'Opportunity', score: parsePct(data.opportunityPct) }
+        ];
+
+        var weakest = competencies.reduce(function(a, b) { return a.score < b.score ? a : b; });
+        var highest = competencies.reduce(function(a, b) { return a.score > b.score ? a : b; });
+
+        document.getElementById('mriBiggestGap').textContent = weakest.name + ' (' + weakest.score + '%)';
+        document.getElementById('mriHiddenStrength').textContent = highest.name + ' (' + highest.score + '%)';
+
+        // ---- SUMMARY ----
+        function getPercentile(score) {
+            if (score >= 91) return '97th';
+            if (score >= 85) return '93rd';
+            if (score >= 80) return '88th';
+            if (score >= 75) return '82nd';
+            if (score >= 70) return '74th';
+            if (score >= 65) return '65th';
+            if (score >= 60) return '55th';
+            if (score >= 55) return '45th';
+            if (score >= 50) return '35th';
+            if (score >= 40) return '20th';
+            if (score >= 30) return '10th';
+            return '5th';
+        }
+
+        var percentile = getPercentile(ciScore);
+        var taxInLakhs = (annualTax / 100000).toFixed(1);
+        var summaryParts = [];
+
+        summaryParts.push('Your Communication Tax Intelligence places you above the ' + percentile + ' percentile of working professionals.');
+        summaryParts.push('However, your current communication patterns are estimated to reduce your professional impact by approximately ₹' + taxInLakhs + ' Lakhs annually.');
+
+        if (thinking > communication + 15) {
+            summaryParts.push('Your thinking quality is significantly higher than your translation ability.');
+        } else if (thinking > communication + 5) {
+            summaryParts.push('Your thinking quality is higher than your translation ability.');
+        } else if (communication > thinking + 5) {
+            summaryParts.push('Your translation ability is stronger than your thinking clarity.');
+        } else {
+            summaryParts.push('Your thinking and translation abilities are well aligned.');
+        }
+
+        if (communication < 50) {
+            summaryParts.push('People significantly underestimate your expertise.');
+        } else if (communication < 65) {
+            summaryParts.push('People sometimes miss the full extent of your expertise.');
+        } else if (communication < 80) {
+            summaryParts.push('Your expertise is generally recognised but could be amplified.');
+        } else {
+            summaryParts.push('Your expertise comes through clearly and consistently.');
+        }
+
+        if (annualTax > 500000) {
+            summaryParts.push('The good news? This is fixable in 6 weeks.');
+        } else if (annualTax > 200000) {
+            summaryParts.push('The good news? This is fixable in 4 weeks with focused effort.');
+        } else {
+            summaryParts.push('The best part? This is completely fixable.');
+        }
+
+        document.getElementById('summaryText').textContent = summaryParts.join(' ');
+
+        // ---- EXECUTIVE SUMMARY ----
+        var executiveSummary = data.executiveSummary || {};
+        if (executiveSummary.statement) {
+            var summaryTitle = executiveSummary.executiveEdge + ' + ' + executiveSummary.blindSpot;
+            document.getElementById('summaryTitle').textContent = summaryTitle;
+            document.getElementById('summaryInsight').textContent = executiveSummary.statement;
+            document.getElementById('summaryBlindSpot').textContent = 'Your ' + executiveSummary.blindSpot + ' is your biggest opportunity for growth.';
+            document.getElementById('summaryAdvantage').textContent = 'Your ' + executiveSummary.executiveEdge + ' is your greatest strength.';
+        }
+
+        // ---- TAX ----
+        var perMonth = Math.round(annualTax / 12);
+        var perDay = Math.round(annualTax / 365);
+        var perHour = Math.round(annualTax / (365 * 8));
+        document.getElementById('taxHeroAmount').textContent = '₹' + formatNumber(annualTax);
+        document.getElementById('taxPerMonth').textContent = '₹' + formatNumber(perMonth);
+        document.getElementById('taxPerDay').textContent = '₹' + formatNumber(perDay);
+        document.getElementById('taxPerHour').textContent = '₹' + formatNumber(perHour);
+        document.getElementById('taxInterviews').textContent = '₹' + formatNumber(Math.round(annualTax * 0.25));
+        document.getElementById('taxPromotions').textContent = '₹' + formatNumber(Math.round(annualTax * 0.15));
+        document.getElementById('taxClients').textContent = '₹' + formatNumber(Math.round(annualTax * 0.5));
+        document.getElementById('taxTeam').textContent = '₹' + formatNumber(Math.round(annualTax * 0.1));
+
+        // ---- PERSONA ----
+        var persona = data.persona || 'The Articulator';
+        document.getElementById('personaEmoji').textContent = '🟢';
+        document.getElementById('personaName').textContent = persona;
+        document.getElementById('personaDesc').textContent = "You're clear and confident. Some gaps in translation are costing you momentum.";
+        document.getElementById('journeyCurrent').innerHTML = '<span class="emoji">🟢</span> ' + persona;
+        document.getElementById('whereYouAre').textContent = persona;
+
+        // ---- RINGS ----
+        renderRings(data);
+
+        // ---- PROFILE BARS ----
+        renderProfileBars(data);
+
+        // ---- DNA ----
+        renderDNA(data);
+
+        // ---- WATERFALL ----
+        renderWaterfall(data);
+
+        // ---- INSIGHT ----
+        document.getElementById('insightText').innerHTML =
+            'Your highest score is <strong>' + (data.highestCompetency || 'Thinking') +
+            '</strong> — build on this. Your lowest score is <strong>' + (data.weakestCompetency ||
+                'Communication') + '</strong> — fix this first.';
+
+        // ---- PROGRAM CARD ----
+        document.getElementById('progCurrentScore').textContent = ciScore + '%';
+
+        var projectedScore = data.projectedScore || '0%';
+        if (typeof projectedScore === 'number') {
+            projectedScore = Math.round(projectedScore * 100) + '%';
+        }
+        document.getElementById('progProjectedScore').textContent = projectedScore;
+
+        var taxSaved = data.communicationTaxSaved || '₹0';
+        document.getElementById('progTaxSaved').textContent = taxSaved;
+
+        var roi = data.roi || '0X';
+        document.getElementById('progROI').textContent = roi;
+
+        // ---- CHECK UNLOCK STATUS ----
+        checkUnlockStatus();
+        togglePaymentOverlay();
+
+        console.log('✅ renderReport COMPLETE');
+    }
+
+    // ============================================================
+    // INITIATE PAYMENT
+    // ============================================================
+    function initiatePayment() {
+        if (!RAZORPAY_KEY_ID || RAZORPAY_KEY_ID === 'YOUR_RAZORPAY_KEY_ID') {
+            alert('Payment system is being configured. Please contact support.');
+            return;
+        }
+
+        var payBtn = document.getElementById('payButtonSticky');
+        payBtn.disabled = true;
+        payBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+        var options = {
+            key: RAZORPAY_KEY_ID,
+            amount: 99900,
+            currency: 'INR',
+            name: 'The Unspoken',
+            description: 'Communication Tax™ Full Report',
+            prefill: { email: reportData ? reportData.email : '' },
+            notes: { submissionId: submissionId },
+            handler: function(response) {
+                window.location.href = window.location.pathname + '?id=' + submissionId + '&payment_id=' + response.razorpay_payment_id;
+            },
+            modal: {
+                ondismiss: function() {
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '<i class="fas fa-unlock"></i> Unlock Now';
+                }
+            }
+        };
+
+        try {
+            var rzp = new Razorpay(options);
+            rzp.open();
+        } catch (error) {
+            console.error('Payment error:', error);
+            alert('Payment system error. Please try again.');
+            payBtn.disabled = false;
+            payBtn.innerHTML = '<i class="fas fa-unlock"></i> Unlock Now';
+        }
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    async function init() {
+        console.log('🚀 Initializing preview report...');
+
+        if (paymentId) {
+            sessionStorage.setItem('unlocked_' + submissionId, 'true');
+            if (window.history && window.history.replaceState) {
+                var newUrl = window.location.pathname + '?id=' + submissionId;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        }
+
+        var data = await fetchReportData();
+        if (data) {
+            renderReport(data);
+        }
+
+        var payBtn = document.getElementById('payButtonSticky');
+        if (payBtn) payBtn.addEventListener('click', initiatePayment);
+    }
+
+    // ============================================================
+    // START THE APP
+    // ============================================================
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    // ============================================================
+    // EXPOSE GLOBALLY
+    // ============================================================
+    window.initiatePayment = initiatePayment;
+</script>
+</body>
+</html>
