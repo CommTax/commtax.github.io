@@ -2342,41 +2342,42 @@ body {
         var roi = data.roi || '0X';
         document.getElementById('progROI').textContent = roi;
 
-    // ⭐ FIX: Update badge elements safely
-    var badgeElements = {
-        'thinkingBadge': data.thinkingLevel || 'Proficient',
-        'structureBadge': data.structureLevel || 'Proficient',
-        'communicationBadge': data.communicationLevel || 'Needs Attention',
-        'understandingBadge': data.understandingLevel || 'Needs Attention',
-        'opportunityBadge': data.opportunityLevel || 'Proficient'
-    };
-    
-    for (var badgeId in badgeElements) {
-        var el = document.getElementById(badgeId);
-        if (el) {
-            el.textContent = badgeElements[badgeId];
+        // ---- BADGE ELEMENTS (Safely update if they exist) ----
+        var badgeElements = {
+            'thinkingBadge': data.thinkingLevel || 'Proficient',
+            'structureBadge': data.structureLevel || 'Proficient',
+            'communicationBadge': data.communicationLevel || 'Needs Attention',
+            'understandingBadge': data.understandingLevel || 'Needs Attention',
+            'opportunityBadge': data.opportunityLevel || 'Proficient'
+        };
+        
+        for (var badgeId in badgeElements) {
+            var el = document.getElementById(badgeId);
+            if (el) {
+                el.textContent = badgeElements[badgeId];
+            }
         }
-    }
+
+        // ---- UPDATE CENTRAL PAYMENT OVERLAY PREVIEW VALUES ----
+        var previewTaxSaved = document.getElementById('previewTaxSaved');
+        var previewROI = document.getElementById('previewROI');
+        
+        if (previewTaxSaved) {
+            var taxSavedValue = data.communicationTaxSaved || '₹0';
+            previewTaxSaved.textContent = taxSavedValue;
+        }
+               
+        if (previewROI) {
+            var roiValue = data.roi || '0X';
+            previewROI.textContent = roiValue;
+        }
+
         // ---- CHECK UNLOCK STATUS ----
         checkUnlockStatus();
         togglePaymentBar();
 
         console.log('✅ renderReport COMPLETE');
-    
-            // ---- UPDATE CENTRAL PAYMENT OVERLAY PREVIEW VALUES ----
-    var previewTaxSaved = document.getElementById('previewTaxSaved');
-    var previewROI = document.getElementById('previewROI');
-    
-    if (previewTaxSaved) {
-        var taxSaved = data.communicationTaxSaved || '₹0';
-        previewTaxSaved.textContent = taxSaved;
     }
-           
-    if (previewROI) {
-        var roi = data.roi || '0X';
-        previewROI.textContent = roi;
-    }
-        }
 
     // ============================================================
     // INITIATE PAYMENT
@@ -2387,9 +2388,12 @@ body {
             return;
         }
 
-        var payBtn = document.getElementById('payButtonSticky');
-        payBtn.disabled = true;
-        payBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        // Disable ALL payment buttons
+        var allPayButtons = document.querySelectorAll('.btn-unlock, .btn-pay-central');
+        allPayButtons.forEach(function(btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        });
 
         var options = {
             key: RAZORPAY_KEY_ID,
@@ -2397,15 +2401,21 @@ body {
             currency: 'INR',
             name: 'The Unspoken',
             description: 'Communication Tax™ Full Report',
-            prefill: { email: reportData ? reportData.email : '' },
-            notes: { submissionId: submissionId },
+            prefill: { 
+                email: reportData ? reportData.email : '' 
+            },
+            notes: { 
+                submissionId: submissionId 
+            },
             handler: function(response) {
                 window.location.href = 'ReportNew.html?id=' + submissionId + '&payment_id=' + response.razorpay_payment_id;
             },
             modal: {
                 ondismiss: function() {
-                    payBtn.disabled = false;
-                    payBtn.innerHTML = '<i class="fas fa-unlock"></i> Unlock Now';
+                    allPayButtons.forEach(function(btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-unlock"></i> Unlock Now';
+                    });
                 }
             }
         };
@@ -2416,12 +2426,22 @@ body {
         } catch (error) {
             console.error('Payment error:', error);
             alert('Payment system error. Please try again.');
-            payBtn.disabled = false;
-            payBtn.innerHTML = '<i class="fas fa-unlock"></i> Unlock Now';
+            allPayButtons.forEach(function(btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-unlock"></i> Unlock Now';
+            });
         }
     }
 
-        // ============================================================
+    // ============================================================
+    // DOWNLOAD PDF
+    // ============================================================
+    function downloadPDF() {
+        alert('Download functionality will be available after payment.');
+        // You can add the full PDF download logic here
+    }
+
+    // ============================================================
     // INIT
     // ============================================================
     async function init() {
@@ -2478,6 +2498,7 @@ body {
     // EXPOSE GLOBALLY
     // ============================================================
     window.initiatePayment = initiatePayment;
-    </script>
+    window.downloadPDF = downloadPDF;
+   </script>
 </body>
 </html>
