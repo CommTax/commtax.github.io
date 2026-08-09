@@ -787,6 +787,62 @@
             background: #1d4ed8;
         }
 
+                /* ============================================================ */
+        /* PRICING - ADDITIONAL STYLES (Keep existing, add these)       */
+        /* ============================================================ */
+
+        /* Button disabled state */
+        .pricing-card .btn-pricing:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Primary button (Blueprint - Razorpay) with shadow */
+        .pricing-card .btn-pricing.primary {
+            background: #2563eb;
+            box-shadow: 0 4px 16px -6px rgba(37, 99, 235, 0.4);
+        }
+
+        .pricing-card .btn-pricing.primary:hover {
+            background: #1d4ed8;
+            box-shadow: 0 8px 24px -6px rgba(37, 99, 235, 0.5);
+        }
+
+        /* Regular link button (Diagnosis - Tally) */
+        /* This inherits from existing .btn-pricing */
+        .pricing-card .btn-pricing:not(.primary) {
+            background: #0f172a;
+        }
+
+        .pricing-card .btn-pricing:not(.primary):hover {
+            background: #1e293b;
+        }
+
+        /* Make sure anchor tags behave like buttons */
+        .pricing-card .btn-pricing {
+            text-align: center;
+            text-decoration: none;
+        }
+
+        /* Responsive fine-tuning */
+        @media (max-width: 600px) {
+            .pricing-card .btn-pricing {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .pricing-card .btn-pricing {
+                font-size: 13px;
+                padding: 8px;
+            }
+            .pricing-card .plan-price {
+                font-size: 26px;
+            }
+        }
+
         /* ============================================================ */
         /* SECTION 7: GUARANTEE                                         */
         /* ============================================================ */
@@ -1732,6 +1788,88 @@
             }
         });
     });
+
+    // ============================================================
+// RAZORPAY PAYMENT INTEGRATION - ONLY FOR BLUEPRINT & ACCELERATOR
+// ============================================================
+var RAZORPAY_KEY_ID = 'rzp_live_TN9VVH5DwiHx0L'; // <-- YOUR ACTUAL RAZORPAY KEY
+
+function initiatePayment(amount, productName) {
+    // Convert amount to paise (Razorpay accepts amount in paise)
+    var amountInPaise = parseInt(amount) * 100;
+
+    // Disable only Razorpay buttons (Blueprint & Accelerator)
+    var buttons = document.querySelectorAll('.pricing-card .btn-pricing.primary, .pricing-card .btn-pricing:not(.primary)');
+    buttons.forEach(function(btn) {
+        // Only disable buttons that have Razorpay payment
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes('initiatePayment')) {
+            btn.disabled = true;
+            btn.textContent = '⏳ Processing...';
+        }
+    });
+
+    var options = {
+        key: RAZORPAY_KEY_ID,
+        amount: amountInPaise,
+        currency: 'INR',
+        name: 'The Unspoken',
+        description: productName,
+        prefill: {
+            email: '',
+            contact: ''
+        },
+        notes: {
+            product: productName,
+            amount: amount
+        },
+        handler: function(response) {
+            // Payment successful
+            alert('✅ Payment Successful!\nPayment ID: ' + response.razorpay_payment_id + '\n\nYou will receive your ' + productName + ' shortly via email.');
+            
+            // Optional: Redirect to a success page with payment details
+            // window.location.href = 'thank-you.html?payment_id=' + response.razorpay_payment_id + '&product=' + encodeURIComponent(productName);
+            
+            // Re-enable buttons
+            resetRazorpayButtons();
+        },
+        modal: {
+            ondismiss: function() {
+                // User closed the payment modal without paying
+                resetRazorpayButtons();
+            }
+        }
+    };
+
+    try {
+        var rzp = new Razorpay(options);
+        rzp.open();
+    } catch (error) {
+        console.error('Payment error:', error);
+        alert('⚠️ Payment system error. Please try again or contact support.');
+        resetRazorpayButtons();
+    }
+}
+
+function resetRazorpayButtons() {
+    var buttons = document.querySelectorAll('.pricing-card .btn-pricing.primary, .pricing-card .btn-pricing:not(.primary)');
+    buttons.forEach(function(btn) {
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes('initiatePayment')) {
+            btn.disabled = false;
+            var card = btn.closest('.pricing-card');
+            if (card) {
+                var planName = card.querySelector('.plan-name');
+                if (planName) {
+                    var name = planName.textContent.trim();
+                    if (name === 'BLUEPRINT') {
+                        btn.textContent = 'Build My Blueprint';
+                    } else if (name === 'ACCELERATOR') {
+                        btn.textContent = 'Start 60-Day Program';
+                    }
+                }
+            }
+        }
+    });
+}
 </script>
 
 </body>
