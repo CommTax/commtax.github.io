@@ -3142,55 +3142,78 @@ body {
     // RENDER WATERFALL
     // ============================================================
     function renderWaterfall(data) {
-        var container = document.getElementById('waterfallContainer');
-        if (!container) return;
+    var container = document.getElementById('waterfallContainer');
+    if (!container) return;
 
-        var communication = Math.round((data.communicationPct || 0) * 100);
-        var understanding = Math.round((data.understandingPct || 0) * 100);
-        var opportunity = Math.round((data.opportunityPct || 0) * 100);
-        var thinking = Math.round((data.thinkingPct || 0) * 100);
-        var structure = Math.round((data.structurePct || 0) * 100);
-
-        var items = [
-            { label: 'Communication', value: Math.max(0, 60 - communication) * 100000, color: '#EF4444' },
-            { label: 'Opportunity', value: Math.max(0, 60 - opportunity) * 150000, color: '#F97316' },
-            { label: 'Understanding', value: Math.max(0, 60 - understanding) * 50000, color: '#F59E0B' },
-            { label: 'Thinking', value: Math.max(0, 60 - thinking) * 0, color: '#00C4A7' },
-            { label: 'Structure', value: Math.max(0, 60 - structure) * 0, color: '#10B981' }
-        ];
-
-        var total = 0;
-        items.forEach(function(item) { total += item.value; });
-
-        if (total === 0) {
-            container.innerHTML = '<div style="text-align:center;padding:20px;color:#6B7280;">✅ No significant tax leakage detected. Your communication is well aligned.</div>';
-            return;
+    // ✅ Parse percentage values correctly
+    function parsePct(value) {
+        if (!value) return 0;
+        if (typeof value === 'string') {
+            var cleaned = value.replace('%', '').trim();
+            return parseFloat(cleaned) || 0;
         }
-
-        var maxVal = Math.max(total, 1);
-        var html = '';
-
-        items.forEach(function(item) {
-            if (item.value > 0) {
-                var pct = (item.value / maxVal) * 100;
-                html +=
-                    '<div class="wf-row">' +
-                    '<span class="wf-label">' + item.label + '</span>' +
-                    '<div class="wf-bar"><div class="wf-fill" style="width:' + Math.min(pct, 100) + '%;background:' + item.color + ';"></div></div>' +
-                    '<span class="wf-amount" style="color:' + item.color + ';">₹' + formatNumber(item.value) + '</span>' +
-                    '</div>';
-            }
-        });
-
-        html +=
-            '<div class="wf-total">' +
-            '<span>TOTAL ANNUAL TAX</span>' +
-            '<span class="wf-total-amount">₹' + formatNumber(total) + '</span>' +
-            '</div>';
-
-        container.innerHTML = html;
+        if (typeof value === 'number' && value < 1) {
+            return Math.round(value * 100);
+        }
+        return Number(value) || 0;
     }
 
+    // ✅ Parse all scores
+    var communication = parsePct(data.communicationPct);
+    var understanding = parsePct(data.understandingPct);
+    var opportunity = parsePct(data.opportunityPct);
+    var thinking = parsePct(data.thinkingPct);
+    var structure = parsePct(data.structurePct);
+
+    console.log('📊 Waterfall Scores:', {
+        communication: communication,
+        understanding: understanding,
+        opportunity: opportunity,
+        thinking: thinking,
+        structure: structure
+    });
+
+    var items = [
+        { label: 'Communication', value: Math.max(0, 60 - communication) * 100000, color: '#EF4444' },
+        { label: 'Opportunity', value: Math.max(0, 60 - opportunity) * 150000, color: '#F97316' },
+        { label: 'Understanding', value: Math.max(0, 60 - understanding) * 50000, color: '#F59E0B' },
+        { label: 'Thinking', value: Math.max(0, 60 - thinking) * 0, color: '#00C4A7' },
+        { label: 'Structure', value: Math.max(0, 60 - structure) * 0, color: '#10B981' }
+    ];
+
+    var total = 0;
+    items.forEach(function(item) { total += item.value; });
+
+    console.log('💰 Total Tax Calculated:', total);
+
+    if (total === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#6B7280;">✅ No significant tax leakage detected. Your communication is well aligned.</div>';
+        return;
+    }
+
+    var maxVal = Math.max(total, 1);
+    var html = '';
+
+    items.forEach(function(item) {
+        if (item.value > 0) {
+            var pct = (item.value / maxVal) * 100;
+            html +=
+                '<div class="wf-row">' +
+                '<span class="wf-label">' + item.label + '</span>' +
+                '<div class="wf-bar"><div class="wf-fill" style="width:' + Math.min(pct, 100) + '%;background:' + item.color + ';"></div></div>' +
+                '<span class="wf-amount" style="color:' + item.color + ';">₹' + formatNumber(item.value) + '</span>' +
+                '</div>';
+        }
+    });
+
+    html +=
+        '<div class="wf-total">' +
+        '<span>TOTAL ANNUAL TAX</span>' +
+        '<span class="wf-total-amount">₹' + formatNumber(total) + '</span>' +
+        '</div>';
+
+    container.innerHTML = html;
+}
     // ============================================================
     // FETCH NARRATIVES
     // ============================================================
