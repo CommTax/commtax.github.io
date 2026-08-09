@@ -2751,17 +2751,25 @@ body {
         safeSetText('opportunityScoreDisplay', opportunity + '%');
 
         // ---- TAX IMPACT ----
-        function calculateTaxImpact(score, multiplier) {
-            if (score >= 60) return '₹0';
-            var loss = (60 - score) * multiplier;
-            return '₹' + formatNumber(Math.round(loss));
-        }
+// ---- TAX IMPACT CALCULATIONS - FROM WATERFALL ----
+function getTaxFromWaterfall(score, multiplier) {
+    if (score >= 60) return 0;
+    return Math.max(0, 60 - score) * multiplier;
+}
 
-        safeSetText('thinkingTaxImpact', calculateTaxImpact(thinking, 50000));
-        safeSetText('structureTaxImpact', calculateTaxImpact(structure, 50000));
-        safeSetText('communicationTaxImpact', calculateTaxImpact(communication, 150000));
-        safeSetText('understandingTaxImpact', calculateTaxImpact(understanding, 80000));
-        safeSetText('opportunityTaxImpact', calculateTaxImpact(opportunity, 200000));
+// Calculate all tax values dynamically
+var commTax = getTaxFromWaterfall(communication, 100000);
+var underTax = getTaxFromWaterfall(understanding, 50000);
+var oppTax = getTaxFromWaterfall(opportunity, 150000);
+var thinkTax = getTaxFromWaterfall(thinking, 0);
+var structTax = getTaxFromWaterfall(structure, 0);
+
+// Display
+safeSetText('thinkingTaxImpact', thinkTax > 0 ? '₹' + formatNumber(thinkTax) : '₹0');
+safeSetText('structureTaxImpact', structTax > 0 ? '₹' + formatNumber(structTax) : '₹0');
+safeSetText('communicationTaxImpact', commTax > 0 ? '₹' + formatNumber(commTax) : '₹0');
+safeSetText('understandingTaxImpact', underTax > 0 ? '₹' + formatNumber(underTax) : '₹0');
+safeSetText('opportunityTaxImpact', oppTax > 0 ? '₹' + formatNumber(oppTax) : '₹0');
 
         safeSetText('thinkingBadge', data.thinkingLevel || 'Proficient');
         safeSetText('structureBadge', data.structureLevel || 'Proficient');
