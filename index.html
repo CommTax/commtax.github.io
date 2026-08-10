@@ -1974,31 +1974,17 @@
     });
 
     // ============================================================
-    // STICKY BAR - Hide on mobile scroll down
+    // STICKY BAR - Always visible on all devices
     // ============================================================
     var stickyBar = document.getElementById('stickyBottomBar');
-    var lastScrollY = 0;
-
-    window.addEventListener('scroll', function() {
-        if (window.innerWidth <= 768) {
-            var currentScrollY = window.scrollY;
-            if (currentScrollY > lastScrollY && currentScrollY > 100) {
-                stickyBar.style.transform = 'translateY(100%)';
-            } else {
-                stickyBar.style.transform = 'translateY(0)';
-            }
-            lastScrollY = currentScrollY;
-        }
-    });
-
-    window.addEventListener('scroll', function() {
-        if (window.innerWidth <= 768 && window.scrollY < 50) {
-            stickyBar.style.transform = 'translateY(0)';
-        }
-    });
-
+    
+    // No scroll listeners needed - bar stays fixed at bottom always
+    // The bar uses position:fixed and z-index:9999
+    // It remains visible on both desktop and mobile at all times
+    
+    // Ensure bar is visible on resize
     window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
+        if (stickyBar) {
             stickyBar.style.transform = 'translateY(0)';
         }
     });
