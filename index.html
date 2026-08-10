@@ -2394,13 +2394,12 @@
     function getSeatsRemaining() {
         var today = new Date();
         var dayOfMonth = today.getDate();
-        var baseSeats = 5;
         
         if (dayOfMonth >= 25) return 1;
         if (dayOfMonth >= 20) return 2;
         if (dayOfMonth >= 15) return 3;
         if (dayOfMonth >= 10) return 4;
-        return baseSeats;
+        return 5;
     }
 
     function updateIntakeBadge() {
@@ -2409,17 +2408,32 @@
         var seats = getSeatsRemaining();
         var badgeText = 'Next intake: ' + formattedDate + ' · ' + seats + ' seats remaining';
         
-        var blueprintBadge = document.getElementById('intakeBadgeBlueprint');
-        var acceleratorBadge = document.getElementById('intakeBadgeAccelerator');
+        // Update all intake badges (using class selector as fallback)
+        var badges = document.querySelectorAll('.intake-badge');
         
-        if (blueprintBadge) blueprintBadge.textContent = badgeText;
-        if (acceleratorBadge) acceleratorBadge.textContent = badgeText;
+        if (badges.length === 0) {
+            console.warn('⚠️ No intake badges found on the page');
+            return;
+        }
+        
+        badges.forEach(function(badge) {
+            badge.textContent = badgeText;
+        });
+        
+        console.log('✅ Updated ' + badges.length + ' intake badge(s) to: ' + badgeText);
     }
 
     // Run on page load
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('🔄 Running intake badge update...');
         updateIntakeBadge();
     });
+
+    // Also run immediately if DOM is already loaded
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        console.log('🔄 DOM already loaded, running intake badge update...');
+        updateIntakeBadge();
+    }
 
     // Also update when the page becomes visible
     document.addEventListener('visibilitychange', function() {
