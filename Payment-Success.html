@@ -1,1 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Payment Success | The Unspoken</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 520px;
+            width: 100%;
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .success-icon { font-size: 56px; margin-bottom: 8px; }
+        h1 { font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+        .sub { color: #64748b; font-size: 15px; margin-bottom: 24px; line-height: 1.6; }
+        .sub strong { color: #0f172a; }
+        .details-box {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .details-box .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+        .details-box .row:last-child { border-bottom: none; }
+        .details-box .label { color: #64748b; font-weight: 500; }
+        .details-box .value { font-weight: 600; color: #0f172a; }
+        .loading-text { color: #94a3b8; font-size: 14px; }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+        }
+        .btn-submit:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .secure-text { font-size: 12px; color: #94a3b8; margin-top: 12px; }
+        .secure-text i { color: #10b981; margin-right: 4px; }
+        .error-text { color: #dc2626; font-size: 14px; margin-top: 8px; display: none; }
+        @media (max-width: 480px) {
+            .container { padding: 24px 16px; }
+            h1 { font-size: 22px; }
+            .details-box .row { font-size: 12px; flex-wrap: wrap; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
 
+<div class="container" id="app">
+    <div class="success-icon">🎉</div>
+    <h1>Payment Confirmed!</h1>
+    <p class="sub">
+        Thank you for purchasing <strong id="productNameDisplay">Communication Tax Blueprint</strong>.
+        <br>Please confirm your details below.
+    </p>
+
+    <div class="details-box" id="detailsBox">
+        <div class="row">
+            <span class="label">Payment ID</span>
+            <span class="value" id="paymentIdDisplay">---</span>
+        </div>
+        <div class="row">
+            <span class="label">Amount</span>
+            <span class="value" id="amountDisplay">---</span>
+        </div>
+        <div class="row">
+            <span class="label">Name</span>
+            <span class="value" id="nameDisplay"><span class="loading-text">Loading...</span></span>
+        </div>
+        <div class="row">
+            <span class="label">Email</span>
+            <span class="value" id="emailDisplay"><span class="loading-text">Loading...</span></span>
+        </div>
+        <div class="row">
+            <span class="label">Phone</span>
+            <span class="value" id="phoneDisplay"><span class="loading-text">Loading...</span></span>
+        </div>
+    </div>
+
+    <p class="error-text" id="errorText">⚠️ Could not fetch your details. Please email us at info@theunspoken.co.in with your payment ID.</p>
+
+    <button class="btn-submit" id="confirmBtn" disabled>⏳ Loading...</button>
+
+    <p class="secure-text">
+        <i class="fas fa-shield-alt"></i> Your information is secure and will only be used to deliver your purchase.
+    </p>
+</div>
+
+<script>
+    // ============================================================
+    // GET URL PARAMETERS
+    // ============================================================
+    var urlParams = new URLSearchParams(window.location.search);
+    var paymentId = urlParams.get('payment_id');
+    var productType = urlParams.get('product') || 'blueprint';
+    var amount = urlParams.get('amount') || '4999';
+
+    var productName = productType === 'blueprint' ? 'Communication Tax Blueprint' : '60-Day Transformation Program';
+    document.getElementById('productNameDisplay').textContent = productName;
+    document.getElementById('paymentIdDisplay').textContent = paymentId || '---';
+    document.getElementById('amountDisplay').textContent = '₹' + (amount === '4999' ? '4,999' : '9,999');
+
+    var confirmBtn = document.getElementById('confirmBtn');
+    var errorText = document.getElementById('errorText');
+
+    // ============================================================
+    // STEP 1: FETCH CUSTOMER DETAILS FROM RAZORPAY API
+    // ============================================================
+    // You need a server-side endpoint that fetches payment details
+    // For now, we'll use a Google Apps Script as a proxy
+    
+    var GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_APPS_SCRIPT_ID/exec'; // REPLACE THIS
+
+    function fetchPaymentDetails() {
+        if (!paymentId) {
+            document.getElementById('nameDisplay').textContent = 'No payment ID found';
+            document.getElementById('emailDisplay').textContent = 'No payment ID found';
+            document.getElementById('phoneDisplay').textContent = 'No payment ID found';
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '❌ Error - Contact Support';
+            return;
+        }
+
+        // First try: Fetch via Google Apps Script proxy
+        var proxyUrl = GOOGLE_APPS_SCRIPT_URL + '?action=getPayment&payment_id=' + encodeURIComponent(paymentId);
+
+        fetch(proxyUrl)
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success && data.customer) {
+                    document.getElementById('nameDisplay').textContent = data.customer.name || 'Not provided';
+                    document.getElementById('emailDisplay').textContent = data.customer.email || 'Not provided';
+                    document.getElementById('phoneDisplay').textContent = data.customer.contact || 'Not provided';
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = '✅ Confirm & Get My Product';
+                } else {
+                    throw new Error(data.error || 'Could not fetch details');
+                }
+            })
+            .catch(function(error) {
+                console.error('Error fetching payment details:', error);
+                // Show error but allow manual entry
+                document.getElementById('nameDisplay').textContent = 'Could not fetch - please enter below';
+                document.getElementById('emailDisplay').textContent = 'Could not fetch - please enter below';
+                document.getElementById('phoneDisplay').textContent = 'Could not fetch - please enter below';
+                
+                // Convert to editable fields
+                makeEditable();
+                errorText.style.display = 'block';
+            });
+    }
+
+    // ============================================================
+    // FALLBACK: Make fields editable if API fails
+    // ============================================================
+    function makeEditable() {
+        var rows = document.querySelectorAll('.details-box .row');
+        rows.forEach(function(row) {
+            var label = row.querySelector('.label');
+            var value = row.querySelector('.value');
+            if (label && value) {
+                // Skip Payment ID and Amount rows
+                if (label.textContent === 'Payment ID' || label.textContent === 'Amount') return;
+                
+                var input = document.createElement('input');
+                input.type = 'text';
+                input.value = value.textContent === 'Loading...' || value.textContent === 'Could not fetch - please enter below' ? '' : value.textContent;
+                input.style.cssText = 'width:100%; padding:6px 10px; border:1px solid #e2e8f0; border-radius:6px; font-size:14px; font-family:inherit;';
+                input.className = 'editable-field';
+                input.dataset.field = label.textContent.toLowerCase();
+                value.textContent = '';
+                value.appendChild(input);
+            }
+        });
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = '✅ Confirm & Get My Product';
+    }
+
+    // ============================================================
+    // STEP 2: CONFIRM BUTTON - Send to Google Apps Script
+    // ============================================================
+    confirmBtn.addEventListener('click', function() {
+        var btn = this;
+        btn.disabled = true;
+        btn.textContent = '⏳ Processing...';
+
+        // Get customer details (from display or editable fields)
+        var nameEl = document.getElementById('nameDisplay');
+        var emailEl = document.getElementById('emailDisplay');
+        var phoneEl = document.getElementById('phoneDisplay');
+
+        // Check if there are editable inputs
+        var editableInputs = document.querySelectorAll('.editable-field');
+        var customerName = nameEl.textContent || 'Not provided';
+        var customerEmail = emailEl.textContent || 'Not provided';
+        var customerPhone = phoneEl.textContent || 'Not provided';
+
+        if (editableInputs.length > 0) {
+            editableInputs.forEach(function(input) {
+                if (input.dataset.field === 'name') customerName = input.value || 'Not provided';
+                if (input.dataset.field === 'email') customerEmail = input.value || 'Not provided';
+                if (input.dataset.field === 'phone') customerPhone = input.value || 'Not provided';
+            });
+        }
+
+        var data = {
+            action: 'savePurchase',
+            payment_id: paymentId,
+            product: productType,
+            amount: amount,
+            customer_name: customerName,
+            customer_email: customerEmail,
+            customer_phone: customerPhone,
+            timestamp: new Date().toISOString()
+        };
+
+        // Send to Google Apps Script
+        fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(function() {
+            // Success - show thank you
+            document.getElementById('app').innerHTML = `
+                <div class="success-icon">📬</div>
+                <h1>Check Your Email!</h1>
+                <p class="sub">
+                    We've sent your <strong>${productName}</strong> to <strong>${customerEmail}</strong>.<br>
+                    Please allow a few minutes for delivery.
+                </p>
+                <p style="color:#64748b; font-size:13px; margin-top:8px;">
+                    Payment ID: ${paymentId}
+                </p>
+                <a href="https://theunspoken.co.in" style="display:inline-block; margin-top:16px; color:#2563eb; text-decoration:none; font-weight:600;">
+                    ← Return to Home
+                </a>
+            `;
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+            alert('⚠️ There was an error. Please email us at info@theunspoken.co.in with your payment ID.');
+            btn.disabled = false;
+            btn.textContent = '✅ Confirm & Get My Product';
+        });
+    });
+
+    // ============================================================
+    // INIT - Fetch payment details on page load
+    // ============================================================
+    fetchPaymentDetails();
+</script>
+
+</body>
+</html>
