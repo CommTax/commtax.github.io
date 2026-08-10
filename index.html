@@ -2675,6 +2675,39 @@ var RAZORPAY_KEY_ID = 'rzp_live_TN9VVH5DwiHx0L';
 function initiatePayment(amount, productName) {
     var amountInPaise = parseInt(amount) * 100;
 
+    var options = {
+        key: rzp_live_TN9VVH5DwiHx0L,
+        amount: amountInPaise,
+        currency: 'INR',
+        name: 'The Unspoken',
+        description: productName,
+        image: 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Mini%20Logo%20Unspoken.png',
+        
+        // ✅ For older checkout versions, this is the way
+        // This pre-fills the fields (but user can still edit)
+        prefill: {
+            name: '',
+            email: '',
+            contact: ''
+        },
+        
+        // ✅ This shows the customer details section
+        // Make sure the user can edit these fields
+        readonly: {
+            name: false,
+            email: false,
+            contact: false
+        },
+        
+        // ✅ This callback gives you the details when modal closes
+        modal: {
+            ondismiss: function() {
+                resetRazorpayButtons();
+            }
+        }
+    };
+    
+
     // Disable buttons while processing
     var buttons = document.querySelectorAll('.pricing-card .btn-pricing.primary, .pricing-card .btn-pricing:not(.primary)');
     buttons.forEach(function(btn) {
