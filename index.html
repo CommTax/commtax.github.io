@@ -2667,77 +2667,95 @@
         });
     });
 
-    // ============================================================
-    // RAZORPAY PAYMENT INTEGRATION
-    // ============================================================
-    var RAZORPAY_KEY_ID = 'rzp_live_TN9VVH5DwiHx0L';
+// ============================================================
+// RAZORPAY PAYMENT INTEGRATION - FOR BLUEPRINT & ACCELERATOR
+// ============================================================
+var RAZORPAY_KEY_ID = 'rzp_live_TN9VVH5DwiHx0L';
 
-    function initiatePayment(amount, productName) {
-        var amountInPaise = parseInt(amount) * 100;
+function initiatePayment(amount, productName) {
+    var amountInPaise = parseInt(amount) * 100;
 
-        var buttons = document.querySelectorAll('.pricing-card .btn-pricing.primary, .pricing-card .btn-pricing:not(.primary)');
-        buttons.forEach(function(btn) {
-            if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes('initiatePayment')) {
-                btn.disabled = true;
-                btn.textContent = '⏳ Processing...';
-            }
-        });
-
-        var options = {
-            key: RAZORPAY_KEY_ID,
-            amount: amountInPaise,
-            currency: 'INR',
-            name: 'The Unspoken',
-            description: productName,
-            prefill: {
-                email: '',
-                contact: ''
-            },
-            notes: {
-                product: productName,
-                amount: amount
-            },
-            handler: function(response) {
-                alert('✅ Payment Successful!\nPayment ID: ' + response.razorpay_payment_id + '\n\nYou will receive your ' + productName + ' shortly via email.');
-                resetRazorpayButtons();
-            },
-            modal: {
-                ondismiss: function() {
-                    resetRazorpayButtons();
-                }
-            }
-        };
-
-        try {
-            var rzp = new Razorpay(options);
-            rzp.open();
-        } catch (error) {
-            console.error('Payment error:', error);
-            alert('⚠️ Payment system error. Please try again or contact support.');
-            resetRazorpayButtons();
+    // Disable buttons while processing
+    var buttons = document.querySelectorAll('.pricing-card .btn-pricing.primary, .pricing-card .btn-pricing:not(.primary)');
+    buttons.forEach(function(btn) {
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes('initiatePayment')) {
+            btn.disabled = true;
+            btn.textContent = '⏳ Processing...';
         }
-    }
+    });
 
-    function resetRazorpayButtons() {
-        var buttons = document.querySelectorAll('.pricing-card .btn-pricing.primary, .pricing-card .btn-pricing:not(.primary)');
-        buttons.forEach(function(btn) {
-            if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes('initiatePayment')) {
-                btn.disabled = false;
-                var card = btn.closest('.pricing-card');
-                if (card) {
-                    var planName = card.querySelector('.plan-name');
-                    if (planName) {
-                        var name = planName.textContent.trim();
-                        if (name === 'BLUEPRINT') {
-                            btn.textContent = 'Build My Blueprint';
-                        } else if (name === 'ACCELERATOR') {
-                            btn.textContent = 'Enroll in 60-Day Transformation';
-                        }
+    var options = {
+        key: RAZORPAY_KEY_ID,
+        amount: amountInPaise,
+        currency: 'INR',
+        name: 'The Unspoken',
+        description: productName,
+        
+        // ✅ Collect customer details during checkout
+        customer: {
+            name: '',
+            email: '',
+            contact: ''
+        },
+        
+        prefill: {
+            email: '',
+            contact: ''
+        },
+        
+        notes: {
+            product: productName,
+            amount: amount,
+            source: 'pricing_page'
+        },
+        
+        handler: function(response) {
+            // ✅ Payment successful - redirect to success page
+            var productType = amount === '4999' ? 'blueprint' : 'accelerator';
+            var redirectUrl = 'https://theunspoken.co.in/payment-success.html?payment_id=' + 
+                              response.razorpay_payment_id + 
+                              '&product=' + productType + 
+                              '&amount=' + amount;
+            
+            window.location.href = redirectUrl;
+        },
+        modal: {
+            ondismiss: function() {
+                resetRazorpayButtons();
+            }
+        }
+    };
+
+    try {
+        var rzp = new Razorpay(options);
+        rzp.open();
+    } catch (error) {
+        console.error('Payment error:', error);
+        alert('⚠️ Payment system error. Please try again or contact support.');
+        resetRazorpayButtons();
+    }
+}
+
+function resetRazorpayButtons() {
+    var buttons = document.querySelectorAll('.pricing-card .btn-pricing.primary, .pricing-card .btn-pricing:not(.primary)');
+    buttons.forEach(function(btn) {
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes('initiatePayment')) {
+            btn.disabled = false;
+            var card = btn.closest('.pricing-card');
+            if (card) {
+                var planName = card.querySelector('.plan-name');
+                if (planName) {
+                    var name = planName.textContent.trim();
+                    if (name === 'BLUEPRINT') {
+                        btn.textContent = 'Build My Blueprint';
+                    } else if (name === 'ACCELERATOR') {
+                        btn.textContent = 'Enroll in 60-Day Transformation';
                     }
                 }
             }
-        });
-    }
+        }
+    });
+}
 </script>
 
 </body>
