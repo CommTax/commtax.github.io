@@ -2757,56 +2757,58 @@ body {
         safeSetText('taxClients', '₹' + formatNumber(Math.round(annualTax * 0.5)));
         safeSetText('taxTeam', '₹' + formatNumber(Math.round(annualTax * 0.1)));
 
-        // ============================================================
-        // PERSONA SECTION - DYNAMIC TIMELINE
-        // ============================================================
-        
-        var personaFromAPI = data.persona || 'The Articulator';
+// ============================================================
+// PERSONA SECTION - DYNAMIC TIMELINE (FIXED)
+// ============================================================
 
-        // Get persona config
-        var personaConfig = PERSONA_CONFIG[personaFromAPI];
-        var personaEmoji = personaConfig ? personaConfig.emoji : '🟢';
-        var personaDesc = personaConfig ? personaConfig.description : 'Your communication profile is unique and evolving.';
-        var personaCategory = personaConfig ? personaConfig.category : 'Developing';
+// Clean the persona string (remove emoji if present)
+var rawPersona = data.persona || 'The Articulator';
+var personaFromAPI = rawPersona.replace(/[🟢🟡🟠🔴]/g, '').trim();
 
-        console.log('📊 Persona from API:', personaFromAPI);
-        console.log('📊 Persona Emoji:', personaEmoji);
-        console.log('📊 Persona Category:', personaCategory);
+// Get persona config
+var personaConfig = PERSONA_CONFIG[personaFromAPI];
+var personaEmoji = personaConfig ? personaConfig.emoji : '🟢';
+var personaDesc = personaConfig ? personaConfig.description : 'Your communication profile is unique and evolving.';
+var personaCategory = personaConfig ? personaConfig.category : 'Developing';
 
-        // Generate the dynamic timeline
-        generatePersonaTimeline(personaFromAPI);
+console.log('📊 Persona from API (cleaned):', personaFromAPI);
+console.log('📊 Persona Emoji:', personaEmoji);
+console.log('📊 Persona Category:', personaCategory);
 
-        // ---- UPDATE PERSONA DISPLAYS ----
-        safeSetText('personaEmoji', personaEmoji);
-        safeSetText('personaName', personaFromAPI);
-        safeSetText('personaDesc', personaDesc);
-        safeSetText('whereYouAre', personaFromAPI);
-        safeSetText('personaCategoryDisplay', personaCategory);
-        safeSetText('personaCategoryDisplay2', personaCategory);
+// Generate the dynamic timeline
+generatePersonaTimeline(personaFromAPI);
 
-        // ---- PERSONA CATEGORY COLOR ----
-        var categoryColors = {
-            'High-Performing': '#10B981',
-            'Developing': '#F59E0B',
-            'Struggling': '#F97316',
-            'Critical': '#EF4444'
-        };
-        
-        var categoryElement = document.getElementById('personaCategoryDisplay');
-        if (categoryElement) {
-            categoryElement.style.color = categoryColors[personaCategory] || '#6B7280';
-            categoryElement.style.fontWeight = '700';
-        }
+// ---- UPDATE PERSONA DISPLAYS ----
+safeSetText('personaEmoji', personaEmoji);
+safeSetText('personaName', personaFromAPI);
+safeSetText('personaDesc', personaDesc);
+safeSetText('whereYouAre', personaFromAPI);
+safeSetText('personaCategoryDisplay', personaCategory);
+safeSetText('personaCategoryDisplay2', personaCategory);
 
-        var categoryElement2 = document.getElementById('personaCategoryDisplay2');
-        if (categoryElement2) {
-            categoryElement2.style.color = categoryColors[personaCategory] || '#6B7280';
-            categoryElement2.style.fontWeight = '700';
-        }
+// ---- PERSONA CATEGORY COLOR ----
+var categoryColors = {
+    'High-Performing': '#10B981',
+    'Developing': '#F59E0B',
+    'Struggling': '#F97316',
+    'Critical': '#EF4444'
+};
 
-        console.log('✅ Persona section updated successfully');
+var categoryElement = document.getElementById('personaCategoryDisplay');
+if (categoryElement) {
+    categoryElement.style.color = categoryColors[personaCategory] || '#6B7280';
+    categoryElement.style.fontWeight = '700';
+}
 
-        // ---- NARRATIVES ----
+var categoryElement2 = document.getElementById('personaCategoryDisplay2');
+if (categoryElement2) {
+    categoryElement2.style.color = categoryColors[personaCategory] || '#6B7280';
+    categoryElement2.style.fontWeight = '700';
+}
+
+console.log('✅ Persona section updated successfully');
+
+                // ---- NARRATIVES ----
         if (data.narratives) {
             reportData.narratives = data.narratives;
             console.log('📝 Narratives loaded:', Object.keys(data.narratives));
