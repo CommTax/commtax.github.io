@@ -2009,18 +2009,7 @@ body {
                 <div style="font-size: 14px; color: var(--gray-500); max-width: 500px; margin: 2px auto;" id="personaDesc">--</div>
             </div>
             <div class="persona-timeline" id="personaTimeline">
-                <span class="step"><span class="emoji">🔴</span> Unclear Thinker</span>
-                <span class="arrow">→</span>
-                <span class="step"><span class="emoji">🟠</span> Hidden Contributor</span>
-                <span class="arrow">→</span>
-                <span class="step"><span class="emoji">🟡</span> Emerging Communicator</span>
-                <span class="arrow">→</span>
-                <span class="step active" id="journeyCurrent"><span class="emoji">🟢</span> --</span>
-                <span class="arrow">→</span>
-                <span class="step"><span class="emoji">🟢</span> Influential Communicator</span>
-                <span class="arrow">→</span>
-                <span class="step"><span class="emoji">🟢</span> Strategic Influencer</span>
-                <div class="you-here">▼ YOU ARE HERE</div>
+                <!-- Will be populated by JavaScript -->
             </div>
         </section>
 
@@ -2216,6 +2205,99 @@ body {
     ============================================================ -->
     <script>
     // ============================================================
+    // PERSONA CONFIGURATION
+    // ============================================================
+    var PERSONA_CONFIG = {
+        'The Translator': { 
+            emoji: '🟢', 
+            level: 1, 
+            category: 'High-Performing',
+            description: "You don't just communicate—you make people understand, feel, and act. You turn complex thoughts into clear, memorable messages and know how to connect logic with emotion. You're operating at a high level of communication mastery."
+        },
+        'The Amplifier': { 
+            emoji: '🟢', 
+            level: 2, 
+            category: 'High-Performing',
+            description: "Your message lands—and often stays with people. You communicate with clarity and presence, but a few gaps may still prevent your strongest ideas from becoming truly unforgettable."
+        },
+        'The Articulator': { 
+            emoji: '🟢', 
+            level: 3, 
+            category: 'High-Performing',
+            description: "You can explain yourself clearly and confidently. But clarity alone isn't always enough. At times, your message may inform without fully influencing, moving, or being remembered."
+        },
+        'The Interpreter': { 
+            emoji: '🟡', 
+            level: 4, 
+            category: 'Developing',
+            description: "You generally get your message across, but something gets lost along the way. The meaning is there, but the nuance, structure, or impact doesn't always survive the translation."
+        },
+        'The Filter': { 
+            emoji: '🟡', 
+            level: 5, 
+            category: 'Developing',
+            description: "You have useful thoughts, but too much may compete for attention. Your challenge isn't a lack of ideas—it's deciding what matters most and what to leave out."
+        },
+        'The Mumbler': { 
+            emoji: '🟠', 
+            level: 6, 
+            category: 'Struggling',
+            description: "The thought is often better than the way it comes out. You may know what you mean, but your message can lose clarity, confidence, or structure before others fully understand it."
+        },
+        'The Eclipsed': { 
+            emoji: '🟠', 
+            level: 7, 
+            category: 'Struggling',
+            description: "Your ideas can be stronger than the way they are received. Others may communicate similar thoughts more clearly, confidently, or at the right moment—and end up getting the recognition."
+        },
+        'The Unheard': { 
+            emoji: '🟠', 
+            level: 8, 
+            category: 'Struggling',
+            description: "You speak, but your real message doesn't always reach the listener. People may hear your words without fully understanding the point, importance, or action behind them."
+        },
+        'The Overlooked': { 
+            emoji: '🔴', 
+            level: 9, 
+            category: 'Critical',
+            description: "Your contribution exists, but it isn't always visible enough to be recognised. You may have the capability and ideas, but your communication isn't consistently helping others see their full value."
+        },
+        'The Faded': { 
+            emoji: '🔴', 
+            level: 10, 
+            category: 'Critical',
+            description: "Your message starts with potential but loses power before it lands. Over-explaining, hesitation, or lack of structure can cause your strongest point to fade into the background."
+        },
+        'The Ghost': { 
+            emoji: '🔴', 
+            level: 11, 
+            category: 'Critical',
+            description: "You're often present in the room but not fully present in the conversation. Valuable thoughts may remain unspoken, delayed, or unnoticed—making your contribution easier to miss."
+        },
+        'The Disconnected': { 
+            emoji: '🔴', 
+            level: 12, 
+            category: 'Critical',
+            description: "There is a significant gap between what you think, what you say, and what others understand. Your communication may not yet reflect your actual capability—but this gap can be rebuilt, one layer at a time."
+        }
+    };
+
+    var PERSONA_ORDER = [
+        'The Translator',
+        'The Amplifier',
+        'The Articulator',
+        'The Interpreter',
+        'The Filter',
+        'The Mumbler',
+        'The Eclipsed',
+        'The Unheard',
+        'The Overlooked',
+        'The Faded',
+        'The Ghost',
+        'The Disconnected'
+    ];
+
+    // ============================================================
     // CONFIGURATION
     // ============================================================
     var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyz95HXs81Z9dyfkOrGpiSChjX-1ON3UhRI4AvkT2lAWvDJM2YhBd2h-lGtSRrs5WJr/exec';
@@ -2275,6 +2357,54 @@ body {
             if (bar) bar.classList.remove('hidden');
             if (overlay) overlay.classList.remove('hidden');
         }
+    }
+
+    // ============================================================
+    // GENERATE PERSONA TIMELINE
+    // ============================================================
+    function generatePersonaTimeline(activePersona) {
+        var container = document.getElementById('personaTimeline');
+        if (!container) return;
+        
+        // Clean the persona name (remove emoji if present)
+        var cleanPersona = activePersona.replace(/[🟢🟡🟠🔴]/g, '').trim();
+        
+        var personaOrder = [
+            { name: 'The Translator', emoji: '🟢' },
+            { name: 'The Amplifier', emoji: '🟢' },
+            { name: 'The Articulator', emoji: '🟢' },
+            { name: 'The Interpreter', emoji: '🟡' },
+            { name: 'The Filter', emoji: '🟡' },
+            { name: 'The Mumbler', emoji: '🟠' },
+            { name: 'The Eclipsed', emoji: '🟠' },
+            { name: 'The Unheard', emoji: '🟠' },
+            { name: 'The Overlooked', emoji: '🔴' },
+            { name: 'The Faded', emoji: '🔴' },
+            { name: 'The Ghost', emoji: '🔴' },
+            { name: 'The Disconnected', emoji: '🔴' }
+        ];
+        
+        var activeIndex = personaOrder.findIndex(p => p.name === cleanPersona);
+        if (activeIndex === -1) {
+            activeIndex = 2; // Default to The Articulator
+        }
+        
+        var html = '';
+        
+        personaOrder.forEach(function(persona, index) {
+            var isActive = (index === activeIndex);
+            var activeClass = isActive ? 'active' : '';
+            html += '<span class="step ' + activeClass + '">';
+            html += '<span class="emoji">' + persona.emoji + '</span> ' + persona.name;
+            html += '</span>';
+            
+            if (index < personaOrder.length - 1) {
+                html += '<span class="arrow">→</span>';
+            }
+        });
+        
+        html += '<div class="you-here">▼ YOU ARE HERE</div>';
+        container.innerHTML = html;
     }
 
     async function fetchReportData() {
@@ -2460,26 +2590,37 @@ body {
     function renderWaterfall(data) {
         var container = document.getElementById('waterfallContainer');
         if (!container) return;
+        
+        // Calculate tax based on actual scores with proper thresholds
         var communication = parsePct(data.communicationPct);
         var understanding = parsePct(data.understandingPct);
         var opportunity = parsePct(data.opportunityPct);
         var thinking = parsePct(data.thinkingPct);
         var structure = parsePct(data.structurePct);
+        
+        // More accurate tax calculation based on 85% benchmark
         var items = [
-            { label: 'Communication', value: Math.max(0, 60 - communication) * 100000, color: '#EF4444' },
-            { label: 'Opportunity', value: Math.max(0, 60 - opportunity) * 150000, color: '#F97316' },
-            { label: 'Understanding', value: Math.max(0, 60 - understanding) * 50000, color: '#F59E0B' },
-            { label: 'Thinking', value: Math.max(0, 60 - thinking) * 0, color: '#00C4A7' },
-            { label: 'Structure', value: Math.max(0, 60 - structure) * 0, color: '#10B981' }
+            { label: 'Communication', value: Math.max(0, 85 - communication) * 10000, color: '#EF4444' },
+            { label: 'Opportunity', value: Math.max(0, 85 - opportunity) * 10000, color: '#F97316' },
+            { label: 'Understanding', value: Math.max(0, 85 - understanding) * 10000, color: '#F59E0B' },
+            { label: 'Thinking', value: Math.max(0, 85 - thinking) * 10000, color: '#00C4A7' },
+            { label: 'Structure', value: Math.max(0, 85 - structure) * 10000, color: '#10B981' }
         ];
+        
         var total = 0;
         items.forEach(function(item) { total += item.value; });
-        if (total === 0) {
+        
+        // Use the annual tax from the API if available, otherwise use calculated total
+        var displayTax = data.annualTax || total;
+        
+        if (displayTax === 0) {
             container.innerHTML = '<div style="text-align:center;padding:20px;color:#6B7280;">✅ No significant tax leakage detected.</div>';
             return;
         }
-        var maxVal = Math.max(total, 1);
+        
+        var maxVal = Math.max(displayTax, 1);
         var html = '';
+        
         items.forEach(function(item) {
             if (item.value > 0) {
                 var pct = (item.value / maxVal) * 100;
@@ -2491,10 +2632,11 @@ body {
                     '</div>';
             }
         });
+        
         html +=
             '<div class="wf-total">' +
             '<span>TOTAL ANNUAL TAX</span>' +
-            '<span class="wf-total-amount">₹' + formatNumber(total) + '</span>' +
+            '<span class="wf-total-amount">₹' + formatNumber(displayTax) + '</span>' +
             '</div>';
         container.innerHTML = html;
     }
@@ -2502,6 +2644,11 @@ body {
     function renderReport(data) {
         console.log('🔍 renderReport START');
         reportData = data;
+        
+        // Clean the persona (remove emoji if present)
+        var rawPersona = data.persona || 'The Articulator';
+        var cleanPersona = rawPersona.replace(/[🟢🟡🟠🔴]/g, '').trim();
+        
         var thinking = parsePct(data.thinkingPct);
         var structure = parsePct(data.structurePct);
         var communication = parsePct(data.communicationPct);
@@ -2510,15 +2657,18 @@ body {
         var ciScore = parsePct(data.ciScore);
         var annualTax = data.annualTax || 700000;
 
+        // ---- COVER ----
         document.getElementById('coverName').textContent = data.name || 'Executive';
         document.getElementById('coverRole').textContent = data.role || 'Professional';
         document.getElementById('coverDate').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 
+        // ---- MRI ----
         document.getElementById('mriScore').textContent = ciScore + '%';
         document.getElementById('mriTax').textContent = '₹' + (annualTax / 100000).toFixed(1) + ' Lakh';
-        document.getElementById('mriPersona').textContent = data.persona || 'The Articulator';
+        document.getElementById('mriPersona').textContent = cleanPersona;
         document.getElementById('mriROI').textContent = (ciScore > 50 ? (100 / ciScore).toFixed(1) : '2.0') + 'x';
 
+        // ---- EXECUTIVE BLIND SPOT ----
         var competencies = [
             { name: 'Thinking', score: parsePct(data.thinkingPct) },
             { name: 'Structure', score: parsePct(data.structurePct) },
@@ -2531,6 +2681,7 @@ body {
         document.getElementById('mriBiggestGap').textContent = weakest.name + ' (' + weakest.score + '%)';
         document.getElementById('mriHiddenStrength').textContent = highest.name + ' (' + highest.score + '%)';
 
+        // ---- SUMMARY ----
         function getPercentile(score) {
             if (score >= 91) return '97th';
             if (score >= 85) return '93rd';
@@ -2577,6 +2728,7 @@ body {
         }
         document.getElementById('summaryText').textContent = summaryParts.join(' ');
 
+        // ---- EXECUTIVE SUMMARY ----
         var executiveSummary = data.executiveSummary || {};
         if (executiveSummary.statement) {
             var summaryTitle = executiveSummary.executiveEdge + ' + ' + executiveSummary.blindSpot;
@@ -2586,6 +2738,7 @@ body {
             document.getElementById('summaryAdvantage').textContent = 'Your ' + executiveSummary.executiveEdge + ' is your greatest strength.';
         }
 
+        // ---- TAX ----
         var perMonth = Math.round(annualTax / 12);
         var perDay = Math.round(annualTax / 365);
         var perHour = Math.round(annualTax / (365 * 8));
@@ -2598,12 +2751,20 @@ body {
         document.getElementById('taxClients').textContent = '₹' + formatNumber(Math.round(annualTax * 0.5));
         document.getElementById('taxTeam').textContent = '₹' + formatNumber(Math.round(annualTax * 0.1));
 
-        var persona = data.persona || 'The Articulator';
-        document.getElementById('personaEmoji').textContent = '🟢';
-        document.getElementById('personaName').textContent = persona;
-        document.getElementById('personaDesc').textContent = "You're clear and confident. Some gaps in translation are costing you momentum.";
-        document.getElementById('journeyCurrent').innerHTML = '<span class="emoji">🟢</span> ' + persona;
+        // ---- PERSONA ----
+        var personaConfig = PERSONA_CONFIG[cleanPersona];
+        var personaEmoji = personaConfig ? personaConfig.emoji : '🟢';
+        var personaDesc = personaConfig ? personaConfig.description : "Your communication profile is unique and evolving.";
+        var personaCategory = personaConfig ? personaConfig.category : 'Developing';
+        
+        document.getElementById('personaEmoji').textContent = personaEmoji;
+        document.getElementById('personaName').textContent = cleanPersona;
+        document.getElementById('personaDesc').textContent = personaDesc;
+        
+        // Generate the persona timeline
+        generatePersonaTimeline(cleanPersona);
 
+        // ---- RINGS ----
         renderRings(data);
         renderProfileBars(data);
         renderDNA(data);
@@ -2613,6 +2774,7 @@ body {
             'Your highest score is <strong>' + (data.highestCompetency || 'Thinking') +
             '</strong> — build on this. Your lowest score is <strong>' + (data.weakestCompetency || 'Communication') + '</strong> — fix this first.';
 
+        // ---- PROGRAM CARD ----
         document.getElementById('progCurrentScore').textContent = ciScore + '%';
         var projectedScore = data.projectedScore || '0%';
         if (typeof projectedScore === 'number') {
@@ -2622,6 +2784,7 @@ body {
         document.getElementById('progTaxSaved').textContent = data.communicationTaxSaved || '₹0';
         document.getElementById('progROI').textContent = data.roi || '0X';
 
+        // ---- BADGES ----
         var badgeElements = {
             'thinkingBadge': data.thinkingLevel || 'Proficient',
             'structureBadge': data.structureLevel || 'Proficient',
@@ -2634,6 +2797,7 @@ body {
             if (el) el.textContent = badgeElements[badgeId];
         }
 
+        // ---- PREVIEW OVERLAY ----
         var previewTaxSaved = document.getElementById('previewTaxSaved');
         var previewROI = document.getElementById('previewROI');
         if (previewTaxSaved) previewTaxSaved.textContent = data.communicationTaxSaved || '₹0';
