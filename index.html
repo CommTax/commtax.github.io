@@ -2591,78 +2591,263 @@
         setTimeout(startAutoPlay, 2000);
     })();
 
+// ============================================================
+// ESTIMATOR - COMPLETE
+// ============================================================
+
+function animateNumber(el, target, prefix, suffix, duration) {
+    var start = 0, startTime = null;
+    var isNum = typeof target === 'number';
+    function tick(time) {
+        if (!startTime) startTime = time;
+        var progress = Math.min((time - startTime) / duration, 1);
+        var current = Math.round(progress * (isNum ? target : 0));
+        el.textContent = prefix + (isNum ? current.toLocaleString('en-IN') : target) + suffix;
+        if (progress < 1) requestAnimationFrame(tick);
+        else el.textContent = prefix + (isNum ? target.toLocaleString('en-IN') : target) + suffix;
+    }
+    requestAnimationFrame(tick);
+}
+
+function calculateTax() {
+    // Get values from sliders and selects
+    var ctc = parseInt(document.getElementById('ctcSlider').value);
+    var thinking = parseInt(document.getElementById('thinkingSlider').value);
+    var structure = parseInt(document.getElementById('structureSlider').value);
+    var efficiency = parseInt(document.getElementById('efficiencySlider').value);
+    var exposure = parseInt(document.getElementById('exposureSelect').value);
+    var career = parseInt(document.getElementById('careerSelect').value);
+
     // ============================================================
-    // ESTIMATOR
+    // 🔥 STEP 1: Check if ALL communication skills are at max (5/5)
     // ============================================================
-    function animateNumber(el, target, prefix, suffix, duration) {
-        var start = 0, startTime = null;
-        var isNum = typeof target === 'number';
-        function tick(time) {
-            if (!startTime) startTime = time;
-            var progress = Math.min((time - startTime) / duration, 1);
-            var current = Math.round(progress * (isNum ? target : 0));
-            el.textContent = prefix + (isNum ? current.toLocaleString('en-IN') : target) + suffix;
-            if (progress < 1) requestAnimationFrame(tick);
-            else el.textContent = prefix + (isNum ? target.toLocaleString('en-IN') : target) + suffix;
-        }
-        requestAnimationFrame(tick);
+    var allSkillsMax = (
+        thinking === 5 &&
+        structure === 5 &&
+        efficiency === 5
+    );
+
+    // ============================================================
+    // 🔥 STEP 2: Check Exposure Level
+    //    4/4 = Daily → Excellent
+    //    3/4 = Weekly → Good
+    //    2/4 or 1/4 = Normal
+    // ============================================================
+    var exposureExcellent = (exposure === 4);  // Daily
+    var exposureGood = (exposure === 3);       // Weekly
+
+    // ============================================================
+    // 🔥 STEP 3: Check Career Progression
+    //    4/4 = Consistently ahead → Excellent
+    //    3/4 = Faster than peers → Good
+    //    2/4 or 1/4 = Normal
+    // ============================================================
+    var careerExcellent = (career === 4);  // Consistently ahead
+    var careerGood = (career === 3);       // Faster than peers
+
+    // ============================================================
+    // 🔥 STEP 4: Determine Tax Category
+    // ============================================================
+    var isExcellent = (
+        allSkillsMax &&
+        exposureExcellent &&
+        careerExcellent
+    );
+    // All 5/5 + Daily + Consistently ahead
+
+    var isGood = (
+        allSkillsMax &&
+        (
+            (exposureExcellent && careerGood) ||   // Daily + Faster than peers
+            (exposureGood && careerExcellent) ||   // Weekly + Consistently ahead
+            (exposureGood && careerGood)           // Weekly + Faster than peers
+        )
+    );
+    // All 5/5 + (Daily or Weekly) + (Consistently ahead or Faster than peers)
+
+    // ============================================================
+    // 🔥 STEP 5: Calculate percentages
+    // ============================================================
+    var thinkingPct = (thinking / 5) * 100;
+    var structurePct = (structure / 5) * 100;
+    var efficiencyPct = (efficiency / 5) * 100;
+    var exposurePct = (exposure / 4) * 100;
+    var careerPct = (career / 4) * 100;
+
+    // ============================================================
+    // 🔥 STEP 6: Calculate weighted score
+    // ============================================================
+    var score = thinkingPct * 0.20 + structurePct * 0.20 + efficiencyPct * 0.25 + exposurePct * 0.15 + careerPct * 0.20;
+
+    // ============================================================
+    // 🔥 STEP 7: Calculate tax rate based on category
+    // ============================================================
+    var taxRate;
+    
+    if (isExcellent) {
+        // 🎯 EXCELLENT: Zero tax
+        taxRate = 0;
+    } else if (isGood) {
+        // ✅ GOOD: Fixed 2% tax
+        taxRate = 2;
+    } else {
+        // 📊 Normal case: Full tax
+        taxRate = Math.round(100 - score);
     }
 
-    function calculateTax() {
-        var ctc = parseInt(document.getElementById('ctcSlider').value);
-        var thinking = parseInt(document.getElementById('thinkingSlider').value);
-        var structure = parseInt(document.getElementById('structureSlider').value);
-        var efficiency = parseInt(document.getElementById('efficiencySlider').value);
-        var exposure = parseInt(document.getElementById('exposureSelect').value);
-        var career = parseInt(document.getElementById('careerSelect').value);
+    // Ensure taxRate is never negative
+    taxRate = Math.max(0, taxRate);
 
-        var thinkingPct = (thinking/5)*100;
-        var structurePct = (structure/5)*100;
-        var efficiencyPct = (efficiency/5)*100;
-        var exposurePct = (exposure/4)*100;
-        var careerPct = (career/4)*100;
+    // ============================================================
+    // 🔥 STEP 8: Calculate financial impact
+    // ============================================================
+    var ctcInRupees = ctc * 100000;
+    var annualLoss = Math.round((ctcInRupees * taxRate * 0.65) / 100);
+    
+    // If excellent, force annual loss to 0
+    if (isExcellent) {
+        annualLoss = 0;
+    }
 
-        var score = thinkingPct*0.20 + structurePct*0.20 + efficiencyPct*0.25 + exposurePct*0.15 + careerPct*0.20;
-        var taxRate = Math.round(100 - score);
-        var ctcInRupees = ctc * 100000;
-        var annualLoss = Math.round((ctcInRupees * taxRate * 0.65) / 100);
-        var lifetime = Math.round(annualLoss * 25 * 1.5);
+    var lifetime = Math.round(annualLoss * 25 * 1.5);
 
-        var results = document.getElementById('estimatorResults');
+    // ============================================================
+    // 🔥 STEP 9: Show results
+    // ============================================================
+    var results = document.getElementById('estimatorResults');
+    if (results) {
         results.style.display = 'block';
+    }
 
-        var taxEl = document.getElementById('taxScore');
-        var annualEl = document.getElementById('annualLoss');
-        var lifetimeEl = document.getElementById('lifetimeImpact');
+    var taxEl = document.getElementById('taxScore');
+    var annualEl = document.getElementById('annualLoss');
+    var lifetimeEl = document.getElementById('lifetimeImpact');
 
+    if (taxEl) {
         taxEl.textContent = '0%';
+    }
+    if (annualEl) {
         annualEl.textContent = '₹0';
+    }
+    if (lifetimeEl) {
         lifetimeEl.textContent = '₹0';
+    }
 
-        setTimeout(function() { animateNumber(taxEl, taxRate, '', '%', 800); }, 100);
-        setTimeout(function() { animateNumber(annualEl, annualLoss, '₹', '', 1000); }, 300);
-        setTimeout(function() {
-            var display = lifetime >= 10000000 ? (lifetime/10000000).toFixed(1)+' Cr' : lifetime.toLocaleString('en-IN');
+    setTimeout(function() { 
+        if (taxEl) animateNumber(taxEl, taxRate, '', '%', 800); 
+    }, 100);
+    
+    setTimeout(function() { 
+        if (annualEl) animateNumber(annualEl, annualLoss, '₹', '', 1000); 
+    }, 300);
+    
+    setTimeout(function() {
+        if (lifetimeEl) {
+            var display = lifetime >= 10000000 ? (lifetime / 10000000).toFixed(1) + ' Cr' : lifetime.toLocaleString('en-IN');
             animateNumber(lifetimeEl, display, '₹', '', 1000);
-        }, 600);
+        }
+    }, 600);
 
+    // ============================================================
+    // 🔥 STEP 10: Update result descriptions
+    // ============================================================
+    updateResultDescriptions(taxRate, annualLoss, isExcellent, isGood);
+
+    if (results) {
         results.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+}
 
-    function updateLabels() {
-        var ctc = parseInt(document.getElementById('ctcSlider').value);
-        document.getElementById('ctcDisplay').textContent = '₹' + (ctc*100000).toLocaleString('en-IN');
-        document.getElementById('ctcLabel').textContent = '₹' + ctc + ' Lakhs';
-        document.getElementById('thinkingLabel').textContent = parseInt(document.getElementById('thinkingSlider').value) + '/5';
-        document.getElementById('structureLabel').textContent = parseInt(document.getElementById('structureSlider').value) + '/5';
-        document.getElementById('efficiencyLabel').textContent = parseInt(document.getElementById('efficiencySlider').value) + '/5';
+// ============================================================
+// 🔥 Result descriptions
+// ============================================================
+
+function updateResultDescriptions(taxRate, annualLoss, isExcellent, isGood) {
+    var descriptionEl = document.getElementById('resultDescription');
+    if (!descriptionEl) return;
+
+    var message = '';
+    var color = '';
+
+    if (isExcellent) {
+        message = '🏆 Exceptional! You have mastered communication skills, communicate daily, and are consistently ahead of peers. No communication tax applies to you.';
+        color = '#10B981';
+    } else if (isGood) {
+        message = '🌟 Great progress! You have strong communication skills and are on the right track. Only a 2% tax applies - a minor gap to close.';
+        color = '#F59E0B';
+    } else if (taxRate <= 10) {
+        message = '📈 Excellent! Your communication is well above average. A few minor tweaks could make you unstoppable.';
+        color = '#10B981';
+    } else if (taxRate <= 25) {
+        message = '📈 Good foundation! You\'re doing well, but there\'s room to grow. Focus on the specific gaps identified in your report.';
+        color = '#F59E0B';
+    } else if (taxRate <= 50) {
+        message = '⚠️ Noticeable gaps detected. Your expertise isn\'t translating as effectively as it could. The good news? This is fixable in 6-8 weeks.';
+        color = '#F97316';
+    } else {
+        message = '🔴 Significant communication gaps found. Your true potential is being hidden. Immediate action can transform your career trajectory.';
+        color = '#EF4444';
     }
 
-    document.querySelectorAll('#ctcSlider, #thinkingSlider, #structureSlider, #efficiencySlider').forEach(function(el) {
+    descriptionEl.innerHTML = message;
+    descriptionEl.style.color = color;
+    descriptionEl.style.fontWeight = '600';
+    descriptionEl.style.fontSize = '16px';
+    descriptionEl.style.padding = '16px 20px';
+    descriptionEl.style.background = 'var(--gray-50)';
+    descriptionEl.style.borderRadius = '10px';
+    descriptionEl.style.borderLeft = '4px solid ' + color;
+}
+
+// ============================================================
+// 🔥 Update labels when sliders change
+// ============================================================
+
+function updateLabels() {
+    var ctc = parseInt(document.getElementById('ctcSlider').value);
+    var ctcDisplay = document.getElementById('ctcDisplay');
+    var ctcLabel = document.getElementById('ctcLabel');
+    var thinkingLabel = document.getElementById('thinkingLabel');
+    var structureLabel = document.getElementById('structureLabel');
+    var efficiencyLabel = document.getElementById('efficiencyLabel');
+
+    if (ctcDisplay) {
+        ctcDisplay.textContent = '₹' + (ctc * 100000).toLocaleString('en-IN');
+    }
+    if (ctcLabel) {
+        ctcLabel.textContent = '₹' + ctc + ' Lakhs';
+    }
+    if (thinkingLabel) {
+        thinkingLabel.textContent = parseInt(document.getElementById('thinkingSlider').value) + '/5';
+    }
+    if (structureLabel) {
+        structureLabel.textContent = parseInt(document.getElementById('structureSlider').value) + '/5';
+    }
+    if (efficiencyLabel) {
+        efficiencyLabel.textContent = parseInt(document.getElementById('efficiencySlider').value) + '/5';
+    }
+}
+
+// ============================================================
+// 🔥 Event Listeners
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Slider event listeners
+    var sliders = document.querySelectorAll('#ctcSlider, #thinkingSlider, #structureSlider, #efficiencySlider');
+    sliders.forEach(function(el) {
         el.addEventListener('input', updateLabels);
     });
-    document.getElementById('estimateBtn').addEventListener('click', calculateTax);
+
+    // Estimate button
+    var estimateBtn = document.getElementById('estimateBtn');
+    if (estimateBtn) {
+        estimateBtn.addEventListener('click', calculateTax);
+    }
+
+    // Initialize labels
     updateLabels();
+});
 
     // ============================================================
     // SMOOTH SCROLL FOR NAV LINKS
