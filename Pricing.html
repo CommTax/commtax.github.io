@@ -604,7 +604,7 @@
                 <li class="disabled">👥 Community Access</li>
                 <li class="highlight">🎁 Cancel anytime</li>
             </ul>
-            <a href="https://rzp.io/rzp/starter" target="_blank" class="btn-plan green">Start Daily Habit →</a>
+            <button onclick="openRazorpay('starter', 299, 179)" class="btn-plan green">Start Daily Habit →</button>
             <div class="no-credit">7-day free trial · No commitment</div>
         </div>
 
@@ -633,7 +633,7 @@
                 <li>📄 <strong>18-Page Persona Report</strong> — Complete communication profile</li>
                 <li class="highlight">🎁 Data excluded from AI training</li>
             </ul>
-            <a href="https://rzp.io/rzp/Bn57txO" target="_blank" class="btn-plan gold">Start Pro →</a>
+            <button onclick="openRazorpay('pro', 699, 499)" class="btn-plan gold">Start Pro →</button>
             <div class="no-credit">7-day free trial · Cancel anytime</div>
         </div>
 
@@ -662,11 +662,94 @@
                 <li>🎯 Personalized Improvement Plan</li>
                 <li class="highlight">🎁 Reimbursable as learning benefit</li>
             </ul>
-            <a href="https://rzp.io/rzp/ncWsNe01" target="_blank" class="btn-plan purple">Go Advanced →</a>
+            <button onclick="openRazorpay('advanced', 1499, 1299)" class="btn-plan purple">Go Advanced →</button>
             <div class="no-credit">7-day free trial · Cancel anytime</div>
         </div>
 
     </div>
+
+    <script>
+    // ============================================================
+    // RAZORPAY DYNAMIC CHECKOUT
+    // ============================================================
+
+    // Track current billing mode
+    let isAnnual = false;
+
+    // Update billing mode when toggle is clicked
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('billingToggle');
+        if (toggle) {
+            toggle.addEventListener('click', function() {
+                isAnnual = this.classList.contains('active');
+                // Update all price displays (already handled in your existing toggle)
+            });
+        }
+    });
+
+    function openRazorpay(plan, monthlyPrice, annualPrice) {
+        // Determine which price to use
+        const amount = isAnnual ? annualPrice : monthlyPrice;
+        
+        // Razorpay requires amount in paise (multiply by 100)
+        const amountInPaise = amount * 100;
+
+        // Get the plan name for display
+        const planNames = {
+            'starter': 'Starter - Daily Habit',
+            'pro': 'Pro - Targeted Practice',
+            'advanced': 'Advanced - Full Development'
+        };
+
+        const billingPeriod = isAnnual ? 'Annual' : 'Monthly';
+        const planName = planNames[plan] || plan;
+
+        // Razorpay options
+        const options = {
+            key: 'YOUR_RAZORPAY_KEY_ID', // Replace with your Razorpay Key ID
+            amount: amountInPaise,
+            currency: 'INR',
+            name: 'The Unspoken',
+            description: `${planName} (${billingPeriod} Billing)`,
+            image: 'https://theunspoken.co.in/Mini%20Logo%20Unspoken.png',
+            prefill: {
+                name: '',
+                email: '',
+                contact: ''
+            },
+            notes: {
+                plan: plan,
+                billing: billingPeriod,
+                amount: amount
+            },
+            theme: {
+                color: '#2563eb'
+            },
+            modal: {
+                ondismiss: function() {
+                    console.log('Checkout closed');
+                }
+            }
+        };
+
+        // Initialize Razorpay
+        const rzp = new Razorpay(options);
+        rzp.open();
+
+        // Handle payment success (optional)
+        rzp.on('payment.success', function(response) {
+            console.log('Payment successful:', response);
+            // Redirect to success page
+            window.location.href = '/Payment-Success.html';
+        });
+
+        // Handle payment failure (optional)
+        rzp.on('payment.failed', function(response) {
+            console.log('Payment failed:', response);
+            alert('Payment failed. Please try again.');
+        });
+    }
+</script>
 
     <!-- ============================================================ -->
     <!-- FOOTER                                                        -->
