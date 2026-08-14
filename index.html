@@ -3511,294 +3511,335 @@
     });
 
     // ============================================================
-    // COMMUNICATION TAX ANALYZER - LIGHT THEME
-    // ============================================================
+// COMMUNICATION TAX ANALYZER - PREMIUM
+// ============================================================
 
-    // Configuration
-    const API_URL = 'https://unspoken-backend-yvbi.onrender.com/api';
-    const RECORDING_DURATION = 45;
+// Configuration
+const API_URL = 'https://unspoken-backend-yvbi.onrender.com/api';
+const RECORDING_DURATION = 45;
 
-    // DOM Elements
-    const recordBtn = document.getElementById('recordBtn');
-    const stopBtn = document.getElementById('stopBtn');
-    const btnText = document.getElementById('btnText');
-    const statusText = document.getElementById('statusText');
-    const statusIcon = document.getElementById('statusIcon');
-    const timerText = document.getElementById('timerText');
-    const transcriptText = document.getElementById('transcriptText');
-    const transcriptContainer = document.getElementById('transcriptContainer');
-    const resultsCard = document.getElementById('resultsCard');
-    const countdownOverlay = document.getElementById('countdownOverlay');
-    const countdownNumber = document.getElementById('countdownNumber');
-    const recordingStatus = document.getElementById('recordingStatus');
-    const retryBtn = document.getElementById('retryBtn');
+// DOM Elements
+const recordBtn = document.getElementById('recordBtn');
+const stopBtn = document.getElementById('stopBtn');
+const btnText = document.getElementById('btnText');
+const statusText = document.getElementById('statusText');
+const statusIcon = document.getElementById('statusIcon');
+const statusSubtext = document.getElementById('statusSubtext');
+const timerText = document.getElementById('timerText');
+const transcriptText = document.getElementById('transcriptText');
+const transcriptContainer = document.getElementById('transcriptContainer');
+const resultsCard = document.getElementById('resultsCard');
+const countdownOverlay = document.getElementById('countdownOverlay');
+const countdownNumber = document.getElementById('countdownNumber');
+const recordingStatus = document.getElementById('recordingStatus');
+const retryBtn = document.getElementById('retryBtn');
 
-    // State
-    let recognition = null;
-    let isRecording = false;
-    let isCountdown = false;
-    let countdownTimer = null;
-    let recordingTimer = null;
-    let remainingSeconds = RECORDING_DURATION;
-    let transcript = '';
-    let startTime = null;
+// State
+let recognition = null;
+let isRecording = false;
+let isCountdown = false;
+let countdownTimer = null;
+let recordingTimer = null;
+let remainingSeconds = RECORDING_DURATION;
+let transcript = '';
+let startTime = null;
 
-    // Question Bank
-    const questions = [
-        "Tell me about a time you had to persuade someone at work.",
-        "Describe a situation where you struggled to get your point across.",
-        "What's one thing you wish people understood about your work?",
-        "Tell me about a time you received feedback that changed how you communicate.",
-        "Describe a moment when you felt your voice wasn't heard in a meeting.",
-        "Tell me about a time you had to deliver difficult news to a colleague.",
-        "What's the most important lesson you've learned about communication?",
-        "Describe a time when you had to adapt your communication style to a different audience."
-    ];
+// Question Bank
+const questions = [
+    "Tell me about a time you had to persuade someone at work.",
+    "Describe a situation where you struggled to get your point across.",
+    "What's one thing you wish people understood about your work?",
+    "Tell me about a time you received feedback that changed how you communicate.",
+    "Describe a moment when you felt your voice wasn't heard in a meeting.",
+    "Tell me about a time you had to deliver difficult news to a colleague.",
+    "What's the most important lesson you've learned about communication?",
+    "Describe a time when you had to adapt your communication style to a different audience."
+];
 
-    let currentQuestionIndex = 0;
+let currentQuestionIndex = 0;
 
-    // Get new question
-    function getNewQuestion() {
-        currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
-        document.getElementById('promptText').textContent = questions[currentQuestionIndex];
+// Get new question
+function getNewQuestion() {
+    currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+    const promptEl = document.getElementById('promptText');
+    if (promptEl) {
+        promptEl.textContent = questions[currentQuestionIndex];
+    }
+}
+
+// Initialize Speech Recognition
+function initSpeechRecognition() {
+    // Check if browser supports speech recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert('Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari.');
+        return false;
     }
 
-    // Initialize Speech Recognition
-    function initSpeechRecognition() {
-        if (!('webkitSpeechRecognition' in window)) {
-            alert('Speech recognition is not supported in this browser. Please use Chrome.');
-            return false;
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event) => {
+        let final = '';
+        let interim = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+                final += event.results[i][0].transcript;
+            } else {
+                interim += event.results[i][0].transcript;
+            }
         }
 
-        recognition = new webkitSpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
-
-        recognition.onresult = (event) => {
-            let final = '';
-            let interim = '';
-
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                if (event.results[i].isFinal) {
-                    final += event.results[i][0].transcript;
-                } else {
-                    interim += event.results[i][0].transcript;
-                }
-            }
-
-            transcript = final || interim;
+        transcript = final || interim;
+        if (transcriptText) {
             transcriptText.textContent = transcript || 'Listening...';
-        };
+        }
+    };
 
-        recognition.onerror = (event) => {
-            console.error('Speech recognition error:', event.error);
-            if (event.error === 'not-allowed') {
-                alert('Please allow microphone access to use this feature.');
-                resetRecording();
-            } else if (event.error === 'no-speech') {
-                if (isRecording) {
-                    recognition.stop();
-                    recognition.start();
-                }
-            }
-        };
-
-        recognition.onend = () => {
+    recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        
+        if (event.error === 'not-allowed') {
+            alert('Please allow microphone access to use this feature.');
+            resetRecording();
+        } else if (event.error === 'no-speech') {
+            // Resume automatically if still recording
             if (isRecording) {
                 try {
+                    recognition.stop();
                     recognition.start();
                 } catch (e) {}
             }
-        };
+        } else if (event.error === 'audio-capture') {
+            alert('No microphone found. Please connect a microphone and try again.');
+            resetRecording();
+        }
+    };
 
-        return true;
-    }
-
-    // Recording Flow
-    function startRecording() {
-        if (isRecording || isCountdown) return;
-
-        if (!recognition) {
-            if (!initSpeechRecognition()) {
-                return;
+    recognition.onend = () => {
+        // Restart if still recording
+        if (isRecording) {
+            try {
+                recognition.start();
+            } catch (e) {
+                console.log('Restart failed:', e);
             }
         }
+    };
 
-        isCountdown = true;
-        recordBtn.disabled = true;
-        stopBtn.style.display = 'none';
-        btnText.textContent = 'Getting ready...';
-        countdownOverlay.style.display = 'block';
-        recordingStatus.className = 'analyzer-status idle';
-        statusText.textContent = 'Get ready...';
-        statusIcon.textContent = '⏳';
+    return true;
+}
 
-        let count = 3;
-        countdownNumber.textContent = count;
+// Recording Flow
+function startRecording() {
+    if (isRecording || isCountdown) return;
 
-        countdownTimer = setInterval(() => {
-            count--;
-            if (count > 0) {
-                countdownNumber.textContent = count;
-                countdownNumber.style.animation = 'none';
-                requestAnimationFrame(() => {
-                    countdownNumber.style.animation = 'countdown-bounce 0.8s ease';
-                });
-            } else {
-                clearInterval(countdownTimer);
-                countdownOverlay.style.display = 'none';
-                startActualRecording();
-            }
-        }, 800);
-    }
-
-    function startActualRecording() {
-        isCountdown = false;
-        isRecording = true;
-        transcript = '';
-        remainingSeconds = RECORDING_DURATION;
-
-        // Update UI
-        recordBtn.classList.add('recording');
-        recordBtn.disabled = false;
-        btnText.textContent = '🔴 Recording...';
-        stopBtn.style.display = 'inline-flex';
-        statusText.textContent = '🎤 Speak now...';
-        statusText.className = 'text recording-text';
-        statusIcon.textContent = '🎤';
-        recordingStatus.className = 'analyzer-status recording';
-        transcriptContainer.style.display = 'block';
-        transcriptText.textContent = 'Listening...';
-        resultsCard.style.display = 'none';
-
-        // Start recognition
-        try {
-            recognition.start();
-        } catch (e) {}
-
-        startTime = Date.now();
-
-        // Update timer every second
-        recordingTimer = setInterval(() => {
-            remainingSeconds--;
-            updateTimer();
-
-            if (remainingSeconds <= 0) {
-                stopRecording();
-            }
-        }, 1000);
-    }
-
-    function stopRecording() {
-        if (!isRecording) return;
-
-        isRecording = false;
-        clearInterval(recordingTimer);
-
-        // Stop recognition
-        try {
-            recognition.stop();
-        } catch (e) {}
-
-        // Update UI
-        recordBtn.classList.remove('recording');
-        btnText.textContent = 'Start Recording';
-        stopBtn.style.display = 'none';
-        statusText.textContent = 'Processing...';
-        statusText.className = 'text';
-        statusIcon.textContent = '⏳';
-        recordingStatus.className = 'analyzer-status idle';
-        recordBtn.disabled = false;
-
-        // Final transcript
-        if (transcript.length < 10) {
-            transcriptText.textContent = '⚠️ Please speak at least 10 words. Try again.';
-            statusText.textContent = 'Ready to Speak';
-            statusIcon.textContent = '🎤';
+    // Initialize recognition if not already
+    if (!recognition) {
+        if (!initSpeechRecognition()) {
             return;
         }
-
-        statusText.textContent = 'Analyzing...';
-        statusIcon.textContent = '🤔';
-
-        // Send to backend
-        analyzeTranscript();
     }
 
-    function resetRecording() {
-        isRecording = false;
-        isCountdown = false;
-        clearInterval(countdownTimer);
-        clearInterval(recordingTimer);
-        recordBtn.disabled = false;
-        recordBtn.classList.remove('recording');
-        btnText.textContent = 'Start Recording';
-        stopBtn.style.display = 'none';
-        statusText.textContent = 'Ready to Speak';
-        statusText.className = 'text';
+    isCountdown = true;
+    recordBtn.disabled = true;
+    stopBtn.style.display = 'none';
+    btnText.textContent = 'Getting ready...';
+    countdownOverlay.style.display = 'block';
+    recordingStatus.className = 'analyzer-status idle';
+    statusText.textContent = 'Get ready...';
+    statusIcon.textContent = '⏳';
+    if (statusSubtext) statusSubtext.textContent = '';
+
+    let count = 3;
+    countdownNumber.textContent = count;
+
+    countdownTimer = setInterval(() => {
+        count--;
+        if (count > 0) {
+            countdownNumber.textContent = count;
+            countdownNumber.style.animation = 'none';
+            requestAnimationFrame(() => {
+                countdownNumber.style.animation = 'countdown-bounce 0.8s ease';
+            });
+        } else {
+            clearInterval(countdownTimer);
+            countdownOverlay.style.display = 'none';
+            startActualRecording();
+        }
+    }, 800);
+}
+
+function startActualRecording() {
+    isCountdown = false;
+    isRecording = true;
+    transcript = '';
+    remainingSeconds = RECORDING_DURATION;
+
+    // Update UI
+    recordBtn.disabled = true;
+    btnText.textContent = '🔴 Recording...';
+    stopBtn.style.display = 'inline-flex';
+    statusText.textContent = '🎤 Speak now...';
+    statusIcon.textContent = '🎤';
+    recordingStatus.className = 'analyzer-status recording';
+    transcriptContainer.style.display = 'block';
+    transcriptText.textContent = 'Listening...';
+    
+    // Hide old results
+    const resultsContent = document.getElementById('resultsContent');
+    const insightsPreview = document.getElementById('insightsPreview');
+    if (resultsContent) resultsContent.style.display = 'none';
+    if (insightsPreview) {
+        insightsPreview.style.display = 'block';
+        insightsPreview.textContent = '🎙️ Listening... speak freely!';
+    }
+
+    // Start recognition
+    try {
+        recognition.start();
+    } catch (e) {
+        console.log('Recognition start error:', e);
+    }
+
+    startTime = Date.now();
+
+    // Update timer every second
+    recordingTimer = setInterval(() => {
+        remainingSeconds--;
+        updateTimer();
+
+        if (remainingSeconds <= 0) {
+            stopRecording();
+        }
+    }, 1000);
+}
+
+function stopRecording() {
+    if (!isRecording) return;
+
+    isRecording = false;
+    clearInterval(recordingTimer);
+
+    // Stop recognition
+    try {
+        recognition.stop();
+    } catch (e) {
+        console.log('Recognition stop error:', e);
+    }
+
+    // Update UI
+    recordBtn.disabled = false;
+    btnText.textContent = 'Start Speaking';
+    stopBtn.style.display = 'none';
+    statusText.textContent = 'Processing...';
+    statusIcon.textContent = '⏳';
+    recordingStatus.className = 'analyzer-status idle';
+
+    // Final transcript check
+    const finalTranscript = transcript.trim();
+    if (finalTranscript.length < 10) {
+        transcriptText.textContent = '⚠️ Please speak at least 10 words. Try again.';
+        statusText.textContent = 'Ready to speak?';
         statusIcon.textContent = '🎤';
-        recordingStatus.className = 'analyzer-status idle';
-        countdownOverlay.style.display = 'none';
-        timerText.textContent = '00:45';
+        const insightsPreview = document.getElementById('insightsPreview');
+        if (insightsPreview) {
+            insightsPreview.textContent = '⚠️ Try speaking a bit more next time!';
+        }
+        return;
+    }
+
+    statusText.textContent = 'Analyzing...';
+    statusIcon.textContent = '🤔';
+    if (statusSubtext) statusSubtext.textContent = 'Your coach is reviewing your communication';
+
+    // Send to backend
+    analyzeTranscript();
+}
+
+function resetRecording() {
+    isRecording = false;
+    isCountdown = false;
+    clearInterval(countdownTimer);
+    clearInterval(recordingTimer);
+    recordBtn.disabled = false;
+    btnText.textContent = 'Start Speaking';
+    stopBtn.style.display = 'none';
+    statusText.textContent = 'Ready to speak? I\'m listening.';
+    statusIcon.textContent = '🎤';
+    recordingStatus.className = 'analyzer-status idle';
+    countdownOverlay.style.display = 'none';
+    timerText.textContent = '00:45';
+    timerText.className = 'text';
+    if (statusSubtext) statusSubtext.textContent = 'Press the button below when you\'re ready';
+}
+
+function updateTimer() {
+    const mins = Math.floor(remainingSeconds / 60);
+    const secs = remainingSeconds % 60;
+    timerText.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    
+    if (remainingSeconds <= 5) {
+        timerText.className = 'text warning';
+    } else {
         timerText.className = 'text';
     }
+}
 
-    function updateTimer() {
-        const mins = Math.floor(remainingSeconds / 60);
-        const secs = remainingSeconds % 60;
-        timerText.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        
-        if (remainingSeconds <= 5) {
-            timerText.className = 'text warning';
+// API Call
+async function analyzeTranscript() {
+    try {
+        const response = await fetch(`${API_URL}/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                transcript: transcript.trim(),
+                context: 'Communication assessment'
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            displayResults(data.analysis);
+            statusText.textContent = '✅ Analysis complete!';
+            statusIcon.textContent = '✅';
+            if (statusSubtext) statusSubtext.textContent = 'Your personalized insights are ready';
         } else {
-            timerText.className = 'text';
-        }
-    }
-
-    // API Call
-    async function analyzeTranscript() {
-        try {
-            const response = await fetch(`${API_URL}/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    transcript: transcript,
-                    context: 'Communication assessment'
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                displayResults(data.analysis);
-                statusText.textContent = '✅ Analysis complete!';
-                statusIcon.textContent = '✅';
-            } else {
-                statusText.textContent = '❌ Error analyzing';
-                statusIcon.textContent = '❌';
-                transcriptText.textContent = `Error: ${data.error}`;
-            }
-        } catch (error) {
-            statusText.textContent = '❌ Network error';
+            statusText.textContent = '❌ Error analyzing';
             statusIcon.textContent = '❌';
-            transcriptText.textContent = `Error: ${error.message}`;
+            transcriptText.textContent = `Error: ${data.error}`;
+            if (statusSubtext) statusSubtext.textContent = 'Please try again';
         }
+    } catch (error) {
+        statusText.textContent = '❌ Network error';
+        statusIcon.textContent = '❌';
+        transcriptText.textContent = `Error: ${error.message}`;
+        if (statusSubtext) statusSubtext.textContent = 'Check your internet connection';
     }
+}
 
-    // Display Results with full report card update
+// Display Results
 function displayResults(analysis) {
-    // Show the results content
-    document.getElementById('resultsContent').style.display = 'block';
-    document.getElementById('insightsPreview').style.display = 'none';
+    // Show results content
+    const resultsContent = document.getElementById('resultsContent');
+    const insightsPreview = document.getElementById('insightsPreview');
+    
+    if (resultsContent) resultsContent.style.display = 'block';
+    if (insightsPreview) insightsPreview.style.display = 'none';
 
     // Score
     const score = calculateTaxScore(analysis);
-    document.getElementById('taxScore').textContent = score;
+    const taxScoreEl = document.getElementById('taxScore');
+    if (taxScoreEl) taxScoreEl.textContent = score;
 
     // Dimensions
     const dims = ['thinking', 'structure', 'clarity', 'influence'];
-    const ratings = {
+    const ratingLabels = {
         'Strong': 'Strong',
         'Good': 'Good',
         'Needs Work': 'Needs Work',
@@ -3810,9 +3851,13 @@ function displayResults(analysis) {
         const ratingEl = document.getElementById(`${dim}Rating`);
         const feedbackEl = document.getElementById(`${dim}Feedback`);
         
-        if (data) {
-            ratingEl.textContent = data.rating || '--';
-            ratingEl.className = `rating ${(data.rating || '').toLowerCase().replace(' ', '-')}`;
+        if (data && ratingEl) {
+            const rating = data.rating || '--';
+            ratingEl.textContent = rating;
+            ratingEl.className = `rating ${(rating || '').toLowerCase().replace(' ', '-')}`;
+        }
+        
+        if (data && feedbackEl) {
             feedbackEl.textContent = data.feedback || '';
             feedbackEl.style.display = 'block';
         }
@@ -3821,9 +3866,13 @@ function displayResults(analysis) {
     // Speech Analytics
     const sa = analysis.speech_analytics;
     if (sa) {
-        document.getElementById('wpm').textContent = sa.words_per_minute || '--';
-        document.getElementById('fillersPerMin').textContent = sa.filler_words_per_minute || '--';
-        document.getElementById('totalWords').textContent = sa.total_words || '--';
+        const wpmEl = document.getElementById('wpm');
+        const fillersEl = document.getElementById('fillersPerMin');
+        const wordsEl = document.getElementById('totalWords');
+        
+        if (wpmEl) wpmEl.textContent = sa.words_per_minute || '--';
+        if (fillersEl) fillersEl.textContent = sa.filler_words_per_minute || '--';
+        if (wordsEl) wordsEl.textContent = sa.total_words || '--';
     }
 
     // Insights
@@ -3831,19 +3880,131 @@ function displayResults(analysis) {
     const areasToCover = analysis.areas_to_cover || [];
     
     const goodList = document.getElementById('goodPoints');
-    goodList.innerHTML = goodPoints.slice(0, 3).map(p => `<li style="padding: 2px 0; padding-left: 14px; position: relative;">• ${p}</li>`).join('');
-    
     const areasList = document.getElementById('areasToCover');
-    areasList.innerHTML = areasToCover.slice(0, 3).map(p => `<li style="padding: 2px 0; padding-left: 14px; position: relative;">• ${p}</li>`).join('');
+    
+    if (goodList) {
+        goodList.innerHTML = goodPoints.slice(0, 3).map(p => 
+            `<li style="padding: 2px 0; padding-left: 14px; position: relative; list-style: none;">• ${p}</li>`
+        ).join('');
+    }
+    
+    if (areasList) {
+        areasList.innerHTML = areasToCover.slice(0, 3).map(p => 
+            `<li style="padding: 2px 0; padding-left: 14px; position: relative; list-style: none;">• ${p}</li>`
+        ).join('');
+    }
 
     // Scroll to report card on mobile
     if (window.innerWidth <= 1024) {
-        document.querySelector('#analyzer .analyzer-container > div > div:last-child').scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-        });
+        const reportCard = document.querySelector('#analyzer .analyzer-container > div > div:last-child');
+        if (reportCard) {
+            setTimeout(() => {
+                reportCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
     }
 }
+
+function calculateTaxScore(analysis) {
+    const ratings = {
+        'Strong': 10,
+        'Good': 7,
+        'Needs Work': 4,
+        'Critical Gap': 1
+    };
+
+    const dims = ['thinking', 'structure', 'clarity', 'influence'];
+    let total = 0;
+    let count = 0;
+    dims.forEach(dim => {
+        if (analysis[dim] && analysis[dim].rating) {
+            total += ratings[analysis[dim].rating] || 5;
+            count++;
+        }
+    });
+    if (count === 0) return 50;
+    const avg = total / count;
+    return Math.round((100 - (avg / 10 * 100)) / 10) * 10;
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+
+// Record Button
+if (recordBtn) {
+    recordBtn.addEventListener('click', startRecording);
+}
+
+// Stop Button
+if (stopBtn) {
+    stopBtn.addEventListener('click', stopRecording);
+}
+
+// Retry Button
+if (retryBtn) {
+    retryBtn.addEventListener('click', () => {
+        // Reset everything
+        const resultsContent = document.getElementById('resultsContent');
+        const insightsPreview = document.getElementById('insightsPreview');
+        
+        if (resultsContent) resultsContent.style.display = 'none';
+        if (insightsPreview) {
+            insightsPreview.style.display = 'block';
+            insightsPreview.textContent = '✨ Speak for 45 seconds to unlock personalized insights';
+        }
+        
+        transcriptContainer.style.display = 'none';
+        transcript = '';
+        transcriptText.textContent = 'Your words will appear here...';
+        statusText.textContent = 'Ready to speak? I\'m listening.';
+        statusIcon.textContent = '🎤';
+        timerText.textContent = '00:45';
+        timerText.className = 'text';
+        recordBtn.disabled = false;
+        btnText.textContent = 'Start Speaking';
+        stopBtn.style.display = 'none';
+        recordingStatus.className = 'analyzer-status idle';
+        if (statusSubtext) statusSubtext.textContent = 'Press the button below when you\'re ready';
+        
+        // Reset score and dimensions
+        document.getElementById('taxScore').textContent = '--';
+        ['thinking', 'structure', 'clarity', 'influence'].forEach(dim => {
+            const el = document.getElementById(`${dim}Rating`);
+            const fb = document.getElementById(`${dim}Feedback`);
+            if (el) el.textContent = '--';
+            if (fb) {
+                fb.textContent = '';
+                fb.style.display = 'none';
+            }
+        });
+        document.getElementById('wpm').textContent = '--';
+        document.getElementById('fillersPerMin').textContent = '--';
+        document.getElementById('totalWords').textContent = '--';
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
+// ============================================================
+// INITIALIZE
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔍 Communication Tax Analyzer initialized');
+    
+    // Set first question
+    const promptEl = document.getElementById('promptText');
+    if (promptEl) {
+        promptEl.textContent = questions[0];
+    }
+    
+    // Initialize speech recognition
+    initSpeechRecognition();
+});
+
+// Expose getNewQuestion globally
+window.getNewQuestion = getNewQuestion;
 
     // ============================================================
     // SMOOTH SCROLL FOR NAV LINKS
