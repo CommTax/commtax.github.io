@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Plan | The Unspoken</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        /* ============================================================ */
+        /* RESET & BASE                                                 */
+        /* ============================================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* ============================================================ */
+        /* HEADER                                                       */
+        /* ============================================================ */
+        .pricing-header {
+            text-align: center;
+            max-width: 750px;
+            margin: 0 auto 40px;
+        }
+
+        .pricing-header .back-link {
+            display: inline-block;
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+
+        .pricing-header .back-link:hover {
+            color: #1d4ed8;
+        }
+
+        .pricing-header .badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #d97706;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 6px 20px;
+            border-radius: 30px;
+            margin-bottom: 10px;
+        }
+
+        .pricing-header h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .pricing-header h1 .gold { color: #d97706; }
+        .pricing-header h1 .blue { color: #2563eb; }
+
+        .pricing-header p {
+            font-size: 16px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .pricing-header .sub {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        /* ============================================================ */
+        /* WHATSAPP FEATURE BANNER                                      */
+        /* ============================================================ */
+        .whatsapp-banner {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            border-radius: 16px;
+            padding: 16px 24px;
+            max-width: 700px;
+            margin: 0 auto 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            color: white;
+        }
+
+        .whatsapp-banner .icon {
+            font-size: 32px;
+        }
+
+        .whatsapp-banner .text {
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .whatsapp-banner .text strong {
+            font-weight: 700;
+        }
+
+        /* ============================================================ */
+        /* TOGGLE: Monthly / Annual                                     */
+        /* ============================================================ */
+        .toggle-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+        }
+
+        .toggle-wrapper .label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #94a3b8;
+            transition: 0.3s;
+        }
+
+        .toggle-wrapper .label.active {
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 56px;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+            padding: 0;
+        }
+
+        .toggle-switch.active {
+            background: #2563eb;
+        }
+
+        .toggle-switch .slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .toggle-switch.active .slider {
+            left: 29px;
+        }
+
+        .toggle-wrapper .save-badge {
+            background: #10b981;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .toggle-wrapper .annual-note {
+            font-size: 12px;
+            color: #94a3b8;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* ============================================================ */
+        /* PRICING GRID                                                 */
+        /* ============================================================ */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        /* ============================================================ */
+        /* PLAN CARD                                                    */
+        /* ============================================================ */
+        .plan-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 28px 22px 24px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+        }
+
+        .plan-card.recommended {
+            border-color: #2563eb;
+            background: #f8faff;
+        }
+
+        .plan-card.recommended .popular-badge {
+            display: inline-block;
+            background: #2563eb;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .plan-card .plan-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .plan-card .plan-name {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #94a3b8;
+            margin-bottom: 2px;
+        }
+
+        .plan-card .plan-tagline {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .plan-card .plan-price {
+            font-size: 34px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 4px 0 2px;
+        }
+
+        .plan-card .plan-price .currency {
+            font-size: 18px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .plan-card .plan-price .period {
+            font-size: 13px;
+            font-weight: 400;
+            color: #94a3b8;
+        }
+
+        .plan-card .plan-price .annual-price {
+            font-size: 14px;
+            color: #10b981;
+            font-weight: 600;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .plan-card .plan-desc {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 14px;
+            line-height: 1.5;
+            min-height: 40px;
+        }
+
+        .plan-card .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 18px;
+            flex: 1;
+        }
+
+        .plan-card .plan-features li {
+            padding: 5px 0;
+            font-size: 13px;
+            color: #334155;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .plan-card .plan-features li::before {
+            content: "✅";
+            font-size: 13px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .plan-card .plan-features li.disabled {
+            color: #94a3b8;
+        }
+
+        .plan-card .plan-features li.disabled::before {
+            content: "❌";
+        }
+
+        .plan-card .plan-features li.whatsapp {
+            background: rgba(37, 211, 102, 0.08);
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin: 4px 0;
+            font-weight: 500;
+            color: #0f172a;
+        }
+
+        .plan-card .plan-features li.whatsapp::before {
+            content: "💬";
+        }
+
+        .plan-card .plan-features li.highlight {
+            color: #10b981;
+            font-weight: 600;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 10px;
+            margin-top: 4px;
+        }
+
+        .plan-card .plan-features li.highlight::before {
+            content: "🎁";
+        }
+
+        .plan-card .plan-features .roleplay-count {
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        /* ============================================================ */
+        /* BUTTONS                                                      */
+        /* ============================================================ */
+        .plan-card .btn-plan {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .plan-card .btn-plan:hover {
+            background: #e2e8f0;
+        }
+
+        .plan-card .btn-plan.primary {
+            background: #2563eb;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .plan-card .btn-plan.primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(37, 99, 235, 0.4);
+        }
+
+        .plan-card .btn-plan.gold {
+            background: #d97706;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(217, 119, 6, 0.3);
+        }
+
+        .plan-card .btn-plan.gold:hover {
+            background: #b45309;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(217, 119, 6, 0.4);
+        }
+
+        .plan-card .btn-plan.purple {
+            background: #7c3aed;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+        }
+
+        .plan-card .btn-plan.purple:hover {
+            background: #6d28d9;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
+        }
+
+        .plan-card .btn-plan.outline {
+            background: transparent;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+        }
+
+        .plan-card .btn-plan.outline:hover {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .plan-card .no-credit {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        /* ============================================================ */
+        /* FOOTER                                                       */
+        /* ============================================================ */
+        .pricing-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 28px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .pricing-footer p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .pricing-footer a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        /* ============================================================ */
+        /* RESPONSIVE                                                   */
+        /* ============================================================ */
+        @media (max-width: 768px) {
+            body { padding: 20px 16px; }
+
+            .pricing-header h1 {
+                font-size: 28px;
+            }
+
+            .pricing-header p {
+                font-size: 15px;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 420px;
+            }
+
+            .plan-card {
+                padding: 22px 16px 20px;
+            }
+
+            .plan-card .plan-price {
+                font-size: 30px;
+            }
+
+            .toggle-wrapper .label {
+                font-size: 12px;
+            }
+
+            .toggle-switch {
+                width: 48px;
+                height: 26px;
+            }
+
+            .toggle-switch .slider {
+                width: 20px;
+                height: 20px;
+            }
+
+            .toggle-switch.active .slider {
+                left: 25px;
+            }
+
+            .whatsapp-banner {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+
+            .whatsapp-banner .icon {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pricing-header h1 {
+                font-size: 24px;
+            }
+
+            .plan-card .plan-price {
+                font-size: 26px;
+            }
+
+            .plan-card .btn-plan {
+                font-size: 14px;
+                padding: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================ -->
+    <!-- HEADER                                                        -->
+    <!-- ============================================================ -->
+    <div class="pricing-header">
+        <a href="javascript:history.back()" class="back-link">← Back to Assessment</a>
+        <div class="badge">🎯 Your Communication Coach</div>
+        <h1>Choose Your <span class="gold">Transformation</span> <span class="blue">Path</span></h1>
+        <p>From a quick diagnosis to a full transformation — pick the plan that fits your journey.</p>
+        <div class="sub">All plans include instant access. Upgrade or cancel anytime.</div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- WHATSAPP BANNER                                               -->
+    <!-- ============================================================ -->
+    <div class="whatsapp-banner">
+        <span class="icon">💬</span>
+        <span class="text">
+            <strong>Daily Practice via WhatsApp</strong> — Get AI coaching prompts sent to your phone every day.
+            Practice anytime, anywhere.
+        </span>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- TOGGLE: Monthly / Annual                                      -->
+    <!-- ============================================================ -->
+    <div class="toggle-wrapper">
+        <span class="label active" id="monthlyLabel">Monthly</span>
+        <button class="toggle-switch active" id="billingToggle" aria-label="Toggle billing">
+            <span class="slider"></span>
+        </button>
+        <span class="label" id="annualLabel">Annual</span>
+        <span class="save-badge">SAVE 40%</span>
+        <div class="annual-note">Billed annually — cancel anytime</div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PRICING GRID                                                  -->
+    <!-- ============================================================ -->
+    <div class="pricing-grid" id="pricingGrid">
+
+        <!-- ========================================================= -->
+        <!-- PLAN 1: STARTER (Free)                                   -->
+        <!-- ========================================================= -->
+        <div class="plan-card">
+            <div class="plan-icon">📊</div>
+            <div class="plan-name">STARTER</div>
+            <div class="plan-tagline">Get started, just exploring</div>
+            <div class="plan-price">
+                <span class="currency">₹</span>0
+                <span class="period">/ forever</span>
+            </div>
+            <div class="plan-desc">Discover your Communication Tax score and get a taste of AI coaching.</div>
+            <ul class="plan-features">
+                <li>🎯 Communication Tax Score</li>
+                <li>📄 18-Page Premium Report</li>
+                <li>🧠 4-Dimension Analysis</li>
+                <li>📊 Speech Analytics (WPM, Fillers)</li>
+                <li class="whatsapp">💬 WhatsApp: Daily practice tips</li>
+                <li class="disabled">Live AI Roleplays</li>
+                <li class="disabled">Feedback on Recordings</li>
+                <li class="disabled">Community Access</li>
+            </ul>
+            <a href="https://tally.so/r/jaXNNQ" target="_blank" class="btn-plan outline">Get Started Free</a>
+            <div class="no-credit">No credit card required</div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- PLAN 2: PRO (₹499/month) - RECOMMENDED                   -->
+        <!-- ========================================================= -->
+        <div class="plan-card recommended">
+            <span class="popular-badge">⭐ MOST POPULAR</span>
+            <div class="plan-icon">🚀</div>
+            <div class="plan-name">PRO</div>
+            <div class="plan-tagline">Preparing for a high-stakes event</div>
+            <div class="plan-price">
+                <span class="currency">₹</span>
+                <span class="price-value" data-monthly="499" data-annual="299">499</span>
+                <span class="period">/ <span class="period-label">month</span></span>
+                <span class="annual-price" id="annualPricePro">Billed annually: ₹3,588/year (Save ₹2,400)</span>
+            </div>
+            <div class="plan-desc">Everything you need to prepare for interviews, pitches, and key presentations.</div>
+            <ul class="plan-features">
+                <li>✅ Everything in Starter</li>
+                <li>✅ <span class="roleplay-count">Up to 10 roleplays/week</span></li>
+                <li class="whatsapp">💬 WhatsApp: Daily AI roleplay prompts</li>
+                <li>🎙️ Live AI Roleplays</li>
+                <li>📹 Feedback on Recordings</li>
+                <li>👥 Exclusive User Community</li>
+                <li>📈 Progress Tracking</li>
+                <li class="highlight">🎁 Data excluded from AI training</li>
+            </ul>
+            <a href="https://rzp.io/rzp/Bn57txO" target="_blank" class="btn-plan gold">Start Pro →</a>
+            <div class="no-credit">7-day free trial · Cancel anytime</div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- PLAN 3: ADVANCED (₹999/month)                             -->
+        <!-- ========================================================= -->
+        <div class="plan-card">
+            <div class="plan-icon">🏆</div>
+            <div class="plan-name">ADVANCED</div>
+            <div class="plan-tagline">Ongoing performance improvement</div>
+            <div class="plan-price">
+                <span class="currency">₹</span>
+                <span class="price-value" data-monthly="999" data-annual="599">999</span>
+                <span class="period">/ <span class="period-label">month</span></span>
+                <span class="annual-price" id="annualPriceAdvanced">Billed annually: ₹7,188/year (Save ₹4,800)</span>
+            </div>
+            <div class="plan-desc">For professionals committed to continuous growth and mastery.</div>
+            <ul class="plan-features">
+                <li>✅ Everything in Pro</li>
+                <li>✅ <span class="roleplay-count">Unlimited roleplays</span></li>
+                <li class="whatsapp">💬 WhatsApp: Unlimited daily coaching</li>
+                <li>🎙️ Unlimited Live AI Roleplays</li>
+                <li>📹 Unlimited Feedback on Recordings</li>
+                <li>👥 VIP Community Access</li>
+                <li>📊 Advanced Analytics Dashboard</li>
+                <li>🎯 Personalized Improvement Plan</li>
+                <li class="highlight">🎁 Reimbursable as learning benefit</li>
+            </ul>
+            <a href="https://rzp.io/rzp/ncWsNe01" target="_blank" class="btn-plan purple">Go Advanced →</a>
+            <div class="no-credit">7-day free trial · Cancel anytime</div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- FOOTER                                                        -->
+    <!-- ============================================================ -->
+    <div class="pricing-footer">
+        <p>⭐ Trusted by <strong>100+</strong> professionals from <strong>Fortune 500</strong> companies</p>
+        <p style="margin-top: 4px;">
+            🔒 Secure payments via Razorpay · 7-day money-back guarantee
+        </p>
+        <p style="margin-top: 8px; font-size: 12px; color: #cbd5e1;">
+            <a href="javascript:history.back()">← Back to Assessment</a>
+        </p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT                                                    -->
+    <!-- ============================================================ -->
+    <script>
+        // ============================================================
+        // BILLING TOGGLE (Monthly / Annual)
+        // ============================================================
+        const toggle = document.getElementById('billingToggle');
+        const monthlyLabel = document.getElementById('monthlyLabel');
+        const annualLabel = document.getElementById('annualLabel');
+        const priceValues = document.querySelectorAll('.price-value');
+        const annualPrices = document.querySelectorAll('.annual-price');
+
+        // Store original monthly prices for calculation
+        const monthlyPrices = {
+            pro: 499,
+            advanced: 999
+        };
+
+        toggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            monthlyLabel.classList.toggle('active');
+            annualLabel.classList.toggle('active');
+
+            const isAnnual = this.classList.contains('active');
+
+            priceValues.forEach(function(el) {
+                if (isAnnual) {
+                    el.textContent = el.dataset.annual;
+                } else {
+                    el.textContent = el.dataset.monthly;
+                }
+            });
+
+            // Update period labels
+            document.querySelectorAll('.period-label').forEach(function(el) {
+                el.textContent = isAnnual ? 'month' : 'month';
+            });
+
+            // Update annual price text
+            annualPrices.forEach(function(el) {
+                if (el.id === 'annualPricePro') {
+                    if (isAnnual) {
+                        el.textContent = 'Billed annually: ₹3,588/year (Save ₹2,400)';
+                        el.style.display = 'block';
+                    } else {
+                        el.textContent = 'Monthly billing: ₹499/month';
+                        el.style.display = 'block';
+                    }
+                }
+                if (el.id === 'annualPriceAdvanced') {
+                    if (isAnnual) {
+                        el.textContent = 'Billed annually: ₹7,188/year (Save ₹4,800)';
+                        el.style.display = 'block';
+                    } else {
+                        el.textContent = 'Monthly billing: ₹999/month';
+                        el.style.display = 'block';
+                    }
+                }
+            });
+        });
+
+        // ============================================================
+        // PLAN CARD HOVER EFFECT
+        // ============================================================
+        document.querySelectorAll('.plan-card').forEach(function(card) {
+            card.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.3s ease';
+            });
+        });
+    </script>
+
+</body>
+</html>
