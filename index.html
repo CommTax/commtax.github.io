@@ -2571,7 +2571,7 @@
                     <!-- Header -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <div>
-                            <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Your Communication Score</div>
+                            <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Your Upspoken Value</div>
                             <div style="font-size: 13px; color: rgba(255,255,255,0.5);">See how you're doing in real-time</div>
                         </div>
                         <div style="background: rgba(255,255,255,0.05); border-radius: 20px; padding: 4px 12px; font-size: 10px; color: #34d399; border: 1px solid rgba(52, 211, 153, 0.2);">LIVE</div>
@@ -3701,10 +3701,13 @@ function displayResults(analysis) {
     if (resultsContent) resultsContent.style.display = 'block';
     if (insightsPreview) insightsPreview.style.display = 'none';
 
-    // Score
-    const score = calculateTaxScore(analysis);
-    const taxScoreEl = document.getElementById('taxScore');
-    if (taxScoreEl) taxScoreEl.textContent = score;
+// Score - Use unspoken_value_score from Gemini
+const taxScoreEl = document.getElementById('taxScore');
+if (taxScoreEl) {
+    // Use the score from Gemini, or fallback to calculated
+    const score = analysis.unspoken_value_score || calculateTaxScore(analysis);
+    taxScoreEl.textContent = score;
+}
 
     // Dimensions
     const dims = ['thinking', 'structure', 'clarity', 'influence'];
