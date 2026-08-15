@@ -744,4 +744,132 @@
             step4: document.getElementById('step4'),
             step5: document.getElementById('step5'),
             step6: document.getElementById('step6'),
-            step7: document.getElementById('
+            step7: document.getElementById('step7')
+        };
+
+        let currentStep = 'step1';
+        const totalSteps = 7;
+
+        function showStep(id) {
+            Object.values(steps).forEach(s => s.classList.add('hidden'));
+            if (steps[id]) {
+                steps[id].classList.remove('hidden');
+                currentStep = id;
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getStepNumber(id) {
+            const map = { step1: 1, step2: 2, step3: 3, step4: 4, step5: 5, step6: 6, step7: 7 };
+            return map[id] || 0;
+        }
+
+        // Navigation: Forward
+        document.getElementById('step1Next').addEventListener('click', (e) => {
+            e.preventDefault();
+            showStep('step2');
+        });
+
+        document.getElementById('step2Next').addEventListener('click', (e) => {
+            e.preventDefault();
+            const expSelected = document.querySelector('#expGrid .choice-btn.active');
+            if (!expSelected) { alert('Please select your experience level.'); return; }
+            // If Experienced, check range
+            if (expSelected.dataset.exp === 'experienced') {
+                const rangeSelected = document.querySelector('#rangeGrid .choice-btn.active');
+                if (!rangeSelected) { alert('Please select your experience range.'); return; }
+            }
+            showStep('step3');
+        });
+
+        document.getElementById('step3Next').addEventListener('click', (e) => {
+            e.preventDefault();
+            showStep('step4');
+        });
+
+        document.getElementById('step4Next').addEventListener('click', (e) => {
+            e.preventDefault();
+            showStep('step5');
+        });
+
+        document.getElementById('step5Next').addEventListener('click', (e) => {
+            e.preventDefault();
+            // Check if all 7 behavioural questions answered
+            const allGroups = document.querySelectorAll('[data-q]');
+            let allAnswered = true;
+            allGroups.forEach(group => {
+                const active = group.querySelector('.choice-btn.active');
+                if (!active) allAnswered = false;
+            });
+            if (!allAnswered) {
+                alert('Please answer all 7 questions to continue.');
+                return;
+            }
+            showStep('step6');
+        });
+
+        document.getElementById('step6Next').addEventListener('click', (e) => {
+            e.preventDefault();
+            showStep('step7');
+        });
+
+        document.getElementById('unlockBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            if (!name || !email || !mobile) {
+                alert('Please enter your name, email, and mobile number to unlock your profile.');
+                return;
+            }
+            alert('✨ Your Personal Communication Profile is now unlocked!\n\nYou\'ll receive:\n• Persona explanation\n• Strengths & blind spots\n• Intent → Impact gap\n• Dimension scores\n• Behavioural patterns\n• Personalized recommendations\n• First practice recommendation\n\nWe\'ll send your results to ' + email);
+        });
+
+        // Back navigation
+        document.getElementById('step2Back').addEventListener('click', () => showStep('step1'));
+        document.getElementById('step3Back').addEventListener('click', () => showStep('step2'));
+        document.getElementById('step4Back').addEventListener('click', () => showStep('step3'));
+        document.getElementById('step5Back').addEventListener('click', () => showStep('step4'));
+        document.getElementById('step6Back').addEventListener('click', () => showStep('step5'));
+        document.getElementById('step7Back').addEventListener('click', () => showStep('step6'));
+
+        // Entry discover button (restart)
+        document.getElementById('step1Next').addEventListener('click', (e) => {
+            // already handled above, but we keep it
+        });
+
+        // Toggle choice buttons
+        document.querySelectorAll('.choice-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const parent = this.closest('.choice-grid');
+                if (parent) {
+                    parent.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                } else {
+                    this.classList.toggle('active');
+                }
+                // Show range for experienced
+                if (this.closest('#expGrid')) {
+                    const expContainer = document.getElementById('expRangeContainer');
+                    if (this.dataset.exp === 'experienced') {
+                        expContainer.style.display = 'block';
+                    } else {
+                        expContainer.style.display = 'none';
+                        // Clear range selection
+                        document.querySelectorAll('#rangeGrid .choice-btn').forEach(b => b.classList.remove('active'));
+                    }
+                }
+            });
+        });
+
+        // Record button
+        document.getElementById('recordBtn').addEventListener('click', () => {
+            alert('🎙️ Recording simulation: your voice sample has been captured.\n\n"Don\'t tell us how good a communicator you are. Show us."');
+        });
+
+        // Start
+        showStep('step1');
+    })();
+</script>
+</body>
+</html>
