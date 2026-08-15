@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RiseGuide · interactive premium</title>
+  <title>Your Communication Persona · Premium Journey</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #f4f9ff; /* off-blue, bright */
+      background: #f4f9ff;
       font-family: "Inter", system-ui, sans-serif;
       color: #0a1e2e;
       min-height: 100vh;
@@ -22,355 +22,558 @@
     .container {
       max-width: 820px;
       width: 100%;
-      background: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.7);
       backdrop-filter: blur(2px);
       border-radius: 3rem;
-      padding: 2.2rem 2.2rem;
-      box-shadow: 0 16px 40px rgba(0,20,40,0.06);
+      padding: 2rem 2rem;
+      box-shadow: 0 20px 48px rgba(0,20,40,0.06);
       border: 1px solid rgba(255,255,255,0.8);
-      transition: all 0.2s;
     }
     .step-card {
       background: white;
       border-radius: 2.2rem;
-      padding: 1.8rem 2rem;
-      margin-bottom: 1.5rem;
+      padding: 2rem 2rem;
+      margin-bottom: 1.2rem;
       border: 1px solid #eaf1f8;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.01);
-      transition: 0.3s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+      transition: 0.2s;
     }
-    .step-card:hover { box-shadow: 0 8px 24px rgba(30,70,110,0.04); }
-    h2 { font-weight: 600; font-size: 1.6rem; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
-    .sub { color: #1d4b66; border-left: 4px solid #7bb0d0; padding-left: 1rem; margin-bottom: 1.2rem; }
-    .flex-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+    h2 { font-weight: 600; font-size: 1.7rem; letter-spacing: -0.02em; color: #0a2a3f; }
+    .subhead { color: #3a6a88; font-size: 0.95rem; margin: 0.2rem 0 0.8rem; }
     .flex-between { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; }
 
+    /* Premium Buttons */
     .btn-primary {
-      background: #1a3e55; color: white; border: none; padding: 0.7rem 2.4rem;
-      border-radius: 60px; font-weight: 500; cursor: pointer; transition: 0.15s;
-      border: 1px solid #2a5d7a; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      background: linear-gradient(145deg, #1e3f5a, #142f45);
+      color: white;
+      border: none;
+      padding: 0.8rem 2.8rem;
+      border-radius: 60px;
+      font-weight: 500;
       font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(20,60,90,0.15);
+      letter-spacing: 0.3px;
+      border: 1px solid rgba(255,255,255,0.1);
     }
-    .btn-primary:hover { background: #0f2a3b; transform: scale(1.02); box-shadow: 0 6px 14px rgba(20,60,90,0.1); }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(20,60,90,0.25);
+      background: linear-gradient(145deg, #254f6a, #1a3a52);
+    }
+    .btn-primary:active { transform: translateY(0px); }
+
     .btn-outline {
-      background: transparent; border: 1px solid #b8d2e6; color: #1a4057;
-      padding: 0.5rem 1.5rem; border-radius: 60px; font-weight: 500; cursor: pointer;
+      background: transparent;
+      border: 1.5px solid #b8d2e6;
+      color: #1a4057;
+      padding: 0.5rem 1.6rem;
+      border-radius: 60px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.15s;
     }
-    .btn-outline:hover { background: #e3eefa; }
+    .btn-outline:hover { background: #eaf3fc; border-color: #7ba9cc; }
 
-    .tag-group { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0.5rem 0 0.2rem; }
-    .tag {
-      background: #eaf1f8; padding: 0.4rem 1.4rem; border-radius: 60px;
-      font-size: 0.9rem; font-weight: 450; color: #1d4057; cursor: pointer;
-      border: 2px solid transparent; transition: 0.1s;
+    .btn-voice {
+      background: linear-gradient(145deg, #c94a44, #b03a34);
+      color: white;
+      border: none;
+      padding: 0.6rem 2rem;
+      border-radius: 60px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 4px 12px rgba(180,50,40,0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    .tag.active { background: #1a3e55; color: white; border-color: #1a3e55; }
-    .tag:hover { border-color: #7ba9cc; }
+    .btn-voice:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(180,50,40,0.3); }
 
-    .pill {
-      background: #e7f0f8; padding: 0.2rem 1rem; border-radius: 40px; font-size: 0.8rem;
+    .btn-unlock {
+      background: linear-gradient(145deg, #2a5f7a, #1a4057);
+      color: white;
+      border: none;
+      padding: 0.9rem 3.5rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 6px 20px rgba(20,60,90,0.2);
+      letter-spacing: 0.5px;
+    }
+    .btn-unlock:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(20,60,90,0.3); }
+
+    /* Choice buttons */
+    .choice-grid {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      margin: 0.8rem 0 0.2rem;
+    }
+    .choice-btn {
+      background: #f5faff;
+      padding: 0.7rem 1.6rem;
+      border-radius: 60px;
+      font-size: 0.9rem;
+      font-weight: 450;
+      color: #1d4057;
+      cursor: pointer;
+      border: 2px solid #e2edf7;
+      transition: all 0.15s;
+      flex: 1 0 calc(50% - 0.6rem);
+      text-align: center;
+    }
+    .choice-btn:hover { border-color: #7ba9cc; background: #ecf5fe; transform: translateY(-1px); }
+    .choice-btn.active {
+      background: #1a3e55;
+      color: white;
+      border-color: #1a3e55;
+      box-shadow: 0 4px 12px rgba(26,62,85,0.15);
     }
 
-    /* trust badges & media mentions */
     .trust-row {
       display: flex; flex-wrap: wrap; gap: 0.8rem 2rem;
-      background: #eaf3fc; border-radius: 3rem; padding: 0.6rem 1.8rem;
+      background: #eaf3fc; border-radius: 3rem; padding: 0.5rem 1.8rem;
       margin-bottom: 1rem; justify-content: center;
     }
     .trust-item { font-size: 0.85rem; font-weight: 500; color: #1a4057; }
     .trust-item strong { color: #0a2a3f; }
 
-    .media-row {
-      display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem;
-      justify-content: center; margin: 0.8rem 0;
-    }
-    .media-badge {
-      background: #eef5fc; padding: 0.2rem 1rem; border-radius: 40px;
-      font-size: 0.7rem; font-weight: 600; color: #1f4a64; letter-spacing: 0.3px;
-      border: 1px solid #d8e6f2;
-    }
-
-    .profile-box {
-      background: #f2f9ff; border-radius: 2rem; padding: 1.5rem;
-      border: 1px solid #dcebf6;
-    }
-
-    .review-quote {
-      background: white; border-radius: 2rem; padding: 1rem 1.5rem;
-      border-left: 4px solid #f5b342; margin: 0.8rem 0;
-      font-style: italic; color: #1d3d55;
+    .pill {
+      background: #e7f0f8; padding: 0.2rem 1rem; border-radius: 40px; font-size: 0.75rem; font-weight: 500; color: #1a4a66;
     }
 
     .hidden { display: none; }
     .mt-1 { margin-top: 1rem; }
-    .mb-1 { margin-bottom: 0.8rem; }
+    .mt-2 { margin-top: 1.5rem; }
+    .text-right { text-align: right; }
     .text-center { text-align: center; }
 
-    .img-icon { background: #c7dae9; width: 40px; height: 40px; border-radius: 40px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; }
-    .chip { background: white; padding: 0.1rem 1rem; border-radius: 40px; font-size: 0.75rem; color: #1d4a64; }
-    hr { border: none; border-top: 2px dashed #d3e2ef; margin: 1.5rem 0; }
-
-    /* progress bar */
+    /* progress */
     .progress-track {
-      display: flex; align-items: center; gap: 0.8rem; margin: 0.5rem 0 0.8rem;
+      display: flex; align-items: center; gap: 0.8rem; margin: 0.8rem 0 0.2rem;
     }
-    .progress-bar { height: 6px; flex: 1; background: #d8e5f0; border-radius: 12px; }
-    .progress-fill { height: 100%; width: 15%; background: #1d5779; border-radius: 12px; transition: width 0.3s; }
+    .progress-bar { height: 6px; flex: 1; background: #dce8f3; border-radius: 12px; }
+    .progress-fill { height: 100%; width: 12%; background: #1d5779; border-radius: 12px; transition: width 0.4s ease; }
 
-    .gender-btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .gender-btn {
-      background: white; border: 2px solid #d4e2ed; padding: 0.6rem 2.2rem;
-      border-radius: 60px; font-weight: 500; cursor: pointer; transition: 0.1s;
-      font-size: 1rem; flex: 1 0 100px;
+    .img-placeholder {
+      background: linear-gradient(145deg, #eaf3fc, #dce8f3);
+      border-radius: 1.8rem;
+      padding: 1.2rem 1.5rem;
+      margin: 0.8rem 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      border: 1px solid #d4e2ed;
+      color: #2a5f7a;
+      font-weight: 450;
     }
-    .gender-btn:hover { border-color: #7ba9cc; background: #f0f7fe; }
-    .gender-btn.active { border-color: #1a3e55; background: #e3eefa; }
+    .img-placeholder .icon { font-size: 2.2rem; }
+    .img-placeholder .label { font-size: 0.85rem; color: #3a6a88; }
+
+    .detail-row { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem; }
+    .detail-row input {
+      flex: 1 0 160px; padding: 0.7rem 1.4rem; border-radius: 60px;
+      border: 1.5px solid #dce8f3; font-family: inherit; font-size: 0.95rem;
+      transition: 0.15s; background: #fafcff;
+    }
+    .detail-row input:focus { outline: none; border-color: #7ba9cc; box-shadow: 0 0 0 4px rgba(107,159,199,0.1); }
+
+    .persona-preview {
+      background: linear-gradient(145deg, #e8f2fa, #dceaf5);
+      border-radius: 1.8rem; padding: 1.2rem 1.8rem; margin: 1rem 0;
+      border: 1px solid #cde0ef;
+    }
+    .badge-persona {
+      background: #1a3e55; color: white; padding: 0.15rem 1.2rem; border-radius: 40px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.5px;
+      display: inline-block;
+    }
+
+    .profile-teaser {
+      background: #f0f8ff; border-radius: 1.8rem; padding: 1.5rem 1.8rem;
+      border: 1px solid #cde0ef;
+    }
+    .dimension-grid { display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 0.5rem 0; }
+    .dimension-item { flex: 1 0 70px; }
+    .dimension-score { font-weight: 600; font-size: 1.8rem; color: #0d3047; }
+
+    hr { border: none; border-top: 2px dashed #d3e2ef; margin: 1.2rem 0; }
+
+    /* signal chips */
+    .signal-chip {
+      background: #eaf3fc; border-radius: 3rem; padding: 0.5rem 1.2rem;
+      display: inline-block; font-size: 0.85rem; font-weight: 450; color: #1a4a66;
+      border: 1px solid #d4e2ed;
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 1.2rem; }
+      .step-card { padding: 1.5rem; }
+      .choice-btn { flex: 1 0 100%; }
+      .btn-primary, .btn-unlock { width: 100%; justify-content: center; }
+    }
   </style>
 </head>
 <body>
 <div class="container" id="app">
 
-  <!-- trust & media (always visible) -->
+  <!-- trust row -->
   <div class="trust-row">
-    <span class="trust-item"><strong>1,000,000+</strong> USERS · Learning New Skills</span>
-    <span class="trust-item">⭐ RATED ON TRUSTPILOT <strong>4.4</strong> Satisfaction</span>
+    <span class="trust-item"><strong>1,000,000+</strong> Users · Learning New Skills</span>
+    <span class="trust-item">⭐ Rated on Trustpilot <strong>4.4</strong> Satisfaction</span>
   </div>
 
-  <!-- ===== STEP 0: ENTRY (gender + welcome) ===== -->
-  <div class="step-card" id="step0">
-    <div class="flex-between">
-      <h2>Articulation Training Plan</h2>
-      <span class="pill">0 / 26</span>
-    </div>
-    <p style="font-size: 1.1rem; color: #0f344b; margin: 0.2rem 0 0.8rem;">
-      to stop losing your best ideas between your <strong>brain</strong> and your <strong>mouth</strong>
-    </p>
-
-    <!-- Profile / age (from image) -->
-    <div class="profile-box">
-      <div style="display: flex; align-items: center; gap: 0.6rem;">
-        <span class="img-icon">👤</span>
-        <span style="font-weight: 600;">Profile</span>
+  <!-- ===== STEP 1: Entry - sell curiosity ===== -->
+  <div class="step-card" id="step1">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start;">
+      <div>
+        <h1 style="font-size: 2rem; font-weight: 600; color: #0a2a3f; letter-spacing: -0.02em;">Make Your Potential<br>Impossible to Miss.</h1>
+        <p style="color: #1d4b66; font-size: 1.05rem; margin: 0.3rem 0;">Discover How the World Experiences You.</p>
+        <p style="color: #3a6a88; max-width: 420px; font-size: 0.95rem;">Uncover the gap between intent and impact — and see how your communication shapes the way others experience your value.</p>
       </div>
-      <p style="margin: 0.3rem 0 0.5rem; color: #1d4a66;">What's your age? <span style="font-weight: 300; font-size: 0.8rem; color: #5a7f99;">We only use age to personalise your plan</span></p>
-      <div class="gender-btn-group" id="ageGroup">
-        <button class="gender-btn" data-age="18-34">18-34</button>
-        <button class="gender-btn active" data-age="35-44">35-44</button>
-        <button class="gender-btn" data-age="45-54">45-54</button>
-        <button class="gender-btn" data-age="55+">55+</button>
+      <div style="margin-top: 0.5rem; cursor: pointer;" id="entryDiscover">
+        <span style="background: #1a3e55; color: white; padding: 0.6rem 1.8rem; border-radius: 60px; font-weight: 500; display: inline-block; box-shadow: 0 4px 12px rgba(26,62,85,0.15);">✨ Discover My Persona →</span>
       </div>
     </div>
-
-    <div style="margin-top: 1.2rem; display: flex; justify-content: flex-end;">
-      <button class="btn-primary" id="step0Next">Continue →</button>
+    <div class="img-placeholder" style="margin-top: 1.2rem;">
+      <span class="icon">🧠</span>
+      <span class="label">[ Image: Person communicating with impact, surrounded by visual cues ]</span>
+    </div>
+    <div class="text-right mt-1">
+      <button class="btn-primary" id="step1Next">Start Your Discovery →</button>
     </div>
   </div>
 
-  <!-- ===== STEP 1: social proof + review ===== -->
-  <div class="step-card hidden" id="step1">
-    <div style="display: flex; align-items: center; gap: 0.8rem;">
-      <span class="img-icon" style="background: #d4e4f2;">📈</span>
-      <h2>Over 1,000,000 people</h2>
-    </div>
-    <p style="font-size: 1rem; color: #1a4057; margin-bottom: 0.8rem;">are already leveling up with RiseGuide</p>
-
-    <div class="review-quote">
-      “We often ignore what actually matters. Communication skills are vital for success.”
-      <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem;">
-        <span style="color: #f5b342;">★★★★★</span>
-        <span style="font-weight: 500; font-size: 0.8rem;">TrustPilot Review</span>
-      </div>
-    </div>
-
-    <div style="margin: 0.8rem 0;">
-      <span style="font-weight: 500; font-size: 0.85rem; color: #1d4a66;">Methods we use are mentioned in:</span>
-      <div class="media-row">
-        <span class="media-badge">Forbes</span>
-        <span class="media-badge">WIRED</span>
-        <span class="media-badge">The Guardian</span>
-        <span class="media-badge">TC</span>
-        <span class="media-badge">TIME</span>
-        <span class="media-badge">The Economist</span>
-      </div>
-    </div>
-
-    <div style="margin-top: 1.2rem; display: flex; justify-content: flex-end;">
-      <button class="btn-primary" id="step1Next">CONTINUE →</button>
-    </div>
-  </div>
-
-  <!-- ===== STEP 2: voice / communication (interactive) ===== -->
+  <!-- ===== STEP 2: About you (high-value inputs) ===== -->
   <div class="step-card hidden" id="step2">
     <div class="flex-between">
-      <h3>🎤 Let us hear how you communicate</h3>
-      <span class="chip">45s · no script</span>
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <span style="font-size: 1.8rem;">👤</span>
+        <h2>About you</h2>
+      </div>
+      <span class="pill">1 / 5</span>
     </div>
-    <p style="color: #1f4a64; margin: 0.3rem 0 0.8rem;">Tell us about something you know really well.</p>
-    <div style="background: #eef5fb; border-radius: 2rem; padding: 1.2rem 1.8rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
-      <span style="display: flex; align-items: center; gap: 0.6rem;"><span class="img-icon">🎙️</span> <strong>Start Recording</strong></span>
-      <span style="display: flex; gap: 0.8rem;">
-        <span class="btn-outline" style="padding: 0.2rem 1rem;">▸ 0:00</span>
-        <button class="btn-primary" style="background: #b93f3a; border-color: #a8332d; padding: 0.4rem 1.6rem;" id="recordBtn">● Record</button>
-      </span>
+    <p class="subhead">A few details to personalise your experience.</p>
+
+    <div class="detail-row">
+      <input type="text" placeholder="Name" id="nameInput" value="Alex Rivera">
+      <input type="text" placeholder="Role / profession" id="roleInput" value="Product Lead">
+      <input type="text" placeholder="Experience level" id="expInput" value="8+ years">
     </div>
-    <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.2rem; margin-top: 1rem;">
-      <span><span class="badge-dark" style="background: #3e6b88; color:white; padding:0.1rem 1rem; border-radius:40px; font-size:0.7rem;">Voice 1</span> Natural · “Tell us about something you're proud of.”</span>
-      <span><span class="badge-dark" style="background: #3e6b88; color:white; padding:0.1rem 1rem; border-radius:40px; font-size:0.7rem;">Voice 2</span> Structured · “Explain a difficult problem you solved.”</span>
-      <span><span class="badge-dark" style="background: #3e6b88; color:white; padding:0.1rem 1rem; border-radius:40px; font-size:0.7rem;">Voice 3</span> Influence · “Convince someone why your idea matters.”</span>
+
+    <div style="margin-top: 1rem;">
+      <label style="font-weight: 500; font-size: 0.9rem; color: #1a4057;">Where do you most want your communication to make an impact?</label>
+      <div class="choice-grid" id="impactGrid">
+        <button class="choice-btn active" data-impact="leadership">Leadership</button>
+        <button class="choice-btn" data-impact="interviews">Interviews</button>
+        <button class="choice-btn" data-impact="meetings">Meetings</button>
+        <button class="choice-btn" data-impact="presentations">Presentations</button>
+        <button class="choice-btn" data-impact="confidence">Everyday confidence</button>
+      </div>
     </div>
-    <div style="margin-top: 1.2rem; display: flex; justify-content: flex-end;">
-      <button class="btn-primary" id="step2Next">Next →</button>
+
+    <div class="progress-track">
+      <span style="font-size:0.75rem; color:#3a6a88;">0%</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:15%;"></div></div>
+      <span style="font-size:0.75rem; color:#3a6a88;">20%</span>
+    </div>
+
+    <div class="text-right mt-1">
+      <button class="btn-primary" id="step2Next">Continue →</button>
     </div>
   </div>
 
-  <!-- ===== STEP 3: anticipation / progress ===== -->
+  <!-- ===== STEP 3: Voice becomes the differentiator ===== -->
   <div class="step-card hidden" id="step3">
-    <div style="background: #e5eff8; border-radius: 3rem; padding: 0.8rem 1.8rem;">
-      <div class="progress-track">
-        <span>🔍 We're beginning to see your communication signature</span>
-        <div class="progress-bar"><div class="progress-fill" style="width: 40%;"></div></div>
+    <div class="flex-between">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <span style="font-size: 1.8rem;">🎙️</span>
+        <h2>Let us hear how you communicate</h2>
       </div>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem;">
-        <span>⚡ Your strongest pattern is emerging…</span>
-        <span>📌 One final response will complete your profile</span>
-      </div>
+      <span class="pill">2 / 5</span>
     </div>
-    <div style="margin-top: 1.5rem; text-align: right;">
+    <p class="subhead">45 seconds. No script. No preparation. Tell us about something you know really well.</p>
+
+    <div class="img-placeholder">
+      <span class="icon">🎧</span>
+      <span class="label">[ Image: Person recording with a professional microphone ]</span>
+    </div>
+
+    <div style="background: #f0f7fe; border-radius: 2rem; padding: 1rem 1.8rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin: 0.8rem 0;">
+      <span style="display: flex; align-items: center; gap: 0.6rem;"><span style="font-size:1.5rem;">🎙️</span> <strong>Start Recording</strong></span>
+      <span style="display: flex; gap: 0.8rem;">
+        <span class="btn-outline" style="padding: 0.2rem 1.2rem;">▸ 0:00</span>
+        <button class="btn-voice" id="recordBtn">● Record</button>
+      </span>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem; font-size: 0.85rem; color: #2a5f7a; background: #f5faff; padding: 0.8rem 1.2rem; border-radius: 1.2rem;">
+      <span>🎯 Voice 1: “Tell us about something you're proud of.”</span>
+      <span>🧠 Voice 2: “Explain a difficult problem you recently solved.”</span>
+      <span>💡 Voice 3: “Convince someone why your idea deserves attention.”</span>
+    </div>
+
+    <div style="margin-top: 0.8rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+      <span class="signal-chip">🔍 We're beginning to see your communication signature</span>
+    </div>
+
+    <div class="progress-track">
+      <span style="font-size:0.75rem; color:#3a6a88;">20%</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:38%;"></div></div>
+      <span style="font-size:0.75rem; color:#3a6a88;">40%</span>
+    </div>
+
+    <div class="text-right mt-1">
       <button class="btn-primary" id="step3Next">Continue →</button>
     </div>
   </div>
 
-  <!-- ===== STEP 4: FREE mini persona (aha) ===== -->
+  <!-- ===== STEP 4: Anticipation signals ===== -->
   <div class="step-card hidden" id="step4">
-    <div style="background: #e3eefa; border-radius: 2rem; padding: 1.2rem 1.8rem;">
-      <div class="flex-between">
-        <div>
-          <span style="background: #1a3e55; color:white; padding:0.1rem 1rem; border-radius:40px; font-size:0.7rem;">✨ Your Communication Persona</span>
-          <h2 style="font-size: 2rem; margin: 0.1rem 0;">The Amplifier</h2>
-          <p style="max-width: 400px;">You bring energy and conviction to your ideas. People notice your presence quickly—but your impact can weaken when your message becomes less structured.</p>
-        </div>
-        <div style="background: white; padding: 0.6rem 1.5rem; border-radius: 2rem; min-width: 120px;">
-          <div><span style="font-weight:300;">Strength</span> <strong>Presence</strong></div>
-          <div><span style="font-weight:300;">Advantage</span> <strong>Conviction</strong></div>
-          <div><span style="font-weight:300;">Growth</span> <strong>Structured Expression</strong></div>
-        </div>
+    <div class="flex-between">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <span style="font-size: 1.8rem;">⚡</span>
+        <h2>Your pattern is emerging</h2>
       </div>
-      <div style="margin-top: 0.6rem; background: #d7e6f3; border-radius: 40px; padding: 0.2rem 1.4rem; display: inline-block;">
-        ⚡ Your communication creates more impact in conversation than in structured explanation.
+      <span class="pill">3 / 5</span>
+    </div>
+
+    <div class="img-placeholder">
+      <span class="icon">📊</span>
+      <span class="label">[ Image: Abstract data visualization of communication patterns ]</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.8rem; margin: 1rem 0;">
+      <div style="background: #eaf3fc; border-radius: 3rem; padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 0.8rem;">
+        <span style="font-size: 1.2rem;">🔍</span>
+        <span style="font-weight: 450;">We're beginning to see your communication signature</span>
+      </div>
+      <div style="background: #eaf3fc; border-radius: 3rem; padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 0.8rem;">
+        <span style="font-size: 1.2rem;">⚡</span>
+        <span style="font-weight: 450;">Your strongest pattern is emerging…</span>
+      </div>
+      <div style="background: #eaf3fc; border-radius: 3rem; padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 0.8rem;">
+        <span style="font-size: 1.2rem;">📌</span>
+        <span style="font-weight: 450;">One final response will complete your profile</span>
       </div>
     </div>
-    <div style="margin-top: 1.2rem; text-align: right;">
-      <button class="btn-primary" id="step4Next">See full profile →</button>
+
+    <div class="progress-track">
+      <span style="font-size:0.75rem; color:#3a6a88;">40%</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:60%;"></div></div>
+      <span style="font-size:0.75rem; color:#3a6a88;">60%</span>
+    </div>
+
+    <div class="text-right mt-1">
+      <button class="btn-primary" id="step4Next">Continue →</button>
     </div>
   </div>
 
-  <!-- ===== STEP 5: profile teaser + paywall ===== -->
+  <!-- ===== STEP 5: FREE mini persona (aha moment) ===== -->
   <div class="step-card hidden" id="step5">
-    <div style="background: #f0f8ff; border-radius: 2rem; padding: 1.5rem 2rem; border: 1px solid #cde0ef;">
-      <div class="flex-between">
+    <div class="flex-between">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <span style="font-size: 1.8rem;">✨</span>
+        <h2>Your Communication Persona</h2>
+      </div>
+      <span class="pill">4 / 5</span>
+    </div>
+    <p class="subhead">This is you. Based on how you communicate.</p>
+
+    <div class="img-placeholder">
+      <span class="icon">🧩</span>
+      <span class="label">[ Image: Persona visualization — The Amplifier ]</span>
+    </div>
+
+    <div class="persona-preview">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;">
         <div>
-          <h3 style="font-size: 1.6rem;">You know how you're experienced.<br>Now discover <em>why</em>.</h3>
-          <p style="color: #1d4057; max-width: 450px;">Your persona is only the surface. Your full profile reveals the patterns behind it.</p>
+          <span class="badge-persona">✨ Your Communication Persona</span>
+          <h3 style="font-size: 2rem; margin: 0.1rem 0; color: #0a2a3f;">The Amplifier</h3>
+          <p style="font-size: 0.95rem; max-width: 380px; color: #1a4a66;">You bring energy and conviction to your ideas. People are likely to notice your presence quickly—but your impact can weaken when your message becomes less structured.</p>
         </div>
-        <div style="background: white; border-radius: 2rem; padding: 0.8rem 1.5rem;">
-          <div style="font-weight:600;">Your profile reveals</div>
-          <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 0.5rem 0;">
-            <div><span style="font-weight:600; font-size:1.8rem; color:#0d3047;">78</span> Thinking</div>
-            <div><span style="font-weight:600; font-size:1.8rem; color:#0d3047;">61</span> Structure</div>
-            <div><span style="font-weight:600; font-size:1.8rem; color:#0d3047;">84</span> Expression</div>
-            <div><span style="font-weight:600; font-size:1.8rem; color:#0d3047;">72</span> Presence</div>
-            <div><span style="font-weight:600; font-size:1.8rem; color:#0d3047;">64</span> Impact</div>
+        <div style="background: white; padding: 0.6rem 1.5rem; border-radius: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.02); min-width: 130px;">
+          <div><span style="font-weight:300; color:#4a6f89;">Strength</span> <strong style="color:#0a2a3f;">Presence</strong></div>
+          <div><span style="font-weight:300; color:#4a6f89;">Advantage</span> <strong style="color:#0a2a3f;">Conviction</strong></div>
+          <div><span style="font-weight:300; color:#4a6f89;">Growth</span> <strong style="color:#0a2a3f;">Structured Expression</strong></div>
+        </div>
+      </div>
+      <div style="margin-top: 0.6rem; background: #d7e6f3; border-radius: 40px; padding: 0.3rem 1.4rem; display: inline-block; font-size: 0.9rem;">
+        ⚡ Your communication currently creates more impact in conversation than in structured explanation.
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin: 0.5rem 0;">
+      <div style="background: #f5faff; border-radius: 1.2rem; padding: 0.5rem 1.2rem; border: 1px solid #d4e2ed;">
+        <span style="font-weight:300; color:#4a6f89;">Natural strength</span> <strong style="color:#0a2a3f;">Presence</strong>
+      </div>
+      <div style="background: #f5faff; border-radius: 1.2rem; padding: 0.5rem 1.2rem; border: 1px solid #d4e2ed;">
+        <span style="font-weight:300; color:#4a6f89;">Communication advantage</span> <strong style="color:#0a2a3f;">Conviction</strong>
+      </div>
+      <div style="background: #f5faff; border-radius: 1.2rem; padding: 0.5rem 1.2rem; border: 1px solid #d4e2ed;">
+        <span style="font-weight:300; color:#4a6f89;">Growth edge</span> <strong style="color:#0a2a3f;">Structured Expression</strong>
+      </div>
+    </div>
+
+    <div class="progress-track">
+      <span style="font-size:0.75rem; color:#3a6a88;">60%</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:80%;"></div></div>
+      <span style="font-size:0.75rem; color:#3a6a88;">80%</span>
+    </div>
+
+    <div class="text-right mt-1">
+      <button class="btn-primary" id="step5Next">See Your Full Profile →</button>
+    </div>
+  </div>
+
+  <!-- ===== STEP 6: Profile teaser + paywall ===== -->
+  <div class="step-card hidden" id="step6">
+    <div class="flex-between">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <span style="font-size: 1.8rem;">📊</span>
+        <h2>You know how you're experienced.<br>Now discover <em style="color: #1d5779;">why</em>.</h2>
+      </div>
+      <span class="pill">5 / 5</span>
+    </div>
+
+    <div class="img-placeholder">
+      <span class="icon">🔍</span>
+      <span class="label">[ Image: Detailed profile dashboard with insights ]</span>
+    </div>
+
+    <div class="profile-teaser">
+      <p style="color: #1d4057; margin-bottom: 0.8rem;">Your persona is only the surface. Your full profile reveals the patterns behind it—the strengths amplifying your message, the behaviours diluting it, and the gap between what you intend and what others experience.</p>
+
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-weight:600; color: #0a2a3f; margin-bottom: 0.3rem;">Your profile reveals</div>
+          <div class="dimension-grid">
+            <div class="dimension-item"><span class="dimension-score">78</span> Thinking</div>
+            <div class="dimension-item"><span class="dimension-score">61</span> Structure</div>
+            <div class="dimension-item"><span class="dimension-score">84</span> Expression</div>
+            <div class="dimension-item"><span class="dimension-score">72</span> Presence</div>
+            <div class="dimension-item"><span class="dimension-score">64</span> Impact</div>
           </div>
-          <div style="font-size:0.75rem; color:#3f6b87;">⬆︎ partial preview · full profile locked</div>
         </div>
+        <div style="background: #eaf3fc; padding: 0.3rem 1.2rem; border-radius: 40px; font-size: 0.75rem; color: #3a6a88;">⬆︎ partial preview · full profile locked</div>
       </div>
-      <hr>
-      <div class="flex-between">
-        <div>
-          <span style="background: #1a3e55; color:white; padding:0.2rem 1.2rem; border-radius:40px; font-weight:600;">₹199</span>
-          <span style="font-weight:600; margin-left:0.5rem;">Your Personal Communication Profile</span>
-          <div style="font-size:0.9rem; color:#1a4460;">Discover what's really shaping your communication.</div>
-          <ul style="list-style:none; margin-top:0.5rem; display:flex; flex-wrap:wrap; gap:0.2rem 1rem; font-size:0.9rem;">
-            <li>✓ Persona explanation</li><li>✓ Strengths & blind spots</li>
-            <li>✓ Intent→Impact gap</li><li>✓ Dimension scores</li>
-            <li>✓ Personalized recommendations</li>
-          </ul>
+    </div>
+
+    <hr>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="background: #1a3e55; color: white; padding: 0.2rem 1.2rem; border-radius: 40px; font-weight: 600;">₹199</span>
+          <span style="font-weight: 600; font-size: 1.1rem; color: #0a2a3f;">Your Personal Communication Profile</span>
         </div>
-        <div>
-          <button class="btn-primary" style="padding:0.8rem 2.8rem; font-size:1.1rem;" id="unlockBtn">🔓 Unlock full profile</button>
-          <div style="font-size:0.7rem; color:#336683; margin-top:0.2rem;">includes PDF · first practice</div>
-        </div>
+        <p style="color: #1a4460; margin: 0.2rem 0 0.4rem;">Discover what's really shaping your communication.</p>
+        <ul style="list-style: none; display: flex; flex-wrap: wrap; gap: 0.2rem 1.2rem; font-size: 0.9rem; color: #1a4057;">
+          <li>✓ Persona explanation</li>
+          <li>✓ Strengths & blind spots</li>
+          <li>✓ Intent → Impact gap</li>
+          <li>✓ Dimension scores</li>
+          <li>✓ Key behavioural patterns</li>
+          <li>✓ Personalized recommendations</li>
+          <li>✓ First practice recommendation</li>
+        </ul>
       </div>
+      <div>
+        <button class="btn-unlock" id="unlockBtn">🔓 Unlock Full Profile</button>
+        <div style="font-size:0.7rem; color:#336683; margin-top:0.2rem; text-align:center;">includes PDF · first practice recommendation</div>
+      </div>
+    </div>
+
+    <div class="progress-track">
+      <span style="font-size:0.75rem; color:#3a6a88;">80%</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:95%;"></div></div>
+      <span style="font-size:0.75rem; color:#3a6a88;">100%</span>
     </div>
   </div>
 
   <!-- subscription / transformation (always visible) -->
-  <div style="margin-top: 1.2rem; text-align: center; background: #ecf3fa; border-radius: 3rem; padding: 0.6rem 1.2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem 1.5rem;">
-    <span style="font-weight:400;">⚡ Curiosity → Revelation → Recognition → Desire → Practice → Transformation</span>
-    <span style="background:#1a3e55; color:white; padding:0.1rem 1.2rem; border-radius:40px; font-weight:500;">Subscribe</span>
-  </div>
-  <div style="font-size:0.75rem; color:#456f8a; text-align:center; margin-top:0.6rem;">
-    <span>🔹 No self-rating. Real voice. Real patterns. </span>
-    <span style="background:#dce8f2; padding:0.1rem 0.8rem; border-radius:40px;">🎯 mini persona free · full profile ₹199</span>
+  <div style="margin-top: 0.8rem; text-align: center; background: #ecf3fa; border-radius: 3rem; padding: 0.4rem 1.2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.3rem 1.5rem;">
+    <span style="font-weight:400; font-size:0.85rem; color:#1a4a66;">⚡ Curiosity → Revelation → Recognition → Desire → Practice → Transformation → Subscription</span>
+    <span style="background:#1a3e55; color:white; padding:0.1rem 1.2rem; border-radius:40px; font-weight:500; font-size:0.85rem;">Subscribe</span>
   </div>
 </div>
 
 <script>
   (function() {
-    // step management
     const steps = {
-      step0: document.getElementById('step0'),
       step1: document.getElementById('step1'),
       step2: document.getElementById('step2'),
       step3: document.getElementById('step3'),
       step4: document.getElementById('step4'),
-      step5: document.getElementById('step5')
+      step5: document.getElementById('step5'),
+      step6: document.getElementById('step6')
     };
 
-    function showStep(stepId) {
-      for (let key in steps) {
-        steps[key].classList.add('hidden');
-      }
-      if (steps[stepId]) {
-        steps[stepId].classList.remove('hidden');
-      }
+    function showStep(id) {
+      Object.values(steps).forEach(s => s.classList.add('hidden'));
+      if (steps[id]) steps[id].classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // navigation
-    document.getElementById('step0Next').addEventListener('click', (e) => { e.preventDefault(); showStep('step1'); });
-    document.getElementById('step1Next').addEventListener('click', (e) => { e.preventDefault(); showStep('step2'); });
-    document.getElementById('step2Next').addEventListener('click', (e) => { e.preventDefault(); showStep('step3'); });
-    document.getElementById('step3Next').addEventListener('click', (e) => { e.preventDefault(); showStep('step4'); });
-    document.getElementById('step4Next').addEventListener('click', (e) => { e.preventDefault(); showStep('step5'); });
+    // Navigation
+    document.getElementById('step1Next').addEventListener('click', (e) => {
+      e.preventDefault();
+      showStep('step2');
+    });
+
+    document.getElementById('step2Next').addEventListener('click', (e) => {
+      e.preventDefault();
+      const active = document.querySelector('#impactGrid .choice-btn.active');
+      if (!active) { alert('Please select an impact area to continue.'); return; }
+      showStep('step3');
+    });
+
+    document.getElementById('step3Next').addEventListener('click', (e) => {
+      e.preventDefault();
+      showStep('step4');
+    });
+
+    document.getElementById('step4Next').addEventListener('click', (e) => {
+      e.preventDefault();
+      showStep('step5');
+    });
+
+    document.getElementById('step5Next').addEventListener('click', (e) => {
+      e.preventDefault();
+      showStep('step6');
+    });
 
     document.getElementById('unlockBtn').addEventListener('click', (e) => {
       e.preventDefault();
-      alert('✨ Full profile unlocked (premium). Complete diagnosis revealed.');
+      alert('✨ Your Personal Communication Profile is now unlocked! You\'ll receive:\n\n• Persona explanation\n• Strengths & blind spots\n• Intent → Impact gap\n• Dimension scores\n• Key behavioural patterns\n• Personalized recommendations\n• First practice recommendation');
     });
 
-    // age buttons (step0)
-    const ageBtns = document.querySelectorAll('#ageGroup .gender-btn');
-    ageBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        ageBtns.forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
-
-    // record button
-    document.getElementById('recordBtn').addEventListener('click', () => {
-      alert('🎙️ Recording simulation: voice sample captured.');
-    });
-
-    // entry discover (restart)
-    document.querySelector('.img-icon')?.addEventListener('click', () => {
-      if (confirm('Restart the discovery journey?')) {
-        showStep('step0');
+    // Entry discover button (restart)
+    document.getElementById('entryDiscover').addEventListener('click', () => {
+      if (confirm('Restart your discovery journey?')) {
+        showStep('step1');
       }
     });
 
-    // initial
-    showStep('step0');
+    // Choice buttons: toggle active
+    document.querySelectorAll('.choice-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const parent = this.closest('.choice-grid');
+        if (parent) {
+          parent.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+        }
+      });
+    });
+
+    // Record button
+    document.getElementById('recordBtn').addEventListener('click', () => {
+      alert('🎙️ Recording simulation: your voice sample has been captured.\n\n"Don\'t tell us how good a communicator you are. Show us."');
+    });
+
+    showStep('step1');
   })();
 </script>
 </body>
