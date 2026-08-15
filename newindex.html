@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Communication Persona · Discovery</title>
+  <!-- Font & basic styling -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f2f7fc;  /* off-blue, close to white */
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      color: #1a2a3a;
+      line-height: 1.5;
+      padding: 2rem 1.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 1000px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(2px);
+      border-radius: 2.5rem;
+      padding: 2.5rem 2.2rem;
+      box-shadow: 0 12px 30px rgba(0, 20, 40, 0.04), 0 4px 10px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
+    /* typography */
+    h1, h2, h3 {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    h1 {
+      font-size: 2.4rem;
+      margin-bottom: 0.2rem;
+      color: #0b1f2e;
+    }
+    .subhead {
+      font-size: 1.1rem;
+      color: #2b4a5e;
+      margin-bottom: 2rem;
+      border-left: 4px solid #6b9fc7;
+      padding-left: 1.2rem;
+      background: rgba(107, 159, 199, 0.04);
+      border-radius: 0 12px 12px 0;
+    }
+
+    .card {
+      background: white;
+      border-radius: 2rem;
+      padding: 1.8rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      border: 1px solid #eef5fa;
+      transition: box-shadow 0.2s;
+    }
+    .card:hover {
+      box-shadow: 0 8px 20px rgba(30, 70, 100, 0.04);
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .col {
+      flex: 1 1 200px;
+    }
+
+    /* buttons & inputs */
+    .btn-primary {
+      background: #1b3d54;
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 60px;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.15s ease;
+      box-shadow: 0 2px 6px rgba(20, 60, 90, 0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid #2b5670;
+    }
+    .btn-primary:hover {
+      background: #0f2a3b;
+      transform: scale(1.02);
+      box-shadow: 0 6px 14px rgba(20, 60, 90, 0.15);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #b6d2e3;
+      color: #1f4057;
+      padding: 0.6rem 1.6rem;
+      border-radius: 60px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    .btn-outline:hover {
+      background: #e3eef7;
+      border-color: #7ba9cc;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border-radius: 40px;
+      border: 1px solid #d4e2ed;
+      background: white;
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: 0.1s;
+    }
+    input:focus, select:focus {
+      outline: 2px solid #97bedb;
+      border-color: transparent;
+    }
+
+    .tag-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin: 0.6rem 0 0.2rem;
+    }
+    .tag {
+      background: #e9f0f6;
+      padding: 0.3rem 1.2rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 450;
+      color: #1d4057;
+      border: 1px solid transparent;
+      transition: 0.05s;
+      cursor: default;
+    }
+    .tag.active {
+      background: #1b3d54;
+      color: white;
+      border-color: #1b3d54;
+    }
+
+    .divider {
+      border: none;
+      border-top: 2px dashed #d3e2ef;
+      margin: 1.8rem 0;
+    }
+
+    .voice-box {
+      background: #eef5fb;
+      border-radius: 2rem;
+      padding: 1.2rem 1.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.2rem;
+      justify-content: space-between;
+    }
+    .record-btn {
+      background: #c3413b;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.8rem;
+      border-radius: 60px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+    .record-btn:hover {
+      background: #a8332d;
+    }
+    .chip {
+      background: white;
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #1f4a64;
+    }
+
+    .progress-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.9rem;
+      color: #1d4a64;
+    }
+    .progress-bar {
+      height: 6px;
+      width: 120px;
+      background: #d8e5f0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 30%;
+      background: #1d5779;
+      border-radius: 12px;
+    }
+
+    .persona-preview {
+      background: #e2eef9;
+      border-radius: 2rem;
+      padding: 1.2rem 1.8rem;
+    }
+    .badge-strength {
+      background: #1b3d54;
+      color: white;
+      border-radius: 40px;
+      padding: 0.2rem 1.2rem;
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .profile-teaser {
+      background: #f1f8fe;
+      border-radius: 2rem;
+      padding: 1.5rem 2rem;
+      border: 1px solid #cde0ef;
+    }
+    .dimension-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin: 0.8rem 0;
+    }
+    .dimension-item {
+      flex: 1 0 80px;
+    }
+    .dimension-score {
+      font-weight: 600;
+      font-size: 1.6rem;
+      color: #12344d;
+    }
+
+    .price-tag {
+      display: inline-block;
+      background: #1c4058;
+      color: white;
+      padding: 0.2rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+    }
+
+    .footer-note {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #456f8a;
+      text-align: center;
+    }
+
+    /* responsive */
+    @media (max-width: 600px) {
+      .container { padding: 1.5rem; }
+      h1 { font-size: 1.8rem; }
+    }
+
+    /* image placeholders – we use subtle svg / background */
+    .img-placeholder {
+      display: inline-block;
+      background: #dce8f2;
+      border-radius: 60px;
+      padding: 0.2rem 1rem 0.2rem 0.5rem;
+      font-size: 0.75rem;
+      color: #1f4a64;
+      font-weight: 500;
+    }
+    .img-icon {
+      background: #b6d0e3;
+      width: 32px;
+      height: 32px;
+      border-radius: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ENTRY: sell the curiosity -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+    <div>
+      <h1>Make Your Potential <br>Impossible to Miss.</h1>
+      <div class="subhead" style="margin-top: 0.5rem;">
+        Discover how the world experiences you.
+      </div>
+      <p style="max-width: 500px; color: #1d4057; margin-top: 0.2rem;">
+        Uncover the gap between intent and impact — and see how your communication shapes the way others experience your value.
+      </p>
+    </div>
+    <div style="margin-top: 0.8rem;">
+      <span class="img-placeholder">✨ Discover My Persona →</span>
+    </div>
+  </div>
+
+  <!-- DISCOVERY experience: screen 1 about you -->
+  <div class="card">
+    <h3 style="margin-bottom: 0.5rem;">🧭 About you</h3>
+    <div class="row">
+      <div class="col"><input type="text" placeholder="Name" value="Alex Rivera"></div>
+      <div class="col"><input type="text" placeholder="Role / profession" value="Product Lead"></div>
+      <div class="col"><input type="text" placeholder="Experience level" value="8+ years"></div>
+    </div>
+    <div style="margin-top: 1rem;">
+      <label style="font-weight: 500; font-size: 0.95rem;">Where do you most want your communication to make an impact?</label>
+      <div class="tag-group">
+        <span class="tag active">Leadership</span>
+        <span class="tag">Interviews</span>
+        <span class="tag">Meetings</span>
+        <span class="tag">Presentations</span>
+        <span class="tag">Everyday confidence</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOICE becomes the differentiator -->
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center;">
+      <h3>🎤 Let us hear how you communicate</h3>
+      <span class="chip">45s · no script</span>
+    </div>
+    <p style="color: #1f4a64; margin: 0.2rem 0 0.8rem;">Tell us about something you know really well.</p>
+    <div class="voice-box">
+      <span style="display: flex; align-items: center; gap: 0.8rem;">
+        <span class="img-icon">🎙️</span> 
+        <span><strong>Start Recording</strong></span>
+      </span>
+      <span style="display: flex; gap: 0.8rem;">
+        <span class="btn-outline" style="padding: 0.3rem 1.2rem;">▸ 0:00</span>
+        <button class="record-btn">● Record</button>
+      </span>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.5rem; margin-top: 1rem;">
+      <span><span class="badge-strength" style="background: #3e6b88;">Voice 1</span> Natural · “Tell us about something you're proud of.”</span>
+      <span><span class="badge-strength" style="background: #3e6b88;">Voice 2</span> Structured · “Explain a difficult problem you solved.”</span>
+      <span><span class="badge-strength" style="background: #3e6b88;">Voice 3</span> Influence · “Convince someone why your idea matters.”</span>
+    </div>
+  </div>
+
+  <!-- anticipation & signals -->
+  <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; background: #e5eff8; border-radius: 3rem; padding: 0.8rem 1.8rem; margin-bottom: 1.8rem;">
+    <div class="progress-badge">
+      <span>🔍 We're beginning to see your communication signature</span>
+      <div class="progress-bar"><div class="progress-fill" style="width: 40%;"></div></div>
+    </div>
+    <div class="progress-badge">
+      <span>⚡ Your strongest pattern is emerging…</span>
+    </div>
+    <div class="progress-badge">
+      <span>📌 One final response will complete your profile</span>
+    </div>
+  </div>
+
+  <!-- FREE mini persona (aha moment) -->
+  <div class="persona-preview" style="margin-bottom: 2rem;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+      <div>
+        <span class="badge-strength">✨ Your Communication Persona</span>
+        <h2 style="font-size: 2rem; margin: 0.2rem 0 0;">The Amplifier</h2>
+        <p style="max-width: 450px;">You bring energy and conviction to your ideas. People notice your presence quickly—but your impact can weaken when your message becomes less structured.</p>
+      </div>
+      <div style="background: white; padding: 0.8rem 1.8rem; border-radius: 2rem; min-width: 130px;">
+        <div><span style="font-weight: 300;">Strength</span> <strong>Presence</strong></div>
+        <div><span style="font-weight: 300;">Advantage</span> <strong>Conviction</strong></div>
+        <div><span style="font-weight: 300;">Growth</span> <strong>Structured Expression</strong></div>
+      </div>
+    </div>
+    <div style="margin-top: 0.6rem; background: #d7e6f3; border-radius: 40px; padding: 0.3rem 1.4rem; display: inline-block;">
+      ⚡ Your communication creates more impact in conversation than in structured explanation.
+    </div>
+  </div>
+
+  <!-- THEN comes the most important screen: profile teaser + paywall -->
+  <div class="profile-teaser">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+      <div>
+        <h3 style="font-size: 1.6rem;">You know how you're experienced.<br>Now discover <em>why</em>.</h3>
+        <p style="max-width: 500px; color: #1d4057;">Your persona is only the surface. Your full profile reveals the patterns behind it—the strengths amplifying your message, the behaviours diluting it, and the gap between intent and impact.</p>
+      </div>
+      <div style="background: white; border-radius: 2rem; padding: 1rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+        <div style="font-weight: 600; margin-bottom: 0.3rem;">Your profile reveals</div>
+        <div class="dimension-grid">
+          <div class="dimension-item"><span class="dimension-score">78</span> Thinking</div>
+          <div class="dimension-item"><span class="dimension-score">61</span> Structure</div>
+          <div class="dimension-item"><span class="dimension-score">84</span> Expression</div>
+          <div class="dimension-item"><span class="dimension-score">72</span> Presence</div>
+          <div class="dimension-item"><span class="dimension-score">64</span> Impact</div>
+        </div>
+        <div style="font-size: 0.8rem; color: #3f6b87;">⬆︎ partial preview · full profile locked</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- paywall: ₹199 unlock -->
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem;">
+      <div>
+        <span class="price-tag">₹199</span>
+        <span style="font-weight: 600; margin-left: 0.6rem;">Your Personal Communication Profile</span>
+        <div style="font-size: 0.9rem; color: #1a4460;">Discover what's really shaping your communication.</div>
+        <ul style="list-style: none; margin-top: 0.6rem; font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 0.4rem 1rem;">
+          <li>✓ Persona explanation</li>
+          <li>✓ Strengths & blind spots</li>
+          <li>✓ Intent→Impact gap</li>
+          <li>✓ Dimension scores</li>
+          <li>✓ Personalized recommendations</li>
+        </ul>
+      </div>
+      <div>
+        <button class="btn-primary" style="padding: 0.9rem 2.8rem; font-size: 1.1rem;">🔓 Unlock full profile</button>
+        <div style="font-size: 0.75rem; color: #336683; margin-top: 0.2rem;">includes PDF · first practice recommendation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- subtle extra: subscription / transformation call (optional) -->
+  <div style="margin-top: 2rem; text-align: center; background: #ecf3fa; border-radius: 3rem; padding: 0.8rem 1.5rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem 1.5rem;">
+    <span style="font-weight: 400;">⚡ Curiosity → Revelation → Recognition → Desire → Practice → Transformation</span>
+    <span style="background: #1b3d54; color: white; padding: 0.1rem 1.2rem; border-radius: 40px; font-weight: 500;">Subscribe</span>
+    <span style="color: #2b5f7a;">✨ full journey</span>
+  </div>
+
+  <div class="footer-note">
+    <span>🔹 No self-rating. Real voice. Real patterns. </span>
+    <span style="display: inline-block; background: #dce8f2; padding: 0.1rem 1rem; border-radius: 40px;">🎯 mini persona free · full profile ₹199</span>
+  </div>
+
+</div>
+<!-- end container -->
+</body>
+</html>
