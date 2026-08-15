@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Unspoken · premium interactive</title>
+  <title>RiseGuide · interactive premium</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #f0f6fc;
+      background: #f4f9ff; /* off-blue, bright */
       font-family: "Inter", system-ui, sans-serif;
       color: #0a1e2e;
       min-height: 100vh;
@@ -20,14 +20,15 @@
       padding: 1.5rem;
     }
     .container {
-      max-width: 880px;
+      max-width: 820px;
       width: 100%;
-      background: rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.75);
       backdrop-filter: blur(2px);
       border-radius: 3rem;
       padding: 2.2rem 2.2rem;
-      box-shadow: 0 12px 32px rgba(0,20,40,0.04);
-      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 16px 40px rgba(0,20,40,0.06);
+      border: 1px solid rgba(255,255,255,0.8);
+      transition: all 0.2s;
     }
     .step-card {
       background: white;
@@ -35,131 +36,170 @@
       padding: 1.8rem 2rem;
       margin-bottom: 1.5rem;
       border: 1px solid #eaf1f8;
-      transition: 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+      transition: 0.3s ease;
     }
+    .step-card:hover { box-shadow: 0 8px 24px rgba(30,70,110,0.04); }
     h2 { font-weight: 600; font-size: 1.6rem; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
     .sub { color: #1d4b66; border-left: 4px solid #7bb0d0; padding-left: 1rem; margin-bottom: 1.2rem; }
     .flex-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
     .flex-between { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; }
 
     .btn-primary {
-      background: #1a3e55; color: white; border: none; padding: 0.7rem 2rem;
-      border-radius: 60px; font-weight: 500; cursor: pointer; transition: 0.1s;
+      background: #1a3e55; color: white; border: none; padding: 0.7rem 2.4rem;
+      border-radius: 60px; font-weight: 500; cursor: pointer; transition: 0.15s;
       border: 1px solid #2a5d7a; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      font-size: 1rem;
     }
-    .btn-primary:hover { background: #0f2a3b; transform: scale(1.02); }
+    .btn-primary:hover { background: #0f2a3b; transform: scale(1.02); box-shadow: 0 6px 14px rgba(20,60,90,0.1); }
     .btn-outline {
       background: transparent; border: 1px solid #b8d2e6; color: #1a4057;
       padding: 0.5rem 1.5rem; border-radius: 60px; font-weight: 500; cursor: pointer;
     }
     .btn-outline:hover { background: #e3eefa; }
-    .btn-voice {
-      background: #b93f3a; color: white; border: none; padding: 0.5rem 1.8rem;
-      border-radius: 60px; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem;
-      cursor: pointer;
-    }
-    .btn-voice:hover { background: #a1322d; }
 
-    input, select {
-      width: 100%; padding: 0.65rem 1.2rem; border-radius: 40px;
-      border: 1px solid #d1e0ed; background: white; font-family: inherit;
-      font-size: 0.95rem;
-    }
-    input:focus { outline: 2px solid #97bedb; border-color: transparent; }
-
-    .tag-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0 0.2rem; }
+    .tag-group { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0.5rem 0 0.2rem; }
     .tag {
-      background: #eaf1f8; padding: 0.2rem 1.2rem; border-radius: 40px;
-      font-size: 0.85rem; font-weight: 450; color: #1d4057; cursor: pointer;
-      border: 1px solid transparent;
+      background: #eaf1f8; padding: 0.4rem 1.4rem; border-radius: 60px;
+      font-size: 0.9rem; font-weight: 450; color: #1d4057; cursor: pointer;
+      border: 2px solid transparent; transition: 0.1s;
     }
     .tag.active { background: #1a3e55; color: white; border-color: #1a3e55; }
+    .tag:hover { border-color: #7ba9cc; }
 
     .pill {
       background: #e7f0f8; padding: 0.2rem 1rem; border-radius: 40px; font-size: 0.8rem;
     }
-    .pill.active-pill { background: #1a3e55; color: white; }
 
-    .persona-box {
-      background: #e3eefa; border-radius: 2rem; padding: 1.2rem 1.8rem;
+    /* trust badges & media mentions */
+    .trust-row {
+      display: flex; flex-wrap: wrap; gap: 0.8rem 2rem;
+      background: #eaf3fc; border-radius: 3rem; padding: 0.6rem 1.8rem;
+      margin-bottom: 1rem; justify-content: center;
     }
-    .badge-dark { background: #1a3e55; color: white; padding: 0.1rem 1rem; border-radius: 40px; font-size: 0.7rem; font-weight: 600; }
+    .trust-item { font-size: 0.85rem; font-weight: 500; color: #1a4057; }
+    .trust-item strong { color: #0a2a3f; }
 
-    .profile-teaser {
-      background: #f0f8ff; border-radius: 2rem; padding: 1.5rem 2rem;
-      border: 1px solid #cde0ef;
+    .media-row {
+      display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem;
+      justify-content: center; margin: 0.8rem 0;
     }
-    .dimension-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 0.5rem 0; }
-    .dimension-item { flex: 1 0 70px; }
-    .dimension-score { font-weight: 600; font-size: 1.8rem; color: #0d3047; }
+    .media-badge {
+      background: #eef5fc; padding: 0.2rem 1rem; border-radius: 40px;
+      font-size: 0.7rem; font-weight: 600; color: #1f4a64; letter-spacing: 0.3px;
+      border: 1px solid #d8e6f2;
+    }
 
-    .price-tag { background: #1a3e55; color: white; padding: 0.2rem 1.2rem; border-radius: 40px; font-weight: 600; }
+    .profile-box {
+      background: #f2f9ff; border-radius: 2rem; padding: 1.5rem;
+      border: 1px solid #dcebf6;
+    }
+
+    .review-quote {
+      background: white; border-radius: 2rem; padding: 1rem 1.5rem;
+      border-left: 4px solid #f5b342; margin: 0.8rem 0;
+      font-style: italic; color: #1d3d55;
+    }
 
     .hidden { display: none; }
     .mt-1 { margin-top: 1rem; }
     .mb-1 { margin-bottom: 0.8rem; }
-    .gap-1 { gap: 1rem; }
+    .text-center { text-align: center; }
 
-    .img-icon { background: #c7dae9; width: 36px; height: 36px; border-radius: 40px; display: inline-flex; align-items: center; justify-content: center; }
+    .img-icon { background: #c7dae9; width: 40px; height: 40px; border-radius: 40px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; }
     .chip { background: white; padding: 0.1rem 1rem; border-radius: 40px; font-size: 0.75rem; color: #1d4a64; }
     hr { border: none; border-top: 2px dashed #d3e2ef; margin: 1.5rem 0; }
 
-    /* trust badges */
-    .trust-row {
-      display: flex; flex-wrap: wrap; gap: 1.2rem 2rem;
-      background: #eaf1f8; border-radius: 3rem; padding: 0.4rem 1.8rem;
-      margin-bottom: 1rem; justify-content: center;
+    /* progress bar */
+    .progress-track {
+      display: flex; align-items: center; gap: 0.8rem; margin: 0.5rem 0 0.8rem;
     }
-    .trust-item { font-size: 0.8rem; font-weight: 500; color: #1a4057; }
-    .trust-item strong { color: #0a2a3f; }
+    .progress-bar { height: 6px; flex: 1; background: #d8e5f0; border-radius: 12px; }
+    .progress-fill { height: 100%; width: 15%; background: #1d5779; border-radius: 12px; transition: width 0.3s; }
+
+    .gender-btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .gender-btn {
+      background: white; border: 2px solid #d4e2ed; padding: 0.6rem 2.2rem;
+      border-radius: 60px; font-weight: 500; cursor: pointer; transition: 0.1s;
+      font-size: 1rem; flex: 1 0 100px;
+    }
+    .gender-btn:hover { border-color: #7ba9cc; background: #f0f7fe; }
+    .gender-btn.active { border-color: #1a3e55; background: #e3eefa; }
   </style>
 </head>
 <body>
 <div class="container" id="app">
 
-  <!-- trust row (from image) -->
+  <!-- trust & media (always visible) -->
   <div class="trust-row">
     <span class="trust-item"><strong>1,000,000+</strong> USERS · Learning New Skills</span>
-    <span class="trust-item">⭐ RATED ON TRUSTPILOT <strong>4.4</strong> Satisfaction Score</span>
+    <span class="trust-item">⭐ RATED ON TRUSTPILOT <strong>4.4</strong> Satisfaction</span>
   </div>
 
-  <!-- 0. ENTRY: sell curiosity (with "The Unspoken" style) -->
-  <div class="flex-between" style="margin-bottom: 0.8rem;">
-    <div>
-      <h1 style="font-size: 2rem;">Make Your Potential<br>Impossible to Miss.</h1>
-      <div class="sub" style="margin: 0.2rem 0 0.2rem;">Discover how the world experiences you.</div>
-      <p style="color: #1d4057; max-width: 400px;">Uncover the gap between intent & impact.</p>
+  <!-- ===== STEP 0: ENTRY (gender + welcome) ===== -->
+  <div class="step-card" id="step0">
+    <div class="flex-between">
+      <h2>Articulation Training Plan</h2>
+      <span class="pill">0 / 26</span>
     </div>
-    <div style="cursor: pointer;" id="entryDiscover">
-      <span class="img-icon" style="background: #b6d0e3;">✨</span>
-      <span style="font-weight: 500; margin-left: 0.3rem;">Discover My Persona →</span>
-    </div>
-  </div>
+    <p style="font-size: 1.1rem; color: #0f344b; margin: 0.2rem 0 0.8rem;">
+      to stop losing your best ideas between your <strong>brain</strong> and your <strong>mouth</strong>
+    </p>
 
-  <!-- ===== STEP 1: About you ===== -->
-  <div class="step-card" id="step1">
-    <h3>🧭 About you</h3>
-    <div class="flex-row">
-      <div style="flex:1;"><input type="text" placeholder="Name" value="Jamie Chen" id="nameInput"></div>
-      <div style="flex:1;"><input type="text" placeholder="Role / profession" value="Product Designer" id="roleInput"></div>
-      <div style="flex:1;"><input type="text" placeholder="Experience level" value="6+ years" id="expInput"></div>
-    </div>
-    <div>
-      <label style="font-weight: 500; font-size: 0.9rem;">Where do you most want your communication to make an impact?</label>
-      <div class="tag-group" id="impactTags">
-        <span class="tag active" data-tag="Leadership">Leadership</span>
-        <span class="tag" data-tag="Interviews">Interviews</span>
-        <span class="tag" data-tag="Meetings">Meetings</span>
-        <span class="tag" data-tag="Presentations">Presentations</span>
-        <span class="tag" data-tag="Everyday">Everyday confidence</span>
+    <!-- Profile / age (from image) -->
+    <div class="profile-box">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <span class="img-icon">👤</span>
+        <span style="font-weight: 600;">Profile</span>
+      </div>
+      <p style="margin: 0.3rem 0 0.5rem; color: #1d4a66;">What's your age? <span style="font-weight: 300; font-size: 0.8rem; color: #5a7f99;">We only use age to personalise your plan</span></p>
+      <div class="gender-btn-group" id="ageGroup">
+        <button class="gender-btn" data-age="18-34">18-34</button>
+        <button class="gender-btn active" data-age="35-44">35-44</button>
+        <button class="gender-btn" data-age="45-54">45-54</button>
+        <button class="gender-btn" data-age="55+">55+</button>
       </div>
     </div>
-    <div style="margin-top: 1rem; text-align: right;">
-      <button class="btn-primary" id="step1Next">Continue →</button>
+
+    <div style="margin-top: 1.2rem; display: flex; justify-content: flex-end;">
+      <button class="btn-primary" id="step0Next">Continue →</button>
     </div>
   </div>
 
-  <!-- ===== STEP 2: Voice ===== -->
+  <!-- ===== STEP 1: social proof + review ===== -->
+  <div class="step-card hidden" id="step1">
+    <div style="display: flex; align-items: center; gap: 0.8rem;">
+      <span class="img-icon" style="background: #d4e4f2;">📈</span>
+      <h2>Over 1,000,000 people</h2>
+    </div>
+    <p style="font-size: 1rem; color: #1a4057; margin-bottom: 0.8rem;">are already leveling up with RiseGuide</p>
+
+    <div class="review-quote">
+      “We often ignore what actually matters. Communication skills are vital for success.”
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem;">
+        <span style="color: #f5b342;">★★★★★</span>
+        <span style="font-weight: 500; font-size: 0.8rem;">TrustPilot Review</span>
+      </div>
+    </div>
+
+    <div style="margin: 0.8rem 0;">
+      <span style="font-weight: 500; font-size: 0.85rem; color: #1d4a66;">Methods we use are mentioned in:</span>
+      <div class="media-row">
+        <span class="media-badge">Forbes</span>
+        <span class="media-badge">WIRED</span>
+        <span class="media-badge">The Guardian</span>
+        <span class="media-badge">TC</span>
+        <span class="media-badge">TIME</span>
+        <span class="media-badge">The Economist</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 1.2rem; display: flex; justify-content: flex-end;">
+      <button class="btn-primary" id="step1Next">CONTINUE →</button>
+    </div>
+  </div>
+
+  <!-- ===== STEP 2: voice / communication (interactive) ===== -->
   <div class="step-card hidden" id="step2">
     <div class="flex-between">
       <h3>🎤 Let us hear how you communicate</h3>
@@ -170,28 +210,30 @@
       <span style="display: flex; align-items: center; gap: 0.6rem;"><span class="img-icon">🎙️</span> <strong>Start Recording</strong></span>
       <span style="display: flex; gap: 0.8rem;">
         <span class="btn-outline" style="padding: 0.2rem 1rem;">▸ 0:00</span>
-        <button class="btn-voice" id="recordBtn">● Record</button>
+        <button class="btn-primary" style="background: #b93f3a; border-color: #a8332d; padding: 0.4rem 1.6rem;" id="recordBtn">● Record</button>
       </span>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.2rem; margin-top: 1rem;">
-      <span><span class="badge-dark" style="background: #3e6b88;">Voice 1</span> Natural · “Tell us about something you're proud of.”</span>
-      <span><span class="badge-dark" style="background: #3e6b88;">Voice 2</span> Structured · “Explain a difficult problem you solved.”</span>
-      <span><span class="badge-dark" style="background: #3e6b88;">Voice 3</span> Influence · “Convince someone why your idea matters.”</span>
+      <span><span class="badge-dark" style="background: #3e6b88; color:white; padding:0.1rem 1rem; border-radius:40px; font-size:0.7rem;">Voice 1</span> Natural · “Tell us about something you're proud of.”</span>
+      <span><span class="badge-dark" style="background: #3e6b88; color:white; padding:0.1rem 1rem; border-radius:40px; font-size:0.7rem;">Voice 2</span> Structured · “Explain a difficult problem you solved.”</span>
+      <span><span class="badge-dark" style="background: #3e6b88; color:white; padding:0.1rem 1rem; border-radius:40px; font-size:0.7rem;">Voice 3</span> Influence · “Convince someone why your idea matters.”</span>
     </div>
     <div style="margin-top: 1.2rem; display: flex; justify-content: flex-end;">
       <button class="btn-primary" id="step2Next">Next →</button>
     </div>
   </div>
 
-  <!-- ===== STEP 3: anticipation / momentum ===== -->
+  <!-- ===== STEP 3: anticipation / progress ===== -->
   <div class="step-card hidden" id="step3">
-    <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.5rem; background: #e5eff8; border-radius: 3rem; padding: 0.8rem 1.8rem;">
-      <div class="progress-badge" style="display: flex; align-items: center; gap: 0.6rem;">
+    <div style="background: #e5eff8; border-radius: 3rem; padding: 0.8rem 1.8rem;">
+      <div class="progress-track">
         <span>🔍 We're beginning to see your communication signature</span>
-        <div style="height: 6px; width: 100px; background: #d8e5f0; border-radius: 12px;"><div style="height:100%; width:40%; background:#1d5779; border-radius:12px;"></div></div>
+        <div class="progress-bar"><div class="progress-fill" style="width: 40%;"></div></div>
       </div>
-      <div><span>⚡ Your strongest pattern is emerging…</span></div>
-      <div><span>📌 One final response will complete your profile</span></div>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem;">
+        <span>⚡ Your strongest pattern is emerging…</span>
+        <span>📌 One final response will complete your profile</span>
+      </div>
     </div>
     <div style="margin-top: 1.5rem; text-align: right;">
       <button class="btn-primary" id="step3Next">Continue →</button>
@@ -200,10 +242,10 @@
 
   <!-- ===== STEP 4: FREE mini persona (aha) ===== -->
   <div class="step-card hidden" id="step4">
-    <div class="persona-box">
+    <div style="background: #e3eefa; border-radius: 2rem; padding: 1.2rem 1.8rem;">
       <div class="flex-between">
         <div>
-          <span class="badge-dark">✨ Your Communication Persona</span>
+          <span style="background: #1a3e55; color:white; padding:0.1rem 1rem; border-radius:40px; font-size:0.7rem;">✨ Your Communication Persona</span>
           <h2 style="font-size: 2rem; margin: 0.1rem 0;">The Amplifier</h2>
           <p style="max-width: 400px;">You bring energy and conviction to your ideas. People notice your presence quickly—but your impact can weaken when your message becomes less structured.</p>
         </div>
@@ -224,7 +266,7 @@
 
   <!-- ===== STEP 5: profile teaser + paywall ===== -->
   <div class="step-card hidden" id="step5">
-    <div class="profile-teaser">
+    <div style="background: #f0f8ff; border-radius: 2rem; padding: 1.5rem 2rem; border: 1px solid #cde0ef;">
       <div class="flex-between">
         <div>
           <h3 style="font-size: 1.6rem;">You know how you're experienced.<br>Now discover <em>why</em>.</h3>
@@ -232,12 +274,12 @@
         </div>
         <div style="background: white; border-radius: 2rem; padding: 0.8rem 1.5rem;">
           <div style="font-weight:600;">Your profile reveals</div>
-          <div class="dimension-grid">
-            <div class="dimension-item"><span class="dimension-score">78</span> Thinking</div>
-            <div class="dimension-item"><span class="dimension-score">61</span> Structure</div>
-            <div class="dimension-item"><span class="dimension-score">84</span> Expression</div>
-            <div class="dimension-item"><span class="dimension-score">72</span> Presence</div>
-            <div class="dimension-item"><span class="dimension-score">64</span> Impact</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 0.5rem 0;">
+            <div><span style="font-weight:600; font-size:1.8rem; color:#0d3047;">78</span> Thinking</div>
+            <div><span style="font-weight:600; font-size:1.8rem; color:#0d3047;">61</span> Structure</div>
+            <div><span style="font-weight:600; font-size:1.8rem; color:#0d3047;">84</span> Expression</div>
+            <div><span style="font-weight:600; font-size:1.8rem; color:#0d3047;">72</span> Presence</div>
+            <div><span style="font-weight:600; font-size:1.8rem; color:#0d3047;">64</span> Impact</div>
           </div>
           <div style="font-size:0.75rem; color:#3f6b87;">⬆︎ partial preview · full profile locked</div>
         </div>
@@ -245,7 +287,7 @@
       <hr>
       <div class="flex-between">
         <div>
-          <span class="price-tag">₹199</span>
+          <span style="background: #1a3e55; color:white; padding:0.2rem 1.2rem; border-radius:40px; font-weight:600;">₹199</span>
           <span style="font-weight:600; margin-left:0.5rem;">Your Personal Communication Profile</span>
           <div style="font-size:0.9rem; color:#1a4460;">Discover what's really shaping your communication.</div>
           <ul style="list-style:none; margin-top:0.5rem; display:flex; flex-wrap:wrap; gap:0.2rem 1rem; font-size:0.9rem;">
@@ -277,6 +319,7 @@
   (function() {
     // step management
     const steps = {
+      step0: document.getElementById('step0'),
       step1: document.getElementById('step1'),
       step2: document.getElementById('step2'),
       step3: document.getElementById('step3'),
@@ -294,6 +337,7 @@
     }
 
     // navigation
+    document.getElementById('step0Next').addEventListener('click', (e) => { e.preventDefault(); showStep('step1'); });
     document.getElementById('step1Next').addEventListener('click', (e) => { e.preventDefault(); showStep('step2'); });
     document.getElementById('step2Next').addEventListener('click', (e) => { e.preventDefault(); showStep('step3'); });
     document.getElementById('step3Next').addEventListener('click', (e) => { e.preventDefault(); showStep('step4'); });
@@ -304,16 +348,12 @@
       alert('✨ Full profile unlocked (premium). Complete diagnosis revealed.');
     });
 
-    // tag interaction
-    document.querySelectorAll('.tag').forEach(tag => {
-      tag.addEventListener('click', function() {
-        const parent = this.closest('.tag-group');
-        if (parent) {
-          parent.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
-          this.classList.add('active');
-        } else {
-          this.classList.toggle('active');
-        }
+    // age buttons (step0)
+    const ageBtns = document.querySelectorAll('#ageGroup .gender-btn');
+    ageBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        ageBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
       });
     });
 
@@ -322,15 +362,15 @@
       alert('🎙️ Recording simulation: voice sample captured.');
     });
 
-    // entry click: restart
-    document.getElementById('entryDiscover').addEventListener('click', () => {
+    // entry discover (restart)
+    document.querySelector('.img-icon')?.addEventListener('click', () => {
       if (confirm('Restart the discovery journey?')) {
-        showStep('step1');
+        showStep('step0');
       }
     });
 
     // initial
-    showStep('step1');
+    showStep('step0');
   })();
 </script>
 </body>
