@@ -162,6 +162,22 @@
             color: #d97706;
         }
 
+        .btn-secondary {
+            background: transparent;
+            border: 1.5px solid #b8d2e6;
+            color: #1a4057;
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 0.9rem;
+        }
+        .btn-secondary:hover {
+            background: #eaf3fc;
+            border-color: #7ba9cc;
+        }
+
         /* Choice buttons */
         .choice-grid {
             display: flex;
@@ -275,7 +291,7 @@
             min-width: 32px;
         }
 
-        /* Image placeholders - like the age example */
+        /* Image placeholders */
         .img-placeholder {
             background: linear-gradient(145deg, #eaf3fc, #dce8f3);
             border-radius: 1.5rem;
@@ -443,6 +459,50 @@
             }
         }
 
+        /* Countdown animation */
+        @keyframes countdown-bounce {
+            0% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Timer warning pulse */
+        .text.warning {
+            color: #f87171 !important;
+            animation: pulse-timer 0.5s infinite alternate;
+        }
+
+        @keyframes pulse-timer {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Status states */
+        .analyzer-status.idle {
+            border-color: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .analyzer-status.recording {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.05);
+        }
+        .analyzer-status.analyzing {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+
         /* Desktop adjustments */
         @media (min-width: 640px) {
             body {
@@ -592,10 +652,9 @@
 <body>
 <div class="container" id="app">
 
-    <!-- TICKER - from reference code -->
+    <!-- TICKER -->
     <div class="ticker-wrap">
         <div class="ticker">
-            <!-- First set -->
             <span class="ticker-item">
                 <span class="value gold">🔍</span>
                 <span class="label">WHO ARE YOU WHEN YOU</span>
@@ -695,7 +754,6 @@
             <p style="color: #1d4b66; font-size: 1rem; margin: 0.3rem 0;">Discover How the World Experiences You.</p>
             <p style="color: #3a6a88; font-size: 0.9rem;">Uncover the gap between intent and impact — and see how your communication shapes the way others experience your value.</p>
         </div>
-        <!-- Hero Image placeholder -->
         <div class="img-placeholder" style="background: linear-gradient(145deg, #fef3c7, #fde68a); border-color: #fcd34d;">
             <span class="icon">🧠</span>
             <span class="label" style="color: #d97706;">[ Hero Image: Professional communicating with impact ]</span>
@@ -741,7 +799,7 @@
         </div>
     </div>
 
-    <!-- ===== STEP 3: Voice - with recording from analyzer ===== -->
+    <!-- ===== STEP 3: Voice - with full analyzer recording ===== -->
     <div class="step-card hidden" id="step3">
         <div class="flex-between">
             <h2>Let us hear your voice</h2>
@@ -752,18 +810,74 @@
             <span class="icon">🎙️</span>
             <span class="label">[ Image: Recording with microphone ]</span>
         </div>
-        <div style="background: #f0f7fe; border-radius: 1.8rem; padding: 0.8rem 1.2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem;">
-            <span style="display: flex; align-items: center; gap: 0.4rem;"><span style="font-size:1.3rem;">🎙️</span> <strong>Start Recording</strong></span>
-            <span style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <span class="btn-secondary" style="padding: 0.2rem 1rem; font-size:0.8rem; background:transparent; border:1px solid #b8d2e6; border-radius:60px; color:#1a4057;">▸ 0:00</span>
-                <button class="btn-voice" id="recordBtn">● Record</button>
-            </span>
+
+        <!-- Prompt Card -->
+        <div style="background: #f8fafc; border-radius: 1.5rem; padding: 1rem 1.2rem; margin-bottom: 1rem; border: 1px solid #e2e8f0;">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #d97706, #f59e0b); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; color: white;">💭</div>
+                <div style="flex: 1;">
+                    <div style="font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Today's Prompt</div>
+                    <p style="font-size: 1rem; font-weight: 500; color: #0f172a; margin: 0;" id="promptText">Tell me about a time you had to persuade someone at work.</p>
+                    <button onclick="getNewQuestion()" style="background: transparent; border: 1px solid #e2e8f0; padding: 4px 14px; border-radius: 20px; font-size: 11px; color: #64748b; cursor: pointer; margin-top: 8px; transition: 0.3s;">🔄 New Question</button>
+                </div>
+            </div>
         </div>
-        <div style="display: flex; flex-wrap: wrap; gap: 0.4rem 0.8rem; font-size: 0.8rem; color: #2a5f7a; background: #f5faff; padding: 0.6rem 1rem; border-radius: 1.2rem; margin-top: 0.6rem;">
-            <span>🎯 “Tell us about something you're proud of.”</span>
-            <span>🧠 “Explain a difficult problem you solved.”</span>
-            <span>💡 “Convince someone why your idea matters.”</span>
+
+        <!-- Recording Card - Dark Navy Premium -->
+        <div style="background: #0f172a; border-radius: 1.5rem; padding: 1.5rem 1.2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+
+            <!-- Status -->
+            <div id="recordingStatus" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; border-radius: 16px; margin-bottom: 16px; transition: all 0.3s ease; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);">
+                <div style="width: 60px; height: 60px; position: relative;" id="statusIcon">
+                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="30" cy="30" r="28" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                        <circle cx="30" cy="22" r="9" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" fill="rgba(255,255,255,0.03)"/>
+                        <path d="M15 54 C15 42 22 36 30 36 C38 36 45 42 45 54" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" fill="rgba(255,255,255,0.02)"/>
+                        <circle cx="39" cy="15" r="1.5" fill="rgba(217, 119, 6, 0.15)"/>
+                        <circle cx="42" cy="20" r="1" fill="rgba(217, 119, 6, 0.1)"/>
+                        <circle cx="18" cy="14" r="1" fill="rgba(217, 119, 6, 0.1)"/>
+                    </svg>
+                </div>
+                <div style="font-size: 16px; color: rgba(255,255,255,0.5); font-weight: 400; letter-spacing: 0.3px;" id="statusText">Ready to speak.</div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.15);" id="statusSubtext">Press the button below when you're ready</div>
+            </div>
+
+            <!-- Countdown -->
+            <div id="countdownOverlay" style="display:none; text-align: center; padding: 16px 0;">
+                <div id="countdownNumber" style="font-size: 4rem; font-weight: 300; color: #ffffff; animation: countdown-bounce 0.8s ease;">3</div>
+                <p style="color: rgba(255,255,255,0.4); font-size: 13px; letter-spacing: 1px;">Take a breath. You've got this.</p>
+            </div>
+
+            <!-- Timer -->
+            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 12px 0 16px;">
+                <span style="font-size: 1rem; opacity: 0.5;">⏱️</span>
+                <span id="timerText" style="font-size: 2.8rem; font-weight: 300; font-variant-numeric: tabular-nums; color: #ffffff; letter-spacing: 2px;">00:45</span>
+            </div>
+
+            <!-- Controls - Start & Stop buttons -->
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+                <button class="analyzer-btn-start" id="recordBtn" style="background: linear-gradient(135deg, #d97706, #b45309); color: white; border: none; padding: 14px 36px; border-radius: 60px; font-size: 15px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: all 0.3s ease; box-shadow: 0 6px 24px rgba(217, 119, 6, 0.3); letter-spacing: 0.5px;">
+                    <span>🎙️</span>
+                    <span id="btnText">Start Speaking</span>
+                </button>
+                <button class="analyzer-btn-stop" id="stopBtn" style="display: none; background: #7c3aed; color: white; border: none; padding: 14px 36px; border-radius: 60px; font-size: 15px; font-weight: 600; cursor: pointer; align-items: center; gap: 10px; transition: all 0.3s ease; box-shadow: 0 6px 24px rgba(124, 58, 237, 0.3);">
+                    <span>⏹️</span>
+                    <span>Finish & Analyze</span>
+                </button>
+            </div>
+
+            <!-- Transcript -->
+            <div id="transcriptContainer" style="display:none; margin-top: 16px; padding: 14px; background: rgba(255,255,255,0.04); border-radius: 12px; border: 1px solid rgba(255,255,255,0.04);">
+                <div style="font-size: 10px; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Live Transcript</div>
+                <div id="transcriptText" style="color: rgba(255,255,255,0.7); font-size: 14px; line-height: 1.6; min-height: 30px; font-style: italic; font-weight: 300;">Your words will appear here...</div>
+            </div>
+
+            <!-- Privacy -->
+            <div style="margin-top: 14px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.15); letter-spacing: 0.5px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 14px;">
+                🔒 Your voice is processed privately. Nothing is stored without your consent.
+            </div>
         </div>
+
         <div style="margin-top: 0.6rem;">
             <span class="signal-chip">🔍 We're beginning to see your communication signature</span>
         </div>
@@ -822,12 +936,8 @@
             <span class="label">[ Image: Communication style illustration ]</span>
         </div>
 
-        <!-- Question container -->
-        <div id="questionContainer" style="margin: 0.6rem 0;">
-            <!-- Rendered by JS -->
-        </div>
+        <div id="questionContainer" style="margin: 0.6rem 0;"></div>
 
-        <!-- Progress -->
         <div class="progress-track">
             <span class="progress-label" id="behavProgressLabel">45%</span>
             <div class="progress-bar"><div class="progress-fill" id="behavProgressFill" style="width:45%;"></div></div>
@@ -840,7 +950,7 @@
         </div>
     </div>
 
-    <!-- ===== STEP 6: Mini Persona (FREE) ===== -->
+    <!-- ===== STEP 6: Mini Persona ===== -->
     <div class="step-card hidden" id="step6">
         <div class="flex-between">
             <h2>Your Communication Persona</h2>
@@ -965,7 +1075,7 @@
 
         let currentStep = 'step1';
 
-        // ===== BEHAVIOURAL QUESTIONS (one at a time) =====
+        // ===== BEHAVIOURAL QUESTIONS =====
         const questions = [
             { q: 'In meetings, you usually:', options: ['Speak early & often', 'Listen first, then speak', 'Observe & share when asked'] },
             { q: 'When presenting, you focus on:', options: ['Story & emotion', 'Data & logic', 'Big picture & vision'] },
@@ -997,7 +1107,6 @@
             html += `</div></div>`;
             questionContainer.innerHTML = html;
 
-            // Update pill & progress
             const stepNum = 4 + index;
             behavPill.textContent = `${stepNum} / 7`;
             behavSubhead.textContent = `Question ${index + 1} of ${totalQuestions}`;
@@ -1008,7 +1117,6 @@
             behavProgressFill.style.width = `${progressStart}%`;
             behavProgressEnd.textContent = `${Math.round(progressEnd)}%`;
 
-            // Re-bind choice buttons
             document.querySelectorAll('#questionContainer .choice-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const parent = this.closest('.choice-grid');
@@ -1021,7 +1129,6 @@
         }
 
         // ===== NAVIGATION =====
-        // Forward
         document.getElementById('step1Next').addEventListener('click', (e) => {
             e.preventDefault();
             showStep('step2');
@@ -1052,7 +1159,6 @@
 
         document.getElementById('step5Next').addEventListener('click', (e) => {
             e.preventDefault();
-            // Check if current question answered
             const currentGrid = document.querySelector('#questionContainer .choice-grid');
             if (!currentGrid) { alert('Please answer the question.'); return; }
             const active = currentGrid.querySelector('.choice-btn.active');
@@ -1062,7 +1168,6 @@
                 currentQuestionIndex++;
                 renderQuestion(currentQuestionIndex);
             } else {
-                // All questions answered
                 showStep('step6');
             }
         });
@@ -1127,9 +1232,309 @@
             });
         });
 
-        // ===== RECORD BUTTON (simulated - from analyzer) =====
-        document.getElementById('recordBtn').addEventListener('click', () => {
-            alert('🎙️ Recording simulation: your voice sample has been captured.\n\n"Don\'t tell us how good a communicator you are. Show us."');
+        // ============================================================
+        // FULL VOICE RECORDING - START/STOP, COUNTDOWN, BACKEND
+        // ============================================================
+
+        const API_URL = 'https://unspoken-backend-yvbi.onrender.com/api';
+        const RECORDING_DURATION = 45;
+
+        // DOM Elements
+        const recordBtn = document.getElementById('recordBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const btnText = document.getElementById('btnText');
+        const statusText = document.getElementById('statusText');
+        const statusIcon = document.getElementById('statusIcon');
+        const statusSubtext = document.getElementById('statusSubtext');
+        const timerText = document.getElementById('timerText');
+        const transcriptText = document.getElementById('transcriptText');
+        const transcriptContainer = document.getElementById('transcriptContainer');
+        const countdownOverlay = document.getElementById('countdownOverlay');
+        const countdownNumber = document.getElementById('countdownNumber');
+        const recordingStatus = document.getElementById('recordingStatus');
+
+        // State
+        let recognition = null;
+        let isRecording = false;
+        let isCountdown = false;
+        let countdownTimer = null;
+        let recordingTimer = null;
+        let remainingSeconds = RECORDING_DURATION;
+        let transcript = '';
+        let startTime = null;
+
+        // Question Bank
+        const promptQuestions = [
+            "Tell me about a time you had to persuade someone at work.",
+            "Describe a situation where you struggled to get your point across.",
+            "What's one thing you wish people understood about your work?",
+            "Tell me about a time you received feedback that changed how you communicate.",
+            "Describe a moment when you felt your voice wasn't heard in a meeting.",
+            "Tell me about a time you had to deliver difficult news to a colleague.",
+            "What's the most important lesson you've learned about communication?",
+            "Describe a time when you had to adapt your communication style to a different audience."
+        ];
+        let currentPromptIndex = 0;
+
+        window.getNewQuestion = function() {
+            currentPromptIndex = (currentPromptIndex + 1) % promptQuestions.length;
+            const promptEl = document.getElementById('promptText');
+            if (promptEl) {
+                promptEl.textContent = promptQuestions[currentPromptIndex];
+            }
+        };
+
+        // Initialize Speech Recognition
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert('Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari.');
+                return false;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            recognition.maxAlternatives = 1;
+
+            recognition.onresult = (event) => {
+                let final = '';
+                let interim = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        final += event.results[i][0].transcript;
+                    } else {
+                        interim += event.results[i][0].transcript;
+                    }
+                }
+
+                transcript = final || interim;
+                if (transcriptText) {
+                    transcriptText.textContent = transcript || 'Listening...';
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                if (event.error === 'not-allowed') {
+                    alert('Please allow microphone access to use this feature.');
+                    resetRecording();
+                } else if (event.error === 'no-speech') {
+                    if (isRecording) {
+                        try {
+                            recognition.stop();
+                            recognition.start();
+                        } catch (e) {}
+                    }
+                } else if (event.error === 'audio-capture') {
+                    alert('No microphone found. Please connect a microphone and try again.');
+                    resetRecording();
+                }
+            };
+
+            recognition.onend = () => {
+                if (isRecording) {
+                    try {
+                        recognition.start();
+                    } catch (e) {
+                        console.log('Restart failed:', e);
+                    }
+                }
+            };
+
+            return true;
+        }
+
+        // Start Recording Flow
+        function startRecording() {
+            if (isRecording || isCountdown) return;
+
+            if (!recognition) {
+                if (!initSpeechRecognition()) {
+                    return;
+                }
+            }
+
+            isCountdown = true;
+            recordBtn.disabled = true;
+            stopBtn.style.display = 'none';
+            btnText.textContent = 'Getting ready...';
+            countdownOverlay.style.display = 'block';
+            recordingStatus.className = 'analyzer-status idle';
+            statusText.textContent = 'Get ready...';
+            statusIcon.textContent = '⏳';
+            if (statusSubtext) statusSubtext.textContent = '';
+
+            let count = 3;
+            countdownNumber.textContent = count;
+
+            countdownTimer = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countdownNumber.textContent = count;
+                    countdownNumber.style.animation = 'none';
+                    requestAnimationFrame(() => {
+                        countdownNumber.style.animation = 'countdown-bounce 0.8s ease';
+                    });
+                } else {
+                    clearInterval(countdownTimer);
+                    countdownOverlay.style.display = 'none';
+                    startActualRecording();
+                }
+            }, 800);
+        }
+
+        function startActualRecording() {
+            isCountdown = false;
+            isRecording = true;
+            transcript = '';
+            remainingSeconds = RECORDING_DURATION;
+
+            recordBtn.disabled = true;
+            btnText.textContent = '🔴 Recording...';
+            stopBtn.style.display = 'inline-flex';
+            statusText.textContent = '🎤 Speak now...';
+            statusIcon.textContent = '🎤';
+            recordingStatus.className = 'analyzer-status recording';
+            transcriptContainer.style.display = 'block';
+            transcriptText.textContent = 'Listening...';
+            if (statusSubtext) statusSubtext.textContent = 'Speak freely — we\'re listening';
+
+            try {
+                recognition.start();
+            } catch (e) {
+                console.log('Recognition start error:', e);
+            }
+
+            startTime = Date.now();
+
+            recordingTimer = setInterval(() => {
+                remainingSeconds--;
+                updateTimer();
+
+                if (remainingSeconds <= 0) {
+                    stopRecording();
+                }
+            }, 1000);
+        }
+
+        function stopRecording() {
+            if (!isRecording) return;
+
+            isRecording = false;
+            clearInterval(recordingTimer);
+
+            try {
+                recognition.stop();
+            } catch (e) {
+                console.log('Recognition stop error:', e);
+            }
+
+            recordBtn.disabled = false;
+            btnText.textContent = 'Start Speaking';
+            stopBtn.style.display = 'none';
+            statusText.textContent = 'Processing...';
+            statusIcon.textContent = '⏳';
+            recordingStatus.className = 'analyzer-status idle';
+
+            const finalTranscript = transcript.trim();
+            if (finalTranscript.length < 10) {
+                transcriptText.textContent = '⚠️ Please speak at least 10 words. Try again.';
+                statusText.textContent = 'Ready to speak?';
+                statusIcon.textContent = '🎤';
+                if (statusSubtext) statusSubtext.textContent = 'Press the button below when you\'re ready';
+                return;
+            }
+
+            statusText.textContent = 'Analyzing...';
+            statusIcon.textContent = '🤔';
+            if (statusSubtext) statusSubtext.textContent = 'Your coach is reviewing your communication';
+
+            analyzeTranscript();
+        }
+
+        function resetRecording() {
+            isRecording = false;
+            isCountdown = false;
+            clearInterval(countdownTimer);
+            clearInterval(recordingTimer);
+            recordBtn.disabled = false;
+            btnText.textContent = 'Start Speaking';
+            stopBtn.style.display = 'none';
+            statusText.textContent = 'Ready to speak? I\'m listening.';
+            statusIcon.textContent = '🎤';
+            recordingStatus.className = 'analyzer-status idle';
+            countdownOverlay.style.display = 'none';
+            timerText.textContent = '00:45';
+            timerText.className = 'text';
+            if (statusSubtext) statusSubtext.textContent = 'Press the button below when you\'re ready';
+        }
+
+        function updateTimer() {
+            const mins = Math.floor(remainingSeconds / 60);
+            const secs = remainingSeconds % 60;
+            timerText.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+            if (remainingSeconds <= 5) {
+                timerText.className = 'text warning';
+            } else {
+                timerText.className = 'text';
+            }
+        }
+
+        // API Call to Backend
+        async function analyzeTranscript() {
+            try {
+                const response = await fetch(`${API_URL}/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        transcript: transcript.trim(),
+                        context: 'Communication assessment'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    statusText.textContent = '✅ Analysis complete!';
+                    statusIcon.textContent = '✅';
+                    if (statusSubtext) statusSubtext.textContent = 'Your personalized insights are ready';
+                    console.log('Analysis result:', data.analysis);
+                    // Store result for later use
+                    window._analysisResult = data.analysis;
+                } else {
+                    statusText.textContent = '❌ Error analyzing';
+                    statusIcon.textContent = '❌';
+                    transcriptText.textContent = `Error: ${data.error}`;
+                    if (statusSubtext) statusSubtext.textContent = 'Please try again';
+                }
+            } catch (error) {
+                statusText.textContent = '❌ Network error';
+                statusIcon.textContent = '❌';
+                transcriptText.textContent = `Error: ${error.message}`;
+                if (statusSubtext) statusSubtext.textContent = 'Check your internet connection';
+            }
+        }
+
+        // Event Listeners for Recording
+        if (recordBtn) {
+            recordBtn.addEventListener('click', startRecording);
+        }
+
+        if (stopBtn) {
+            stopBtn.addEventListener('click', stopRecording);
+        }
+
+        // Initialize prompt
+        document.addEventListener('DOMContentLoaded', function() {
+            const promptEl = document.getElementById('promptText');
+            if (promptEl) {
+                promptEl.textContent = promptQuestions[0];
+            }
+            initSpeechRecognition();
         });
 
         // ===== START =====
