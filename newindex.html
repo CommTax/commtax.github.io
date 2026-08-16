@@ -994,8 +994,6 @@
     // ============================================================
     let categoryQuestions = [];
     let currentQuestionIndex = 0;
-    const mcqQuestionCodes = ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q7', 'Q8', 'Q9'];
-    const voiceQuestionCodes = ['Q6', 'Q10'];
 
     // ============================================================
     // CATEGORY MAPPING
@@ -1056,7 +1054,6 @@
         const microcopyEl = document.getElementById('dynamicMicrocopy');
 
         if (currentQuestionIndex >= categoryQuestions.length) {
-            // All questions answered → go to user details
             showStep('step9');
             return;
         }
@@ -1065,21 +1062,18 @@
         const total = categoryQuestions.length;
         const stepNum = 7 + currentQuestionIndex;
 
-        // Update progress
         const progressPercent = 58 + ((currentQuestionIndex / total) * 30);
         progressLabel.textContent = `${String(stepNum).padStart(2, '0')} / 10`;
         progressFill.style.width = `${Math.min(progressPercent, 88)}%`;
         counterEl.textContent = `${String(stepNum).padStart(2, '0')} / 10`;
 
-        // Check if it's a voice question
         const isVoice = q.question_type === 'voice';
 
         if (isVoice) {
             titleEl.textContent = q.question_text || 'Voice Recording';
             subheadEl.textContent = q.voice_prompt || 'Press record and speak freely.';
-            microcopyEl.textContent = 'Your voice will be saved and analyzed.';
+            microcopyEl.textContent = 'Your voice will be saved.';
 
-            // Render voice UI
             container.innerHTML = `
                 <div style="background: #0f172a; border-radius: 1.5rem; padding: 1.5rem 1.2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; border-radius: 16px; margin-bottom: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);">
@@ -1097,12 +1091,8 @@
                     </div>
                 </div>
             `;
-
-            // Bind voice recording for dynamic question
             bindDynamicVoiceRecording(q.question_code);
-
         } else {
-            // Multiple choice
             titleEl.textContent = q.question_text || 'Choose an option';
             subheadEl.textContent = 'Select the option that best describes you.';
             microcopyEl.textContent = 'There are no right answers. Choose what feels most like you.';
@@ -1111,29 +1101,25 @@
             let html = `<div class="choice-grid-vertical" style="display:flex; flex-direction:column; gap:0.6rem;">`;
             options.forEach((opt, idx) => {
                 const letter = String.fromCharCode(65 + idx);
+                const label = typeof opt === 'string' ? opt : (opt.label || opt.value || opt);
                 html += `
-                    <div class="card-btn" data-option="${letter}" data-value="${opt.value || opt}" style="display:flex; align-items:center; gap:0.8rem; padding:0.9rem 1.2rem; background:#f5faff; border-radius:1.2rem; border:2px solid #e2edf7; cursor:pointer; transition:all 0.15s; min-height:60px;">
+                    <div class="card-btn" data-option="${letter}" data-value="${typeof opt === 'string' ? opt : (opt.value || opt)}" style="display:flex; align-items:center; gap:0.8rem; padding:0.9rem 1.2rem; background:#f5faff; border-radius:1.2rem; border:2px solid #e2edf7; cursor:pointer; transition:all 0.15s; min-height:60px;">
                         <span style="font-weight:700; color:#1a3e55; min-width:28px;">${letter}</span>
-                        <span style="font-size:0.95rem; color:#0a2a3f;">${opt.label || opt}</span>
+                        <span style="font-size:0.95rem; color:#0a2a3f;">${label}</span>
                     </div>
                 `;
             });
             html += `</div>`;
             container.innerHTML = html;
 
-            // Bind click events for options
             container.querySelectorAll('.card-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     container.querySelectorAll('.card-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                 });
             });
-
-            // Store the selected option when Continue is clicked
-            document.getElementById('step8Next').dataset.mode = 'mcq';
         }
 
-        // Store question reference for saving
         document.getElementById('step8Next').dataset.questionCode = q.question_code;
         document.getElementById('step8Next').dataset.isVoice = isVoice ? 'true' : 'false';
     }
@@ -1210,7 +1196,6 @@
 
             try { recognition.start(); } catch (e) {}
 
-            // Auto-stop after 45 seconds
             setTimeout(() => {
                 if (isRecording) stopDynamicRecording();
             }, 45000);
@@ -1233,9 +1218,6 @@
 
             transcriptEl.textContent = '✅ Voice saved!';
             storeResponse(questionCode, { transcript: finalTranscript }, 'voice');
-            console.log('Voice saved for', questionCode, ':', finalTranscript);
-
-            // Mark as completed
             document.getElementById('step8Next').dataset.voiceSaved = 'true';
         }
 
@@ -1251,7 +1233,7 @@
     }
 
     // ============================================================
-    // STEP NAVIGATION
+    // STEP 1: Create Session
     // ============================================================
     document.getElementById('step1Next').addEventListener('click', async (e) => {
         e.preventDefault();
@@ -1274,6 +1256,9 @@
         }
     });
 
+    // ============================================================
+    // STEP 2: Category Selection
+    // ============================================================
     document.getElementById('step2Next').addEventListener('click', async (e) => {
         e.preventDefault();
         const active = document.querySelector('#journeyGrid .card-btn.active');
@@ -1303,6 +1288,9 @@
         }
     });
 
+    // ============================================================
+    // STEP 3: Goal Selection
+    // ============================================================
     document.getElementById('step3Next').addEventListener('click', (e) => {
         e.preventDefault();
         const active = document.querySelector('#goalGrid .card-btn.active');
@@ -1314,10 +1302,16 @@
         showStep('step4');
     });
 
+    // ============================================================
+    // STEP 4: First Voice → Continue
+    // ============================================================
     document.getElementById('step4Next').addEventListener('click', () => {
         showStep('step5');
     });
 
+    // ============================================================
+    // STEP 5: Multi-select
+    // ============================================================
     document.getElementById('step5Next').addEventListener('click', (e) => {
         e.preventDefault();
         const selected = document.querySelectorAll('#breakdownGrid .card-btn.active');
@@ -1331,49 +1325,62 @@
         showStep('step6');
     });
 
+    // ============================================================
+    // STEP 6: Second Voice → Continue
+    // ============================================================
     document.getElementById('step6Next').addEventListener('click', () => {
         showStep('step7');
     });
 
+    // ============================================================
+    // STEP 7: Load Questions from DB (NO FALLBACK)
+    // ============================================================
     document.getElementById('step7Next').addEventListener('click', async (e) => {
         e.preventDefault();
+        
+        const btn = e.target;
+        const originalText = btn.textContent;
+        btn.textContent = '⏳ Loading questions...';
+        btn.disabled = true;
+        
         try {
             const response = await fetch(`${API_BASE_URL}/questions/${userCategory}`);
             const data = await response.json();
+            
             if (data.success && data.questions && data.questions.length > 0) {
                 categoryQuestions = data.questions;
                 console.log('✅ Questions loaded from DB:', categoryQuestions.length);
+                currentQuestionIndex = 0;
+                renderQuestion();
+                showStep('step8');
             } else {
-                // Fallback: Use hardcoded questions if DB fetch fails
-                console.warn('⚠️ No questions from DB, using fallback');
-                categoryQuestions = getFallbackQuestions();
+                alert(`❌ No questions found in the database for "${userCategory}". Please ensure questions are added.`);
+                console.error('No questions in database for category:', userCategory);
+                btn.textContent = originalText;
+                btn.disabled = false;
             }
-            currentQuestionIndex = 0;
-            renderQuestion();
-            showStep('step8');
         } catch (error) {
             console.error('Error loading questions:', error);
-            // Use fallback questions
-            categoryQuestions = getFallbackQuestions();
-            currentQuestionIndex = 0;
-            renderQuestion();
-            showStep('step8');
+            alert('❌ Failed to load questions from the database. Please try again.');
+            btn.textContent = originalText;
+            btn.disabled = false;
         }
     });
 
+    // ============================================================
+    // STEP 8: Dynamic Questions - Continue
+    // ============================================================
     document.getElementById('step8Next').addEventListener('click', (e) => {
         e.preventDefault();
         const isVoice = e.target.dataset.isVoice === 'true';
         const questionCode = e.target.dataset.questionCode;
 
         if (isVoice) {
-            // Check if voice was saved
             if (e.target.dataset.voiceSaved !== 'true') {
                 alert('Please record your voice before continuing.');
                 return;
             }
         } else {
-            // MCQ: Check if an option was selected
             const container = document.getElementById('dynamicQuestionContainer');
             const active = container.querySelector('.card-btn.active');
             if (!active) {
@@ -1392,6 +1399,9 @@
         }
     });
 
+    // ============================================================
+    // STEP 9: User Details
+    // ============================================================
     document.getElementById('step9Next').addEventListener('click', async (e) => {
         e.preventDefault();
         const name = document.getElementById('fullName').value.trim();
@@ -1437,6 +1447,9 @@
         }
     });
 
+    // ============================================================
+    // STEP 10: Results
+    // ============================================================
     document.getElementById('step10Next').addEventListener('click', async (e) => {
         e.preventDefault();
         try {
@@ -1462,6 +1475,9 @@
         }
     });
 
+    // ============================================================
+    // UNLOCK BUTTON
+    // ============================================================
     document.getElementById('unlockBtn').addEventListener('click', (e) => {
         e.preventDefault();
         alert('✨ Your Personal Communication Profile is now unlocked!');
@@ -1485,7 +1501,6 @@
         }
     });
     document.getElementById('step9Back').addEventListener('click', () => {
-        // Go back to last question
         if (categoryQuestions.length > 0) {
             currentQuestionIndex = categoryQuestions.length - 1;
             renderQuestion();
@@ -1498,7 +1513,7 @@
     document.getElementById('step11Back').addEventListener('click', () => showStep('step10'));
 
     // ============================================================
-    // CARD BUTTON TOGGLES (Static)
+    // CARD BUTTON TOGGLES
     // ============================================================
     document.querySelectorAll('.card-grid-2col:not(#breakdownGrid):not(#desiredGrid) .card-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -1525,19 +1540,41 @@
     });
 
     // ============================================================
-    // FALLBACK QUESTIONS (if DB fails)
+    // VOICE/TEXT TOGGLE
     // ============================================================
-    function getFallbackQuestions() {
-        return [
-            { question_code: 'Q2', question_text: 'How do you typically handle conflict?', question_type: 'choice', options: [{ label: 'I confront it directly', value: 'confront' }, { label: 'I try to avoid it', value: 'avoid' }, { label: 'I seek compromise', value: 'compromise' }] },
-            { question_code: 'Q3', question_text: 'What motivates you most at work?', question_type: 'choice', options: [{ label: 'Recognition and rewards', value: 'recognition' }, { label: 'Making a difference', value: 'impact' }, { label: 'Learning and growth', value: 'growth' }] },
-            { question_code: 'Q4', question_text: 'How do you prefer to receive feedback?', question_type: 'choice', options: [{ label: 'Direct and honest', value: 'direct' }, { label: 'With empathy and care', value: 'empathetic' }, { label: 'Written and detailed', value: 'written' }] },
-            { question_code: 'Q5', question_text: 'What is your biggest strength?', question_type: 'choice', options: [{ label: 'Problem solving', value: 'problem-solving' }, { label: 'Communication', value: 'communication' }, { label: 'Leadership', value: 'leadership' }] },
-            { question_code: 'Q7', question_text: 'How do you handle pressure?', question_type: 'choice', options: [{ label: 'I stay calm and focused', value: 'calm' }, { label: 'I get energized', value: 'energized' }, { label: 'I get stressed', value: 'stressed' }] },
-            { question_code: 'Q8', question_text: 'What is your preferred work style?', question_type: 'choice', options: [{ label: 'Collaborative', value: 'collaborative' }, { label: 'Independent', value: 'independent' }, { label: 'Hybrid', value: 'hybrid' }] },
-            { question_code: 'Q9', question_text: 'What is your career goal?', question_type: 'choice', options: [{ label: 'Become a leader', value: 'leader' }, { label: 'Become an expert', value: 'expert' }, { label: 'Start my own business', value: 'entrepreneur' }] }
-        ];
-    }
+    document.getElementById('textModeBtn').addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('voiceModeBtn').classList.remove('active');
+        document.getElementById('textInputArea').style.display = 'block';
+        document.getElementById('voiceInputArea').style.display = 'none';
+    });
+    document.getElementById('voiceModeBtn').addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('textModeBtn').classList.remove('active');
+        document.getElementById('textInputArea').style.display = 'none';
+        document.getElementById('voiceInputArea').style.display = 'block';
+    });
+
+    // ============================================================
+    // WISH VOICE RECORDING
+    // ============================================================
+    document.getElementById('wishVoiceBtn').addEventListener('click', function() {
+        const btn = this;
+        const transcriptEl = document.getElementById('wishTranscript');
+        if (btn.textContent === '● Start Recording') {
+            btn.textContent = '⏹️ Stop Recording';
+            transcriptEl.textContent = '🎤 Listening... Speak now.';
+            setTimeout(() => {
+                transcriptEl.textContent = 'I know I\'m capable of making a real difference.';
+                btn.textContent = '● Start Recording';
+            }, 3000);
+        } else {
+            btn.textContent = '● Start Recording';
+            if (transcriptEl.textContent === '🎤 Listening... Speak now.') {
+                transcriptEl.textContent = 'Your words will appear here...';
+            }
+        }
+    });
 
     // ============================================================
     // FIRST VOICE RECORDING (Step 4 - Q6)
