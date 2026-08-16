@@ -1235,27 +1235,39 @@
         // ============================================================
 
         // Step 1: Create Session
-        document.getElementById('step1Next').addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                const response = await fetch(`${API_BASE_URL}/sessions`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({})
-                });
-                const data = await response.json();
-                if (data.success) {
-                    sessionId = data.session_id;
-                    console.log('Session created:', sessionId);
-                    showStep('step2');
-                } else {
-                    alert('Failed to start assessment. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error creating session:', error);
-                alert('Network error. Please check your connection.');
-            }
+document.getElementById('step1Next').addEventListener('click', async (e) => {
+    e.preventDefault();
+    
+    // Generate a temporary user ID or use a guest flow
+    // For now, we'll use a temporary email
+    const tempEmail = `guest_${Date.now()}@temp.com`;
+    
+    try {
+        // Create a user instead of a session
+        const response = await fetch(`${API_BASE_URL}/users`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                fullName: 'Guest User',
+                email: tempEmail,
+                whatsapp: ''
+            })
         });
+        
+        const data = await response.json();
+        if (data.success) {
+            // Store user_id as session_id
+            sessionId = data.user.user_id;
+            console.log('User created:', sessionId);
+            showStep('step2');
+        } else {
+            alert('Failed to start assessment. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error creating user:', error);
+        alert('Network error. Please check your connection.');
+    }
+});
 
         // Step 2: Category Selection
         document.getElementById('step2Next').addEventListener('click', async (e) => {
