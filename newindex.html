@@ -889,6 +889,8 @@
 <script>
 (function() {
     // ============================================================
+ (function() {
+    // ============================================================
     // BACKEND API CONFIGURATION
     // ============================================================
     const API_BASE_URL = 'https://unspoken-backend-yvbi.onrender.com/api';
@@ -951,20 +953,21 @@
     }
 
     // ============================================================
-    // HELPER: RENDER MCQ OPTIONS
+    // HELPER: RENDER MCQ OPTIONS (2x2 Grid)
     // ============================================================
     function renderMCQOptions(containerId, options, selectedCallback) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        let html = `<div class="choice-grid-vertical" style="display:flex; flex-direction:column; gap:0.6rem;">`;
+        let html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;">`;
         options.forEach((opt, idx) => {
             const letter = String.fromCharCode(65 + idx);
             const label = typeof opt === 'string' ? opt : (opt.label || opt.value || opt);
+            const value = typeof opt === 'string' ? opt : (opt.value || opt);
             html += `
-                <div class="card-btn" data-option="${letter}" data-value="${typeof opt === 'string' ? opt : (opt.value || opt)}" style="display:flex; align-items:center; gap:0.8rem; padding:0.9rem 1.2rem; background:#f5faff; border-radius:1.2rem; border:2px solid #e2edf7; cursor:pointer; transition:all 0.15s; min-height:60px;">
-                    <span style="font-weight:700; color:#1a3e55; min-width:28px;">${letter}</span>
-                    <span style="font-size:0.95rem; color:#0a2a3f;">${label}</span>
+                <div class="card-btn" data-option="${letter}" data-value="${value}" style="display:flex; align-items:center; gap:0.6rem; padding:0.8rem 0.8rem; background:#f5faff; border-radius:1.2rem; border:2px solid #e2edf7; cursor:pointer; transition:all 0.15s; min-height:60px;">
+                    <span style="font-weight:700; color:#1a3e55; min-width:24px; font-size:0.9rem;">${letter}</span>
+                    <span style="font-size:0.85rem; color:#0a2a3f; line-height:1.3;">${label}</span>
                 </div>
             `;
         });
@@ -975,6 +978,11 @@
             btn.addEventListener('click', function() {
                 container.querySelectorAll('.card-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
+                // Store selected value on the next button
+                const nextBtn = document.getElementById('step4Next') || document.getElementById('step6Next');
+                if (nextBtn) {
+                    nextBtn.dataset.selected = this.dataset.value;
+                }
                 if (selectedCallback) selectedCallback(this.dataset.value);
             });
         });
@@ -1076,8 +1084,6 @@
             }
             transcriptEl.textContent = '✅ Voice saved!';
             storeResponse(questionCode, { transcript: finalTranscript }, 'voice');
-            const nextBtn = document.getElementById(`voiceNextBtn_${questionCode}`);
-            if (nextBtn) nextBtn.dataset.voiceSaved = 'true';
             console.log('Voice saved for', questionCode);
         }
 
@@ -1150,7 +1156,6 @@
         } else {
             document.getElementById('questionATitle').textContent = 'Who are you becoming?';
             document.getElementById('questionASubhead').textContent = 'Choose the option that best describes your journey.';
-            // Fallback options
             renderMCQOptions('questionAContainer', [
                 { label: 'Building my career', value: 'building' },
                 { label: 'Stepping up', value: 'stepping-up' },
@@ -1219,7 +1224,6 @@
         if (data && data.success && data.questions) {
             mcq1Questions = data.questions.filter(q => mcq1Codes.includes(q.question_code));
             if (mcq1Questions.length === 0) {
-                // Fallback questions
                 mcq1Questions = [
                     { question_code: 'Q1', question_text: 'When your message didn\'t land, what happened?', options: ['They misunderstood my point', 'I couldn\'t find the right words', 'I gave too much information', 'They didn\'t seem convinced'] },
                     { question_code: 'Q2', question_text: 'How do you typically handle conflict?', options: ['I confront it directly', 'I try to avoid it', 'I seek compromise'] },
@@ -1227,6 +1231,16 @@
                     { question_code: 'Q4', question_text: 'How do you prefer to receive feedback?', options: ['Direct and honest', 'With empathy and care', 'Written and detailed'] }
                 ];
             }
+            mcq1Index = 0;
+            renderMCQ1();
+        } else {
+            // Fallback
+            mcq1Questions = [
+                { question_code: 'Q1', question_text: 'When your message didn\'t land, what happened?', options: ['They misunderstood my point', 'I couldn\'t find the right words', 'I gave too much information', 'They didn\'t seem convinced'] },
+                { question_code: 'Q2', question_text: 'How do you typically handle conflict?', options: ['I confront it directly', 'I try to avoid it', 'I seek compromise'] },
+                { question_code: 'Q3', question_text: 'What motivates you most at work?', options: ['Recognition and rewards', 'Making a difference', 'Learning and growth'] },
+                { question_code: 'Q4', question_text: 'How do you prefer to receive feedback?', options: ['Direct and honest', 'With empathy and care', 'Written and detailed'] }
+            ];
             mcq1Index = 0;
             renderMCQ1();
         }
@@ -1245,9 +1259,14 @@
         document.getElementById('mcq1ProgressLabel').textContent = `${String(3 + mcq1Index).padStart(2, '0')} / 09`;
         const progress = 30 + ((mcq1Index / mcq1Questions.length) * 30);
         document.getElementById('mcq1ProgressFill').style.width = `${Math.min(progress, 55)}%`;
+        
+        // Store question code on the next button
+        document.getElementById('step4Next').dataset.questionCode = q.question_code;
+        // Clear previous selection
+        document.getElementById('step4Next').dataset.selected = '';
+        
         renderMCQOptions('mcq1Container', q.options || [], (value) => {
             document.getElementById('step4Next').dataset.selected = value;
-            document.getElementById('step4Next').dataset.questionCode = q.question_code;
         });
     }
 
@@ -1255,7 +1274,10 @@
         e.preventDefault();
         const selected = e.target.dataset.selected;
         const questionCode = e.target.dataset.questionCode || mcq1Questions[mcq1Index]?.question_code;
-        if (!selected) { alert('Please select an option.'); return; }
+        if (!selected) { 
+            alert('Please select an option.'); 
+            return; 
+        }
         storeResponse(questionCode, { selected: selected });
         mcq1Index++;
         if (mcq1Index < mcq1Questions.length) {
@@ -1285,13 +1307,11 @@
         document.getElementById('voice1Title').textContent = voiceQuestion.question_text || 'Tell us about something you know really well.';
         document.getElementById('voice1Subhead').textContent = voiceQuestion.voice_prompt || 'Press record and speak freely.';
         renderVoiceUI('voice1Container', voiceQuestion.question_code, voiceQuestion.question_text, voiceQuestion.voice_prompt);
-        // Store the question code for saving
         document.getElementById('step5Next').dataset.questionCode = voiceQuestion.question_code;
     }
 
     document.getElementById('step5Next').addEventListener('click', (e) => {
         e.preventDefault();
-        // Check if voice was saved (we check if there's a response stored for Q6)
         const hasVoiceResponse = allResponses.some(r => r.question_code === 'Q6' || r.question_code === 'V1');
         if (!hasVoiceResponse) {
             alert('Please record your voice before continuing.');
@@ -1317,6 +1337,14 @@
             }
             mcq2Index = 0;
             renderMCQ2();
+        } else {
+            mcq2Questions = [
+                { question_code: 'Q7', question_text: 'What is your biggest strength?', options: ['Problem solving', 'Communication', 'Leadership'] },
+                { question_code: 'Q8', question_text: 'How do you handle pressure?', options: ['I stay calm and focused', 'I get energized', 'I get stressed'] },
+                { question_code: 'Q9', question_text: 'What is your preferred work style?', options: ['Collaborative', 'Independent', 'Hybrid'] }
+            ];
+            mcq2Index = 0;
+            renderMCQ2();
         }
     }
 
@@ -1333,9 +1361,12 @@
         document.getElementById('mcq2ProgressLabel').textContent = `${String(7 + mcq2Index).padStart(2, '0')} / 09`;
         const progress = 70 + ((mcq2Index / mcq2Questions.length) * 20);
         document.getElementById('mcq2ProgressFill').style.width = `${Math.min(progress, 88)}%`;
+        
+        document.getElementById('step6Next').dataset.questionCode = q.question_code;
+        document.getElementById('step6Next').dataset.selected = '';
+        
         renderMCQOptions('mcq2Container', q.options || [], (value) => {
             document.getElementById('step6Next').dataset.selected = value;
-            document.getElementById('step6Next').dataset.questionCode = q.question_code;
         });
     }
 
@@ -1343,7 +1374,10 @@
         e.preventDefault();
         const selected = e.target.dataset.selected;
         const questionCode = e.target.dataset.questionCode || mcq2Questions[mcq2Index]?.question_code;
-        if (!selected) { alert('Please select an option.'); return; }
+        if (!selected) { 
+            alert('Please select an option.'); 
+            return; 
+        }
         storeResponse(questionCode, { selected: selected });
         mcq2Index++;
         if (mcq2Index < mcq2Questions.length) {
@@ -1502,6 +1536,6 @@
     // ============================================================
     showStep('step1');
 })();
-</script>
+    </script>
 </body>
 </html>
