@@ -1187,27 +1187,21 @@
         // BACKEND API CONFIGURATION
         // ============================================================
         const API_BASE_URL = 'https://unspoken-backend-yvbi.onrender.com/api';
-        let userId = null;
+        let sessionId = null;
         let userCategory = null;
         let assessmentResultData = null;
-        let allResponses = [];  // Store all responses locally
+        let allResponses = [];
 
         // ============================================================
-        // QUESTION ID MAPPING (Map question codes to backend question IDs)
+        // CATEGORY MAPPING
         // ============================================================
-        const questionIdMap = {
-            'A': 1,
-            'B': 2,
-            '01': 3,
-            '02': 4,
-            '03': 5,
-            '04': 6,
-            '05': 7,
-            '06': 8,
-            '07': 9,
-            '08': 10,
-            '09': 11,
-            '10': 12
+        const categoryMapping = {
+            'building': 'fresher',
+            'responsibility': 'senior',
+            'leading': 'manager',
+            'nextmove': 'transition',
+            'redefining': 'undecided',
+            'business': 'business'
         };
 
         // ============================================================
@@ -1215,22 +1209,290 @@
         // ============================================================
         function storeResponse(questionCode, answer, responseType = 'choice') {
             allResponses.push({
-                questionId: questionIdMap[questionCode] || 0,
+                question_code: questionCode,
                 answer: answer,
-                responseType: responseType
+                response_type: responseType
             });
             console.log('📝 Response stored:', questionCode, answer);
         }
 
         // ============================================================
-        // TICKER PAUSE
+        // STEP 1: Create Session (No user details!)
         // ============================================================
-        const tickerWrap = document.querySelector('.ticker-wrap');
-        const ticker = document.querySelector('.ticker');
-        if (tickerWrap && ticker) {
-            tickerWrap.addEventListener('mouseenter', () => { ticker.style.animationPlayState = 'paused'; });
-            tickerWrap.addEventListener('mouseleave', () => { ticker.style.animationPlayState = 'running'; });
-        }
+        document.getElementById('step1Next').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/sessions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    sessionId = data.session_id;
+                    console.log('✅ Session created:', sessionId);
+                    showStep('step2');
+                } else {
+                    alert('Failed to start assessment. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Network error. Please check your connection.');
+            }
+        });
+
+        // ============================================================
+        // STEP 2: Category Selection
+        // ============================================================
+        document.getElementById('step2Next').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const active = document.querySelector('#journeyGrid .card-btn.active');
+            if (!active) { 
+                alert('Please select a chapter that feels like you.'); 
+                return; 
+            }
+            
+            const backendCategory = categoryMapping[active.dataset.journey] || 'undecided';
+            userCategory = backendCategory;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/category`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_category: backendCategory })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    console.log('✅ Category set:', backendCategory);
+                    storeResponse('A', { selected: backendCategory });
+                    showStep('step3');
+                } else {
+                    alert('Failed to save category. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Network error. Please check your connection.');
+            }
+        });
+
+        // ============================================================
+        // STEP 3: Goal Selection
+        // ============================================================
+        document.getElementById('step3Next').addEventListener('click', (e) => {
+            e.preventDefault();
+            const active = document.querySelector('#goalGrid .card-btn.active');
+            if (!active) { 
+                alert('Please select a goal.'); 
+                return; 
+            }
+            
+            storeResponse('B', { selected: active.dataset.goal });
+            showStep('step4');
+        });
+
+        // ============================================================
+        // STEP 4: First Voice → Continue
+        // ============================================================
+        document.getElementById('step4Next').addEventListener('click', () => {
+            showStep('step5');
+        });
+
+        // ============================================================
+        // STEP 5: Multi-select
+        // ============================================================
+        document.getElementById('step5Next').addEventListener('click', (e) => {
+            e.preventDefault();
+            const selected = document.querySelectorAll('#breakdownGrid .card-btn.active');
+            if (selected.length === 0) { 
+                alert('Please select at least one option.'); 
+                return; 
+            }
+            
+            for (const btn of selected) {
+                storeResponse('Q1', { selected: btn.dataset.breakdown });
+            }
+            showStep('step6');
+        });
+
+        // ============================================================
+        // STEP 6: Second Voice → Continue
+        // ============================================================
+        document.getElementById('step6Next').addEventListener('click', () => {
+            showStep('step7');
+        });
+
+        // ============================================================
+        // STEP 7: Load Category Questions
+        // ============================================================
+        document.getElementById('step7Next').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/questions/${userCategory}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('✅ Questions loaded:', data.questions.length);
+                    showStep('step8');
+                } else {
+                    alert('Failed to load questions. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                alert('Network error. Please check your connection.');
+            }
+        });
+
+        // ============================================================
+        // STEP 8: Self-Perception
+        // ============================================================
+        document.getElementById('step8Next').addEventListener('click', (e) => {
+            e.preventDefault();
+            const desired = document.querySelectorAll('#desiredGrid .card-btn.active');
+            const worry = document.querySelector('#worryGrid .card-btn.active');
+            
+            if (desired.length === 0) { 
+                alert('Please select at least one desired experience.'); 
+                return; 
+            }
+            if (!worry) { 
+                alert('Please select one worry.'); 
+                return; 
+            }
+            
+            for (const btn of desired) {
+                storeResponse('Q2', { selected: btn.dataset.desired });
+            }
+            storeResponse('Q3', { selected: worry.dataset.worry });
+            showStep('step9');
+        });
+
+        // ============================================================
+        // STEP 9: Emotional Question
+        // ============================================================
+        document.getElementById('step9Next').addEventListener('click', (e) => {
+            e.preventDefault();
+            const textMode = document.getElementById('textModeBtn').classList.contains('active');
+            let answer = '';
+            if (textMode) {
+                answer = document.getElementById('wishText').value.trim();
+            } else {
+                answer = document.getElementById('wishTranscript').textContent.trim();
+            }
+            if (answer.length < 3 || answer === 'Your words will appear here...') {
+                alert('Please share what you wish people understood about you.');
+                return;
+            }
+            
+            storeResponse('Q9', { text: answer }, 'text');
+            showStep('step10');
+        });
+
+        // ============================================================
+        // STEP 10: Complete Assessment with User Details
+        // ============================================================
+        document.getElementById('step10Next').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('whatsapp').value.trim();
+            
+            if (!name) { alert('Please enter your full name.'); return; }
+            if (!email) { alert('Please enter your email address.'); return; }
+            if (!phone) { alert('Please enter your phone number.'); return; }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/assessment/complete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        user_details: {
+                            full_name: name,
+                            email: email,
+                            phone: phone
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('✅ Assessment complete:', data);
+                
+                if (data.success) {
+                    assessmentResultData = data;
+                    // Update persona preview
+                    const personaNameEl = document.getElementById('resultPersonaName');
+                    const personaDescEl = document.getElementById('resultPersonaDesc');
+                    if (personaNameEl) {
+                        personaNameEl.textContent = data.archetype_name || 'The Amplifier';
+                    }
+                    if (personaDescEl) {
+                        personaDescEl.textContent = data.archetype_description || 'You bring energy and conviction to your ideas.';
+                    }
+                    showStep('step11');
+                } else {
+                    alert('Failed to complete assessment. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Network error. Please check your connection.');
+            }
+        });
+
+        // ============================================================
+        // STEP 11: See Results
+        // ============================================================
+        document.getElementById('step11Next').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/assessment/result/${sessionId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('✅ Results retrieved:', data);
+                    const personaNameEl = document.getElementById('resultPersonaName');
+                    const personaDescEl = document.getElementById('resultPersonaDesc');
+                    if (personaNameEl && data.archetype) {
+                        personaNameEl.textContent = data.archetype.name || 'The Amplifier';
+                    }
+                    if (personaDescEl && data.archetype) {
+                        personaDescEl.textContent = data.archetype.description || 'You bring energy and conviction to your ideas.';
+                    }
+                    showStep('step12');
+                } else {
+                    alert('Failed to get results. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Network error. Please check your connection.');
+            }
+        });
+
+        // ============================================================
+        // UNLOCK BUTTON
+        // ============================================================
+        document.getElementById('unlockBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('✨ Your Personal Communication Profile is now unlocked!');
+        });
+
+        // ============================================================
+        // BACK BUTTONS
+        // ============================================================
+        document.getElementById('step2Back').addEventListener('click', () => showStep('step1'));
+        document.getElementById('step3Back').addEventListener('click', () => showStep('step2'));
+        document.getElementById('step4Back').addEventListener('click', () => showStep('step3'));
+        document.getElementById('step5Back').addEventListener('click', () => showStep('step4'));
+        document.getElementById('step6Back').addEventListener('click', () => showStep('step5'));
+        document.getElementById('step7Back').addEventListener('click', () => showStep('step6'));
+        document.getElementById('step8Back').addEventListener('click', () => showStep('step7'));
+        document.getElementById('step9Back').addEventListener('click', () => showStep('step8'));
+        document.getElementById('step10Back').addEventListener('click', () => showStep('step9'));
+        document.getElementById('step11Back').addEventListener('click', () => showStep('step10'));
+        document.getElementById('step12Back').addEventListener('click', () => showStep('step11'));
 
         // ============================================================
         // STEP MANAGEMENT
@@ -1254,247 +1516,9 @@
             Object.values(steps).forEach(s => s.classList.add('hidden'));
             if (steps[id]) {
                 steps[id].classList.remove('hidden');
-                currentStep = id;
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        let currentStep = 'step1';
-
-        // ============================================================
-        // NAVIGATION - WITH BACKEND INTEGRATION
-        // ============================================================
-
-        // Step 1: Create a temporary user (guest)
-        document.getElementById('step1Next').addEventListener('click', async (e) => {
-            e.preventDefault();
-            
-            try {
-                const tempEmail = `guest_${Date.now()}@temp.com`;
-                const response = await fetch(`${API_BASE_URL}/users`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        fullName: 'Guest User',
-                        email: tempEmail,
-                        whatsapp: ''
-                    })
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    userId = data.user.user_id;
-                    console.log('✅ Guest user created:', userId);
-                    showStep('step2');
-                } else {
-                    alert('Failed to start assessment. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Network error. Please check your connection.');
-            }
-        });
-
-        // Step 2: Category Selection
-        document.getElementById('step2Next').addEventListener('click', (e) => {
-            e.preventDefault();
-            const active = document.querySelector('#journeyGrid .card-btn.active');
-            if (!active) { alert('Please select a chapter that feels like you.'); return; }
-            
-            const categoryMap = {
-                'building': 'fresher',
-                'responsibility': 'senior',
-                'leading': 'manager',
-                'nextmove': 'transition',
-                'redefining': 'undecided',
-                'business': 'business'
-            };
-            userCategory = categoryMap[active.dataset.journey] || 'undecided';
-            
-            // Store response locally
-            storeResponse('A', { selected: userCategory });
-            showStep('step3');
-        });
-
-        // Step 3: Goal Selection
-        document.getElementById('step3Next').addEventListener('click', (e) => {
-            e.preventDefault();
-            const active = document.querySelector('#goalGrid .card-btn.active');
-            if (!active) { alert('Please select a goal.'); return; }
-            
-            storeResponse('B', { selected: active.dataset.goal });
-            showStep('step4');
-        });
-
-        // Step 4: First Voice → Continue
-        document.getElementById('step4Next').addEventListener('click', () => {
-            showStep('step5');
-        });
-
-        // Step 5: Multi-select
-        document.getElementById('step5Next').addEventListener('click', (e) => {
-            e.preventDefault();
-            const selected = document.querySelectorAll('#breakdownGrid .card-btn.active');
-            if (selected.length === 0) { alert('Please select at least one option.'); return; }
-            
-            for (const btn of selected) {
-                storeResponse('01', { selected: btn.dataset.breakdown });
-            }
-            showStep('step6');
-        });
-
-        // Step 6: Second Voice → Continue
-        document.getElementById('step6Next').addEventListener('click', () => {
-            showStep('step7');
-        });
-
-        // Step 7: Encouragement → Continue
-        document.getElementById('step7Next').addEventListener('click', () => {
-            showStep('step8');
-        });
-
-        // Step 8: Self-Perception
-        document.getElementById('step8Next').addEventListener('click', (e) => {
-            e.preventDefault();
-            const desired = document.querySelectorAll('#desiredGrid .card-btn.active');
-            const worry = document.querySelector('#worryGrid .card-btn.active');
-            
-            if (desired.length === 0) { alert('Please select at least one desired experience.'); return; }
-            if (!worry) { alert('Please select one worry.'); return; }
-            
-            for (const btn of desired) {
-                storeResponse('02', { selected: btn.dataset.desired });
-            }
-            storeResponse('03', { selected: worry.dataset.worry });
-            showStep('step9');
-        });
-
-        // Step 9: Emotional Question
-        document.getElementById('step9Next').addEventListener('click', (e) => {
-            e.preventDefault();
-            const textMode = document.getElementById('textModeBtn').classList.contains('active');
-            let answer = '';
-            if (textMode) {
-                answer = document.getElementById('wishText').value.trim();
-            } else {
-                answer = document.getElementById('wishTranscript').textContent.trim();
-            }
-            if (answer.length < 3 || answer === 'Your words will appear here...') {
-                alert('Please share what you wish people understood about you.');
-                return;
-            }
-            
-            storeResponse('09', { text: answer }, 'text');
-            showStep('step10');
-        });
-
-        // Step 10: User Details → Complete Assessment
-        document.getElementById('step10Next').addEventListener('click', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('fullName').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const whatsapp = document.getElementById('whatsapp').value.trim();
-            
-            if (!name) { alert('Please enter your full name.'); return; }
-            if (!email) { alert('Please enter your email address.'); return; }
-            if (!whatsapp) { alert('Please enter your WhatsApp number.'); return; }
-            
-            try {
-                // Step 1: Update the user with real details (or create if guest was used)
-                const userResponse = await fetch(`${API_BASE_URL}/users/${userId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        fullName: name,
-                        email: email,
-                        whatsapp: whatsapp
-                    })
-                });
-                
-                // If PUT fails (user not found), create new user
-                let finalUserId = userId;
-                if (!userResponse.ok) {
-                    const createResponse = await fetch(`${API_BASE_URL}/users`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            fullName: name,
-                            email: email,
-                            whatsapp: whatsapp
-                        })
-                    });
-                    const createData = await createResponse.json();
-                    if (createData.success) {
-                        finalUserId = createData.user.user_id;
-                    } else {
-                        alert('Failed to create user. Please try again.');
-                        return;
-                    }
-                }
-                
-                console.log('✅ User created/updated:', finalUserId);
-                console.log('📦 All responses:', allResponses);
-                
-                // Step 2: Send all responses to assessment/complete
-                const assessmentResponse = await fetch(`${API_BASE_URL}/assessment/complete`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId: finalUserId,
-                        responses: allResponses,
-                        communicationPersona: 'The Amplifier',
-                        archetypeId: 1
-                    })
-                });
-                
-                const assessmentData = await assessmentResponse.json();
-                console.log('✅ Assessment complete:', assessmentData);
-                
-                if (assessmentData.success) {
-                    assessmentResultData = assessmentData;
-                    // Update persona preview with actual results
-                    const personaNameEl = document.getElementById('resultPersonaName');
-                    const personaDescEl = document.getElementById('resultPersonaDesc');
-                    if (personaNameEl) {
-                        personaNameEl.textContent = assessmentData.persona_name || assessmentData.archetype_name || 'The Amplifier';
-                    }
-                    if (personaDescEl) {
-                        personaDescEl.textContent = assessmentData.archetype_description || 'You bring energy and conviction to your ideas.';
-                    }
-                    showStep('step11');
-                } else {
-                    alert('Failed to complete assessment. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Network error. Please check your connection.');
-            }
-        });
-
-        // Step 11: See Full Profile → Paywall
-        document.getElementById('step11Next').addEventListener('click', () => {
-            showStep('step12');
-        });
-
-        // Unlock Button
-        document.getElementById('unlockBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            alert('✨ Your Personal Communication Profile is now unlocked!\n\nYou\'ll receive:\n• Your Communication Persona\n• Your Intent → Impact Gap\n• 5 Communication Dimensions\n• Your Blind Spots\n• Your Personal Growth Path\n• Your First Practice');
-        });
-
-        // ============================================================
-        // BACK BUTTONS
-        // ============================================================
-        document.getElementById('step2Back').addEventListener('click', () => showStep('step1'));
-        document.getElementById('step3Back').addEventListener('click', () => showStep('step2'));
-        document.getElementById('step4Back').addEventListener('click', () => showStep('step3'));
-        document.getElementById('step5Back').addEventListener('click', () => showStep('step4'));
-        document.getElementById('step6Back').addEventListener('click', () => showStep('step5'));
-        document.getElementById('step7Back').addEventListener('click', () => showStep('step6'));
-        document.getElementById('step8Back').addEventListener('click', () => showStep('step7'));
-        document.getElementById('step9Back').addEventListener('click', () => showStep('step8'));
-        document.getElementById('step10Back').addEventListener('click', () => showStep('step9'));
-        document.getElementById('step11Back').addEventListener('click', () => showStep('step10'));
-        document.getElementById('step12Back').addEventListener('click', () => showStep('step11'));
 
         // ============================================================
         // CARD BUTTON TOGGLES
@@ -1559,7 +1583,7 @@
                 btn.textContent = '⏹️ Stop Recording';
                 transcriptEl.textContent = '🎤 Listening... Speak now.';
                 setTimeout(() => {
-                    transcriptEl.textContent = 'I know I\'m capable of making a real difference, but I often hold back because I worry about being misunderstood.';
+                    transcriptEl.textContent = 'I know I\'m capable of making a real difference.';
                     btn.textContent = '● Start Recording';
                 }, 3000);
             } else {
@@ -1571,196 +1595,10 @@
         });
 
         // ============================================================
-        // FIRST VOICE RECORDING (Question 06)
+        // VOICE RECORDING FUNCTIONS (keep your existing ones)
         // ============================================================
-        const recordBtn = document.getElementById('recordBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const btnText = document.getElementById('btnText');
-        const statusText = document.getElementById('statusText');
-        const statusIcon = document.getElementById('statusIcon');
-        const statusSubtext = document.getElementById('statusSubtext');
-        const timerText = document.getElementById('timerText');
-        const transcriptText = document.getElementById('transcriptText');
-        const transcriptContainer = document.getElementById('transcriptContainer');
-        const countdownOverlay = document.getElementById('countdownOverlay');
-        const countdownNumber = document.getElementById('countdownNumber');
-        const recordingStatus = document.getElementById('recordingStatus');
-
-        let isRecording = false;
-        let isCountdown = false;
-        let countdownTimer = null;
-        let recordingTimer = null;
-        let remainingSeconds = 45;
-        let transcript = '';
-
-        const promptQuestions = [
-            "Tell me about a time you had to persuade someone at work.",
-            "Describe a situation where you struggled to get your point across.",
-            "What's one thing you wish people understood about your work?",
-            "Tell me about a time you received feedback that changed how you communicate.",
-            "Describe a moment when you felt your voice wasn't heard in a meeting."
-        ];
-        let currentPromptIndex = 0;
-
-        window.getNewQuestion = function() {
-            currentPromptIndex = (currentPromptIndex + 1) % promptQuestions.length;
-            const promptEl = document.getElementById('promptText');
-            if (promptEl) promptEl.textContent = promptQuestions[currentPromptIndex];
-        };
-
-        let recognition = null;
-
-        function initSpeechRecognition() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert('Speech recognition is not supported. Please use Chrome, Edge, or Safari.');
-                return false;
-            }
-            recognition = new SpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
-            recognition.maxAlternatives = 1;
-
-            recognition.onresult = (event) => {
-                let final = '', interim = '';
-                for (let i = event.resultIndex; i < event.results.length; i++) {
-                    if (event.results[i].isFinal) {
-                        final += event.results[i][0].transcript;
-                    } else {
-                        interim += event.results[i][0].transcript;
-                    }
-                }
-                transcript = final || interim;
-                if (transcriptText) {
-                    transcriptText.textContent = transcript || 'Listening...';
-                }
-            };
-
-            recognition.onerror = (event) => {
-                console.error('Speech error:', event.error);
-                if (event.error === 'not-allowed') {
-                    alert('Please allow microphone access.');
-                    resetRecording();
-                } else if (event.error === 'no-speech') {
-                    if (isRecording) {
-                        try { recognition.stop(); recognition.start(); } catch (e) {}
-                    }
-                } else if (event.error === 'audio-capture') {
-                    alert('No microphone found. Please connect a microphone.');
-                    resetRecording();
-                }
-            };
-
-            recognition.onend = () => {
-                if (isRecording) {
-                    try { recognition.start(); } catch (e) {}
-                }
-            };
-            return true;
-        }
-
-        function startRecording() {
-            if (isRecording || isCountdown) return;
-            if (!recognition) {
-                if (!initSpeechRecognition()) return;
-            }
-            isCountdown = true;
-            recordBtn.disabled = true;
-            btnText.textContent = 'Getting ready...';
-            countdownOverlay.style.display = 'block';
-            statusText.textContent = 'Get ready...';
-            statusIcon.textContent = '⏳';
-            if (statusSubtext) statusSubtext.textContent = '';
-
-            let count = 3;
-            countdownNumber.textContent = count;
-            countdownTimer = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    countdownNumber.textContent = count;
-                    countdownNumber.style.animation = 'none';
-                    requestAnimationFrame(() => {
-                        countdownNumber.style.animation = 'countdown-bounce 0.8s ease';
-                    });
-                } else {
-                    clearInterval(countdownTimer);
-                    countdownOverlay.style.display = 'none';
-                    startActualRecording();
-                }
-            }, 800);
-        }
-
-        function startActualRecording() {
-            isCountdown = false;
-            isRecording = true;
-            transcript = '';
-            remainingSeconds = 45;
-            recordBtn.disabled = true;
-            btnText.textContent = '🔴 Recording...';
-            stopBtn.style.display = 'inline-flex';
-            statusText.textContent = '🎤 Speak now...';
-            statusIcon.textContent = '🎤';
-            recordingStatus.className = 'analyzer-status recording';
-            transcriptContainer.style.display = 'block';
-            transcriptText.textContent = 'Listening...';
-            if (statusSubtext) statusSubtext.textContent = 'Speak freely — we\'re listening';
-            try { recognition.start(); } catch (e) {}
-
-            recordingTimer = setInterval(() => {
-                remainingSeconds--;
-                const mins = Math.floor(remainingSeconds / 60);
-                const secs = remainingSeconds % 60;
-                timerText.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-                timerText.className = remainingSeconds <= 5 ? 'text warning' : 'text';
-                if (remainingSeconds <= 0) stopRecording();
-            }, 1000);
-        }
-
-        function stopRecording() {
-            if (!isRecording) return;
-            isRecording = false;
-            clearInterval(recordingTimer);
-            try { recognition.stop(); } catch (e) {}
-
-            recordBtn.disabled = false;
-            btnText.textContent = 'Start Speaking';
-            stopBtn.style.display = 'none';
-            statusText.textContent = 'Processing...';
-            statusIcon.textContent = '⏳';
-            recordingStatus.className = 'analyzer-status idle';
-
-            const finalTranscript = transcript.trim();
-            if (finalTranscript.length < 10) {
-                transcriptText.textContent = '⚠️ Please speak at least 10 words. Try again.';
-                statusText.textContent = 'Ready to speak?';
-                statusIcon.textContent = '🎤';
-                if (statusSubtext) statusSubtext.textContent = 'Press the button below when you\'re ready';
-                return;
-            }
-
-            statusText.textContent = 'Analyzing...';
-            statusIcon.textContent = '🤔';
-            if (statusSubtext) statusSubtext.textContent = 'Your coach is reviewing your communication';
-            analyzeVoiceTranscript(finalTranscript, '06');
-        }
-
-        function resetRecording() {
-            isRecording = false;
-            isCountdown = false;
-            clearInterval(countdownTimer);
-            clearInterval(recordingTimer);
-            recordBtn.disabled = false;
-            btnText.textContent = 'Start Speaking';
-            stopBtn.style.display = 'none';
-            statusText.textContent = 'Ready to speak? I\'m listening.';
-            statusIcon.textContent = '🎤';
-            recordingStatus.className = 'analyzer-status idle';
-            countdownOverlay.style.display = 'none';
-            timerText.textContent = '00:45';
-            timerText.className = 'text';
-            if (statusSubtext) statusSubtext.textContent = 'Press the button below when you\'re ready';
-        }
+        // ... (your existing voice recording code)
+        // Make sure to update analyzeVoiceTranscript to use sessionId
 
         async function analyzeVoiceTranscript(transcript, questionCode) {
             try {
@@ -1768,138 +1606,29 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        session_id: userId,  // Use userId as session_id
+                        session_id: sessionId,
                         question_code: questionCode,
                         transcript: transcript
                     })
                 });
                 const data = await response.json();
                 if (data.success) {
-                    statusText.textContent = '✅ Analysis complete!';
-                    statusIcon.textContent = '✅';
-                    if (statusSubtext) statusSubtext.textContent = 'Your voice has been analyzed';
                     console.log(`Voice ${questionCode} analysis:`, data.analysis);
-                    
-                    // Store voice analysis response
-                    storeResponse(questionCode === '06' ? '06' : '10', { 
+                    storeResponse(questionCode, { 
                         voice_analysis: data.analysis,
                         transcript: transcript 
                     }, 'voice');
-                } else {
-                    statusText.textContent = '❌ Error analyzing';
-                    statusIcon.textContent = '❌';
-                    if (statusSubtext) statusSubtext.textContent = 'Please try again';
                 }
             } catch (error) {
                 console.error('Error analyzing voice:', error);
-                statusText.textContent = '❌ Network error';
-                statusIcon.textContent = '❌';
             }
         }
-
-        if (recordBtn) recordBtn.addEventListener('click', startRecording);
-        if (stopBtn) stopBtn.addEventListener('click', stopRecording);
-
-        // ============================================================
-        // SECOND VOICE RECORDING (Question 10)
-        // ============================================================
-        const voice2RecordBtn = document.getElementById('voice2RecordBtn');
-        const voice2StopBtn = document.getElementById('voice2StopBtn');
-        let isVoice2Recording = false;
-
-        function startVoice2Recording() {
-            if (isVoice2Recording || isCountdown) return;
-            if (!recognition) {
-                if (!initSpeechRecognition()) return;
-            }
-            isCountdown = true;
-            voice2RecordBtn.disabled = true;
-            voice2RecordBtn.textContent = 'Getting ready...';
-            countdownOverlay.style.display = 'block';
-            statusText.textContent = 'Get ready...';
-            statusIcon.textContent = '⏳';
-            if (statusSubtext) statusSubtext.textContent = '';
-
-            let count = 3;
-            countdownNumber.textContent = count;
-            countdownTimer = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    countdownNumber.textContent = count;
-                    countdownNumber.style.animation = 'none';
-                    requestAnimationFrame(() => {
-                        countdownNumber.style.animation = 'countdown-bounce 0.8s ease';
-                    });
-                } else {
-                    clearInterval(countdownTimer);
-                    countdownOverlay.style.display = 'none';
-                    startActualVoice2Recording();
-                }
-            }, 800);
-        }
-
-        function startActualVoice2Recording() {
-            isCountdown = false;
-            isVoice2Recording = true;
-            transcript = '';
-            remainingSeconds = 45;
-            voice2RecordBtn.disabled = true;
-            voice2RecordBtn.textContent = '🔴 Recording...';
-            voice2StopBtn.style.display = 'inline-flex';
-            statusText.textContent = '🎤 Speak now...';
-            statusIcon.textContent = '🎤';
-            recordingStatus.className = 'analyzer-status recording';
-            transcriptContainer.style.display = 'block';
-            transcriptText.textContent = 'Listening...';
-            if (statusSubtext) statusSubtext.textContent = 'Speak freely — we\'re listening';
-            try { recognition.start(); } catch (e) {}
-
-            recordingTimer = setInterval(() => {
-                remainingSeconds--;
-                const mins = Math.floor(remainingSeconds / 60);
-                const secs = remainingSeconds % 60;
-                timerText.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-                timerText.className = remainingSeconds <= 5 ? 'text warning' : 'text';
-                if (remainingSeconds <= 0) stopVoice2Recording();
-            }, 1000);
-        }
-
-        function stopVoice2Recording() {
-            if (!isVoice2Recording) return;
-            isVoice2Recording = false;
-            clearInterval(recordingTimer);
-            try { recognition.stop(); } catch (e) {}
-
-            voice2RecordBtn.disabled = false;
-            voice2RecordBtn.textContent = '🎙️ Start Recording';
-            voice2StopBtn.style.display = 'none';
-            statusText.textContent = 'Processing...';
-            statusIcon.textContent = '⏳';
-            recordingStatus.className = 'analyzer-status idle';
-
-            const finalTranscript = transcript.trim();
-            if (finalTranscript.length < 10) {
-                transcriptText.textContent = '⚠️ Please speak at least 10 words. Try again.';
-                statusText.textContent = 'Ready to speak?';
-                statusIcon.textContent = '🎤';
-                if (statusSubtext) statusSubtext.textContent = 'Press the button below when you\'re ready';
-                return;
-            }
-
-            statusText.textContent = 'Analyzing...';
-            statusIcon.textContent = '🤔';
-            if (statusSubtext) statusSubtext.textContent = 'Your coach is reviewing your communication';
-            analyzeVoiceTranscript(finalTranscript, '10');
-        }
-
-        if (voice2RecordBtn) voice2RecordBtn.addEventListener('click', startVoice2Recording);
-        if (voice2StopBtn) voice2StopBtn.addEventListener('click', stopVoice2Recording);
 
         // ============================================================
         // START
         // ============================================================
         showStep('step1');
-    })();
+        })();
 </script>
 </body>
 </html>
