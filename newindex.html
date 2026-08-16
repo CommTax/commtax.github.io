@@ -1187,10 +1187,40 @@
         // BACKEND API CONFIGURATION
         // ============================================================
         const API_BASE_URL = 'https://unspoken-backend-yvbi.onrender.com/api';
-        let sessionId = null;
+        let userId = null;
         let userCategory = null;
-        let currentVoiceQuestion = '06';
         let assessmentResultData = null;
+        let allResponses = [];  // Store all responses locally
+
+        // ============================================================
+        // QUESTION ID MAPPING (Map question codes to backend question IDs)
+        // ============================================================
+        const questionIdMap = {
+            'A': 1,
+            'B': 2,
+            '01': 3,
+            '02': 4,
+            '03': 5,
+            '04': 6,
+            '05': 7,
+            '06': 8,
+            '07': 9,
+            '08': 10,
+            '09': 11,
+            '10': 12
+        };
+
+        // ============================================================
+        // HELPER: Store Response Locally
+        // ============================================================
+        function storeResponse(questionCode, answer, responseType = 'choice') {
+            allResponses.push({
+                questionId: questionIdMap[questionCode] || 0,
+                answer: answer,
+                responseType: responseType
+            });
+            console.log('📝 Response stored:', questionCode, answer);
+        }
 
         // ============================================================
         // TICKER PAUSE
@@ -1234,43 +1264,38 @@
         // NAVIGATION - WITH BACKEND INTEGRATION
         // ============================================================
 
-        // Step 1: Create Session
-document.getElementById('step1Next').addEventListener('click', async (e) => {
-    e.preventDefault();
-    
-    // Generate a temporary user ID or use a guest flow
-    // For now, we'll use a temporary email
-    const tempEmail = `guest_${Date.now()}@temp.com`;
-    
-    try {
-        // Create a user instead of a session
-        const response = await fetch(`${API_BASE_URL}/users`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                fullName: 'Guest User',
-                email: tempEmail,
-                whatsapp: ''
-            })
+        // Step 1: Create a temporary user (guest)
+        document.getElementById('step1Next').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const tempEmail = `guest_${Date.now()}@temp.com`;
+                const response = await fetch(`${API_BASE_URL}/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fullName: 'Guest User',
+                        email: tempEmail,
+                        whatsapp: ''
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    userId = data.user.user_id;
+                    console.log('✅ Guest user created:', userId);
+                    showStep('step2');
+                } else {
+                    alert('Failed to start assessment. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Network error. Please check your connection.');
+            }
         });
-        
-        const data = await response.json();
-        if (data.success) {
-            // Store user_id as session_id
-            sessionId = data.user.user_id;
-            console.log('User created:', sessionId);
-            showStep('step2');
-        } else {
-            alert('Failed to start assessment. Please try again.');
-        }
-    } catch (error) {
-        console.error('Error creating user:', error);
-        alert('Network error. Please check your connection.');
-    }
-});
 
         // Step 2: Category Selection
-        document.getElementById('step2Next').addEventListener('click', async (e) => {
+        document.getElementById('step2Next').addEventListener('click', (e) => {
             e.preventDefault();
             const active = document.querySelector('#journeyGrid .card-btn.active');
             if (!active) { alert('Please select a chapter that feels like you.'); return; }
@@ -1285,44 +1310,19 @@ document.getElementById('step1Next').addEventListener('click', async (e) => {
             };
             userCategory = categoryMap[active.dataset.journey] || 'undecided';
             
-            try {
-                await fetch(`${API_BASE_URL}/responses`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        session_id: sessionId,
-                        question_code: 'A',
-                        selected_option: userCategory
-                    })
-                });
-                showStep('step3');
-            } catch (error) {
-                console.error('Error saving response:', error);
-                alert('Failed to save your response. Please try again.');
-            }
+            // Store response locally
+            storeResponse('A', { selected: userCategory });
+            showStep('step3');
         });
 
         // Step 3: Goal Selection
-        document.getElementById('step3Next').addEventListener('click', async (e) => {
+        document.getElementById('step3Next').addEventListener('click', (e) => {
             e.preventDefault();
             const active = document.querySelector('#goalGrid .card-btn.active');
             if (!active) { alert('Please select a goal.'); return; }
             
-            try {
-                await fetch(`${API_BASE_URL}/responses`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        session_id: sessionId,
-                        question_code: 'B',
-                        selected_option: active.dataset.goal
-                    })
-                });
-                showStep('step4');
-            } catch (error) {
-                console.error('Error saving response:', error);
-                alert('Failed to save your response. Please try again.');
-            }
+            storeResponse('B', { selected: active.dataset.goal });
+            showStep('step4');
         });
 
         // Step 4: First Voice → Continue
@@ -1331,28 +1331,15 @@ document.getElementById('step1Next').addEventListener('click', async (e) => {
         });
 
         // Step 5: Multi-select
-        document.getElementById('step5Next').addEventListener('click', async (e) => {
+        document.getElementById('step5Next').addEventListener('click', (e) => {
             e.preventDefault();
             const selected = document.querySelectorAll('#breakdownGrid .card-btn.active');
             if (selected.length === 0) { alert('Please select at least one option.'); return; }
             
-            try {
-                for (const btn of selected) {
-                    await fetch(`${API_BASE_URL}/responses`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            session_id: sessionId,
-                            question_code: '01',
-                            selected_option: btn.dataset.breakdown
-                        })
-                    });
-                }
-                showStep('step6');
-            } catch (error) {
-                console.error('Error saving responses:', error);
-                alert('Failed to save your responses. Please try again.');
+            for (const btn of selected) {
+                storeResponse('01', { selected: btn.dataset.breakdown });
             }
+            showStep('step6');
         });
 
         // Step 6: Second Voice → Continue
@@ -1360,64 +1347,29 @@ document.getElementById('step1Next').addEventListener('click', async (e) => {
             showStep('step7');
         });
 
-        // Step 7: Encouragement → Load Category Questions
-        document.getElementById('step7Next').addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                const response = await fetch(`${API_BASE_URL}/questions/category/${userCategory}`);
-                const data = await response.json();
-                if (data.success) {
-                    // Store questions for later use
-                    window.categoryQuestions = data.questions;
-                    console.log('Category questions loaded:', data.questions.length);
-                    showStep('step8');
-                } else {
-                    alert('Failed to load questions. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error loading questions:', error);
-                alert('Network error. Please check your connection.');
-            }
+        // Step 7: Encouragement → Continue
+        document.getElementById('step7Next').addEventListener('click', () => {
+            showStep('step8');
         });
 
         // Step 8: Self-Perception
-        document.getElementById('step8Next').addEventListener('click', async (e) => {
+        document.getElementById('step8Next').addEventListener('click', (e) => {
             e.preventDefault();
             const desired = document.querySelectorAll('#desiredGrid .card-btn.active');
             const worry = document.querySelector('#worryGrid .card-btn.active');
+            
             if (desired.length === 0) { alert('Please select at least one desired experience.'); return; }
             if (!worry) { alert('Please select one worry.'); return; }
             
-            try {
-                for (const btn of desired) {
-                    await fetch(`${API_BASE_URL}/responses`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            session_id: sessionId,
-                            question_code: '02',
-                            selected_option: btn.dataset.desired
-                        })
-                    });
-                }
-                await fetch(`${API_BASE_URL}/responses`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        session_id: sessionId,
-                        question_code: '03',
-                        selected_option: worry.dataset.worry
-                    })
-                });
-                showStep('step9');
-            } catch (error) {
-                console.error('Error saving responses:', error);
-                alert('Failed to save your responses. Please try again.');
+            for (const btn of desired) {
+                storeResponse('02', { selected: btn.dataset.desired });
             }
+            storeResponse('03', { selected: worry.dataset.worry });
+            showStep('step9');
         });
 
         // Step 9: Emotional Question
-        document.getElementById('step9Next').addEventListener('click', async (e) => {
+        document.getElementById('step9Next').addEventListener('click', (e) => {
             e.preventDefault();
             const textMode = document.getElementById('textModeBtn').classList.contains('active');
             let answer = '';
@@ -1431,21 +1383,8 @@ document.getElementById('step1Next').addEventListener('click', async (e) => {
                 return;
             }
             
-            try {
-                await fetch(`${API_BASE_URL}/responses`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        session_id: sessionId,
-                        question_code: '09',
-                        text_response: answer
-                    })
-                });
-                showStep('step10');
-            } catch (error) {
-                console.error('Error saving response:', error);
-                alert('Failed to save your response. Please try again.');
-            }
+            storeResponse('09', { text: answer }, 'text');
+            showStep('step10');
         });
 
         // Step 10: User Details → Complete Assessment
@@ -1454,37 +1393,79 @@ document.getElementById('step1Next').addEventListener('click', async (e) => {
             const name = document.getElementById('fullName').value.trim();
             const email = document.getElementById('email').value.trim();
             const whatsapp = document.getElementById('whatsapp').value.trim();
+            
             if (!name) { alert('Please enter your full name.'); return; }
             if (!email) { alert('Please enter your email address.'); return; }
             if (!whatsapp) { alert('Please enter your WhatsApp number.'); return; }
             
             try {
-                const response = await fetch(`${API_BASE_URL}/assessment/complete`, {
+                // Step 1: Update the user with real details (or create if guest was used)
+                const userResponse = await fetch(`${API_BASE_URL}/users/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fullName: name,
+                        email: email,
+                        whatsapp: whatsapp
+                    })
+                });
+                
+                // If PUT fails (user not found), create new user
+                let finalUserId = userId;
+                if (!userResponse.ok) {
+                    const createResponse = await fetch(`${API_BASE_URL}/users`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            fullName: name,
+                            email: email,
+                            whatsapp: whatsapp
+                        })
+                    });
+                    const createData = await createResponse.json();
+                    if (createData.success) {
+                        finalUserId = createData.user.user_id;
+                    } else {
+                        alert('Failed to create user. Please try again.');
+                        return;
+                    }
+                }
+                
+                console.log('✅ User created/updated:', finalUserId);
+                console.log('📦 All responses:', allResponses);
+                
+                // Step 2: Send all responses to assessment/complete
+                const assessmentResponse = await fetch(`${API_BASE_URL}/assessment/complete`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        session_id: sessionId,
-                        user_details: { fullName: name, email: email, whatsapp: whatsapp }
+                        userId: finalUserId,
+                        responses: allResponses,
+                        communicationPersona: 'The Amplifier',
+                        archetypeId: 1
                     })
                 });
-                const data = await response.json();
-                if (data.success) {
-                    assessmentResultData = data;
+                
+                const assessmentData = await assessmentResponse.json();
+                console.log('✅ Assessment complete:', assessmentData);
+                
+                if (assessmentData.success) {
+                    assessmentResultData = assessmentData;
                     // Update persona preview with actual results
                     const personaNameEl = document.getElementById('resultPersonaName');
                     const personaDescEl = document.getElementById('resultPersonaDesc');
                     if (personaNameEl) {
-                        personaNameEl.textContent = data.persona_name || data.archetype_name || 'The Amplifier';
+                        personaNameEl.textContent = assessmentData.persona_name || assessmentData.archetype_name || 'The Amplifier';
                     }
                     if (personaDescEl) {
-                        personaDescEl.textContent = data.archetype_description || 'You bring energy and conviction to your ideas.';
+                        personaDescEl.textContent = assessmentData.archetype_description || 'You bring energy and conviction to your ideas.';
                     }
                     showStep('step11');
                 } else {
                     alert('Failed to complete assessment. Please try again.');
                 }
             } catch (error) {
-                console.error('Error completing assessment:', error);
+                console.error('Error:', error);
                 alert('Network error. Please check your connection.');
             }
         });
@@ -1787,7 +1768,7 @@ document.getElementById('step1Next').addEventListener('click', async (e) => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        session_id: sessionId,
+                        session_id: userId,  // Use userId as session_id
                         question_code: questionCode,
                         transcript: transcript
                     })
@@ -1798,6 +1779,12 @@ document.getElementById('step1Next').addEventListener('click', async (e) => {
                     statusIcon.textContent = '✅';
                     if (statusSubtext) statusSubtext.textContent = 'Your voice has been analyzed';
                     console.log(`Voice ${questionCode} analysis:`, data.analysis);
+                    
+                    // Store voice analysis response
+                    storeResponse(questionCode === '06' ? '06' : '10', { 
+                        voice_analysis: data.analysis,
+                        transcript: transcript 
+                    }, 'voice');
                 } else {
                     statusText.textContent = '❌ Error analyzing';
                     statusIcon.textContent = '❌';
