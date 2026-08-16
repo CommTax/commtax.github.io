@@ -1547,6 +1547,22 @@
 </div>
 
 <script>
+// ============================================================
+// BACKEND API CONFIGURATION
+// ============================================================
+const API_BASE_URL = 'https://unspoken-backend-yvbi.onrender.com/api';
+
+// ============================================================
+// SESSION MANAGEMENT
+// ============================================================
+let sessionId = null;
+let userCategory = null;
+let currentQuestionIndex = 0;
+let categoryQuestions = [];
+let responses = [];
+let userDetails = null;
+
+    
     (function() {
         // ===== TICKER PAUSE =====
         const tickerWrap = document.querySelector('.ticker-wrap');
@@ -1583,30 +1599,123 @@
         let currentStep = 'step1';
 
         // ===== NAVIGATION =====
-        document.getElementById('step1Next').addEventListener('click', (e) => { e.preventDefault(); showStep('step2'); });
-
-        document.getElementById('step2Next').addEventListener('click', (e) => {
-            e.preventDefault();
-            const active = document.querySelector('#journeyGrid .card-btn.active');
-            if (!active) { alert('Please select a chapter that feels like you.'); return; }
-            showStep('step3');
+document.getElementById('step1Next').addEventListener('click', async (e) => {
+    e.preventDefault();
+    
+    try {
+        // Create a new session
+        const response = await fetch(`${API_BASE_URL}/sessions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
         });
-
-        document.getElementById('step3Next').addEventListener('click', (e) => {
-            e.preventDefault();
-            const active = document.querySelector('#goalGrid .card-btn.active');
-            if (!active) { alert('Please select a goal.'); return; }
-            showStep('step4');
+        
+        const data = await response.json();
+        if (data.success) {
+            sessionId = data.session_id;
+            console.log('Session created:', sessionId);
+            showStep('step2');
+        } else {
+            alert('Failed to start assessment. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error creating session:', error);
+        alert('Network error. Please check your connection.');
+    }
+});
+document.getElementById('step2Next').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const active = document.querySelector('#journeyGrid .card-btn.active');
+    if (!active) { 
+        alert('Please select a chapter that feels like you.'); 
+        return; 
+    }
+    
+    // Map frontend category to backend category code
+    const categoryMap = {
+        'building': 'fresher',
+        'responsibility': 'senior',
+        'leading': 'manager',
+        'nextmove': 'transition',
+        'redefining': 'undecided',
+        'business': 'business'
+    };
+    
+    userCategory = categoryMap[active.dataset.journey] || 'undecided';
+    
+    try {
+        // Save the response
+        await fetch(`${API_BASE_URL}/responses`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                session_id: sessionId,
+                question_code: 'A',
+                selected_option: userCategory
+            })
         });
-
+        
+        showStep('step3');
+    } catch (error) {
+        console.error('Error saving response:', error);
+        alert('Failed to save your response. Please try again.');
+    }
+});
+   document.getElementById('step3Next').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const active = document.querySelector('#goalGrid .card-btn.active');
+    if (!active) { 
+        alert('Please select a goal.'); 
+        return; 
+    }
+    
+    try {
+        await fetch(`${API_BASE_URL}/responses`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                session_id: sessionId,
+                question_code: 'B',
+                selected_option: active.dataset.goal
+            })
+        });
+        
+        showStep('step4');
+    } catch (error) {
+        console.error('Error saving response:', error);
+        alert('Failed to save your response. Please try again.');
+    }
+});
         document.getElementById('step4Next').addEventListener('click', (e) => { e.preventDefault(); showStep('step5'); });
 
-        document.getElementById('step5Next').addEventListener('click', (e) => {
-            e.preventDefault();
-            const selected = document.querySelectorAll('#breakdownGrid .card-btn.active');
-            if (selected.length === 0) { alert('Please select at least one option.'); return; }
-            showStep('step6');
-        });
+document.getElementById('step5Next').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const selected = document.querySelectorAll('#breakdownGrid .card-btn.active');
+    if (selected.length === 0) { 
+        alert('Please select at least one option.'); 
+        return; 
+    }
+    
+    try {
+        // Save each selected option
+        for (const btn of selected) {
+            await fetch(`${API_BASE_URL}/responses`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    question_code: '01',
+                    selected_option: btn.dataset.breakdown
+                })
+            });
+        }
+        
+        showStep('step6');
+    } catch (error) {
+        console.error('Error saving responses:', error);
+        alert('Failed to save your responses. Please try again.');
+    }
+});
 
         document.getElementById('step6Next').addEventListener('click', (e) => {
             e.preventDefault();
@@ -1835,23 +1944,64 @@
             }, 1000);
         }
 
-        function stopRecording() {
-            if (!isRecording) return;
-            isRecording = false;
-            clearInterval(recordingTimer);
-            recordBtn.disabled = false;
-            btnText.textContent = 'Start Speaking';
-            stopBtn.style.display = 'none';
-            statusText.textContent = '✅ Recording complete!';
+function stopRecording() {
+    if (!isRecording) return;
+    isRecording = false;
+    clearInterval(recordingTimer);
+    
+    recordBtn.disabled = false;
+    btnText.textContent = 'Start Speaking';
+    stopBtn.style.display = 'none';
+    statusText.textContent = 'Processing...';
+    statusIcon.textContent = '⏳';
+    recordingStatus.className = 'analyzer-status idle';
+    
+    const finalTranscript = transcript.trim();
+    if (finalTranscript.length < 10) {
+        transcriptText.textContent = '⚠️ Please speak at least 10 words. Try again.';
+        statusText.textContent = 'Ready to speak?';
+        statusIcon.textContent = '🎤';
+        if (statusSubtext) statusSubtext.textContent = 'Press the button below when you\'re ready';
+        return;
+    }
+    
+    statusText.textContent = 'Analyzing...';
+    statusIcon.textContent = '🤔';
+    if (statusSubtext) statusSubtext.textContent = 'Your coach is reviewing your communication';
+    
+    // Send to backend
+    analyzeVoiceTranscript(finalTranscript);
+}
+
+async function analyzeVoiceTranscript(transcript) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/voice/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                session_id: sessionId,
+                question_code: '06',
+                transcript: transcript
+            })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            statusText.textContent = '✅ Analysis complete!';
             statusIcon.textContent = '✅';
-            recordingStatus.className = 'analyzer-status idle';
-            if (statusSubtext) statusSubtext.textContent = 'Your voice has been captured';
-            transcriptText.textContent = 'Sample transcript: "I believe we should focus on the core issue and address it directly..."';
+            if (statusSubtext) statusSubtext.textContent = 'Your voice has been analyzed';
+            console.log('Voice analysis:', data.analysis);
+        } else {
+            statusText.textContent = '❌ Error analyzing';
+            statusIcon.textContent = '❌';
+            if (statusSubtext) statusSubtext.textContent = 'Please try again';
         }
-
-        if (recordBtn) recordBtn.addEventListener('click', startRecording);
-        if (stopBtn) stopBtn.addEventListener('click', stopRecording);
-
+    } catch (error) {
+        console.error('Error analyzing voice:', error);
+        statusText.textContent = '❌ Network error';
+        statusIcon.textContent = '❌';
+    }
+}
         // ===== START =====
         showStep('step1');
     })();
