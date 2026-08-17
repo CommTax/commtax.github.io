@@ -1561,7 +1561,7 @@
     }
 
 // ============================================================
-// HELPER: RENDER AGE-STYLE CARDS WITH HUMAN FACES - FIXED
+// HELPER: RENDER AGE-STYLE CARDS WITH HUMAN FACES
 // ============================================================
 function renderAgeStyleCards(containerId, options, selectedCallback) {
     console.log('✅ renderAgeStyleCards called with:', containerId);
@@ -1572,15 +1572,18 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
         return;
     }
 
-    // ✅ IMAGE URL MAPPING - All verified working
+    // ✅ IMAGE URL MAPPING - Include both variations
     const faceImages = {
         'building': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Fresher.png',
         'stepping-up': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Senior.png',
         'leading': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Manager.png',
         'nextmove': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Transition.png',
         'business': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Owner.png',
+        // ✅ Add both variations
         'skills': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Student.png',
-        'other': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Other.jpg'
+        'student': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Student.png',  // ← Add this
+        'other': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Other.jpg',
+        'undecided': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Other.jpg'  // ← Add this
     };
 
     let html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">`;
@@ -1588,8 +1591,6 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
     options.forEach((opt, index) => {
         const value = typeof opt === 'string' ? opt : opt.value;
         const label = typeof opt === 'string' ? opt : opt.label;
-        
-        console.log(`📌 Processing option ${index}:`, { value, label });
         
         let mainText = label;
         let description = '';
@@ -1599,13 +1600,10 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
             description = match[2].trim();
         }
         
-        // ✅ FIX: Get the image URL based on the value
+        // ✅ Get the image URL - now works with 'student' and 'skills'
         const faceUrl = faceImages[value] || '';
         
-        // ✅ Debug: Log what URL is being used
-        console.log(`🖼️ ${value} → ${faceUrl || 'NO URL FOUND'}`);
-        
-        // ✅ If no URL found, use a colored circle with first letter
+        // ✅ If no URL found, use SVG fallback with first letter
         const finalImageUrl = faceUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Crect width='56' height='56' rx='28' fill='%23e2e8f0'/%3E%3Ctext x='28' y='36' font-family='Inter, sans-serif' font-size='24' font-weight='600' fill='%2394a3b8' text-anchor='middle'%3E${mainText.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
         
         html += `
@@ -2080,35 +2078,46 @@ function bindDynamicVoice(questionCode) {
 // ============================================================
 // STEP 2: LOAD QUESTION A
 // ============================================================
-// ============================================================
-// STEP 2: LOAD QUESTION A
-// ============================================================
 async function loadQuestionA() {
     console.log('📝 loadQuestionA called');
     const data = await loadQuestion('initial');
     console.log('📝 Question A data:', data);
     
-    // ✅ Define the options with correct values that match faceImages keys
+    // ✅ Define the options with correct values
     const defaultOptions = [
         { label: 'Building my career (Fresher / Early Career)', value: 'building' },
         { label: 'Stepping up (Senior Professional: Growing into greater responsibility)', value: 'stepping-up' },
         { label: 'Leading with influence (Manager / Director)', value: 'leading' },
         { label: 'Preparing for what\'s next (Transition / Career Change)', value: 'nextmove' },
         { label: 'Building my business (Entrepreneur / Founder: Turning ideas into influence.)', value: 'business' },
-        { label: 'Building skills (Student / Continuous Learner)', value: 'skills' },
+        { label: 'Building skills (Student / Continuous Learner)', value: 'skills' },  // ← Use 'skills'
         { label: 'Others (Explore / Undecided)', value: 'other' }
     ];
+    
+    // ✅ Mapping from backend values to frontend values
+    const valueMap = {
+        'student': 'skills',     // Backend sends 'student', we want 'skills'
+        'undecided': 'other'     // Backend sends 'undecided', we want 'other'
+    };
     
     if (data && data.success && data.question) {
         const q = data.question;
         document.getElementById('questionATitle').textContent = q.question_text || 'Who are you becoming?';
         document.getElementById('questionASubhead').textContent = 'Choose the chapter that feels most like you.';
         
-        // ✅ Use the options from the backend, but ensure values are correct
         let options = q.options || defaultOptions;
         
-        // ✅ Log the options to debug
-        console.log('📋 Options being passed:', options);
+        // ✅ Map the values if needed
+        options = options.map(opt => {
+            const value = typeof opt === 'string' ? opt : opt.value;
+            const mappedValue = valueMap[value] || value;
+            return {
+                label: typeof opt === 'string' ? opt : opt.label,
+                value: mappedValue
+            };
+        });
+        
+        console.log('📋 Mapped options:', options);
         
         renderAgeStyleCards('questionAContainer', options, (value) => {
             console.log('✅ Selected value:', value);
