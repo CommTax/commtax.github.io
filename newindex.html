@@ -1531,12 +1531,13 @@ async function loadVoice2() {
     if (data && data.success && data.questions) {
         voiceQuestion = data.questions.find(q => q.question_code === 'Q10' || q.question_code === 'V2');
     }
-        if (!voiceQuestion) {
-            voiceQuestion = {
-                question_code: 'Q10',
-                question_text: 'Convince someone why your idea deserves attention.',
-                voice_prompt: '45 seconds. Convince a senior decision-maker to support an idea you believe in.'
-            };
+    // ONLY use fallback if backend fails completely
+    if (!voiceQuestion) {
+        console.error('❌ Voice question not found in backend!');
+        alert('Failed to load voice question. Please try again.');
+        showStep('step6');
+        return;
+    }
         }
         document.getElementById('voice2Title').textContent = voiceQuestion.question_text || 'Convince someone why your idea deserves attention.';
         document.getElementById('voice2Subhead').textContent = voiceQuestion.voice_prompt || 'Press record and speak freely.';
