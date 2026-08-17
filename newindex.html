@@ -1301,180 +1301,241 @@
         bindDynamicVoice(questionCode);
     }
 
-    // ============================================================
-    // BIND DYNAMIC VOICE RECORDING
-    // ============================================================
-    function bindDynamicVoice(questionCode) {
-        const recordBtn = document.getElementById(`dynamicVoiceRecordBtn_${questionCode}`);
-        const stopBtn = document.getElementById(`dynamicVoiceStopBtn_${questionCode}`);
-        const transcriptEl = document.getElementById(`dynamicVoiceTranscript_${questionCode}`);
-        if (!recordBtn) return;
+// ============================================================
+// BIND DYNAMIC VOICE RECORDING WITH SILENCE DETECTION
+// ============================================================
+function bindDynamicVoice(questionCode) {
+    const recordBtn = document.getElementById(`dynamicVoiceRecordBtn_${questionCode}`);
+    const stopBtn = document.getElementById(`dynamicVoiceStopBtn_${questionCode}`);
+    const transcriptEl = document.getElementById(`dynamicVoiceTranscript_${questionCode}`);
+    if (!recordBtn) return;
 
-        let isRecording = false;
-        let isCountdownActive = false;
-        let recognition = null;
-        let fullTranscript = '';
-        let timerInterval = null;
-        let timeLeft = 45;
-        let countdownInterval = null;
-        let countdownValue = 3;
+    let isRecording = false;
+    let isCountdownActive = false;
+    let recognition = null;
+    let fullTranscript = '';
+    let timerInterval = null;
+    let timeLeft = 45;
+    let countdownInterval = null;
+    let countdownValue = 3;
+    let silenceTimer = null;
+    let lastSpeechTime = 0;
+    let isSpeaking = false;
 
-        function initSpeechRecog() {
-            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SR) { alert('Speech recognition not supported.'); return false; }
-            recognition = new SR();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
+    function initSpeechRecog() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) { alert('Speech recognition not supported.'); return false; }
+        recognition = new SR();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
 
-            recognition.onresult = (e) => {
-                let interimTranscript = '';
-                let finalTranscript = '';
+        recognition.onresult = (e) => {
+            let interimTranscript = '';
+            let finalTranscript = '';
+            let hasSpeech = false;
+            
+            for (let i = e.resultIndex; i < e.results.length; i++) {
+                const result = e.results[i];
+                const transcript = result[0].transcript;
                 
-                for (let i = e.resultIndex; i < e.results.length; i++) {
-                    const result = e.results[i];
-                    const transcript = result[0].transcript;
-                    
-                    if (result.isFinal) {
-                        fullTranscript += transcript + ' ';
-                        finalTranscript += transcript;
-                    } else {
-                        interimTranscript += transcript;
+                if (result.isFinal) {
+                    fullTranscript += transcript + ' ';
+                    finalTranscript += transcript;
+                    hasSpeech = true;
+                } else {
+                    interimTranscript += transcript;
+                    if (transcript.trim().length > 0) {
+                        hasSpeech = true;
                     }
                 }
-                
-                const displayText = fullTranscript + interimTranscript;
-                
-                if (transcriptEl) {
-                    const timerDisplay = timeLeft > 0 ? `⏱️ ${timeLeft}s remaining\n\n` : '⏰ Time\'s up!\n\n';
-                    transcriptEl.textContent = timerDisplay + (displayText.trim() || '🎤 Speak now...');
-                }
-            };
-
-            recognition.onerror = (e) => {
-                console.error('Speech error:', e.error);
-                if (e.error === 'not-allowed') alert('Please allow microphone access.');
-                if (e.error === 'no-speech') {
-                    transcriptEl.textContent = '⚠️ No speech detected. Please try again.';
-                }
-                resetVoice();
-            };
-
-            recognition.onend = () => { 
-                if (isRecording) {
-                    try { recognition.start(); } catch(e) {}
-                }
-            };
-            return true;
-        }
-
-        function startCountdown() {
-            if (isCountdownActive) return;
-            isCountdownActive = true;
-            countdownValue = 3;
-            fullTranscript = '';
-            recordBtn.disabled = true;
-            recordBtn.textContent = `⏳ ${countdownValue}`;
-            transcriptEl.textContent = `🎤 Get ready... ${countdownValue}`;
-            
-            countdownInterval = setInterval(() => {
-                countdownValue--;
-                if (countdownValue > 0) {
-                    recordBtn.textContent = `⏳ ${countdownValue}`;
-                    transcriptEl.textContent = `🎤 Get ready... ${countdownValue}`;
-                } else {
-                    clearInterval(countdownInterval);
-                    countdownInterval = null;
-                    recordBtn.textContent = '🎙️ Recording...';
-                    transcriptEl.textContent = '🎤 Recording... Speak now!';
-                    isCountdownActive = false;
-                    startRecording();
-                }
-            }, 1000);
-        }
-
-        function startRecording() {
-            if (isRecording) return;
-            if (!recognition) { if (!initSpeechRecog()) return; }
-            
-            isRecording = true;
-            timeLeft = 45;
-            recordBtn.disabled = true;
-            recordBtn.textContent = '🔴 Recording...';
-            stopBtn.style.display = 'inline-flex';
-            transcriptEl.textContent = '⏱️ 45s remaining\n\n🎤 Speak now...';
-            
-            try { recognition.start(); } catch(e) {}
-            
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                if (timeLeft > 0) {
-                    if (transcriptEl) {
-                        const currentText = transcriptEl.textContent;
-                        const lines = currentText.split('\n');
-                        if (lines.length > 0) {
-                            lines[0] = `⏱️ ${timeLeft}s remaining`;
-                            transcriptEl.textContent = lines.join('\n');
-                        }
-                    }
-                } else {
-                    clearInterval(timerInterval);
-                    timerInterval = null;
-                    transcriptEl.textContent = '⏰ Time\'s up!\n\n' + fullTranscript.trim();
-                    stopVoice();
-                }
-            }, 1000);
-        }
-
-        function stopVoice() {
-            if (!isRecording) return;
-            isRecording = false;
-            
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
             }
             
-            try { recognition.stop(); } catch(e) {}
-            
-            recordBtn.disabled = false;
-            recordBtn.textContent = '🎙️ Start Recording';
-            stopBtn.style.display = 'none';
-            
-            const finalTranscript = fullTranscript.trim();
-            if (finalTranscript.length < 10) {
-                transcriptEl.textContent = '⚠️ Please speak at least 10 words. Try again.';
-                return;
+            // Update speech detection
+            if (hasSpeech) {
+                isSpeaking = true;
+                lastSpeechTime = Date.now();
+                // Reset silence timer when speech is detected
+                if (silenceTimer) {
+                    clearTimeout(silenceTimer);
+                    silenceTimer = null;
+                }
             }
             
-            transcriptEl.textContent = `✅ Voice saved! (${finalTranscript.length} characters, ${45 - timeLeft}s)\n\n${finalTranscript}`;
-            storeResponse(questionCode, { transcript: finalTranscript }, 'voice');
-            console.log('Voice saved for', questionCode, 'Length:', finalTranscript.length, 'words');
-        }
-
-        function resetVoice() {
-            isRecording = false;
-            isCountdownActive = false;
+            const displayText = fullTranscript + interimTranscript;
             
-            if (countdownInterval) {
+            if (transcriptEl) {
+                const timerDisplay = timeLeft > 0 ? `⏱️ ${timeLeft}s remaining\n\n` : '⏰ Time\'s up!\n\n';
+                transcriptEl.textContent = timerDisplay + (displayText.trim() || '🎤 Speak now...');
+            }
+        };
+
+        recognition.onerror = (e) => {
+            console.error('Speech error:', e.error);
+            if (e.error === 'not-allowed') alert('Please allow microphone access.');
+            if (e.error === 'no-speech') {
+                transcriptEl.textContent = '⚠️ No speech detected. Please try again.';
+            }
+            resetVoice();
+        };
+
+        recognition.onend = () => { 
+            if (isRecording) {
+                try { recognition.start(); } catch(e) {}
+            }
+        };
+        return true;
+    }
+
+    function startCountdown() {
+        if (isCountdownActive) return;
+        isCountdownActive = true;
+        countdownValue = 3;
+        fullTranscript = '';
+        isSpeaking = false;
+        lastSpeechTime = 0;
+        recordBtn.disabled = true;
+        recordBtn.textContent = `⏳ ${countdownValue}`;
+        transcriptEl.textContent = `🎤 Get ready... ${countdownValue}`;
+        
+        countdownInterval = setInterval(() => {
+            countdownValue--;
+            if (countdownValue > 0) {
+                recordBtn.textContent = `⏳ ${countdownValue}`;
+                transcriptEl.textContent = `🎤 Get ready... ${countdownValue}`;
+            } else {
                 clearInterval(countdownInterval);
                 countdownInterval = null;
+                recordBtn.textContent = '🎙️ Recording...';
+                transcriptEl.textContent = '🎤 Recording... Speak now!';
+                isCountdownActive = false;
+                startRecording();
             }
-            if (timerInterval) {
+        }, 1000);
+    }
+
+    function startRecording() {
+        if (isRecording) return;
+        if (!recognition) { if (!initSpeechRecog()) return; }
+        
+        isRecording = true;
+        timeLeft = 45;
+        isSpeaking = false;
+        lastSpeechTime = Date.now();
+        recordBtn.disabled = true;
+        recordBtn.textContent = '🔴 Recording...';
+        stopBtn.style.display = 'inline-flex';
+        transcriptEl.textContent = '⏱️ 45s remaining\n\n🎤 Speak now...';
+        
+        try { recognition.start(); } catch(e) {}
+        
+        // Start timer
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            if (timeLeft > 0) {
+                if (transcriptEl) {
+                    const currentText = transcriptEl.textContent;
+                    const lines = currentText.split('\n');
+                    if (lines.length > 0) {
+                        lines[0] = `⏱️ ${timeLeft}s remaining`;
+                        transcriptEl.textContent = lines.join('\n');
+                    }
+                }
+            } else {
+                // Time's up - auto stop
                 clearInterval(timerInterval);
                 timerInterval = null;
+                transcriptEl.textContent = '⏰ Time\'s up!\n\n' + fullTranscript.trim();
+                stopVoice();
             }
-            
-            if (recordBtn) { 
-                recordBtn.disabled = false; 
-                recordBtn.textContent = '🎙️ Start Recording'; 
-            }
-            if (stopBtn) stopBtn.style.display = 'none';
-        }
-
-        recordBtn.addEventListener('click', startCountdown);
-        if (stopBtn) stopBtn.addEventListener('click', stopVoice);
+        }, 1000);
+        
+        // Start silence detection (5 seconds of silence = auto-stop)
+        startSilenceDetection();
     }
+
+    function startSilenceDetection() {
+        if (silenceTimer) {
+            clearTimeout(silenceTimer);
+            silenceTimer = null;
+        }
+        
+        silenceTimer = setTimeout(() => {
+            // Check if there's been speech in the last 5 seconds
+            const timeSinceLastSpeech = Date.now() - lastSpeechTime;
+            if (isRecording && timeSinceLastSpeech >= 5000 && fullTranscript.trim().length > 10) {
+                console.log('🔇 5 seconds of silence detected - auto-stopping');
+                transcriptEl.textContent = '⏱️ ' + timeLeft + 's remaining\n\n' + fullTranscript.trim();
+                stopVoice();
+            } else if (isRecording) {
+                // Restart silence detection
+                startSilenceDetection();
+            }
+        }, 5000);
+    }
+
+    function stopVoice() {
+        if (!isRecording) return;
+        isRecording = false;
+        
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        
+        if (silenceTimer) {
+            clearTimeout(silenceTimer);
+            silenceTimer = null;
+        }
+        
+        try { recognition.stop(); } catch(e) {}
+        
+        recordBtn.disabled = false;
+        recordBtn.textContent = '🎙️ Start Recording';
+        stopBtn.style.display = 'none';
+        
+        const finalTranscript = fullTranscript.trim();
+        if (finalTranscript.length < 10) {
+            transcriptEl.textContent = '⚠️ Please speak at least 10 words. Try again.';
+            return;
+        }
+        
+        transcriptEl.textContent = `✅ Voice saved! (${finalTranscript.length} characters, ${45 - timeLeft}s)\n\n${finalTranscript}`;
+        storeResponse(questionCode, { transcript: finalTranscript }, 'voice');
+        console.log('Voice saved for', questionCode, 'Length:', finalTranscript.length, 'words');
+    }
+
+    function resetVoice() {
+        isRecording = false;
+        isCountdownActive = false;
+        isSpeaking = false;
+        
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+        }
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        if (silenceTimer) {
+            clearTimeout(silenceTimer);
+            silenceTimer = null;
+        }
+        
+        if (recordBtn) { 
+            recordBtn.disabled = false; 
+            recordBtn.textContent = '🎙️ Start Recording'; 
+        }
+        if (stopBtn) stopBtn.style.display = 'none';
+    }
+
+    // Start countdown when record button is clicked
+    recordBtn.addEventListener('click', startCountdown);
+    
+    // Stop recording when stop button is clicked
+    if (stopBtn) stopBtn.addEventListener('click', stopVoice);
+}
 
     // ============================================================
     // LOAD QUESTIONS FROM DB
