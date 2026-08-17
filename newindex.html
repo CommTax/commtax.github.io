@@ -1063,33 +1063,35 @@ async function saveResponseToBackend(questionCode, answer, responseType) {
         });
     }
 
-    // ============================================================
-    // HELPER: RENDER VOICE UI
-    // ============================================================
-    function renderVoiceUI(containerId, questionCode, questionText, voicePrompt) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+// ============================================================
+// HELPER: RENDER VOICE UI - CLEAN VERSION
+// ============================================================
+function renderVoiceUI(containerId, questionCode, questionText, voicePrompt) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-        container.innerHTML = `
-            <div style="background: #0f172a; border-radius: 1.5rem; padding: 1.5rem 1.2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; border-radius: 16px; margin-bottom: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);">
-                    <div style="font-size: 16px; color: rgba(255,255,255,0.5); font-weight: 400;">🎤 ${questionText || 'Record your response'}</div>
-                    <button id="dynamicVoiceRecordBtn_${questionCode}" style="background: linear-gradient(135deg, #d97706, #b45309); color: white; border: none; padding: 14px 36px; border-radius: 60px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 24px rgba(217,119,6,0.3);">
-                        🎙️ Start Recording
-                    </button>
-                    <button id="dynamicVoiceStopBtn_${questionCode}" style="display: none; background: #7c3aed; color: white; border: none; padding: 14px 36px; border-radius: 60px; font-size: 15px; font-weight: 600; cursor: pointer; align-items: center; gap: 10px; box-shadow: 0 6px 24px rgba(124,58,237,0.3);">
-                        ⏹️ Finish & Save
-                    </button>
+    container.innerHTML = `
+        <div style="background: #0f172a; border-radius: 1.5rem; padding: 1.5rem 1.2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; border-radius: 16px; margin-bottom: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);">
+                <div style="font-size: 16px; color: rgba(255,255,255,0.7); font-weight: 400; text-align: center; max-width: 600px;">
+                    🎤 ${voicePrompt || questionText || 'Record your response'}
                 </div>
-                <div id="dynamicVoiceTranscript_${questionCode}" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 0.8rem; text-align: center; min-height: 30px; font-style: italic;">Your words will appear here...</div>
-                <div style="margin-top: 14px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.15); letter-spacing: 0.5px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 14px;">
-                    🔒 Your voice is processed privately.
-                </div>
+                <button id="dynamicVoiceRecordBtn_${questionCode}" style="background: linear-gradient(135deg, #d97706, #b45309); color: white; border: none; padding: 14px 36px; border-radius: 60px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 24px rgba(217,119,6,0.3);">
+                    🎙️ Start Recording
+                </button>
+                <button id="dynamicVoiceStopBtn_${questionCode}" style="display: none; background: #7c3aed; color: white; border: none; padding: 14px 36px; border-radius: 60px; font-size: 15px; font-weight: 600; cursor: pointer; align-items: center; gap: 10px; box-shadow: 0 6px 24px rgba(124,58,237,0.3);">
+                    ⏹️ Finish & Save
+                </button>
             </div>
-        `;
+            <div id="dynamicVoiceTranscript_${questionCode}" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 0.8rem; text-align: center; min-height: 30px; font-style: italic;">Your words will appear here...</div>
+            <div style="margin-top: 14px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.15); letter-spacing: 0.5px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 14px;">
+                🔒 Your voice is processed privately.
+            </div>
+        </div>
+    `;
 
-        bindDynamicVoice(questionCode);
-    }
+    bindDynamicVoice(questionCode);
+}
 
     // ============================================================
     // BIND DYNAMIC VOICE RECORDING
@@ -1423,11 +1425,12 @@ async function loadVoice1() {
                 voice_prompt: '45 seconds. No script. No preparation. Tell us about something you know really well.'
             };
         }
-        document.getElementById('voice1Title').textContent = voiceQuestion.question_text || 'Tell us about something you know really well.';
-        document.getElementById('voice1Subhead').textContent = voiceQuestion.voice_prompt || 'Press record and speak freely.';
-        renderVoiceUI('voice1Container', voiceQuestion.question_code, voiceQuestion.question_text, voiceQuestion.voice_prompt);
-        document.getElementById('step5Next').dataset.questionCode = voiceQuestion.question_code;
-    }
+    // Display only the voice prompt, not the question text twice
+    document.getElementById('voice1Title').textContent = '🎙️ Voice Response';
+    document.getElementById('voice1Subhead').textContent = voiceQuestion.voice_prompt || voiceQuestion.question_text;
+    renderVoiceUI('voice1Container', voiceQuestion.question_code, voiceQuestion.question_text, voiceQuestion.voice_prompt);
+    document.getElementById('step5Next').dataset.questionCode = voiceQuestion.question_code;
+}
 
     document.getElementById('step5Next').addEventListener('click', (e) => {
         e.preventDefault();
