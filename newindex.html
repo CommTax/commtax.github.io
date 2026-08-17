@@ -2610,58 +2610,60 @@ async function loadQuestionA() {
 
     // ============================================================
     // STEP 8: USER DETAILS
-    // ============================================================
-    document.getElementById('step8Next').addEventListener('click', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('fullName').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const phone = document.getElementById('phone').value.trim();
+    // ============================================================document.getElementById('step8Next').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
 
-        if (!name) { alert('Please enter your full name.'); return; }
-        if (!email) { alert('Please enter your email address.'); return; }
-        if (!phone) { alert('Please enter your phone number.'); return; }
+    if (!name) { alert('Please enter your full name.'); return; }
+    if (!email) { alert('Please enter your email address.'); return; }
+    if (!phone) { alert('Please enter your phone number.'); return; }
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/assessment/complete`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    session_id: sessionId,
-                    user_details: {
-                        full_name: name,
-                        email: email,
-                        phone: phone
-                    }
-                })
-            });
-            const data = await response.json();
-            console.log('✅ Assessment complete:', data);
-            if (data.success) {
-                assessmentResultData = data;
-                
-                const archetypeNameEl = document.getElementById('resultArchetypeName');
-                const archetypeDescEl = document.getElementById('resultArchetypeDesc');
-                if (archetypeNameEl) {
-                    archetypeNameEl.textContent = data.archetype_name || 'The Amplifier';
+    try {
+        const response = await fetch(`${API_BASE_URL}/assessment/complete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                session_id: sessionId,
+                user_details: {
+                    full_name: name,
+                    email: email,
+                    phone: phone
                 }
-                if (archetypeDescEl) {
-                    archetypeDescEl.textContent = data.archetype_description || 'You bring energy and conviction to your ideas.';
-                }
-                
-                const unspokenValueEl = document.getElementById('unspokenValue');
-                if (unspokenValueEl && data.overall_score) {
-                    unspokenValueEl.textContent = data.overall_score + '%';
-                }
-                
-                showStep('step9');
-            } else {
-                alert('Failed to complete assessment. Please try again.');
+            })
+        });
+        const data = await response.json();
+        console.log('✅ Assessment complete:', data);
+        if (data.success) {
+            assessmentResultData = data;
+            
+            const archetypeNameEl = document.getElementById('resultArchetypeName');
+            const archetypeDescEl = document.getElementById('resultArchetypeDesc');
+            if (archetypeNameEl) {
+                archetypeNameEl.textContent = data.archetype_name || 'The Amplifier';
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Network error. Please check your connection.');
+            if (archetypeDescEl) {
+                archetypeDescEl.textContent = data.archetype_description || 'You bring energy and conviction to your ideas.';
+            }
+            
+            const unspokenValueEl = document.getElementById('unspokenValue');
+            if (unspokenValueEl && data.overall_score) {
+                unspokenValueEl.textContent = data.overall_score + '%';
+            }
+            
+            // ✅ GENERATE FREE REPORT
+            await generateFreeReport();  // ← This will show Step 12
+            
+            // showStep('step9');  // ← Comment this out or remove
+        } else {
+            alert('Failed to complete assessment. Please try again.');
         }
-    });
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Network error. Please check your connection.');
+    }
+});
 
     // ============================================================
     // STEP 9: Inside Section Toggle
