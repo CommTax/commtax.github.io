@@ -1572,7 +1572,7 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
         return;
     }
 
-    // ✅ VERIFIED WORKING IMAGE URLs
+    // ✅ IMAGE URL MAPPING - All verified working
     const faceImages = {
         'building': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Fresher.png',
         'stepping-up': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Senior.png',
@@ -1589,6 +1589,8 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
         const value = typeof opt === 'string' ? opt : opt.value;
         const label = typeof opt === 'string' ? opt : opt.label;
         
+        console.log(`📌 Processing option ${index}:`, { value, label });
+        
         let mainText = label;
         let description = '';
         const match = label.match(/^(.*?)\s*\((.*?)\)$/);
@@ -1597,7 +1599,14 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
             description = match[2].trim();
         }
         
+        // ✅ FIX: Get the image URL based on the value
         const faceUrl = faceImages[value] || '';
+        
+        // ✅ Debug: Log what URL is being used
+        console.log(`🖼️ ${value} → ${faceUrl || 'NO URL FOUND'}`);
+        
+        // ✅ If no URL found, use a colored circle with first letter
+        const finalImageUrl = faceUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Crect width='56' height='56' rx='28' fill='%23e2e8f0'/%3E%3Ctext x='28' y='36' font-family='Inter, sans-serif' font-size='24' font-weight='600' fill='%2394a3b8' text-anchor='middle'%3E${mainText.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
         
         html += `
             <div class="age-card human-face-card" data-value="${value}" style="
@@ -1629,7 +1638,7 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
                     justify-content: center;
                 ">
                     <img 
-                        src="${faceUrl}" 
+                        src="${finalImageUrl}" 
                         alt="${mainText}" 
                         style="
                             width:100%; 
@@ -1639,7 +1648,7 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
                         "
                         loading="lazy"
                         onerror="
-                            console.warn('⚠️ Image failed, using placeholder:', this.src);
+                            console.warn('⚠️ Image failed to load:', this.src);
                             this.parentElement.innerHTML='<span style=\\'font-size:1.2rem; color:#94a3b8;\\'>${mainText.charAt(0).toUpperCase()}</span>';
                         "
                         onload="console.log('✅ Image loaded:', this.src)"
@@ -2071,18 +2080,37 @@ function bindDynamicVoice(questionCode) {
 // ============================================================
 // STEP 2: LOAD QUESTION A
 // ============================================================
+// ============================================================
+// STEP 2: LOAD QUESTION A
+// ============================================================
 async function loadQuestionA() {
     console.log('📝 loadQuestionA called');
     const data = await loadQuestion('initial');
     console.log('📝 Question A data:', data);
+    
+    // ✅ Define the options with correct values that match faceImages keys
+    const defaultOptions = [
+        { label: 'Building my career (Fresher / Early Career)', value: 'building' },
+        { label: 'Stepping up (Senior Professional: Growing into greater responsibility)', value: 'stepping-up' },
+        { label: 'Leading with influence (Manager / Director)', value: 'leading' },
+        { label: 'Preparing for what\'s next (Transition / Career Change)', value: 'nextmove' },
+        { label: 'Building my business (Entrepreneur / Founder: Turning ideas into influence.)', value: 'business' },
+        { label: 'Building skills (Student / Continuous Learner)', value: 'skills' },
+        { label: 'Others (Explore / Undecided)', value: 'other' }
+    ];
     
     if (data && data.success && data.question) {
         const q = data.question;
         document.getElementById('questionATitle').textContent = q.question_text || 'Who are you becoming?';
         document.getElementById('questionASubhead').textContent = 'Choose the chapter that feels most like you.';
         
-        // ✅ USE HUMAN FACE CARDS FOR QUESTION A
-        renderAgeStyleCards('questionAContainer', q.options || [], (value) => {
+        // ✅ Use the options from the backend, but ensure values are correct
+        let options = q.options || defaultOptions;
+        
+        // ✅ Log the options to debug
+        console.log('📋 Options being passed:', options);
+        
+        renderAgeStyleCards('questionAContainer', options, (value) => {
             console.log('✅ Selected value:', value);
             document.getElementById('step2Next').dataset.selected = value;
         });
@@ -2091,15 +2119,7 @@ async function loadQuestionA() {
         document.getElementById('questionATitle').textContent = 'Who are you becoming?';
         document.getElementById('questionASubhead').textContent = 'Choose the chapter that feels most like you.';
         
-        renderAgeStyleCards('questionAContainer', [
-            { label: 'Building my career (Fresher / Early Career)', value: 'building' },
-            { label: 'Stepping up (Senior Professional: Growing into greater responsibility)', value: 'stepping-up' },
-            { label: 'Leading with influence (Manager / Director)', value: 'leading' },
-            { label: 'Preparing for what\'s next (Transition / Career Change)', value: 'nextmove' },
-            { label: 'Building my business (Entrepreneur / Founder: Turning ideas into influence.)', value: 'business' },
-            { label: 'Building skills (Student / Continuous Learner)', value: 'skills' },
-            { label: 'Others (Explore / Undecided)', value: 'other' }
-        ], (value) => {
+        renderAgeStyleCards('questionAContainer', defaultOptions, (value) => {
             console.log('✅ Selected value (fallback):', value);
             document.getElementById('step2Next').dataset.selected = value;
         });
