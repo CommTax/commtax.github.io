@@ -1369,40 +1369,107 @@ function bindDynamicVoice(questionCode) {
         }
     }
 
-    document.getElementById('step2Next').addEventListener('click', async (e) => {
-        e.preventDefault();
-        const selected = e.target.dataset.selected;
-        if (!selected) { 
-            alert('Please select an option.'); 
-            return; 
-        }
-        
-        userCategory = selected;
-        console.log('📌 Category selected:', selected);
-        
-        storeResponse('A', selected);
-        
-        try {
-            const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/category`, {
+document.getElementById('step2Next').addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    const selected = e.target.dataset.selected;
+
+    if (!selected) {
+        alert('Please select an option.');
+        return;
+    }
+
+    // ============================================================
+    // MAP FRONTEND DISPLAY VALUE → BACKEND CATEGORY CODE
+    // ============================================================
+
+    const categoryMap = {
+        "building": "fresher",
+        "stepping-up": "senior",
+        "leading": "manager",
+        "nextmove": "transition",
+        "business": "business",
+        "student": "student",
+        "undecided": "undecided"
+    };
+
+    userCategory = categoryMap[selected];
+
+    if (!userCategory) {
+        console.error("❌ Unknown category:", selected);
+        alert("Invalid category selected.");
+        return;
+    }
+
+    console.log("📌 Category selected:", selected);
+    console.log("📌 Backend category:", userCategory);
+
+    // ============================================================
+    // SAVE CATEGORY AGAINST SESSION
+    // ============================================================
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/sessions/${sessionId}/category`,
+            {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({
-                    user_category: selected
+                    user_category: userCategory
                 })
-            });
-            const data = await response.json();
-            if (data.success) {
-                console.log('✅ Category saved to backend:', selected);
-            } else {
-                console.error('❌ Failed to save category:', data);
             }
-        } catch (error) {
-            console.error('❌ Error saving category:', error);
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+
+            console.error(
+                "❌ Failed to save category:",
+                data
+            );
+
+            alert(
+                data.detail ||
+                "Could not save your category. Please try again."
+            );
+
+            return;
         }
-        
+
+        console.log(
+            "✅ CATEGORY SAVED:",
+            data.user_category
+        );
+
+        // ========================================================
+        // SAVE ANSWER A
+        // ========================================================
+
+        storeResponse('A', selected);
+
+        // ========================================================
+        // MOVE TO QUESTION B
+        // ========================================================
+
         showStep('step3');
         loadQuestionB();
-    });
+
+    } catch (error) {
+
+        console.error(
+            "❌ Category save network error:",
+            error
+        );
+
+        alert(
+            "Network error while saving your category. Please try again."
+        );
+    }
+});
 
     // ============================================================
     // STEP 3: LOAD QUESTION B
