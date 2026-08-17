@@ -607,6 +607,48 @@
             .encouragement-grid { grid-template-columns: 1fr 1fr; }
             .btn-primary, .btn-gold, .btn-unlock { font-size: 0.85rem; padding: 0.6rem 1.2rem; width: 100%; max-width: 100%; }
         }
+
+    /* Voice recording timer styles */
+.recording-timer {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ef4444;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.recording-active {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3) !important;
+}
+
+.countdown-active {
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3) !important;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.timer-warning {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+.transcript-area {
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+}
+        
     </style>
 </head>
 <body>
@@ -1057,114 +1099,200 @@
     // ============================================================
     // HELPER: RENDER VOICE UI
     // ============================================================
-    function renderVoiceUI(containerId, questionCode, questionText, voicePrompt) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+function renderVoiceUI(containerId, questionCode, questionText, voicePrompt) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-        container.innerHTML = `
-            <div style="background: #0f172a; border-radius: 1.5rem; padding: 1.5rem 1.2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; border-radius: 16px; margin-bottom: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);">
-                    <div style="font-size: 16px; color: rgba(255,255,255,0.7); font-weight: 400; text-align: center; max-width: 600px;">
-                        🎤 ${voicePrompt || questionText || 'Record your response'}
-                    </div>
-                    <button id="dynamicVoiceRecordBtn_${questionCode}" style="background: linear-gradient(135deg, #d97706, #b45309); color: white; border: none; padding: 14px 36px; border-radius: 60px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 24px rgba(217,119,6,0.3);">
-                        🎙️ Start Recording
-                    </button>
-                    <button id="dynamicVoiceStopBtn_${questionCode}" style="display: none; background: #7c3aed; color: white; border: none; padding: 14px 36px; border-radius: 60px; font-size: 15px; font-weight: 600; cursor: pointer; align-items: center; gap: 10px; box-shadow: 0 6px 24px rgba(124,58,237,0.3);">
-                        ⏹️ Finish & Save
-                    </button>
+    container.innerHTML = `
+        <div style="background: #0f172a; border-radius: 1.5rem; padding: 1.5rem 1.2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px; border-radius: 16px; margin-bottom: 16px; background: rgba(255,255,255,0.02); border: 2px solid rgba(255,255,255,0.04);" id="voiceContainer_${questionCode}">
+                <div style="font-size: 16px; color: rgba(255,255,255,0.8); font-weight: 400; text-align: center; max-width: 600px; line-height: 1.6;">
+                    🎤 ${voicePrompt || questionText || 'Record your response'}
                 </div>
-                <div id="dynamicVoiceTranscript_${questionCode}" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 0.8rem; text-align: center; min-height: 30px; font-style: italic;">Your words will appear here...</div>
-                <div style="margin-top: 14px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.15); letter-spacing: 0.5px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 14px;">
-                    🔒 Your voice is processed privately.
+                <div style="font-size: 14px; color: rgba(255,255,255,0.4); margin-top: 4px;">
+                    ⏱️ You'll have 45 seconds to speak after a 3-second countdown
                 </div>
+                <button id="dynamicVoiceRecordBtn_${questionCode}" style="background: linear-gradient(135deg, #d97706, #b45309); color: white; border: none; padding: 14px 36px; border-radius: 60px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 24px rgba(217,119,6,0.3); transition: all 0.3s ease;">
+                    🎙️ Start Recording
+                </button>
+                <button id="dynamicVoiceStopBtn_${questionCode}" style="display: none; background: #7c3aed; color: white; border: none; padding: 14px 36px; border-radius: 60px; font-size: 15px; font-weight: 600; cursor: pointer; align-items: center; gap: 10px; box-shadow: 0 6px 24px rgba(124,58,237,0.3);">
+                    ⏹️ Finish & Save
+                </button>
             </div>
-        `;
+            <div id="dynamicVoiceTranscript_${questionCode}" style="color: rgba(255,255,255,0.8); font-size: 0.95rem; margin-top: 0.8rem; text-align: left; min-height: 80px; max-height: 200px; overflow-y: auto; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; font-family: 'Courier New', monospace; white-space: pre-wrap; line-height: 1.6;">
+                Your words will appear here...
+            </div>
+            <div style="margin-top: 14px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.15); letter-spacing: 0.5px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 14px;">
+                🔒 Your voice is processed privately. 45 second limit.
+            </div>
+        </div>
+    `;
 
-        bindDynamicVoice(questionCode);
-    }
+    bindDynamicVoice(questionCode);
+}
 
     // ============================================================
-    // BIND DYNAMIC VOICE RECORDING
-    // ============================================================
-    function bindDynamicVoice(questionCode) {
-        const recordBtn = document.getElementById(`dynamicVoiceRecordBtn_${questionCode}`);
-        const stopBtn = document.getElementById(`dynamicVoiceStopBtn_${questionCode}`);
-        const transcriptEl = document.getElementById(`dynamicVoiceTranscript_${questionCode}`);
-        if (!recordBtn) return;
+// BIND DYNAMIC VOICE RECORDING WITH COUNTDOWN & TIMER
+// ============================================================
+function bindDynamicVoice(questionCode) {
+    const recordBtn = document.getElementById(`dynamicVoiceRecordBtn_${questionCode}`);
+    const stopBtn = document.getElementById(`dynamicVoiceStopBtn_${questionCode}`);
+    const transcriptEl = document.getElementById(`dynamicVoiceTranscript_${questionCode}`);
+    if (!recordBtn) return;
 
-        let isRecording = false;
-        let recognition = null;
-        let transcript = '';
+    let isRecording = false;
+    let isCountdownActive = false;
+    let recognition = null;
+    let transcript = '';
+    let timerInterval = null;
+    let timeLeft = 45;
+    let countdownInterval = null;
+    let countdownValue = 3;
 
-        function initSpeechRecog() {
-            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SR) { alert('Speech recognition not supported.'); return false; }
-            recognition = new SR();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
+    function initSpeechRecog() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) { alert('Speech recognition not supported.'); return false; }
+        recognition = new SR();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
 
-            recognition.onresult = (e) => {
-                let final = '', interim = '';
-                for (let i = e.resultIndex; i < e.results.length; i++) {
-                    if (e.results[i].isFinal) final += e.results[i][0].transcript;
-                    else interim += e.results[i][0].transcript;
-                }
-                transcript = final || interim;
-                if (transcriptEl) transcriptEl.textContent = transcript || 'Listening...';
-            };
-
-            recognition.onerror = (e) => {
-                console.error('Speech error:', e.error);
-                if (e.error === 'not-allowed') alert('Please allow microphone access.');
-                resetVoice();
-            };
-
-            recognition.onend = () => { if (isRecording) try { recognition.start(); } catch(e) {} };
-            return true;
-        }
-
-        function startVoice() {
-            if (isRecording) return;
-            if (!recognition) { if (!initSpeechRecog()) return; }
-            isRecording = true;
-            transcript = '';
-            recordBtn.disabled = true;
-            recordBtn.textContent = '🔴 Recording...';
-            stopBtn.style.display = 'inline-flex';
-            transcriptEl.textContent = '🎤 Listening... Speak now.';
-            try { recognition.start(); } catch(e) {}
-            setTimeout(() => { if (isRecording) stopVoice(); }, 45000);
-        }
-
-        function stopVoice() {
-            if (!isRecording) return;
-            isRecording = false;
-            try { recognition.stop(); } catch(e) {}
-            recordBtn.disabled = false;
-            recordBtn.textContent = '🎙️ Start Recording';
-            stopBtn.style.display = 'none';
-            const finalTranscript = transcript.trim();
-            if (finalTranscript.length < 10) {
-                transcriptEl.textContent = '⚠️ Please speak at least 10 words. Try again.';
-                return;
+        recognition.onresult = (e) => {
+            let final = '', interim = '';
+            for (let i = e.resultIndex; i < e.results.length; i++) {
+                if (e.results[i].isFinal) final += e.results[i][0].transcript;
+                else interim += e.results[i][0].transcript;
             }
-            transcriptEl.textContent = '✅ Voice saved!';
-            storeResponse(questionCode, { transcript: finalTranscript }, 'voice');
-            console.log('Voice saved for', questionCode);
-        }
+            transcript = final || interim;
+            if (transcriptEl) {
+                const timerDisplay = timeLeft > 0 ? `⏱️ ${timeLeft}s remaining\n\n` : '⏰ Time\'s up!\n\n';
+                transcriptEl.textContent = timerDisplay + (transcript || 'Listening...');
+            }
+        };
 
-        function resetVoice() {
-            isRecording = false;
-            if (recordBtn) { recordBtn.disabled = false; recordBtn.textContent = '🎙️ Start Recording'; }
-            if (stopBtn) stopBtn.style.display = 'none';
-        }
+        recognition.onerror = (e) => {
+            console.error('Speech error:', e.error);
+            if (e.error === 'not-allowed') alert('Please allow microphone access.');
+            if (e.error === 'no-speech') {
+                transcriptEl.textContent = '⚠️ No speech detected. Please try again.';
+            }
+            resetVoice();
+        };
 
-        recordBtn.addEventListener('click', startVoice);
-        if (stopBtn) stopBtn.addEventListener('click', stopVoice);
+        recognition.onend = () => { 
+            if (isRecording) {
+                try { recognition.start(); } catch(e) {}
+            }
+        };
+        return true;
     }
 
+    function startCountdown() {
+        if (isCountdownActive) return;
+        isCountdownActive = true;
+        countdownValue = 3;
+        recordBtn.disabled = true;
+        recordBtn.textContent = `⏳ ${countdownValue}`;
+        transcriptEl.textContent = `🎤 Get ready... ${countdownValue}`;
+        
+        countdownInterval = setInterval(() => {
+            countdownValue--;
+            if (countdownValue > 0) {
+                recordBtn.textContent = `⏳ ${countdownValue}`;
+                transcriptEl.textContent = `🎤 Get ready... ${countdownValue}`;
+            } else {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+                recordBtn.textContent = '🎙️ Recording...';
+                transcriptEl.textContent = '🎤 Recording... Speak now!';
+                isCountdownActive = false;
+                startRecording();
+            }
+        }, 1000);
+    }
+
+    function startRecording() {
+        if (isRecording) return;
+        if (!recognition) { if (!initSpeechRecog()) return; }
+        
+        isRecording = true;
+        timeLeft = 45;
+        transcript = '';
+        recordBtn.disabled = true;
+        recordBtn.textContent = '🔴 Recording...';
+        stopBtn.style.display = 'inline-flex';
+        transcriptEl.textContent = '⏱️ 45s remaining\n\n🎤 Speak now...';
+        
+        try { recognition.start(); } catch(e) {}
+        
+        // Start timer
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            if (timeLeft > 0) {
+                const timerDisplay = transcript ? `⏱️ ${timeLeft}s remaining\n\n` : `⏱️ ${timeLeft}s remaining\n\n🎤 Speak now...`;
+                transcriptEl.textContent = timerDisplay + (transcript || '');
+            } else {
+                // Time's up - auto stop
+                clearInterval(timerInterval);
+                timerInterval = null;
+                transcriptEl.textContent = '⏰ Time\'s up!\n\n' + (transcript || '');
+                stopVoice();
+            }
+        }, 1000);
+    }
+
+    function stopVoice() {
+        if (!isRecording) return;
+        isRecording = false;
+        
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        
+        try { recognition.stop(); } catch(e) {}
+        
+        recordBtn.disabled = false;
+        recordBtn.textContent = '🎙️ Start Recording';
+        stopBtn.style.display = 'none';
+        
+        const finalTranscript = transcript.trim();
+        if (finalTranscript.length < 10) {
+            transcriptEl.textContent = '⚠️ Please speak at least 10 words. Try again.';
+            return;
+        }
+        
+        transcriptEl.textContent = '✅ Voice saved! (Duration: ' + (45 - timeLeft) + 's)';
+        storeResponse(questionCode, { transcript: finalTranscript }, 'voice');
+        console.log('Voice saved for', questionCode, 'Length:', finalTranscript.length, 'words');
+    }
+
+    function resetVoice() {
+        isRecording = false;
+        isCountdownActive = false;
+        
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+        }
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        
+        if (recordBtn) { 
+            recordBtn.disabled = false; 
+            recordBtn.textContent = '🎙️ Start Recording'; 
+        }
+        if (stopBtn) stopBtn.style.display = 'none';
+    }
+
+    // Start countdown when record button is clicked
+    recordBtn.addEventListener('click', startCountdown);
+    
+    // Stop recording when stop button is clicked
+    if (stopBtn) stopBtn.addEventListener('click', stopVoice);
+}
     // ============================================================
     // LOAD QUESTIONS FROM DB
     // ============================================================
