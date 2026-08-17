@@ -765,26 +765,29 @@
             display: block;
         }
 
-        /* Communication Tax - Fully Visible */
-        .tax-section {
+        /* Unspoken Value - Fully Visible (Percentage based) */
+        .value-section {
             padding: 1.2rem 0 1.5rem;
             border-bottom: 1px solid #eef2f6;
             text-align: center;
         }
-        .tax-section .tax-label {
+        .value-section .value-label {
             font-size: 0.6rem;
             color: #6a8aaa;
             letter-spacing: 1px;
             text-transform: uppercase;
             font-weight: 600;
         }
-        .tax-section .tax-value {
-            font-size: 2.2rem;
-            font-weight: 700;
+        .value-section .value-number {
+            font-size: 2.8rem;
+            font-weight: 800;
             color: #0a2a3f;
             margin: 0.1rem 0;
+            background: linear-gradient(135deg, #d97706, #b45309);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .tax-section .tax-desc {
+        .value-section .value-desc {
             font-size: 0.8rem;
             color: #4a6a8a;
         }
@@ -944,6 +947,7 @@
             .question-image { height: 320px; max-width: 900px; margin-left: auto; margin-right: auto; }
             .report-card { padding: 3rem 3.5rem; }
             .archetype-name { font-size: 3.5rem; }
+            .value-section .value-number { font-size: 3.5rem; }
         }
 
         @media (max-width: 640px) {
@@ -969,6 +973,7 @@
             .cta-section .cta-options { flex-direction: column; gap: 0.8rem; }
             .cta-section .cta-options .divider { display: none; }
             .archetype-name { font-size: 2rem; }
+            .value-section .value-number { font-size: 2.2rem; }
         }
     </style>
 </head>
@@ -1269,16 +1274,16 @@
                 </div>
 
                 <!-- ============================================================ -->
-                <!-- COMMUNICATION TAX - FULLY VISIBLE -->
+                <!-- UNSPOKEN VALUE - FULLY VISIBLE (Percentage) -->
                 <!-- ============================================================ -->
-                <div class="tax-section">
-                    <div class="tax-label">Communication Tax</div>
-                    <div class="tax-value">₹7.0 Lakhs</div>
-                    <p class="tax-desc">Estimated annual impact of communication gaps on your professional potential</p>
+                <div class="value-section">
+                    <div class="value-label">💰 Your Unspoken Value</div>
+                    <div class="value-number" id="unspokenValue">74%</div>
+                    <p class="value-desc">Your current communication effectiveness score</p>
                 </div>
 
                 <!-- ============================================================ -->
-                <!-- WHAT'S INSIDE - HOVER TO REVEAL DUMMY DATA -->
+                <!-- WHAT'S INSIDE - Click to Reveal Dummy Data -->
                 <!-- ============================================================ -->
                 <div class="inside-section">
                     <div class="inside-header" id="insideToggle">
@@ -2227,6 +2232,12 @@
                     archetypeDescEl.textContent = data.archetype_description || 'You bring energy and conviction to your ideas.';
                 }
                 
+                // Update Unspoken Value (percentage)
+                const unspokenValueEl = document.getElementById('unspokenValue');
+                if (unspokenValueEl && data.overall_score) {
+                    unspokenValueEl.textContent = data.overall_score + '%';
+                }
+                
                 showStep('step9');
             } else {
                 alert('Failed to complete assessment. Please try again.');
@@ -2240,23 +2251,25 @@
     // ============================================================
     // STEP 9: Inside Section Toggle
     // ============================================================
-    document.getElementById('insideToggle').addEventListener('click', function() {
-        const content = document.getElementById('insideContent');
-        const dummyPreview = document.getElementById('dummyPreview');
-        
-        if (content.classList.contains('open')) {
-            content.classList.remove('open');
-            dummyPreview.classList.remove('show');
-            this.querySelector('.arrow').textContent = '▶';
-        } else {
-            content.classList.add('open');
-            this.querySelector('.arrow').textContent = '▼';
-            // Show dummy preview after a short delay
-            setTimeout(() => {
-                dummyPreview.classList.add('show');
-            }, 300);
-        }
-    });
+    const insideToggle = document.getElementById('insideToggle');
+    if (insideToggle) {
+        insideToggle.addEventListener('click', function() {
+            const content = document.getElementById('insideContent');
+            const dummyPreview = document.getElementById('dummyPreview');
+            
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                dummyPreview.classList.remove('show');
+                this.querySelector('.arrow').textContent = '▶';
+            } else {
+                content.classList.add('open');
+                this.querySelector('.arrow').textContent = '▼';
+                setTimeout(() => {
+                    dummyPreview.classList.add('show');
+                }, 300);
+            }
+        });
+    }
 
     // ============================================================
     // STEP 9: RESULTS
@@ -2291,10 +2304,13 @@
     // ============================================================
     // REFER BUTTON
     // ============================================================
-    document.getElementById('referBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('📱 Share this with 3 friends and tag @theunspoken on Instagram!\n\nYour full report will be unlocked once you\'ve shared and tagged us.');
-    });
+    const referBtn = document.getElementById('referBtn');
+    if (referBtn) {
+        referBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('📱 Share this with 3 friends and tag @theunspoken on Instagram!\n\nYour full report will be unlocked once you\'ve shared and tagged us.');
+        });
+    }
 
     // ============================================================
     // BACK BUTTONS
