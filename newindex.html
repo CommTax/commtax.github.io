@@ -951,6 +951,34 @@
             .value-section .value-number { font-size: 2.2rem; }
             .free-options-grid { grid-template-columns: 1fr; }
         }
+
+/* Locked DNA Score Style */
+.dna-locked {
+    position: relative;
+    display: inline-block;
+}
+
+.dna-locked .lock-icon {
+    font-size: 0.6rem;
+    color: #94a3b8;
+    margin-left: 0.2rem;
+}
+
+.dna-locked .score-blur {
+    filter: blur(2px);
+    user-select: none;
+    color: #b0c0d0;
+}
+
+.dna-card {
+    transition: all 0.3s ease;
+}
+
+.dna-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+       
     </style>
 </head>
 <body>
@@ -2444,81 +2472,78 @@
         }
     }
 
-    // ============================================================
-    // POPULATE REPORT
-    // ============================================================
-    function populateReport(report) {
-        console.log('📝 Populating report with:', report);
+// ============================================================
+// POPULATE REPORT - WITH XX% HIDDEN SCORES
+// ============================================================
+function populateReport(report) {
+    console.log('📝 Populating report with:', report);
+    
+    // Persona
+    document.getElementById('reportUserName').textContent = report.user_name || 'Professional';
+    document.getElementById('reportPersonaName').textContent = report.persona_name || 'The Articulator';
+    document.getElementById('reportPersonaDesc').textContent = report.refined_description || 'Loading...';
+    
+    // Communication Signature
+    document.getElementById('reportYouTendTo').textContent = report.you_tend_to || 'Loading...';
+    document.getElementById('reportYouBring').textContent = report.you_naturally_bring || 'Loading...';
+    document.getElementById('reportYouCreate').textContent = report.you_may_create || 'Loading...';
+    
+    // ✅ DNA Scores - Show XX% instead of actual numbers
+    const dna = report.communication_dna || {};
+    const container = document.getElementById('dnaContainer');
+    container.innerHTML = '';
+    
+    const labels = ['Thinking', 'Structure', 'Expression', 'Understanding', 'Influence'];
+    const keys = ['thinking', 'structure', 'expression', 'understanding', 'influence'];
+    const emojis = ['🧠', '🧩', '🗣', '👁', '🎯'];
+    
+    keys.forEach((key, i) => {
+        // ✅ Use XX% instead of actual score
+        const displayScore = 'XX%';
+        // For the bar width, use a random-looking but consistent value (60-80%)
+        // This gives visual interest without revealing actual scores
+        const barWidth = 65 + (i * 3) % 20; // Creates variation between 65-85%
         
-        document.getElementById('reportUserName').textContent = report.user_name || 'Professional';
-        document.getElementById('reportPersonaName').textContent = report.persona_name || 'The Articulator';
-        document.getElementById('reportPersonaDesc').textContent = report.refined_description || 'Loading...';
-        
-        document.getElementById('reportYouTendTo').textContent = report.you_tend_to || 'Loading...';
-        document.getElementById('reportYouBring').textContent = report.you_naturally_bring || 'Loading...';
-        document.getElementById('reportYouCreate').textContent = report.you_may_create || 'Loading...';
-        
-        const dna = report.communication_dna || {};
-        const container = document.getElementById('dnaContainer');
-        container.innerHTML = '';
-        
-        const labels = ['Thinking', 'Structure', 'Expression', 'Understanding', 'Influence'];
-        const keys = ['thinking', 'structure', 'expression', 'understanding', 'influence'];
-        const emojis = ['🧠', '🧩', '🗣', '👁', '🎯'];
-        
-        let strongest = '';
-        let weakest = '';
-        let highestScore = 0;
-        let lowestScore = 100;
-        
-        keys.forEach((key, i) => {
-            const score = dna[key] || 0;
-            const color = score >= 70 ? '#059669' : score >= 50 ? '#d97706' : '#dc2626';
-            
-            if (score > highestScore) {
-                highestScore = score;
-                strongest = labels[i];
-            }
-            if (score < lowestScore) {
-                lowestScore = score;
-                weakest = labels[i];
-            }
-            
-            container.innerHTML += `
-                <div style="text-align: center; background: #f8fafc; padding: 0.8rem; border-radius: 0.8rem;">
-                    <div style="font-size: 1.5rem;">${emojis[i]}</div>
-                    <div style="font-size: 0.6rem; color: #6a8aaa; text-transform: uppercase;">${labels[i]}</div>
-                    <div style="font-size: 1.2rem; font-weight: 700; color: ${color};">${score}</div>
-                    <div style="width: 100%; height: 4px; background: #e2e8f0; border-radius: 4px; margin-top: 0.2rem;">
-                        <div style="width: ${score}%; height: 100%; background: ${color}; border-radius: 4px;"></div>
-                    </div>
+        container.innerHTML += `
+            <div style="text-align: center; background: #f8fafc; padding: 0.8rem; border-radius: 0.8rem; border: 1px solid #eef2f6;">
+                <div style="font-size: 1.5rem;">${emojis[i]}</div>
+                <div style="font-size: 0.6rem; color: #6a8aaa; text-transform: uppercase; margin-top: 0.2rem;">${labels[i]}</div>
+                <div style="font-size: 1.2rem; font-weight: 700; color: #d97706; margin: 0.2rem 0;">
+                    ${displayScore}
                 </div>
-            `;
-        });
-        
-        document.getElementById('dnaSummary').textContent = 
-            `Your strongest capability is ${strongest}. Your biggest opportunity is ${weakest}.`;
-        
-        document.getElementById('reportStrength').textContent = report.natural_advantage || 'Loading...';
-        document.getElementById('reportStrengthDesc').textContent = 
-            report.natural_advantage ? `Your natural advantage is ${report.natural_advantage}.` : 'Loading...';
-        
-        document.getElementById('reportBlindSpot').textContent = report.blind_spot || 'Loading...';
-        document.getElementById('reportBlindSpotDesc').textContent = 
-            report.blind_spot_description || 'Loading...';
-        
-        document.getElementById('sharePersonaName').textContent = report.persona_name || 'The Articulator';
-        document.getElementById('shareUserName').textContent = `— ${report.user_name || 'Professional'}`;
-        
-        const shareContainer = document.getElementById('shareDnaContainer');
-        shareContainer.innerHTML = '';
-        keys.forEach((key, i) => {
-            const score = dna[key] || 0;
-            shareContainer.innerHTML += `
-                <span style="background: rgba(255,255,255,0.1); padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.7rem; color: white;">${emojis[i]} ${labels[i]} ${score}</span>
-            `;
-        });
-    }
+                <div style="width: 100%; height: 4px; background: #e2e8f0; border-radius: 4px; margin-top: 0.2rem; overflow: hidden;">
+                    <div style="width: ${barWidth}%; height: 100%; background: linear-gradient(90deg, #d97706, #fcd34d); border-radius: 4px;"></div>
+                </div>
+                <div style="font-size: 0.5rem; color: #94a3b8; margin-top: 0.2rem;">🔒 Locked</div>
+            </div>
+        `;
+    });
+    
+    // DNA Summary - Generic (no specific scores)
+    document.getElementById('dnaSummary').textContent = 
+        'Your communication DNA is being analyzed. Unlock the full report to see your complete profile.';
+    
+    // Signature Strength & Blind Spot
+    document.getElementById('reportStrength').textContent = report.natural_advantage || 'Loading...';
+    document.getElementById('reportStrengthDesc').textContent = 
+        report.natural_advantage ? `Your natural advantage is ${report.natural_advantage}.` : 'Loading...';
+    
+    document.getElementById('reportBlindSpot').textContent = report.blind_spot || 'Loading...';
+    document.getElementById('reportBlindSpotDesc').textContent = 
+        report.blind_spot_description || 'Loading...';
+    
+    // Share Card - Also show XX%
+    document.getElementById('sharePersonaName').textContent = report.persona_name || 'The Articulator';
+    document.getElementById('shareUserName').textContent = `— ${report.user_name || 'Professional'}`;
+    
+    const shareContainer = document.getElementById('shareDnaContainer');
+    shareContainer.innerHTML = '';
+    keys.forEach((key, i) => {
+        shareContainer.innerHTML += `
+            <span style="background: rgba(255,255,255,0.1); padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.7rem; color: white;">${emojis[i]} ${labels[i]} XX%</span>
+        `;
+    });
+}
 
     // ============================================================
     // SHARE FUNCTIONS
