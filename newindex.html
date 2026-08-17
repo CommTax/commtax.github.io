@@ -897,19 +897,7 @@
     let assessmentResultData = null;
     let allResponses = [];
 
-    // ============================================================
-    // CATEGORY MAPPING
-    // ============================================================
-    const categoryMapping = {
-        'building': 'fresher',
-        'responsibility': 'senior',
-        'leading': 'manager',
-        'nextmove': 'transition',
-        'redefining': 'undecided',
-        'business': 'business'
-    };
-
-    // ============================================================
+     // ============================================================
     // MCQ QUESTION SETS
     // ============================================================
     let mcq1Questions = [];
@@ -942,34 +930,57 @@
     }
 
 // ============================================================
-// RESPONSE HANDLING - UPDATED WITH BACKEND SAVE
+// RESPONSE HANDLING - FIXED VERSION
 // ============================================================
 
 function storeResponse(questionCode, answer, responseType = 'choice') {
+    // Extract the actual value if answer is an object
+    let storedAnswer = answer;
+    
+    // If answer is an object with 'selected' property, extract it
+    if (typeof answer === 'object' && answer !== null) {
+        if (answer.selected !== undefined) {
+            storedAnswer = answer.selected;
+        } else if (answer.value !== undefined) {
+            storedAnswer = answer.value;
+        } else {
+            // If it's still an object, stringify it
+            storedAnswer = JSON.stringify(answer);
+        }
+    }
+    
+    // Ensure it's a string
+    storedAnswer = String(storedAnswer);
+    
     // Local storage
     allResponses.push({
         question_code: questionCode,
-        answer: answer,
+        answer: storedAnswer,
         response_type: responseType
     });
-    console.log('📝 Response stored locally:', questionCode, answer);
+    console.log('📝 Response stored locally:', questionCode, storedAnswer);
     
     // Save to backend
-    saveResponseToBackend(questionCode, answer, responseType);
+    saveResponseToBackend(questionCode, storedAnswer, responseType);
 }
 
 async function saveResponseToBackend(questionCode, answer, responseType) {
     try {
-        // If it's a voice response, use the voice endpoint
+        let payload;
+        
         if (responseType === 'voice') {
+            // Voice response
+            const transcript = typeof answer === 'object' ? answer.transcript : answer;
+            payload = {
+                session_id: sessionId,
+                question_code: questionCode,
+                transcript: transcript || String(answer)
+            };
+            
             const response = await fetch(`${API_BASE_URL}/voice/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    session_id: sessionId,
-                    question_code: questionCode,
-                    transcript: answer.transcript
-                })
+                body: JSON.stringify(payload)
             });
             const data = await response.json();
             if (data.success) {
@@ -979,20 +990,31 @@ async function saveResponseToBackend(questionCode, answer, responseType) {
             }
             return data;
         } else {
-            // MCQ/Choice response
-            const payload = {
+            // MCQ/Choice response - ensure answer is a string
+            const selectedOption = typeof answer === 'string' ? answer : String(answer);
+            
+            payload = {
                 session_id: sessionId,
                 question_code: questionCode,
-                selected_option: answer,
+                selected_option: selectedOption,
                 text_response: null
             };
+            
+            console.log('📤 Sending to backend:', JSON.stringify(payload, null, 2));
             
             const response = await fetch(`${API_BASE_URL}/responses`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
+            
             const data = await response.json();
+            
+            if (!response.ok) {
+                console.error('❌ Backend error:', response.status, data);
+                throw new Error(`Backend returned ${response.status}: ${JSON.stringify(data)}`);
+            }
+            
             if (data.success) {
                 console.log('✅ Choice response saved to backend:', questionCode);
             } else {
@@ -1153,22 +1175,26 @@ async function saveResponseToBackend(questionCode, answer, responseType) {
     // ============================================================
     // LOAD QUESTIONS FROM DB
     // ============================================================
-    async function loadQuestion(type) {
-        try {
-            let endpoint = '';
-            if (type === 'initial') endpoint = `${API_BASE_URL}/questions/initial`;
-            else if (type === 'common') endpoint = `${API_BASE_URL}/questions/common`;
-            else if (type === 'category') endpoint = `${API_BASE_URL}/questions/${userCategory}`;
-
-            const response = await fetch(endpoint);
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('Error loading question:', error);
-            return null;
+async function loadQuestion(type) {
+    try {
+        let endpoint = '';
+        if (type === 'initial') {
+            endpoint = `${API_BASE_URL}/questions/initial`;
+        } else if (type === 'common') {
+            endpoint = `${API_BASE_URL}/questions/common`;
+        } else if (type === 'category') {
+            // Use the selected category directly from Step 2
+            endpoint = `${API_BASE_URL}/questions/${userCategory}`;
         }
+        
+        const response = await fetch(endpoint);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error loading question:', error);
+        return null;
     }
-
+}
     // ============================================================
     // STEP 1: Create Session
     // ============================================================
@@ -1222,16 +1248,19 @@ async function saveResponseToBackend(questionCode, answer, responseType) {
         }
     }
 
-    document.getElementById('step2Next').addEventListener('click', (e) => {
-        e.preventDefault();
-        const selected = e.target.dataset.selected;
-        if (!selected) { alert('Please select an option.'); return; }
-        const backendCategory = categoryMapping[selected] || 'undecided';
-        userCategory = backendCategory;
-        storeResponse('A', { selected: backendCategory });
-        showStep('step3');
-        loadQuestionB();
-    });
+document.getElementById('step2Next').addEventListener('click', (e) => {
+    e.preventDefault();
+    const selected = e.target.dataset.selected;
+    if (!selected) { 
+        alert('Please select an option.'); 
+        return; 
+    }
+    // Directly use the selected value as the category
+    userCategory = selected;  // No mapping needed
+    storeResponse('A', selected);
+    showStep('step3');
+    loadQuestionB();
+});
 
     // ============================================================
     // STEP 3: LOAD QUESTION B
@@ -1260,15 +1289,17 @@ async function saveResponseToBackend(questionCode, answer, responseType) {
         }
     }
 
-    document.getElementById('step3Next').addEventListener('click', (e) => {
-        e.preventDefault();
-        const selected = e.target.dataset.selected;
-        if (!selected) { alert('Please select an option.'); return; }
-        storeResponse('B', { selected: selected });
-        showStep('step4');
-        loadMCQ1();
-    });
-
+document.getElementById('step3Next').addEventListener('click', (e) => {
+    e.preventDefault();
+    const selected = e.target.dataset.selected;
+    if (!selected) { 
+        alert('Please select an option.'); 
+        return; 
+    }
+    storeResponse('B', selected);
+    showStep('step4');
+    loadMCQ1();
+});
     // ============================================================
     // STEP 4: MCQ Q1-Q4
     // ============================================================
@@ -1341,12 +1372,13 @@ async function saveResponseToBackend(questionCode, answer, responseType) {
     // ============================================================
     // STEP 5: VOICE Q6
     // ============================================================
-    async function loadVoice1() {
-        const data = await loadQuestion('category');
-        let voiceQuestion = null;
-        if (data && data.success && data.questions) {
-            voiceQuestion = data.questions.find(q => q.question_code === 'Q6' || q.question_code === 'V1');
-        }
+async function loadVoice1() {
+    // Voice questions should also come from the backend
+    const data = await loadQuestion('category');
+    let voiceQuestion = null;
+    if (data && data.success && data.questions) {
+        voiceQuestion = data.questions.find(q => q.question_code === 'Q6' || q.question_code === 'V1');
+    }
         if (!voiceQuestion) {
             voiceQuestion = {
                 question_code: 'Q6',
@@ -1441,12 +1473,12 @@ async function saveResponseToBackend(questionCode, answer, responseType) {
     // ============================================================
     // STEP 7: VOICE Q10
     // ============================================================
-    async function loadVoice2() {
-        const data = await loadQuestion('category');
-        let voiceQuestion = null;
-        if (data && data.success && data.questions) {
-            voiceQuestion = data.questions.find(q => q.question_code === 'Q10' || q.question_code === 'V2');
-        }
+async function loadVoice2() {
+    const data = await loadQuestion('category');
+    let voiceQuestion = null;
+    if (data && data.success && data.questions) {
+        voiceQuestion = data.questions.find(q => q.question_code === 'Q10' || q.question_code === 'V2');
+    }
         if (!voiceQuestion) {
             voiceQuestion = {
                 question_code: 'Q10',
