@@ -1248,16 +1248,40 @@ async function loadQuestion(type) {
         }
     }
 
-document.getElementById('step2Next').addEventListener('click', (e) => {
+document.getElementById('step2Next').addEventListener('click', async (e) => {
     e.preventDefault();
     const selected = e.target.dataset.selected;
     if (!selected) { 
         alert('Please select an option.'); 
         return; 
     }
-    // Directly use the selected value as the category
-    userCategory = selected;  // No mapping needed
+    
+    // Store locally
+    userCategory = selected;
+    console.log('📌 Category selected:', selected);
+    
+    // Save response locally
     storeResponse('A', selected);
+    
+    // Save category to backend
+    try {
+        const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/category`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_category: selected
+            })
+        });
+        const data = await response.json();
+        if (data.success) {
+            console.log('✅ Category saved to backend:', selected);
+        } else {
+            console.error('❌ Failed to save category:', data);
+        }
+    } catch (error) {
+        console.error('❌ Error saving category:', error);
+    }
+    
     showStep('step3');
     loadQuestionB();
 });
@@ -1304,6 +1328,13 @@ document.getElementById('step3Next').addEventListener('click', (e) => {
     // STEP 4: MCQ Q1-Q4
     // ============================================================
     async function loadMCQ1() {
+            // Check if we have a category
+    if (!userCategory) {
+        console.error('❌ No category set!');
+        alert('Please select a category first.');
+        showStep('step2');
+        return;
+    }
         const data = await loadQuestion('category');
         if (data && data.success && data.questions) {
             mcq1Questions = data.questions.filter(q => mcq1Codes.includes(q.question_code));
@@ -1373,6 +1404,12 @@ document.getElementById('step3Next').addEventListener('click', (e) => {
     // STEP 5: VOICE Q6
     // ============================================================
 async function loadVoice1() {
+        if (!userCategory) {
+        console.error('❌ No category set!');
+        alert('Please select a category first.');
+        showStep('step2');
+        return;
+    }
     // Voice questions should also come from the backend
     const data = await loadQuestion('category');
     let voiceQuestion = null;
@@ -1407,6 +1444,12 @@ async function loadVoice1() {
     // STEP 6: MCQ Q7-Q9
     // ============================================================
     async function loadMCQ2() {
+            if (!userCategory) {
+        console.error('❌ No category set!');
+        alert('Please select a category first.');
+        showStep('step2');
+        return;
+    }
         const data = await loadQuestion('category');
         if (data && data.success && data.questions) {
             mcq2Questions = data.questions.filter(q => mcq2Codes.includes(q.question_code));
@@ -1474,6 +1517,12 @@ async function loadVoice1() {
     // STEP 7: VOICE Q10
     // ============================================================
 async function loadVoice2() {
+        if (!userCategory) {
+        console.error('❌ No category set!');
+        alert('Please select a category first.');
+        showStep('step2');
+        return;
+    }
     const data = await loadQuestion('category');
     let voiceQuestion = null;
     if (data && data.success && data.questions) {
