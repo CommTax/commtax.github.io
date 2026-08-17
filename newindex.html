@@ -2072,34 +2072,38 @@ function bindDynamicVoice(questionCode) {
         }
     });
 
-    // ============================================================
-    // STEP 2: LOAD QUESTION A
-    // ============================================================
-    async function loadQuestionA() {
-        const data = await loadQuestion('initial');
-        if (data && data.success && data.question) {
-            const q = data.question;
-            document.getElementById('questionATitle').textContent = q.question_text || 'Who are you becoming?';
-            document.getElementById('questionASubhead').textContent = 'Choose the option that best describes your journey.';
-            renderMCQOptions('questionAContainer', q.options || [], (value) => {
-                document.getElementById('step2Next').dataset.selected = value;
-            });
-        } else {
-            document.getElementById('questionATitle').textContent = 'Who are you becoming?';
-            document.getElementById('questionASubhead').textContent = 'Choose the option that best describes your journey.';
-            renderMCQOptions('questionAContainer', [
-                { label: 'Building my career', value: 'building' },
-                { label: 'Stepping up', value: 'stepping-up' },
-                { label: 'Leading with influence', value: 'leading' },
-                { label: 'Preparing for what\'s next', value: 'nextmove' },
-                { label: 'Redefining my next chapter', value: 'redefining' },
-                { label: 'Building my business', value: 'business' }
-            ], (value) => {
-                document.getElementById('step2Next').dataset.selected = value;
-            });
-        }
+// ============================================================
+// STEP 2: LOAD QUESTION A
+// ============================================================
+async function loadQuestionA() {
+    const data = await loadQuestion('initial');
+    if (data && data.success && data.question) {
+        const q = data.question;
+        document.getElementById('questionATitle').textContent = q.question_text || 'Who are you becoming?';
+        document.getElementById('questionASubhead').textContent = 'Choose the chapter that feels most like you.';
+        
+        // ✅ USE HUMAN FACE CARDS FOR QUESTION A
+        renderAgeStyleCards('questionAContainer', q.options || [], (value) => {
+            document.getElementById('step2Next').dataset.selected = value;
+        });
+    } else {
+        document.getElementById('questionATitle').textContent = 'Who are you becoming?';
+        document.getElementById('questionASubhead').textContent = 'Choose the chapter that feels most like you.';
+        
+        // ✅ FALLBACK WITH HUMAN FACE CARDS
+        renderAgeStyleCards('questionAContainer', [
+            { label: 'Building my career (Fresher / Early Career)', value: 'building' },
+            { label: 'Stepping up (Senior Professional: Growing into greater responsibility)', value: 'stepping-up' },
+            { label: 'Leading with influence (Manager / Director)', value: 'leading' },
+            { label: 'Preparing for what\'s next (Transition / Career Change)', value: 'nextmove' },
+            { label: 'Building my business (Entrepreneur / Founder: Turning ideas into influence.)', value: 'business' },
+            { label: 'Building skills (Student / Continuous Learner)', value: 'skills' },
+            { label: 'Others (Explore / Undecided)', value: 'other' }
+        ], (value) => {
+            document.getElementById('step2Next').dataset.selected = value;
+        });
     }
-
+}
     // ============================================================
     // STEP 2: Handle Category Selection
     // ============================================================
