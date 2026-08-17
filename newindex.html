@@ -1418,12 +1418,12 @@ async function loadVoice1() {
     if (data && data.success && data.questions) {
         voiceQuestion = data.questions.find(q => q.question_code === 'Q6' || q.question_code === 'V1');
     }
-        if (!voiceQuestion) {
-            voiceQuestion = {
-                question_code: 'Q6',
-                question_text: 'Tell us about something you know really well.',
-                voice_prompt: '45 seconds. No script. No preparation. Tell us about something you know really well.'
-            };
+    if (!voiceQuestion) {
+        console.error('❌ Voice question not found in backend!');
+        alert('Failed to load voice question. Please try again.');
+        showStep('step4');
+        return;
+    }
         }
     // Display only the voice prompt, not the question text twice
     document.getElementById('voice1Title').textContent = '🎙️ Voice Response';
