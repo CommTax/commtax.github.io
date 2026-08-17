@@ -1561,7 +1561,7 @@
     }
 
 // ============================================================
-// HELPER: RENDER AGE-STYLE CARDS WITH HUMAN FACES
+// HELPER: RENDER AGE-STYLE CARDS WITH HUMAN FACES - FIXED
 // ============================================================
 function renderAgeStyleCards(containerId, options, selectedCallback) {
     console.log('✅ renderAgeStyleCards called with:', containerId);
@@ -1572,7 +1572,7 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
         return;
     }
 
-    // Image URLs - all verified working
+    // ✅ VERIFIED WORKING IMAGE URLs
     const faceImages = {
         'building': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Fresher.png',
         'stepping-up': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Senior.png',
@@ -1583,17 +1583,12 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
         'other': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Other.jpg'
     };
 
-    console.log('🖼️ faceImages:', faceImages);
-
     let html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">`;
     
     options.forEach((opt, index) => {
         const value = typeof opt === 'string' ? opt : opt.value;
         const label = typeof opt === 'string' ? opt : opt.label;
         
-        console.log(`📌 Processing option ${index}:`, value, label);
-        
-        // Extract description
         let mainText = label;
         let description = '';
         const match = label.match(/^(.*?)\s*\((.*?)\)$/);
@@ -1603,7 +1598,6 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
         }
         
         const faceUrl = faceImages[value] || '';
-        console.log(`🖼️ Image URL for ${value}:`, faceUrl);
         
         html += `
             <div class="age-card human-face-card" data-value="${value}" style="
@@ -1645,8 +1639,8 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
                         "
                         loading="lazy"
                         onerror="
-                            console.error('❌ Image failed to load:', this.src);
-                            this.parentElement.innerHTML='<span style=\\'font-size:1.8rem; color:#94a3b8;\\'>${mainText.charAt(0)}</span>';
+                            console.warn('⚠️ Image failed, using placeholder:', this.src);
+                            this.parentElement.innerHTML='<span style=\\'font-size:1.2rem; color:#94a3b8;\\'>${mainText.charAt(0).toUpperCase()}</span>';
                         "
                         onload="console.log('✅ Image loaded:', this.src)"
                     >
@@ -1673,8 +1667,6 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
     });
     html += `</div>`;
     container.innerHTML = html;
-    
-    console.log('✅ HTML rendered to container:', containerId);
 
     // Add interactions
     container.querySelectorAll('.human-face-card').forEach(card => {
