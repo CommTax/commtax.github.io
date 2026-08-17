@@ -941,14 +941,70 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function storeResponse(questionCode, answer, responseType = 'choice') {
-        allResponses.push({
-            question_code: questionCode,
-            answer: answer,
-            response_type: responseType
-        });
-        console.log('📝 Response stored:', questionCode, answer);
+// ============================================================
+// RESPONSE HANDLING - UPDATED WITH BACKEND SAVE
+// ============================================================
+
+function storeResponse(questionCode, answer, responseType = 'choice') {
+    // Local storage
+    allResponses.push({
+        question_code: questionCode,
+        answer: answer,
+        response_type: responseType
+    });
+    console.log('📝 Response stored locally:', questionCode, answer);
+    
+    // Save to backend
+    saveResponseToBackend(questionCode, answer, responseType);
+}
+
+async function saveResponseToBackend(questionCode, answer, responseType) {
+    try {
+        // If it's a voice response, use the voice endpoint
+        if (responseType === 'voice') {
+            const response = await fetch(`${API_BASE_URL}/voice/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    question_code: questionCode,
+                    transcript: answer.transcript
+                })
+            });
+            const data = await response.json();
+            if (data.success) {
+                console.log('✅ Voice response saved to backend:', questionCode);
+            } else {
+                console.error('❌ Failed to save voice response:', data);
+            }
+            return data;
+        } else {
+            // MCQ/Choice response
+            const payload = {
+                session_id: sessionId,
+                question_code: questionCode,
+                selected_option: answer,
+                text_response: null
+            };
+            
+            const response = await fetch(`${API_BASE_URL}/responses`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            if (data.success) {
+                console.log('✅ Choice response saved to backend:', questionCode);
+            } else {
+                console.error('❌ Failed to save choice response:', data);
+            }
+            return data;
+        }
+    } catch (error) {
+        console.error('❌ Error saving response to backend:', error);
+        return null;
     }
+}
 
     // ============================================================
     // HELPER: RENDER MCQ OPTIONS (2x2 Grid)
