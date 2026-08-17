@@ -1596,13 +1596,19 @@
     }
 
 // ============================================================
-// BIND DYNAMIC VOICE RECORDING - FIXED
+// BIND DYNAMIC VOICE RECORDING - 5 WORD MINIMUM, NO TIME LIMIT
 // ============================================================
 function bindDynamicVoice(questionCode) {
     const recordBtn = document.getElementById(`dynamicVoiceRecordBtn_${questionCode}`);
     const stopBtn = document.getElementById(`dynamicVoiceStopBtn_${questionCode}`);
     const transcriptEl = document.getElementById(`dynamicVoiceTranscript_${questionCode}`);
-    if (!recordBtn) return;
+    
+    console.log('🔍 bindDynamicVoice called for:', questionCode);
+    
+    if (!recordBtn) {
+        console.error('❌ Record button not found for:', questionCode);
+        return;
+    }
 
     let isRecording = false;
     let isCountdownActive = false;
@@ -1613,6 +1619,34 @@ function bindDynamicVoice(questionCode) {
     let countdownInterval = null;
     let countdownValue = 3;
     let recordingStartTime = 0;
+    let isSaved = false;
+
+    // Make transcript editable
+    if (transcriptEl) {
+        transcriptEl.contentEditable = true;
+        transcriptEl.style.outline = 'none';
+        transcriptEl.style.cursor = 'text';
+        transcriptEl.style.background = 'white';
+        transcriptEl.style.border = '2px solid #dce8f3';
+        transcriptEl.style.padding = '12px';
+        transcriptEl.style.borderRadius = '8px';
+        transcriptEl.style.minHeight = '100px';
+        transcriptEl.style.maxHeight = '200px';
+        transcriptEl.style.overflowY = 'auto';
+        transcriptEl.style.fontFamily = 'Inter, sans-serif';
+        transcriptEl.style.fontSize = '0.95rem';
+        transcriptEl.style.lineHeight = '1.6';
+        transcriptEl.style.color = '#1a3a55';
+        transcriptEl.textContent = 'Your words will appear here... You can edit them anytime.';
+        
+        // Focus on transcript to show it's editable
+        transcriptEl.addEventListener('focus', function() {
+            this.style.borderColor = '#d97706';
+        });
+        transcriptEl.addEventListener('blur', function() {
+            this.style.borderColor = '#dce8f3';
+        });
+    }
 
     function initSpeechRecog() {
         const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1642,7 +1676,10 @@ function bindDynamicVoice(questionCode) {
             
             if (transcriptEl) {
                 const timerDisplay = timeLeft > 0 ? `⏱️ ${timeLeft}s remaining\n\n` : '⏰ Time\'s up!\n\n';
-                transcriptEl.textContent = timerDisplay + (displayText.trim() || '🎤 Speak now...');
+                // Only update if not being edited manually
+                if (!transcriptEl.isContentEditable || document.activeElement !== transcriptEl) {
+                    transcriptEl.textContent = timerDisplay + (displayText.trim() || '🎤 Speak now...');
+                }
             }
         };
 
@@ -1650,7 +1687,9 @@ function bindDynamicVoice(questionCode) {
             console.error('Speech error:', e.error);
             if (e.error === 'not-allowed') alert('Please allow microphone access.');
             if (e.error === 'no-speech') {
-                transcriptEl.textContent = '⚠️ No speech detected. Please try again.';
+                if (transcriptEl) {
+                    transcriptEl.textContent = '⚠️ No speech detected. Please try again.\n\n✏️ You can also type your response.';
+                }
             }
             resetVoice();
         };
@@ -1668,20 +1707,27 @@ function bindDynamicVoice(questionCode) {
         isCountdownActive = true;
         countdownValue = 3;
         fullTranscript = '';
+        isSaved = false;
         recordBtn.disabled = true;
         recordBtn.textContent = `⏳ ${countdownValue}`;
-        transcriptEl.textContent = `🎤 Get ready... ${countdownValue}`;
+        if (transcriptEl) {
+            transcriptEl.textContent = `🎤 Get ready... ${countdownValue}`;
+        }
         
         countdownInterval = setInterval(() => {
             countdownValue--;
             if (countdownValue > 0) {
                 recordBtn.textContent = `⏳ ${countdownValue}`;
-                transcriptEl.textContent = `🎤 Get ready... ${countdownValue}`;
+                if (transcriptEl) {
+                    transcriptEl.textContent = `🎤 Get ready... ${countdownValue}`;
+                }
             } else {
                 clearInterval(countdownInterval);
                 countdownInterval = null;
                 recordBtn.textContent = '🎙️ Recording...';
-                transcriptEl.textContent = '🎤 Recording... Speak now!';
+                if (transcriptEl) {
+                    transcriptEl.textContent = '🎤 Recording... Speak now!\n\n✏️ You can edit your text anytime.';
+                }
                 isCountdownActive = false;
                 startRecording();
             }
@@ -1698,19 +1744,23 @@ function bindDynamicVoice(questionCode) {
         recordBtn.disabled = true;
         recordBtn.textContent = '🔴 Recording...';
         
-        // ✅ SHOW the Stop button when recording starts
+        // Show Finish & Save button
         if (stopBtn) {
+            console.log('✅ Showing Finish & Save button');
             stopBtn.style.display = 'inline-flex';
         }
         
-        transcriptEl.textContent = '⏱️ 45s remaining\n\n🎤 Speak now...';
+        if (transcriptEl) {
+            transcriptEl.textContent = '⏱️ 45s remaining\n\n🎤 Speak now...\n\n✏️ You can edit your text anytime.';
+        }
         
         try { recognition.start(); } catch(e) {}
         
+        // Timer - counts down from 45
         timerInterval = setInterval(() => {
             timeLeft--;
             if (timeLeft > 0) {
-                if (transcriptEl) {
+                if (transcriptEl && document.activeElement !== transcriptEl) {
                     const currentText = transcriptEl.textContent;
                     const lines = currentText.split('\n');
                     if (lines.length > 0) {
@@ -1721,14 +1771,16 @@ function bindDynamicVoice(questionCode) {
             } else {
                 clearInterval(timerInterval);
                 timerInterval = null;
-                transcriptEl.textContent = '⏰ Time\'s up!\n\n' + fullTranscript.trim();
+                if (transcriptEl) {
+                    transcriptEl.textContent = '⏰ Time\'s up!\n\n' + fullTranscript.trim() + '\n\n✏️ You can edit your text before saving.';
+                }
                 stopVoice();
             }
         }, 1000);
     }
 
     function stopVoice() {
-        if (!isRecording) return;
+        if (!isRecording && !isSaved) return;
         
         const duration = (Date.now() - recordingStartTime) / 1000;
         
@@ -1744,25 +1796,46 @@ function bindDynamicVoice(questionCode) {
         recordBtn.disabled = false;
         recordBtn.textContent = '🎙️ Start Recording';
         
-        // ✅ HIDE the Stop button when recording stops
+        // Hide Finish & Save button
         if (stopBtn) {
             stopBtn.style.display = 'none';
         }
         
-        const finalTranscript = fullTranscript.trim();
+        // Get the final transcript (allow user edits)
+        let finalTranscript = fullTranscript.trim();
+        if (transcriptEl) {
+            // If user edited, use the edited text
+            const editedText = transcriptEl.textContent;
+            // Remove timer lines if present
+            const cleanText = editedText.replace(/^⏱️ \d+s remaining\n\n/, '').replace(/^⏰ Time's up!\n\n/, '');
+            if (cleanText.trim() && cleanText.trim() !== '🎤 Speak now...' && cleanText.trim() !== 'Your words will appear here... You can edit them anytime.') {
+                finalTranscript = cleanText.trim();
+            }
+        }
         
-        if (duration < 10) {
-            transcriptEl.textContent = `⚠️ Please speak for at least 10 seconds. You spoke for ${Math.round(duration)} seconds.`;
+        // ✅ MINIMUM 5 WORDS - No time requirement
+        const wordCount = finalTranscript.split(/\s+/).filter(w => w.length > 0).length;
+        
+        // Check minimum words (5 words)
+        if (wordCount < 5) {
+            if (transcriptEl) {
+                transcriptEl.textContent = `⚠️ Please speak at least 5 words. You spoke ${wordCount} words.\n\n✏️ You can type additional words or speak again.`;
+                // Keep the stop button visible so user can try again
+                if (stopBtn) {
+                    stopBtn.style.display = 'inline-flex';
+                    stopBtn.textContent = '✏️ Edit & Save';
+                }
+            }
+            // Re-enable record button
+            recordBtn.disabled = false;
+            recordBtn.textContent = '🎙️ Start Recording';
             return;
         }
         
-        const wordCount = finalTranscript.split(/\s+/).length;
-        if (wordCount < 10) {
-            transcriptEl.textContent = `⚠️ Please speak at least 10 words. You spoke ${wordCount} words.`;
-            return;
+        isSaved = true;
+        if (transcriptEl) {
+            transcriptEl.textContent = `✅ Voice saved! (${wordCount} words, ${Math.round(duration)}s)\n\n${finalTranscript}\n\n✏️ You can still edit this text.`;
         }
-        
-        transcriptEl.textContent = `✅ Voice saved! (${wordCount} words, ${Math.round(duration)}s)\n\n${finalTranscript}`;
         storeResponse(questionCode, { transcript: finalTranscript }, 'voice');
         console.log('Voice saved for', questionCode, 'Words:', wordCount, 'Duration:', Math.round(duration), 's');
     }
@@ -1789,20 +1862,17 @@ function bindDynamicVoice(questionCode) {
         }
     }
 
-    // ✅ Start countdown when record button is clicked
+    // Record button starts the countdown
     recordBtn.addEventListener('click', startCountdown);
     
-    // ✅ FIX: Properly attach the stop button event listener
+    // Finish & Save button
     if (stopBtn) {
-        // Remove any existing listeners by cloning and replacing
-        const newStopBtn = stopBtn.cloneNode(true);
-        stopBtn.parentNode.replaceChild(newStopBtn, stopBtn);
-        // Get the new reference and add the event listener
-        const freshStopBtn = document.getElementById(`dynamicVoiceStopBtn_${questionCode}`);
-        if (freshStopBtn) {
-            freshStopBtn.addEventListener('click', stopVoice);
-            freshStopBtn.style.display = 'none'; // Initially hidden
-        }
+        console.log('✅ Attaching event listener to Finish & Save button');
+        stopBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('✅ Finish & Save clicked!');
+            stopVoice();
+        });
     }
 }
 
