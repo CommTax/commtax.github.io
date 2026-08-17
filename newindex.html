@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>The Unspoken · Premium Journey</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..600&display=swap" rel="stylesheet" />
@@ -2573,7 +2574,7 @@ async function loadQuestionA() {
     document.getElementById('communityOption').addEventListener('click', (e) => {
         e.preventDefault();
         alert('🌍 Join The Unspoken community and continue impacting the world!\n\nYou\'ll be redirected to the pricing page.');
-        window.location.href = '/pricing';
+        window.location.href = 'https://theunspoken.co.in/Pricing';
     });
 
     // ============================================================
@@ -2618,6 +2619,58 @@ async function loadQuestionA() {
     // START
     // ============================================================
     showStep('step1');
+
+// ============================================================
+// RAZORPAY PAYMENT HANDLER
+// ============================================================
+function initiateRazorpayPayment(amount = 199, currency = 'INR', orderId = null) {
+    const options = {
+        "key": "rzp_live_TN9VVH5DwiHx0L",
+        "amount": amount * 100,
+        "currency": currency,
+        "name": "The Unspoken",
+        "description": "Unlock Your Complete Communication Profile",
+        "image": "https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Mini%20Logo%20Unspoken.png",
+        "prefill": {
+            "name": document.getElementById('fullName')?.value || "",
+            "email": document.getElementById('email')?.value || "",
+            "contact": document.getElementById('phone')?.value || ""
+        },
+        "theme": {
+            "color": "#d97706"
+        },
+        "modal": {
+            "ondismiss": function() {
+                console.log("Payment modal closed");
+            }
+        }
+    };
+
+    if (orderId) {
+        options.order_id = orderId;
+    }
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+    
+    rzp.on('payment.failed', function(response) {
+        console.error('Payment failed:', response.error);
+        alert('Payment failed. Please try again.');
+    });
+
+    rzp.on('payment.success', function(response) {
+        console.log('Payment successful:', response);
+        alert('✨ Payment successful! Your report is now unlocked.');
+    });
+}
+
+
+
+
+
+
+
+    
 })();
 </script>
 </body>
