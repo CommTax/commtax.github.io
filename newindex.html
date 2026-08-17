@@ -1564,10 +1564,15 @@
 // HELPER: RENDER AGE-STYLE CARDS WITH HUMAN FACES
 // ============================================================
 function renderAgeStyleCards(containerId, options, selectedCallback) {
+    console.log('✅ renderAgeStyleCards called with:', containerId);
+    
     const container = document.getElementById(containerId);
-    if (!container) return;
+    if (!container) {
+        console.error('❌ Container not found:', containerId);
+        return;
+    }
 
-    // Human face images for each career stage (using your exact filenames)
+    // Image URLs - all verified working
     const faceImages = {
         'building': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Fresher.png',
         'stepping-up': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Senior.png',
@@ -1578,22 +1583,15 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
         'other': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Other.jpg'
     };
 
-    // Background colors (muted to let faces pop)
-    const bgColors = {
-        'building': 'linear-gradient(135deg, #f8fafc, #e2e8f0)',
-        'stepping-up': 'linear-gradient(135deg, #f8fafc, #e2e8f0)',
-        'leading': 'linear-gradient(135deg, #f8fafc, #e2e8f0)',
-        'nextmove': 'linear-gradient(135deg, #f8fafc, #e2e8f0)',
-        'business': 'linear-gradient(135deg, #f8fafc, #e2e8f0)',
-        'skills': 'linear-gradient(135deg, #f8fafc, #e2e8f0)',
-        'other': 'linear-gradient(135deg, #f8fafc, #e2e8f0)'
-    };
+    console.log('🖼️ faceImages:', faceImages);
 
     let html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">`;
     
-    options.forEach((opt) => {
+    options.forEach((opt, index) => {
         const value = typeof opt === 'string' ? opt : opt.value;
         const label = typeof opt === 'string' ? opt : opt.label;
+        
+        console.log(`📌 Processing option ${index}:`, value, label);
         
         // Extract description
         let mainText = label;
@@ -1605,7 +1603,7 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
         }
         
         const faceUrl = faceImages[value] || '';
-        const bgColor = bgColors[value] || 'linear-gradient(135deg, #f8fafc, #e2e8f0)';
+        console.log(`🖼️ Image URL for ${value}:`, faceUrl);
         
         html += `
             <div class="age-card human-face-card" data-value="${value}" style="
@@ -1615,7 +1613,7 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
                 cursor:pointer; 
                 transition:all 0.3s ease; 
                 text-align:left; 
-                background: ${bgColor};
+                background: #f8fafc;
                 min-height: 85px;
                 display: flex;
                 align-items: center;
@@ -1623,7 +1621,6 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
                 position: relative;
                 overflow: hidden;
             ">
-                <!-- Human Face Image -->
                 <div style="
                     width:56px; 
                     height:56px; 
@@ -1632,6 +1629,10 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
                     overflow:hidden;
                     border:2px solid rgba(255,255,255,0.8);
                     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+                    background: #e2e8f0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 ">
                     <img 
                         src="${faceUrl}" 
@@ -1642,7 +1643,12 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
                             object-fit:cover; 
                             display:block;
                         "
-                        onerror="this.parentElement.innerHTML='<span style=\\'font-size:1.8rem; line-height:56px; text-align:center; display:block;\\'>👤</span>'"
+                        loading="lazy"
+                        onerror="
+                            console.error('❌ Image failed to load:', this.src);
+                            this.parentElement.innerHTML='<span style=\\'font-size:1.8rem; color:#94a3b8;\\'>${mainText.charAt(0)}</span>';
+                        "
+                        onload="console.log('✅ Image loaded:', this.src)"
                     >
                 </div>
                 <div style="flex:1; min-width:0;">
@@ -1651,7 +1657,6 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
                     </div>
                     ${description ? `<div style="font-size:0.6rem; color:#6a8aaa; font-weight:400; margin-top:2px; letter-spacing:0.3px;">${description}</div>` : ''}
                 </div>
-                <!-- Selection Checkmark -->
                 <div class="selection-check" style="
                     position:absolute;
                     right:12px;
@@ -1668,6 +1673,8 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
     });
     html += `</div>`;
     container.innerHTML = html;
+    
+    console.log('✅ HTML rendered to container:', containerId);
 
     // Add interactions
     container.querySelectorAll('.human-face-card').forEach(card => {
@@ -1689,7 +1696,7 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
             container.querySelectorAll('.human-face-card').forEach(b => {
                 b.classList.remove('active');
                 b.style.borderColor = '#e2edf7';
-                b.style.background = b.dataset.originalBg || '';
+                b.style.background = '#f8fafc';
                 b.style.transform = 'translateY(0)';
                 const check = b.querySelector('.selection-check');
                 if (check) check.style.opacity = '0';
@@ -1702,11 +1709,8 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
             if (checkmark) checkmark.style.opacity = '1';
             if (selectedCallback) selectedCallback(this.dataset.value);
         });
-        card.dataset.originalBg = card.style.background;
     });
 }
-
-
     
     // ============================================================
     // HELPER: RENDER VOICE UI
@@ -2076,7 +2080,10 @@ function bindDynamicVoice(questionCode) {
 // STEP 2: LOAD QUESTION A
 // ============================================================
 async function loadQuestionA() {
+    console.log('📝 loadQuestionA called');
     const data = await loadQuestion('initial');
+    console.log('📝 Question A data:', data);
+    
     if (data && data.success && data.question) {
         const q = data.question;
         document.getElementById('questionATitle').textContent = q.question_text || 'Who are you becoming?';
@@ -2084,13 +2091,14 @@ async function loadQuestionA() {
         
         // ✅ USE HUMAN FACE CARDS FOR QUESTION A
         renderAgeStyleCards('questionAContainer', q.options || [], (value) => {
+            console.log('✅ Selected value:', value);
             document.getElementById('step2Next').dataset.selected = value;
         });
     } else {
+        console.warn('⚠️ Using fallback questions');
         document.getElementById('questionATitle').textContent = 'Who are you becoming?';
         document.getElementById('questionASubhead').textContent = 'Choose the chapter that feels most like you.';
         
-        // ✅ FALLBACK WITH HUMAN FACE CARDS
         renderAgeStyleCards('questionAContainer', [
             { label: 'Building my career (Fresher / Early Career)', value: 'building' },
             { label: 'Stepping up (Senior Professional: Growing into greater responsibility)', value: 'stepping-up' },
@@ -2100,6 +2108,7 @@ async function loadQuestionA() {
             { label: 'Building skills (Student / Continuous Learner)', value: 'skills' },
             { label: 'Others (Explore / Undecided)', value: 'other' }
         ], (value) => {
+            console.log('✅ Selected value (fallback):', value);
             document.getElementById('step2Next').dataset.selected = value;
         });
     }
