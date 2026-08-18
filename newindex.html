@@ -3163,13 +3163,15 @@ function populateReport(report) {
         });
     }
 // ============================================================
-// POPULATE VOICE ANALYSIS
+// POPULATE VOICE ANALYSIS - FIXED
 // ============================================================
 function populateVoiceAnalysis(voiceAnalysis) {
     if (!voiceAnalysis) {
         console.warn('No voice analysis data available');
         return;
     }
+    
+    console.log('📊 Voice Analysis Data:', voiceAnalysis);
     
     // Persona Name
     const personaNameEl = document.getElementById('voicePersonaName');
@@ -3189,18 +3191,35 @@ function populateVoiceAnalysis(voiceAnalysis) {
         sourceEl.textContent = 'AI Voice Analysis';
     }
     
-    // Comments
+    // ✅ FIX: Handle comments properly (could be array, string, or JSON)
     const commentsList = document.getElementById('voiceCommentsList');
     if (commentsList) {
-        const comments = voiceAnalysis.comments || [];
+        let comments = voiceAnalysis.comments || [];
+        
+        // If comments is a string, try to parse it as JSON
+        if (typeof comments === 'string') {
+            try {
+                comments = JSON.parse(comments);
+            } catch (e) {
+                // If it's a plain string, make it an array with one item
+                comments = [comments];
+            }
+        }
+        
+        // Ensure comments is an array
+        if (!Array.isArray(comments)) {
+            comments = [];
+        }
         
         if (comments.length > 0) {
-            commentsList.innerHTML = comments.map(comment => `
-                <div style="display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #f0f4ff;">
-                    <span style="color: #2563eb; font-weight: 700; font-size: 0.8rem;">•</span>
-                    <span style="font-size: 0.8rem; color: #1a3a55; line-height: 1.4;">${comment}</span>
-                </div>
-            `).join('');
+            commentsList.innerHTML = comments.map(function(comment) {
+                return `
+                    <div style="display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #f0f4ff;">
+                        <span style="color: #2563eb; font-weight: 700; font-size: 0.8rem;">•</span>
+                        <span style="font-size: 0.8rem; color: #1a3a55; line-height: 1.4;">${comment}</span>
+                    </div>
+                `;
+            }).join('');
         } else {
             commentsList.innerHTML = `
                 <div style="display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.3rem 0;">
