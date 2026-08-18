@@ -3350,7 +3350,31 @@ document.getElementById('goDeeperBtn')?.addEventListener('click', function() {
     // ============================================================
     // START
     // ============================================================
-    showStep('step1');
+   // Auto-start the assessment directly from Step 2
+async function startAssessmentDirectly() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/sessions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        if (data.success) {
+            sessionId = data.session_id;
+            console.log('✅ Session created:', sessionId);
+            showStep('step2');
+            loadQuestionA();
+        } else {
+            alert('Failed to start assessment. Please try again.');
+            showStep('step1'); // Fallback to step 1 if fails
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Network error. Please check your connection.');
+        showStep('step1'); // Fallback to step 1 if fails
+    }
+}
+
+startAssessmentDirectly();
 
 })();
 </script>
