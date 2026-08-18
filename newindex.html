@@ -2514,39 +2514,36 @@ flex-direction: column;
         }
     });
 
-// ============================================================
-// STEP 5: VOICE Q6 - Recommended
-// ============================================================
-async function loadVoice1() {
-    if (!userCategory) {
-        console.error('❌ No category set!');
-        alert('Please select a category first.');
-        showStep('step2');
-        return;
+    // ============================================================
+    // STEP 5: VOICE Q6
+    // ============================================================
+    async function loadVoice1() {
+        if (!userCategory) {
+            console.error('❌ No category set!');
+            alert('Please select a category first.');
+            showStep('step2');
+            return;
+        }
+        
+        const data = await loadQuestion('category');
+        let voiceQuestion = null;
+        
+        if (data && data.success && data.questions) {
+            voiceQuestion = data.questions.find(q => q.question_code === 'Q6' || q.question_code === 'V1');
+        }
+        
+        if (!voiceQuestion) {
+            console.error('❌ Voice question not found in backend!');
+            alert('Failed to load voice question. Please try again.');
+            showStep('step4');
+            return;
+        }
+        
+        document.getElementById('voice1Title').textContent = '🎙️ Voice Response';
+        document.getElementById('voice1Subhead').textContent = voiceQuestion.voice_prompt || voiceQuestion.question_text;
+        renderVoiceUI('voice1Container', voiceQuestion.question_code, voiceQuestion.question_text, voiceQuestion.voice_prompt);
+        document.getElementById('step5Next').dataset.questionCode = voiceQuestion.question_code;
     }
-    
-    const data = await loadQuestion('category');
-    let voiceQuestion = null;
-    
-    if (data && data.success && data.questions) {
-        voiceQuestion = data.questions.find(q => q.question_code === 'Q6' || q.question_code === 'V1');
-    }
-    
-    if (!voiceQuestion) {
-        console.error('❌ Voice question not found in backend!');
-        alert('Failed to load voice question. Please try again.');
-        showStep('step4');
-        return;
-    }
-    
-    document.getElementById('voice1Title').textContent = '🎙️ Voice Response';
-    // ✅ Show the question once in the subhead
-    document.getElementById('voice1Subhead').textContent = voiceQuestion.voice_prompt || voiceQuestion.question_text;
-    
-    // ✅ Pass null for voicePrompt so it doesn't show again in the box
-    renderVoiceUI('voice1Container', voiceQuestion.question_code, voiceQuestion.question_text, null);
-    document.getElementById('step5Next').dataset.questionCode = voiceQuestion.question_code;
-}
 
     document.getElementById('step5Next').addEventListener('click', (e) => {
         e.preventDefault();
