@@ -2802,66 +2802,93 @@ flex-direction: column;
 function populateReport(report) {
     console.log('📝 Populating report with:', report);
     
-    // Persona
-    document.getElementById('reportUserName').textContent = report.user_name || 'Professional';
-    document.getElementById('reportPersonaName').textContent = report.persona_name || 'The Articulator';
-    document.getElementById('reportPersonaDesc').textContent = report.refined_description || 'Loading...';
+    // ============================================================
+    // HELPER: Safe element update
+    // ============================================================
+    function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = text;
+        } else {
+            console.warn('⚠️ Element not found:', id);
+        }
+    }
     
-    // Communication Signature
-    document.getElementById('reportYouTendTo').textContent = report.you_tend_to || 'Loading...';
-    document.getElementById('reportYouBring').textContent = report.you_naturally_bring || 'Loading...';
-    document.getElementById('reportYouCreate').textContent = report.you_may_create || 'Loading...';
+    function setHTML(id, html) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.innerHTML = html;
+        } else {
+            console.warn('⚠️ Element not found:', id);
+        }
+    }
     
-    // DNA Scores - Show XX%
+    // ============================================================
+    // PERSONA
+    // ============================================================
+    setText('reportUserName', report.user_name || 'Professional');
+    setText('reportPersonaName', report.persona_name || 'The Articulator');
+    setText('reportPersonaDesc', report.refined_description || 'Loading...');
+    
+    // ============================================================
+    // COMMUNICATION SIGNATURE
+    // ============================================================
+    setText('reportYouTendTo', report.you_tend_to || 'Loading...');
+    setText('reportYouBring', report.you_naturally_bring || 'Loading...');
+    setText('reportYouCreate', report.you_may_create || 'Loading...');
+    
+    // ============================================================
+    // DNA SCORES
+    // ============================================================
     const dna = report.communication_dna || {};
     const container = document.getElementById('dnaContainer');
-    container.innerHTML = '';
     
-    const labels = ['Thinking', 'Structure', 'Expression', 'Understanding', 'Influence'];
-    const keys = ['thinking', 'structure', 'expression', 'understanding', 'influence'];
-    const emojis = ['🧠', '🧩', '🗣', '👁', '🎯'];
-    
-    keys.forEach((key, i) => {
-        const displayScore = 'XX%';
-        const barWidth = 65 + (i * 3) % 20;
+    if (container) {
+        container.innerHTML = '';
         
-        container.innerHTML += `
-            <div style="text-align: center; background: #f8fafc; padding: 0.8rem; border-radius: 0.8rem; border: 1px solid #eef2f6;">
-                <div style="font-size: 1.5rem;">${emojis[i]}</div>
-                <div style="font-size: 0.6rem; color: #6a8aaa; text-transform: uppercase; margin-top: 0.2rem;">${labels[i]}</div>
-                <div style="font-size: 1.2rem; font-weight: 700; color: #d97706; margin: 0.2rem 0;">${displayScore}</div>
-                <div style="width: 100%; height: 4px; background: #e2e8f0; border-radius: 4px; margin-top: 0.2rem; overflow: hidden;">
-                    <div style="width: ${barWidth}%; height: 100%; background: linear-gradient(90deg, #d97706, #fcd34d); border-radius: 4px;"></div>
+        const labels = ['Thinking', 'Structure', 'Expression', 'Understanding', 'Influence'];
+        const keys = ['thinking', 'structure', 'expression', 'understanding', 'influence'];
+        const emojis = ['🧠', '🧩', '🗣', '👁', '🎯'];
+        
+        keys.forEach((key, i) => {
+            const displayScore = 'XX%';
+            const barWidth = 65 + (i * 3) % 20;
+            
+            container.innerHTML += `
+                <div style="text-align: center; background: #f8fafc; padding: 0.8rem; border-radius: 0.8rem; border: 1px solid #eef2f6;">
+                    <div style="font-size: 1.5rem;">${emojis[i]}</div>
+                    <div style="font-size: 0.6rem; color: #6a8aaa; text-transform: uppercase; margin-top: 0.2rem;">${labels[i]}</div>
+                    <div style="font-size: 1.2rem; font-weight: 700; color: #d97706; margin: 0.2rem 0;">${displayScore}</div>
+                    <div style="width: 100%; height: 4px; background: #e2e8f0; border-radius: 4px; margin-top: 0.2rem; overflow: hidden;">
+                        <div style="width: ${barWidth}%; height: 100%; background: linear-gradient(90deg, #d97706, #fcd34d); border-radius: 4px;"></div>
+                    </div>
+                    <div style="font-size: 0.5rem; color: #94a3b8; margin-top: 0.2rem;">🔒 Locked</div>
                 </div>
-                <div style="font-size: 0.5rem; color: #94a3b8; margin-top: 0.2rem;">🔒 Locked</div>
-            </div>
-        `;
-    });
+            `;
+        });
+    }
     
-    document.getElementById('dnaSummary').textContent = 'Your Communication DNA goes deeper than your Persona. Complete your full assessment to reveal your scores across the 5 dimensions that shape how you communicate.';
-    
-    // Signature Strength & Blind Spot
-    document.getElementById('reportStrength').textContent = report.natural_advantage || 'Loading...';
-    document.getElementById('reportStrengthDesc').textContent = report.natural_advantage ? 'Your natural advantage is ' + report.natural_advantage + '.' : 'Loading...';
-    
-    document.getElementById('reportBlindSpot').textContent = report.blind_spot || 'Loading...';
-    document.getElementById('reportBlindSpotDesc').textContent = report.blind_spot_description || 'Loading...';
+    setText('dnaSummary', 'Your Communication DNA goes deeper than your Persona. Complete your full assessment to reveal your scores across the 5 dimensions that shape how you communicate.');
     
     // ============================================================
-    // SHARE CARD - NO DNA TAGS, NO SCORES
+    // SIGNATURE STRENGTH & BLIND SPOT
     // ============================================================
+    setText('reportStrength', report.natural_advantage || 'Loading...');
+    setText('reportStrengthDesc', report.natural_advantage ? 'Your natural advantage is ' + report.natural_advantage + '.' : 'Loading...');
+    setText('reportBlindSpot', report.blind_spot || 'Loading...');
+    setText('reportBlindSpotDesc', report.blind_spot_description || 'Loading...');
     
-    // Persona Name on Share Card
-    document.getElementById('sharePersonaName').textContent = report.persona_name || 'The Articulator';
+    // ============================================================
+    // SHARE CARD - CLEAN VERSION (NO DNA)
+    // ============================================================
+    setText('sharePersonaName', report.persona_name || 'The Articulator');
     
-    // User Name on Share Card
     const userName = report.user_name || 'Professional';
-    document.getElementById('shareUserFullName').textContent = userName;
-    document.getElementById('shareUserName').textContent = '— ' + userName;
+    setText('shareUserFullName', userName);
+    setText('shareUserName', '— ' + userName);
     
-    // ✅ DNA tags are REMOVED - no scores on share card
+    console.log('✅ Report populated successfully');
 }
-       }
 
     // ============================================================
     // SHARE FUNCTIONS
