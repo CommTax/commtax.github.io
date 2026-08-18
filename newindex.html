@@ -2783,8 +2783,8 @@ flex-direction: column;
         }
     }
 
-// ============================================================
-// POPULATE REPORT - WITH XX% HIDDEN SCORES
+    // ============================================================
+// POPULATE REPORT - CORRECTED
 // ============================================================
 function populateReport(report) {
     console.log('📝 Populating report with:', report);
@@ -2799,7 +2799,7 @@ function populateReport(report) {
     document.getElementById('reportYouBring').textContent = report.you_naturally_bring || 'Loading...';
     document.getElementById('reportYouCreate').textContent = report.you_may_create || 'Loading...';
     
-    // ✅ DNA Scores - Show XX% instead of actual numbers
+    // DNA Scores - Show XX%
     const dna = report.communication_dna || {};
     const container = document.getElementById('dnaContainer');
     container.innerHTML = '';
@@ -2809,19 +2809,14 @@ function populateReport(report) {
     const emojis = ['🧠', '🧩', '🗣', '👁', '🎯'];
     
     keys.forEach((key, i) => {
-        // ✅ Use XX% instead of actual score
         const displayScore = 'XX%';
-        // For the bar width, use a random-looking but consistent value (60-80%)
-        // This gives visual interest without revealing actual scores
-        const barWidth = 65 + (i * 3) % 20; // Creates variation between 65-85%
+        const barWidth = 65 + (i * 3) % 20;
         
         container.innerHTML += `
             <div style="text-align: center; background: #f8fafc; padding: 0.8rem; border-radius: 0.8rem; border: 1px solid #eef2f6;">
                 <div style="font-size: 1.5rem;">${emojis[i]}</div>
                 <div style="font-size: 0.6rem; color: #6a8aaa; text-transform: uppercase; margin-top: 0.2rem;">${labels[i]}</div>
-                <div style="font-size: 1.2rem; font-weight: 700; color: #d97706; margin: 0.2rem 0;">
-                    ${displayScore}
-                </div>
+                <div style="font-size: 1.2rem; font-weight: 700; color: #d97706; margin: 0.2rem 0;">${displayScore}</div>
                 <div style="width: 100%; height: 4px; background: #e2e8f0; border-radius: 4px; margin-top: 0.2rem; overflow: hidden;">
                     <div style="width: ${barWidth}%; height: 100%; background: linear-gradient(90deg, #d97706, #fcd34d); border-radius: 4px;"></div>
                 </div>
@@ -2830,52 +2825,32 @@ function populateReport(report) {
         `;
     });
     
-    // DNA Summary - Generic (no specific scores)
-    document.getElementById('dnaSummary').textContent = 
-        'Your Communication DNA goes deeper than your Persona.Complete your full assessment to reveal your scores across the 5 dimensions that shape how you communicate.';
+    document.getElementById('dnaSummary').textContent = 'Your Communication DNA goes deeper than your Persona. Complete your full assessment to reveal your scores across the 5 dimensions that shape how you communicate.';
     
     // Signature Strength & Blind Spot
     document.getElementById('reportStrength').textContent = report.natural_advantage || 'Loading...';
-    document.getElementById('reportStrengthDesc').textContent = 
-        report.natural_advantage ? `Your natural advantage is ${report.natural_advantage}.` : 'Loading...';
+    document.getElementById('reportStrengthDesc').textContent = report.natural_advantage ? 'Your natural advantage is ' + report.natural_advantage + '.' : 'Loading...';
     
     document.getElementById('reportBlindSpot').textContent = report.blind_spot || 'Loading...';
-    document.getElementById('reportBlindSpotDesc').textContent = 
-        report.blind_spot_description || 'Loading...';
+    document.getElementById('reportBlindSpotDesc').textContent = report.blind_spot_description || 'Loading...';
     
-    // Share Card - Also show XX%
-    document.getElementById('sharePersonaName').textContent = report.persona_name || 'The Articulator';
-    document.getElementById('shareUserName').textContent = `— ${report.user_name || 'Professional'}`;
-    
-    const shareContainer = document.getElementById('shareDnaContainer');
-    shareContainer.innerHTML = '';
-    keys.forEach((key, i) => {
-        shareContainer.innerHTML += `
-            <span style="background: rgba(255,255,255,0.1); padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.7rem; color: white;">${emojis[i]} ${labels[i]} XX%</span>
-       
-            // ✅ Update Share Card with User Name
+    // ✅ Share Card - Updated with user name
     document.getElementById('sharePersonaName').textContent = report.persona_name || 'The Articulator';
     
-// ✅ Show user name on share card - Simpler version
-const userName = report.user_name || 'Professional';
-document.getElementById('shareUserFullName').textContent = userName;
-document.getElementById('shareUserName').textContent = '— ' + userName;
+    const userName = report.user_name || 'Professional';
+    document.getElementById('shareUserFullName').textContent = userName;
+    document.getElementById('shareUserName').textContent = '— ' + userName;
     
-    // DNA tags for share card
-    const dna = report.communication_dna || {};
+    // ✅ Share DNA tags - Fixed
     const shareContainer = document.getElementById('shareDnaContainer');
     shareContainer.innerHTML = '';
-    
-    const labels = ['Thinking', 'Structure', 'Expression', 'Understanding', 'Influence'];
-    const keys = ['thinking', 'structure', 'expression', 'understanding', 'influence'];
-    const emojis = ['🧠', '🧩', '🗣', '👁', '🎯'];
     
     keys.forEach((key, i) => {
         const score = dna[key] || 0;
         shareContainer.innerHTML += `
             <span style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.55rem; color: rgba(255,255,255,0.2);">
                 ${emojis[i]} ${labels[i]} ${score}%
-            </span>      
+            </span>
         `;
     });
 }
