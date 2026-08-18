@@ -1131,6 +1131,103 @@ flex-direction: column;
         gap: 0.8rem;
     }
 }
+
+/* ============================================================ */
+/* MOBILE RESPONSIVE FIXES */
+/* ============================================================ */
+
+/* Mobile: Smaller fonts and better spacing */
+@media (max-width: 640px) {
+    /* Question cards - single column on mobile */
+    .card-grid-2col {
+        grid-template-columns: 1fr !important;
+        gap: 0.5rem !important;
+    }
+    
+    /* Smaller card text */
+    .card-btn .card-title {
+        font-size: 0.8rem !important;
+    }
+    
+    .card-btn .card-sub {
+        font-size: 0.65rem !important;
+    }
+    
+    /* Better spacing for question cards */
+    .step-card {
+        padding: 1rem !important;
+        border-radius: 1.2rem !important;
+    }
+    
+    /* Smaller headings */
+    h2 {
+        font-size: 1.1rem !important;
+    }
+    
+    .subhead {
+        font-size: 0.75rem !important;
+        margin: 0.1rem 0 0.4rem !important;
+    }
+    
+    /* Image containers */
+    .question-image,
+    .cinematic-img {
+        height: 100px !important;
+        margin: 8px auto 12px !important;
+    }
+    
+    .question-image img,
+    .cinematic-img img {
+        height: 100px !important;
+    }
+    
+    /* Age cards on mobile */
+    .age-card.human-face-card {
+        min-height: 65px !important;
+        padding: 0.6rem 0.8rem !important;
+        gap: 10px !important;
+    }
+    
+    .age-card.human-face-card .card-icon {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 1.4rem !important;
+    }
+    
+    .age-card.human-face-card .card-title {
+        font-size: 0.75rem !important;
+    }
+    
+    .age-card.human-face-card .card-sub {
+        font-size: 0.55rem !important;
+    }
+    
+    /* Progress bar */
+    .progress-discreet .step-label {
+        font-size: 0.55rem !important;
+    }
+    
+    /* Premium cards */
+    .premium-card-option {
+        min-height: 60px !important;
+        padding: 0.6rem 0.8rem !important;
+        gap: 10px !important;
+    }
+    
+    .premium-card-option .card-icon {
+        font-size: 1.4rem !important;
+        width: 32px !important;
+    }
+    
+    .premium-card-option .card-title {
+        font-size: 0.75rem !important;
+    }
+    
+    .premium-card-option .card-sub {
+        font-size: 0.55rem !important;
+    }
+}
+
         
        
     </style>
@@ -1866,7 +1963,12 @@ flex-direction: column;
         const container = document.getElementById(containerId);
         if (!container) return;
 
+        const isMobile = window.innerWidth <= 640;
+        
         let html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;">`;
+            if (!isMobile) {
+        html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">`;
+    }    
         options.forEach((opt, idx) => {
             const letter = String.fromCharCode(65 + idx);
             const label = typeof opt === 'string' ? opt : (opt.label || opt.value || opt);
@@ -1919,7 +2021,13 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
     // Use icons instead of images for non-A questions
     const defaultIcons = ['🌟', '🚀', '💼', '🎯', '💡', '📚', '🌈'];
 
-    let html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">`;
+       // ✅ Mobile: 1 column, Desktop: 2 columns
+    let html = `<div style="display:grid; grid-template-columns:1fr; gap:0.6rem;">`;
+    
+    // ✅ For larger screens, use 2 columns
+    if (window.innerWidth > 640) {
+        html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">`;
+    }
     
     options.forEach((opt, index) => {
         const value = typeof opt === 'string' ? opt : opt.value;
@@ -1936,6 +2044,12 @@ function renderAgeStyleCards(containerId, options, selectedCallback) {
         // ✅ Check if this option has a face image
         const hasFaceImage = faceImages[value] !== undefined;
         const icon = defaultIcons[index % defaultIcons.length];
+
+        // ✅ Responsive sizing
+        const isMobile = window.innerWidth <= 640;
+        const imgSize = isMobile ? 40 : 56;
+        const fontSize = isMobile ? '0.75rem' : '0.85rem';
+        const descSize = isMobile ? '0.55rem' : '0.6rem';
         
         html += `
             <div class="age-card human-face-card" data-value="${value}" style="
