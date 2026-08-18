@@ -175,14 +175,16 @@
       align-items: center;
       gap: 60px;
       padding: 60px 0 80px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       min-height: 80vh;
     }
     .hero-left {
       flex: 1 1 48%;
+      min-width: 0;
     }
     .hero-right {
       flex: 1 1 48%;
+      min-width: 0;
     }
 
     .hero-badge {
@@ -198,53 +200,58 @@
       margin-bottom: 24px;
     }
 
-    .hero h1 {
+    /* Hero rotating lines - both lines change together */
+    .hero .rotating-container {
+      height: 180px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .hero .rotating-pair {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeSlide 10s infinite;
+    }
+
+    .hero .rotating-pair .line1 {
       font-size: 4.8rem;
       line-height: 1.05;
-      margin-bottom: 4px;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
     }
-    .hero h1 .highlight {
+    .hero .rotating-pair .line1 .highlight {
       font-style: italic;
       color: #b8943c;
     }
 
-    .hero .rotating-container {
-      min-height: 80px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      margin-bottom: 8px;
-    }
-
-    .hero .rotating-line {
-      font-size: 2.8rem;
+    .hero .rotating-pair .line2 {
+      font-size: 3rem;
       font-weight: 400;
       color: #3d3a34;
       font-family: 'Playfair Display', serif;
-      opacity: 0;
-      animation: fadeSlide 8s infinite;
-      position: absolute;
-      width: 100%;
-      left: 0;
+      margin-top: 4px;
+    }
+    .hero .rotating-pair .line2 .highlight {
+      font-style: italic;
+      color: #b8943c;
     }
 
-    .hero .rotating-wrapper {
-      position: relative;
-      height: 80px;
-      overflow: hidden;
-      margin-bottom: 8px;
-    }
-
-    .hero .rotating-line:nth-child(1) { animation-delay: 0s; }
-    .hero .rotating-line:nth-child(2) { animation-delay: 2s; }
-    .hero .rotating-line:nth-child(3) { animation-delay: 4s; }
-    .hero .rotating-line:nth-child(4) { animation-delay: 6s; }
+    .hero .rotating-pair:nth-child(1) { animation-delay: 0s; }
+    .hero .rotating-pair:nth-child(2) { animation-delay: 2.5s; }
+    .hero .rotating-pair:nth-child(3) { animation-delay: 5s; }
+    .hero .rotating-pair:nth-child(4) { animation-delay: 7.5s; }
 
     @keyframes fadeSlide {
-      0% { opacity: 0; transform: translateY(20px); }
+      0% { opacity: 0; transform: translateY(30px); }
       5% { opacity: 1; transform: translateY(0); }
       20% { opacity: 1; transform: translateY(0); }
-      25% { opacity: 0; transform: translateY(-20px); }
+      25% { opacity: 0; transform: translateY(-30px); }
       100% { opacity: 0; }
     }
 
@@ -253,6 +260,7 @@
       font-weight: 500;
       color: #b8943c;
       margin-bottom: 12px;
+      margin-top: 8px;
     }
     .hero p {
       font-size: 1.1rem;
@@ -740,19 +748,22 @@
     @media (max-width: 992px) {
       .hero {
         flex-direction: column;
+        flex-wrap: wrap;
         min-height: auto;
+        gap: 40px;
       }
       .hero-left, .hero-right {
         flex: 1 1 100%;
+        width: 100%;
       }
-      .hero h1 {
+      .hero .rotating-pair .line1 {
         font-size: 3.6rem;
       }
-      .hero .rotating-line {
-        font-size: 2.2rem;
+      .hero .rotating-pair .line2 {
+        font-size: 2.4rem;
       }
-      .hero .rotating-wrapper {
-        height: 65px;
+      .hero .rotating-container {
+        height: 150px;
       }
       .heading-xl {
         font-size: 3rem;
@@ -791,14 +802,14 @@
         flex-wrap: wrap;
         justify-content: center;
       }
-      .hero h1 {
-        font-size: 2.8rem;
+      .hero .rotating-pair .line1 {
+        font-size: 2.6rem;
       }
-      .hero .rotating-line {
+      .hero .rotating-pair .line2 {
         font-size: 1.8rem;
       }
-      .hero .rotating-wrapper {
-        height: 55px;
+      .hero .rotating-container {
+        height: 120px;
       }
       .hero-badge {
         font-size: 0.75rem;
@@ -845,14 +856,33 @@
 <section class="container hero">
   <div class="hero-left">
     <div class="hero-badge">Uncover what your words leave unspoken</div>
-    <h1 class="heading-serif">What You <span class="highlight">Mean</span></h1>
     
+    <!-- Rotating pairs - both lines change together -->
     <div class="rotating-container">
-      <div class="rotating-wrapper">
-        <div class="rotating-line">What They <span class="highlight">Understand</span></div>
-        <div class="rotating-line">How You're <span class="highlight">Experienced</span></div>
-        <div class="rotating-line">What They <span class="highlight">Remember</span></div>
-        <div class="rotating-line">Your <span class="highlight">Impact</span></div>
+      <!-- Pair 1 -->
+      <div class="rotating-pair">
+        <div class="line1 heading-serif">What You <span class="highlight">Mean</span></div>
+        <div class="line2">What They <span class="highlight">Hear</span></div>
+      </div>
+      <!-- Pair 2 -->
+      <div class="rotating-pair">
+        <div class="line1 heading-serif">What You <span class="highlight">Know</span></div>
+        <div class="line2">What They <span class="highlight">Understand</span></div>
+      </div>
+      <!-- Pair 3 -->
+      <div class="rotating-pair">
+        <div class="line1 heading-serif">Who You <span class="highlight">Are</span></div>
+        <div class="line2">How You're <span class="highlight">Experienced</span></div>
+      </div>
+      <!-- Pair 4 -->
+      <div class="rotating-pair">
+        <div class="line1 heading-serif">What You <span class="highlight">Say</span></div>
+        <div class="line2">What They <span class="highlight">Remember</span></div>
+      </div>
+      <!-- Pair 5 -->
+      <div class="rotating-pair">
+        <div class="line1 heading-serif">Your <span class="highlight">Potential</span></div>
+        <div class="line2">Your <span class="highlight">Impact</span></div>
       </div>
     </div>
 
