@@ -3121,11 +3121,21 @@ function populateReport(report) {
     document.getElementById('step7Back').addEventListener('click', () => showStep('step6'));
     document.getElementById('step8Back').addEventListener('click', () => showStep('step7'));
 
-    // ============================================================
-    // RAZORPAY PAYMENT HANDLER
-    // ============================================================
-    function initiateRazorpayPayment(amount = 199, currency = 'INR', orderId = null) {
-        const options = {
+// ============================================================
+// RAZORPAY PAYMENT HANDLER - UPDATED
+// ============================================================
+function initiateRazorpayPayment(amount = 199, currency = 'INR', orderId = null) {
+    // Get user details from the form
+    const userName = document.getElementById('fullName')?.value || 'User';
+    const userEmail = document.getElementById('email')?.value || '';
+    const userPhone = document.getElementById('phone')?.value || '';
+    
+    // Description based on amount
+    const description = amount === 499 
+        ? 'Unlock Full Communication Profile' 
+        : 'Unlock Your Complete Communication Profile';
+             
+            const options = {
             "key": "rzp_live_TN9VVH5DwiHx0L",
             "amount": amount * 100,
             "currency": currency,
@@ -3161,7 +3171,7 @@ function populateReport(report) {
 
         rzp.on('payment.success', function(response) {
             console.log('Payment successful:', response);
-            alert('✨ Payment successful! Your report is now unlocked.');
+            alert('✨ Payment successful! You unlocked your full Persona Journey.');
         });
     }
 // ============================================================
