@@ -2795,8 +2795,8 @@ flex-direction: column;
         }
     }
 
-    // ============================================================
-// POPULATE REPORT - CORRECTED
+// ============================================================
+// POPULATE REPORT - WITH DYNAMIC FIELDS FROM DATABASE
 // ============================================================
 function populateReport(report) {
     console.log('📝 Populating report with:', report);
@@ -2870,77 +2870,143 @@ function populateReport(report) {
     setText('dnaSummary', 'Your Communication DNA goes deeper than your Persona. Complete your full assessment to reveal your scores across the 5 dimensions that shape how you communicate.');
     
     // ============================================================
-    // SIGNATURE STRENGTH & BLIND SPOT
+    // SIGNATURE STRENGTH - WITH DYNAMIC DESCRIPTION
     // ============================================================
     setText('reportStrength', report.natural_advantage || 'Loading...');
-    setText('reportStrengthDesc', report.natural_advantage ? 'Your natural advantage is ' + report.natural_advantage + '.' : 'Loading...');
+    setText('reportStrengthDesc', report.signature_strength_description || 'Loading...');
+    
+    // ============================================================
+    // BLIND SPOT
+    // ============================================================
     setText('reportBlindSpot', report.blind_spot || 'Loading...');
     setText('reportBlindSpotDesc', report.blind_spot_description || 'Loading...');
     
     // ============================================================
-    // SHARE CARD - CLEAN VERSION (NO DNA)
+    // GROWTH OPPORTUNITIES - NEW DYNAMIC FIELD
     // ============================================================
+    const growthContainer = document.getElementById('growthOpportunitiesContainer');
+    if (growthContainer) {
+        const opportunities = [
+            report.growth_opportunity_1,
+            report.growth_opportunity_2,
+            report.growth_opportunity_3
+        ].filter(Boolean);
+        
+        if (opportunities.length > 0) {
+            growthContainer.innerHTML = opportunities.map(opp => `
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0; border-bottom: 1px solid #f0f4ff;">
+                    <span style="color: #d97706; font-weight: 700;">✓</span>
+                    <span style="font-size: 0.8rem; color: #1a3a55;">${opp}</span>
+                </div>
+            `).join('');
+        } else {
+            growthContainer.innerHTML = `<p style="font-size: 0.8rem; color: #6a8aaa;">Complete your full assessment to see personalized growth opportunities.</p>`;
+        }
+    }
+    
+    // ============================================================
+    // COMMUNICATION IMPACT - DYNAMIC
+    // ============================================================
+    const impactContainer = document.getElementById('impactContainer');
+    if (impactContainer && report.communication_impact) {
+        const impacts = report.communication_impact;
+        // Handle both string and object formats
+        const impactData = typeof impacts === 'string' ? JSON.parse(impacts) : impacts;
+        
+        impactContainer.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr; gap: 0.5rem;">
+                <div style="background: #f8fafc; border-radius: 0.6rem; padding: 0.6rem 0.8rem; border-left: 3px solid #2563eb;">
+                    <h4 style="font-size: 0.6rem; color: #2563eb; text-transform: uppercase; font-weight: 600;">Meetings</h4>
+                    <p style="font-size: 0.65rem; color: #4a6a8a; line-height: 1.3;">${impactData.Meetings || 'How quickly people recognize your point'}</p>
+                </div>
+                <div style="background: #f8fafc; border-radius: 0.6rem; padding: 0.6rem 0.8rem; border-left: 3px solid #7c3aed;">
+                    <h4 style="font-size: 0.6rem; color: #7c3aed; text-transform: uppercase; font-weight: 600;">Leadership</h4>
+                    <p style="font-size: 0.65rem; color: #4a6a8a; line-height: 1.3;">${impactData.Leadership || 'How decisively your ideas are perceived'}</p>
+                </div>
+                <div style="background: #f8fafc; border-radius: 0.6rem; padding: 0.6rem 0.8rem; border-left: 3px solid #059669;">
+                    <h4 style="font-size: 0.6rem; color: #059669; text-transform: uppercase; font-weight: 600;">Interviews</h4>
+                    <p style="font-size: 0.65rem; color: #4a6a8a; line-height: 1.3;">${impactData.Interviews || 'How clearly your achievements come through'}</p>
+                </div>
+                <div style="background: #f8fafc; border-radius: 0.6rem; padding: 0.6rem 0.8rem; border-left: 3px solid #d97706;">
+                    <h4 style="font-size: 0.6rem; color: #d97706; text-transform: uppercase; font-weight: 600;">Presentations</h4>
+                    <p style="font-size: 0.65rem; color: #4a6a8a; line-height: 1.3;">${impactData.Presentations || 'How well people retain your message'}</p>
+                </div>
+                <div style="background: #f8fafc; border-radius: 0.6rem; padding: 0.6rem 0.8rem; border-left: 3px solid #dc2626;">
+                    <h4 style="font-size: 0.6rem; color: #dc2626; text-transform: uppercase; font-weight: 600;">Influence</h4>
+                    <p style="font-size: 0.65rem; color: #4a6a8a; line-height: 1.3;">${impactData.Influence || 'How easily people move from understanding to action'}</p>
+                </div>
+                <div style="background: #f8fafc; border-radius: 0.6rem; padding: 0.6rem 0.8rem; border-left: 3px solid #6a8aaa;">
+                    <h4 style="font-size: 0.6rem; color: #6a8aaa; text-transform: uppercase; font-weight: 600;">Overall Impact</h4>
+                    <p style="font-size: 0.65rem; color: #4a6a8a; line-height: 1.3;">${impactData.Overall || 'The quality of your thinking vs. communication experience'}</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    // ============================================================
+    // UNSPOKEN QUESTIONS - DYNAMIC
+    // ============================================================
+    const questionsContainer = document.getElementById('unspokenQuestionsContainer');
+    if (questionsContainer && report.unspoken_questions) {
+        const questions = typeof report.unspoken_questions === 'string' 
+            ? JSON.parse(report.unspoken_questions) 
+            : report.unspoken_questions;
+        
+        questionsContainer.innerHTML = questions.map(q => `
+            <div style="background: #f8fafc; border-radius: 0.5rem; padding: 0.5rem 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span style="color: #d97706; font-size: 0.8rem;">❓</span>
+                <span style="font-size: 0.7rem; color: #1a3a55;">${q}</span>
+            </div>
+        `).join('');
+    }
+    
+    // ============================================================
+    // SHARE CARD - DYNAMIC
+    // ============================================================
+    // Persona Name
     setText('sharePersonaName', report.persona_name || 'The Articulator');
     
+    // User Name
     const userName = report.user_name || 'Professional';
     setText('shareUserFullName', userName);
     setText('shareUserName', '— ' + userName);
     
+    // ✅ DYNAMIC Tagline
+    setText('shareTagline', report.share_card_tagline || '"Says less. Lands more. Moves rooms with timing, not volume."');
+    
+    // ✅ DYNAMIC Traits (3 circular traits)
+    const traitsContainer = document.getElementById('shareTraitsContainer');
+    if (traitsContainer) {
+        const traits = [
+            report.share_card_trait_1,
+            report.share_card_trait_2,
+            report.share_card_trait_3
+        ].filter(Boolean);
+        
+        if (traits.length > 0) {
+            traitsContainer.innerHTML = traits.map(trait => `
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 56px; height: 56px; border-radius: 50%; border: 1.5px solid rgba(217,119,6,0.2); background: rgba(217,119,6,0.03); display: flex; align-items: center; justify-content: center; text-align: center; padding: 0.2rem;">
+                        <span style="font-size: 0.45rem; color: rgba(255,255,255,0.3); text-transform: uppercase; line-height: 1.2; font-weight: 500;">${trait}</span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            traitsContainer.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 56px; height: 56px; border-radius: 50%; border: 1.5px solid rgba(217,119,6,0.2); background: rgba(217,119,6,0.03); display: flex; align-items: center; justify-content: center; text-align: center; padding: 0.2rem;">
+                        <span style="font-size: 0.45rem; color: rgba(255,255,255,0.3); text-transform: uppercase; line-height: 1.2; font-weight: 500;">Strategic<br>Pauses</span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    // ✅ DYNAMIC Persona Summary
+    setText('sharePersonaSummary', report.persona_summary || 'A rare communication persona.');
+    
     console.log('✅ Report populated successfully');
 }
-
-    // ============================================================
-    // SHARE FUNCTIONS
-    // ============================================================
-document.getElementById('shareWhatsApp')?.addEventListener('click', () => {
-    const userName = window.reportData?.user_name || 'Someone';
-    const personaName = window.reportData?.persona_name || 'The Articulator';
-    
-    // ✅ Premium share message format
-    const text = `🧠 I COMMUNICATE AS  
-${personaName}
-
-Says less. Lands more. Moves rooms with timing, not volume.
-
-— ${userName}
-
-A rare communication persona.
-
-Discover your communication persona @ theunspoken.co.in
-
-✨ The Unspoken - Uncover What Your Words Leave Unspoken`;
-
-    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
-});
-
-document.getElementById('shareInstagram')?.addEventListener('click', () => {
-    const userName = window.reportData?.user_name || 'Someone';
-    const personaName = window.reportData?.persona_name || 'The Articulator';
-    
-    // ✅ Premium Instagram caption
-    const text = `🧠 I COMMUNICATE AS ${personaName}
-
-Says less. Lands more. Moves rooms with timing, not volume.
-
-— ${userName}
-
-A rare communication persona.
-
-Discover yours at theunspoken.co.in
-
-#TheUnspoken #CommunicationPersona #Growth #CommunicationSkills #SelfDiscovery`;
-
-    navigator.clipboard.writeText(text).then(() => {
-        alert('📋 Text copied! Paste it in your Instagram post or story.');
-    }).catch(() => {
-        prompt('Copy this text for Instagram:', text);
-    });
-});
-
-    document.getElementById('downloadCard')?.addEventListener('click', () => {
-        alert('⬇️ Card download will be available soon!');
-    });
 
     // ============================================================
     // PAY & ENROLL BUTTON
