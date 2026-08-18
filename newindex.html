@@ -1432,6 +1432,41 @@ flex-direction: column;
                 <p style="font-size: 0.7rem; color: #4a6a8a; text-align: center; margin-top: 0.3rem; line-height: 1.5; padding: 0 0.5rem;">The difference between your intention and another person's experience is where communication gets interesting.</p>
             </div>
 
+<!-- ============================================================ -->
+<!-- VOICE ANALYSIS - AI RESULTS -->
+<!-- ============================================================ -->
+<div style="padding: 1rem 0; border-bottom: 2px solid #f0f4ff;">
+    <h3 style="font-size: 0.7rem; color: #6a8aaa; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; margin-bottom: 0.6rem;">🎙️ Voice Analysis</h3>
+    <p style="font-size: 0.75rem; color: #4a6a8a; margin-bottom: 0.6rem; line-height: 1.5;">
+        AI analysis of your voice response:
+    </p>
+    
+    <!-- Persona Match -->
+    <div id="voicePersonaContainer" style="background: #f8fafc; border-radius: 0.6rem; padding: 0.8rem; border: 1px solid #eef2f6; margin-bottom: 0.8rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div>
+                <span style="font-size: 0.5rem; color: #6a8aaa; text-transform: uppercase; font-weight: 600;">Matched Persona</span>
+                <p id="voicePersonaName" style="font-size: 1.2rem; font-weight: 700; color: #1a3a55; margin: 0.1rem 0;">The Articulator</p>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-size: 0.5rem; color: #6a8aaa; text-transform: uppercase; font-weight: 600;">Confidence</span>
+                <p id="voiceConfidence" style="font-size: 1rem; font-weight: 700; color: #d97706; margin: 0.1rem 0;">85%</p>
+            </div>
+        </div>
+        <div style="font-size: 0.6rem; color: #94a3b8; margin-top: 0.3rem; border-top: 1px solid #eef2f6; padding-top: 0.3rem;">
+            Source: <span id="personaSource">AI Voice Analysis</span>
+        </div>
+    </div>
+    
+    <!-- Comments -->
+    <div id="voiceCommentsContainer" style="background: #f0f7ff; border-radius: 0.6rem; padding: 0.8rem; border: 1px solid #dbeafe;">
+        <h4 style="font-size: 0.6rem; color: #2563eb; text-transform: uppercase; font-weight: 600; margin-bottom: 0.3rem;">💬 AI Comments</h4>
+        <div id="voiceCommentsList">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+</div>
+           
             <!-- Growth Opportunities -->
 <div id="growthOpportunitiesContainer">
     <!-- Dynamically populated -->
@@ -2790,32 +2825,40 @@ flex-direction: column;
     // ============================================================
     // GENERATE FREE REPORT
     // ============================================================
-    async function generateFreeReport() {
-        try {
-            console.log('📝 Generating free report...');
+async function generateFreeReport() {
+    try {
+        console.log('📝 Generating free report...');
+        
+        const response = await fetch(`${API_BASE_URL}/report/generate-free`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: sessionId })
+        });
+        
+        const data = await response.json();
+        console.log('📊 Report data:', data);
+        
+        if (data.success) {
+            window.reportData = data.report;
+            window.reportId = data.report.report_id;
             
-            const response = await fetch(`${API_BASE_URL}/report/generate-free`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ session_id: sessionId })
-            });
+            // Populate main report
+            populateReport(data.report);
             
-            const data = await response.json();
-            console.log('📊 Report data:', data);
-            
-            if (data.success) {
-                window.reportData = data.report;
-                window.reportId = data.report.report_id;
-                populateReport(data.report);
-                showStep('step12');
-            } else {
-                alert('Failed to generate report. Please try again.');
+            // ✅ Populate voice analysis if available
+            if (data.report.voice_analysis) {
+                populateVoiceAnalysis(data.report.voice_analysis);
             }
-        } catch (error) {
-            console.error('❌ Error generating report:', error);
-            alert('Network error. Please check your connection.');
+            
+            showStep('step12');
+        } else {
+            alert('Failed to generate report. Please try again.');
         }
+    } catch (error) {
+        console.error('❌ Error generating report:', error);
+        alert('Network error. Please check your connection.');
     }
+}
 
 // ============================================================
 // POPULATE REPORT - WITH DYNAMIC FIELDS FROM DATABASE
@@ -3119,7 +3162,55 @@ function populateReport(report) {
             alert('✨ Payment successful! Your report is now unlocked.');
         });
     }
-
+// ============================================================
+// POPULATE VOICE ANALYSIS
+// ============================================================
+function populateVoiceAnalysis(voiceAnalysis) {
+    if (!voiceAnalysis) {
+        console.warn('No voice analysis data available');
+        return;
+    }
+    
+    // Persona Name
+    const personaNameEl = document.getElementById('voicePersonaName');
+    if (personaNameEl) {
+        personaNameEl.textContent = voiceAnalysis.persona_name || 'The Articulator';
+    }
+    
+    // Confidence
+    const confidenceEl = document.getElementById('voiceConfidence');
+    if (confidenceEl) {
+        confidenceEl.textContent = (voiceAnalysis.confidence || 70) + '%';
+    }
+    
+    // Source
+    const sourceEl = document.getElementById('personaSource');
+    if (sourceEl) {
+        sourceEl.textContent = 'AI Voice Analysis';
+    }
+    
+    // Comments
+    const commentsList = document.getElementById('voiceCommentsList');
+    if (commentsList) {
+        const comments = voiceAnalysis.comments || [];
+        
+        if (comments.length > 0) {
+            commentsList.innerHTML = comments.map(comment => `
+                <div style="display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #f0f4ff;">
+                    <span style="color: #2563eb; font-weight: 700; font-size: 0.8rem;">•</span>
+                    <span style="font-size: 0.8rem; color: #1a3a55; line-height: 1.4;">${comment}</span>
+                </div>
+            `).join('');
+        } else {
+            commentsList.innerHTML = `
+                <div style="display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.3rem 0;">
+                    <span style="color: #2563eb; font-weight: 700; font-size: 0.8rem;">•</span>
+                    <span style="font-size: 0.8rem; color: #1a3a55; line-height: 1.4;">Your voice analysis will appear here after you complete your assessment.</span>
+                </div>
+            `;
+        }
+    }
+}
     // ============================================================
     // START
     // ============================================================
