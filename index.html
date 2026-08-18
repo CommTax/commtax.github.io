@@ -1922,6 +1922,8 @@ flex-direction: column;
             'other': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Other.jpg',
             'undecided': 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Other.jpg'
         };
+           // Use icons instead of images for non-A questions
+    const defaultIcons = ['🌟', '🚀', '💼', '🎯', '💡', '📚', '🌈'];
 
         let html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">`;
         
@@ -1936,9 +1938,9 @@ flex-direction: column;
                 mainText = match[1].trim();
                 description = match[2].trim();
             }
-            
-            const faceUrl = faceImages[value] || '';
-            const finalImageUrl = faceUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Crect width='56' height='56' rx='28' fill='%23e2e8f0'/%3E%3Ctext x='28' y='36' font-family='Inter, sans-serif' font-size='24' font-weight='600' fill='%2394a3b8' text-anchor='middle'%3E${mainText.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
+                    // ✅ Check if this is Question A (has face images) or other questions
+        const hasFaceImage = faceImages[value] !== undefined;
+        const icon = defaultIcons[index % defaultIcons.length];
             
             html += `
                 <div class="age-card human-face-card" data-value="${value}" style="
@@ -2517,12 +2519,12 @@ flex-direction: column;
             const q = data.question;
             document.getElementById('questionBTitle').textContent = q.question_text || 'What do you want to achieve?';
             document.getElementById('questionBSubhead').textContent = 'Choose what matters most to you right now.';
-            renderMCQOptions('questionBContainer', q.options || [], (value) => {
+            renderAgeStyleCards('questionBContainer', q.options || [], (value) => {
                 document.getElementById('step3Next').dataset.selected = value;
             });
         } else {
             document.getElementById('questionBTitle').textContent = 'What do you want to achieve?';
-            renderMCQOptions('questionBContainer', [
+            renderAgeStyleCards('questionBContainer', [
                 { label: '🚀 Advance career', value: 'career' },
                 { label: '💪 Feel more confident', value: 'confident' },
                 { label: '✨ Develop a stronger presence', value: 'presence' },
@@ -2600,7 +2602,7 @@ flex-direction: column;
         document.getElementById('step4Next').dataset.questionCode = q.question_code;
         document.getElementById('step4Next').dataset.selected = '';
         
-        renderMCQOptions('mcq1Container', q.options || [], (value) => {
+        renderAgeStyleCards('mcq1Container', q.options || [], (value) => {
             document.getElementById('step4Next').dataset.selected = value;
         });
     }
@@ -2716,7 +2718,7 @@ flex-direction: column;
         document.getElementById('step6Next').dataset.questionCode = q.question_code;
         document.getElementById('step6Next').dataset.selected = '';
         
-        renderMCQOptions('mcq2Container', q.options || [], (value) => {
+        renderAgeStyleCards('mcq2Container', q.options || [], (value) => {
             document.getElementById('step6Next').dataset.selected = value;
         });
     }
