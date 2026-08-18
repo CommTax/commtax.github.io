@@ -266,7 +266,7 @@
     .video-poster {
       position: absolute;
       inset: 0;
-      background: #2d2a24;
+      background: linear-gradient(135deg, #2d2a24 0%, #1a1917 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -274,11 +274,12 @@
       color: #f0ebe4;
       text-align: center;
       padding: 20px;
+      z-index: 2;
     }
     .video-poster .play-icon {
       width: 72px;
       height: 72px;
-      background: rgba(184, 148, 60, 0.85);
+      background: rgba(184, 148, 60, 0.9);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -286,15 +287,16 @@
       font-size: 2.2rem;
       margin-bottom: 16px;
       transition: transform 0.2s;
+      color: #1a1917;
     }
     .video-poster .play-icon:hover {
-      transform: scale(1.05);
+      transform: scale(1.08);
     }
     .video-poster p {
       font-size: 1rem;
       font-weight: 400;
-      max-width: 240px;
-      opacity: 0.8;
+      max-width: 280px;
+      opacity: 0.9;
     }
     .video-overlay-text {
       position: absolute;
@@ -306,9 +308,10 @@
       font-weight: 500;
       font-size: 0.9rem;
       letter-spacing: 0.5px;
-      background: linear-gradient(transparent, rgba(0,0,0,0.5));
+      background: linear-gradient(transparent, rgba(0,0,0,0.6));
       padding: 30px 20px 16px;
       pointer-events: none;
+      z-index: 1;
     }
 
     /* ----- TRUST STRIP ----- */
@@ -807,13 +810,14 @@
   <div class="hero-right">
     <div class="video-card">
       <div class="video-wrapper" id="heroVideoWrapper">
-        <video id="heroVideo" poster="" muted playsinline>
-          <source src="" type="video/mp4" />
-          Your browser does not support the video tag.
+        <!-- Video element - no src to avoid 404 -->
+        <video id="heroVideo" muted playsinline poster="">
+          <!-- No src to prevent 404 -->
         </video>
         <div class="video-poster" id="videoPoster">
           <div class="play-icon" id="playIcon">▶</div>
           <p>See what the world experiences when you communicate.</p>
+          <p style="font-size:0.8rem; opacity:0.6; margin-top:8px;">(Demo video placeholder)</p>
         </div>
         <div class="video-overlay-text">See what the world experiences when you communicate.</div>
       </div>
@@ -1128,39 +1132,5 @@
   </div>
 </footer>
 
-<!-- ===== VIDEO SCRIPT ===== -->
-<script>
-  (function() {
-    const wrapper = document.getElementById('heroVideoWrapper');
-    const video = document.getElementById('heroVideo');
-    const poster = document.getElementById('videoPoster');
-    const playIcon = document.getElementById('playIcon');
-
-    // Configuration: set your video URL here (leave empty to show poster)
-    const HERO_VIDEO_URL = ''; // e.g. 'https://example.com/unspoken-demo.mp4'
-
-    if (HERO_VIDEO_URL) {
-      video.src = HERO_VIDEO_URL;
-      video.load();
-      // On click, play/pause
-      wrapper.addEventListener('click', function(e) {
-        if (video.paused) {
-          video.play();
-          poster.style.display = 'none';
-        } else {
-          video.pause();
-          poster.style.display = 'flex';
-        }
-      });
-      video.addEventListener('ended', function() {
-        poster.style.display = 'flex';
-      });
-    } else {
-      // No video: poster remains, but we show a static state
-      playIcon.textContent = '▶';
-      poster.querySelector('p').textContent = 'Preview video coming soon.';
-    }
-  })();
-</script>
 </body>
 </html>
