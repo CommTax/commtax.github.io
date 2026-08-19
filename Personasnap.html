@@ -663,6 +663,80 @@
         }
 
         /* ============================================================ */
+        /* CATEGORY CARDS WITH IMAGES */
+        /* ============================================================ */
+        .category-card-with-image {
+            padding: 0.8rem 1rem;
+            border-radius: 1.2rem;
+            border: 2px solid #e2edf7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            background: #f8fafc;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        .category-card-with-image:hover {
+            border-color: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .category-card-with-image.active {
+            border-color: #d97706;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            box-shadow: 0 4px 20px rgba(217,119,6,0.15);
+        }
+        .category-card-with-image.active::after {
+            content: "✓";
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #d97706;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .category-card-with-image .card-image {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.8);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .category-card-with-image .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .category-card-with-image .card-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .category-card-with-image .card-content .title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #0a2a3f;
+            line-height: 1.3;
+        }
+        .category-card-with-image .card-content .description {
+            font-size: 0.6rem;
+            color: #6a8aaa;
+            font-weight: 400;
+            margin-top: 2px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ============================================================ */
         /* RESPONSIVE */
         /* ============================================================ */
         @media (min-width: 1024px) {
@@ -682,6 +756,7 @@
             .archetype-name { font-size: 3.5rem; }
             .progress-screen .graph-svg { height: 150px; }
             .charisma-screen .charisma-visual { min-height: 200px; }
+            .category-card-with-image { min-height: 120px; padding: 1rem 1.2rem; }
         }
 
         @media (max-width: 640px) {
@@ -705,6 +780,10 @@
             .progress-screen .stat-item:last-child { grid-column: span 2; }
             .charisma-screen .charisma-title { font-size: 1.2rem; }
             .charisma-screen .charisma-visual { min-height: 140px; padding: 1rem; }
+            .category-card-with-image { min-height: 80px; padding: 0.6rem 0.8rem; gap: 10px; }
+            .category-card-with-image .card-image { width: 40px; height: 40px; }
+            .category-card-with-image .card-content .title { font-size: 0.75rem; }
+            .category-card-with-image .card-content .description { font-size: 0.55rem; }
         }
 
         @media (max-width: 640px) {
@@ -714,7 +793,6 @@
             .step-card { padding: 1rem !important; border-radius: 1.2rem !important; }
             h2 { font-size: 1.1rem !important; }
             .subhead { font-size: 0.75rem !important; margin: 0.1rem 0 0.4rem !important; }
-            .age-card.human-face-card { min-height: 65px !important; padding: 0.6rem 0.8rem !important; gap: 10px !important; }
             .progress-discreet .step-label { font-size: 0.55rem !important; }
         }
     </style>
@@ -750,14 +828,17 @@
         </div>
     </div>
 
-    <!-- ===== STEP 1: QUESTION A ===== -->
+    <!-- ===== STEP 1: QUESTION A (Category with Images) ===== -->
     <div class="step-card" id="step1">
         <div class="flex-between">
-            <h2 id="questionATitle">Loading...</h2>
+            <h2 id="questionATitle">Who are you becoming?</h2>
             <span style="font-size: 0.65rem; color: #94a3b8; font-weight: 500;">01 / 09</span>
         </div>
-        <p class="subhead" id="questionASubhead">Please wait while we load your first question.</p>
+        <p class="subhead" id="questionASubhead">Choose the chapter that feels most like you.</p>
+        
+        <!-- Category cards with images -->
         <div id="questionAContainer" style="margin: 0.6rem 0;"></div>
+        
         <p class="premium-micro" id="questionAMicro">There are no right answers. Choose the chapter that feels most like you.</p>
         <div class="progress-discreet">
             <span class="step-label">01 / 09</span>
@@ -772,10 +853,10 @@
     <!-- ===== STEP 2: QUESTION B ===== -->
     <div class="step-card hidden" id="step2">
         <div class="flex-between">
-            <h2 id="questionBTitle">Loading...</h2>
+            <h2 id="questionBTitle">What do you want to achieve?</h2>
             <span style="font-size: 0.65rem; color: #94a3b8; font-weight: 500;">02 / 09</span>
         </div>
-        <p class="subhead" id="questionBSubhead">Please wait while we load your next question.</p>
+        <p class="subhead" id="questionBSubhead">Choose what matters most to you right now.</p>
         <div id="questionBContainer" style="margin: 0.6rem 0;"></div>
         <p class="premium-micro" id="questionBMicro">Choose what matters most to you right now.</p>
         <div class="progress-discreet">
@@ -1177,48 +1258,103 @@
     // ============================================================
     // QUESTIONS CONFIGURATION (Frontend-only)
     // ============================================================
-    const QUESTIONS = {
-        initial: {
-            question_text: 'Who are you becoming?',
-            options: [
-                { label: 'Building my career (Fresher / Early Career)', value: 'building' },
-                { label: 'Stepping up (Senior Professional: Growing into greater responsibility)', value: 'stepping-up' },
-                { label: 'Leading with influence (Manager / Director)', value: 'leading' },
-                { label: 'Preparing for what\'s next (Transition / Career Change)', value: 'nextmove' },
-                { label: 'Building my business (Entrepreneur / Founder: Turning ideas into influence.)', value: 'business' },
-                { label: 'Building skills (Student / Continuous Learner)', value: 'skills' },
-                { label: 'Others (Explore / Undecided)', value: 'other' }
-            ]
+    
+    // Category options with images (Removed Manager/Leader & Career Transition)
+    const categoryOptions = [
+        { 
+            label: 'Building my career', 
+            value: 'building',
+            description: 'Fresher / Early Career',
+            image: 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Fresher.png'
         },
-        common: {
-            question_text: 'What do you want to achieve?',
-            options: [
-                { label: '🚀 Advance career', value: 'career' },
-                { label: '💪 Feel more confident', value: 'confident' },
-                { label: '✨ Develop a stronger presence', value: 'presence' },
-                { label: '🗣️ Become more persuasive', value: 'persuasive' },
-                { label: '🧘 Overcome social anxiety', value: 'anxiety' },
-                { label: '🤝 Be understood by others', value: 'understood' }
-            ]
+        { 
+            label: 'Stepping up', 
+            value: 'stepping-up',
+            description: 'Senior Professional: Growing into greater responsibility',
+            image: 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Senior.png'
         },
-        mcq: [
-            { question_code: 'Q1', question_text: 'When your message didn\'t land, what happened?', options: ['They misunderstood my point', 'I couldn\'t find the right words', 'I gave too much information', 'They didn\'t seem convinced'] },
-            { question_code: 'Q2', question_text: 'How do you typically handle conflict?', options: ['I confront it directly', 'I try to avoid it', 'I seek compromise'] },
-            { question_code: 'Q3', question_text: 'What motivates you most at work?', options: ['Recognition and rewards', 'Making a difference', 'Learning and growth'] },
-            { question_code: 'Q4', question_text: 'How do you prefer to receive feedback?', options: ['Direct and honest', 'With empathy and care', 'Written and detailed'] },
-            { question_code: 'Q5', question_text: 'How do you handle stress?', options: ['I stay calm and focused', 'I get anxious', 'I get energized'] },
-            { question_code: 'Q6', question_text: 'What is your preferred learning style?', options: ['Reading and writing', 'Hands-on practice', 'Watching and listening'] },
-            { question_code: 'Q7', question_text: 'What is your biggest strength?', options: ['Problem solving', 'Communication', 'Leadership'] },
-            { question_code: 'Q8', question_text: 'How do you handle pressure?', options: ['I stay calm and focused', 'I get energized', 'I get stressed'] },
-            { question_code: 'Q9', question_text: 'What is your preferred work style?', options: ['Collaborative', 'Independent', 'Hybrid'] }
-        ]
-    };
+        { 
+            label: 'Building my business', 
+            value: 'business',
+            description: 'Entrepreneur / Founder: Turning ideas into influence',
+            image: 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Owner.png'
+        },
+        { 
+            label: 'Building skills', 
+            value: 'skills',
+            description: 'Student / Continuous Learner',
+            image: 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Student.png'
+        },
+        { 
+            label: 'Others', 
+            value: 'other',
+            description: 'Explore / Undecided',
+            image: 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Other.jpg'
+        }
+    ];
+
+    // Common question with 5 options
+    const commonOptions = [
+        { label: '🚀 Advance career', value: 'career' },
+        { label: '💪 Feel more confident', value: 'confident' },
+        { label: '✨ Develop a stronger presence', value: 'presence' },
+        { label: '🗣️ Become more persuasive', value: 'persuasive' },
+        { label: '🤝 Be understood by others', value: 'understood' }
+    ];
+
+    // MCQ Questions - Each with 4-5 options
+    const mcqQuestions = [
+        { 
+            question_code: 'Q1', 
+            question_text: 'When your message didn\'t land, what happened?', 
+            options: ['They misunderstood my point', 'I couldn\'t find the right words', 'I gave too much information', 'They didn\'t seem convinced'] 
+        },
+        { 
+            question_code: 'Q2', 
+            question_text: 'How do you typically handle conflict?', 
+            options: ['I confront it directly', 'I try to avoid it', 'I seek compromise', 'I listen and understand first'] 
+        },
+        { 
+            question_code: 'Q3', 
+            question_text: 'What motivates you most at work?', 
+            options: ['Recognition and rewards', 'Making a difference', 'Learning and growth', 'Building relationships', 'Achieving goals'] 
+        },
+        { 
+            question_code: 'Q4', 
+            question_text: 'How do you prefer to receive feedback?', 
+            options: ['Direct and honest', 'With empathy and care', 'Written and detailed', 'In a private setting'] 
+        },
+        { 
+            question_code: 'Q5', 
+            question_text: 'How do you handle stress?', 
+            options: ['I stay calm and focused', 'I get anxious', 'I get energized', 'I seek support from others'] 
+        },
+        { 
+            question_code: 'Q6', 
+            question_text: 'What is your preferred learning style?', 
+            options: ['Reading and writing', 'Hands-on practice', 'Watching and listening', 'Discussion and debate'] 
+        },
+        { 
+            question_code: 'Q7', 
+            question_text: 'What is your biggest strength?', 
+            options: ['Problem solving', 'Communication', 'Leadership', 'Empathy', 'Creativity'] 
+        },
+        { 
+            question_code: 'Q8', 
+            question_text: 'How do you handle pressure?', 
+            options: ['I stay calm and focused', 'I get energized', 'I get stressed', 'I work through it step by step'] 
+        },
+        { 
+            question_code: 'Q9', 
+            question_text: 'What is your preferred work style?', 
+            options: ['Collaborative', 'Independent', 'Hybrid', 'Team-oriented'] 
+        }
+    ];
 
     // ============================================================
     // PERSONA SCORING ENGINE (Frontend-only)
     // ============================================================
     function calculatePersona(responses, userName) {
-        // Initialize scores for each dimension
         const scores = {
             clarity: 0,
             structure: 0,
@@ -1228,20 +1364,18 @@
             confidence: 0
         };
 
-        // Map questions to dimensions and score them
         const questionMap = {
             'Q1': { dimension: 'clarity', values: { 'They misunderstood my point': 2, 'I couldn\'t find the right words': 1, 'I gave too much information': 1, 'They didn\'t seem convinced': 3 } },
-            'Q2': { dimension: 'structure', values: { 'I confront it directly': 3, 'I try to avoid it': 1, 'I seek compromise': 2 } },
-            'Q3': { dimension: 'influence', values: { 'Recognition and rewards': 2, 'Making a difference': 3, 'Learning and growth': 1 } },
-            'Q4': { dimension: 'understanding', values: { 'Direct and honest': 3, 'With empathy and care': 2, 'Written and detailed': 1 } },
-            'Q5': { dimension: 'confidence', values: { 'I stay calm and focused': 3, 'I get anxious': 1, 'I get energized': 2 } },
-            'Q6': { dimension: 'expression', values: { 'Reading and writing': 1, 'Hands-on practice': 3, 'Watching and listening': 2 } },
-            'Q7': { dimension: 'influence', values: { 'Problem solving': 2, 'Communication': 3, 'Leadership': 3 } },
-            'Q8': { dimension: 'confidence', values: { 'I stay calm and focused': 3, 'I get energized': 2, 'I get stressed': 1 } },
-            'Q9': { dimension: 'structure', values: { 'Collaborative': 2, 'Independent': 3, 'Hybrid': 2 } }
+            'Q2': { dimension: 'structure', values: { 'I confront it directly': 3, 'I try to avoid it': 1, 'I seek compromise': 2, 'I listen and understand first': 3 } },
+            'Q3': { dimension: 'influence', values: { 'Recognition and rewards': 2, 'Making a difference': 3, 'Learning and growth': 1, 'Building relationships': 2, 'Achieving goals': 3 } },
+            'Q4': { dimension: 'understanding', values: { 'Direct and honest': 3, 'With empathy and care': 2, 'Written and detailed': 1, 'In a private setting': 2 } },
+            'Q5': { dimension: 'confidence', values: { 'I stay calm and focused': 3, 'I get anxious': 1, 'I get energized': 2, 'I seek support from others': 2 } },
+            'Q6': { dimension: 'expression', values: { 'Reading and writing': 1, 'Hands-on practice': 3, 'Watching and listening': 2, 'Discussion and debate': 2 } },
+            'Q7': { dimension: 'influence', values: { 'Problem solving': 2, 'Communication': 3, 'Leadership': 3, 'Empathy': 2, 'Creativity': 2 } },
+            'Q8': { dimension: 'confidence', values: { 'I stay calm and focused': 3, 'I get energized': 2, 'I get stressed': 1, 'I work through it step by step': 3 } },
+            'Q9': { dimension: 'structure', values: { 'Collaborative': 2, 'Independent': 3, 'Hybrid': 2, 'Team-oriented': 2 } }
         };
 
-        // Process each response
         responses.forEach(r => {
             const mapping = questionMap[r.question_code];
             if (mapping) {
@@ -1250,21 +1384,15 @@
             }
         });
 
-        // Normalize scores (0-100)
-        const maxPossible = 3; // Max score per question
-        const totalQuestions = Object.keys(questionMap).length;
-        const maxPerDimension = Math.ceil(totalQuestions / 5) * 3; // Approximate
-
+        const maxPerDimension = 15;
         Object.keys(scores).forEach(key => {
             scores[key] = Math.min(Math.round((scores[key] / maxPerDimension) * 100), 100);
         });
 
-        // Determine dominant dimensions
         const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
         const primary = sorted[0][0];
         const secondary = sorted[1][0];
 
-        // Map to persona
         const personaMap = {
             'clarity_structure': { name: 'The Articulator', desc: 'You speak with clarity and precision. Your ideas are well-organized and easy to follow.', strength: 'Clear communication', strengthDesc: 'You have a natural ability to structure your thoughts and express them clearly.', blindSpot: 'May come across as too formal', tagline: '"Clarity is your superpower. Structure is your signature."' },
             'clarity_expression': { name: 'The Translator', desc: 'You have a gift for making complex ideas simple and accessible to everyone.', strength: 'Simplification', strengthDesc: 'You can take complex concepts and break them down for any audience.', blindSpot: 'May oversimplify at times', tagline: '"You turn complexity into clarity."' },
@@ -1277,7 +1405,6 @@
         let personaKey = `${primary}_${secondary}`;
         let persona = personaMap[personaKey] || personaMap['default'];
 
-        // Special cases for Mumbler (low scores)
         const avgScore = Object.values(scores).reduce((a, b) => a + b, 0) / Object.values(scores).length;
         if (avgScore < 40) {
             persona = {
@@ -1290,14 +1417,13 @@
             };
         }
 
-        // Override with category-based refinement
         const category = responses.find(r => r.question_code === 'A')?.answer || '';
         const categoryRefinements = {
-            'fresher': ' As someone building their career, your communication skills are developing.',
-            'senior': ' As someone stepping into greater responsibility, your communication is evolving.',
-            'manager': ' As a leader, your communication sets the tone for your team.',
+            'building': ' As someone building their career, your communication skills are developing.',
+            'stepping-up': ' As someone stepping into greater responsibility, your communication is evolving.',
             'business': ' As an entrepreneur, your communication shapes your brand.',
-            'student': ' As a student, you\'re building communication skills for the future.'
+            'skills': ' As a student, you\'re building communication skills for the future.',
+            'other': ' You\'re exploring your communication style.'
         };
 
         const refinement = categoryRefinements[category] || '';
@@ -1323,7 +1449,7 @@
     let currentStep = 0;
     let userCategory = '';
     let mcqIndex = 0;
-    let mcqQuestions = QUESTIONS.mcq;
+    let mcq2Index = 0;
 
     // ============================================================
     // STEP MANAGEMENT
@@ -1346,13 +1472,85 @@
     }
 
     // ============================================================
-    // RENDER HELPERS
+    // RENDER CATEGORY CARDS WITH IMAGES
+    // ============================================================
+    function renderCategoryCards(containerId, options, selectedCallback) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        let html = `<div style="display:grid; grid-template-columns:1fr; gap:0.6rem;">`;
+        if (window.innerWidth > 640) {
+            html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">`;
+        }
+        
+        options.forEach((opt) => {
+            html += `
+                <div class="category-card-with-image" data-value="${opt.value}" style="
+                    padding:0.8rem 1rem; 
+                    border-radius:1.2rem; 
+                    border:2px solid #e2edf7; 
+                    cursor:pointer; 
+                    transition:all 0.3s ease; 
+                    text-align:left; 
+                    background: #f8fafc;
+                    min-height: 100px;
+                    display: flex;
+                    align-items: center;
+                    gap: 14px;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div class="card-image">
+                        <img src="${opt.image}" alt="${opt.label}" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\\'font-size:1.8rem;\\'>🌟</span>';">
+                    </div>
+                    <div class="card-content">
+                        <div class="title">${opt.label}</div>
+                        <div class="description">${opt.description}</div>
+                    </div>
+                    <div class="selection-check" style="
+                        position:absolute;
+                        right:12px;
+                        top:50%;
+                        transform:translateY(-50%);
+                        opacity:0;
+                        transition:all 0.3s ease;
+                        color:#d97706;
+                        font-size:1.2rem;
+                        font-weight:700;
+                    ">✓</div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+
+        container.querySelectorAll('.category-card-with-image').forEach(card => {
+            const checkmark = card.querySelector('.selection-check');
+            card.addEventListener('click', function() {
+                container.querySelectorAll('.category-card-with-image').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.borderColor = '#e2edf7';
+                    b.style.background = '#f8fafc';
+                    const check = b.querySelector('.selection-check');
+                    if (check) check.style.opacity = '0';
+                });
+                this.classList.add('active');
+                this.style.borderColor = '#d97706';
+                this.style.background = 'linear-gradient(135deg, #fef3c7, #fde68a)';
+                if (checkmark) checkmark.style.opacity = '1';
+                if (selectedCallback) selectedCallback(this.dataset.value);
+            });
+        });
+    }
+
+    // ============================================================
+    // RENDER AGE STYLE CARDS (for MCQ)
     // ============================================================
     function renderAgeStyleCards(containerId, options, selectedCallback) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        const defaultIcons = ['🌟', '🚀', '💼', '🎯', '💡', '📚', '🌈'];
+        const defaultIcons = ['🌟', '🚀', '💼', '🎯', '💡'];
 
         let html = `<div style="display:grid; grid-template-columns:1fr; gap:0.6rem;">`;
         if (window.innerWidth > 640) {
@@ -1360,8 +1558,8 @@
         }
         
         options.forEach((opt, index) => {
-            const value = typeof opt === 'string' ? opt : opt.value;
-            const label = typeof opt === 'string' ? opt : opt.label;
+            const value = typeof opt === 'string' ? opt : opt;
+            const label = typeof opt === 'string' ? opt : opt;
             const icon = defaultIcons[index % defaultIcons.length];
 
             html += `
@@ -1425,15 +1623,12 @@
                     b.classList.remove('active');
                     b.style.borderColor = '#e2edf7';
                     b.style.background = '#f8fafc';
-                    b.style.transform = 'translateY(0)';
                     const check = b.querySelector('.selection-check');
                     if (check) check.style.opacity = '0';
                 });
                 this.classList.add('active');
                 this.style.borderColor = '#d97706';
                 this.style.background = 'linear-gradient(135deg, #fef3c7, #fde68a)';
-                this.style.transform = 'translateY(-2px)';
-                this.style.boxShadow = '0 4px 20px rgba(217,119,6,0.15)';
                 if (checkmark) checkmark.style.opacity = '1';
                 if (selectedCallback) selectedCallback(this.dataset.value);
             });
@@ -1441,22 +1636,20 @@
     }
 
     // ============================================================
-    // INITIALIZE STEPS
+    // INITIALIZE ASSESSMENT
     // ============================================================
     function initAssessment() {
-        // Step 1: Question A
-        const qA = QUESTIONS.initial;
-        document.getElementById('questionATitle').textContent = qA.question_text;
+        // Step 1: Category with images
+        document.getElementById('questionATitle').textContent = 'Who are you becoming?';
         document.getElementById('questionASubhead').textContent = 'Choose the chapter that feels most like you.';
-        renderAgeStyleCards('questionAContainer', qA.options, (value) => {
+        renderCategoryCards('questionAContainer', categoryOptions, (value) => {
             document.getElementById('step1Next').dataset.selected = value;
         });
 
-        // Step 2: Question B
-        const qB = QUESTIONS.common;
-        document.getElementById('questionBTitle').textContent = qB.question_text;
+        // Step 2: Common question
+        document.getElementById('questionBTitle').textContent = 'What do you want to achieve?';
         document.getElementById('questionBSubhead').textContent = 'Choose what matters most to you right now.';
-        renderAgeStyleCards('questionBContainer', qB.options, (value) => {
+        renderAgeStyleCards('questionBContainer', commonOptions, (value) => {
             document.getElementById('step2Next').dataset.selected = value;
         });
 
@@ -1474,7 +1667,7 @@
     // ============================================================
     function loadMCQ1() {
         const startIdx = 0;
-        const endIdx = 4; // Q1-Q4
+        const endIdx = 4;
         const q = mcqQuestions.slice(startIdx, endIdx);
         if (mcqIndex < q.length) {
             const currentQ = q[mcqIndex];
@@ -1495,17 +1688,16 @@
     }
 
     function loadMCQ2() {
-        const startIdx = 6; // Q7
-        const endIdx = 9; // Q9
-        const q = mcqQuestions.slice(startIdx, endIdx);
-        const localIdx = 0;
-        if (localIdx < q.length) {
-            const currentQ = q[localIdx];
+        const startIdx = 6;
+        const q = mcqQuestions.slice(startIdx);
+        if (mcq2Index < q.length) {
+            const currentQ = q[mcq2Index];
             document.getElementById('mcq2Title').textContent = currentQ.question_text;
             document.getElementById('mcq2Subhead').textContent = 'Select the option that best describes you.';
-            document.getElementById('mcq2Counter').textContent = `07 / 09`;
-            document.getElementById('mcq2ProgressLabel').textContent = `07 / 09`;
-            document.getElementById('mcq2ProgressFill').style.width = '70%';
+            document.getElementById('mcq2Counter').textContent = `${String(7 + mcq2Index).padStart(2, '0')} / 09`;
+            document.getElementById('mcq2ProgressLabel').textContent = `${String(7 + mcq2Index).padStart(2, '0')} / 09`;
+            const progress = 70 + ((mcq2Index / q.length) * 18);
+            document.getElementById('mcq2ProgressFill').style.width = `${Math.min(progress, 88)}%`;
             
             document.getElementById('step5Next').dataset.questionCode = currentQ.question_code;
             document.getElementById('step5Next').dataset.selected = '';
@@ -1553,19 +1745,18 @@
         if (mcqIndex < 4) {
             loadMCQ1();
         } else {
+            // Q5-Q6 are skipped in this simplified version
             showStep('step4');
         }
     });
 
     document.getElementById('step4Next').addEventListener('click', () => {
         // Q5-Q6 are not stored in this simplified version
-        // They are part of the MCQ list but we're skipping them for simplicity
-        // In production, you'd add Q5-Q6 here
         showStep('step5');
+        mcq2Index = 0;
         loadMCQ2();
     });
 
-    let mcq2Index = 0;
     document.getElementById('step5Next').addEventListener('click', (e) => {
         const selected = e.target.dataset.selected;
         const questionCode = e.target.dataset.questionCode;
@@ -1573,24 +1764,7 @@
         storeResponse(questionCode, selected);
         mcq2Index++;
         if (mcq2Index < 3) {
-            // Load next Q7-Q9
-            const startIdx = 6 + mcq2Index;
-            if (startIdx < mcqQuestions.length) {
-                const currentQ = mcqQuestions[startIdx];
-                document.getElementById('mcq2Title').textContent = currentQ.question_text;
-                document.getElementById('mcq2Subhead').textContent = 'Select the option that best describes you.';
-                document.getElementById('mcq2Counter').textContent = `${String(7 + mcq2Index).padStart(2, '0')} / 09`;
-                document.getElementById('mcq2ProgressLabel').textContent = `${String(7 + mcq2Index).padStart(2, '0')} / 09`;
-                const progress = 70 + ((mcq2Index / 3) * 20);
-                document.getElementById('mcq2ProgressFill').style.width = `${Math.min(progress, 88)}%`;
-                
-                document.getElementById('step5Next').dataset.questionCode = currentQ.question_code;
-                document.getElementById('step5Next').dataset.selected = '';
-                
-                renderAgeStyleCards('mcq2Container', currentQ.options, (value) => {
-                    document.getElementById('step5Next').dataset.selected = value;
-                });
-            }
+            loadMCQ2();
         } else {
             showStep('step6');
         }
@@ -1609,13 +1783,9 @@
         if (!email) { alert('Please enter your email address.'); return; }
         if (!phone) { alert('Please enter your WhatsApp number.'); return; }
 
-        // Store user details
         const userDetails = { name, email, phone };
-
-        // Calculate persona using frontend engine
         const report = calculatePersona(userResponses, name);
 
-        // Display report
         populateReport(report, userDetails);
         showStep('step8');
     });
@@ -1637,7 +1807,6 @@
         document.getElementById('reportStrengthDesc').textContent = report.signature_strength_description;
         document.getElementById('reportBlindSpot').textContent = report.blind_spot;
 
-        // Store in localStorage for later use
         const fullData = {
             user: userDetails,
             responses: userResponses,
@@ -1645,8 +1814,6 @@
             timestamp: new Date().toISOString()
         };
         localStorage.setItem('unspoken_assessment', JSON.stringify(fullData));
-
-        // Also send to backend for lead capture
         sendToBackend(fullData);
     }
 
@@ -1671,7 +1838,6 @@
             console.log('✅ Lead data sent to backend:', response.status);
         } catch (error) {
             console.log('⚠️ Backend not available, data saved locally:', error);
-            // Data is already saved in localStorage
         }
     }
 
@@ -1691,24 +1857,7 @@
     document.getElementById('step5Back').addEventListener('click', () => {
         if (mcq2Index > 0) {
             mcq2Index--;
-            // Reload the previous question
-            const startIdx = 6 + mcq2Index;
-            if (startIdx < mcqQuestions.length) {
-                const currentQ = mcqQuestions[startIdx];
-                document.getElementById('mcq2Title').textContent = currentQ.question_text;
-                document.getElementById('mcq2Subhead').textContent = 'Select the option that best describes you.';
-                document.getElementById('mcq2Counter').textContent = `${String(7 + mcq2Index).padStart(2, '0')} / 09`;
-                document.getElementById('mcq2ProgressLabel').textContent = `${String(7 + mcq2Index).padStart(2, '0')} / 09`;
-                const progress = 70 + ((mcq2Index / 3) * 20);
-                document.getElementById('mcq2ProgressFill').style.width = `${Math.min(progress, 88)}%`;
-                
-                document.getElementById('step5Next').dataset.questionCode = currentQ.question_code;
-                document.getElementById('step5Next').dataset.selected = '';
-                
-                renderAgeStyleCards('mcq2Container', currentQ.options, (value) => {
-                    document.getElementById('step5Next').dataset.selected = value;
-                });
-            }
+            loadMCQ2();
         } else {
             showStep('step4');
         }
