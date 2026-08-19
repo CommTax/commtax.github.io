@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Paid Persona · The Unspoken</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..600&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            background: #f0f4ff;
+            color: #0a1e2e;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 100%;
+            background: #f0f4ff;
+            padding: 0 1.2rem 2rem;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        .logo-section {
+            padding: 1.2rem 0 0.4rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+        .logo-section .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #d97706;
+            letter-spacing: -0.5px;
+        }
+        .logo-section .logo img { height: 36px; width: auto; }
+        .logo-section .logo .gold { color: #d97706; }
+        .logo-section .tagline {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* ===== HIDDEN ===== */
+        .hidden { display: none !important; }
+
+        /* ===== BUTTONS ===== */
+        .btn-primary {
+            display: inline-block;
+            background: linear-gradient(145deg, #1e3f5a, #142f45);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(20,60,90,0.15);
+            width: 100%;
+            max-width: 280px;
+            letter-spacing: 0.2px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(20,60,90,0.25);
+        }
+
+        .btn-gold {
+            display: inline-block;
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px rgba(217,119,6,0.3);
+            width: 100%;
+            max-width: 280px;
+            letter-spacing: 0.2px;
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(217,119,6,0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #1e3f5a;
+            border: 2px solid #1e3f5a;
+            padding: 0.7rem 1.8rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-outline:hover {
+            background: #1e3f5a;
+            color: white;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: none;
+            color: #3a6a88;
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 0.3rem 0.6rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-weight: 500;
+        }
+        .btn-back:hover { color: #d97706; }
+
+        /* ===== STEP CARD ===== */
+        .step-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.5rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border: 1px solid #eaf1f8;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+            transition: 0.3s ease;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .step-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+
+        h1 { font-size: 1.8rem; font-weight: 800; color: #0a2a3f; line-height: 1.2; letter-spacing: -0.02em; }
+        h1 .gold { color: #d97706; }
+        h2 { font-weight: 600; font-size: 1.4rem; letter-spacing: -0.02em; color: #0a2a3f; line-height: 1.3; }
+        .subhead { color: #3a6a88; font-size: 0.9rem; margin: 0.2rem 0 0.6rem; }
+
+        .flex-between {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .flex-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 1rem; }
+        .mt-2 { margin-top: 1.5rem; }
+
+        /* ===== FORM ===== */
+        .detail-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
+        .detail-row input {
+            padding: 0.7rem 1.2rem;
+            border-radius: 60px;
+            border: 1.5px solid #dce8f3;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: 0.15s;
+            background: #fafcff;
+            width: 100%;
+        }
+        .detail-row input:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 4px rgba(217,119,6,0.1);
+        }
+
+        /* ===== SCREEN 1: SALES PAGE ===== */
+        .sales-hero {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .sales-hero .big-icon { font-size: 4rem; margin-bottom: 0.5rem; }
+        .sales-hero h1 { font-size: 2.2rem; }
+        .sales-hero .price-tag {
+            display: inline-block;
+            background: #fef3c7;
+            padding: 0.5rem 2rem;
+            border-radius: 60px;
+            border: 1px solid #fcd34d;
+            margin: 0.5rem 0;
+        }
+        .sales-hero .price-tag .amount { font-size: 2rem; font-weight: 800; color: #d97706; }
+        .sales-hero .price-tag .label { font-size: 0.8rem; color: #6a8aaa; }
+        .sales-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin: 1.2rem 0;
+            text-align: left;
+        }
+        .sales-features .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #1a3a55;
+            padding: 0.3rem 0;
+        }
+        .sales-features .feature .check { color: #059669; font-weight: 700; }
+
+        .report-preview {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1rem;
+            border: 1px dashed #dce8f3;
+            margin: 1rem 0;
+            text-align: left;
+        }
+        .report-preview .preview-title {
+            font-size: 0.6rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .report-preview .preview-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #eef2f6;
+            font-size: 0.8rem;
+        }
+
+        /* ===== SCREEN 4: SUCCESS ===== */
+        .success-screen { text-align: center; padding: 1rem 0; }
+        .success-screen .icon { font-size: 4rem; margin-bottom: 0.5rem; }
+        .success-screen h2 { font-size: 1.8rem; color: #0a2a3f; }
+        .success-screen .message { color: #4a6a8a; margin: 0.5rem 0; font-size: 1rem; }
+        .success-screen .next-step { color: #1a3a55; font-weight: 500; margin: 1rem 0; font-size: 0.9rem; }
+
+        /* ===== SCREEN 6: ONBOARDING ===== */
+        .onboarding-screen { text-align: center; padding: 1rem 0; }
+        .onboarding-screen .icon { font-size: 3.5rem; margin-bottom: 0.5rem; }
+        .onboarding-screen .duration {
+            display: inline-block;
+            background: #e8edf5;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            color: #6a8aaa;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== ASSESSMENT ===== */
+        .question-number {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        .progress-discreet {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0.4rem 0 0.6rem;
+            gap: 0.8rem;
+        }
+        .progress-discreet .progress-line {
+            flex: 1;
+            height: 2px;
+            background: #e2e8f0;
+            border-radius: 2px;
+        }
+        .progress-discreet .progress-line .fill {
+            height: 100%;
+            background: #d97706;
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+
+        .age-card {
+            padding: 0.8rem 1rem;
+            border-radius: 1.2rem;
+            border: 2px solid #e2edf7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            background: #f8fafc;
+            min-height: 85px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        .age-card:hover {
+            border-color: #d97706;
+            background: #fef3c7;
+        }
+        .age-card.active {
+            border-color: #d97706;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+        }
+        .age-card.active .selection-check { opacity: 1; }
+        .age-card .selection-check {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            color: #d97706;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .age-card .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .age-card .card-content { flex: 1; min-width: 0; }
+        .age-card .card-content .title { font-size: 0.85rem; font-weight: 600; color: #0a2a3f; line-height: 1.3; }
+
+        /* ===== VOICE RECORDING ===== */
+        .voice-recording {
+            background: #f0f4ff;
+            border-radius: 1.5rem;
+            padding: 1.5rem 1.2rem;
+            border: 1px solid #eaf1f8;
+            text-align: center;
+        }
+        .voice-recording .voice-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        .voice-recording .voice-prompt {
+            font-size: 1rem;
+            color: #0a2a3f;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .voice-recording .voice-timer {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d97706;
+            margin: 0.5rem 0;
+        }
+        .voice-recording .voice-status {
+            font-size: 0.8rem;
+            color: #6a8aaa;
+        }
+        .voice-recording .record-btn {
+            background: linear-gradient(135deg, #1e3f5a, #142f45);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+        .voice-recording .record-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(20,60,90,0.25);
+        }
+        .voice-recording .record-btn.recording {
+            background: #dc2626;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .voice-recording .transcript {
+            background: white;
+            border-radius: 0.8rem;
+            padding: 0.8rem;
+            margin-top: 0.8rem;
+            min-height: 60px;
+            border: 1px solid #eaf1f8;
+            font-size: 0.85rem;
+            color: #1a3a55;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        /* ===== REPORT ===== */
+        .report-section {
+            padding: 1rem 0;
+            border-bottom: 2px solid #f0f4ff;
+        }
+        .report-section:last-of-type { border-bottom: none; }
+        .report-section .section-title {
+            font-size: 0.7rem;
+            color: #6a8aaa;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+        .report-persona-name {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e3f5a, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .report-score {
+            display: inline-block;
+            background: #f0f7ff;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #2563eb;
+            font-weight: 600;
+        }
+        .report-strength {
+            background: #f0fdf4;
+            border-radius: 0.8rem;
+            padding: 0.8rem;
+            border: 1px solid #bbf7d0;
+        }
+        .report-blindspot {
+            background: #fef2f2;
+            border-radius: 0.8rem;
+            padding: 0.8rem;
+            border: 1px solid #fca5a5;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin: 1rem 0;
+        }
+        .dashboard-item {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #eef2f6;
+        }
+        .dashboard-item .icon { font-size: 2rem; }
+        .dashboard-item .label { font-size: 0.75rem; color: #6a8aaa; margin-top: 0.2rem; }
+        .dashboard-item .status { font-size: 0.65rem; font-weight: 600; }
+        .dashboard-item .status.unlocked { color: #059669; }
+        .dashboard-item .status.locked { color: #94a3b8; }
+
+        /* ============================================================ */
+        /* PROCESSING SCREEN */
+        /* ============================================================ */
+        .processing-screen { text-align: center; padding: 2rem 0; }
+        .processing-screen .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .processing-screen h2 { font-size: 1.6rem; color: #0a2a3f; }
+        .processing-screen .progress-bar {
+            width: 100%;
+            max-width: 300px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin: 1rem auto;
+            overflow: hidden;
+        }
+        .processing-screen .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d97706, #fcd34d);
+            border-radius: 4px;
+            animation: progress 2s ease forwards;
+        }
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* ============================================================ */
+        /* RESPONSIVE */
+        /* ============================================================ */
+        @media (max-width: 640px) {
+            .container { padding: 0 1rem 1.5rem; }
+            .step-card { padding: 1.2rem 1rem; border-radius: 1.5rem; }
+            .sales-features { grid-template-columns: 1fr; }
+            .sales-hero h1 { font-size: 1.6rem; }
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+            .report-persona-name { font-size: 1.6rem; }
+            .age-card .card-icon { width: 40px; height: 40px; font-size: 1.2rem; }
+            .age-card .card-content .title { font-size: 0.75rem; }
+            .voice-recording .voice-timer { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+
+    <!-- ===== LOGO ===== -->
+    <div class="logo-section">
+        <a href="#" class="logo">
+            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Mini%20Logo%20Unspoken.png" alt="The Unspoken" />
+            <span class="gold">The Unspoken</span>
+        </a>
+        <div class="tagline">Uncover What Your Words Leave Unspoken</div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN 1: SALES PAGE                                          -->
+    <!-- ============================================================ -->
+    <div class="step-card" id="screen1">
+        <div class="sales-hero">
+            <div class="big-icon">🔍</div>
+            <h1>Discover Your <span class="gold">Communication Persona</span></h1>
+            <p style="color: #4a6a8a; max-width: 500px; margin: 0.5rem auto; font-size: 1rem;">
+                Understand how others experience you, uncover what's getting lost, and get a clear path to improve.
+            </p>
+            
+            <div class="price-tag">
+                <span class="label">One-time purchase</span>
+                <div><span class="amount">₹299</span></div>
+            </div>
+
+            <div class="sales-features">
+                <div class="feature"><span class="check">✓</span> Your Communication Persona</div>
+                <div class="feature"><span class="check">✓</span> How others experience you</div>
+                <div class="feature"><span class="check">✓</span> Your strengths &amp; blind spots</div>
+                <div class="feature"><span class="check">✓</span> What's getting lost</div>
+                <div class="feature"><span class="check">✓</span> Personalized insights</div>
+                <div class="feature"><span class="check">✓</span> Shareable persona card</div>
+            </div>
+
+            <div class="report-preview">
+                <div class="preview-title">📊 Sample Insights</div>
+                <div class="preview-item"><span>Communication Style</span><span style="color:#0a2a3f;font-weight:500;">Clear &amp; Structured</span></div>
+                <div class="preview-item"><span>Strengths</span><span style="color:#0a2a3f;font-weight:500;">Clarity, Organization</span></div>
+                <div class="preview-item"><span>Growth Area</span><span style="color:#0a2a3f;font-weight:500;">Emotional Expression</span></div>
+            </div>
+
+            <button class="btn-gold" id="startCheckout">Get My Paid Persona →</button>
+            <p style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.5rem;">🔒 Secure payment · Instant access</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN 2: CHECKOUT                                            -->
+    <!-- ============================================================ -->
+    <div class="step-card hidden" id="screen2">
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <h2>Your Paid Persona</h2>
+            <p style="color: #6a8aaa;">One-time purchase — <strong>₹299</strong></p>
+        </div>
+
+        <div class="detail-row">
+            <input type="text" placeholder="Full name" id="fullName" />
+            <input type="email" placeholder="Email address" id="email" />
+            <input type="tel" placeholder="WhatsApp number" id="phone" />
+        </div>
+
+        <button class="btn-gold" id="payButton" style="margin-top: 1rem;">
+            💳 Pay ₹299 &amp; Get My Persona
+        </button>
+        <p style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 0.5rem;">🔒 Secure payment powered by Razorpay</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN 3: PAYMENT PROCESSING (Handled by Razorpay)            -->
+    <!-- ============================================================ -->
+
+    <!-- ============================================================ -->
+    <!-- SCREEN 4: PAYMENT SUCCESS                                     -->
+    <!-- ============================================================ -->
+    <div class="step-card hidden" id="screen4">
+        <div class="success-screen">
+            <div class="icon">🎉</div>
+            <h2>You're in.</h2>
+            <p class="message">Your Paid Persona is now unlocked.</p>
+            <p class="next-step">Your next step is to discover how you communicate and how others may experience you.</p>
+            <button class="btn-primary" id="continueToAccount">Continue →</button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN 5: ACCOUNT SETUP (Email + Generated Password)          -->
+    <!-- ============================================================ -->
+    <div class="step-card hidden" id="screen5">
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <h2>Your account is ready</h2>
+            <p style="color: #4a6a8a;">Use these credentials to login anytime</p>
+        </div>
+
+        <div style="background: #f8fafc; border-radius: 1rem; padding: 1.2rem; border: 1px solid #eef2f6;">
+            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eef2f6;">
+                <span style="color: #6a8aaa;">📧 Email</span>
+                <span style="font-weight: 500;" id="accountEmail">user@email.com</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                <span style="color: #6a8aaa;">🔑 Password</span>
+                <span style="font-weight: 500; font-family: monospace; letter-spacing: 1px;" id="accountPassword">Unsp0ken!2024</span>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 0.8rem; margin-top: 1rem; flex-wrap: wrap;">
+            <button class="btn-primary" id="copyPasswordBtn" style="flex:1; max-width: 100%;">
+                📋 Copy Password
+            </button>
+            <button class="btn-primary" id="continueToOnboarding" style="flex:1; max-width: 100%;">
+                Continue →
+            </button>
+        </div>
+        <p style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 0.5rem;">Save your password securely. You'll need it to login.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN 6: WELCOME / ONBOARDING                                -->
+    <!-- ============================================================ -->
+    <div class="step-card hidden" id="screen6">
+        <div class="onboarding-screen">
+            <div class="icon">👋</div>
+            <h2>Welcome to The Unspoken</h2>
+            <p style="color: #4a6a8a; max-width: 500px; margin: 0.5rem auto;">
+                Let's discover your Communication Persona.
+            </p>
+            <p style="color: #6a8aaa; font-size: 0.9rem; max-width: 450px; margin: 0.5rem auto;">
+                Your Persona will become the foundation for understanding your communication and identifying where your potential is getting lost.
+            </p>
+            <div class="duration" id="assessmentDuration">⏱️ Loading questions...</div>
+            <button class="btn-gold" id="startAssessment" style="margin-top: 1.5rem;">
+                Start My Persona →
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN 7: PAID PERSONA ASSESSMENT                             -->
+    <!-- ============================================================ -->
+    <div class="step-card hidden" id="screen7">
+        <div class="flex-between">
+            <h2 id="assessmentTitle">Loading...</h2>
+            <span class="question-number" id="assessmentCounter">01 / 30</span>
+        </div>
+        <p class="subhead" id="assessmentSubhead">Choose the option that best describes you.</p>
+        <div id="assessmentContainer" style="margin: 0.6rem 0;"></div>
+        <div class="progress-discreet">
+            <span class="step-label" id="progressLabel">01 / 30</span>
+            <div class="progress-line"><div class="fill" id="progressFill" style="width:3%;"></div></div>
+        </div>
+        <div class="flex-wrap mt-1">
+            <button class="btn-back" id="assessmentBack" style="opacity:0.3; cursor:default;">← Back</button>
+            <button class="btn-primary" id="assessmentNext">Continue →</button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN 8: PROCESSING / GENERATING PERSONA                     -->
+    <!-- ============================================================ -->
+    <div class="step-card hidden" id="screen8">
+        <div class="processing-screen">
+            <div class="icon">🧠</div>
+            <h2>Your Communication Persona is taking shape...</h2>
+            <p style="color: #4a6a8a; margin-top: 0.5rem;">Analyzing your responses</p>
+            <div class="progress-bar">
+                <div class="fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN 9: PAID PERSONA REPORT                                 -->
+    <!-- ============================================================ -->
+    <div class="step-card hidden" id="screen9">
+        <div style="text-align: center; padding-bottom: 1rem; border-bottom: 2px solid #f0f4ff;">
+            <p style="font-size: 0.7rem; color: #6a8aaa; margin-bottom: 0.2rem;">Your Communication Persona</p>
+            <div class="report-persona-name" id="reportPersonaName">Loading...</div>
+            <p style="color: #4a6a8a; max-width: 450px; margin: 0.3rem auto; font-size: 0.9rem;" id="reportPersonaDesc">Loading...</p>
+            <span class="report-score" id="reportScore">Score: --/100</span>
+        </div>
+
+        <div class="report-section">
+            <div class="section-title">💪 Your Signature Strength</div>
+            <div class="report-strength">
+                <p style="font-size: 0.9rem; font-weight: 600; color: #0a2a3f;" id="reportStrength">Loading...</p>
+                <p style="font-size: 0.75rem; color: #4a6a8a; line-height: 1.5;" id="reportStrengthDesc">Loading...</p>
+            </div>
+        </div>
+
+        <div class="report-section">
+            <div class="section-title">⚠️ Your Blind Spot</div>
+            <div class="report-blindspot">
+                <p style="font-size: 0.9rem; font-weight: 600; color: #0a2a3f;" id="reportBlindSpot">Loading...</p>
+            </div>
+        </div>
+
+        <div class="report-section">
+            <div class="section-title">🗣️ How You Communicate</div>
+            <p style="font-size: 0.85rem; color: #1a3a55; line-height: 1.6;" id="reportCommunicationStyle">Loading...</p>
+        </div>
+
+        <div class="report-section">
+            <div class="section-title">🔍 What's Getting Lost</div>
+            <p style="font-size: 0.85rem; color: #1a3a55; line-height: 1.6;" id="reportGap">Loading...</p>
+        </div>
+
+        <div style="padding-top: 1rem; text-align: center;">
+            <button class="btn-primary" id="explorePlansBtn" style="max-width: 100%;">
+                🚀 Explore Plans
+            </button>
+            <button class="btn-outline" id="goToDashboardBtn" style="margin-top: 0.5rem; width: 100%;">
+                Go to My Persona
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN 10: NEXT STEP / UPGRADE                                -->
+    <!-- ============================================================ -->
+    <div class="step-card hidden" id="screen10">
+        <div style="text-align: center; padding: 0.5rem 0;">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🚀</div>
+            <h2>You know how you're experienced.</h2>
+            <h2 style="font-size: 1.6rem; margin-top: 0.3rem;">Now, do you want to <span class="gold">change it</span>?</h2>
+            <p style="color: #4a6a8a; max-width: 450px; margin: 0.5rem auto; font-size: 0.95rem; line-height: 1.6;">
+                Your Persona shows you where you are.<br>
+                The Unspoken Journey helps you practice where you want to be.
+            </p>
+            <button class="btn-gold" id="explorePlansBtn2" style="max-width: 100%; margin-top: 0.5rem;">
+                Explore Plans →
+            </button>
+            <button class="btn-outline" id="goToDashboardBtn2" style="margin-top: 0.5rem; width: 100%;">
+                Go to My Persona
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN 11: PAID DASHBOARD                                     -->
+    <!-- ============================================================ -->
+    <div class="step-card hidden" id="screen11">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h2>My Dashboard</h2>
+            <span style="font-size: 0.65rem; color: #6a8aaa;">🏷️ Paid</span>
+        </div>
+
+        <div style="background: #f8fafc; border-radius: 1rem; padding: 1rem; border: 1px solid #eef2f6; text-align: center;">
+            <div style="font-size: 1.4rem; font-weight: 700; color: #0a2a3f;" id="dashboardPersonaName">Loading...</div>
+            <div style="font-size: 0.85rem; color: #4a6a8a;" id="dashboardScore">Score: --/100</div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-item">
+                <div class="icon">🧠</div>
+                <div style="font-weight: 600; font-size: 0.9rem;">My Persona</div>
+                <div class="status unlocked">✓ Unlocked</div>
+            </div>
+            <div class="dashboard-item">
+                <div class="icon">🗺️</div>
+                <div style="font-weight: 600; font-size: 0.9rem;">My Journey</div>
+                <div class="status locked">🔒 Locked</div>
+            </div>
+            <div class="dashboard-item">
+                <div class="icon">🎯</div>
+                <div style="font-weight: 600; font-size: 0.9rem;">Practice</div>
+                <div class="status locked">🔒 Locked</div>
+            </div>
+            <div class="dashboard-item">
+                <div class="icon">📈</div>
+                <div style="font-weight: 600; font-size: 0.9rem;">Progress</div>
+                <div class="status locked">🔒 Locked</div>
+            </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 1rem; padding: 1rem; border: 1px solid #fcd34d; text-align: center;">
+            <p style="font-weight: 600; color: #0a2a3f;">Ready to take the next step?</p>
+            <button class="btn-gold" id="explorePlansBtn3" style="max-width: 100%; margin-top: 0.5rem;">
+                Explore Plans →
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ============================================================
+// API CONFIGURATION
+// ============================================================
+const API_BASE = 'https://unspoken-backend-yvbi.onrender.com';
+let userId = null;
+let userEmail = null;
+let userFullName = null;
+let userPhone = null;
+let userPassword = null;
+let assessmentQuestions = [];
+let assessmentResponses = [];
+let currentQuestionIndex = 0;
+let personaResult = null;
+let totalQuestions = 0;
+let isVoiceQuestion = false;
+
+// ============================================================
+// SCREEN MANAGEMENT
+// ============================================================
+function showScreen(id) {
+    document.querySelectorAll('.step-card').forEach(s => s.classList.add('hidden'));
+    const screen = document.getElementById(id);
+    if (screen) screen.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// SCREEN 1: SALES PAGE → CHECKOUT
+// ============================================================
+document.getElementById('startCheckout').addEventListener('click', () => {
+    showScreen('screen2');
+});
+
+// ============================================================
+// SCREEN 2: CHECKOUT → PAYMENT
+// ============================================================
+document.getElementById('payButton').addEventListener('click', async () => {
+    const fullName = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+
+    if (!fullName || !email || !phone) {
+        alert('Please fill in all fields.');
+        return;
+    }
+
+    userFullName = fullName;
+    userEmail = email;
+    userPhone = phone;
+
+    const payButton = document.getElementById('payButton');
+    payButton.disabled = true;
+    payButton.textContent = '⏳ Processing...';
+
+    try {
+        const response = await fetch(`${API_BASE}/api/checkout/create-order`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                full_name: fullName,
+                email: email,
+                phone: phone,
+                type: 'persona'
+            })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            if (data.already_owned) {
+                alert('You already own the Paid Persona!');
+                return;
+            }
+            alert(data.message || 'Something went wrong.');
+            payButton.disabled = false;
+            payButton.textContent = '💳 Pay ₹299 & Get My Persona';
+            return;
+        }
+
+        userId = data.user_id;
+        userPassword = data.generated_password;
+
+        const options = {
+            key: data.key_id,
+            amount: data.amount,
+            currency: data.currency,
+            name: 'The Unspoken',
+            description: 'Paid Persona Assessment',
+            image: 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Mini%20Logo%20Unspoken.png',
+            order_id: data.order_id,
+            prefill: {
+                name: fullName,
+                email: email,
+                contact: phone
+            },
+            theme: { color: '#d97706' },
+            modal: {
+                ondismiss: function() {
+                    payButton.disabled = false;
+                    payButton.textContent = '💳 Pay ₹299 & Get My Persona';
+                }
+            }
+        };
+
+        const rzp = new Razorpay(options);
+
+        rzp.on('payment.success', function(response) {
+            verifyPayment(response, data);
+        });
+
+        rzp.on('payment.failed', function(response) {
+            console.error('Payment failed:', response);
+            alert('Payment failed. Please try again.');
+            payButton.disabled = false;
+            payButton.textContent = '💳 Pay ₹299 & Get My Persona';
+        });
+
+        rzp.open();
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Something went wrong. Please try again.');
+        payButton.disabled = false;
+        payButton.textContent = '💳 Pay ₹299 & Get My Persona';
+    }
+});
+
+// ============================================================
+// VERIFY PAYMENT
+// ============================================================
+async function verifyPayment(paymentResponse, orderData) {
+    try {
+        const response = await fetch(`${API_BASE}/api/checkout/verify-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_signature: paymentResponse.razorpay_signature
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            userId = result.user_id;
+            showScreen('screen4');
+        } else {
+            alert('Payment verification failed. Please contact support.');
+        }
+    } catch (error) {
+        console.error('Verification error:', error);
+        alert('Something went wrong. Please contact support.');
+    }
+}
+
+// ============================================================
+// SCREEN 4: SUCCESS → ACCOUNT SETUP
+// ============================================================
+document.getElementById('continueToAccount').addEventListener('click', () => {
+    document.getElementById('accountEmail').textContent = userEmail;
+    document.getElementById('accountPassword').textContent = userPassword || 'Unsp0ken!2024';
+    showScreen('screen5');
+});
+
+// ============================================================
+// SCREEN 5: ACCOUNT SETUP → ONBOARDING
+// ============================================================
+document.getElementById('copyPasswordBtn').addEventListener('click', () => {
+    const password = document.getElementById('accountPassword').textContent;
+    navigator.clipboard.writeText(password).then(() => {
+        alert('✅ Password copied to clipboard!');
+    }).catch(() => {
+        const input = document.createElement('input');
+        input.value = password;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('✅ Password copied to clipboard!');
+    });
+});
+
+document.getElementById('continueToOnboarding').addEventListener('click', () => {
+    showScreen('screen6');
+    loadQuestions();
+});
+
+// ============================================================
+// LOAD QUESTIONS FROM BACKEND
+// ============================================================
+async function loadQuestions() {
+    try {
+        document.getElementById('assessmentDuration').textContent = '⏱️ Loading questions...';
+        
+        // For now, use placeholder count
+        // In production, fetch from: `${API_BASE}/api/persona/questions`
+        // For demo, we'll create placeholder questions
+        // This will be replaced with actual backend call
+        // Placeholder - 30 questions (25 MCQ + 5 Voice)
+        const placeholderQuestions = [];
+        
+        // 25 MCQ Questions (Q1-Q25)
+        for (let i = 1; i <= 25; i++) {
+            placeholderQuestions.push({
+                question_code: `Q${i}`,
+                question_text: `Question ${i}: How do you typically handle this situation?`,
+                options: [
+                    'Option A - I take a structured approach',
+                    'Option B - I go with my intuition',
+                    'Option C - I seek input from others',
+                    'Option D - I analyze all options first'
+                ],
+                is_voice: false
+            });
+        }
+        
+        // 5 Voice Questions (V1-V5)
+        const voicePrompts = [
+            'Explain a project, skill, task or area of work you know well to someone who has very little knowledge of it.',
+            'Describe a time when you had to influence someone to see things your way. What did you say?',
+            'Tell me about a difficult conversation you had and how you handled it.',
+            'How would you explain your communication style to someone who just met you?',
+            'Describe a situation where you felt misunderstood and how you resolved it.'
+        ];
+        
+        for (let i = 1; i <= 5; i++) {
+            placeholderQuestions.push({
+                question_code: `V${i}`,
+                question_text: voicePrompts[i-1],
+                options: [],
+                is_voice: true,
+                voice_prompt: voicePrompts[i-1],
+                duration: 45
+            });
+        }
+        
+        assessmentQuestions = placeholderQuestions;
+        totalQuestions = assessmentQuestions.length;
+        
+        document.getElementById('assessmentDuration').textContent = `⏱️ Takes approximately ${Math.ceil(totalQuestions / 2)} minutes`;
+        
+        // Reset assessment state
+        currentQuestionIndex = 0;
+        assessmentResponses = [];
+        
+    } catch (error) {
+        console.error('Error loading questions:', error);
+        document.getElementById('assessmentDuration').textContent = '⏱️ Failed to load questions. Please refresh.';
+    }
+}
+
+// ============================================================
+// SCREEN 6: ONBOARDING → ASSESSMENT
+// ============================================================
+document.getElementById('startAssessment').addEventListener('click', () => {
+    if (assessmentQuestions.length === 0) {
+        alert('Questions are still loading. Please wait.');
+        return;
+    }
+    currentQuestionIndex = 0;
+    assessmentResponses = [];
+    showScreen('screen7');
+    renderQuestion();
+});
+
+// ============================================================
+// SCREEN 7: ASSESSMENT
+// ============================================================
+function renderQuestion() {
+    if (currentQuestionIndex >= assessmentQuestions.length) {
+        // All questions answered → Submit
+        showScreen('screen8');
+        submitAssessment();
+        return;
+    }
+
+    const q = assessmentQuestions[currentQuestionIndex];
+    const isVoice = q.is_voice;
+    
+    document.getElementById('assessmentTitle').textContent = isVoice ? '🎙️ Voice Response' : q.question_text;
+    document.getElementById('assessmentSubhead').textContent = isVoice ? 'Press record and speak freely.' : 'Choose the option that best describes you.';
+    document.getElementById('assessmentCounter').textContent = `${String(currentQuestionIndex + 1).padStart(2, '0')} / ${totalQuestions}`;
+    document.getElementById('progressLabel').textContent = `${String(currentQuestionIndex + 1).padStart(2, '0')} / ${totalQuestions}`;
+    document.getElementById('progressFill').style.width = `${((currentQuestionIndex + 1) / totalQuestions) * 100}%`;
+
+    const container = document.getElementById('assessmentContainer');
+    
+    if (isVoice) {
+        // Render voice recording UI
+        container.innerHTML = `
+            <div class="voice-recording">
+                <div class="voice-icon">🎤</div>
+                <div class="voice-prompt">${q.voice_prompt || q.question_text}</div>
+                <div class="voice-timer" id="voiceTimer">⏱️ ${q.duration || 45}s</div>
+                <div class="voice-status" id="voiceStatus">Press record to start</div>
+                <button class="record-btn" id="recordBtn">🎙️ Start Recording</button>
+                <div class="transcript" id="voiceTranscript">Your response will appear here...</div>
+            </div>
+        `;
+        
+        // Voice recording logic
+        let isRecording = false;
+        let timeLeft = q.duration || 45;
+        let timerInterval = null;
+        let transcript = '';
+        
+        const recordBtn = document.getElementById('recordBtn');
+        const voiceTimer = document.getElementById('voiceTimer');
+        const voiceStatus = document.getElementById('voiceStatus');
+        const voiceTranscript = document.getElementById('voiceTranscript');
+        
+        // Speech recognition setup
+        let recognition = null;
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SR();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            
+            recognition.onresult = (e) => {
+                let finalTranscript = '';
+                let interimTranscript = '';
+                for (let i = e.resultIndex; i < e.results.length; i++) {
+                    const result = e.results[i];
+                    if (result.isFinal) {
+                        finalTranscript += result[0].transcript;
+                    } else {
+                        interimTranscript += result[0].transcript;
+                    }
+                }
+                transcript = finalTranscript || interimTranscript;
+                voiceTranscript.textContent = transcript || '🎤 Speak now...';
+            };
+            
+            recognition.onend = () => {
+                if (isRecording) {
+                    try { recognition.start(); } catch(e) {}
+                }
+            };
+            
+            recognition.onerror = (e) => {
+                console.error('Speech error:', e.error);
+                if (e.error === 'not-allowed') {
+                    voiceStatus.textContent = '⚠️ Please allow microphone access.';
+                }
+            };
+        }
+        
+        recordBtn.addEventListener('click', () => {
+            if (!recognition) {
+                voiceStatus.textContent = '❌ Speech recognition not supported in this browser.';
+                return;
+            }
+            
+            if (!isRecording) {
+                // Start recording
+                isRecording = true;
+                timeLeft = q.duration || 45;
+                transcript = '';
+                voiceTranscript.textContent = '🎤 Recording... Speak now!';
+                voiceStatus.textContent = '🔴 Recording in progress...';
+                recordBtn.textContent = '⏹️ Stop Recording';
+                recordBtn.classList.add('recording');
+                
+                try { recognition.start(); } catch(e) {}
+                
+                // Timer
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    voiceTimer.textContent = `⏱️ ${timeLeft}s`;
+                    if (timeLeft <= 5) {
+                        voiceTimer.style.color = '#ef4444';
+                    }
+                    if (timeLeft <= 0) {
+                        stopRecording();
+                    }
+                }, 1000);
+                
+            } else {
+                // Stop recording
+                stopRecording();
+            }
+        });
+        
+        function stopRecording() {
+            isRecording = false;
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            try { recognition.stop(); } catch(e) {}
+            
+            recordBtn.textContent = '🎙️ Start Recording';
+            recordBtn.classList.remove('recording');
+            voiceStatus.textContent = '✅ Recording stopped';
+            
+            // Check if transcript has content
+            if (transcript.trim().length > 10) {
+                voiceStatus.textContent = '✅ Response captured!';
+                document.getElementById('assessmentNext').dataset.selected = transcript;
+                document.getElementById('assessmentNext').dataset.isVoice = 'true';
+            } else {
+                voiceStatus.textContent = '⚠️ Please speak at least a few words.';
+            }
+        }
+        
+        // Back button
+        if (currentQuestionIndex === 0) {
+            document.getElementById('assessmentBack').style.opacity = '0.3';
+            document.getElementById('assessmentBack').style.cursor = 'default';
+        } else {
+            document.getElementById('assessmentBack').style.opacity = '1';
+            document.getElementById('assessmentBack').style.cursor = 'pointer';
+        }
+        
+        // Next button
+        document.getElementById('assessmentNext').dataset.selected = '';
+        document.getElementById('assessmentNext').dataset.isVoice = 'false';
+        
+    } else {
+        // Render MCQ options
+        const icons = ['🌟', '🚀', '💼', '🎯', '💡', '📚', '🌈'];
+        
+        let html = `<div style="display:grid; grid-template-columns:1fr; gap:0.6rem;">`;
+        if (window.innerWidth > 640) {
+            html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">`;
+        }
+
+        q.options.forEach((opt, index) => {
+            const icon = icons[index % icons.length];
+            html += `
+                <div class="age-card" data-value="${opt}" style="min-height: 75px;">
+                    <div class="card-icon">${icon}</div>
+                    <div class="card-content">
+                        <div class="title">${opt}</div>
+                    </div>
+                    <div class="selection-check">✓</div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+
+        // Select handler
+        container.querySelectorAll('.age-card').forEach(card => {
+            card.addEventListener('click', function() {
+                container.querySelectorAll('.age-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('assessmentNext').dataset.selected = this.dataset.value;
+                document.getElementById('assessmentNext').dataset.isVoice = 'false';
+            });
+        });
+
+        // Back button
+        if (currentQuestionIndex === 0) {
+            document.getElementById('assessmentBack').style.opacity = '0.3';
+            document.getElementById('assessmentBack').style.cursor = 'default';
+        } else {
+            document.getElementById('assessmentBack').style.opacity = '1';
+            document.getElementById('assessmentBack').style.cursor = 'pointer';
+        }
+
+        // Next button
+        document.getElementById('assessmentNext').dataset.selected = '';
+        document.getElementById('assessmentNext').dataset.isVoice = 'false';
+    }
+}
+
+// ============================================================
+// ASSESSMENT BACK
+// ============================================================
+document.getElementById('assessmentBack').addEventListener('click', () => {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion();
+    }
+});
+
+// ============================================================
+// ASSESSMENT NEXT
+// ============================================================
+document.getElementById('assessmentNext').addEventListener('click', async () => {
+    const selected = document.getElementById('assessmentNext').dataset.selected;
+    const isVoice = document.getElementById('assessmentNext').dataset.isVoice === 'true';
+    
+    if (!selected) {
+        alert(isVoice ? 'Please record your voice response.' : 'Please select an option.');
+        return;
+    }
+
+    const q = assessmentQuestions[currentQuestionIndex];
+    assessmentResponses.push({
+        question_code: q.question_code,
+        answer: selected,
+        is_voice: isVoice
+    });
+
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < assessmentQuestions.length) {
+        renderQuestion();
+    } else {
+        showScreen('screen8');
+        await submitAssessment();
+    }
+});
+
+// ============================================================
+// SUBMIT ASSESSMENT
+// ============================================================
+async function submitAssessment() {
+    try {
+        const response = await fetch(`${API_BASE}/api/persona/assess`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                responses: assessmentResponses,
+                type: 'paid'
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            personaResult = data.persona;
+            showReport(data.persona);
+            showScreen('screen9');
+        } else {
+            alert('Failed to generate persona. Please try again.');
+            showScreen('screen6');
+        }
+    } catch (error) {
+        console.error('Assessment error:', error);
+        alert('Something went wrong. Please try again.');
+        showScreen('screen6');
+    }
+}
+
+// ============================================================
+// SCREEN 9: REPORT
+// ============================================================
+function showReport(persona) {
+    document.getElementById('reportPersonaName').textContent = persona.name;
+    document.getElementById('reportPersonaDesc').textContent = persona.description;
+    document.getElementById('reportScore').textContent = `Score: ${persona.scores[persona.primary_dimension]}/100`;
+    document.getElementById('reportStrength').textContent = persona.strength;
+    document.getElementById('reportStrengthDesc').textContent = persona.strength_description;
+    document.getElementById('reportBlindSpot').textContent = persona.blind_spot;
+
+    const styleMap = {
+        'clarity': 'You communicate with clarity and precision. Your ideas are well-organized and easy to follow.',
+        'structure': 'You communicate with structure and logic. Your messages are carefully organized.',
+        'expression': 'You communicate with energy and enthusiasm. Your presence is engaging.',
+        'understanding': 'You communicate with empathy and insight. You read between the lines.',
+        'confidence': 'You communicate with confidence and conviction. Your voice is heard.',
+        'influence': 'You communicate with influence and persuasion. People are convinced by your ideas.'
+    };
+    document.getElementById('reportCommunicationStyle').textContent = styleMap[persona.primary_dimension] || 'You have a unique communication style that blends clarity and impact.';
+
+    const gapMap = {
+        'clarity': 'Your desire to be precise may sometimes come across as too formal. Consider adding warmth to your delivery.',
+        'structure': 'Your structured approach might feel rigid. Allow more flexibility in your communication.',
+        'expression': 'Your energy can sometimes overwhelm quieter listeners. Adapt your style to the audience.',
+        'understanding': 'Your empathy may lead you to take on others\' emotions. Maintain healthy boundaries.',
+        'confidence': 'Your confidence can sometimes come across as overbearing. Balance with active listening.',
+        'influence': 'Your persuasive skills might feel like manipulation to some. Focus on building genuine connection.'
+    };
+    document.getElementById('reportGap').textContent = gapMap[persona.primary_dimension] || 'Your communication effectiveness can be enhanced by practicing active listening and adapting your style to different audiences.';
+}
+
+// ============================================================
+// EXPLORE PLANS / DASHBOARD
+// ============================================================
+document.getElementById('explorePlansBtn').addEventListener('click', () => {
+    window.location.href = '/plans.html';
+});
+
+document.getElementById('explorePlansBtn2').addEventListener('click', () => {
+    window.location.href = '/plans.html';
+});
+
+document.getElementById('explorePlansBtn3').addEventListener('click', () => {
+    window.location.href = '/plans.html';
+});
+
+document.getElementById('goToDashboardBtn').addEventListener('click', () => {
+    showDashboard();
+});
+
+document.getElementById('goToDashboardBtn2').addEventListener('click', () => {
+    showDashboard();
+});
+
+// ============================================================
+// SCREEN 11: DASHBOARD
+// ============================================================
+function showDashboard() {
+    if (personaResult) {
+        document.getElementById('dashboardPersonaName').textContent = personaResult.name;
+        document.getElementById('dashboardScore').textContent = `Score: ${personaResult.scores[personaResult.primary_dimension]}/100`;
+    }
+    showScreen('screen11');
+}
+
+// ============================================================
+// START - Show Sales Page
+// ============================================================
+showScreen('screen1');
+</script>
+</body>
+</html>
