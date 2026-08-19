@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>Paid Persona · The Unspoken</title>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..600&display=swap" rel="stylesheet" />
@@ -116,7 +115,6 @@
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
         .btn-outline:hover {
             background: #1e3f5a;
@@ -147,6 +145,57 @@
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== ANIMATED CHARACTER ===== */
+        .animated-character {
+            position: absolute;
+            font-size: 2.5rem;
+            opacity: 0.06;
+            animation: floatCharacter 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+            user-select: none;
+        }
+        .animated-character:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+        .animated-character:nth-child(2) {
+            bottom: 15%;
+            right: 8%;
+            animation-delay: 2s;
+            font-size: 2rem;
+        }
+        .animated-character:nth-child(3) {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 4s;
+            font-size: 4rem;
+        }
+        .animated-character:nth-child(4) {
+            top: 20%;
+            right: 5%;
+            animation-delay: 1s;
+            font-size: 1.8rem;
+        }
+        .animated-character:nth-child(5) {
+            bottom: 25%;
+            left: 10%;
+            animation-delay: 3s;
+            font-size: 1.5rem;
+        }
+
+        @keyframes floatCharacter {
+            0% { transform: translate(0, 0) rotate(0deg); opacity: 0.04; }
+            25% { transform: translate(10px, -15px) rotate(5deg); opacity: 0.08; }
+            50% { transform: translate(-5px, 10px) rotate(-3deg); opacity: 0.04; }
+            75% { transform: translate(15px, 5px) rotate(2deg); opacity: 0.07; }
+            100% { transform: translate(0, 0) rotate(0deg); opacity: 0.04; }
         }
 
         h1 { font-size: 1.8rem; font-weight: 800; color: #0a2a3f; line-height: 1.2; letter-spacing: -0.02em; }
@@ -243,12 +292,6 @@
             font-size: 0.8rem;
         }
 
-        /* Success Screen */
-        .success-screen { text-align: center; padding: 1rem 0; }
-        .success-screen .icon { font-size: 4rem; margin-bottom: 0.5rem; }
-        .success-screen h2 { font-size: 1.8rem; color: #0a2a3f; }
-        .success-screen .message { color: #4a6a8a; margin: 0.5rem 0; font-size: 1rem; }
-
         /* Onboarding */
         .onboarding-screen { text-align: center; padding: 1rem 0; }
         .onboarding-screen .icon { font-size: 3.5rem; margin-bottom: 0.5rem; }
@@ -262,19 +305,42 @@
             margin-top: 0.5rem;
         }
 
-        /* Assessment */
-        .question-number {
+        /* ===== ASSESSMENT - UPDATED ===== */
+        .assessment-header {
+            position: relative;
+            z-index: 1;
+        }
+        .question-number-small {
             font-size: 0.65rem;
             color: #94a3b8;
             font-weight: 500;
             letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
+        .question-text-large {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #0a2a3f;
+            line-height: 1.5;
+            margin: 0.3rem 0 0.8rem;
+            position: relative;
+            z-index: 1;
+        }
+
         .progress-discreet {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin: 0.4rem 0 0.6rem;
+            margin: 0.8rem 0 0.6rem;
             gap: 0.8rem;
+            position: relative;
+            z-index: 1;
+        }
+        .progress-discreet .step-label {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
         .progress-discreet .progress-line {
             flex: 1;
@@ -289,43 +355,39 @@
             transition: width 0.4s ease;
         }
 
-        /* Likert Scale */
-        .likert-container { margin: 0.8rem 0; }
-        .likert-question {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: #0a2a3f;
-            margin-bottom: 1rem;
-            line-height: 1.5;
+        /* ===== LIKERT SCALE - 2x2 Grid ===== */
+        .likert-container { 
+            margin: 1rem 0 0.8rem;
+            position: relative;
+            z-index: 1;
         }
         .likert-label {
             font-size: 0.75rem;
             color: #6a8aaa;
             text-align: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
             font-weight: 500;
+            letter-spacing: 0.5px;
         }
         .likert-options {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
         }
         .likert-option {
-            flex: 1;
-            min-width: 50px;
-            max-width: 80px;
-            padding: 0.8rem 0.3rem;
+            padding: 0.8rem 0.6rem;
             border-radius: 0.8rem;
             border: 2px solid #e2edf7;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
             background: #f8fafc;
+            position: relative;
         }
         .likert-option:hover {
             border-color: #d97706;
             background: #fef3c7;
+            transform: translateY(-2px);
         }
         .likert-option.active {
             border-color: #d97706;
@@ -333,13 +395,13 @@
             box-shadow: 0 4px 12px rgba(217,119,6,0.15);
         }
         .likert-option .number {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: #0a2a3f;
             display: block;
         }
         .likert-option .label {
-            font-size: 0.5rem;
+            font-size: 0.65rem;
             color: #6a8aaa;
             display: block;
             margin-top: 0.2rem;
@@ -380,26 +442,6 @@
             border: 1px solid #fca5a5;
         }
 
-        /* Dashboard */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem;
-            margin: 1rem 0;
-        }
-        .dashboard-item {
-            background: #f8fafc;
-            border-radius: 1rem;
-            padding: 1rem;
-            text-align: center;
-            border: 1px solid #eef2f6;
-        }
-        .dashboard-item .icon { font-size: 2rem; }
-        .dashboard-item .label { font-size: 0.75rem; color: #6a8aaa; margin-top: 0.2rem; }
-        .dashboard-item .status { font-size: 0.65rem; font-weight: 600; }
-        .dashboard-item .status.unlocked { color: #059669; }
-        .dashboard-item .status.locked { color: #94a3b8; }
-
         /* Processing */
         .processing-screen { text-align: center; padding: 2rem 0; }
         .processing-screen .spinner {
@@ -415,65 +457,19 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Skip Payment */
-        .skip-payment-section {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eaf1f8;
-            text-align: center;
-        }
-        .skip-payment-section .divider {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 0.8rem;
-        }
-        .skip-payment-section .divider .line {
-            flex: 1;
-            height: 1px;
-            background: #e8edf5;
-        }
-        .skip-payment-section .divider .text {
-            font-size: 0.7rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .btn-skip {
-            display: inline-block;
-            background: transparent;
-            color: #94a3b8;
-            border: 1px dashed #d0c8bc;
-            padding: 0.6rem 1.5rem;
-            border-radius: 60px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            max-width: 280px;
-        }
-        .btn-skip:hover {
-            background: #f0f4ff;
-            border-color: #94a3b8;
-            color: #4a6a8a;
-        }
-        .btn-skip-label {
-            font-size: 0.65rem;
-            color: #b0c0d0;
-        }
-
         /* Responsive */
         @media (max-width: 640px) {
             .container { padding: 0 1rem 1.5rem; }
             .step-card { padding: 1.2rem 1rem; border-radius: 1.5rem; }
             .sales-features { grid-template-columns: 1fr; }
             .sales-hero h1 { font-size: 1.6rem; }
-            .likert-option { min-width: 40px; max-width: 60px; padding: 0.6rem 0.2rem; }
-            .likert-option .number { font-size: 1rem; }
-            .likert-option .label { font-size: 0.4rem; }
+            .question-text-large { font-size: 1rem; }
+            .likert-options { gap: 0.4rem; }
+            .likert-option { padding: 0.6rem 0.3rem; }
+            .likert-option .number { font-size: 1.2rem; }
+            .likert-option .label { font-size: 0.55rem; }
             .report-persona-name { font-size: 1.6rem; }
-            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+            .animated-character { display: none; }
         }
     </style>
 </head>
@@ -531,8 +527,9 @@
     <!-- ============================================================ -->
     <div class="step-card hidden" id="screen2">
         <div style="text-align: center; margin-bottom: 1rem;">
-            <h2>Your Paid Persona</h2>
+            <h2>Get Your Paid Persona</h2>
             <p style="color: #6a8aaa;">One-time purchase — <strong>₹299</strong></p>
+            <p style="color: #94a3b8; font-size: 0.8rem;">(Test mode: No payment required)</p>
         </div>
 
         <div class="detail-row">
@@ -541,71 +538,13 @@
             <input type="tel" placeholder="WhatsApp number" id="phone" />
         </div>
 
-        <button class="btn-gold" id="payButton" style="margin-top: 1rem;">
-            💳 Pay ₹299 &amp; Get My Persona
+        <button class="btn-gold" id="startAssessmentBtn" style="margin-top: 1rem;">
+            🚀 Get My Persona & Start Assessment
         </button>
-
-        <div class="skip-payment-section">
-            <div class="divider">
-                <span class="line"></span>
-                <span class="text">Testing Mode</span>
-                <span class="line"></span>
-            </div>
-            <button class="btn-skip" id="skipPaymentBtn">
-                ⏭️ Skip Payment (Test Mode)
-            </button>
-            <p class="btn-skip-label">Bypass payment for testing purposes</p>
-        </div>
-
-        <p style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 0.5rem;">🔒 Secure payment powered by Razorpay</p>
     </div>
 
     <!-- ============================================================ -->
-    <!-- SCREEN 3: PAYMENT SUCCESS                                     -->
-    <!-- ============================================================ -->
-    <div class="step-card hidden" id="screen4">
-        <div class="success-screen">
-            <div class="icon">🎉</div>
-            <h2>You're in.</h2>
-            <p class="message">Your Paid Persona is now unlocked.</p>
-            <p class="next-step">Your next step is to discover how you communicate and how others may experience you.</p>
-            <button class="btn-primary" id="continueToAccount">Continue →</button>
-        </div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- SCREEN 4: ACCOUNT SETUP                                       -->
-    <!-- ============================================================ -->
-    <div class="step-card hidden" id="screen5">
-        <div style="text-align: center; margin-bottom: 1.5rem;">
-            <h2>Your account is ready</h2>
-            <p style="color: #4a6a8a;">Use these credentials to login anytime</p>
-        </div>
-
-        <div style="background: #f8fafc; border-radius: 1rem; padding: 1.2rem; border: 1px solid #eef2f6;">
-            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eef2f6;">
-                <span style="color: #6a8aaa;">📧 Email</span>
-                <span style="font-weight: 500;" id="accountEmail">user@email.com</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
-                <span style="color: #6a8aaa;">🔑 Password</span>
-                <span style="font-weight: 500; font-family: monospace; letter-spacing: 1px;" id="accountPassword">Unsp0ken!2024</span>
-            </div>
-        </div>
-
-        <div style="display: flex; gap: 0.8rem; margin-top: 1rem; flex-wrap: wrap;">
-            <button class="btn-primary" id="copyPasswordBtn" style="flex:1; max-width: 100%;">
-                📋 Copy Password
-            </button>
-            <button class="btn-primary" id="continueToOnboarding" style="flex:1; max-width: 100%;">
-                Continue →
-            </button>
-        </div>
-        <p style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 0.5rem;">Save your password securely. You'll need it to login.</p>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- SCREEN 5: WELCOME / ONBOARDING                                -->
+    <!-- SCREEN 3: WELCOME / ONBOARDING                                -->
     <!-- ============================================================ -->
     <div class="step-card hidden" id="screen6">
         <div class="onboarding-screen">
@@ -626,12 +565,22 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- SCREEN 6: PAID PERSONA ASSESSMENT (30 Questions)              -->
+    <!-- SCREEN 4: PAID PERSONA ASSESSMENT                             -->
     <!-- ============================================================ -->
     <div class="step-card hidden" id="screen7">
-        <div class="flex-between">
-            <h2 id="questionText" style="font-size: 1.1rem; line-height: 1.4;">Loading...</h2>
-            <span class="question-number" id="questionCounter">01 / 30</span>
+        <!-- Animated Characters -->
+        <div class="animated-character">💬</div>
+        <div class="animated-character">🧠</div>
+        <div class="animated-character">🗣️</div>
+        <div class="animated-character">🤝</div>
+        <div class="animated-character">💡</div>
+
+        <div class="assessment-header">
+            <div class="flex-between">
+                <span class="question-number-small" id="questionCounter">01 / 30</span>
+                <span style="font-size: 0.65rem; color: #94a3b8; font-weight: 500;">The Unspoken</span>
+            </div>
+            <div class="question-text-large" id="questionText">Loading...</div>
         </div>
 
         <div class="likert-container">
@@ -672,7 +621,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- SCREEN 7: PROCESSING                                          -->
+    <!-- SCREEN 5: PROCESSING                                          -->
     <!-- ============================================================ -->
     <div class="step-card hidden" id="screen8">
         <div class="processing-screen">
@@ -683,7 +632,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- SCREEN 8: REPORT                                              -->
+    <!-- SCREEN 6: REPORT                                              -->
     <!-- ============================================================ -->
     <div class="step-card hidden" id="screen9">
         <div style="text-align: center; padding-bottom: 1rem; border-bottom: 2px solid #f0f4ff;">
@@ -735,45 +684,39 @@ let userId = null;
 let userEmail = null;
 let userFullName = null;
 let userPhone = null;
-let userPassword = null;
 let assessmentResponses = [];
 let currentQuestionIndex = 0;
 let selectedValue = null;
 let personaResult = null;
 
 // ============================================================
-// 30 QUESTIONS (Exact Questions)
+// 30 QUESTIONS
 // ============================================================
 const questions = [
-    // STRUCTURE — Q1–Q6
     { id: 'Q1', text: 'Before I speak on a complex topic, I usually know my main point before I start explaining it.' },
     { id: 'Q2', text: 'My explanations tend to move in a logical order rather than jumping around.' },
     { id: 'Q3', text: 'I can organize a complicated idea into a few clear steps without much effort.' },
     { id: 'Q4', text: 'When writing, I naturally lead with the conclusion rather than building up to it.' },
     { id: 'Q5', text: 'People rarely lose track of where I\'m going when I explain something.' },
     { id: 'Q6', text: 'I can spot when my own explanation is getting disorganized and correct it mid-way.' },
-    // THINKING — Q7–Q12
     { id: 'Q7', text: 'I usually think a few steps ahead about how someone might respond before I say something important.' },
     { id: 'Q8', text: 'I notice gaps or flaws in an argument — including my own — before others point them out.' },
     { id: 'Q9', text: 'I can break a vague problem into specific, answerable questions.' },
     { id: 'Q10', text: 'I regularly ask "why" a decision was made rather than accepting it at face value.' },
     { id: 'Q11', text: 'When faced with conflicting information, I can usually tell which source is more reliable.' },
     { id: 'Q12', text: 'I connect ideas across different situations rather than treating each one in isolation.' },
-    // IMPACT — Q13–Q18
     { id: 'Q13', text: 'When I speak in a group, the conversation\'s direction often shifts because of what I said.' },
     { id: 'Q14', text: 'People often act on what I suggest without needing to be convinced twice.' },
     { id: 'Q15', text: 'My ideas get remembered and repeated by others after a meeting ends.' },
     { id: 'Q16', text: 'I feel confident holding the room\'s attention when I have something important to say.' },
     { id: 'Q17', text: 'I rarely have to repeat myself to be taken seriously.' },
     { id: 'Q18', text: 'When I disagree with the group, my objection gets treated as worth discussing, not brushed aside.' },
-    // EXPRESSION — Q19–Q24
     { id: 'Q19', text: 'I can explain a technical or complex idea to someone with no background in it.' },
     { id: 'Q20', text: 'People rarely ask me to repeat or rephrase what I just said.' },
     { id: 'Q21', text: 'I choose words that make an idea memorable, not just accurate.' },
     { id: 'Q22', text: 'I can compress a long explanation into one clear sentence when needed.' },
     { id: 'Q23', text: 'My tone naturally matches what I\'m saying — serious things sound serious, exciting things sound exciting.' },
     { id: 'Q24', text: 'I rarely say more words than the idea actually needs.' },
-    // CONNECTION — Q25–Q30
     { id: 'Q25', text: 'I can tell when someone disagrees with me even if they don\'t say so directly.' },
     { id: 'Q26', text: 'I adjust how I explain something based on who I\'m talking to, without being asked.' },
     { id: 'Q27', text: 'I notice shifts in a room\'s mood and change my approach accordingly.' },
@@ -793,42 +736,16 @@ function showScreen(id) {
 }
 
 // ============================================================
-// SCREEN 1: SALES PAGE → CHECKOUT
+// SALES PAGE → CHECKOUT
 // ============================================================
 document.getElementById('startCheckout').addEventListener('click', () => {
     showScreen('screen2');
 });
 
 // ============================================================
-// SKIP PAYMENT (TESTING MODE)
+// START ASSESSMENT (No Payment)
 // ============================================================
-document.getElementById('skipPaymentBtn').addEventListener('click', () => {
-    userId = 'test-user-' + Date.now();
-    userEmail = document.getElementById('email').value.trim() || 'test@example.com';
-    userFullName = document.getElementById('fullName').value.trim() || 'Test User';
-    userPhone = document.getElementById('phone').value.trim() || '9999999999';
-    userPassword = 'Test@' + Math.random().toString(36).slice(2, 8);
-    
-    localStorage.setItem('test_user_data', JSON.stringify({
-        user_id: userId,
-        email: userEmail,
-        full_name: userFullName,
-        phone: userPhone,
-        password: userPassword
-    }));
-    
-    console.log('🔧 TEST MODE: Payment skipped');
-    console.log('📧 Email:', userEmail);
-    console.log('🔑 Password:', userPassword);
-    console.log('🆔 User ID:', userId);
-    
-    showScreen('screen4');
-});
-
-// ============================================================
-// SCREEN 2: CHECKOUT → PAYMENT
-// ============================================================
-document.getElementById('payButton').addEventListener('click', async () => {
+document.getElementById('startAssessmentBtn').addEventListener('click', () => {
     const fullName = document.getElementById('fullName').value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
@@ -842,145 +759,20 @@ document.getElementById('payButton').addEventListener('click', async () => {
     userEmail = email;
     userPhone = phone;
 
-    const payButton = document.getElementById('payButton');
-    payButton.disabled = true;
-    payButton.textContent = '⏳ Processing...';
+    userId = 'user-' + Date.now();
+    
+    localStorage.setItem('unspoken_user', JSON.stringify({
+        full_name: fullName,
+        email: email,
+        phone: phone,
+        user_id: userId
+    }));
 
-    try {
-        const response = await fetch(`${API_BASE}/api/checkout/create-order`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                full_name: fullName,
-                email: email,
-                phone: phone,
-                type: 'persona'
-            })
-        });
-
-        const data = await response.json();
-
-        if (!data.success) {
-            if (data.already_owned) {
-                alert('You already own the Paid Persona!');
-                return;
-            }
-            alert(data.message || 'Something went wrong.');
-            payButton.disabled = false;
-            payButton.textContent = '💳 Pay ₹299 & Get My Persona';
-            return;
-        }
-
-        userId = data.user_id;
-        userPassword = data.generated_password;
-
-        const options = {
-            key: data.key_id,
-            amount: data.amount,
-            currency: data.currency,
-            name: 'The Unspoken',
-            description: 'Paid Persona Assessment',
-            image: 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Mini%20Logo%20Unspoken.png',
-            order_id: data.order_id,
-            prefill: {
-                name: fullName,
-                email: email,
-                contact: phone
-            },
-            theme: { color: '#d97706' },
-            modal: {
-                ondismiss: function() {
-                    payButton.disabled = false;
-                    payButton.textContent = '💳 Pay ₹299 & Get My Persona';
-                }
-            }
-        };
-
-        const rzp = new Razorpay(options);
-
-        rzp.on('payment.success', function(response) {
-            verifyPayment(response, data);
-        });
-
-        rzp.on('payment.failed', function(response) {
-            console.error('Payment failed:', response);
-            alert('Payment failed. Please try again.');
-            payButton.disabled = false;
-            payButton.textContent = '💳 Pay ₹299 & Get My Persona';
-        });
-
-        rzp.open();
-
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Something went wrong. Please try again.');
-        payButton.disabled = false;
-        payButton.textContent = '💳 Pay ₹299 & Get My Persona';
-    }
-});
-
-// ============================================================
-// VERIFY PAYMENT
-// ============================================================
-async function verifyPayment(paymentResponse, orderData) {
-    try {
-        const response = await fetch(`${API_BASE}/api/checkout/verify-payment`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                razorpay_order_id: paymentResponse.razorpay_order_id,
-                razorpay_signature: paymentResponse.razorpay_signature
-            })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            userId = result.user_id;
-            showScreen('screen4');
-        } else {
-            alert('Payment verification failed. Please contact support.');
-        }
-    } catch (error) {
-        console.error('Verification error:', error);
-        alert('Something went wrong. Please contact support.');
-    }
-}
-
-// ============================================================
-// SCREEN 4: SUCCESS → ACCOUNT SETUP
-// ============================================================
-document.getElementById('continueToAccount').addEventListener('click', () => {
-    document.getElementById('accountEmail').textContent = userEmail;
-    document.getElementById('accountPassword').textContent = userPassword || 'Unsp0ken!2024';
-    showScreen('screen5');
-});
-
-// ============================================================
-// SCREEN 5: ACCOUNT SETUP → ONBOARDING
-// ============================================================
-document.getElementById('copyPasswordBtn').addEventListener('click', () => {
-    const password = document.getElementById('accountPassword').textContent;
-    navigator.clipboard.writeText(password).then(() => {
-        alert('✅ Password copied to clipboard!');
-    }).catch(() => {
-        const input = document.createElement('input');
-        input.value = password;
-        document.body.appendChild(input);
-        input.select();
-        document.execCommand('copy');
-        document.body.removeChild(input);
-        alert('✅ Password copied to clipboard!');
-    });
-});
-
-document.getElementById('continueToOnboarding').addEventListener('click', () => {
     showScreen('screen6');
 });
 
 // ============================================================
-// SCREEN 6: ONBOARDING → ASSESSMENT
+// ONBOARDING → ASSESSMENT
 // ============================================================
 document.getElementById('startAssessment').addEventListener('click', () => {
     currentQuestionIndex = 0;
@@ -999,11 +791,9 @@ function renderQuestion() {
     document.getElementById('progressLabel').textContent = `${String(currentQuestionIndex + 1).padStart(2, '0')} / 30`;
     document.getElementById('progressFill').style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
 
-    // Reset selection
     selectedValue = null;
     document.querySelectorAll('.likert-option').forEach(el => el.classList.remove('active'));
 
-    // Check if already answered
     const existing = assessmentResponses.find(r => r.question_code === q.id);
     if (existing) {
         selectedValue = existing.answer;
@@ -1014,7 +804,6 @@ function renderQuestion() {
         });
     }
 
-    // Back button
     if (currentQuestionIndex === 0) {
         document.getElementById('prevQuestion').style.opacity = '0.3';
         document.getElementById('prevQuestion').style.cursor = 'default';
@@ -1023,16 +812,12 @@ function renderQuestion() {
         document.getElementById('prevQuestion').style.cursor = 'pointer';
     }
 
-    // Next button text
-    if (currentQuestionIndex === questions.length - 1) {
-        document.getElementById('nextQuestion').textContent = 'Submit Assessment →';
-    } else {
-        document.getElementById('nextQuestion').textContent = 'Continue →';
-    }
+    document.getElementById('nextQuestion').textContent = 
+        currentQuestionIndex === questions.length - 1 ? 'Submit Assessment →' : 'Continue →';
 }
 
 // ============================================================
-// LIKERT SCALE SELECTION
+// LIKERT SELECTION
 // ============================================================
 document.querySelectorAll('.likert-option').forEach(el => {
     el.addEventListener('click', function() {
@@ -1063,7 +848,6 @@ document.getElementById('nextQuestion').addEventListener('click', async () => {
         return;
     }
 
-    // Save response
     const existingIndex = assessmentResponses.findIndex(r => r.question_code === q.id);
     if (existingIndex >= 0) {
         assessmentResponses[existingIndex].answer = selectedValue;
@@ -1075,7 +859,6 @@ document.getElementById('nextQuestion').addEventListener('click', async () => {
         currentQuestionIndex++;
         renderQuestion();
     } else {
-        // All questions answered - Submit
         await submitAssessment();
     }
 });
@@ -1087,25 +870,17 @@ async function submitAssessment() {
     showScreen('screen8');
 
     try {
-        // Sort responses by question code
         assessmentResponses.sort((a, b) => a.question_code.localeCompare(b.question_code));
 
         const payload = {
-            user_id: userId,
-            responses: assessmentResponses,
-            type: 'paid'
-        };
-
-        // Check if test mode
-        if (userId && userId.startsWith('test-user-')) {
-            payload.test_mode = true;
-            payload.user_details = {
+            user_details: {
                 full_name: userFullName,
                 email: userEmail,
                 phone: userPhone
-            };
-            console.log('🧪 TEST MODE: Submitting test assessment');
-        }
+            },
+            responses: assessmentResponses,
+            type: 'paid'
+        };
 
         console.log('📤 Submitting assessment:', payload);
 
@@ -1119,6 +894,10 @@ async function submitAssessment() {
 
         if (data.success) {
             personaResult = data.report;
+            if (data.user && data.user.user_id) {
+                userId = data.user.user_id;
+                localStorage.setItem('unspoken_user_id', userId);
+            }
             showReport(data.report);
             showScreen('screen9');
         } else {
@@ -1140,7 +919,6 @@ function showReport(report) {
     const competencies = report.competencies;
     const scores = report.scores;
 
-    // Persona
     document.getElementById('reportPersonaName').textContent = persona.name;
     document.getElementById('reportPersonaDesc').textContent = persona.description;
     document.getElementById('reportTagline').textContent = persona.tagline || '';
@@ -1149,7 +927,6 @@ function showReport(report) {
     document.getElementById('reportBlindSpot').textContent = persona.blind_spot || '';
     document.getElementById('reportBlindSpotDesc').textContent = persona.blind_spot_description || '';
 
-    // Competencies
     const competencyList = document.getElementById('competencyList');
     competencyList.innerHTML = '';
 
