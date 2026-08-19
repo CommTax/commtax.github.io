@@ -2217,33 +2217,43 @@
         URL.revokeObjectURL(url);
     });
 
-    // ============================================================
-    // SEND TO BACKEND (Lead Capture)
-    // ============================================================
-    async function sendToBackend(data) {
-        try {
-            const response = await fetch('https://unspoken-backend-yvbi.onrender.com/api/leads', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: data.user.name,
-                    email: data.user.email,
-                    phone: data.user.phone,
-                    persona: data.report.persona_name,
-                    responses: data.responses,
-                    category: data.report.category || '',
-                    aspiration: data.report.aspiration || '',
-                    primary_dimension: data.report.primary_dimension || '',
-                    secondary_dimension: data.report.secondary_dimension || '',
-                    scores: data.report.scores || {},
-                    timestamp: data.timestamp
-                })
-            });
-            console.log('✅ Lead data sent to backend:', response.status);
-        } catch (error) {
-            console.log('⚠️ Backend not available, data saved locally:', error);
+// ============================================================
+// SEND TO BACKEND - For leads table
+// ============================================================
+async function sendToBackend(data) {
+    try {
+        const response = await fetch('https://unspoken-backend-yvbi.onrender.com/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                full_name: data.user.name,
+                email: data.user.email,
+                phone: data.user.phone
+            })
+        });
+        
+        const result = await response.json();
+        console.log('✅ Backend response:', result);
+        
+        if (result.success) {
+            console.log('✅ Lead saved successfully!');
+            if (result.lead) {
+                console.log('Lead ID:', result.lead.lead_id);
+            }
+        } else {
+            console.log('⚠️ Error saving lead:', result.message);
         }
+        
+    } catch (error) {
+        console.log('⚠️ Backend not available, data saved locally:', error);
+        localStorage.setItem('unspoken_lead_backup', JSON.stringify({
+            full_name: data.user.name,
+            email: data.user.email,
+            phone: data.user.phone,
+            timestamp: new Date().toISOString()
+        }));
     }
+}
 
     // ============================================================
     // BACK BUTTONS
