@@ -27,7 +27,6 @@
             overflow: hidden;
         }
 
-        /* ===== COVER ===== */
         .cover-page {
             background: linear-gradient(145deg, #0a0e1a, #141b2b);
             color: #f0ebe4;
@@ -105,7 +104,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* ===== REPORT BODY ===== */
         .report-body { padding: 30px 40px 40px; }
 
         .mri-section { margin-bottom: 30px; }
@@ -339,19 +337,6 @@
         }
         .btn-primary:hover { background: #2d2d33; transform: translateY(-2px); }
 
-        .btn-outline {
-            background: transparent;
-            color: #1a1a1e;
-            border: 2px solid #1a1a1e;
-            padding: 0.7rem 2rem;
-            border-radius: 60px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .btn-outline:hover { background: #1a1a1e; color: white; }
-
         @media (max-width: 768px) {
             .cover-page { padding: 30px 20px 20px; }
             .cover-page h1 { font-size: 2rem; }
@@ -366,11 +351,6 @@
         @media (max-width: 480px) {
             .scores-grid { grid-template-columns: repeat(2, 1fr); }
             .persona-display .persona-name { font-size: 1.8rem; }
-        }
-        @media print {
-            body { background: white; padding: 0; }
-            .container { box-shadow: none; border-radius: 0; }
-            .cover-page { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -533,7 +513,6 @@
             <!-- Actions -->
             <div style="text-align: center; padding-top: 1rem; border-top: 1px solid #ede8e0; margin-top: 0.5rem;">
                 <button class="btn-primary" onclick="window.location.href='plans.html'" style="max-width: 300px; margin: 0 auto 0.5rem;">🚀 Explore Plans</button>
-                <button class="btn-outline" onclick="window.location.href='dashboard.html'" style="max-width: 300px; margin: 0 auto; padding: 0.6rem 1rem; font-size: 0.8rem;">Go to My Persona</button>
             </div>
         </div>
     </div>
@@ -548,6 +527,23 @@ const API_BASE = 'https://unspoken-backend-yvbi.onrender.com';
 // Get user_id from URL
 const urlParams = new URLSearchParams(window.location.search);
 let userId = urlParams.get('user_id') || localStorage.getItem('unspoken_user_id');
+
+// ============================================================
+// SAFE GET - Helper to avoid missing field errors
+// ============================================================
+function safeGet(obj, path, fallback = '—') {
+    try {
+        const keys = path.split('.');
+        let result = obj;
+        for (const key of keys) {
+            if (result === undefined || result === null) return fallback;
+            result = result[key];
+        }
+        return (result === undefined || result === null) ? fallback : result;
+    } catch (e) {
+        return fallback;
+    }
+}
 
 // ============================================================
 // LOAD REPORT
@@ -601,8 +597,18 @@ function renderReport(report) {
     const competencies = report.competencies || {};
     const scores = report.scores || {};
 
+    // ===== SAFE GETS =====
+    const userName = safeGet(persona, 'user_name', 'Professional');
+    const personaName = safeGet(persona, 'name', 'The Articulator');
+    const personaDesc = safeGet(persona, 'description', '');
+    const personaTagline = safeGet(persona, 'tagline', '');
+    const strength = safeGet(persona, 'strength', '');
+    const strengthDesc = safeGet(persona, 'strength_description', '');
+    const blindSpot = safeGet(persona, 'blind_spot', '');
+    const blindSpotDesc = safeGet(persona, 'blind_spot_description', '');
+
     // Cover
-    document.getElementById('reportName').textContent = persona.user_name || 'Professional';
+    document.getElementById('reportName').textContent = userName;
     document.getElementById('reportTitle').textContent = 'Executive';
     const date = new Date();
     document.getElementById('reportDate').textContent = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -616,16 +622,16 @@ function renderReport(report) {
         document.getElementById('lowestScore').textContent = sorted[sorted.length - 1][1] + '%';
         document.getElementById('lowestLabel').textContent = sorted[sorted.length - 1][0].charAt(0).toUpperCase() + sorted[sorted.length - 1][0].slice(1);
     }
-    document.getElementById('mriPersona').textContent = persona.name || 'The Articulator';
+    document.getElementById('mriPersona').textContent = personaName;
 
     // Summary
     const summary = generateSummary(persona, scores);
     document.getElementById('executiveSummary').innerHTML = summary;
 
     // Persona
-    document.getElementById('personaName').textContent = persona.name || 'The Articulator';
-    document.getElementById('personaDesc').textContent = persona.description || '';
-    document.getElementById('personaTagline').textContent = persona.tagline || '';
+    document.getElementById('personaName').textContent = personaName;
+    document.getElementById('personaDesc').textContent = personaDesc;
+    document.getElementById('personaTagline').textContent = personaTagline;
 
     // Scores
     const scoreMap = {
@@ -641,22 +647,22 @@ function renderReport(report) {
     });
 
     // Strength & Blind Spot
-    document.getElementById('strengthTitle').textContent = persona.strength || '—';
-    document.getElementById('strengthDesc').textContent = persona.strength_description || '—';
-    document.getElementById('blindspotTitle').textContent = persona.blind_spot || '—';
-    document.getElementById('blindspotDesc').textContent = persona.blind_spot_description || '—';
+    document.getElementById('strengthTitle').textContent = strength;
+    document.getElementById('strengthDesc').textContent = strengthDesc;
+    document.getElementById('blindspotTitle').textContent = blindSpot;
+    document.getElementById('blindspotDesc').textContent = blindSpotDesc;
 
     // Details
-    document.getElementById('detailTendTo').textContent = persona.you_tend_to || '—';
-    document.getElementById('detailNaturallyBring').textContent = persona.you_naturally_bring || '—';
-    document.getElementById('detailUnintentionallyCreate').textContent = persona.you_may_unintentionally_create || '—';
-    document.getElementById('detailAdvantage').textContent = persona.greatest_communication_advantage || '—';
-    document.getElementById('detailRisk').textContent = persona.biggest_communication_risk || '—';
-    document.getElementById('detailCommStyle').textContent = persona.communication_style || '—';
-    document.getElementById('detailHowOthers').textContent = persona.how_others_experience_you || '—';
-    document.getElementById('detailGrowth').textContent = persona.growth_opportunities || '—';
-    document.getElementById('detailGap').textContent = persona.communication_gap || '—';
-    document.getElementById('detailActions').textContent = persona.recommended_actions || '—';
+    document.getElementById('detailTendTo').textContent = safeGet(persona, 'you_tend_to');
+    document.getElementById('detailNaturallyBring').textContent = safeGet(persona, 'you_naturally_bring');
+    document.getElementById('detailUnintentionallyCreate').textContent = safeGet(persona, 'you_may_unintentionally_create');
+    document.getElementById('detailAdvantage').textContent = safeGet(persona, 'greatest_communication_advantage');
+    document.getElementById('detailRisk').textContent = safeGet(persona, 'biggest_communication_risk');
+    document.getElementById('detailCommStyle').textContent = safeGet(persona, 'communication_style');
+    document.getElementById('detailHowOthers').textContent = safeGet(persona, 'how_others_experience_you');
+    document.getElementById('detailGrowth').textContent = safeGet(persona, 'growth_opportunities');
+    document.getElementById('detailGap').textContent = safeGet(persona, 'communication_gap');
+    document.getElementById('detailActions').textContent = safeGet(persona, 'recommended_actions');
 
     // Competencies
     const container = document.getElementById('competenciesContainer');
@@ -672,27 +678,17 @@ function renderReport(report) {
     };
 
     order.forEach(key => {
-        let comp = competencies[key];
-        if (!comp) {
-            comp = {
-                score: scores[key] || 0,
-                category: getLevel(scores[key] || 0),
-                executive_narrative: `${labels[key]} is an area of focus for you.`,
-                whats_working: '',
-                whats_holding_you_back: '',
-                how_others_experience_you: '',
-                professional_impact: '',
-                highest_roi_improvement: ''
-            };
-        }
+        let comp = competencies[key] || {};
+        const score = comp.score !== undefined ? comp.score : (scores[key] || 0);
+        const category = comp.category || getLevel(score);
 
         const card = document.createElement('div');
         card.className = 'competency-card';
         card.innerHTML = `
             <div class="competency-header">
                 <span class="comp-name">${labels[key]}</span>
-                <span class="comp-level">${comp.category || getLevel(comp.score || 0)}</span>
-                <span class="comp-score">${comp.score || scores[key] || 0}%</span>
+                <span class="comp-level">${category}</span>
+                <span class="comp-score">${score}%</span>
             </div>
             <div class="competency-grid">
                 <div class="item" style="grid-column: 1 / -1;">
