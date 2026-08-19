@@ -193,6 +193,7 @@
         .text-center { text-align: center; }
         .mt-1 { margin-top: 1rem; }
         .mt-2 { margin-top: 1.5rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
 
         /* ===== FORM ===== */
         .detail-row {
@@ -408,8 +409,42 @@
         }
         .voice-recording .voice-icon { font-size: 3rem; margin-bottom: 0.5rem; }
         .voice-recording .voice-prompt { font-size: 1rem; color: #0a2a3f; font-weight: 500; margin-bottom: 0.5rem; }
-        .voice-recording .voice-timer { font-size: 2rem; font-weight: 700; color: #d97706; margin: 0.5rem 0; }
-        .voice-recording .voice-status { font-size: 0.8rem; color: #6a8aaa; }
+        .voice-recording .voice-timer { 
+            font-size: 2.5rem; 
+            font-weight: 700; 
+            color: #0a2a3f; 
+            margin: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+        .voice-recording .voice-timer.countdown {
+            color: #d97706;
+            animation: countdownPulse 0.5s ease infinite alternate;
+        }
+        .voice-recording .voice-timer.recording {
+            color: #dc2626;
+        }
+        .voice-recording .voice-timer.warning {
+            color: #ef4444;
+            animation: pulse 0.5s ease infinite alternate;
+        }
+        @keyframes countdownPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+        .voice-recording .voice-status { 
+            font-size: 0.85rem; 
+            color: #6a8aaa; 
+            margin: 0.3rem 0;
+            min-height: 1.5rem;
+        }
+        .voice-recording .voice-status.recording { color: #dc2626; font-weight: 600; }
+        .voice-recording .voice-status.ready { color: #059669; font-weight: 600; }
+        .voice-recording .voice-status.countdown { color: #d97706; font-weight: 600; }
+        
         .voice-recording .record-btn {
             background: linear-gradient(135deg, #1e3f5a, #142f45);
             color: white;
@@ -427,22 +462,58 @@
             background: #dc2626;
             animation: pulse 1s infinite;
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
+        .voice-recording .record-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
         }
-        .voice-recording .transcript {
+        .voice-recording .record-btn.finish {
+            background: #059669;
+        }
+        .voice-recording .record-btn.finish:hover {
+            background: #047857;
+        }
+        
+        .voice-recording .transcript-area {
             background: white;
             border-radius: 0.8rem;
             padding: 0.8rem;
             margin-top: 0.8rem;
-            min-height: 60px;
-            border: 1px solid #eaf1f8;
+            min-height: 80px;
+            border: 2px solid #eaf1f8;
             font-size: 0.85rem;
             color: #1a3a55;
             text-align: left;
             line-height: 1.6;
+            transition: border-color 0.3s ease;
         }
+        .voice-recording .transcript-area:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 4px rgba(217,119,6,0.1);
+        }
+        .voice-recording .transcript-area.editable {
+            border-color: #d97706;
+            background: #fefcf7;
+        }
+        .voice-recording .transcript-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            text-align: left;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+        }
+        .voice-recording .disclaimer {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 0.8rem;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            border: 1px solid #eef2f6;
+        }
+        .voice-recording .disclaimer .lock-icon { margin-right: 0.3rem; }
 
         /* ===== REPORT ===== */
         .report-section {
@@ -545,7 +616,8 @@
             .report-persona-name { font-size: 1.6rem; }
             .age-card .card-icon { width: 40px; height: 40px; font-size: 1.2rem; }
             .age-card .card-content .title { font-size: 0.75rem; }
-            .voice-recording .voice-timer { font-size: 1.5rem; }
+            .voice-recording .voice-timer { font-size: 2rem; }
+            .voice-recording .record-btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
             .btn-skip { font-size: 0.7rem; padding: 0.5rem 1rem; }
         }
     </style>
@@ -888,14 +960,12 @@ document.getElementById('startCheckout').addEventListener('click', () => {
 // SKIP PAYMENT (TESTING MODE)
 // ============================================================
 document.getElementById('skipPaymentBtn').addEventListener('click', () => {
-    // Generate a fake user ID and password
     userId = 'test-user-' + Date.now();
     userEmail = document.getElementById('email').value.trim() || 'test@example.com';
     userFullName = document.getElementById('fullName').value.trim() || 'Test User';
     userPhone = document.getElementById('phone').value.trim() || '9999999999';
     userPassword = 'Test@' + Math.random().toString(36).slice(2, 8);
     
-    // Store in localStorage for testing
     localStorage.setItem('test_user_data', JSON.stringify({
         user_id: userId,
         email: userEmail,
@@ -909,7 +979,6 @@ document.getElementById('skipPaymentBtn').addEventListener('click', () => {
     console.log('🔑 Password:', userPassword);
     console.log('🆔 User ID:', userId);
     
-    // Show success screen
     showScreen('screen4');
 });
 
@@ -1075,8 +1144,6 @@ async function loadQuestions() {
     try {
         document.getElementById('assessmentDuration').textContent = '⏱️ Loading questions...';
         
-        // For testing, create placeholder questions
-        // In production, fetch from: `${API_BASE}/api/persona/questions`
         const placeholderQuestions = [];
         
         // 25 MCQ Questions (Q1-Q25)
@@ -1119,7 +1186,6 @@ async function loadQuestions() {
         
         document.getElementById('assessmentDuration').textContent = `⏱️ Takes approximately ${Math.ceil(totalQuestions / 2)} minutes`;
         
-        // Reset assessment state
         currentQuestionIndex = 0;
         assessmentResponses = [];
         
@@ -1170,9 +1236,15 @@ function renderQuestion() {
                 <div class="voice-icon">🎤</div>
                 <div class="voice-prompt">${q.voice_prompt || q.question_text}</div>
                 <div class="voice-timer" id="voiceTimer">⏱️ ${q.duration || 45}s</div>
-                <div class="voice-status" id="voiceStatus">Press record to start</div>
+                <div class="voice-status" id="voiceStatus">Press the button to start recording</div>
                 <button class="record-btn" id="recordBtn">🎙️ Start Recording</button>
-                <div class="transcript" id="voiceTranscript">Your response will appear here...</div>
+                <button class="record-btn finish hidden" id="finishBtn">✅ Finish & Save</button>
+                <div class="transcript-label">📝 Edit your response if needed:</div>
+                <div class="transcript-area" id="voiceTranscript" contenteditable="false">Your response will appear here... You can edit it.</div>
+                <div class="disclaimer">
+                    <span class="lock-icon">🔒</span> 
+                    We do NOT store your voice recording. Only the transcribed text will be used for your assessment.
+                </div>
             </div>
         `;
         
@@ -1181,102 +1253,239 @@ function renderQuestion() {
         let timeLeft = q.duration || 45;
         let timerInterval = null;
         let transcript = '';
+        let countdownValue = 3;
+        let countdownInterval = null;
+        let isCountdownActive = false;
+        let isSaved = false;
         
         const recordBtn = document.getElementById('recordBtn');
+        const finishBtn = document.getElementById('finishBtn');
         const voiceTimer = document.getElementById('voiceTimer');
         const voiceStatus = document.getElementById('voiceStatus');
         const voiceTranscript = document.getElementById('voiceTranscript');
         
-        let recognition = null;
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SR();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
-            
-            recognition.onresult = (e) => {
-                let finalTranscript = '';
-                let interimTranscript = '';
-                for (let i = e.resultIndex; i < e.results.length; i++) {
-                    const result = e.results[i];
-                    if (result.isFinal) {
-                        finalTranscript += result[0].transcript;
-                    } else {
-                        interimTranscript += result[0].transcript;
-                    }
-                }
-                transcript = finalTranscript || interimTranscript;
-                voiceTranscript.textContent = transcript || '🎤 Speak now...';
-            };
-            
-            recognition.onend = () => {
-                if (isRecording) {
-                    try { recognition.start(); } catch(e) {}
-                }
-            };
-            
-            recognition.onerror = (e) => {
-                console.error('Speech error:', e.error);
-                if (e.error === 'not-allowed') {
-                    voiceStatus.textContent = '⚠️ Please allow microphone access.';
-                }
-            };
-        }
+        // Make transcript editable
+        voiceTranscript.contentEditable = true;
+        voiceTranscript.style.cursor = 'text';
+        voiceTranscript.style.background = 'white';
+        voiceTranscript.style.border = '2px solid #eaf1f8';
+        voiceTranscript.style.padding = '12px';
+        voiceTranscript.style.borderRadius = '8px';
+        voiceTranscript.style.minHeight = '80px';
+        voiceTranscript.style.maxHeight = '200px';
+        voiceTranscript.style.overflowY = 'auto';
+        voiceTranscript.style.fontFamily = 'Inter, sans-serif';
+        voiceTranscript.style.fontSize = '0.9rem';
+        voiceTranscript.style.lineHeight = '1.6';
+        voiceTranscript.style.color = '#1a3a55';
+        voiceTranscript.textContent = 'Your response will appear here... You can edit it.';
         
-        recordBtn.addEventListener('click', () => {
-            if (!recognition) {
-                voiceStatus.textContent = '❌ Speech recognition not supported in this browser.';
-                return;
-            }
-            
-            if (!isRecording) {
-                isRecording = true;
-                timeLeft = q.duration || 45;
-                transcript = '';
-                voiceTranscript.textContent = '🎤 Recording... Speak now!';
-                voiceStatus.textContent = '🔴 Recording in progress...';
-                recordBtn.textContent = '⏹️ Stop Recording';
-                recordBtn.classList.add('recording');
-                
-                try { recognition.start(); } catch(e) {}
-                
-                timerInterval = setInterval(() => {
-                    timeLeft--;
-                    voiceTimer.textContent = `⏱️ ${timeLeft}s`;
-                    if (timeLeft <= 5) {
-                        voiceTimer.style.color = '#ef4444';
-                    }
-                    if (timeLeft <= 0) {
-                        stopRecording();
-                    }
-                }, 1000);
-                
-            } else {
-                stopRecording();
-            }
+        // Focus handler to show editing mode
+        voiceTranscript.addEventListener('focus', function() {
+            this.style.borderColor = '#d97706';
+            this.style.boxShadow = '0 0 0 4px rgba(217,119,6,0.1)';
+            this.style.background = '#fefcf7';
+        });
+        voiceTranscript.addEventListener('blur', function() {
+            this.style.borderColor = '#eaf1f8';
+            this.style.boxShadow = 'none';
+            this.style.background = 'white';
         });
         
-        function stopRecording() {
+        let recognition = null;
+        let isFinalized = false;
+        
+        function initSpeechRecog() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SR();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+                
+                recognition.onresult = (e) => {
+                    let finalTranscript = '';
+                    let interimTranscript = '';
+                    for (let i = e.resultIndex; i < e.results.length; i++) {
+                        const result = e.results[i];
+                        if (result.isFinal) {
+                            finalTranscript += result[0].transcript;
+                        } else {
+                            interimTranscript += result[0].transcript;
+                        }
+                    }
+                    transcript = finalTranscript || interimTranscript;
+                    if (transcript.trim()) {
+                        voiceTranscript.textContent = transcript;
+                    }
+                };
+                
+                recognition.onend = () => {
+                    if (isRecording && !isFinalized) {
+                        try { recognition.start(); } catch(e) {}
+                    }
+                };
+                
+                recognition.onerror = (e) => {
+                    console.error('Speech error:', e.error);
+                    if (e.error === 'not-allowed') {
+                        voiceStatus.textContent = '⚠️ Please allow microphone access.';
+                        voiceStatus.className = 'voice-status';
+                    }
+                    if (e.error === 'no-speech') {
+                        voiceStatus.textContent = '⚠️ No speech detected. Please try again.';
+                        voiceStatus.className = 'voice-status';
+                    }
+                };
+                return true;
+            } else {
+                voiceStatus.textContent = '❌ Speech recognition not supported in this browser.';
+                return false;
+            }
+        }
+        
+        function startCountdown() {
+            if (isCountdownActive || isRecording) return;
+            isCountdownActive = true;
+            countdownValue = 3;
+            transcript = '';
+            isSaved = false;
+            isFinalized = false;
+            voiceTranscript.textContent = '🎤 Get ready...';
+            recordBtn.disabled = true;
+            recordBtn.textContent = `⏳ ${countdownValue}`;
+            voiceTimer.textContent = `⏱️ ${countdownValue}`;
+            voiceTimer.className = 'voice-timer countdown';
+            voiceStatus.textContent = `⏳ Recording starts in ${countdownValue}...`;
+            voiceStatus.className = 'voice-status countdown';
+            
+            countdownInterval = setInterval(() => {
+                countdownValue--;
+                if (countdownValue > 0) {
+                    recordBtn.textContent = `⏳ ${countdownValue}`;
+                    voiceTimer.textContent = `⏱️ ${countdownValue}`;
+                    voiceStatus.textContent = `⏳ Recording starts in ${countdownValue}...`;
+                } else {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                    isCountdownActive = false;
+                    startRecording();
+                }
+            }, 1000);
+        }
+        
+        function startRecording() {
+            if (isRecording) return;
+            if (!recognition) {
+                if (!initSpeechRecog()) return;
+            }
+            
+            isRecording = true;
+            isFinalized = false;
+            timeLeft = q.duration || 45;
+            transcript = '';
+            recordBtn.textContent = '🔴 Recording...';
+            recordBtn.className = 'record-btn recording';
+            recordBtn.disabled = false;
+            finishBtn.className = 'record-btn finish hidden';
+            voiceTimer.textContent = `⏱️ ${timeLeft}s`;
+            voiceTimer.className = 'voice-timer recording';
+            voiceStatus.textContent = '🔴 Recording in progress... Speak now!';
+            voiceStatus.className = 'voice-status recording';
+            voiceTranscript.textContent = '🎤 Listening... Speak now!';
+            
+            try { recognition.start(); } catch(e) {}
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                voiceTimer.textContent = `⏱️ ${timeLeft}s`;
+                if (timeLeft <= 10) {
+                    voiceTimer.className = 'voice-timer warning';
+                }
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    stopRecording(true);
+                }
+            }, 1000);
+        }
+        
+        function stopRecording(autoStop = false) {
+            if (!isRecording && !autoStop) return;
+            
             isRecording = false;
+            isFinalized = true;
+            
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
             }
-            try { recognition.stop(); } catch(e) {}
-            
-            recordBtn.textContent = '🎙️ Start Recording';
-            recordBtn.classList.remove('recording');
-            voiceStatus.textContent = '✅ Recording stopped';
-            
-            if (transcript.trim().length > 10) {
-                voiceStatus.textContent = '✅ Response captured!';
-                document.getElementById('assessmentNext').dataset.selected = transcript;
-                document.getElementById('assessmentNext').dataset.isVoice = 'true';
-            } else {
-                voiceStatus.textContent = '⚠️ Please speak at least a few words.';
+            if (recognition) {
+                try { recognition.stop(); } catch(e) {}
             }
+            
+            recordBtn.textContent = '🎙️ Record Again';
+            recordBtn.className = 'record-btn';
+            recordBtn.disabled = false;
+            
+            // Show finish button if there's transcript content
+            const hasContent = transcript.trim().length > 5 || voiceTranscript.textContent.trim().length > 5;
+            if (hasContent) {
+                finishBtn.className = 'record-btn finish';
+                finishBtn.style.display = 'inline-block';
+                voiceStatus.textContent = '✅ Recording stopped. Review and edit your response below.';
+                voiceStatus.className = 'voice-status ready';
+                if (voiceTranscript.textContent === '🎤 Listening... Speak now!' || voiceTranscript.textContent === 'Your response will appear here... You can edit it.') {
+                    voiceTranscript.textContent = transcript || 'No speech detected. Please try again or type your response.';
+                }
+            } else {
+                finishBtn.className = 'record-btn finish hidden';
+                finishBtn.style.display = 'none';
+                voiceStatus.textContent = '⚠️ No speech detected. Please try recording again or type your response.';
+                voiceStatus.className = 'voice-status';
+                voiceTranscript.textContent = 'Type your response here...';
+            }
+            
+            voiceTimer.className = 'voice-timer';
+            voiceTimer.textContent = `⏱️ ${timeLeft}s`;
         }
+        
+        // Record button click
+        recordBtn.addEventListener('click', function() {
+            if (isRecording) {
+                stopRecording(false);
+            } else {
+                startCountdown();
+            }
+        });
+        
+        // Finish button click
+        finishBtn.addEventListener('click', function() {
+            const finalText = voiceTranscript.textContent.trim();
+            if (finalText.length > 5 && finalText !== 'Your response will appear here... You can edit it.' && finalText !== 'No speech detected. Please try again or type your response.') {
+                document.getElementById('assessmentNext').dataset.selected = finalText;
+                document.getElementById('assessmentNext').dataset.isVoice = 'true';
+                voiceStatus.textContent = '✅ Response saved! You can proceed.';
+                voiceStatus.className = 'voice-status ready';
+                finishBtn.className = 'record-btn finish hidden';
+                finishBtn.style.display = 'none';
+                isSaved = true;
+            } else {
+                voiceStatus.textContent = '⚠️ Please speak at least a few words or type your response.';
+                voiceStatus.className = 'voice-status';
+            }
+        });
+        
+        // Allow manual editing of transcript
+        voiceTranscript.addEventListener('input', function() {
+            // If user manually edits, we consider it saved
+            if (this.textContent.trim().length > 5) {
+                finishBtn.className = 'record-btn finish';
+                finishBtn.style.display = 'inline-block';
+                voiceStatus.textContent = '✏️ Response edited. Click "Finish & Save" to save.';
+                voiceStatus.className = 'voice-status';
+            }
+        });
         
         if (currentQuestionIndex === 0) {
             document.getElementById('assessmentBack').style.opacity = '0.3';
@@ -1352,7 +1561,7 @@ document.getElementById('assessmentNext').addEventListener('click', async () => 
     const isVoice = document.getElementById('assessmentNext').dataset.isVoice === 'true';
     
     if (!selected) {
-        alert(isVoice ? 'Please record your voice response.' : 'Please select an option.');
+        alert(isVoice ? 'Please record your voice response and click "Finish & Save".' : 'Please select an option.');
         return;
     }
 
@@ -1378,18 +1587,14 @@ document.getElementById('assessmentNext').addEventListener('click', async () => 
 // ============================================================
 async function submitAssessment() {
     try {
-        // Check if we're in test mode (skip payment) or real mode
         let payload = {
             user_id: userId,
             responses: assessmentResponses,
             type: 'paid'
         };
         
-        // If we're in test mode (userId starts with 'test-user-'), create a dummy user
         if (userId && userId.startsWith('test-user-')) {
-            // For test mode, we'll send a special flag to the backend
             payload.test_mode = true;
-            // Also send user details for test user creation
             payload.user_details = {
                 full_name: userFullName,
                 email: userEmail,
