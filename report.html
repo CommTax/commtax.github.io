@@ -113,10 +113,51 @@
             letter-spacing: 0.5px;
         }
 
+        /* ===== LOADING ===== */
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .loading-state .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #ede8e0;
+            border-top-color: #b8943c;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-state p {
+            color: #6e6a62;
+            font-size: 0.95rem;
+        }
+
+        /* ===== ERROR ===== */
+        .error-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .error-state .icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        .error-state h3 {
+            color: #1a1a1e;
+            margin-bottom: 0.3rem;
+        }
+        .error-state p {
+            color: #6e6a62;
+            font-size: 0.9rem;
+        }
+
         /* ===== REPORT BODY ===== */
         .report-body {
             padding: 40px 50px 50px;
             background: #ffffff;
+            display: none;
         }
 
         /* ===== EXECUTIVE MRI ===== */
@@ -358,7 +399,7 @@
             .persona-section .persona-name { font-size: 2rem; }
         }
 
-        /* Print Styles */
+        /* ===== PRINT ===== */
         @media print {
             body { background: white; padding: 0; }
             .report-container { box-shadow: none; border-radius: 0; }
@@ -372,20 +413,33 @@
 <div class="report-container" id="reportContainer">
     
     <!-- ===== COVER PAGE ===== -->
-    <div class="cover-page">
+    <div class="cover-page" id="coverPage">
         <div class="gold-accent"></div>
         <div class="brand">The Unspoken</div>
         <div class="badge">Executive Intelligence · 2026</div>
         <h1>Communication <span class="gold">Persona</span></h1>
         <div class="subtitle">Executive Diagnostic</div>
         
-        <div class="executive-name" id="coverName">Rachael Valles</div>
-        <div class="executive-title" id="coverTitle">Team Lead / Front Line Managers</div>
+        <div class="executive-name" id="coverName">Loading...</div>
+        <div class="executive-title" id="coverTitle">—</div>
         
         <div class="footer-line">
-            <span>Report Date: <span id="reportDate">10 Aug 2026</span></span>
+            <span>Report Date: <span id="reportDate">—</span></span>
             <span>Status: <span style="color: #b8943c;">CONFIDENTIAL</span></span>
         </div>
+    </div>
+
+    <!-- ===== LOADING ===== -->
+    <div class="loading-state" id="loadingState">
+        <div class="spinner"></div>
+        <p>Loading your report...</p>
+    </div>
+
+    <!-- ===== ERROR ===== -->
+    <div class="error-state" id="errorState" style="display:none;">
+        <div class="icon">📄</div>
+        <h3>Report Not Found</h3>
+        <p id="errorMessage">We couldn't find your report. Please complete the assessment first.</p>
     </div>
 
     <!-- ===== REPORT BODY ===== -->
@@ -400,17 +454,17 @@
             <div class="mri-grid">
                 <div class="mri-card gold-border">
                     <div class="mri-label">Highest Score</div>
-                    <div class="mri-value" id="highestScore">83%</div>
-                    <div class="mri-desc" id="highestLabel">Opportunity</div>
+                    <div class="mri-value" id="highestScore">—</div>
+                    <div class="mri-desc" id="highestLabel">—</div>
                 </div>
                 <div class="mri-card">
                     <div class="mri-label">Lowest Score</div>
-                    <div class="mri-value" id="lowestScore">63%</div>
-                    <div class="mri-desc" id="lowestLabel">Understanding</div>
+                    <div class="mri-value" id="lowestScore">—</div>
+                    <div class="mri-desc" id="lowestLabel">—</div>
                 </div>
                 <div class="mri-card">
                     <div class="mri-label">Persona</div>
-                    <div class="mri-value" id="mriPersona" style="font-size:1.4rem;">The Articulator</div>
+                    <div class="mri-value" id="mriPersona" style="font-size:1.4rem;">—</div>
                     <div class="mri-desc">Your communication pattern</div>
                 </div>
             </div>
@@ -420,44 +474,44 @@
         <div class="summary-section">
             <h3>Executive Summary</h3>
             <div class="summary-text" id="executiveSummary">
-                Your Communication Persona places you in a strong position. Your <span class="highlight">thinking quality</span> is higher than your <span class="highlight">translation ability</span>. Your expertise is generally recognised but could be amplified. The good news? This is fixable with focused practice.
+                Loading your summary...
             </div>
         </div>
 
         <!-- ===== PERSONA ===== -->
         <div class="persona-section">
             <div class="persona-label">Your Communication Persona</div>
-            <div class="persona-name" id="personaName">The Articulator</div>
-            <div class="persona-desc" id="personaDesc">You make your thinking clear. You organize ideas well and express them with precision. Your communication is structured and easy to follow.</div>
-            <div class="persona-tagline" id="personaTagline">"Build your ideas on solid ground."</div>
+            <div class="persona-name" id="personaName">—</div>
+            <div class="persona-desc" id="personaDesc">—</div>
+            <div class="persona-tagline" id="personaTagline">—</div>
         </div>
 
         <!-- ===== SCORES ===== -->
         <div class="scores-grid" id="scoresGrid">
             <div class="score-item">
-                <div class="score-number gold" id="scoreStructure">85</div>
+                <div class="score-number gold" id="scoreStructure">—</div>
                 <div class="score-label">Structure</div>
-                <div class="score-level">Strong</div>
+                <div class="score-level">—</div>
             </div>
             <div class="score-item">
-                <div class="score-number" id="scoreThinking">78</div>
+                <div class="score-number" id="scoreThinking">—</div>
                 <div class="score-label">Thinking</div>
-                <div class="score-level">Proficient</div>
+                <div class="score-level">—</div>
             </div>
             <div class="score-item">
-                <div class="score-number" id="scoreExpression">82</div>
+                <div class="score-number" id="scoreExpression">—</div>
                 <div class="score-label">Expression</div>
-                <div class="score-level">Strong</div>
+                <div class="score-level">—</div>
             </div>
             <div class="score-item">
-                <div class="score-number" id="scoreConnection">70</div>
+                <div class="score-number" id="scoreConnection">—</div>
                 <div class="score-label">Connection</div>
-                <div class="score-level">Developing</div>
+                <div class="score-level">—</div>
             </div>
             <div class="score-item">
-                <div class="score-number" id="scoreImpact">65</div>
+                <div class="score-number" id="scoreImpact">—</div>
                 <div class="score-label">Impact</div>
-                <div class="score-level">Developing</div>
+                <div class="score-level">—</div>
             </div>
         </div>
 
@@ -469,119 +523,111 @@
 
 <script>
 // ============================================================
-// DUMMY DATA (Replace with API call)
+// API CONFIGURATION
 // ============================================================
-const dummyReport = {
-    user_name: "Rachael Valles",
-    user_title: "Team Lead / Front Line Managers",
-    date: "10 Aug 2026",
-    persona: {
-        name: "The Articulator",
-        description: "You make your thinking clear. You organize ideas well and express them with precision. Your communication is structured and easy to follow.",
-        tagline: '"Build your ideas on solid ground."',
-        strength: "Clarity and organization",
-        strength_description: "You have a natural ability to structure complex ideas and express them in a way anyone can understand. Your thinking is clear and your words follow.",
-        blind_spot: "May come across as too formal or rigid",
-        blind_spot_description: "Your emphasis on structure and clarity can sometimes make you seem cold or disconnected from the emotional side of communication."
-    },
-    scores: {
-        structure: 85,
-        thinking: 78,
-        expression: 82,
-        connection: 70,
-        impact: 65
-    },
-    competencies: {
-        structure: {
-            score: 85,
-            score_range: "75-89",
-            category: "Strong",
-            question: "Do your ideas land in the order you intended?",
-            executive_narrative: "You naturally organise information in a logical way, making it easier for others to follow your thinking. Your communication generally has a clear beginning, middle, and end, although consistency may reduce under pressure.",
-            whats_working: "You understand the importance of sequencing ideas and usually present information in a way that is easy to absorb. Your audience rarely struggles to understand the flow of your message.",
-            whats_holding_you_back: "During high-pressure conversations or spontaneous discussions, your structure becomes less deliberate. You may introduce unnecessary context before arriving at the main point, reducing executive impact.",
-            how_others_experience_you: "People experience your communication as organised and thoughtful. However, senior stakeholders may occasionally feel that your conclusions arrive later than necessary.",
-            professional_impact: "Strong structure reduces confusion, builds credibility, and improves stakeholder confidence. Improving your ability to lead with conclusions will make your recommendations appear more decisive and executive-ready.",
-            highest_roi_improvement: "Adopt a 'Headline → Three Supporting Points → Recommendation' framework for all important conversations."
-        },
-        thinking: {
-            score: 78,
-            score_range: "75-89",
-            category: "Strong",
-            question: "Do you know what you want to say — before you start saying it?",
-            executive_narrative: "You naturally think like a strategist but often communicate like a subject matter expert. Your ideas are strong, yet the quality of your thinking is not always immediately recognised because it isn't consistently translated into executive-level messaging.",
-            whats_working: "You rarely struggle with clarity of thought. Your preparation, logical reasoning, and ability to identify the core issue are above average, allowing you to approach discussions with confidence and structure.",
-            whats_holding_you_back: "Under pressure, your thoughts become less organised. Rather than leading with your conclusion, you sometimes over-explain the background, making your strongest ideas less visible.",
-            how_others_experience_you: "Colleagues see you as intelligent, dependable, and knowledgeable. However, senior stakeholders may occasionally underestimate the quality of your thinking because your delivery lacks executive precision.",
-            professional_impact: "Your thinking capability is rarely the reason opportunities are delayed. However, unless your ideas are communicated with greater structure and confidence, your contribution may consistently be recognised later than it deserves.",
-            highest_roi_improvement: "Practice presenting your recommendation in one sentence before explaining your reasoning. Executive leaders are recognised for clarity before detail."
-        },
-        expression: {
-            score: 82,
-            score_range: "75-89",
-            category: "Strong",
-            question: "Does your message land with the impact you intend?",
-            executive_narrative: "You communicate clearly in most professional situations and are generally successful in explaining ideas, building understanding, and influencing outcomes. Your communication is effective, though not yet consistently executive in style.",
-            whats_working: "You explain concepts well, adapt reasonably to different audiences, and maintain confidence during most conversations. Your ability to communicate is a noticeable professional strength.",
-            whats_holding_you_back: "Your communication occasionally prioritises completeness over impact. In an effort to be thorough, you may provide more detail than your audience requires, reducing the strength of your key message.",
-            how_others_experience_you: "Colleagues see you as articulate and dependable. Senior stakeholders appreciate your knowledge but may occasionally wish your communication was more concise and outcome-focused.",
-            professional_impact: "Strong communication already contributes positively to your professional reputation. Sharpening brevity and executive messaging will further increase your influence and visibility.",
-            highest_roi_improvement: "Aim to communicate the conclusion first, followed by only the supporting details necessary for your audience to make a decision."
-        },
-        connection: {
-            score: 70,
-            score_range: "60-74",
-            category: "Developing",
-            question: "Do you read the room — or does the room read you?",
-            executive_narrative: "You recognise obvious signals during conversations, but you do not consistently adjust your communication based on audience feedback. Your focus remains primarily on delivering your message.",
-            whats_working: "You genuinely care about helping others understand your ideas and are willing to clarify when questions arise.",
-            whats_holding_you_back: "Because most of your attention remains on what you want to communicate, subtle signs of confusion, disagreement, or disengagement may go unnoticed.",
-            how_others_experience_you: "People appreciate your willingness to explain, but they may occasionally feel conversations become one-directional rather than collaborative.",
-            professional_impact: "Improving audience awareness will significantly enhance stakeholder trust, reduce misunderstandings, and increase your ability to influence decisions.",
-            highest_roi_improvement: "Deliberately pause during important conversations to ask, 'Does this align with your perspective?' before continuing."
-        },
-        impact: {
-            score: 65,
-            score_range: "60-74",
-            category: "Developing",
-            question: "Are you converting your communication into real career outcomes?",
-            executive_narrative: "Your communication demonstrates potential, but it does not consistently convert into the opportunities your capability deserves. The quality of your work and expertise provide a solid platform for future success.",
-            whats_working: "You have the technical capability required to achieve stronger outcomes. Your work quality and expertise provide a solid platform for future success.",
-            whats_holding_you_back: "Your communication often explains your work without clearly demonstrating its value or business impact.",
-            how_others_experience_you: "Others recognise your competence without immediately identifying you as a leader or high-impact contributor.",
-            professional_impact: "Closing the gap between communication and business impact will significantly improve interviews, promotions, stakeholder buy-in, and professional recognition.",
-            highest_roi_improvement: "End every important conversation by clearly stating the value created, the recommendation, and the desired next action."
-        }
+const API_BASE = 'https://unspoken-backend-yvbi.onrender.com';
+
+// Get user_id from URL or localStorage
+const urlParams = new URLSearchParams(window.location.search);
+let userId = urlParams.get('user_id') || localStorage.getItem('unspoken_user_id');
+
+// ============================================================
+// COMPETENCY LEVELS
+// ============================================================
+function getLevel(score) {
+    if (score >= 80) return 'Exceptional';
+    if (score >= 70) return 'Strong';
+    if (score >= 60) return 'Proficient';
+    if (score >= 50) return 'Developing';
+    return 'Needs Attention';
+}
+
+// ============================================================
+// LOAD REPORT
+// ============================================================
+async function loadReport() {
+    const loading = document.getElementById('loadingState');
+    const error = document.getElementById('errorState');
+    const body = document.getElementById('reportBody');
+    const cover = document.getElementById('coverPage');
+
+    // Show loading
+    loading.style.display = 'block';
+    error.style.display = 'none';
+    body.style.display = 'none';
+
+    if (!userId) {
+        loading.style.display = 'none';
+        error.style.display = 'block';
+        document.getElementById('errorMessage').textContent = 'No user found. Please complete the assessment first.';
+        return;
     }
-};
+
+    try {
+        const response = await fetch(`${API_BASE}/api/persona/paid-report/${userId}`);
+        const data = await response.json();
+
+        if (!data.success) {
+            loading.style.display = 'none';
+            error.style.display = 'block';
+            document.getElementById('errorMessage').textContent = data.message || 'Report not found.';
+            return;
+        }
+
+        // Hide loading, show report
+        loading.style.display = 'none';
+        error.style.display = 'none';
+        body.style.display = 'block';
+        cover.style.display = 'block';
+
+        renderReport(data.report);
+
+    } catch (err) {
+        console.error('Error loading report:', err);
+        loading.style.display = 'none';
+        error.style.display = 'block';
+        document.getElementById('errorMessage').textContent = 'Network error. Please try again.';
+    }
+}
 
 // ============================================================
 // RENDER REPORT
 // ============================================================
 function renderReport(report) {
-    const p = report.persona;
-    const s = report.scores;
-    const comps = report.competencies;
+    const persona = report.persona || {};
+    const scores = report.scores || {};
+    const competencies = report.competencies || {};
 
-    // Cover
-    document.getElementById('coverName').textContent = report.user_name || 'Professional';
-    document.getElementById('coverTitle').textContent = report.user_title || 'Executive';
-    document.getElementById('reportDate').textContent = report.date || new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    // ===== COVER =====
+    document.getElementById('coverName').textContent = persona.user_name || 'Professional';
+    document.getElementById('coverTitle').textContent = persona.user_title || 'Executive';
+    
+    const date = new Date();
+    document.getElementById('reportDate').textContent = date.toLocaleDateString('en-GB', { 
+        day: '2-digit', month: 'short', year: 'numeric' 
+    });
 
-    // MRI
-    const sorted = Object.entries(s).sort((a, b) => b[1] - a[1]);
-    document.getElementById('highestScore').textContent = sorted[0][1] + '%';
-    document.getElementById('highestLabel').textContent = sorted[0][0].charAt(0).toUpperCase() + sorted[0][0].slice(1);
-    document.getElementById('lowestScore').textContent = sorted[sorted.length - 1][1] + '%';
-    document.getElementById('lowestLabel').textContent = sorted[sorted.length - 1][0].charAt(0).toUpperCase() + sorted[sorted.length - 1][0].slice(1);
-    document.getElementById('mriPersona').textContent = p.name;
+    // ===== MRI =====
+    const scoreEntries = Object.entries(scores).filter(([k, v]) => v !== undefined && v !== null);
+    if (scoreEntries.length > 0) {
+        const sorted = [...scoreEntries].sort((a, b) => b[1] - a[1]);
+        document.getElementById('highestScore').textContent = sorted[0][1] + '%';
+        document.getElementById('highestLabel').textContent = sorted[0][0].charAt(0).toUpperCase() + sorted[0][0].slice(1);
+        document.getElementById('lowestScore').textContent = sorted[sorted.length - 1][1] + '%';
+        document.getElementById('lowestLabel').textContent = sorted[sorted.length - 1][0].charAt(0).toUpperCase() + sorted[sorted.length - 1][0].slice(1);
+    }
+    document.getElementById('mriPersona').textContent = persona.name || 'The Articulator';
 
-    // Persona
-    document.getElementById('personaName').textContent = p.name;
-    document.getElementById('personaDesc').textContent = p.description;
-    document.getElementById('personaTagline').textContent = p.tagline;
+    // ===== EXECUTIVE SUMMARY =====
+    const summary = generateSummary(persona, scores);
+    document.getElementById('executiveSummary').innerHTML = summary;
 
-    // Scores
+    // ===== PERSONA =====
+    document.getElementById('personaName').textContent = persona.name || 'The Articulator';
+    document.getElementById('personaDesc').textContent = persona.description || 'Your communication style is being analyzed.';
+    document.getElementById('personaTagline').textContent = persona.tagline || '';
+
+    // ===== SCORES =====
     const scoreMap = {
         structure: 'scoreStructure',
         thinking: 'scoreThinking',
@@ -589,12 +635,22 @@ function renderReport(report) {
         connection: 'scoreConnection',
         impact: 'scoreImpact'
     };
-    Object.keys(s).forEach(key => {
+    const levelMap = {
+        structure: 'scoreStructureLevel',
+        thinking: 'scoreThinkingLevel',
+        expression: 'scoreExpressionLevel',
+        connection: 'scoreConnectionLevel',
+        impact: 'scoreImpactLevel'
+    };
+
+    Object.keys(scoreMap).forEach(key => {
         const el = document.getElementById(scoreMap[key]);
-        if (el) el.textContent = s[key];
+        const levelEl = document.getElementById(levelMap[key]);
+        if (el) el.textContent = scores[key] !== undefined ? scores[key] : '—';
+        if (levelEl) levelEl.textContent = scores[key] !== undefined ? getLevel(scores[key]) : '—';
     });
 
-    // Competencies
+    // ===== COMPETENCIES =====
     const container = document.getElementById('competenciesContainer');
     container.innerHTML = '';
 
@@ -606,11 +662,34 @@ function renderReport(report) {
         connection: 'Connection',
         impact: 'Impact'
     };
+    const questions = {
+        thinking: 'Do you know what you want to say — before you start saying it?',
+        structure: 'Do your ideas land in the order you intended?',
+        expression: 'Does your message land with the impact you intend?',
+        connection: 'Do you read the room — or does the room read you?',
+        impact: 'Are you converting your communication into real career outcomes?'
+    };
 
     order.forEach(key => {
-        if (!comps[key]) return;
-        const c = comps[key];
-        
+        const comp = competencies[key];
+        if (!comp) {
+            // Try to use persona content as fallback
+            const fallback = persona[key] || {};
+            const fallbackComp = {
+                score: scores[key] || 0,
+                score_range: getScoreRange(scores[key] || 0),
+                category: getLevel(scores[key] || 0),
+                question: questions[key] || '',
+                executive_narrative: fallback.executive_narrative || `${labels[key]} is an area of focus for you.`,
+                whats_working: fallback.whats_working || '',
+                whats_holding_you_back: fallback.whats_holding_you_back || '',
+                how_others_experience_you: fallback.how_others_experience_you || '',
+                professional_impact: fallback.professional_impact || '',
+                highest_roi_improvement: fallback.highest_roi_improvement || ''
+            };
+            comp = fallbackComp;
+        }
+
         const card = document.createElement('div');
         card.className = 'competency-card';
 
@@ -618,35 +697,35 @@ function renderReport(report) {
             <div class="competency-header">
                 <div>
                     <span class="comp-name">${labels[key]}</span>
-                    <span class="comp-level">${c.category || ''}</span>
+                    <span class="comp-level">${comp.category || getLevel(comp.score || 0)}</span>
                 </div>
-                <span class="comp-score">${c.score}%</span>
+                <span class="comp-score">${comp.score || scores[key] || 0}%</span>
             </div>
-            <div class="competency-question">${c.question || ''}</div>
+            <div class="competency-question">${comp.question || questions[key] || ''}</div>
             <div class="competency-grid">
                 <div class="item">
                     <div class="item-label">Executive Narrative</div>
-                    <div class="item-text">${c.executive_narrative || ''}</div>
+                    <div class="item-text">${comp.executive_narrative || 'No narrative available.'}</div>
                 </div>
                 <div class="item">
                     <div class="item-label">What's Working</div>
-                    <div class="item-text">${c.whats_working || ''}</div>
+                    <div class="item-text">${comp.whats_working || 'No data available.'}</div>
                 </div>
                 <div class="item">
                     <div class="item-label">What's Holding You Back</div>
-                    <div class="item-text">${c.whats_holding_you_back || ''}</div>
+                    <div class="item-text">${comp.whats_holding_you_back || 'No data available.'}</div>
                 </div>
                 <div class="item">
                     <div class="item-label">How Others Experience You</div>
-                    <div class="item-text">${c.how_others_experience_you || ''}</div>
+                    <div class="item-text">${comp.how_others_experience_you || 'No data available.'}</div>
                 </div>
                 <div class="item" style="grid-column: 1 / -1;">
                     <div class="item-label">Professional Impact</div>
-                    <div class="item-text">${c.professional_impact || ''}</div>
+                    <div class="item-text">${comp.professional_impact || 'No data available.'}</div>
                 </div>
                 <div class="item" style="grid-column: 1 / -1; border-bottom: none;">
                     <div class="item-label">Highest-ROI Improvement</div>
-                    <div class="item-text" style="color: #b8943c; font-weight: 500;">${c.highest_roi_improvement || ''}</div>
+                    <div class="item-text" style="color: #b8943c; font-weight: 500;">${comp.highest_roi_improvement || 'No recommendation available.'}</div>
                 </div>
             </div>
         `;
@@ -655,27 +734,43 @@ function renderReport(report) {
 }
 
 // ============================================================
-// LOAD REPORT
+// HELPERS
 // ============================================================
-// For testing, use dummy data
-renderReport(dummyReport);
-
-// To load from API, uncomment and use:
-/*
-async function loadReport(email) {
-    try {
-        const res = await fetch(`https://unspoken-backend-yvbi.onrender.com/api/persona/paid-report/${encodeURIComponent(email)}`);
-        const data = await res.json();
-        if (data.success) {
-            renderReport(data.report);
-        } else {
-            console.error('Error:', data.message);
-        }
-    } catch (error) {
-        console.error('Error loading report:', error);
-    }
+function getScoreRange(score) {
+    if (score >= 90) return '90-100';
+    if (score >= 75) return '75-89';
+    if (score >= 60) return '60-74';
+    if (score >= 40) return '40-59';
+    return 'Below 40';
 }
-*/
+
+function generateSummary(persona, scores) {
+    const name = persona.name || 'Your Communication Persona';
+    const desc = persona.description || 'Your communication style is being analyzed.';
+    
+    // Find highest and lowest scores
+    const entries = Object.entries(scores).filter(([k, v]) => v !== undefined && v !== null);
+    let highest = '';
+    let lowest = '';
+    if (entries.length > 0) {
+        const sorted = [...entries].sort((a, b) => b[1] - a[1]);
+        highest = sorted[0][0].charAt(0).toUpperCase() + sorted[0][0].slice(1);
+        lowest = sorted[sorted.length - 1][0].charAt(0).toUpperCase() + sorted[sorted.length - 1][0].slice(1);
+    }
+
+    return `
+        Your <span class="highlight">${name}</span> places you in a strong position. 
+        ${desc} 
+        ${highest ? `Your highest score is <span class="highlight">${highest}</span> — build on this strength.` : ''}
+        ${lowest ? `Your lowest score is <span class="highlight">${lowest}</span> — focus here for the biggest growth.` : ''}
+        The good news? Communication is a skill that can be developed with focused practice.
+    `;
+}
+
+// ============================================================
+// START
+// ============================================================
+document.addEventListener('DOMContentLoaded', loadReport);
 </script>
 </body>
 </html>
