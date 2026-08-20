@@ -2404,6 +2404,134 @@ async function sendToBackend(data) {
     }
 }
 
+// ============================================================
+// LOADING ANIMATION FOR STEP 6 (Premium Dynamic Loading)
+// ============================================================
+let loadingInterval = null;
+
+function startLoadingAnimation() {
+    // Configuration for each loading step
+    const steps = [
+        { 
+            id: 'loadingStep1', 
+            percentId: 'loadingPercent1',
+            message: '📖 Reading your responses...',
+            duration: 1800,
+            target: 100
+        },
+        { 
+            id: 'loadingStep2', 
+            percentId: 'loadingPercent2',
+            message: '🧩 Mapping your communication patterns...',
+            duration: 2000,
+            target: 100
+        },
+        { 
+            id: 'loadingStep3', 
+            percentId: 'loadingPercent3',
+            message: '🔗 Connecting the signals...',
+            duration: 1800,
+            target: 100
+        },
+        { 
+            id: 'loadingStep4', 
+            percentId: 'loadingPercent4',
+            message: '🎯 Finding your communication persona...',
+            duration: 2000,
+            target: 100
+        }
+    ];
+    
+    let currentStep = 0;
+    const statusEl = document.getElementById('loadingStatus');
+    
+    function animateStep(index) {
+        if (index >= steps.length) {
+            // All steps complete
+            if (statusEl) {
+                statusEl.textContent = '✅ Analysis complete! Your persona is ready.';
+                statusEl.style.color = '#059669';
+                statusEl.style.animation = 'none';
+            }
+            // Update the reveal button state
+            const btn = document.getElementById('revealPersonaBtn');
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '🔍 Reveal My Persona →';
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            }
+            return;
+        }
+        
+        const step = steps[index];
+        const bar = document.getElementById(step.id);
+        const percentEl = document.getElementById(step.percentId);
+        let progress = 0;
+        const increment = 100 / (step.duration / 50);
+        
+        // Update status message
+        if (statusEl) {
+            statusEl.textContent = step.message;
+            statusEl.style.color = '#4a6a8a';
+            statusEl.style.animation = 'pulse 1.5s ease-in-out infinite';
+        }
+        
+        // Animate from 0 to 100
+        const interval = setInterval(() => {
+            progress += increment;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                // Move to next step after a short pause
+                setTimeout(() => {
+                    currentStep++;
+                    animateStep(currentStep);
+                }, 300);
+            }
+            // Update bar width
+            if (bar) bar.style.width = progress + '%';
+            // Update percentage text
+            if (percentEl) percentEl.textContent = Math.round(progress) + '%';
+        }, 50);
+    }
+    
+    // Reset all bars to 0 first
+    steps.forEach(s => {
+        const bar = document.getElementById(s.id);
+        const percentEl = document.getElementById(s.percentId);
+        if (bar) bar.style.width = '0%';
+        if (percentEl) percentEl.textContent = '0%';
+    });
+    
+    // Disable the reveal button during animation
+    const btn = document.getElementById('revealPersonaBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Analyzing...';
+        btn.style.opacity = '0.7';
+        btn.style.cursor = 'default';
+    }
+    
+    // Start the animation
+    animateStep(0);
+}
+
+// Reveal Persona Button
+document.getElementById('revealPersonaBtn')?.addEventListener('click', function() {
+    // Start the dynamic loading animation
+    startLoadingAnimation();
+    
+    // Navigate to step 7 after animation completes (about 8 seconds)
+    setTimeout(() => {
+        // Check if all steps are complete
+        const statusEl = document.getElementById('loadingStatus');
+        if (statusEl && statusEl.textContent.includes('Analysis complete')) {
+            showStep('step7');
+        }
+    }, 8500);
+});
+    
     // ============================================================
     // BACK BUTTONS
     // ============================================================
@@ -2426,27 +2554,40 @@ async function sendToBackend(data) {
         }
     });
 
-        // ===== UPDATED STEP 6 BACK BUTTON =====
-    document.getElementById('step6Back').addEventListener('click', () => {
-        // Reset loading bars
-        ['loadingStep1', 'loadingStep2', 'loadingStep3', 'loadingStep4'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.style.width = '0%';
-        });
-        const statusEl = document.getElementById('loadingStatus');
-        if (statusEl) {
-            statusEl.textContent = '⏳ Analyzing your communication patterns...';
-            statusEl.style.color = '#94a3b8';
-            statusEl.style.animation = 'pulse 1.5s ease-in-out infinite';
-        }
-        
-        if (loadingInterval) {
-            clearInterval(loadingInterval);
-            loadingInterval = null;
-        }
-        
-        showStep('step5');
+document.getElementById('step6Back').addEventListener('click', () => {
+    // Reset all loading bars and percentages
+    ['loadingStep1', 'loadingStep2', 'loadingStep3', 'loadingStep4'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.width = '0%';
     });
+    ['loadingPercent1', 'loadingPercent2', 'loadingPercent3', 'loadingPercent4'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '0%';
+    });
+    
+    const statusEl = document.getElementById('loadingStatus');
+    if (statusEl) {
+        statusEl.textContent = '⏳ Analyzing your communication patterns...';
+        statusEl.style.color = '#94a3b8';
+        statusEl.style.animation = 'pulse 1.5s ease-in-out infinite';
+    }
+    
+    // Reset the reveal button
+    const btn = document.getElementById('revealPersonaBtn');
+    if (btn) {
+        btn.disabled = false;
+        btn.textContent = '🔍 Reveal My Persona →';
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    }
+    
+    if (loadingInterval) {
+        clearInterval(loadingInterval);
+        loadingInterval = null;
+    }
+    
+    showStep('step5');
+});
     
     document.getElementById('step7Back').addEventListener('click', () => showStep('step6'));
     document.getElementById('step8Back').addEventListener('click', () => showStep('step7'));
