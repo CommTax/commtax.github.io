@@ -754,7 +754,7 @@ function renderReport(report) {
 
     const userName = safeGet(persona, 'user_name', 'Professional');
     const personaName = safeGet(persona, 'name', 'The Articulator');
-    const personaDesc = safeGet(persona, 'description', '');
+    const personaDesc = safeGet(persona, 'detailed_description', safeGet(persona, 'description', ''));
     const personaTagline = safeGet(persona, 'tagline', '');
     const strength = safeGet(persona, 'strength', '');
     const strengthDesc = safeGet(persona, 'strength_description', '');
@@ -872,7 +872,7 @@ function getLevel(score) {
 
 function generateSummary(persona, scores) {
     const name = persona.name || 'Your Communication Persona';
-    const desc = persona.description || '';
+    const detailedDesc = persona.detailed_description || persona.description || '';
     const entries = Object.entries(scores).filter(([k, v]) => v !== undefined && v !== null);
     let highest = '', lowest = '';
     if (entries.length > 0) {
@@ -880,7 +880,29 @@ function generateSummary(persona, scores) {
         highest = sorted[0][0].charAt(0).toUpperCase() + sorted[0][0].slice(1);
         lowest = sorted[sorted.length - 1][0].charAt(0).toUpperCase() + sorted[sorted.length - 1][0].slice(1);
     }
-    return `Your <span class="highlight">${name}</span> places you in a strong position. ${desc} ${highest ? `Your highest score is <span class="highlight">${highest}</span> — build on this strength.` : ''} ${lowest ? `Your lowest score is <span class="highlight">${lowest}</span> — focus here for the biggest growth.` : ''} Communication is a skill that can be developed with focused practice.`;
+    // Build the summary
+    let summary = '';
+    
+    // First line: "You are [Persona Name] which places you in a strong position."
+    summary += `You are <span class="highlight">${personaName}</span> which places you in a strong position. `;
+    
+    // Add detailed description from database
+    if (detailedDesc) {
+        summary += detailedDesc;
+    }
+    
+    // Add strength and growth area
+    if (highest || lowest) {
+        summary += `<br><br>`;
+        if (highest && highestValue >= 70) {
+            summary += `💪 <strong>Your greatest strength is <span class="highlight">${highest}</span></strong> — this is where you naturally excel. `;
+        }
+        if (lowest && lowestValue <= 50) {
+            summary += `📈 <strong>Your area for growth is <span class="highlight">${lowest}</span></strong> — focusing here will unlock your biggest gains.`;
+        }
+    }
+    
+    return summary;
 }
 
 document.addEventListener('DOMContentLoaded', loadReport);
