@@ -1646,91 +1646,97 @@ html {
       });
     });
   });
-
-  <script>
-// ===== LOGIN MODAL =====
-    document.addEventListener('DOMContentLoaded', function() {
- 
+<script>
   // ===== LOGIN MODAL =====
-  const signInBtn = document.getElementById('signInBtn');
-  const loginModal = document.getElementById('loginModal');
-  const loginModalClose = document.getElementById('loginModalClose');
-  const loginModalOverlay = document.getElementById('loginModalOverlay');
-  const loginForm = document.getElementById('loginForm');
+  document.addEventListener('DOMContentLoaded', function() {
+    // ===== LOGIN MODAL =====
+    const signInBtn = document.getElementById('signInBtn');
+    const loginModal = document.getElementById('loginModal');
+    const loginModalClose = document.getElementById('loginModalClose');
+    const loginModalOverlay = document.getElementById('loginModalOverlay');
+    const loginForm = document.getElementById('loginForm');
 
     // Only run if elements exist
     if (signInBtn && loginModal) {
+      // Open modal
+      signInBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        loginModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      });
+
+      // Close modal functions
+      function closeLoginModal() {
+        loginModal.style.display = 'none';
+        document.body.style.overflow = '';
+        if (loginForm) loginForm.reset();
+        const errorEl = document.querySelector('.login-error');
+        if (errorEl) errorEl.style.display = 'none';
+      }
+
+      if (loginModalClose) {
+        loginModalClose.addEventListener('click', closeLoginModal);
+      }
       
-  // Open modal
-  signInBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    loginModal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  });
+      if (loginModalOverlay) {
+        loginModalOverlay.addEventListener('click', closeLoginModal);
+      }
 
-  // Close modal functions
-  function closeLoginModal() {
-    loginModal.style.display = 'none';
-    document.body.style.overflow = '';
-    loginForm.reset();
-    const errorEl = document.querySelector('.login-error');
-    if (errorEl) errorEl.style.display = 'none';
-  }
+      // Close on Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && loginModal.style.display === 'flex') {
+          closeLoginModal();
+        }
+      });
 
-  loginModalClose.addEventListener('click', closeLoginModal);
-  loginModalOverlay.addEventListener('click', closeLoginModal);
+      // Handle login form submission
+      if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const email = document.getElementById('loginEmail').value.trim();
+          const password = document.getElementById('loginPassword').value.trim();
+          const errorEl = document.querySelector('.login-error') || createErrorElement();
+          
+          if (!email || !password) {
+            errorEl.textContent = 'Please fill in all fields.';
+            errorEl.style.display = 'block';
+            return;
+          }
+          
+          errorEl.style.display = 'none';
+          const submitBtn = this.querySelector('.login-btn-primary');
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Logging in...';
+          
+          // Simulate login - Replace with your actual API call
+          setTimeout(function() {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Log In →';
+            
+            // For demo - replace with actual authentication
+            console.log('Login attempt:', { email, password });
+            
+            // Success - close modal and redirect or show success
+            closeLoginModal();
+            // window.location.href = 'dashboard.html';
+          }, 1500);
+        });
+      }
 
-  // Close on Escape key
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && loginModal.style.display === 'flex') {
-      closeLoginModal();
+      function createErrorElement() {
+        const error = document.createElement('div');
+        error.className = 'login-error';
+        error.style.cssText = 'color: #dc2626; font-size: 0.85rem; display: none; margin-top: 4px;';
+        const form = document.getElementById('loginForm');
+        if (form) {
+          form.insertBefore(error, form.querySelector('.login-btn-primary'));
+        }
+        return error;
+      }
     }
-  });
 
-  // Handle login form submission
-  loginForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-    const errorEl = document.querySelector('.login-error') || createErrorElement();
-    
-    if (!email || !password) {
-      errorEl.textContent = 'Please fill in all fields.';
-      errorEl.style.display = 'block';
-      return;
-    }
-    
-    errorEl.style.display = 'none';
-    const submitBtn = this.querySelector('.login-btn-primary');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Logging in...';
-    
-    // Simulate login - Replace with your actual API call
-    setTimeout(function() {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Log In →';
-      
-      // For demo - replace with actual authentication
-      console.log('Login attempt:', { email, password });
-      
-      // Success - close modal and redirect or show success
-      closeLoginModal();
-      // window.location.href = 'dashboard.html';
-    }, 1500);
-  });
-
-  function createErrorElement() {
-    const error = document.createElement('div');
-    error.className = 'login-error';
-    error.style.cssText = 'color: #dc2626; font-size: 0.85rem; display: none; margin-top: 4px;';
-    const form = document.getElementById('loginForm');
-    form.insertBefore(error, form.querySelector('.login-btn-primary'));
-    return error;
-  }
-
-  // ===== REST OF YOUR EXISTING JAVASCRIPT =====
-  document.addEventListener('DOMContentLoaded', function() {
+    // ===== JOURNEY TABS =====
     const tabs = document.querySelectorAll('.journey-tab');
     const contents = document.querySelectorAll('.journey-content-inner');
 
@@ -1745,7 +1751,6 @@ html {
       });
     });
   });
- 
 </script>
 </body>
 </html>
