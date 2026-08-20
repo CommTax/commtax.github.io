@@ -622,6 +622,70 @@
       color: #3d3a34;
     }
 
+    /* ===== HIGHLIGHTED TRUST STRIP ===== */
+    .trust-strip-highlight {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 2px solid #b8943c;
+      border-radius: 16px;
+      padding: 24px 32px;
+      margin: 32px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 8px 30px rgba(184, 148, 60, 0.12);
+    }
+
+    .trust-strip-highlight .label {
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #8a6d1f;
+    }
+
+    .trust-strip-highlight .tags {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-weight: 600;
+      color: #1a1917;
+      font-size: 0.95rem;
+    }
+
+    .trust-strip-highlight .tags span {
+      padding: 4px 0;
+      position: relative;
+    }
+
+    .trust-strip-highlight .tags span::after {
+      content: "✦";
+      color: #b8943c;
+      margin-left: 12px;
+      font-size: 0.6rem;
+    }
+
+    .trust-strip-highlight .tags span:last-child::after {
+      display: none;
+    }
+
+    @media (max-width: 640px) {
+      .trust-strip-highlight {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+      }
+      
+      .trust-strip-highlight .tags {
+        gap: 12px;
+      }
+      
+      .trust-strip-highlight .tags span::after {
+        display: none;
+      }
+    }
+
     /* ----- THE PROBLEM ----- */
     .problem-flow {
       display: flex;
@@ -653,378 +717,329 @@
       font-weight: 300;
     }
 
-    /* ----- JOURNEYS SECTION (Interactive) ----- */
-    .journeys-wrapper {
-      display: flex;
-      gap: 60px;
-      margin-top: 40px;
-      align-items: stretch;
-      min-height: 400px;
-    }
-    .journeys-list {
-      flex: 0 0 280px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      border-right: 2px solid #ede8e0;
-      padding-right: 32px;
-    }
-    .journey-tab {
-      background: transparent;
-      border: none;
-      padding: 16px 20px;
-      text-align: left;
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: #8a8680;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border-radius: 12px;
+    /* ===== JOURNEY CAROUSEL ===== */
+    .journey-carousel-container {
       position: relative;
+      overflow: hidden;
+      margin-top: 32px;
+      padding: 0 40px;
     }
-    .journey-tab:hover {
-      color: #1a1917;
-      background: #f4f0ea;
+
+    .journey-carousel-track {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      gap: 24px;
     }
-    .journey-tab.active {
-      color: #1a1917;
-      background: #f4f0ea;
+
+    .journey-carousel-track .journey-card-premium {
+      min-width: calc(50% - 12px);
+      flex: 0 0 calc(50% - 12px);
     }
-    .journey-tab.active::after {
-      content: "";
+
+    .carousel-btn {
       position: absolute;
-      right: -2px;
-      top: 20%;
-      height: 60%;
-      width: 3px;
-      background: #b8943c;
-      border-radius: 2px;
-    }
-    .journey-tab .sub {
-      display: block;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 400;
-      color: #8a8680;
-      margin-top: 4px;
-      letter-spacing: 0.3px;
-    }
-    .journey-tab.active .sub {
-      color: #5e5a54;
-    }
-    .journey-content {
-      flex: 1;
-      padding: 8px 0;
-      display: flex;
-      flex-direction: column;
-    }
-    .journey-content-inner {
-      display: none;
-      animation: fadeInContent 0.4s ease;
-    }
-    .journey-content-inner.active {
-      display: flex;
-      gap: 40px;
-      align-items: center;
-      height: 100%;
-    }
-    @keyframes fadeInContent {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    .journey-content-inner .text {
-      flex: 1;
-    }
-    .journey-content-inner .text h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.2rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .journey-content-inner .text h3 .highlight {
-      color: #b8943c;
-      font-style: italic;
-    }
-    .journey-content-inner .text .desc {
-      font-size: 1rem;
-      color: #4d4a44;
-      max-width: 400px;
-      margin: 12px 0 20px;
-      line-height: 1.6;
-    }
-    .journey-content-inner .text .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .journey-content-inner .text .tags span {
-      background: #ede8e0;
-      padding: 4px 14px;
-      border-radius: 40px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #3d3a34;
-    }
-    .journey-content-inner .image {
-      flex: 0 0 240px;
-      height: 240px;
-      border-radius: 20px;
-      background: #2d2a24;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1px solid #ede8e0;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #f0ebe4;
-      font-size: 0.9rem;
+      font-size: 1.2rem;
+      color: #1a1917;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      z-index: 10;
+    }
+
+    .carousel-btn:hover {
+      background: #b8943c;
+      border-color: #b8943c;
+      color: #ffffff;
+      box-shadow: 0 8px 24px rgba(184, 148, 60, 0.25);
+    }
+
+    .carousel-btn.prev {
+      left: 0;
+    }
+
+    .carousel-btn.next {
+      right: 0;
+    }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .carousel-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #e2ddd6;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+    }
+
+    .carousel-dot.active {
+      background: #b8943c;
+      width: 28px;
+      border-radius: 5px;
+    }
+
+    .carousel-dot:hover {
+      background: #b8943c;
+    }
+
+    /* ===== PREMIUM JOURNEY CARDS WITH IMAGES ===== */
+    .journey-card-premium {
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #ede8e0;
+      transition: all 0.3s ease;
+      position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
     }
-    .journey-content-inner .image .placeholder {
-      text-align: center;
-      padding: 20px;
-      opacity: 0.6;
+
+    .journey-card-premium:hover {
+      border-color: #b8943c;
+      box-shadow: 0 12px 40px rgba(184, 148, 60, 0.08);
+      transform: translateY(-4px);
     }
-    .journey-content-inner .image .placeholder .icon {
-      font-size: 3rem;
-      display: block;
-      margin-bottom: 8px;
+
+    .journey-card-premium .gold-accent-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #b8943c, #fcd34d, #b8943c);
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
-/* ===== PREMIUM JOURNEY CARDS WITH IMAGES ===== */
-.journey-grid-premium {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-top: 32px;
-}
 
-.journey-card-premium {
-  background: #ffffff;
-  border-radius: 20px;
-  border: 1px solid #ede8e0;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
-}
+    .journey-card-premium:hover .gold-accent-top {
+      opacity: 1;
+    }
 
-.journey-card-premium:hover {
-  border-color: #b8943c;
-  box-shadow: 0 12px 40px rgba(184, 148, 60, 0.08);
-  transform: translateY(-4px);
-}
+    .journey-card-premium .journey-card-inner {
+      display: flex;
+      padding: 28px 24px;
+      gap: 20px;
+      align-items: stretch;
+    }
 
-.journey-card-premium .gold-accent-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #b8943c, #fcd34d, #b8943c);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
+    .journey-card-premium .journey-card-left {
+      flex: 1;
+      min-width: 0;
+    }
 
-.journey-card-premium:hover .gold-accent-top {
-  opacity: 1;
-}
+    .journey-card-premium .journey-card-right {
+      flex: 0 0 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-.journey-card-premium .journey-card-inner {
-  display: flex;
-  padding: 28px 24px;
-  gap: 20px;
-  align-items: stretch;
-}
+    .journey-card-premium .journey-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #f0ebe4;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
 
-.journey-card-premium .journey-card-left {
-  flex: 1;
-  min-width: 0;
-}
+    .journey-card-premium .journey-icon {
+      font-size: 2.5rem;
+      margin-bottom: 4px;
+    }
 
-.journey-card-premium .journey-card-right {
-  flex: 0 0 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    .journey-card-premium .journey-image-label {
+      font-size: 0.55rem;
+      font-weight: 500;
+      opacity: 0.7;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
 
-.journey-card-premium .journey-image {
-  width: 120px;
-  height: 120px;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #f0ebe4;
-  font-size: 0.8rem;
-  flex-shrink: 0;
-}
+    .journey-card-premium .journey-number {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #b8943c;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
 
-.journey-card-premium .journey-icon {
-  font-size: 2.5rem;
-  margin-bottom: 4px;
-}
+    .journey-card-premium .journey-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1a1917;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
 
-.journey-card-premium .journey-image-label {
-  font-size: 0.55rem;
-  font-weight: 500;
-  opacity: 0.7;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
+    .journey-card-premium .journey-title .highlight {
+      color: #b8943c;
+    }
 
-.journey-card-premium .journey-number {
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: #b8943c;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
+    .journey-card-premium .journey-subtitle {
+      font-size: 0.8rem;
+      color: #6e6a62;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
 
-.journey-card-premium .journey-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #1a1917;
-  margin-bottom: 4px;
-  line-height: 1.2;
-}
+    .journey-card-premium .journey-outcome {
+      background: #f8f5f0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      border-left: 3px solid #b8943c;
+    }
 
-.journey-card-premium .journey-title .highlight {
-  color: #b8943c;
-}
+    .journey-card-premium .journey-outcome .outcome-label {
+      font-size: 0.5rem;
+      font-weight: 700;
+      color: #8a8680;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-.journey-card-premium .journey-subtitle {
-  font-size: 0.8rem;
-  color: #6e6a62;
-  margin-bottom: 12px;
-  line-height: 1.4;
-}
+    .journey-card-premium .journey-outcome .outcome-text {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1a1917;
+      font-style: italic;
+      margin-top: 2px;
+    }
 
-.journey-card-premium .journey-outcome {
-  background: #f8f5f0;
-  border-radius: 10px;
-  padding: 10px 14px;
-  margin-bottom: 12px;
-  border-left: 3px solid #b8943c;
-}
+    .journey-card-premium .journey-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
 
-.journey-card-premium .journey-outcome .outcome-label {
-  font-size: 0.5rem;
-  font-weight: 700;
-  color: #8a8680;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+    .journey-card-premium .journey-skills span {
+      background: #f4f0ea;
+      padding: 3px 12px;
+      border-radius: 40px;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: #4d4a44;
+    }
 
-.journey-card-premium .journey-outcome .outcome-text {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #1a1917;
-  font-style: italic;
-  margin-top: 2px;
-}
+    .journey-card-premium .journey-skills span .emoji {
+      margin-right: 3px;
+    }
 
-.journey-card-premium .journey-skills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 12px;
-}
+    .journey-card-premium .journey-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid #ede8e0;
+    }
 
-.journey-card-premium .journey-skills span {
-  background: #f4f0ea;
-  padding: 3px 12px;
-  border-radius: 40px;
-  font-size: 0.65rem;
-  font-weight: 500;
-  color: #4d4a44;
-}
+    .journey-card-premium .journey-footer .journey-tag {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #b8943c;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
 
-.journey-card-premium .journey-skills span .emoji {
-  margin-right: 3px;
-}
+    .journey-card-premium .btn-journey {
+      display: inline-block;
+      background: linear-gradient(135deg, #b8943c, #a07f30);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding: 6px 20px;
+      border-radius: 60px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(184, 148, 60, 0.2);
+    }
 
-.journey-card-premium .journey-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 12px;
-  border-top: 1px solid #ede8e0;
-}
+    .journey-card-premium .btn-journey:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(184, 148, 60, 0.35);
+      background: linear-gradient(135deg, #a07f30, #8a6d1f);
+    }
 
-.journey-card-premium .journey-footer .journey-tag {
-  font-size: 0.6rem;
-  font-weight: 600;
-  color: #b8943c;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
+    .journey-card-premium .btn-journey.coming-soon {
+      background: #e8e5e0;
+      color: #8a8680;
+      box-shadow: none;
+      cursor: default;
+    }
 
-.journey-card-premium .btn-journey {
-  display: inline-block;
-  background: linear-gradient(135deg, #b8943c, #a07f30);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.8rem;
-  padding: 6px 20px;
-  border-radius: 60px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 16px rgba(184, 148, 60, 0.2);
-}
+    .journey-card-premium .btn-journey.coming-soon:hover {
+      transform: none;
+      box-shadow: none;
+      background: #e8e5e0;
+    }
 
-.journey-card-premium .btn-journey:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(184, 148, 60, 0.35);
-  background: linear-gradient(135deg, #a07f30, #8a6d1f);
-}
+    .journey-card-premium.coming-soon-card {
+      opacity: 0.7;
+    }
 
-.journey-card-premium .btn-journey.coming-soon {
-  background: #e8e5e0;
-  color: #8a8680;
-  box-shadow: none;
-  cursor: default;
-}
+    @media (max-width: 992px) {
+      .journey-carousel-track .journey-card-premium {
+        min-width: calc(100% - 0px);
+        flex: 0 0 calc(100% - 0px);
+      }
+      
+      .journey-carousel-container {
+        padding: 0 10px;
+      }
+      
+      .carousel-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+      }
+    }
 
-.journey-card-premium .btn-journey.coming-soon:hover {
-  transform: none;
-  box-shadow: none;
-  background: #e8e5e0;
-}
-
-.journey-card-premium.coming-soon-card {
-  opacity: 0.7;
-}
-
-@media (max-width: 768px) {
-  .journey-grid-premium {
-    grid-template-columns: 1fr;
-  }
-  
-  .journey-card-premium .journey-card-inner {
-    flex-direction: column;
-    padding: 20px 16px;
-  }
-  
-  .journey-card-premium .journey-card-right {
-    flex: 1;
-    justify-content: center;
-  }
-  
-  .journey-card-premium .journey-image {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .journey-card-premium .journey-icon {
-    font-size: 2rem;
-  }
-}
-
-    
+    @media (max-width: 768px) {
+      .journey-card-premium .journey-card-inner {
+        flex-direction: column;
+        padding: 20px 16px;
+      }
+      
+      .journey-card-premium .journey-card-right {
+        flex: 1;
+        justify-content: center;
+      }
+      
+      .journey-card-premium .journey-image {
+        width: 80px;
+        height: 80px;
+      }
+      
+      .journey-card-premium .journey-icon {
+        font-size: 2rem;
+      }
+    }
 
     /* ----- PERSONA CARDS ----- */
     .persona-grid {
@@ -1326,43 +1341,6 @@
       .problem-arrow {
         transform: rotate(90deg);
       }
-      .journeys-wrapper {
-        flex-direction: column;
-        gap: 32px;
-      }
-      .journeys-list {
-        flex: 1;
-        flex-direction: row;
-        flex-wrap: wrap;
-        border-right: none;
-        border-bottom: 2px solid #ede8e0;
-        padding-right: 0;
-        padding-bottom: 20px;
-        gap: 4px;
-      }
-      .journey-tab {
-        font-size: 1.2rem;
-        padding: 12px 16px;
-        flex: 1;
-        min-width: 120px;
-        text-align: center;
-      }
-      .journey-tab.active::after {
-        display: none;
-      }
-      .journey-tab.active {
-        border-bottom: 3px solid #b8943c;
-        border-radius: 0;
-      }
-      .journey-content-inner.active {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .journey-content-inner .image {
-        flex: 0 0 180px;
-        height: 180px;
-        width: 100%;
-      }
     }
     @media (max-width: 640px) {
       .container {
@@ -1417,19 +1395,6 @@
       }
       .footer {
         flex-direction: column;
-      }
-      .journeys-list {
-        flex-direction: column;
-        gap: 4px;
-      }
-      .journey-tab {
-        font-size: 1rem;
-        padding: 10px 14px;
-        min-width: auto;
-        text-align: left;
-      }
-      .journey-content-inner .text h3 {
-        font-size: 1.6rem;
       }
     }
   </style>
@@ -1597,196 +1562,210 @@
   <h2 class="heading-serif heading-lg">Now that you can see the gap, what do you want to <span class="accent-gold">change?</span></h2>
   <p style="font-size:1.1rem; color:#4d4a44; max-width:500px;">Start with one. Build from there.</p>
 
-  <div class="journey-grid-premium">
-    <!-- Journey 1: The Clarity Journey -->
-    <div class="journey-card-premium">
-      <div class="gold-accent-top"></div>
-      <div class="journey-card-inner">
-        <div class="journey-card-left">
-          <div class="journey-number">Journey 01</div>
-          <div class="journey-title">The <span class="highlight">Clarity</span> Journey</div>
-          <div class="journey-subtitle">You will master to: Discern, Diagnose, Define, Challenge, Connect, and Decide</div>
-          
-          <div class="journey-outcome">
-            <div class="outcome-label">🎯 Outcome</div>
-            <div class="outcome-text">"I know what I think — and I know why."</div>
-          </div>
-          
-          <div class="journey-skills">
-            <span><span class="emoji">🧠</span>Cognitive Clarity</span>
-            <span><span class="emoji">🎯</span>Strategic Reasoning</span>
-            <span><span class="emoji">💡</span>Problem Intelligence</span>
-            <span><span class="emoji">⚡</span>Decision Intelligence</span>
-            <span><span class="emoji">🔍</span>Critical Thinking</span>
-          </div>
-          
-          <div class="journey-footer">
-            <span class="journey-tag">🎙️ Communication</span>
-            <a href="#" class="btn-journey">Start Journey →</a>
-          </div>
-        </div>
-        <div class="journey-card-right">
-          <div class="journey-image" style="background: linear-gradient(135deg, #2d2a24, #4a4438);">
-            <span class="journey-icon">🎙️</span>
-            <span class="journey-image-label">Clarity</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Journey 2: The Architecture Journey -->
-    <div class="journey-card-premium">
-      <div class="gold-accent-top"></div>
-      <div class="journey-card-inner">
-        <div class="journey-card-left">
-          <div class="journey-number">Journey 02</div>
-          <div class="journey-title">The <span class="highlight">Architecture</span> Journey</div>
-          <div class="journey-subtitle">You will master to: Frame, Prioritize, Sequence, Synthesize, Simplify, and Land</div>
-          
-          <div class="journey-outcome">
-            <div class="outcome-label">🏗️ Outcome</div>
-            <div class="outcome-text">"I know how to make my thinking easy to follow"</div>
-          </div>
-          
-          <div class="journey-skills">
-            <span><span class="emoji">📐</span>Structured Thinking</span>
-            <span><span class="emoji">🧩</span>Framework Design</span>
-            <span><span class="emoji">📊</span>Logical Sequencing </span>
-            <span><span class="emoji">🎯</span>Information Design </span>
-            <span><span class="emoji">🔍</span>Narrative Architecture</span>
-          </div>
-          
-          <div class="journey-footer">
-            <span class="journey-tag">🏛️ Architecture</span>
-            <a href="#" class="btn-journey">Start Journey →</a>
-          </div>
-        </div>
-        <div class="journey-card-right">
-          <div class="journey-image" style="background: linear-gradient(135deg, #1a2a3a, #2d4a5a);">
-            <span class="journey-icon">🏛️</span>
-            <span class="journey-image-label">Architecture</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Journey 3: The Expression Journey -->
-    <div class="journey-card-premium">
-      <div class="gold-accent-top"></div>
-      <div class="journey-card-inner">
-        <div class="journey-card-left">
-          <div class="journey-number">Journey 03</div>
-          <div class="journey-title">The <span class="highlight">Expression</span> Journey</div>
-          <div class="journey-subtitle">You will master to: Articulate, Embody, Modulate, Narrate, Adapt, and Command</div>
-          
-          <div class="journey-outcome">
-            <div class="outcome-label">🗣️ Outcome</div>
-            <div class="outcome-text">"My presence matches my potential."</div>
-          </div>
-          
-          <div class="journey-skills">
-            <span><span class="emoji">🎙️</span>Expressive Presence</span>
-            <span><span class="emoji">💬</span>Verbal Precision</span>
-            <span><span class="emoji">🎭</span>Storytelling</span>
-            <span><span class="emoji">🤝</span>Narrative Craft</span>
-            <span><span class="emoji">🤝</span>Nonverbal Communication</span>
-          </div>
-          
-          <div class="journey-footer">
-            <span class="journey-tag">🎤 Expression</span>
-            <a href="#" class="btn-journey">Start Journey →</a>
-          </div>
-        </div>
-        <div class="journey-card-right">
-          <div class="journey-image" style="background: linear-gradient(135deg, #2a1a2a, #4a2a3a);">
-            <span class="journey-icon">🎤</span>
-            <span class="journey-image-label">Expression</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Journey 4: The Influence Journey (Coming Soon) -->
-    <div class="journey-card-premium coming-soon-card">
-      <div class="gold-accent-top"></div>
-      <div class="journey-card-inner">
-        <div class="journey-card-left">
-          <div class="journey-number">Journey 04</div>
-          <div class="journey-title">The <span class="highlight">Influence</span> Journey</div>
-          <div class="journey-subtitle">Make your value felt in every room you walk into.</div>
-          
-          <div class="journey-outcome">
-            <div class="outcome-label">🌟 Outcome</div>
-            <div class="outcome-text">"My voice moves people and shapes decisions."</div>
-          </div>
-          
-          <div class="journey-skills">
-            <span><span class="emoji">⚡</span>Influence</span>
-            <span><span class="emoji">👔</span>Leadership</span>
-            <span><span class="emoji">🎯</span>Executive Presence</span>
-            <span><span class="emoji">📈</span>Impact</span>
-          </div>
-          
-          <div class="journey-footer">
-            <span class="journey-tag">💫 Influence</span>
-            <a href="#" class="btn-journey coming-soon">Coming Soon</a>
-          </div>
-        </div>
-        <div class="journey-card-right">
-          <div class="journey-image" style="background: linear-gradient(135deg, #2d1a2a, #4a2a3a); opacity:0.6;">
-            <span class="journey-icon">💫</span>
-            <span class="journey-image-label">Influence</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Journey 5: The Opportunity Journey (Coming Soon) -->
-    <div class="journey-card-premium coming-soon-card">
-      <div class="gold-accent-top"></div>
-      <div class="journey-card-inner">
-        <div class="journey-card-left">
-          <div class="journey-number">Journey 05</div>
-          <div class="journey-title">The <span class="highlight">Opportunity</span> Journey</div>
-          <div class="journey-subtitle">Turn your value into real opportunities. Transform potential into progress.</div>
-          
-          <div class="journey-outcome">
-            <div class="outcome-label">🚀 Outcome</div>
-            <div class="outcome-text">"I turn my value into visible opportunities."</div>
-          </div>
-          
-          <div class="journey-skills">
-            <span><span class="emoji">🚀</span>Opportunity</span>
-            <span><span class="emoji">📊</span>Growth</span>
-            <span><span class="emoji">👁️</span>Visibility</span>
-            <span><span class="emoji">💎</span>Value Creation</span>
-          </div>
-          
-          <div class="journey-footer">
-            <span class="journey-tag">🌟 Opportunity</span>
-            <a href="#" class="btn-journey coming-soon">Coming Soon</a>
-          </div>
-        </div>
-        <div class="journey-card-right">
-          <div class="journey-image" style="background: linear-gradient(135deg, #1a2a2a, #2a4a4a); opacity:0.6;">
-            <span class="journey-icon">🚀</span>
-            <span class="journey-image-label">Opportunity</span>
-          </div>
-        </div>
-      </div>
+  <!-- ===== HIGHLIGHTED TRUST STRIP ===== -->
+  <div class="trust-strip-highlight">
+    <span class="label">🎯 Built for ambitious professionals</span>
+    <div class="tags">
+      <span>Communication</span>
+      <span>Leadership</span>
+      <span>Career</span>
+      <span>Confidence</span>
+      <span>Influence</span>
     </div>
   </div>
-</section>
 
-<!-- ===== HOW THE JOURNEY WORKS ===== -->
-<section class="container section">
-  <h2 class="heading-serif heading-lg">Not another course. A journey built around you.</h2>
-  <div class="steps">
-    <div class="step-item"><span class="step-num">01</span><h4>Discover</h4><p>Understand your current pattern</p></div>
-    <div class="step-item"><span class="step-num">02</span><h4>Understand</h4><p>See strengths, gaps &amp; blind spots</p></div>
-    <div class="step-item"><span class="step-num">03</span><h4>Learn</h4><p>Proven frameworks from experts</p></div>
-    <div class="step-item"><span class="step-num">04</span><h4>Practice</h4><p>Apply to real situations</p></div>
-    <div class="step-item"><span class="step-num">05</span><h4>Improve</h4><p>Track progress &amp; keep growing</p></div>
+  <!-- Journey Carousel -->
+  <div class="journey-carousel-container">
+    <button class="carousel-btn prev" id="carouselPrev">‹</button>
+    
+    <div class="journey-carousel-track" id="carouselTrack">
+      <!-- Journey 1: The Clarity Journey -->
+      <div class="journey-card-premium">
+        <div class="gold-accent-top"></div>
+        <div class="journey-card-inner">
+          <div class="journey-card-left">
+            <div class="journey-number">Journey 01</div>
+            <div class="journey-title">The <span class="highlight">Clarity</span> Journey</div>
+            <div class="journey-subtitle">You will master to: Discern, Diagnose, Define, Challenge, Connect, and Decide</div>
+            
+            <div class="journey-outcome">
+              <div class="outcome-label">🎯 Outcome</div>
+              <div class="outcome-text">"I know what I think — and I know why."</div>
+            </div>
+            
+            <div class="journey-skills">
+              <span><span class="emoji">🧠</span>Cognitive Clarity</span>
+              <span><span class="emoji">🎯</span>Strategic Reasoning</span>
+              <span><span class="emoji">💡</span>Problem Intelligence</span>
+              <span><span class="emoji">⚡</span>Decision Intelligence</span>
+              <span><span class="emoji">🔍</span>Critical Thinking</span>
+            </div>
+            
+            <div class="journey-footer">
+              <span class="journey-tag">🎙️ Communication</span>
+              <a href="#" class="btn-journey">Start Journey →</a>
+            </div>
+          </div>
+          <div class="journey-card-right">
+            <div class="journey-image" style="background: linear-gradient(135deg, #2d2a24, #4a4438);">
+              <span class="journey-icon">🎙️</span>
+              <span class="journey-image-label">Clarity</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Journey 2: The Architecture Journey -->
+      <div class="journey-card-premium">
+        <div class="gold-accent-top"></div>
+        <div class="journey-card-inner">
+          <div class="journey-card-left">
+            <div class="journey-number">Journey 02</div>
+            <div class="journey-title">The <span class="highlight">Architecture</span> Journey</div>
+            <div class="journey-subtitle">You will master to: Frame, Prioritize, Sequence, Synthesize, Simplify, and Land</div>
+            
+            <div class="journey-outcome">
+              <div class="outcome-label">🏗️ Outcome</div>
+              <div class="outcome-text">"I know how to make my thinking easy to follow"</div>
+            </div>
+            
+            <div class="journey-skills">
+              <span><span class="emoji">📐</span>Structured Thinking</span>
+              <span><span class="emoji">🧩</span>Framework Design</span>
+              <span><span class="emoji">📊</span>Logical Sequencing</span>
+              <span><span class="emoji">🎯</span>Information Design</span>
+              <span><span class="emoji">🔍</span>Narrative Architecture</span>
+            </div>
+            
+            <div class="journey-footer">
+              <span class="journey-tag">🏛️ Architecture</span>
+              <a href="#" class="btn-journey">Start Journey →</a>
+            </div>
+          </div>
+          <div class="journey-card-right">
+            <div class="journey-image" style="background: linear-gradient(135deg, #1a2a3a, #2d4a5a);">
+              <span class="journey-icon">🏛️</span>
+              <span class="journey-image-label">Architecture</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Journey 3: The Expression Journey -->
+      <div class="journey-card-premium">
+        <div class="gold-accent-top"></div>
+        <div class="journey-card-inner">
+          <div class="journey-card-left">
+            <div class="journey-number">Journey 03</div>
+            <div class="journey-title">The <span class="highlight">Expression</span> Journey</div>
+            <div class="journey-subtitle">You will master to: Articulate, Embody, Modulate, Narrate, Adapt, and Command</div>
+            
+            <div class="journey-outcome">
+              <div class="outcome-label">🗣️ Outcome</div>
+              <div class="outcome-text">"My presence matches my potential."</div>
+            </div>
+            
+            <div class="journey-skills">
+              <span><span class="emoji">🎙️</span>Expressive Presence</span>
+              <span><span class="emoji">💬</span>Verbal Precision</span>
+              <span><span class="emoji">🎭</span>Storytelling</span>
+              <span><span class="emoji">🤝</span>Narrative Craft</span>
+              <span><span class="emoji">🤝</span>Nonverbal Communication</span>
+            </div>
+            
+            <div class="journey-footer">
+              <span class="journey-tag">🎤 Expression</span>
+              <a href="#" class="btn-journey">Start Journey →</a>
+            </div>
+          </div>
+          <div class="journey-card-right">
+            <div class="journey-image" style="background: linear-gradient(135deg, #2a1a2a, #4a2a3a);">
+              <span class="journey-icon">🎤</span>
+              <span class="journey-image-label">Expression</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Journey 4: The Influence Journey (Coming Soon) -->
+      <div class="journey-card-premium coming-soon-card">
+        <div class="gold-accent-top"></div>
+        <div class="journey-card-inner">
+          <div class="journey-card-left">
+            <div class="journey-number">Journey 04</div>
+            <div class="journey-title">The <span class="highlight">Influence</span> Journey</div>
+            <div class="journey-subtitle">Make your value felt in every room you walk into.</div>
+            
+            <div class="journey-outcome">
+              <div class="outcome-label">🌟 Outcome</div>
+              <div class="outcome-text">"My voice moves people and shapes decisions."</div>
+            </div>
+            
+            <div class="journey-skills">
+              <span><span class="emoji">⚡</span>Influence</span>
+              <span><span class="emoji">👔</span>Leadership</span>
+              <span><span class="emoji">🎯</span>Executive Presence</span>
+              <span><span class="emoji">📈</span>Impact</span>
+            </div>
+            
+            <div class="journey-footer">
+              <span class="journey-tag">💫 Influence</span>
+              <a href="#" class="btn-journey coming-soon">Coming Soon</a>
+            </div>
+          </div>
+          <div class="journey-card-right">
+            <div class="journey-image" style="background: linear-gradient(135deg, #2d1a2a, #4a2a3a); opacity:0.6;">
+              <span class="journey-icon">💫</span>
+              <span class="journey-image-label">Influence</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Journey 5: The Opportunity Journey (Coming Soon) -->
+      <div class="journey-card-premium coming-soon-card">
+        <div class="gold-accent-top"></div>
+        <div class="journey-card-inner">
+          <div class="journey-card-left">
+            <div class="journey-number">Journey 05</div>
+            <div class="journey-title">The <span class="highlight">Opportunity</span> Journey</div>
+            <div class="journey-subtitle">Turn your value into real opportunities. Transform potential into progress.</div>
+            
+            <div class="journey-outcome">
+              <div class="outcome-label">🚀 Outcome</div>
+              <div class="outcome-text">"I turn my value into visible opportunities."</div>
+            </div>
+            
+            <div class="journey-skills">
+              <span><span class="emoji">🚀</span>Opportunity</span>
+              <span><span class="emoji">📊</span>Growth</span>
+              <span><span class="emoji">👁️</span>Visibility</span>
+              <span><span class="emoji">💎</span>Value Creation</span>
+            </div>
+            
+            <div class="journey-footer">
+              <span class="journey-tag">🌟 Opportunity</span>
+              <a href="#" class="btn-journey coming-soon">Coming Soon</a>
+            </div>
+          </div>
+          <div class="journey-card-right">
+            <div class="journey-image" style="background: linear-gradient(135deg, #1a2a2a, #2a4a4a); opacity:0.6;">
+              <span class="journey-icon">🚀</span>
+              <span class="journey-image-label">Opportunity</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="carousel-btn next" id="carouselNext">›</button>
+  </div>
+
+  <!-- Carousel Dots -->
+  <div class="carousel-dots" id="carouselDots">
+    <button class="carousel-dot active" data-index="0"></button>
+    <button class="carousel-dot" data-index="1"></button>
+    <button class="carousel-dot" data-index="2"></button>
   </div>
 </section>
 
@@ -1892,20 +1871,52 @@
 <!-- ===== JAVASCRIPT ===== -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // ===== JOURNEY TABS =====
-    const tabs = document.querySelectorAll('.journey-tab');
-    const contents = document.querySelectorAll('.journey-content-inner');
+    // ===== JOURNEY CAROUSEL =====
+    const track = document.getElementById('carouselTrack');
+    const prevBtn = document.getElementById('carouselPrev');
+    const nextBtn = document.getElementById('carouselNext');
+    const dots = document.querySelectorAll('.carousel-dot');
+    const cards = track.querySelectorAll('.journey-card-premium');
+    const cardsPerView = window.innerWidth <= 992 ? 1 : 2;
+    let currentIndex = 0;
+    const totalSlides = Math.ceil(cards.length / cardsPerView);
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', function() {
-        tabs.forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-
-        const journeyId = this.getAttribute('data-journey');
-        contents.forEach(c => c.classList.remove('active'));
-        document.querySelector(`.journey-content-inner[data-journey="${journeyId}"]`).classList.add('active');
+    function updateCarousel() {
+      const slideWidth = cards[0].offsetWidth + 24;
+      track.style.transform = `translateX(-${currentIndex * slideWidth * cardsPerView}px)`;
+      
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentIndex);
       });
+    }
+
+    function goToSlide(index) {
+      if (index < 0) index = totalSlides - 1;
+      if (index >= totalSlides) index = 0;
+      currentIndex = index;
+      updateCarousel();
+    }
+
+    prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
+    nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => goToSlide(index));
     });
+
+    window.addEventListener('resize', () => {
+      const newCardsPerView = window.innerWidth <= 992 ? 1 : 2;
+      if (newCardsPerView !== cardsPerView) {
+        // Recalculate total slides
+        const newTotal = Math.ceil(cards.length / newCardsPerView);
+        if (currentIndex >= newTotal) currentIndex = newTotal - 1;
+        if (currentIndex < 0) currentIndex = 0;
+        updateCarousel();
+      }
+    });
+
+    // Initial update
+    setTimeout(updateCarousel, 100);
 
     // ===== LOGIN MODAL =====
     const signInBtn = document.getElementById('signInBtn');
