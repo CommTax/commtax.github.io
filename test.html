@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>The Unspoken · Paid Persona</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            background: #f5f2ed;
+            color: #1a1a1e;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 520px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            overflow: hidden;
+            padding: 40px 32px;
+        }
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 1rem; }
+        .mt-2 { margin-top: 1.5rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .logo-section .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a1a1e;
+        }
+        .logo-section .logo .gold { color: #b8943c; }
+        .logo-section .tagline {
+            font-size: 0.7rem;
+            color: #8a8680;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        h1 { font-size: 1.6rem; font-weight: 700; color: #1a1a1e; }
+        h1 .gold { color: #b8943c; }
+        h2 { font-size: 1.2rem; font-weight: 600; color: #1a1a1e; }
+        .subtitle { color: #6e6a62; font-size: 0.9rem; margin-top: 4px; }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #1a1a1e;
+            margin-bottom: 4px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1.5px solid #e2ddd6;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: 0.15s;
+            background: #faf8f5;
+            font-family: inherit;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #b8943c;
+            box-shadow: 0 0 0 4px rgba(184, 148, 60, 0.1);
+        }
+        .form-group .hint {
+            font-size: 0.7rem;
+            color: #8a8680;
+            margin-top: 4px;
+        }
+        .form-group .prefilled {
+            font-size: 0.7rem;
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: #1a1a1e;
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            letter-spacing: 0.2px;
+        }
+        .btn-primary:hover {
+            background: #2d2d33;
+            transform: translateY(-2px);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-gold {
+            display: inline-block;
+            background: linear-gradient(135deg, #b8943c, #a07f30);
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            box-shadow: 0 4px 16px rgba(184, 148, 60, 0.3);
+            letter-spacing: 0.2px;
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(184, 148, 60, 0.4);
+        }
+        .btn-gold:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #1a1a1e;
+            border: 2px solid #1a1a1e;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .btn-outline:hover {
+            background: #1a1a1e;
+            color: white;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: none;
+            color: #8a8680;
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 0.3rem 0.6rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-weight: 500;
+        }
+        .btn-back:hover { color: #b8943c; }
+
+        .flex-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.8rem;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .success-message {
+            color: #059669;
+            font-size: 0.8rem;
+            margin-top: 4px;
+            display: none;
+        }
+
+        /* ===== SALES PAGE ===== */
+        .sales-hero { text-align: center; padding: 0.5rem 0; }
+        .sales-hero .big-icon { font-size: 4rem; margin-bottom: 0.5rem; }
+        .sales-hero h1 { font-size: 2rem; }
+        .sales-hero .price-tag {
+            display: inline-block;
+            background: #fef3c7;
+            padding: 0.4rem 2rem;
+            border-radius: 60px;
+            border: 1px solid #fcd34d;
+            margin: 0.5rem 0;
+        }
+        .sales-hero .price-tag .amount { font-size: 2rem; font-weight: 800; color: #b8943c; }
+        .sales-hero .price-tag .label { font-size: 0.7rem; color: #6e6a62; }
+        .sales-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            margin: 1rem 0;
+            text-align: left;
+        }
+        .sales-features .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: #1a1a1e;
+            padding: 0.2rem 0;
+        }
+        .sales-features .feature .check { color: #059669; font-weight: 700; font-size: 1rem; }
+
+        /* ===== PAYMENT STATUS ===== */
+        .payment-status {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .payment-status .icon { font-size: 3rem; margin-bottom: 0.5rem; }
+        .payment-status .status-text {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a1e;
+        }
+        .payment-status .status-sub {
+            font-size: 0.85rem;
+            color: #6e6a62;
+            margin-top: 0.3rem;
+        }
+
+        /* ===== ONBOARDING ===== */
+        .onboarding-screen { text-align: center; padding: 0.5rem 0; }
+        .onboarding-screen .icon { font-size: 3.5rem; margin-bottom: 0.5rem; }
+        .onboarding-screen .duration {
+            display: inline-block;
+            background: #e8edf5;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            color: #6a8aaa;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== ASSESSMENT ===== */
+        .question-number-small {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .question-text-large {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #1a1a1e;
+            line-height: 1.5;
+            margin: 0.5rem 0 1rem;
+        }
+        .progress-discreet {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0.8rem 0 0.6rem;
+            gap: 0.8rem;
+        }
+        .progress-discreet .step-label {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        .progress-discreet .progress-line {
+            flex: 1;
+            height: 2px;
+            background: #e2e8f0;
+            border-radius: 2px;
+        }
+        .progress-discreet .progress-line .fill {
+            height: 100%;
+            background: #b8943c;
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+
+        .likert-container { margin: 0.5rem 0 0.8rem; }
+        .likert-label {
+            font-size: 0.7rem;
+            color: #6e6a62;
+            text-align: center;
+            margin-bottom: 0.6rem;
+            font-weight: 500;
+        }
+        .likert-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        .likert-option {
+            padding: 0.7rem 0.4rem;
+            border-radius: 10px;
+            border: 2px solid #e2ddd6;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            background: #faf8f5;
+        }
+        .likert-option:hover {
+            border-color: #b8943c;
+            background: #fef3c7;
+            transform: translateY(-2px);
+        }
+        .likert-option.active {
+            border-color: #b8943c;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            box-shadow: 0 4px 12px rgba(184, 148, 60, 0.15);
+        }
+        .likert-option .number {
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: #94a3b8;
+            display: block;
+            margin-bottom: 0.1rem;
+        }
+        .likert-option.active .number { color: #b8943c; }
+        .likert-option .label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a1a1e;
+            display: block;
+            line-height: 1.2;
+        }
+
+        /* ===== PROCESSING ===== */
+        .processing-screen { text-align: center; padding: 2rem 0; }
+        .processing-screen .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #b8943c;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 24px 16px; }
+            .sales-features { grid-template-columns: 1fr; }
+            .likert-options { grid-template-columns: 1fr 1fr; }
+            .likert-option .label { font-size: 0.8rem; }
+        }
+        @media (max-width: 480px) {
+            .likert-options { grid-template-columns: 1fr; }
+            .sales-hero h1 { font-size: 1.6rem; }
+        }
+
+        .payment-badge {
+            display: inline-block;
+            background: #f0fdf4;
+            color: #059669;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 1px solid #bbf7d0;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    
+    <!-- ===== LOGO ===== -->
+    <div class="logo-section">
+        <div class="logo">The <span class="gold">Unspoken</span></div>
+        <div class="tagline">Uncover What Your Words Leave Unspoken</div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN: SALES                                                -->
+    <!-- ============================================================ -->
+    <div id="screenSales">
+        <div class="sales-hero">
+            <div class="big-icon">🔍</div>
+            <h1>Discover Your <span class="gold">Communication Persona</span></h1>
+            <p style="color: #4d4a44; max-width: 400px; margin: 0.5rem auto; font-size: 0.9rem;">
+                Understand how others experience you, uncover what's getting lost, and get a clear path to improve.
+            </p>
+            <div class="price-tag">
+                <span class="label">One-time purchase</span>
+                <div><span class="amount">₹299</span></div>
+            </div>
+            <div class="sales-features">
+                <div class="feature"><span class="check">✓</span> Your Communication Persona</div>
+                <div class="feature"><span class="check">✓</span> How others experience you</div>
+                <div class="feature"><span class="check">✓</span> Your strengths &amp; blind spots</div>
+                <div class="feature"><span class="check">✓</span> What's getting lost</div>
+                <div class="feature"><span class="check">✓</span> Personalized insights</div>
+                <div class="feature"><span class="check">✓</span> Shareable persona card</div>
+            </div>
+            <button class="btn-gold" id="payNowBtn">
+                💳 Pay ₹299 &amp; Get Started
+            </button>
+            <p style="font-size: 0.65rem; color: #94a3b8; margin-top: 0.5rem;">🔒 Secure payment · Instant access</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN: PAYMENT STATUS (Processing)                          -->
+    <!-- ============================================================ -->
+    <div id="screenPaymentStatus" class="hidden">
+        <div class="payment-status">
+            <div class="icon">⏳</div>
+            <div class="status-text">Processing your payment...</div>
+            <div class="status-sub">Please wait while we confirm your payment.</div>
+            <div style="margin-top: 1.5rem;">
+                <div class="spinner" style="width: 30px; height: 30px; border: 3px solid #e2e8f0; border-top-color: #b8943c; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN: PAYMENT SUCCESS                                      -->
+    <!-- ============================================================ -->
+    <div id="screenPaymentSuccess" class="hidden">
+        <div class="payment-status">
+            <div class="icon">✅</div>
+            <div class="status-text">Payment Successful!</div>
+            <div class="status-sub">Your payment of ₹299 has been confirmed.</div>
+            <div style="margin-top: 1rem; background: #f0fdf4; border-radius: 12px; padding: 0.8rem; border: 1px solid #bbf7d0;">
+                <p style="font-size: 0.8rem; color: #059669; font-weight: 500;">🎉 You now have access to your Paid Persona</p>
+            </div>
+            <button class="btn-gold" id="continueToAccountSetup" style="margin-top: 1rem;">
+                Continue to Account Setup →
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN: ACCOUNT SETUP (Prefilled from Razorpay)              -->
+    <!-- ============================================================ -->
+    <div id="screenAccountSetup" class="hidden">
+        <h1>Complete Your <span class="gold">Account</span></h1>
+        <p class="subtitle">Your details are pre-filled from payment. Just create a password.</p>
+
+        <div style="margin-top: 1.5rem;">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="setupFullName" placeholder="Your full name" />
+                <div class="prefilled">✓ Pre-filled from payment</div>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="setupEmail" placeholder="you@example.com" />
+                <div class="prefilled">✓ Pre-filled from payment</div>
+            </div>
+            <div class="form-group">
+                <label>WhatsApp Number</label>
+                <input type="tel" id="setupPhone" placeholder="9876543210" />
+                <div class="prefilled">✓ Pre-filled from payment</div>
+            </div>
+            <div class="form-group">
+                <label>Create Password</label>
+                <input type="password" id="setupPassword" placeholder="Min 8 characters" />
+                <div class="hint">Use at least 8 characters with letters and numbers</div>
+            </div>
+            <div id="setupError" class="error-message">Please fill in all fields correctly.</div>
+            <button class="btn-gold" id="createAccountBtn">
+                🚀 Create Account &amp; Start Assessment
+            </button>
+        </div>
+
+        <div style="text-align: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ede8e0;">
+            <button class="btn-link" id="backToSales">← Back to Sales</button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN: ONBOARDING                                           -->
+    <!-- ============================================================ -->
+    <div id="screenOnboarding" class="hidden">
+        <div class="onboarding-screen">
+            <div class="icon">👋</div>
+            <h2>Welcome to The Unspoken</h2>
+            <p style="color: #4d4a44; max-width: 400px; margin: 0.5rem auto; font-size: 0.9rem;">
+                Let's discover your Communication Persona.
+            </p>
+            <p style="color: #6e6a62; font-size: 0.85rem; max-width: 400px; margin: 0.5rem auto;">
+                Answer <strong>30 questions</strong> about how you think, express, connect, and influence.<br>
+                Your answers will help us understand your unique communication style.
+            </p>
+            <div class="duration">⏱️ Takes approximately 5 minutes</div>
+            <button class="btn-gold" id="startAssessmentBtn" style="margin-top: 1rem;">
+                Start My Persona →
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN: ASSESSMENT                                           -->
+    <!-- ============================================================ -->
+    <div id="screenAssessment" class="hidden">
+        <div class="flex-wrap">
+            <span class="question-number-small" id="questionCounter">01 / 30</span>
+            <span style="font-size: 0.6rem; color: #94a3b8; font-weight: 500;">The Unspoken</span>
+        </div>
+        <div class="question-text-large" id="questionText">Loading...</div>
+
+        <div class="likert-container">
+            <div class="likert-label">How true is this of you?</div>
+            <div class="likert-options" id="likertOptions">
+                <div class="likert-option" data-value="1">
+                    <span class="number">1</span>
+                    <span class="label">Not at all</span>
+                </div>
+                <div class="likert-option" data-value="2">
+                    <span class="number">2</span>
+                    <span class="label">Slightly</span>
+                </div>
+                <div class="likert-option" data-value="3">
+                    <span class="number">3</span>
+                    <span class="label">Sometimes</span>
+                </div>
+                <div class="likert-option" data-value="4">
+                    <span class="number">4</span>
+                    <span class="label">Mostly</span>
+                </div>
+                <div class="likert-option" data-value="5">
+                    <span class="number">5</span>
+                    <span class="label">Very true</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-discreet">
+            <span class="step-label" id="progressLabel">01 / 30</span>
+            <div class="progress-line"><div class="fill" id="progressFill" style="width:3%;"></div></div>
+        </div>
+
+        <div class="flex-wrap mt-1">
+            <button class="btn-back" id="prevQuestion" style="opacity:0.3; cursor:default;">← Back</button>
+            <button class="btn-primary" id="nextQuestion" style="width: auto; max-width: 200px; padding: 0.6rem 1.5rem;">Continue →</button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN: PROCESSING                                           -->
+    <!-- ============================================================ -->
+    <div id="screenProcessing" class="hidden">
+        <div class="processing-screen">
+            <div class="spinner"></div>
+            <h2>Your Persona is taking shape...</h2>
+            <p style="color: #6e6a62; margin-top: 0.5rem;">Analyzing your responses</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ============================================================
+// API CONFIGURATION
+// ============================================================
+const API_BASE = 'https://unspoken-backend-yvbi.onrender.com';
+const RAZORPAY_KEY = 'rzp_live_TN9VVH5DwiHx0L';
+
+let userId = null;
+let userEmail = null;
+let userFullName = null;
+let userPhone = null;
+let userPassword = null;
+let assessmentResponses = [];
+let currentQuestionIndex = 0;
+let selectedValue = null;
+let paymentCompleted = false;
+let paymentData = null;
+
+// ============================================================
+// 30 QUESTIONS
+// ============================================================
+const questions = [
+    { id: 'Q1', text: 'Before I speak on a complex topic, I usually know my main point before I start explaining it.' },
+    { id: 'Q2', text: 'My explanations tend to move in a logical order rather than jumping around.' },
+    { id: 'Q3', text: 'I can organize a complicated idea into a few clear steps without much effort.' },
+    { id: 'Q4', text: 'When writing, I naturally lead with the conclusion rather than building up to it.' },
+    { id: 'Q5', text: 'People rarely lose track of where I\'m going when I explain something.' },
+    { id: 'Q6', text: 'I can spot when my own explanation is getting disorganized and correct it mid-way.' },
+    { id: 'Q7', text: 'I usually think a few steps ahead about how someone might respond before I say something important.' },
+    { id: 'Q8', text: 'I notice gaps or flaws in an argument — including my own — before others point them out.' },
+    { id: 'Q9', text: 'I can break a vague problem into specific, answerable questions.' },
+    { id: 'Q10', text: 'I regularly ask "why" a decision was made rather than accepting it at face value.' },
+    { id: 'Q11', text: 'When faced with conflicting information, I can usually tell which source is more reliable.' },
+    { id: 'Q12', text: 'I connect ideas across different situations rather than treating each one in isolation.' },
+    { id: 'Q13', text: 'When I speak in a group, the conversation\'s direction often shifts because of what I said.' },
+    { id: 'Q14', text: 'People often act on what I suggest without needing to be convinced twice.' },
+    { id: 'Q15', text: 'My ideas get remembered and repeated by others after a meeting ends.' },
+    { id: 'Q16', text: 'I feel confident holding the room\'s attention when I have something important to say.' },
+    { id: 'Q17', text: 'I rarely have to repeat myself to be taken seriously.' },
+    { id: 'Q18', text: 'When I disagree with the group, my objection gets treated as worth discussing, not brushed aside.' },
+    { id: 'Q19', text: 'I can explain a technical or complex idea to someone with no background in it.' },
+    { id: 'Q20', text: 'People rarely ask me to repeat or rephrase what I just said.' },
+    { id: 'Q21', text: 'I choose words that make an idea memorable, not just accurate.' },
+    { id: 'Q22', text: 'I can compress a long explanation into one clear sentence when needed.' },
+    { id: 'Q23', text: 'My tone naturally matches what I\'m saying — serious things sound serious, exciting things sound exciting.' },
+    { id: 'Q24', text: 'I rarely say more words than the idea actually needs.' },
+    { id: 'Q25', text: 'I can tell when someone disagrees with me even if they don\'t say so directly.' },
+    { id: 'Q26', text: 'I adjust how I explain something based on who I\'m talking to, without being asked.' },
+    { id: 'Q27', text: 'I notice shifts in a room\'s mood and change my approach accordingly.' },
+    { id: 'Q28', text: 'People generally feel heard after talking to me, even in disagreements.' },
+    { id: 'Q29', text: 'I can sense when someone needs reassurance versus when they need direct feedback.' },
+    { id: 'Q30', text: 'My relationships at work generally stay strong even after a difficult conversation.' }
+];
+
+// ============================================================
+// SCREEN MANAGEMENT
+// ============================================================
+function showScreen(screenId) {
+    const screens = ['screenSales', 'screenPaymentStatus', 'screenPaymentSuccess', 'screenAccountSetup', 'screenOnboarding', 'screenAssessment', 'screenProcessing'];
+    screens.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            if (id === screenId) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// RAZORPAY PAYMENT
+// ============================================================
+document.getElementById('payNowBtn').addEventListener('click', function() {
+    const btn = this;
+    btn.disabled = true;
+    btn.textContent = '⏳ Opening payment...';
+
+    const options = {
+        "key": RAZORPAY_KEY,
+        "amount": 299 * 100, // ₹299 in paise
+        "currency": "INR",
+        "name": "The Unspoken",
+        "description": "Communication Persona - Paid Assessment",
+        "image": "https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Mini%20Logo%20Unspoken.png",
+        "prefill": {
+            "name": "",
+            "email": "",
+            "contact": ""
+        },
+        "theme": {
+            "color": "#b8943c"
+        },
+        "modal": {
+            "ondismiss": function() {
+                btn.disabled = false;
+                btn.textContent = '💳 Pay ₹299 & Get Started';
+            }
+        }
+    };
+
+    const rzp = new Razorpay(options);
+
+    rzp.on('payment.failed', function(response) {
+        console.error('Payment failed:', response.error);
+        btn.disabled = false;
+        btn.textContent = '💳 Pay ₹299 & Get Started';
+        alert('Payment failed: ' + response.error.description);
+        showScreen('screenSales');
+    });
+
+    rzp.on('payment.success', function(response) {
+        console.log('Payment successful:', response);
+        paymentCompleted = true;
+        paymentData = {
+            payment_id: response.razorpay_payment_id,
+            order_id: response.razorpay_order_id,
+            signature: response.razorpay_signature
+        };
+        
+        // Show payment success screen
+        showScreen('screenPaymentSuccess');
+        
+        btn.disabled = false;
+        btn.textContent = '💳 Pay ₹299 & Get Started';
+    });
+
+    rzp.open();
+});
+
+// ============================================================
+// CONTINUE TO ACCOUNT SETUP (After Payment)
+// ============================================================
+document.getElementById('continueToAccountSetup').addEventListener('click', function() {
+    showScreen('screenAccountSetup');
+});
+
+// ============================================================
+// BACK TO SALES
+// ============================================================
+document.getElementById('backToSales').addEventListener('click', function() {
+    paymentCompleted = false;
+    paymentData = null;
+    showScreen('screenSales');
+});
+
+// ============================================================
+// CREATE ACCOUNT (After Payment)
+// ============================================================
+document.getElementById('createAccountBtn').addEventListener('click', async function() {
+    const name = document.getElementById('setupFullName').value.trim();
+    const email = document.getElementById('setupEmail').value.trim();
+    const phone = document.getElementById('setupPhone').value.trim();
+    const password = document.getElementById('setupPassword').value.trim();
+    const errorEl = document.getElementById('setupError');
+
+    if (!name || !email || !phone || !password) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Please fill in all fields.';
+        return;
+    }
+
+    if (password.length < 8) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Password must be at least 8 characters.';
+        return;
+    }
+
+    errorEl.style.display = 'none';
+    const btn = this;
+    btn.disabled = true;
+    btn.textContent = 'Creating account...';
+
+    try {
+        // Check if user exists
+        const checkRes = await fetch(`${API_BASE}/api/auth/status/${encodeURIComponent(email)}`);
+        const checkData = await checkRes.json();
+
+        if (checkData.exists) {
+            errorEl.style.display = 'block';
+            errorEl.textContent = 'An account with this email already exists. Please login.';
+            btn.disabled = false;
+            btn.textContent = '🚀 Create Account & Start Assessment';
+            return;
+        }
+
+        // Create dummy assessment to trigger user creation
+        const dummyResponses = [];
+        for (let i = 1; i <= 30; i++) {
+            dummyResponses.push({ question_code: `Q${i}`, answer: 3 });
+        }
+
+        const payload = {
+            user_details: {
+                full_name: name,
+                email: email,
+                phone: phone
+            },
+            responses: dummyResponses,
+            type: 'paid',
+            payment_id: paymentData ? paymentData.payment_id : null
+        };
+
+        const response = await fetch(`${API_BASE}/api/persona/paid-assess`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.user) {
+            userId = data.user.user_id;
+            userEmail = email;
+            userFullName = name;
+            userPhone = phone;
+            userPassword = password;
+            
+            localStorage.setItem('unspoken_user_id', userId);
+            localStorage.setItem('unspoken_user_email', email);
+            localStorage.setItem('unspoken_user_name', name);
+            localStorage.setItem('unspoken_paid', 'true');
+
+            assessmentResponses = [];
+            currentQuestionIndex = 0;
+            
+            showScreen('screenOnboarding');
+        } else {
+            errorEl.style.display = 'block';
+            errorEl.textContent = data.message || 'Failed to create account. Please try again.';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Network error. Please try again.';
+    }
+
+    btn.disabled = false;
+    btn.textContent = '🚀 Create Account & Start Assessment';
+});
+
+// ============================================================
+// ONBOARDING → ASSESSMENT
+// ============================================================
+document.getElementById('startAssessmentBtn').addEventListener('click', function() {
+    currentQuestionIndex = 0;
+    assessmentResponses = [];
+    showScreen('screenAssessment');
+    renderQuestion();
+});
+
+// ============================================================
+// RENDER QUESTION
+// ============================================================
+function renderQuestion() {
+    if (currentQuestionIndex >= questions.length) {
+        submitAssessment();
+        return;
+    }
+
+    const q = questions[currentQuestionIndex];
+    document.getElementById('questionText').textContent = q.text;
+    document.getElementById('questionCounter').textContent = `${String(currentQuestionIndex + 1).padStart(2, '0')} / 30`;
+    document.getElementById('progressLabel').textContent = `${String(currentQuestionIndex + 1).padStart(2, '0')} / 30`;
+    document.getElementById('progressFill').style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+    selectedValue = null;
+    document.querySelectorAll('.likert-option').forEach(el => el.classList.remove('active'));
+
+    const existing = assessmentResponses.find(r => r.question_code === q.id);
+    if (existing) {
+        selectedValue = existing.answer;
+        document.querySelectorAll('.likert-option').forEach(el => {
+            if (parseInt(el.dataset.value) === selectedValue) {
+                el.classList.add('active');
+            }
+        });
+    }
+
+    if (currentQuestionIndex === 0) {
+        document.getElementById('prevQuestion').style.opacity = '0.3';
+        document.getElementById('prevQuestion').style.cursor = 'default';
+    } else {
+        document.getElementById('prevQuestion').style.opacity = '1';
+        document.getElementById('prevQuestion').style.cursor = 'pointer';
+    }
+
+    document.getElementById('nextQuestion').textContent = 
+        currentQuestionIndex === questions.length - 1 ? 'Submit →' : 'Continue →';
+}
+
+// ============================================================
+// LIKERT SELECTION
+// ============================================================
+document.querySelectorAll('.likert-option').forEach(el => {
+    el.addEventListener('click', function() {
+        document.querySelectorAll('.likert-option').forEach(e => e.classList.remove('active'));
+        this.classList.add('active');
+        selectedValue = parseInt(this.dataset.value);
+    });
+});
+
+// ============================================================
+// PREVIOUS QUESTION
+// ============================================================
+document.getElementById('prevQuestion').addEventListener('click', function() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion();
+    }
+});
+
+// ============================================================
+// NEXT QUESTION / SUBMIT
+// ============================================================
+document.getElementById('nextQuestion').addEventListener('click', function() {
+    if (selectedValue === null) {
+        alert('Please select an option before continuing.');
+        return;
+    }
+
+    const q = questions[currentQuestionIndex];
+    const existingIndex = assessmentResponses.findIndex(r => r.question_code === q.id);
+    if (existingIndex >= 0) {
+        assessmentResponses[existingIndex].answer = selectedValue;
+    } else {
+        assessmentResponses.push({ question_code: q.id, answer: selectedValue });
+    }
+
+    if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+    } else {
+        submitAssessment();
+    }
+});
+
+// ============================================================
+// SUBMIT ASSESSMENT
+// ============================================================
+async function submitAssessment() {
+    showScreen('screenProcessing');
+
+    try {
+        assessmentResponses.sort((a, b) => a.question_code.localeCompare(b.question_code));
+
+        const payload = {
+            user_details: {
+                full_name: userFullName || 'Guest User',
+                email: userEmail || 'guest@theunspoken.co.in',
+                phone: userPhone || '9999999999'
+            },
+            responses: assessmentResponses,
+            type: 'paid',
+            payment_id: paymentData ? paymentData.payment_id : null
+        };
+
+        console.log('📤 Submitting assessment:', payload);
+
+        const response = await fetch(`${API_BASE}/api/persona/paid-assess`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            if (data.user && data.user.user_id) {
+                userId = data.user.user_id;
+                localStorage.setItem('unspoken_user_id', userId);
+            }
+            // Redirect to report page with user_id
+            window.location.href = `report.html?user_id=${userId || data.user.user_id}`;
+        } else {
+            alert('Failed to generate report: ' + data.message);
+            showScreen('screenOnboarding');
+        }
+    } catch (error) {
+        console.error('Assessment error:', error);
+        alert('Something went wrong. Please try again.');
+        showScreen('screenOnboarding');
+    }
+}
+
+// ============================================================
+// START - Check if user already paid
+// ============================================================
+const savedUserId = localStorage.getItem('unspoken_user_id');
+const savedPaid = localStorage.getItem('unspoken_paid');
+
+if (savedUserId && savedPaid === 'true') {
+    userId = savedUserId;
+    userEmail = localStorage.getItem('unspoken_user_email') || '';
+    userFullName = localStorage.getItem('unspoken_user_name') || '';
+    showScreen('screenOnboarding');
+} else {
+    showScreen('screenSales');
+}
+</script>
+</body>
+</html>
