@@ -1047,24 +1047,43 @@
       }
     }
 
-/* ===== PERSONAS CAROUSEL ===== */
+
+    /* ===== PREMIUM DYNAMIC PERSONAS ===== */
 .personas-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 50px;
 }
 
 .personas-badge {
   display: inline-block;
-  background: rgba(184, 148, 60, 0.12);
+  background: rgba(184, 148, 60, 0.1);
   color: #b8943c;
   font-size: 0.6rem;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  padding: 4px 16px;
+  padding: 6px 20px;
   border-radius: 40px;
-  margin-bottom: 12px;
   border: 1px solid rgba(184, 148, 60, 0.15);
+  position: relative;
+}
+
+.personas-badge::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 40px;
+  background: linear-gradient(135deg, rgba(184, 148, 60, 0.2), transparent, rgba(184, 148, 60, 0.2));
+  z-index: -1;
+  animation: badgePulse 3s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 .personas-subtitle {
@@ -1072,199 +1091,452 @@
   color: #6e6a62;
   max-width: 600px;
   margin: 8px auto 0;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
-/* Carousel Wrapper */
-.personas-carousel-wrapper {
+/* ===== ORBIT CONTAINER ===== */
+.persona-orbit-container {
   position: relative;
-  padding: 0 50px;
-  margin: 20px 0 30px;
-}
-
-.personas-carousel-container {
-  overflow: hidden;
-  padding: 20px 0;
-}
-
-.personas-track {
-  display: flex;
-  gap: 20px;
-  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Persona Circles */
-.persona-circle {
-  min-width: 140px;
-  height: 140px;
-  border-radius: 50%;
+  width: 500px;
+  height: 500px;
+  margin: 20px auto 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: all 0.4s ease;
-  position: relative;
-  flex-shrink: 0;
-  background: #f8f5f0;
-  border: 2px solid #ede8e0;
 }
 
-.persona-circle:hover {
-  transform: scale(1.05);
-  border-color: #b8943c;
-}
-
-.persona-circle.active {
-  border-color: #b8943c;
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  box-shadow: 0 8px 30px rgba(184, 148, 60, 0.2);
-  transform: scale(1.08);
-}
-
-.persona-circle-inner {
-  text-align: center;
-}
-
-.persona-number {
-  display: block;
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: #b8943c;
-  letter-spacing: 1px;
-}
-
-.persona-name {
-  display: block;
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #1a1917;
-  margin-top: 4px;
-  line-height: 1.2;
-}
-
-/* Navigation Buttons */
-.personas-nav {
+/* Orbit Rings */
+.orbit-ring {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
   border-radius: 50%;
-  background: #ffffff;
-  border: 1px solid #ede8e0;
-  cursor: pointer;
+  border: 1px solid rgba(184, 148, 60, 0.08);
+  animation: ringPulse 4s ease-in-out infinite;
+}
+
+.orbit-ring-1 {
+  width: 100%;
+  height: 100%;
+  animation-delay: 0s;
+}
+
+.orbit-ring-2 {
+  width: 70%;
+  height: 70%;
+  animation-delay: 1s;
+}
+
+.orbit-ring-3 {
+  width: 40%;
+  height: 40%;
+  animation-delay: 2s;
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.5; }
+}
+
+/* Center */
+.orbit-center {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #b8943c, #8a6d1f);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  color: white;
+  z-index: 5;
+  box-shadow: 0 0 40px rgba(184, 148, 60, 0.3);
+  animation: centerPulse 3s ease-in-out infinite;
+}
+
+.orbit-center-icon {
   font-size: 1.2rem;
-  color: #1a1917;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  font-weight: 700;
+}
+
+.orbit-center-label {
+  font-size: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  opacity: 0.8;
+}
+
+@keyframes centerPulse {
+  0%, 100% { box-shadow: 0 0 40px rgba(184, 148, 60, 0.3); transform: scale(1); }
+  50% { box-shadow: 0 0 60px rgba(184, 148, 60, 0.5); transform: scale(1.05); }
+}
+
+/* Orbiting Items */
+.orbit-item {
+  position: absolute;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 2;
+}
+
+.orbit-item:hover {
+  transform: scale(1.3) !important;
   z-index: 10;
 }
 
-.personas-nav:hover {
-  background: #b8943c;
-  border-color: #b8943c;
-  color: #ffffff;
-  box-shadow: 0 8px 24px rgba(184, 148, 60, 0.25);
+.orbit-item:hover .orbit-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-10px);
+  visibility: visible;
 }
 
-.personas-nav.prev {
-  left: 0;
+.orbit-dot {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #b8943c, #d4a84a);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 20px rgba(184, 148, 60, 0.2);
+  transition: all 0.3s ease;
+  animation: dotPulse 2s ease-in-out infinite;
 }
 
-.personas-nav.next {
-  right: 0;
+.orbit-item:hover .orbit-dot {
+  background: linear-gradient(135deg, #d4a84a, #fcd34d);
+  box-shadow: 0 0 40px rgba(184, 148, 60, 0.4);
+  animation: none;
 }
 
-/* Persona Detail Card */
-.persona-detail-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f8f5f0;
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+.orbit-tooltip {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26, 25, 23, 0.95);
+  color: #f0ebe4;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.55rem;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(184, 148, 60, 0.2);
+}
+
+.orbit-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid rgba(26, 25, 23, 0.95);
+}
+
+/* Orbit Item Positions & Animations */
+.orbit-item-1 { 
+  top: 0; 
+  left: 50%; 
+  transform: translateX(-50%);
+  animation: orbit1 12s linear infinite;
+}
+.orbit-item-2 { 
+  top: 50%; 
+  right: 0; 
+  transform: translateY(-50%);
+  animation: orbit2 14s linear infinite;
+}
+.orbit-item-3 { 
+  bottom: 0; 
+  left: 50%; 
+  transform: translateX(-50%);
+  animation: orbit3 10s linear infinite;
+}
+.orbit-item-4 { 
+  top: 50%; 
+  left: 0; 
+  transform: translateY(-50%);
+  animation: orbit4 16s linear infinite;
+}
+.orbit-item-5 { 
+  top: 15%; 
+  right: 15%; 
+  animation: orbit5 18s linear infinite;
+}
+.orbit-item-6 { 
+  bottom: 15%; 
+  right: 15%; 
+  animation: orbit6 13s linear infinite;
+}
+.orbit-item-7 { 
+  bottom: 15%; 
+  left: 15%; 
+  animation: orbit7 15s linear infinite;
+}
+.orbit-item-8 { 
+  top: 15%; 
+  left: 15%; 
+  animation: orbit8 11s linear infinite;
+}
+.orbit-item-9 { 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%);
+  animation: orbit9 20s linear infinite;
+}
+
+@keyframes orbit1 {
+  0% { transform: translateX(-50%) rotate(0deg) translateX(-250px) rotate(0deg); }
+  100% { transform: translateX(-50%) rotate(360deg) translateX(-250px) rotate(-360deg); }
+}
+@keyframes orbit2 {
+  0% { transform: translateY(-50%) rotate(0deg) translateX(250px) rotate(0deg); }
+  100% { transform: translateY(-50%) rotate(360deg) translateX(250px) rotate(-360deg); }
+}
+@keyframes orbit3 {
+  0% { transform: translateX(-50%) rotate(0deg) translateX(-250px) rotate(0deg); }
+  100% { transform: translateX(-50%) rotate(-360deg) translateX(-250px) rotate(360deg); }
+}
+@keyframes orbit4 {
+  0% { transform: translateY(-50%) rotate(0deg) translateX(250px) rotate(0deg); }
+  100% { transform: translateY(-50%) rotate(-360deg) translateX(250px) rotate(360deg); }
+}
+@keyframes orbit5 {
+  0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
+}
+@keyframes orbit6 {
+  0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+  100% { transform: rotate(-360deg) translateX(180px) rotate(360deg); }
+}
+@keyframes orbit7 {
+  0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
+}
+@keyframes orbit8 {
+  0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+  100% { transform: rotate(-360deg) translateX(180px) rotate(360deg); }
+}
+@keyframes orbit9 {
+  0% { transform: translate(-50%, -50%) rotate(0deg) translateX(100px) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg) translateX(100px) rotate(-360deg); }
+}
+
+/* Featured Persona Card */
+.featured-persona {
+  max-width: 600px;
+  margin: 0 auto 30px;
+  background: #ffffff;
   border-radius: 16px;
-  padding: 24px 30px;
-  margin: 10px 0 30px;
   border: 1px solid #ede8e0;
-  transition: all 0.4s ease;
-  min-height: 100px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  transition: all 0.5s ease;
+  overflow: hidden;
 }
 
-.persona-detail-left {
+.featured-persona:hover {
+  border-color: #b8943c;
+  box-shadow: 0 12px 40px rgba(184, 148, 60, 0.08);
+  transform: translateY(-2px);
+}
+
+.featured-persona-inner {
+  display: flex;
+  align-items: center;
+  padding: 24px 28px;
+  gap: 20px;
+}
+
+.featured-left {
   flex: 1;
 }
 
-.persona-detail-number {
-  font-size: 0.6rem;
+.featured-number {
+  font-size: 0.55rem;
   font-weight: 700;
   color: #b8943c;
   letter-spacing: 1px;
 }
 
-.persona-detail-name {
+.featured-name {
   font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: #1a1917;
-  margin: 2px 0;
+  margin: 2px 0 4px;
 }
 
-.persona-detail-desc {
+.featured-desc {
   font-size: 0.85rem;
   color: #6e6a62;
-  max-width: 400px;
   line-height: 1.5;
+  margin-bottom: 6px;
 }
 
-.btn-persona-detail {
-  display: inline-block;
-  margin-top: 8px;
+.featured-link {
   color: #b8943c;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-decoration: none;
 }
 
-.btn-persona-detail:hover {
+.featured-link:hover {
   text-decoration: underline;
 }
 
-.persona-detail-right {
-  flex: 0 0 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.featured-right {
+  flex: 0 0 60px;
 }
 
-.persona-detail-visual {
-  width: 70px;
-  height: 70px;
+.featured-icon-wrapper {
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2d2a24, #4a4438);
+  background: linear-gradient(135deg, #f8f5f0, #ede8e0);
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid #ede8e0;
 }
 
-.persona-detail-icon {
-  font-size: 2.2rem;
+.featured-icon {
+  font-size: 1.8rem;
 }
 
 /* Personas CTA */
 .personas-cta {
   text-align: center;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .personas-cta p {
   font-size: 1.1rem;
   color: #4d4a44;
-  margin-bottom: 12px;
-  font-weight: 500;
+  margin-bottom: 14px;
 }
 
+.personas-cta p strong {
+  color: #b8943c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .persona-orbit-container {
+    width: 350px;
+    height: 350px;
+  }
+  
+  .orbit-center {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .orbit-center-icon {
+    font-size: 0.9rem;
+  }
+  
+  .orbit-center-label {
+    font-size: 0.4rem;
+  }
+  
+  .orbit-dot {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .orbit-item-1 { animation: orbit1-mobile 12s linear infinite; }
+  .orbit-item-2 { animation: orbit2-mobile 14s linear infinite; }
+  .orbit-item-3 { animation: orbit3-mobile 10s linear infinite; }
+  .orbit-item-4 { animation: orbit4-mobile 16s linear infinite; }
+  .orbit-item-5 { animation: orbit5-mobile 18s linear infinite; }
+  .orbit-item-6 { animation: orbit6-mobile 13s linear infinite; }
+  .orbit-item-7 { animation: orbit7-mobile 15s linear infinite; }
+  .orbit-item-8 { animation: orbit8-mobile 11s linear infinite; }
+  .orbit-item-9 { animation: orbit9-mobile 20s linear infinite; }
+  
+  @keyframes orbit1-mobile {
+    0% { transform: translateX(-50%) rotate(0deg) translateX(-175px) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(360deg) translateX(-175px) rotate(-360deg); }
+  }
+  @keyframes orbit2-mobile {
+    0% { transform: translateY(-50%) rotate(0deg) translateX(175px) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg) translateX(175px) rotate(-360deg); }
+  }
+  @keyframes orbit3-mobile {
+    0% { transform: translateX(-50%) rotate(0deg) translateX(-175px) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(-360deg) translateX(-175px) rotate(360deg); }
+  }
+  @keyframes orbit4-mobile {
+    0% { transform: translateY(-50%) rotate(0deg) translateX(175px) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(-360deg) translateX(175px) rotate(360deg); }
+  }
+  @keyframes orbit5-mobile {
+    0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+  }
+  @keyframes orbit6-mobile {
+    0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+    100% { transform: rotate(-360deg) translateX(120px) rotate(360deg); }
+  }
+  @keyframes orbit7-mobile {
+    0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+  }
+  @keyframes orbit8-mobile {
+    0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+    100% { transform: rotate(-360deg) translateX(120px) rotate(360deg); }
+  }
+  @keyframes orbit9-mobile {
+    0% { transform: translate(-50%, -50%) rotate(0deg) translateX(70px) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg) translateX(70px) rotate(-360deg); }
+  }
+  
+  .featured-persona-inner {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .orbit-tooltip {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .persona-orbit-container {
+    width: 280px;
+    height: 280px;
+  }
+  
+  .orbit-center {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .orbit-center-icon {
+    font-size: 0.7rem;
+  }
+  
+  .orbit-dot {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .featured-name {
+    font-size: 1.1rem;
+  }
+}
+
+    
 /* Responsive */
 @media (max-width: 768px) {
   .personas-carousel-wrapper {
@@ -1761,118 +2033,90 @@
   </div>
 </div>
 
-<!-- ===== THE 12 PERSONAS CAROUSEL ===== -->
+<!-- ===== THE 12 PERSONAS - PREMIUM DYNAMIC ===== -->
 <section class="container section" id="personas">
   <div class="personas-header">
-    <div class="personas-badge">THE 12 PERSONAS</div>
+    <span class="personas-badge">✦ THE 12 PERSONAS</span>
     <h2 class="heading-serif heading-lg">12 Ways The World Can <span class="accent-gold">Experience You</span></h2>
     <p class="personas-subtitle">You think. You express. You connect. But beneath the surface, there's a pattern — a persona that shapes how the world experiences you.</p>
   </div>
 
-  <div class="personas-carousel-wrapper">
-    <div class="personas-carousel-container">
-      <div class="personas-track" id="personasTrack">
-        <!-- Persona 1: The Translator -->
-        <div class="persona-circle active" data-persona="translator">
-          <div class="persona-circle-inner">
-            <span class="persona-number">01</span>
-            <span class="persona-name">The Translator</span>
-          </div>
-        </div>
-        
-        <!-- Persona 2: The Listener -->
-        <div class="persona-circle" data-persona="listener">
-          <div class="persona-circle-inner">
-            <span class="persona-number">02</span>
-            <span class="persona-name">The Listener</span>
-          </div>
-        </div>
-        
-        <!-- Persona 3: The Amplifier -->
-        <div class="persona-circle" data-persona="amplifier">
-          <div class="persona-circle-inner">
-            <span class="persona-number">03</span>
-            <span class="persona-name">The Amplifier</span>
-          </div>
-        </div>
-        
-        <!-- Persona 4: The Articulator -->
-        <div class="persona-circle" data-persona="articulator">
-          <div class="persona-circle-inner">
-            <span class="persona-number">04</span>
-            <span class="persona-name">The Articulator</span>
-          </div>
-        </div>
-        
-        <!-- Persona 5: The Influencer -->
-        <div class="persona-circle" data-persona="influencer">
-          <div class="persona-circle-inner">
-            <span class="persona-number">05</span>
-            <span class="persona-name">The Influencer</span>
-          </div>
-        </div>
-        
-        <!-- Persona 6: The Interpreter -->
-        <div class="persona-circle" data-persona="interpreter">
-          <div class="persona-circle-inner">
-            <span class="persona-number">06</span>
-            <span class="persona-name">The Interpreter</span>
-          </div>
-        </div>
-        
-        <!-- Persona 7: The Filter -->
-        <div class="persona-circle" data-persona="filter">
-          <div class="persona-circle-inner">
-            <span class="persona-number">07</span>
-            <span class="persona-name">The Filter</span>
-          </div>
-        </div>
-        
-        <!-- Persona 8: The Emerging -->
-        <div class="persona-circle" data-persona="emerging">
-          <div class="persona-circle-inner">
-            <span class="persona-number">08</span>
-            <span class="persona-name">The Emerging</span>
-          </div>
-        </div>
-        
-        <!-- Persona 9: The Misaligned -->
-        <div class="persona-circle" data-persona="misaligned">
-          <div class="persona-circle-inner">
-            <span class="persona-number">09</span>
-            <span class="persona-name">The Misaligned</span>
-          </div>
-        </div>
-      </div>
+  <!-- Floating Persona Orbits -->
+  <div class="persona-orbit-container">
+    <div class="orbit-ring orbit-ring-1"></div>
+    <div class="orbit-ring orbit-ring-2"></div>
+    <div class="orbit-ring orbit-ring-3"></div>
+    
+    <!-- Center Persona -->
+    <div class="orbit-center">
+      <span class="orbit-center-icon">✦</span>
+      <span class="orbit-center-label">YOU</span>
     </div>
-
-    <!-- Navigation Buttons -->
-    <button class="personas-nav prev" id="personasPrev">‹</button>
-    <button class="personas-nav next" id="personasNext">›</button>
+    
+    <!-- Orbiting Personas -->
+    <div class="orbit-item orbit-item-1" data-persona="translator">
+      <span class="orbit-dot"></span>
+      <span class="orbit-tooltip">The Translator</span>
+    </div>
+    <div class="orbit-item orbit-item-2" data-persona="listener">
+      <span class="orbit-dot"></span>
+      <span class="orbit-tooltip">The Listener</span>
+    </div>
+    <div class="orbit-item orbit-item-3" data-persona="amplifier">
+      <span class="orbit-dot"></span>
+      <span class="orbit-tooltip">The Amplifier</span>
+    </div>
+    <div class="orbit-item orbit-item-4" data-persona="articulator">
+      <span class="orbit-dot"></span>
+      <span class="orbit-tooltip">The Articulator</span>
+    </div>
+    <div class="orbit-item orbit-item-5" data-persona="influencer">
+      <span class="orbit-dot"></span>
+      <span class="orbit-tooltip">The Influencer</span>
+    </div>
+    <div class="orbit-item orbit-item-6" data-persona="interpreter">
+      <span class="orbit-dot"></span>
+      <span class="orbit-tooltip">The Interpreter</span>
+    </div>
+    <div class="orbit-item orbit-item-7" data-persona="filter">
+      <span class="orbit-dot"></span>
+      <span class="orbit-tooltip">The Filter</span>
+    </div>
+    <div class="orbit-item orbit-item-8" data-persona="emerging">
+      <span class="orbit-dot"></span>
+      <span class="orbit-tooltip">The Emerging</span>
+    </div>
+    <div class="orbit-item orbit-item-9" data-persona="misaligned">
+      <span class="orbit-dot"></span>
+      <span class="orbit-tooltip">The Misaligned</span>
+    </div>
   </div>
 
-  <!-- Persona Detail Card -->
-  <div class="persona-detail-card" id="personaDetail">
-    <div class="persona-detail-left">
-      <span class="persona-detail-number" id="detailNumber">01</span>
-      <h3 class="persona-detail-name" id="detailName">The Translator</h3>
-      <p class="persona-detail-desc" id="detailDesc">Makes complexity make sense. You turn complex thoughts into clear, memorable messages.</p>
-      <a href="#" class="btn-persona-detail">Explore →</a>
-    </div>
-    <div class="persona-detail-right">
-      <div class="persona-detail-visual">
-        <span class="persona-detail-icon">🌐</span>
+  <!-- Featured Persona Card -->
+  <div class="featured-persona" id="featuredPersona">
+    <div class="featured-persona-inner">
+      <div class="featured-left">
+        <span class="featured-number" id="featuredNumber">01</span>
+        <h3 class="featured-name" id="featuredName">The Translator</h3>
+        <p class="featured-desc" id="featuredDesc">Makes complexity make sense. You turn complex thoughts into clear, memorable messages.</p>
+        <a href="#" class="featured-link">Explore Persona →</a>
+      </div>
+      <div class="featured-right">
+        <div class="featured-icon-wrapper">
+          <span class="featured-icon" id="featuredIcon">🌐</span>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- CTA -->
   <div class="personas-cta">
-    <p>This isn't just a quiz. It's a mirror.</p>
+    <p>This isn't just a quiz. It's a <strong>mirror</strong>.</p>
     <a href="Personasnap.html" class="btn-paid">Discover My Persona →</a>
   </div>
 </section>
 
+  
     <!-- ===== THE PROBLEM ===== -->
 <section class="container section">
   <h3 class="heading-serif heading-xl">You know what you mean.</h3>
@@ -2252,158 +2496,114 @@
     // Initial update
     setTimeout(updateCarousel, 100);
 
-// ===== PERSONAS CAROUSEL =====
+// ===== PREMIUM DYNAMIC PERSONAS =====
 document.addEventListener('DOMContentLoaded', function() {
-  const track = document.getElementById('personasTrack');
-  const prevBtn = document.getElementById('personasPrev');
-  const nextBtn = document.getElementById('personasNext');
-  const circles = document.querySelectorAll('.persona-circle');
+  const orbitItems = document.querySelectorAll('.orbit-item');
+  const featuredNumber = document.getElementById('featuredNumber');
+  const featuredName = document.getElementById('featuredName');
+  const featuredDesc = document.getElementById('featuredDesc');
+  const featuredIcon = document.getElementById('featuredIcon');
   
-  // Persona data
   const personaData = {
-    translator: {
-      number: '01',
-      name: 'The Translator',
-      desc: 'Makes complexity make sense. You turn complex thoughts into clear, memorable messages.',
-      icon: '🌐'
-    },
-    listener: {
-      number: '02',
-      name: 'The Listener',
-      desc: 'Hears what others miss. You read between the lines and understand the unspoken.',
-      icon: '👂'
-    },
-    amplifier: {
-      number: '03',
-      name: 'The Amplifier',
-      desc: 'Energizes every room. Your presence and energy make ideas unforgettable.',
-      icon: '📢'
-    },
-    articulator: {
-      number: '04',
-      name: 'The Articulator',
-      desc: 'Clarity in every word. You speak with precision and structure that commands respect.',
-      icon: '🎯'
-    },
-    influencer: {
-      number: '05',
-      name: 'The Influencer',
-      desc: 'Moves people to action. Your words create momentum and drive decisions.',
-      icon: '💫'
-    },
-    interpreter: {
-      number: '06',
-      name: 'The Interpreter',
-      desc: 'Reads between the lines. You understand what people truly mean.',
-      icon: '🧠'
-    },
-    filter: {
-      number: '07',
-      name: 'The Filter',
-      desc: 'Chooses words with care. You speak with intention and precision.',
-      icon: '🔍'
-    },
-    emerging: {
-      number: '08',
-      name: 'The Emerging',
-      desc: 'Growing into your voice. Your potential is just beginning to be seen.',
-      icon: '🌱'
-    },
-    misaligned: {
-      number: '09',
-      name: 'The Misaligned',
-      desc: 'Finding your alignment. The gap between intent and impact is your opportunity.',
-      icon: '🔄'
-    }
+    translator: { number: '01', name: 'The Translator', desc: 'Makes complexity make sense. You turn complex thoughts into clear, memorable messages.', icon: '🌐' },
+    listener: { number: '02', name: 'The Listener', desc: 'Hears what others miss. You read between the lines and understand the unspoken.', icon: '👂' },
+    amplifier: { number: '03', name: 'The Amplifier', desc: 'Energizes every room. Your presence and energy make ideas unforgettable.', icon: '📢' },
+    articulator: { number: '04', name: 'The Articulator', desc: 'Clarity in every word. You speak with precision and structure that commands respect.', icon: '🎯' },
+    influencer: { number: '05', name: 'The Influencer', desc: 'Moves people to action. Your words create momentum and drive decisions.', icon: '💫' },
+    interpreter: { number: '06', name: 'The Interpreter', desc: 'Reads between the lines. You understand what people truly mean.', icon: '🧠' },
+    filter: { number: '07', name: 'The Filter', desc: 'Chooses words with care. You speak with intention and precision.', icon: '🔍' },
+    emerging: { number: '08', name: 'The Emerging', desc: 'Growing into your voice. Your potential is just beginning to be seen.', icon: '🌱' },
+    misaligned: { number: '09', name: 'The Misaligned', desc: 'Finding your alignment. The gap between intent and impact is your opportunity.', icon: '🔄' }
   };
 
-  let currentIndex = 0;
-  const visibleCount = window.innerWidth <= 480 ? 3 : window.innerWidth <= 768 ? 4 : 5;
-  const totalCircles = circles.length;
+  let currentPersona = 'translator';
+  let autoRotate = true;
+  let rotateInterval;
 
-  function updateCarousel() {
-    const circleWidth = circles[0].offsetWidth + 20;
-    const offset = currentIndex * circleWidth;
-    track.style.transform = `translateX(-${offset}px)`;
-    
-    // Update active state
-    circles.forEach((circle, index) => {
-      circle.classList.toggle('active', index === currentIndex);
-    });
-    
-    // Update detail card
-    const activeCircle = circles[currentIndex];
-    const personaKey = activeCircle.dataset.persona;
+  function updateFeatured(personaKey) {
     const data = personaData[personaKey];
+    if (!data) return;
     
-    if (data) {
-      document.getElementById('detailNumber').textContent = data.number;
-      document.getElementById('detailName').textContent = data.name;
-      document.getElementById('detailDesc').textContent = data.desc;
-      document.querySelector('.persona-detail-icon').textContent = data.icon;
-    }
+    featuredNumber.textContent = data.number;
+    featuredName.textContent = data.name;
+    featuredDesc.textContent = data.desc;
+    featuredIcon.textContent = data.icon;
+    
+    // Update active state on dots
+    orbitItems.forEach(item => {
+      item.classList.toggle('active', item.dataset.persona === personaKey);
+    });
+    
+    currentPersona = personaKey;
   }
 
-  function goTo(index) {
-    const maxIndex = Math.max(0, totalCircles - visibleCount);
-    if (index < 0) index = maxIndex;
-    if (index > maxIndex) index = 0;
-    currentIndex = index;
-    updateCarousel();
-  }
-
-  prevBtn.addEventListener('click', () => goTo(currentIndex - 1));
-  nextBtn.addEventListener('click', () => goTo(currentIndex + 1));
-
-  // Click on circle
-  circles.forEach((circle, index) => {
-    circle.addEventListener('click', () => {
-      currentIndex = index;
-      updateCarousel();
+  // Click on orbit item
+  orbitItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const personaKey = this.dataset.persona;
+      updateFeatured(personaKey);
+      
+      // Reset auto-rotation timer
+      clearInterval(rotateInterval);
+      if (autoRotate) {
+        startAutoRotate();
+      }
+    });
+    
+    // Hover effect
+    item.addEventListener('mouseenter', function() {
+      const dot = this.querySelector('.orbit-dot');
+      if (dot) {
+        dot.style.transform = 'scale(1.5)';
+        dot.style.background = 'linear-gradient(135deg, #d4a84a, #fcd34d)';
+        dot.style.boxShadow = '0 0 40px rgba(184, 148, 60, 0.5)';
+      }
+    });
+    
+    item.addEventListener('mouseleave', function() {
+      const dot = this.querySelector('.orbit-dot');
+      if (dot) {
+        dot.style.transform = '';
+        dot.style.background = '';
+        dot.style.boxShadow = '';
+      }
     });
   });
 
-  // Auto-play
-  let autoPlay = setInterval(() => {
-    const maxIndex = Math.max(0, totalCircles - visibleCount);
-    if (currentIndex >= maxIndex) {
-      currentIndex = 0;
-    } else {
-      currentIndex++;
-    }
-    updateCarousel();
-  }, 3000);
+  // Auto-rotate personas
+  function startAutoRotate() {
+    const keys = Object.keys(personaData);
+    let index = 0;
+    
+    // Find current index
+    keys.forEach((key, i) => {
+      if (key === currentPersona) index = i;
+    });
+    
+    rotateInterval = setInterval(() => {
+      index = (index + 1) % keys.length;
+      updateFeatured(keys[index]);
+    }, 4000);
+  }
 
-  // Pause on hover
-  const wrapper = document.querySelector('.personas-carousel-wrapper');
-  wrapper.addEventListener('mouseenter', () => clearInterval(autoPlay));
-  wrapper.addEventListener('mouseleave', () => {
-    autoPlay = setInterval(() => {
-      const maxIndex = Math.max(0, totalCircles - visibleCount);
-      if (currentIndex >= maxIndex) {
-        currentIndex = 0;
-      } else {
-        currentIndex++;
-      }
-      updateCarousel();
-    }, 3000);
+  // Pause on hover over orbit container
+  const orbitContainer = document.querySelector('.persona-orbit-container');
+  orbitContainer.addEventListener('mouseenter', () => {
+    clearInterval(rotateInterval);
+  });
+  
+  orbitContainer.addEventListener('mouseleave', () => {
+    if (autoRotate) startAutoRotate();
   });
 
-  // Update on resize
-  let resizeTimeout;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(updateCarousel, 200);
-  });
+  // Start auto-rotation
+  startAutoRotate();
 
-  // Initial update
-  setTimeout(updateCarousel, 100);
+  // Initial load - show first persona
+  updateFeatured('translator');
 });
-
-
-
-
-
+    
+    
       
     // ===== LOGIN MODAL =====
     const signInBtn = document.getElementById('signInBtn');
