@@ -871,15 +871,21 @@ function getLevel(score) {
 }
 
 function generateSummary(persona, scores) {
-    const name = persona.name || 'Your Communication Persona';
+    const personaName = persona.name || 'Your Communication Persona';
     const detailedDesc = persona.detailed_description || persona.description || '';
+    
     const entries = Object.entries(scores).filter(([k, v]) => v !== undefined && v !== null);
-    let highest = '', lowest = '';
+    let highest = '', highestValue = 0;
+    let lowest = '', lowestValue = 100;
+    
     if (entries.length > 0) {
         const sorted = [...entries].sort((a, b) => b[1] - a[1]);
         highest = sorted[0][0].charAt(0).toUpperCase() + sorted[0][0].slice(1);
+        highestValue = sorted[0][1];
         lowest = sorted[sorted.length - 1][0].charAt(0).toUpperCase() + sorted[sorted.length - 1][0].slice(1);
+        lowestValue = sorted[sorted.length - 1][1];
     }
+    
     // Build the summary
     let summary = '';
     
@@ -904,7 +910,6 @@ function generateSummary(persona, scores) {
     
     return summary;
 }
-
 document.addEventListener('DOMContentLoaded', loadReport);
 </script>
 </body>
