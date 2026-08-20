@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>The Unspoken · Paid Persona</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
@@ -85,6 +86,11 @@
             font-size: 0.7rem;
             color: #8a8680;
             margin-top: 4px;
+        }
+        .form-group .prefilled {
+            font-size: 0.7rem;
+            color: #059669;
+            font-weight: 500;
         }
 
         .btn-primary {
@@ -192,6 +198,13 @@
             display: none;
         }
 
+        .success-message {
+            color: #059669;
+            font-size: 0.8rem;
+            margin-top: 4px;
+            display: none;
+        }
+
         /* ===== SALES PAGE ===== */
         .sales-hero { text-align: center; padding: 0.5rem 0; }
         .sales-hero .big-icon { font-size: 4rem; margin-bottom: 0.5rem; }
@@ -222,6 +235,23 @@
             padding: 0.2rem 0;
         }
         .sales-features .feature .check { color: #059669; font-weight: 700; font-size: 1rem; }
+
+        /* ===== PAYMENT STATUS ===== */
+        .payment-status {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .payment-status .icon { font-size: 3rem; margin-bottom: 0.5rem; }
+        .payment-status .status-text {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a1e;
+        }
+        .payment-status .status-sub {
+            font-size: 0.85rem;
+            color: #6e6a62;
+            margin-top: 0.3rem;
+        }
 
         /* ===== ONBOARDING ===== */
         .onboarding-screen { text-align: center; padding: 0.5rem 0; }
@@ -340,26 +370,17 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ===== SUCCESS ===== */
-        .success-screen { text-align: center; padding: 1rem 0; }
-        .success-screen .icon { font-size: 4rem; margin-bottom: 0.5rem; }
-        .success-screen .credentials-box {
-            background: #f8f5f0;
-            border-radius: 12px;
-            padding: 1rem;
-            margin: 1rem 0;
-            text-align: left;
-            border: 1px solid #ede8e0;
+        .payment-badge {
+            display: inline-block;
+            background: #f0fdf4;
+            color: #059669;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 1px solid #bbf7d0;
+            margin-bottom: 0.5rem;
         }
-        .success-screen .credentials-box .row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #ede8e0;
-        }
-        .success-screen .credentials-box .row:last-child { border-bottom: none; }
-        .success-screen .credentials-box .label { color: #8a8680; font-size: 0.8rem; }
-        .success-screen .credentials-box .value { font-weight: 500; font-size: 0.85rem; }
 
         @media (max-width: 640px) {
             .container { padding: 24px 16px; }
@@ -384,45 +405,9 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- SCREEN: CHECKOUT (User Details)                              -->
-    <!-- ============================================================ -->
-    <div id="screenCheckout">
-        <h1>Get Your <span class="gold">Paid Persona</span></h1>
-        <p class="subtitle">Enter your details to get started</p>
-
-        <form id="checkoutForm" style="margin-top: 1.5rem;">
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" id="fullName" placeholder="Your full name" required />
-            </div>
-            <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" id="email" placeholder="you@example.com" required />
-            </div>
-            <div class="form-group">
-                <label>WhatsApp Number</label>
-                <input type="tel" id="phone" placeholder="9876543210" required />
-            </div>
-            <div class="form-group">
-                <label>Create Password</label>
-                <input type="password" id="password" placeholder="Min 8 characters" required />
-                <div class="hint">Use at least 8 characters with letters and numbers</div>
-            </div>
-            <div id="checkoutError" class="error-message">Please fill in all fields correctly.</div>
-            <button type="submit" class="btn-gold" id="checkoutBtn">🚀 Create Account & Start Assessment</button>
-        </form>
-
-        <div style="text-align: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ede8e0;">
-            <p style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.5rem;">⚡ Test Mode</p>
-            <button class="btn-outline" id="testModeBtn" style="padding: 0.6rem 1.5rem; font-size: 0.8rem; width: auto;">🔑 Skip & Continue as Guest</button>
-            <p style="font-size: 0.6rem; color: #94a3b8; margin-top: 0.3rem;">Bypass account creation for testing</p>
-        </div>
-    </div>
-
-    <!-- ============================================================ -->
     <!-- SCREEN: SALES                                                -->
     <!-- ============================================================ -->
-    <div id="screenSales" class="hidden">
+    <div id="screenSales">
         <div class="sales-hero">
             <div class="big-icon">🔍</div>
             <h1>Discover Your <span class="gold">Communication Persona</span></h1>
@@ -441,8 +426,75 @@
                 <div class="feature"><span class="check">✓</span> Personalized insights</div>
                 <div class="feature"><span class="check">✓</span> Shareable persona card</div>
             </div>
-            <button class="btn-gold" id="startCheckout">Get My Paid Persona →</button>
+            <button class="btn-gold" id="payNowBtn">
+                💳 Pay ₹299 &amp; Get Started
+            </button>
             <p style="font-size: 0.65rem; color: #94a3b8; margin-top: 0.5rem;">🔒 Secure payment · Instant access</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN: PAYMENT STATUS (Processing)                          -->
+    <!-- ============================================================ -->
+    <div id="screenPaymentStatus" class="hidden">
+        <div class="payment-status">
+            <div class="icon">⏳</div>
+            <div class="status-text">Processing your payment...</div>
+            <div class="status-sub">Please wait while we confirm your payment.</div>
+            <div style="margin-top: 1.5rem;">
+                <div class="spinner" style="width: 30px; height: 30px; border: 3px solid #e2e8f0; border-top-color: #b8943c; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN: PAYMENT SUCCESS                                      -->
+    <!-- ============================================================ -->
+    <div id="screenPaymentSuccess" class="hidden">
+        <div class="payment-status">
+            <div class="icon">✅</div>
+            <div class="status-text">Payment Successful!</div>
+            <div class="status-sub">Your payment of ₹299 has been confirmed.</div>
+            <div style="margin-top: 1rem; background: #f0fdf4; border-radius: 12px; padding: 0.8rem; border: 1px solid #bbf7d0;">
+                <p style="font-size: 0.8rem; color: #059669; font-weight: 500;">🎉 You now have access to your Paid Persona</p>
+            </div>
+            <button class="btn-gold" id="continueToDetails" style="margin-top: 1rem;">
+                Continue →
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCREEN: USER DETAILS (Prefilled from Razorpay)               -->
+    <!-- ============================================================ -->
+    <div id="screenUserDetails" class="hidden">
+        <h1>Tell Us About <span class="gold">Yourself</span></h1>
+        <p class="subtitle">Your details are pre-filled from payment. Confirm and continue.</p>
+
+        <div style="margin-top: 1.5rem;">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="userFullName" placeholder="Your full name" />
+                <div class="prefilled">✓ Pre-filled from payment</div>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="userEmail" placeholder="you@example.com" />
+                <div class="prefilled">✓ Pre-filled from payment</div>
+            </div>
+            <div class="form-group">
+                <label>WhatsApp Number</label>
+                <input type="tel" id="userPhone" placeholder="9876543210" />
+                <div class="prefilled">✓ Pre-filled from payment</div>
+            </div>
+            <div id="detailsError" class="error-message">Please fill in all fields.</div>
+            <button class="btn-gold" id="continueToOnboarding">
+                Continue to Assessment →
+            </button>
+        </div>
+
+        <div style="text-align: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ede8e0;">
+            <button class="btn-link" id="backToSales">← Back to Sales</button>
         </div>
     </div>
 
@@ -460,7 +512,7 @@
                 Answer <strong>30 questions</strong> about how you think, express, connect, and influence.<br>
                 Your answers will help us understand your unique communication style.
             </p>
-            <div class="duration">⏱️ Takes approximately 5 minutes</div>
+            <div class="duration">⏱️ Takes approximately 10 minutes</div>
             <button class="btn-gold" id="startAssessmentBtn" style="margin-top: 1rem;">
                 Start My Persona →
             </button>
@@ -525,38 +577,6 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- SCREEN: SUCCESS (User Created + Credentials)                 -->
-    <!-- ============================================================ -->
-    <div id="screenSuccess" class="hidden">
-        <div class="success-screen">
-            <div class="icon">🎉</div>
-            <h2>Account Created!</h2>
-            <p style="color: #4d4a44;">Your Paid Persona is now unlocked.</p>
-            
-            <div class="credentials-box">
-                <div class="row">
-                    <span class="label">📧 Email</span>
-                    <span class="value" id="successEmail">—</span>
-                </div>
-                <div class="row">
-                    <span class="label">🔑 Password</span>
-                    <span class="value" id="successPassword">—</span>
-                </div>
-                <div class="row" style="border-bottom: none;">
-                    <span class="label">🆔 User ID</span>
-                    <span class="value" id="successUserId" style="font-size:0.7rem;">—</span>
-                </div>
-            </div>
-
-            <p style="font-size: 0.8rem; color: #6e6a62; margin-bottom: 0.5rem;">Save your credentials securely. You'll need them to login.</p>
-            
-            <button class="btn-gold" id="continueToOnboarding" style="margin-top: 0.5rem;">
-                Continue to Assessment →
-            </button>
-        </div>
-    </div>
-
 </div>
 
 <script>
@@ -564,14 +584,15 @@
 // API CONFIGURATION
 // ============================================================
 const API_BASE = 'https://unspoken-backend-yvbi.onrender.com';
-let userId = null;
-let userEmail = null;
+const RAZORPAY_KEY = 'rzp_live_TN9VVH5DwiHx0L';
+
 let userFullName = null;
+let userEmail = null;
 let userPhone = null;
-let userPassword = null;
 let assessmentResponses = [];
 let currentQuestionIndex = 0;
 let selectedValue = null;
+let paymentCompleted = false;
 
 // ============================================================
 // 30 QUESTIONS
@@ -613,7 +634,7 @@ const questions = [
 // SCREEN MANAGEMENT
 // ============================================================
 function showScreen(screenId) {
-    const screens = ['screenCheckout', 'screenSales', 'screenOnboarding', 'screenAssessment', 'screenProcessing', 'screenSuccess'];
+    const screens = ['screenSales', 'screenPaymentStatus', 'screenPaymentSuccess', 'screenUserDetails', 'screenOnboarding', 'screenAssessment', 'screenProcessing'];
     screens.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -628,143 +649,122 @@ function showScreen(screenId) {
 }
 
 // ============================================================
-// CHECKOUT → CREATE USER
+// RAZORPAY PAYMENT
 // ============================================================
-document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const name = document.getElementById('fullName').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const password = document.getElementById('password').value.trim();
-    const errorEl = document.getElementById('checkoutError');
+document.getElementById('payNowBtn').addEventListener('click', function() {
+    const btn = this;
+    btn.disabled = true;
+    btn.textContent = '⏳ Opening payment...';
 
-    if (!name || !email || !phone || !password) {
+    const options = {
+        "key": RAZORPAY_KEY,
+        "amount": 1 * 100,
+        "currency": "INR",
+        "name": "The Unspoken",
+        "description": "Communication Persona - Paid Assessment",
+        "image": "https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Mini%20Logo%20Unspoken.png",
+        "prefill": {
+            "name": "",
+            "email": "",
+            "contact": ""
+        },
+        "theme": { "color": "#b8943c" },
+        "modal": {
+            "ondismiss": function() {
+                btn.disabled = false;
+                btn.textContent = '💳 Pay ₹299 & Get Started';
+            }
+        }
+    };
+
+    const rzp = new Razorpay(options);
+
+    rzp.on('payment.failed', function(response) {
+        console.error('Payment failed:', response.error);
+        btn.disabled = false;
+        btn.textContent = '💳 Pay ₹299 & Get Started';
+        alert('Payment failed: ' + response.error.description);
+        showScreen('screenSales');
+    });
+
+    rzp.on('payment.success', function(response) {
+        console.log('Payment successful:', response);
+        paymentCompleted = true;
+        
+        // Store payment details
+        const paymentData = {
+            payment_id: response.razorpay_payment_id,
+            order_id: response.razorpay_order_id,
+            signature: response.razorpay_signature
+        };
+        localStorage.setItem('unspoken_payment', JSON.stringify(paymentData));
+        
+        showScreen('screenPaymentSuccess');
+        btn.disabled = false;
+        btn.textContent = '💳 Pay ₹299 & Get Started';
+    });
+
+    rzp.open();
+});
+
+// ============================================================
+// CONTINUE TO USER DETAILS (After Payment)
+// ============================================================
+document.getElementById('continueToDetails').addEventListener('click', function() {
+    // Check if we have Razorpay prefill data from the payment
+    // The user entered this during payment, but we don't have direct access
+    // So we'll show the form with empty fields - user can fill
+    showScreen('screenUserDetails');
+});
+
+// ============================================================
+// BACK TO SALES
+// ============================================================
+document.getElementById('backToSales').addEventListener('click', function() {
+    showScreen('screenSales');
+});
+
+// ============================================================
+// CONTINUE TO ONBOARDING (After User Details)
+// ============================================================
+document.getElementById('continueToOnboarding').addEventListener('click', function() {
+    const name = document.getElementById('userFullName').value.trim();
+    const email = document.getElementById('userEmail').value.trim();
+    const phone = document.getElementById('userPhone').value.trim();
+    const errorEl = document.getElementById('detailsError');
+
+    if (!name || !email || !phone) {
         errorEl.style.display = 'block';
         errorEl.textContent = 'Please fill in all fields.';
         return;
     }
 
-    if (password.length < 8) {
+    // Validate email
+    if (!email.includes('@') || !email.includes('.')) {
         errorEl.style.display = 'block';
-        errorEl.textContent = 'Password must be at least 8 characters.';
+        errorEl.textContent = 'Please enter a valid email address.';
         return;
     }
 
     errorEl.style.display = 'none';
-    const btn = document.getElementById('checkoutBtn');
-    btn.disabled = true;
-    btn.textContent = 'Creating account...';
-
-    try {
-        // First, check if user exists
-        const checkRes = await fetch(`${API_BASE}/api/auth/status/${encodeURIComponent(email)}`);
-        const checkData = await checkRes.json();
-
-        if (checkData.exists) {
-            errorEl.style.display = 'block';
-            errorEl.textContent = 'An account with this email already exists. Please login.';
-            btn.disabled = false;
-            btn.textContent = '🚀 Create Account & Start Assessment';
-            return;
-        }
-
-        // Create user via assessment endpoint
-        // We'll create a dummy assessment to trigger user creation
-        const dummyResponses = [];
-        for (let i = 1; i <= 30; i++) {
-            dummyResponses.push({ question_code: `Q${i}`, answer: 3 });
-        }
-
-        const payload = {
-            user_details: {
-                full_name: name,
-                email: email,
-                phone: phone
-            },
-            responses: dummyResponses,
-            type: 'paid'
-        };
-
-        const response = await fetch(`${API_BASE}/api/persona/paid-assess`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-
-        if (data.success && data.user) {
-            userId = data.user.user_id;
-            userEmail = email;
-            userFullName = name;
-            userPhone = phone;
-            userPassword = password; // Store for display
-            
-            // Store in localStorage
-            localStorage.setItem('unspoken_user_id', userId);
-            localStorage.setItem('unspoken_user_email', email);
-            localStorage.setItem('unspoken_user_name', name);
-
-            // Show success with credentials
-            document.getElementById('successEmail').textContent = email;
-            document.getElementById('successPassword').textContent = password;
-            document.getElementById('successUserId').textContent = userId;
-            
-            showScreen('screenSuccess');
-            
-            // Clear assessment responses for actual test
-            assessmentResponses = [];
-            currentQuestionIndex = 0;
-        } else {
-            errorEl.style.display = 'block';
-            errorEl.textContent = data.message || 'Failed to create account. Please try again.';
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        errorEl.style.display = 'block';
-        errorEl.textContent = 'Network error. Please try again.';
-    }
-
-    btn.disabled = false;
-    btn.textContent = '🚀 Create Account & Start Assessment';
-});
-
-// ============================================================
-// TEST MODE (Skip Account Creation)
-// ============================================================
-document.getElementById('testModeBtn').addEventListener('click', () => {
-    userId = 'test-user-' + Date.now();
-    userEmail = 'guest@theunspoken.co.in';
-    userFullName = 'Guest User';
-    userPhone = '9999999999';
-    userPassword = 'test1234';
     
-    localStorage.setItem('unspoken_user_id', userId);
-    localStorage.setItem('unspoken_user_email', userEmail);
-    localStorage.setItem('unspoken_user_name', userFullName);
-
-    // Show success with test credentials
-    document.getElementById('successEmail').textContent = userEmail;
-    document.getElementById('successPassword').textContent = 'test1234';
-    document.getElementById('successUserId').textContent = userId;
+    userFullName = name;
+    userEmail = email;
+    userPhone = phone;
     
-    showScreen('screenSuccess');
-    assessmentResponses = [];
-    currentQuestionIndex = 0;
-});
-
-// ============================================================
-// SUCCESS → ONBOARDING
-// ============================================================
-document.getElementById('continueToOnboarding').addEventListener('click', () => {
+    // Store user details
+    localStorage.setItem('unspoken_user_name', name);
+    localStorage.setItem('unspoken_user_email', email);
+    localStorage.setItem('unspoken_user_phone', phone);
+    localStorage.setItem('unspoken_paid', 'true');
+    
     showScreen('screenOnboarding');
 });
 
 // ============================================================
 // ONBOARDING → ASSESSMENT
 // ============================================================
-document.getElementById('startAssessmentBtn').addEventListener('click', () => {
+document.getElementById('startAssessmentBtn').addEventListener('click', function() {
     currentQuestionIndex = 0;
     assessmentResponses = [];
     showScreen('screenAssessment');
@@ -825,7 +825,7 @@ document.querySelectorAll('.likert-option').forEach(el => {
 // ============================================================
 // PREVIOUS QUESTION
 // ============================================================
-document.getElementById('prevQuestion').addEventListener('click', () => {
+document.getElementById('prevQuestion').addEventListener('click', function() {
     if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
         renderQuestion();
@@ -835,7 +835,7 @@ document.getElementById('prevQuestion').addEventListener('click', () => {
 // ============================================================
 // NEXT QUESTION / SUBMIT
 // ============================================================
-document.getElementById('nextQuestion').addEventListener('click', () => {
+document.getElementById('nextQuestion').addEventListener('click', function() {
     if (selectedValue === null) {
         alert('Please select an option before continuing.');
         return;
@@ -887,12 +887,11 @@ async function submitAssessment() {
         const data = await response.json();
 
         if (data.success) {
-            if (data.user && data.user.user_id) {
-                userId = data.user.user_id;
+            let userId = data.user?.user_id;
+            if (userId) {
                 localStorage.setItem('unspoken_user_id', userId);
             }
-            // Redirect to report page with user_id
-            window.location.href = `report.html?user_id=${userId || data.user.user_id}`;
+            window.location.href = `report.html?user_id=${userId || ''}`;
         } else {
             alert('Failed to generate report: ' + data.message);
             showScreen('screenOnboarding');
@@ -905,24 +904,27 @@ async function submitAssessment() {
 }
 
 // ============================================================
-// START
+// START - Check if user already paid
 // ============================================================
-// Check if user already has a session
-const savedUserId = localStorage.getItem('unspoken_user_id');
-if (savedUserId) {
-    userId = savedUserId;
-    userEmail = localStorage.getItem('unspoken_user_email') || '';
-    userFullName = localStorage.getItem('unspoken_user_name') || '';
-    // Skip checkout, go to sales
-    showScreen('screenSales');
-} else {
-    showScreen('screenCheckout');
-}
+const savedPaid = localStorage.getItem('unspoken_paid');
+const savedName = localStorage.getItem('unspoken_user_name');
+const savedEmail = localStorage.getItem('unspoken_user_email');
+const savedPhone = localStorage.getItem('unspoken_user_phone');
 
-// Sales → Checkout
-document.getElementById('startCheckout').addEventListener('click', () => {
-    showScreen('screenCheckout');
-});
+if (savedPaid === 'true' && savedName && savedEmail) {
+    userFullName = savedName;
+    userEmail = savedEmail;
+    userPhone = savedPhone;
+    
+    // Prefill the user details form
+    document.getElementById('userFullName').value = savedName;
+    document.getElementById('userEmail').value = savedEmail;
+    document.getElementById('userPhone').value = savedPhone || '';
+    
+    showScreen('screenOnboarding');
+} else {
+    showScreen('screenSales');
+}
 </script>
 </body>
 </html>
