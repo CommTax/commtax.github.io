@@ -769,7 +769,7 @@ function renderReport(report) {
 
     const userName = safeGet(persona, 'user_name', 'Professional');
     const personaName = safeGet(persona, 'name', 'The Articulator');
-    const personaDesc = safeGet(persona, 'description', '');
+    const personaDesc = safeGet(persona, 'detailed_description', safeGet(persona, 'description', ''));
     const personaTagline = safeGet(persona, 'tagline', '');
     const strength = safeGet(persona, 'strength', '');
     const strengthDesc = safeGet(persona, 'strength_description', '');
@@ -780,6 +780,11 @@ function renderReport(report) {
     document.getElementById('reportTitle').textContent = 'Executive';
     const date = new Date();
     document.getElementById('reportDate').textContent = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    // ❌ REMOVE these lines - elements don't exist in HTML
+    // document.getElementById('coverTagline').textContent = personaTagline;
+    // document.getElementById('coverPersonaName').textContent = personaName;
+    // document.getElementById('coverPersonaId').textContent = persona.code || '—';
 
     const scoreEntries = Object.entries(scores).filter(([k, v]) => v !== undefined && v !== null);
     if (scoreEntries.length > 0) {
@@ -876,7 +881,6 @@ function renderReport(report) {
         container.appendChild(card);
     });
 }
-
 function getLevel(score) {
     if (score >= 80) return 'Exceptional';
     if (score >= 70) return 'Strong';
