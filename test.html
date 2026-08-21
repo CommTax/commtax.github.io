@@ -2963,80 +2963,648 @@
 
     setTimeout(updateCarousel, 100);
 
-    // ===== PREMIUM 12-PERSONA ORBIT =====
-    const container = document.querySelector('.persona-orbit-container');
-    if (container) {
-      const orbitTrack = document.getElementById('personaOrbitTrack');
-      if (orbitTrack) {
-        const items = orbitTrack.querySelectorAll('.orbit-item');
-        const total = items.length;
-        const featuredName = document.getElementById('featuredName');
-        const featuredDesc = document.getElementById('featuredDesc');
-        const featuredNumber = document.getElementById('featuredNumber');
-        const featuredIcon = document.getElementById('featuredIcon');
+ (() => {
 
-        const personaData = {
-          'translator': { name: 'The Translator', desc: 'Makes complexity make sense. You turn complex thoughts into clear, memorable messages.', icon: '🌐' },
-          'listener': { name: 'The Listener', desc: 'Hears what others miss. You read between the lines and understand the unspoken.', icon: '👂' },
-          'amplifier': { name: 'The Amplifier', desc: 'Makes ideas impossible to ignore. Your presence and energy make ideas unforgettable.', icon: '📢' },
-          'articulator': { name: 'The Articulator', desc: 'Makes thinking visible. You speak with precision and structure that commands respect.', icon: '🎯' },
-          'strategist': { name: 'The Strategist', desc: 'Connects communication to direction. You align words with outcomes.', icon: '🎯' },
-          'architect': { name: 'The Architect', desc: 'Builds clarity into the bigger picture. You create frameworks that stick.', icon: '🏛️' },
-          'navigator': { name: 'The Navigator', desc: 'Finds a way through complexity. You guide others through uncertainty.', icon: '🧭' },
-          'influencer': { name: 'The Influencer', desc: 'Moves people toward action. Your words create momentum and drive decisions.', icon: '💫' },
-          'interpreter': { name: 'The Interpreter', desc: 'Reads what others miss. You understand what people truly mean.', icon: '🧠' },
-          'filter': { name: 'The Filter', desc: 'Knows what matters. You speak with intention and precision.', icon: '🔍' },
-          'emerging': { name: 'The Emerging', desc: 'Finding your voice. Your potential is just beginning to be seen.', icon: '🌱' },
-          'misaligned': { name: 'The Misaligned', desc: 'Intent and impact may not meet. The gap is your opportunity.', icon: '🔄' }
-        };
+  const container =
+    document.querySelector('.persona-orbit-container');
 
-        function updateFeatured(personaKey) {
-          const data = personaData[personaKey];
-          if (!data) return;
-          if (featuredName) featuredName.textContent = data.name;
-          if (featuredDesc) featuredDesc.textContent = data.desc;
-          if (featuredIcon) featuredIcon.textContent = data.icon;
-          if (featuredNumber) {
-            const index = Object.keys(personaData).indexOf(personaKey) + 1;
-            featuredNumber.textContent = String(index).padStart(2, '0');
-          }
-        }
+  if (!container) return;
 
-        // Position items and handle clicks
-        items.forEach((item, index) => {
-          const step = 360 / total;
-          const angle = index * step - 90;
-          item.style.setProperty('--angle', `${angle}deg`);
-          
-          item.addEventListener('click', function() {
-            const personaKey = this.dataset.persona;
-            updateFeatured(personaKey);
-            
-            // Highlight active
-            items.forEach(i => i.classList.remove('is-active', 'is-dim'));
-            this.classList.add('is-active');
-            
-            // Pause animation
-            orbitTrack.style.animationPlayState = 'paused';
-          });
-        });
+  const track =
+    container.querySelector('.persona-orbit-track');
 
-        // Hover effects
-        items.forEach(item => {
-          item.addEventListener('mouseenter', function() {
-            const personaKey = this.dataset.persona;
-            updateFeatured(personaKey);
-          });
-        });
+  const items =
+    [...container.querySelectorAll('.orbit-item')];
 
-        // Set initial featured persona
-        if (items.length > 0) {
-          const firstKey = items[0].dataset.persona;
-          updateFeatured(firstKey);
-          items[0].classList.add('is-active');
-        }
+  if (!track || !items.length) return;
+
+
+  /* ---------------------------------------------
+     FEATURED PERSONA
+  --------------------------------------------- */
+
+  const featuredName =
+    document.querySelector(
+      '#featuredPersonaName, .featured-name'
+    );
+
+  const featuredDesc =
+    document.querySelector(
+      '#featuredPersonaDesc, .featured-desc'
+    );
+
+  const featuredNumber =
+    document.querySelector(
+      '#featuredPersonaNumber, .featured-number'
+    );
+
+
+  /* ---------------------------------------------
+     PERSONA DESCRIPTIONS
+  --------------------------------------------- */
+
+  const descriptions = {
+
+    'The Translator':
+      'You make complexity make sense.',
+
+    'The Amplifier':
+      'You make ideas impossible to ignore.',
+
+    'The Articulator':
+      'You make thinking visible.',
+
+    'The Interpreter':
+      'You read what others miss.',
+
+    'The Filter':
+      'You know what matters.',
+
+    'The Emerging':
+      'You are finding your voice.',
+
+    'The Misaligned':
+      'Your intent and impact may not always meet.',
+
+    'The Strategist':
+      'You connect communication to direction.',
+
+    'The Architect':
+      'You build clarity into the bigger picture.',
+
+    'The Navigator':
+      'You find a way through complexity.',
+
+    'The Influencer':
+      'You move people toward action.',
+
+    'The Listener':
+      'You hear what is often left unsaid.'
+
+  };
+
+
+  /* ---------------------------------------------
+     ORBIT STATE
+  --------------------------------------------- */
+
+  const state = {
+
+    angle: 0,
+
+    // Slow movement = premium
+    speed: 0.00052,
+
+    paused: false,
+
+    focused: false,
+
+    touchX: null,
+
+    lastTime: performance.now()
+
+  };
+
+
+  const clamp = (n, min, max) =>
+    Math.max(min, Math.min(max, n));
+
+
+  /* ---------------------------------------------
+     READ CSS VARIABLES
+  --------------------------------------------- */
+
+  function getVar(name, fallback) {
+
+    const value =
+      parseFloat(
+        getComputedStyle(container)
+          .getPropertyValue(name)
+      );
+
+    return Number.isFinite(value)
+      ? value
+      : fallback;
+  }
+
+
+  /* ---------------------------------------------
+     GET PERSONA NAME
+  --------------------------------------------- */
+
+  function personaName(item) {
+
+    return item
+      .querySelector('.orbit-name')
+      ?.textContent
+      .trim() || '';
+
+  }
+
+
+  /* ---------------------------------------------
+     UPDATE FEATURED PERSONA
+  --------------------------------------------- */
+
+  function updateFeatured(item) {
+
+    if (!item) return;
+
+    const name =
+      personaName(item);
+
+    const number =
+      item.dataset.personaIndex || '';
+
+    const desc =
+      descriptions[name]
+      || item.dataset.description
+      || '';
+
+    if (featuredName)
+      featuredName.textContent = name;
+
+    if (featuredDesc)
+      featuredDesc.textContent = desc;
+
+    if (featuredNumber)
+      featuredNumber.textContent = number;
+
+  }
+
+
+  /* ---------------------------------------------
+     MAIN 3D RENDER
+  --------------------------------------------- */
+
+  function render() {
+
+    const rx =
+      getVar('--orbit-x', 300);
+
+    const ry =
+      getVar('--orbit-y', 300);
+
+    const depth =
+      getVar('--orbit-depth', 150);
+
+    const total =
+      items.length;
+
+    const step =
+      Math.PI * 2 / total;
+
+
+    let active = null;
+
+    let bestDepth = -Infinity;
+
+
+    items.forEach((item, index) => {
+
+      /*
+        Each persona gets its own position
+        around the circular orbit.
+      */
+
+      const theta =
+        state.angle
+        + index * step
+        - Math.PI / 2;
+
+
+      /*
+        X = horizontal position
+        Y = vertical position
+        Z = depth
+      */
+
+      const x =
+        Math.cos(theta) * rx;
+
+      const y =
+        Math.sin(theta) * ry;
+
+      const z =
+        Math.sin(theta) * depth;
+
+
+      /*
+        Convert Z depth into a 0 → 1 value.
+      */
+
+      const normalizedDepth =
+        (z + depth) /
+        (2 * depth);
+
+
+      /*
+        Front cards become bigger.
+        Back cards become smaller.
+      */
+
+      const scale =
+        0.72 +
+        normalizedDepth * 0.34;
+
+
+      /*
+        Front cards brighter.
+        Back cards fade.
+      */
+
+      const opacity =
+        0.42 +
+        normalizedDepth * 0.58;
+
+
+      /*
+        Back cards receive slight blur.
+      */
+
+      const blur =
+        (1 - normalizedDepth) * 1.15;
+
+
+      /*
+        Send values to CSS.
+      */
+
+      item.style.setProperty(
+        '--x',
+        `${x}px`
+      );
+
+      item.style.setProperty(
+        '--y',
+        `${y}px`
+      );
+
+      item.style.setProperty(
+        '--z',
+        `${z}px`
+      );
+
+      item.style.setProperty(
+        '--depth-scale',
+        scale.toFixed(3)
+      );
+
+      item.style.setProperty(
+        '--depth-opacity',
+        opacity.toFixed(3)
+      );
+
+      item.style.setProperty(
+        '--depth-blur',
+        `${blur.toFixed(2)}px`
+      );
+
+
+      /*
+        Z-index makes front personas
+        appear physically above the others.
+      */
+
+      item.style.zIndex =
+        String(
+          Math.round(
+            10 +
+            normalizedDepth * 30
+          )
+        );
+
+
+      /*
+        Find the persona closest to
+        the front of the orbit.
+      */
+
+      if (z > bestDepth) {
+
+        bestDepth = z;
+
+        active = item;
+
       }
+
+    });
+
+
+    /*
+      Highlight the front persona.
+    */
+
+    if (active) {
+
+      items.forEach(item => {
+
+        item.classList.toggle(
+          'is-active',
+          item === active
+        );
+
+      });
+
+
+      if (!state.focused) {
+
+        updateFeatured(active);
+
+      }
+
     }
+
+  }
+
+
+  /* ---------------------------------------------
+     ANIMATION LOOP
+  --------------------------------------------- */
+
+  function tick(now) {
+
+    const dt =
+      Math.min(
+        now - state.lastTime,
+        40
+      );
+
+    state.lastTime = now;
+
+
+    if (
+      !state.paused &&
+      !state.focused
+    ) {
+
+      state.angle +=
+        state.speed * dt;
+
+    }
+
+
+    render();
+
+
+    requestAnimationFrame(tick);
+
+  }
+
+
+  /* ---------------------------------------------
+     HOVER
+  --------------------------------------------- */
+
+  container.addEventListener(
+    'mouseenter',
+    () => {
+
+      state.paused = true;
+
+    }
+  );
+
+
+  container.addEventListener(
+    'mouseleave',
+    () => {
+
+      if (!state.focused) {
+
+        state.paused = false;
+
+      }
+
+    }
+  );
+
+
+  /* ---------------------------------------------
+     CLICK PERSONA
+  --------------------------------------------- */
+
+  items.forEach(item => {
+
+    item.addEventListener(
+      'click',
+      () => {
+
+        const index =
+          items.indexOf(item);
+
+        const step =
+          Math.PI * 2 /
+          items.length;
+
+
+        /*
+          Move clicked persona
+          to front/top position.
+        */
+
+        const target =
+          -Math.PI / 2
+          - index * step;
+
+
+        let delta =
+          target - state.angle;
+
+
+        /*
+          Always use shortest rotation.
+        */
+
+        while (delta > Math.PI)
+          delta -= Math.PI * 2;
+
+        while (delta < -Math.PI)
+          delta += Math.PI * 2;
+
+
+        const start =
+          state.angle;
+
+        const duration =
+          900;
+
+        const startTime =
+          performance.now();
+
+
+        state.paused = true;
+
+        state.focused = true;
+
+
+        container.classList.add(
+          'manual-focus'
+        );
+
+
+        updateFeatured(item);
+
+
+        function focusFrame(now) {
+
+          const p =
+            clamp(
+              (now - startTime) /
+              duration,
+              0,
+              1
+            );
+
+
+          /*
+            Ease-out animation.
+          */
+
+          const eased =
+            1 -
+            Math.pow(
+              1 - p,
+              4
+            );
+
+
+          state.angle =
+            start +
+            delta * eased;
+
+
+          render();
+
+
+          if (p < 1) {
+
+            requestAnimationFrame(
+              focusFrame
+            );
+
+          }
+
+        }
+
+
+        requestAnimationFrame(
+          focusFrame
+        );
+
+      }
+    );
+
+  });
+
+
+  /* ---------------------------------------------
+     DOUBLE CLICK = RESUME
+  --------------------------------------------- */
+
+  container.addEventListener(
+    'dblclick',
+    () => {
+
+      state.focused = false;
+
+      state.paused = false;
+
+      container.classList.remove(
+        'manual-focus'
+      );
+
+    }
+  );
+
+
+  /* ---------------------------------------------
+     MOBILE SWIPE
+  --------------------------------------------- */
+
+  container.addEventListener(
+    'touchstart',
+    e => {
+
+      state.touchX =
+        e.touches[0].clientX;
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  container.addEventListener(
+    'touchend',
+    e => {
+
+      if (
+        state.touchX === null
+      ) return;
+
+
+      const delta =
+        e.changedTouches[0].clientX
+        - state.touchX;
+
+
+      state.touchX = null;
+
+
+      if (
+        Math.abs(delta) < 30
+      ) return;
+
+
+      state.focused = true;
+
+      state.paused = true;
+
+
+      container.classList.add(
+        'manual-focus'
+      );
+
+
+      state.angle +=
+        delta > 0
+          ? 0.24
+          : -0.24;
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  /* ---------------------------------------------
+     RESIZE
+  --------------------------------------------- */
+
+  window.addEventListener(
+    'resize',
+    render,
+    {
+      passive: true
+    }
+  );
+   const x = Math.cos(theta) * rx;
+const y = Math.sin(theta) * ry;
+const z = Math.sin(theta) * depth;
+
+
+  /* ---------------------------------------------
+     START
+  --------------------------------------------- */
+
+  render();
+
+  requestAnimationFrame(tick);
+
+})();
 
     // ===== LOGIN MODAL =====
     const signInBtn = document.getElementById('signInBtn');
