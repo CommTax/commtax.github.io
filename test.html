@@ -1047,8 +1047,7 @@
       }
     }
 
-
-    /* ===== PREMIUM DYNAMIC PERSONAS ===== */
+   /* ===== PREMIUM DYNAMIC PERSONAS ===== */
 .personas-header {
   text-align: center;
   margin-bottom: 50px;
@@ -1093,7 +1092,6 @@
   margin: 8px auto 0;
   line-height: 1.7;
 }
-
 
 /* ===== PREMIUM 3D PERSONA ORBIT SYSTEM ===== */
 .persona-orbit-container {
@@ -1193,11 +1191,12 @@
   to { transform: rotate(360deg); }
 }
 
-/* ===== 3D PERSONA CARDS ===== */
+/* ===== 3D PERSONA CARDS WITH COLORS ===== */
 .orbit-item {
   --angle: 0deg;
   --radius: 265px;
   --persona-color: #b8943c;
+  --persona-glow: rgba(184, 148, 60, 0.4);
   
   position: absolute;
   top: 50%;
@@ -1212,22 +1211,22 @@
   z-index: 3;
   transition: z-index .3s ease;
   will-change: transform;
-  perspective: 800px;
+  perspective: 1000px;
 }
 
-/* The card container - rotates with orbit, but we counter-rotate the content */
 .orbit-item > .orbit-persona {
-  /* Counter-rotate to keep text upright */
   transform: rotate(calc(var(--angle) * -1));
   transform-style: preserve-3d;
   transition: transform 0.6s cubic-bezier(.22,1,.36,1), box-shadow 0.4s ease;
+  width: 100%;
+  height: 100%;
 }
 
-/* 3D Card */
+/* ===== 3D CARD WITH COLOR VARIANTS ===== */
 .orbit-persona {
   width: 130px;
   height: 160px;
-  border-radius: 16px;
+  border-radius: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1235,15 +1234,27 @@
   text-align: center;
   padding: 16px 12px;
   box-sizing: border-box;
-  background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.12) 0%, var(--persona-color) 70%, rgba(0,0,0,.3) 100%);
-  border: 1px solid rgba(255,255,255,.15);
-  box-shadow: 0 8px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.2);
-  transition: transform .55s cubic-bezier(.22,1,.36,1), border-color .4s ease, box-shadow .4s ease, background .4s ease;
   position: relative;
   overflow: hidden;
+  /* Base gradient with color variable */
+  background: radial-gradient(ellipse at 30% 20%, 
+    rgba(255,255,255,.15) 0%, 
+    var(--persona-color) 60%, 
+    rgba(0,0,0,.35) 100%
+  );
+  border: 1.5px solid rgba(255,255,255,.12);
+  box-shadow: 
+    0 10px 40px rgba(0,0,0,.3),
+    inset 0 1px 0 rgba(255,255,255,.15),
+    inset 0 -2px 0 rgba(0,0,0,.25),
+    0 0 60px var(--persona-glow);
+  transition: transform .55s cubic-bezier(.22,1,.36,1), 
+              border-color .4s ease, 
+              box-shadow .4s ease, 
+              background .4s ease;
 }
 
-/* 3D Card Glow Effect */
+/* 3D Card - Top Shine */
 .orbit-persona::before {
   content: '';
   position: absolute;
@@ -1251,84 +1262,111 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.08), transparent 60%);
+  background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.12), transparent 60%);
   pointer-events: none;
 }
 
-/* 3D Card Shine */
+/* 3D Card - Inner Glow */
 .orbit-persona::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, rgba(255,255,255,.1) 0%, transparent 100%);
+  height: 55%;
+  background: linear-gradient(180deg, rgba(255,255,255,.15) 0%, transparent 100%);
   pointer-events: none;
-  border-radius: 16px 16px 0 0;
+  border-radius: 18px 18px 0 0;
 }
 
-/* Persona Color Variants */
-.orbit-item[data-persona="translator"] { --persona-color: #4f8bc9; }
-.orbit-item[data-persona="amplifier"] { --persona-color: #e86f4a; }
-.orbit-item[data-persona="articulator"] { --persona-color: #4a9e6e; }
-.orbit-item[data-persona="interpreter"] { --persona-color: #9b6fc0; }
-.orbit-item[data-persona="filter"] { --persona-color: #d4a84a; }
-.orbit-item[data-persona="emerging"] { --persona-color: #5ba3a3; }
-.orbit-item[data-persona="misaligned"] { --persona-color: #c45a6a; }
+/* ===== PERSONA COLOR VARIANTS ===== */
+.orbit-item[data-persona="translator"] { 
+  --persona-color: #4f8bc9; 
+  --persona-glow: rgba(79, 139, 201, 0.3);
+}
+.orbit-item[data-persona="amplifier"] { 
+  --persona-color: #e86f4a; 
+  --persona-glow: rgba(232, 111, 74, 0.3);
+}
+.orbit-item[data-persona="articulator"] { 
+  --persona-color: #4a9e6e; 
+  --persona-glow: rgba(74, 158, 110, 0.3);
+}
+.orbit-item[data-persona="interpreter"] { 
+  --persona-color: #9b6fc0; 
+  --persona-glow: rgba(155, 111, 192, 0.3);
+}
+.orbit-item[data-persona="filter"] { 
+  --persona-color: #d4a84a; 
+  --persona-glow: rgba(212, 168, 74, 0.3);
+}
+.orbit-item[data-persona="emerging"] { 
+  --persona-color: #5ba3a3; 
+  --persona-glow: rgba(91, 163, 163, 0.3);
+}
+.orbit-item[data-persona="misaligned"] { 
+  --persona-color: #c45a6a; 
+  --persona-glow: rgba(196, 90, 106, 0.3);
+}
 
-/* Active/Front Persona - 3D pop effect */
+/* ===== ACTIVE / FRONT PERSONA - 3D POP ===== */
 .orbit-item.is-active {
   z-index: 12;
 }
 
 .orbit-item.is-active .orbit-persona {
-  transform: rotate(calc(var(--angle) * -1)) scale(1.15);
-  border-color: rgba(255,255,255,.35);
+  transform: rotate(calc(var(--angle) * -1)) scale(1.18);
+  border-color: rgba(255,255,255,.3);
   box-shadow: 
-    0 0 0 8px rgba(255,255,255,.04),
-    0 15px 45px rgba(0,0,0,.35),
-    0 0 60px rgba(var(--persona-color), .25),
+    0 0 0 10px rgba(255,255,255,.04),
+    0 20px 50px rgba(0,0,0,.4),
+    0 0 80px var(--persona-glow),
     inset 0 1px 0 rgba(255,255,255,.2);
   background: radial-gradient(ellipse at 30% 20%, 
-    rgba(255,255,255,.18) 0%, 
-    var(--persona-color) 65%, 
+    rgba(255,255,255,.2) 0%, 
+    var(--persona-color) 55%, 
     rgba(0,0,0,.25) 100%
   );
 }
 
-/* Dim personas for depth */
+/* ===== DIM PERSONAS (Depth Effect) ===== */
 .orbit-item.is-dim .orbit-persona {
-  opacity: .35;
-  transform: rotate(calc(var(--angle) * -1)) scale(.88);
+  opacity: .3;
+  transform: rotate(calc(var(--angle) * -1)) scale(.85);
+  filter: blur(1px) brightness(0.7);
 }
 
-/* Hover effect */
+/* ===== HOVER EFFECT ===== */
 .orbit-item:hover {
   z-index: 15;
 }
 
 .orbit-item:hover .orbit-persona {
-  transform: rotate(calc(var(--angle) * -1)) scale(1.08);
+  transform: rotate(calc(var(--angle) * -1)) scale(1.1);
   border-color: rgba(255,255,255,.25);
-  box-shadow: 0 12px 40px rgba(0,0,0,.3), 0 0 50px rgba(var(--persona-color), .15);
+  box-shadow: 
+    0 15px 45px rgba(0,0,0,.35),
+    0 0 70px var(--persona-glow),
+    inset 0 1px 0 rgba(255,255,255,.2);
 }
 
-/* Card Content - ALWAYS UPRIGHT */
+/* ===== CARD CONTENT ===== */
 .orbit-number {
   display: block;
-  color: rgba(255,255,255,.7);
+  color: rgba(255,255,255,.6);
   font-size: .45rem;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 2.5px;
   margin-bottom: 4px;
   text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0,0,0,.2);
 }
 
 .orbit-icon {
   margin-bottom: 4px;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,.2));
 }
 
 .orbit-name {
@@ -1340,10 +1378,10 @@
   line-height: 1.2;
   letter-spacing: .5px;
   text-transform: uppercase;
-  text-shadow: 0 2px 8px rgba(0,0,0,.3);
+  text-shadow: 0 2px 12px rgba(0,0,0,.4);
 }
 
-/* Tooltip */
+/* ===== TOOLTIP ===== */
 .orbit-tooltip {
   position: absolute;
   left: 50%;
@@ -1471,6 +1509,44 @@
   color: #b8943c;
 }
 
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .persona-orbit-container { width: 520px; height: 520px; }
+  .orbit-center { width: 130px; height: 130px; }
+  .orbit-item { width: 110px; height: 140px; margin-left: -55px; margin-top: -70px; transform-origin: 55px 70px; }
+  .orbit-persona { width: 110px; height: 140px; }
+  .orbit-name { font-size: .6rem; max-width: 80px; }
+  .orbit-icon { font-size: 1.4rem; }
+}
+
+@media (max-width: 600px) {
+  .persona-orbit-container { width: 380px; height: 380px; margin-top: 10px; margin-bottom: 28px; }
+  .orbit-center { width: 100px; height: 100px; }
+  .orbit-center-icon { font-size: .9rem; letter-spacing: 2.5px; }
+  .orbit-center-label { margin-top: 6px; font-size: .35rem; max-width: 70px; }
+  .orbit-item { width: 85px; height: 110px; margin-left: -42px; margin-top: -55px; transform-origin: 42px 55px; }
+  .orbit-persona { width: 85px; height: 110px; border-radius: 14px; }
+  .orbit-name { font-size: .5rem; max-width: 65px; }
+  .orbit-number { font-size: .38rem; }
+  .orbit-icon { font-size: 1.1rem; }
+  .orbit-tooltip { display: none; }
+  .featured-persona-inner { flex-direction: column; text-align: center; padding: 18px 16px; }
+  .featured-name { font-size: 1.1rem; }
+  .featured-desc { font-size: .75rem; }
+}
+
+@media (max-width: 420px) {
+  .persona-orbit-container { width: 310px; height: 310px; }
+  .orbit-center { width: 80px; height: 80px; }
+  .orbit-center-icon { font-size: .7rem; }
+  .orbit-center-label { font-size: .28rem; max-width: 55px; }
+  .orbit-item { width: 68px; height: 88px; margin-left: -34px; margin-top: -44px; transform-origin: 34px 44px; }
+  .orbit-persona { width: 68px; height: 88px; border-radius: 12px; padding: 10px 8px; }
+  .orbit-name { font-size: .4rem; max-width: 50px; }
+  .orbit-number { font-size: .3rem; }
+  .orbit-icon { display: none; }
+}
+    
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
   .persona-orbit-container { width: 520px; height: 520px; }
