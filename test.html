@@ -421,10 +421,11 @@
     .problem-step.highlight { border-bottom-color: #b8943c; background: #faf8f5; }
     .problem-arrow { font-size: 1.8rem; color: #b8943c; font-weight: 300; }
 
-/* ===== PREMIUM ORBITAL SYSTEM - The Unspoken ===== */
+/* ===== 3D SPHERICAL ORBIT SYSTEM - Equal Distance ===== */
 .persona-orbit-container {
   --orbit-size: 700px;
   --orbit-radius: 270px;
+  --orbit-depth: 120px;
   position: relative;
   width: var(--orbit-size);
   height: var(--orbit-size);
@@ -432,6 +433,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
   isolation: isolate;
 }
 
@@ -577,10 +580,11 @@
   position: absolute;
   inset: 0;
   z-index: 10;
+  transform-style: preserve-3d;
   pointer-events: none;
 }
 
-/* Dark Smoked-Glass Nodes */
+/* Dark Smoked-Glass Nodes - 3D with equal distance */
 .orbit-item {
   position: absolute;
   left: 50%;
@@ -588,10 +592,12 @@
   width: 110px;
   height: 110px;
   margin: -55px 0 0 -55px;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
   pointer-events: auto;
   cursor: pointer;
-  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 5;
+  transition: z-index 0.3s ease;
 }
 
 .orbit-persona {
@@ -605,7 +611,7 @@
   text-align: center;
   padding: 12px;
   box-sizing: border-box;
-  background: rgba(26, 25, 23, 0.06);
+  background: rgba(26, 25, 23, 0.08);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 0.5px solid rgba(200, 180, 150, 0.08);
@@ -633,16 +639,28 @@
   transition: all 0.4s ease;
 }
 
-/* Hover = Preview - subtle lift */
+/* Depth effects */
+.orbit-item.is-front .orbit-persona {
+  background: rgba(26, 25, 23, 0.14);
+  border-color: rgba(200, 180, 150, 0.15);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+.orbit-item.is-back .orbit-persona {
+  opacity: 0.25;
+  transform: scale(0.85);
+}
+
+/* Hover */
 .orbit-item:hover {
-  z-index: 20;
+  z-index: 40;
 }
 
 .orbit-item:hover .orbit-persona {
-  background: rgba(26, 25, 23, 0.12);
-  border-color: rgba(200, 180, 150, 0.15);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-  transform: scale(1.08);
+  background: rgba(26, 25, 23, 0.18);
+  border-color: rgba(200, 180, 150, 0.2);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  transform: scale(1.1);
 }
 
 .orbit-item:hover .orbit-name {
@@ -651,14 +669,14 @@
 
 /* Selected = Gold Accent */
 .orbit-item.is-active {
-  z-index: 25;
+  z-index: 45;
 }
 
 .orbit-item.is-active .orbit-persona {
-  background: rgba(26, 25, 23, 0.08);
+  background: rgba(26, 25, 23, 0.12);
   border-color: #b8943c;
-  box-shadow: 0 0 0 1px rgba(184, 148, 60, 0.15), 0 12px 40px rgba(184, 148, 60, 0.06);
-  transform: scale(1.12);
+  box-shadow: 0 0 0 1px rgba(184, 148, 60, 0.2), 0 12px 40px rgba(184, 148, 60, 0.08);
+  transform: scale(1.15);
 }
 
 .orbit-item.is-active .orbit-name {
@@ -666,13 +684,7 @@
   font-weight: 600;
 }
 
-/* Dim nodes when one is selected */
-.orbit-item.is-dim {
-  opacity: 0.2;
-  pointer-events: none;
-}
-
-/* Orbit Tooltip - minimal */
+/* Tooltip */
 .orbit-tooltip {
   position: absolute;
   bottom: calc(100% + 12px);
@@ -698,6 +710,7 @@
   .persona-orbit-container {
     --orbit-size: 560px;
     --orbit-radius: 210px;
+    --orbit-depth: 90px;
   }
   .orbit-center { width: 180px; height: 180px; padding: 24px; }
   .center-persona-name { font-size: 1.3rem; }
@@ -709,6 +722,7 @@
   .persona-orbit-container {
     --orbit-size: 420px;
     --orbit-radius: 155px;
+    --orbit-depth: 65px;
   }
   .orbit-center { width: 150px; height: 150px; padding: 20px; }
   .center-persona-name { font-size: 1.1rem; }
@@ -723,6 +737,7 @@
   .persona-orbit-container {
     --orbit-size: 340px;
     --orbit-radius: 125px;
+    --orbit-depth: 50px;
     margin: 10px auto 20px;
   }
   .orbit-center { width: 120px; height: 120px; padding: 16px; }
@@ -1866,7 +1881,7 @@
 
     setTimeout(updateCarousel, 100);
 
-// ===== PREMIUM ORBITAL SYSTEM =====
+// ===== 3D SPHERICAL ORBIT WITH EQUAL DISTANCE =====
 (function() {
   const container = document.querySelector('.persona-orbit-container');
   if (!container) return;
@@ -1890,19 +1905,30 @@
     'misaligned': { name: 'The Misaligned', desc: 'Intent and impact may not meet. The gap is your opportunity.' }
   };
 
+  function getVar(name, fallback) {
+    const value = parseFloat(getComputedStyle(container).getPropertyValue(name));
+    return Number.isFinite(value) ? value : fallback;
+  }
+
+  const state = {
+    angle: 0,
+    speed: 0.0004,
+    paused: false,
+    focused: false,
+    lastTime: performance.now()
+  };
+
   let activePersona = null;
-  let isFocused = false;
+  let hoveredPersona = null;
 
   function updateCenter(personaKey) {
     const data = personaData[personaKey];
     if (!data) return;
-
-    // Update center content
+    
     centerName.textContent = data.name;
     centerDesc.textContent = data.desc;
     centerTag.textContent = '✦ Selected Persona';
     
-    // Animate in
     centerName.classList.add('visible');
     centerDesc.classList.add('visible');
     centerTag.classList.add('visible');
@@ -1916,53 +1942,61 @@
     centerDefault.style.display = 'block';
   }
 
-  function setActive(item) {
-    const personaKey = item.dataset.persona;
-    
-    // Remove all active states
-    items.forEach(i => {
-      i.classList.remove('is-active', 'is-dim');
-    });
-    
-    // Set active
-    item.classList.add('is-active');
-    
-    // Dim others
-    items.forEach(i => {
-      if (i !== item) i.classList.add('is-dim');
-    });
-    
-    updateCenter(personaKey);
-    activePersona = personaKey;
-    isFocused = true;
-  }
+  function render() {
+    const radius = getVar('--orbit-radius', 270);
+    const depth = getVar('--orbit-depth', 120);
+    const total = items.length;
+    const step = (Math.PI * 2) / total;
 
-  function clearActive() {
-    items.forEach(i => {
-      i.classList.remove('is-active', 'is-dim');
-    });
-    resetCenter();
-    activePersona = null;
-    isFocused = false;
-  }
+    let active = null;
+    let bestDepth = -Infinity;
 
-  // Click = full persona detail in centre
-  items.forEach(item => {
-    item.addEventListener('click', function(e) {
-      e.stopPropagation();
-      if (this.classList.contains('is-active')) {
-        clearActive();
-      } else {
-        setActive(this);
+    items.forEach((item, index) => {
+      // Calculate position on the circle - EQUAL DISTANCE from center
+      const theta = state.angle + index * step - Math.PI / 2;
+      
+      // X and Y are on the circle (equal distance = radius)
+      const x = Math.cos(theta) * radius;
+      const y = Math.sin(theta) * radius;
+      
+      // Z creates the 3D depth effect - front/back movement
+      const z = Math.sin(theta) * depth;
+
+      // Normalize depth for visual effects
+      const normalizedDepth = (z + depth) / (2 * depth);
+      const scale = 0.78 + normalizedDepth * 0.3;
+      const opacity = 0.35 + normalizedDepth * 0.65;
+      const blur = (1 - normalizedDepth) * 1.2;
+
+      // Apply transforms - EQUAL DISTANCE maintained
+      item.style.transform = `translate3d(${x}px, ${y}px, ${z}px) scale(${scale})`;
+      item.style.opacity = opacity;
+      item.style.filter = `blur(${blur}px)`;
+      
+      // Z-index based on depth
+      const zIndex = Math.round(10 + normalizedDepth * 30);
+      item.style.zIndex = zIndex;
+
+      // Track the front-most persona
+      if (z > bestDepth) {
+        bestDepth = z;
+        active = item;
       }
-    });
-  });
 
-  // Hover = preview
-  items.forEach(item => {
-    item.addEventListener('mouseenter', function() {
-      if (!this.classList.contains('is-active')) {
-        const personaKey = this.dataset.persona;
+      // Add depth classes for styling
+      item.classList.toggle('is-front', z > depth * 0.3);
+      item.classList.toggle('is-back', z < -depth * 0.3);
+    });
+
+    // Update active state if not focused on a specific persona
+    if (active && !state.focused && !hoveredPersona) {
+      items.forEach(item => {
+        item.classList.toggle('is-active', item === active);
+      });
+      
+      // Update center with the front persona
+      const personaKey = active.dataset.persona;
+      if (personaKey && !state.focused) {
         const data = personaData[personaKey];
         if (data) {
           centerName.textContent = data.name;
@@ -1970,47 +2004,120 @@
           centerName.classList.add('visible');
           centerDesc.classList.add('visible');
           centerDefault.style.display = 'none';
+          centerTag.classList.remove('visible');
         }
       }
+    }
+  }
+
+  function tick(now) {
+    const dt = Math.min(now - state.lastTime, 40);
+    state.lastTime = now;
+    
+    if (!state.paused && !state.focused) {
+      state.angle += state.speed * dt;
+    }
+    
+    render();
+    requestAnimationFrame(tick);
+  }
+
+  // Hover = preview
+  items.forEach(item => {
+    item.addEventListener('mouseenter', function() {
+      hoveredPersona = this;
+      const personaKey = this.dataset.persona;
+      const data = personaData[personaKey];
+      if (data) {
+        centerName.textContent = data.name;
+        centerDesc.textContent = data.desc;
+        centerName.classList.add('visible');
+        centerDesc.classList.add('visible');
+        centerDefault.style.display = 'none';
+        centerTag.classList.remove('visible');
+      }
+      state.paused = true;
     });
 
     item.addEventListener('mouseleave', function() {
-      if (!this.classList.contains('is-active') && !isFocused) {
+      hoveredPersona = null;
+      if (!state.focused) {
+        state.paused = false;
+        // Reset to show the front persona
         resetCenter();
+        // Force a render to update
+        render();
       }
     });
   });
 
-  // Click outside to clear
+  // Click = full persona detail
+  items.forEach(item => {
+    item.addEventListener('click', function(e) {
+      e.stopPropagation();
+      
+      const personaKey = this.dataset.persona;
+      
+      if (this.classList.contains('is-active') && state.focused) {
+        // Deselect
+        items.forEach(i => i.classList.remove('is-active'));
+        state.focused = false;
+        state.paused = false;
+        resetCenter();
+        render();
+        return;
+      }
+      
+      // Select this persona
+      items.forEach(i => i.classList.remove('is-active'));
+      this.classList.add('is-active');
+      state.focused = true;
+      state.paused = true;
+      updateCenter(personaKey);
+    });
+  });
+
+  // Click outside to clear focus
   document.addEventListener('click', function(e) {
     if (!container.contains(e.target)) {
-      clearActive();
+      items.forEach(i => i.classList.remove('is-active'));
+      state.focused = false;
+      state.paused = false;
+      resetCenter();
     }
   });
 
-  // Orbit positioning
-  const total = items.length;
-  const step = Math.PI * 2 / total;
-  const radius = 270;
+  // Double click to resume rotation
+  container.addEventListener('dblclick', function() {
+    state.focused = false;
+    state.paused = false;
+    items.forEach(i => i.classList.remove('is-active'));
+    resetCenter();
+  });
 
-  function positionItems() {
-    items.forEach((item, index) => {
-      const angle = index * step - Math.PI / 2;
-      const x = Math.cos(angle) * radius;
-      const y = Math.sin(angle) * radius;
-      item.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
-    });
-  }
+  // Touch support for mobile
+  let touchStartX = null;
+  container.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
 
-  positionItems();
-  window.addEventListener('resize', positionItems);
+  container.addEventListener('touchend', (e) => {
+    if (touchStartX === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX;
+    touchStartX = null;
+    if (Math.abs(delta) < 30) return;
+    state.angle += delta > 0 ? 0.3 : -0.3;
+    state.focused = true;
+    state.paused = true;
+  }, { passive: true });
 
-  // Set default
-  resetCenter();
-})();
+  // Window resize
+  window.addEventListener('resize', render, { passive: true });
 
-
-
+  // Start
+  render();
+  requestAnimationFrame(tick);
+})(); 
     
     // ===== LOGIN MODAL =====
     const signInBtn = document.getElementById('signInBtn');
