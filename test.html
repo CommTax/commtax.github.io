@@ -1093,267 +1093,396 @@
   margin: 8px auto 0;
   line-height: 1.7;
 }
+src = Path("/mnt/data/Pasted text(20260821-050537).txt")
+original = src.read_text(encoding="utf-8")
 
-/* ===== ORBIT CONTAINER ===== */
+# Replace the existing orbit system with a cleaner 12-persona orbital system.
+start = original.index("/* ===== ORBIT CONTAINER ===== */")
+end = original.index("/* Featured Persona Card */")
+
+new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
+   The center stays fixed. Twelve personas orbit around it.
+   JavaScript assigns the 12 positions dynamically.
+=============================================================== */
+
 .persona-orbit-container {
+  --orbit-size: 620px;
+  --orbit-radius: 265px;
   position: relative;
-  width: 500px;
-  height: 500px;
-  margin: 20px auto 40px;
+  width: var(--orbit-size);
+  height: var(--orbit-size);
+  margin: 24px auto 46px;
   display: flex;
   align-items: center;
   justify-content: center;
+  isolation: isolate;
 }
 
-/* Orbit Rings */
+/* Very subtle atmospheric rings */
 .orbit-ring {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid rgba(184, 148, 60, 0.08);
-  animation: ringPulse 4s ease-in-out infinite;
+  pointer-events: none;
+  border: 1px solid rgba(184, 148, 60, 0.10);
 }
 
 .orbit-ring-1 {
   width: 100%;
   height: 100%;
-  animation-delay: 0s;
+  box-shadow: inset 0 0 80px rgba(184, 148, 60, 0.025);
 }
 
 .orbit-ring-2 {
-  width: 70%;
-  height: 70%;
-  animation-delay: 1s;
+  width: 78%;
+  height: 78%;
+  border-color: rgba(184, 148, 60, 0.065);
 }
 
 .orbit-ring-3 {
-  width: 40%;
-  height: 40%;
-  animation-delay: 2s;
+  width: 56%;
+  height: 56%;
+  border-color: rgba(184, 148, 60, 0.045);
 }
 
-@keyframes ringPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.5; }
+.orbit-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(184,148,60,.10) 20deg,
+    transparent 42deg,
+    transparent 360deg
+  );
+  -webkit-mask: radial-gradient(transparent 65%, #000 66%);
+  mask: radial-gradient(transparent 65%, #000 66%);
+  animation: orbitGlowSweep 18s linear infinite;
 }
 
-/* Center */
+@keyframes orbitGlowSweep {
+  to { transform: rotate(360deg); }
+}
+
+/* Fixed center */
 .orbit-center {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 174px;
+  height: 174px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #b8943c, #8a6d1f);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255,255,255,.08), transparent 30%),
+    radial-gradient(circle, #171614 0%, #0d0c0b 68%, #070706 100%);
+  border: 1px solid rgba(184,148,60,.42);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: white;
-  z-index: 5;
-  box-shadow: 0 0 40px rgba(184, 148, 60, 0.3);
-  animation: centerPulse 3s ease-in-out infinite;
+  text-align: center;
+  color: #f6f0e6;
+  z-index: 20;
+  box-shadow:
+    0 0 0 10px rgba(184,148,60,.025),
+    0 0 70px rgba(184,148,60,.16),
+    inset 0 0 45px rgba(184,148,60,.05);
+  animation: centerBreath 5s ease-in-out infinite;
+}
+
+.orbit-center::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 1px solid rgba(184,148,60,.10);
+  pointer-events: none;
 }
 
 .orbit-center-icon {
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: 4px;
+  line-height: 1;
 }
 
 .orbit-center-label {
-  font-size: 0.5rem;
+  margin-top: 12px;
+  max-width: 110px;
+  font-size: .48rem;
+  line-height: 1.65;
   font-weight: 600;
-  letter-spacing: 2px;
-  opacity: 0.8;
+  letter-spacing: 2.1px;
+  color: rgba(240,235,228,.72);
+  text-transform: uppercase;
 }
 
-@keyframes centerPulse {
-  0%, 100% { box-shadow: 0 0 40px rgba(184, 148, 60, 0.3); transform: scale(1); }
-  50% { box-shadow: 0 0 60px rgba(184, 148, 60, 0.5); transform: scale(1.05); }
+@keyframes centerBreath {
+  0%,100% {
+    box-shadow:
+      0 0 0 10px rgba(184,148,60,.025),
+      0 0 60px rgba(184,148,60,.13),
+      inset 0 0 45px rgba(184,148,60,.04);
+  }
+  50% {
+    box-shadow:
+      0 0 0 14px rgba(184,148,60,.035),
+      0 0 85px rgba(184,148,60,.21),
+      inset 0 0 55px rgba(184,148,60,.07);
+  }
 }
 
-/* Orbiting Items */
-.orbit-item {
+/* The rotating track. Keep the center independent. */
+.persona-orbit-track {
   position: absolute;
+  inset: 0;
+  z-index: 8;
+  animation: personaOrbit 52s linear infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.persona-orbit-container:hover .persona-orbit-track {
+  animation-play-state: paused;
+}
+
+@keyframes personaOrbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Persona positions are calculated by JS.
+   --angle is the starting angle and --radius is the orbit radius. */
+.orbit-item {
+  --angle: 0deg;
+  --radius: 265px;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 104px;
+  height: 104px;
+  margin-left: -52px;
+  margin-top: -52px;
+
+  transform:
+    rotate(var(--angle))
+    translateY(calc(var(--radius) * -1));
+
+  transform-origin: 52px 52px;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 2;
+  z-index: 3;
+  transition: z-index .3s ease;
+  will-change: transform;
+}
+
+/* Counter-rotate the visual so names/icons remain upright. */
+.orbit-item > .orbit-persona {
+  transform: rotate(calc(var(--angle) * -1));
+}
+
+.orbit-persona {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  box-sizing: border-box;
+
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255,255,255,.09), transparent 30%),
+    rgba(18,17,15,.88);
+
+  border: 1px solid rgba(184,148,60,.25);
+  box-shadow:
+    0 12px 35px rgba(0,0,0,.22),
+    inset 0 0 24px rgba(184,148,60,.025);
+
+  transition:
+    transform .55s cubic-bezier(.22,1,.36,1),
+    border-color .4s ease,
+    box-shadow .4s ease,
+    background .4s ease,
+    opacity .4s ease;
+}
+
+/* Active/front persona */
+.orbit-item.is-active {
+  z-index: 12;
+}
+
+.orbit-item.is-active .orbit-persona {
+  transform:
+    rotate(calc(var(--angle) * -1))
+    scale(1.22);
+  border-color: rgba(212,168,74,.90);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255,255,255,.13), transparent 30%),
+    rgba(28,25,19,.96);
+  box-shadow:
+    0 0 0 7px rgba(184,148,60,.035),
+    0 0 45px rgba(184,148,60,.34),
+    inset 0 0 28px rgba(184,148,60,.07);
+}
+
+/* Quiet states create depth */
+.orbit-item.is-dim .orbit-persona {
+  opacity: .52;
+  transform: rotate(calc(var(--angle) * -1)) scale(.82);
 }
 
 .orbit-item:hover {
-  transform: scale(1.3) !important;
-  z-index: 10;
+  z-index: 15;
+}
+
+.orbit-item:hover .orbit-persona {
+  transform:
+    rotate(calc(var(--angle) * -1))
+    scale(1.14);
+  opacity: 1;
+  border-color: rgba(212,168,74,.70);
+  box-shadow: 0 0 38px rgba(184,148,60,.25);
+}
+
+.orbit-number {
+  display: block;
+  color: #b8943c;
+  font-size: .46rem;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  margin-bottom: 5px;
+}
+
+.orbit-name {
+  display: block;
+  max-width: 82px;
+  color: #f0ebe4;
+  font-family: 'Playfair Display', serif;
+  font-size: .70rem;
+  line-height: 1.18;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+}
+
+.orbit-icon {
+  margin-bottom: 6px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(184,148,60,.42);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d4a84a;
+  font-size: .65rem;
+}
+
+/* Connection lines */
+.orbit-connector {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: var(--orbit-radius);
+  transform-origin: bottom center;
+  transform: rotate(var(--angle));
+  background: linear-gradient(
+    to top,
+    rgba(184,148,60,.13),
+    rgba(184,148,60,.03),
+    transparent
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Tiny orbit particles */
+.persona-orbit-container::before,
+.persona-orbit-container::after {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #d4a84a;
+  box-shadow: 0 0 12px rgba(212,168,74,.8);
+  opacity: .45;
+  pointer-events: none;
+  animation: particleDrift 7s ease-in-out infinite;
+}
+
+.persona-orbit-container::before {
+  top: 14%;
+  left: 22%;
+}
+
+.persona-orbit-container::after {
+  right: 16%;
+  bottom: 20%;
+  animation-delay: -3s;
+}
+
+@keyframes particleDrift {
+  0%,100% { transform: translate(0,0); opacity:.25; }
+  50% { transform: translate(12px,-18px); opacity:.8; }
+}
+
+/* Tooltip / intrigue copy */
+.orbit-tooltip {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 9px);
+  transform: translateX(-50%) translateY(4px);
+  min-width: 145px;
+  max-width: 190px;
+  padding: 8px 12px;
+  background: rgba(13,12,11,.96);
+  color: #f0ebe4;
+  border: 1px solid rgba(184,148,60,.22);
+  border-radius: 8px;
+  font-size: .56rem;
+  line-height: 1.45;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all .3s ease;
+  z-index: 30;
+  pointer-events: none;
 }
 
 .orbit-item:hover .orbit-tooltip {
   opacity: 1;
-  transform: translateX(-50%) translateY(-10px);
   visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
-.orbit-dot {
-  display: block;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #b8943c, #d4a84a);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 20px rgba(184, 148, 60, 0.2);
-  transition: all 0.3s ease;
-  animation: dotPulse 2s ease-in-out infinite;
-}
-
-.orbit-item:hover .orbit-dot {
-  background: linear-gradient(135deg, #d4a84a, #fcd34d);
-  box-shadow: 0 0 40px rgba(184, 148, 60, 0.4);
-  animation: none;
-}
-
-@keyframes dotPulse {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.2); opacity: 1; }
-}
-
-.orbit-tooltip {
-  position: absolute;
-  top: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(26, 25, 23, 0.95);
-  color: #f0ebe4;
-  padding: 4px 12px;
-  border-radius: 6px;
-  font-size: 0.55rem;
-  font-weight: 500;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-  letter-spacing: 0.3px;
-  border: 1px solid rgba(184, 148, 60, 0.2);
-}
-
-.orbit-tooltip::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid rgba(26, 25, 23, 0.95);
-}
-
-/* Orbit Item Positions & Animations */
-.orbit-item-1 { 
-  top: 0; 
-  left: 50%; 
-  transform: translateX(-50%);
-  animation: orbit1 12s linear infinite;
-}
-.orbit-item-2 { 
-  top: 50%; 
-  right: 0; 
-  transform: translateY(-50%);
-  animation: orbit2 14s linear infinite;
-}
-.orbit-item-3 { 
-  bottom: 0; 
-  left: 50%; 
-  transform: translateX(-50%);
-  animation: orbit3 10s linear infinite;
-}
-.orbit-item-4 { 
-  top: 50%; 
-  left: 0; 
-  transform: translateY(-50%);
-  animation: orbit4 16s linear infinite;
-}
-.orbit-item-5 { 
-  top: 15%; 
-  right: 15%; 
-  animation: orbit5 18s linear infinite;
-}
-.orbit-item-6 { 
-  bottom: 15%; 
-  right: 15%; 
-  animation: orbit6 13s linear infinite;
-}
-.orbit-item-7 { 
-  bottom: 15%; 
-  left: 15%; 
-  animation: orbit7 15s linear infinite;
-}
-.orbit-item-8 { 
-  top: 15%; 
-  left: 15%; 
-  animation: orbit8 11s linear infinite;
-}
-.orbit-item-9 { 
-  top: 50%; 
-  left: 50%; 
-  transform: translate(-50%, -50%);
-  animation: orbit9 20s linear infinite;
-}
-
-@keyframes orbit1 {
-  0% { transform: translateX(-50%) rotate(0deg) translateX(-250px) rotate(0deg); }
-  100% { transform: translateX(-50%) rotate(360deg) translateX(-250px) rotate(-360deg); }
-}
-@keyframes orbit2 {
-  0% { transform: translateY(-50%) rotate(0deg) translateX(250px) rotate(0deg); }
-  100% { transform: translateY(-50%) rotate(360deg) translateX(250px) rotate(-360deg); }
-}
-@keyframes orbit3 {
-  0% { transform: translateX(-50%) rotate(0deg) translateX(-250px) rotate(0deg); }
-  100% { transform: translateX(-50%) rotate(-360deg) translateX(-250px) rotate(360deg); }
-}
-@keyframes orbit4 {
-  0% { transform: translateY(-50%) rotate(0deg) translateX(250px) rotate(0deg); }
-  100% { transform: translateY(-50%) rotate(-360deg) translateX(250px) rotate(360deg); }
-}
-@keyframes orbit5 {
-  0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
-}
-@keyframes orbit6 {
-  0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
-  100% { transform: rotate(-360deg) translateX(180px) rotate(360deg); }
-}
-@keyframes orbit7 {
-  0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
-}
-@keyframes orbit8 {
-  0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
-  100% { transform: rotate(-360deg) translateX(180px) rotate(360deg); }
-}
-@keyframes orbit9 {
-  0% { transform: translate(-50%, -50%) rotate(0deg) translateX(100px) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg) translateX(100px) rotate(-360deg); }
-}
-
-/* Featured Persona Card */
+/* ===== PREMIUM 12-PERSONA FEATURED REVEAL ===== */
 .featured-persona {
-  max-width: 600px;
+  max-width: 680px;
   margin: 0 auto 30px;
-  background: #ffffff;
-  border-radius: 16px;
+  background: rgba(255,255,255,.72);
+  border-radius: 18px;
   border: 1px solid #ede8e0;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-  transition: all 0.5s ease;
+  box-shadow: 0 12px 42px rgba(0,0,0,.055);
+  transition: all .5s ease;
   overflow: hidden;
 }
 
 .featured-persona:hover {
-  border-color: #b8943c;
-  box-shadow: 0 12px 40px rgba(184, 148, 60, 0.08);
+  border-color: rgba(184,148,60,.55);
+  box-shadow: 0 18px 50px rgba(184,148,60,.10);
   transform: translateY(-2px);
 }
 
 .featured-persona-inner {
   display: flex;
   align-items: center;
-  padding: 24px 28px;
-  gap: 20px;
+  padding: 26px 30px;
+  gap: 22px;
 }
 
 .featured-left {
@@ -1361,22 +1490,22 @@
 }
 
 .featured-number {
-  font-size: 0.55rem;
+  font-size: .55rem;
   font-weight: 700;
   color: #b8943c;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
 }
 
 .featured-name {
   font-family: 'Playfair Display', serif;
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: #1a1917;
   margin: 2px 0 4px;
 }
 
 .featured-desc {
-  font-size: 0.85rem;
+  font-size: .85rem;
   color: #6e6a62;
   line-height: 1.5;
   margin-bottom: 6px;
@@ -1385,7 +1514,7 @@
 .featured-link {
   color: #b8943c;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: .8rem;
   text-decoration: none;
 }
 
@@ -1412,6 +1541,133 @@
   font-size: 1.8rem;
 }
 
+/* Personas CTA */
+.personas-cta {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.personas-cta p {
+  font-size: 1.1rem;
+  color: #4d4a44;
+  margin-bottom: 14px;
+}
+
+.personas-cta p strong {
+  color: #b8943c;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .persona-orbit-container {
+    --orbit-size: 520px;
+    --orbit-radius: 220px;
+  }
+
+  .orbit-center {
+    width: 145px;
+    height: 145px;
+  }
+
+  .orbit-item,
+  .orbit-persona {
+    width: 88px;
+    height: 88px;
+  }
+
+  .orbit-item {
+    margin-left: -44px;
+    margin-top: -44px;
+  }
+
+  .orbit-item > .orbit-persona {
+    transform: rotate(calc(var(--angle) * -1));
+  }
+
+  .orbit-name {
+    font-size: .60rem;
+    max-width: 70px;
+  }
+
+  .orbit-icon {
+    width: 17px;
+    height: 17px;
+    margin-bottom: 4px;
+  }
+}
+
+@media (max-width: 600px) {
+  .persona-orbit-container {
+    --orbit-size: 360px;
+    --orbit-radius: 145px;
+    margin-top: 10px;
+    margin-bottom: 28px;
+  }
+
+  .orbit-center {
+    width: 108px;
+    height: 108px;
+  }
+
+  .orbit-center-icon {
+    font-size: .95rem;
+    letter-spacing: 2.5px;
+  }
+
+  .orbit-center-label {
+    margin-top: 8px;
+    font-size: .38rem;
+    letter-spacing: 1.4px;
+    max-width: 78px;
+  }
+
+  .orbit-item,
+  .orbit-persona {
+    width: 66px;
+    height: 66px;
+  }
+
+  .orbit-item {
+    margin-left: -33px;
+    margin-top: -33px;
+  }
+
+  .orbit-name {
+    font-size: .47rem;
+    max-width: 54px;
+  }
+
+  .orbit-number {
+    font-size: .38rem;
+    margin-bottom: 2px;
+  }
+
+  .orbit-icon {
+    display: none;
+  }
+
+  .orbit-tooltip {
+    display: none;
+  }
+
+  .featured-persona-inner {
+    flex-direction: column;
+    text-align: center;
+    padding: 22px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .persona-orbit-track,
+  .orbit-ring::after,
+  .orbit-center,
+  .persona-orbit-container::before,
+  .persona-orbit-container::after {
+    animation: none !important;
+  }
+}
+"""
+    
 /* Personas CTA */
 .personas-cta {
   text-align: center;
@@ -2034,89 +2290,224 @@
 </div>
 
 <!-- ===== THE 12 PERSONAS - PREMIUM DYNAMIC ===== -->
-<section class="container section" id="personas">
-  <div class="personas-header">
-    <span class="personas-badge">✦ THE 12 PERSONAS</span>
-    <h2 class="heading-serif heading-lg">12 Ways The World Can <span class="accent-gold">Experience You</span></h2>
-    <p class="personas-subtitle">You think. You express. You connect. But beneath the surface, there's a pattern — a persona that shapes how the world experiences you.</p>
-  </div>
+  # Keep the header/badge/subtitle and the featured/CTA portions from the original,
+# while replacing the old orbit mechanics with the new 12-persona system.
+modified = original[:start] + new_orbit_css + "\n\n" + original[end:]
 
-  <!-- Floating Persona Orbits -->
-  <div class="persona-orbit-container">
-    <div class="orbit-ring orbit-ring-1"></div>
-    <div class="orbit-ring orbit-ring-2"></div>
-    <div class="orbit-ring orbit-ring-3"></div>
-    
-    <!-- Center Persona -->
-    <div class="orbit-center">
-      <span class="orbit-center-icon">✦</span>
-      <span class="orbit-center-label">YOU</span>
-    </div>
-    
-    <!-- Orbiting Personas -->
-    <div class="orbit-item orbit-item-1" data-persona="translator">
-      <span class="orbit-dot"></span>
-      <span class="orbit-tooltip">The Translator</span>
-    </div>
-    <div class="orbit-item orbit-item-2" data-persona="listener">
-      <span class="orbit-dot"></span>
-      <span class="orbit-tooltip">The Listener</span>
-    </div>
-    <div class="orbit-item orbit-item-3" data-persona="amplifier">
-      <span class="orbit-dot"></span>
-      <span class="orbit-tooltip">The Amplifier</span>
-    </div>
-    <div class="orbit-item orbit-item-4" data-persona="articulator">
-      <span class="orbit-dot"></span>
-      <span class="orbit-tooltip">The Articulator</span>
-    </div>
-    <div class="orbit-item orbit-item-5" data-persona="influencer">
-      <span class="orbit-dot"></span>
-      <span class="orbit-tooltip">The Influencer</span>
-    </div>
-    <div class="orbit-item orbit-item-6" data-persona="interpreter">
-      <span class="orbit-dot"></span>
-      <span class="orbit-tooltip">The Interpreter</span>
-    </div>
-    <div class="orbit-item orbit-item-7" data-persona="filter">
-      <span class="orbit-dot"></span>
-      <span class="orbit-tooltip">The Filter</span>
-    </div>
-    <div class="orbit-item orbit-item-8" data-persona="emerging">
-      <span class="orbit-dot"></span>
-      <span class="orbit-tooltip">The Emerging</span>
-    </div>
-    <div class="orbit-item orbit-item-9" data-persona="misaligned">
-      <span class="orbit-dot"></span>
-      <span class="orbit-tooltip">The Misaligned</span>
-    </div>
-  </div>
+css_path = Path("/mnt/data/the-unspoken-12-persona-orbit.css")
+css_path.write_text(modified, encoding="utf-8")
 
-  <!-- Featured Persona Card -->
-  <div class="featured-persona" id="featuredPersona">
-    <div class="featured-persona-inner">
-      <div class="featured-left">
-        <span class="featured-number" id="featuredNumber">01</span>
-        <h3 class="featured-name" id="featuredName">The Translator</h3>
-        <p class="featured-desc" id="featuredDesc">Makes complexity make sense. You turn complex thoughts into clear, memorable messages.</p>
-        <a href="#" class="featured-link">Explore Persona →</a>
-      </div>
-      <div class="featured-right">
-        <div class="featured-icon-wrapper">
-          <span class="featured-icon" id="featuredIcon">🌐</span>
-        </div>
-      </div>
-    </div>
-  </div>
+js = r"""/* THE UNSPOKEN — Premium 12 Persona Orbit
+   Requires:
+   .persona-orbit-container
+   .persona-orbit-track
+   .orbit-item
+   .orbit-persona
+   .orbit-name
+   .orbit-number
+   Optional: #featuredPersonaName, #featuredPersonaDesc, #featuredPersonaNumber
+*/
 
-  <!-- CTA -->
-  <div class="personas-cta">
-    <p>This isn't just a quiz. It's a <strong>mirror</strong>.</p>
-    <a href="Personasnap.html" class="btn-paid">Discover My Persona →</a>
-  </div>
-</section>
+(() => {
+  const container = document.querySelector('.persona-orbit-container');
+  if (!container) return;
 
-  
+  const track = container.querySelector('.persona-orbit-track');
+  if (!track) return;
+
+  const items = [...track.querySelectorAll('.orbit-item')];
+  if (!items.length) return;
+
+  // If you have 12 persona elements in the HTML, all 12 are positioned automatically.
+  // No manual top/right/bottom/left CSS is required.
+  const total = items.length;
+  const featuredName = document.querySelector('#featuredPersonaName, .featured-name');
+  const featuredDesc = document.querySelector('#featuredPersonaDesc, .featured-desc');
+  const featuredNumber = document.querySelector('#featuredPersonaNumber, .featured-number');
+
+  const descriptions = {
+    'The Translator': 'You make complexity make sense.',
+    'The Amplifier': 'You make ideas impossible to ignore.',
+    'The Articulator': 'You make thinking visible.',
+    'The Interpreter': 'You read what others miss.',
+    'The Filter': 'You know what matters.',
+    'The Emerging': 'You are finding your voice.',
+    'The Misaligned': 'Your intent and impact may not always meet.',
+    'The Strategist': 'You connect communication to direction.',
+    'The Architect': 'You build clarity into the bigger picture.',
+    'The Navigator': 'You find a way through complexity.',
+    'The Influencer': 'You move people toward action.',
+    'The Listener': 'You hear what is often left unsaid.'
+  };
+
+  function getRadius() {
+    const styles = getComputedStyle(container);
+    return parseFloat(styles.getPropertyValue('--orbit-radius')) || 265;
+  }
+
+  function getSize() {
+    const styles = getComputedStyle(container);
+    return parseFloat(styles.getPropertyValue('--orbit-size')) || 620;
+  }
+
+  function positionItems() {
+    const step = 360 / total;
+
+    items.forEach((item, index) => {
+      const angle = index * step - 90; // First persona starts at top.
+      item.style.setProperty('--angle', `${angle}deg`);
+      item.style.setProperty('--radius', `${getRadius()}px`);
+
+      // Keep an accessible/semantic index if not already supplied.
+      if (!item.dataset.personaIndex) {
+        item.dataset.personaIndex = String(index + 1).padStart(2, '0');
+      }
+    });
+  }
+
+  function personaName(item) {
+    const nameEl = item.querySelector('.orbit-name');
+    return nameEl ? nameEl.textContent.trim() : '';
+  }
+
+  function updateFeatured(item) {
+    if (!item) return;
+
+    const name = personaName(item);
+    const number = item.dataset.personaIndex || '';
+    const desc = descriptions[name] || item.dataset.description || '';
+
+    if (featuredName) featuredName.textContent = name;
+    if (featuredDesc) featuredDesc.textContent = desc;
+    if (featuredNumber) featuredNumber.textContent = number;
+  }
+
+  // Determine which persona is visually nearest the top of the orbit.
+  function updateActive() {
+    const rotationMatch = getComputedStyle(track).transform;
+    let rotation = 0;
+
+    if (rotationMatch && rotationMatch !== 'none') {
+      const values = rotationMatch.match(/matrix\(([^)]+)\)/);
+      if (values) {
+        const parts = values[1].split(',').map(Number);
+        rotation = Math.atan2(parts[1], parts[0]) * 180 / Math.PI;
+      }
+    }
+
+    let best = null;
+    let bestDistance = Infinity;
+
+    items.forEach((item, index) => {
+      const base = index * (360 / total) - 90;
+      const current = (base + rotation) % 360;
+      const normalized = ((current + 540) % 360) - 180;
+      const distance = Math.abs(normalized);
+
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = item;
+      }
+    });
+
+    items.forEach(item => {
+      item.classList.remove('is-active', 'is-dim');
+      if (item !== best && bestDistance < 28) item.classList.add('is-dim');
+    });
+
+    if (best && bestDistance < 28) {
+      best.classList.add('is-active');
+      updateFeatured(best);
+    }
+  }
+
+  // Clicking a persona pauses the orbit and smoothly rotates that persona to top.
+  items.forEach((item, index) => {
+    item.addEventListener('click', () => {
+      track.style.animationPlayState = 'paused';
+
+      const step = 360 / total;
+      const desired = -(index * step);
+
+      track.style.transition = 'transform 1.1s cubic-bezier(.22,1,.36,1)';
+      track.style.transform = `rotate(${desired}deg)`;
+
+      items.forEach(i => i.classList.remove('is-active', 'is-dim'));
+      item.classList.add('is-active');
+      updateFeatured(item);
+
+      window.setTimeout(() => {
+        track.style.transition = '';
+      }, 1150);
+    });
+  });
+
+  // Pause while pointer is over the orbit; resume when it leaves.
+  container.addEventListener('mouseenter', () => {
+    track.style.animationPlayState = 'paused';
+  });
+
+  container.addEventListener('mouseleave', () => {
+    // Only resume if the user hasn't clicked to focus a persona.
+    if (!container.classList.contains('manual-focus')) {
+      track.style.animationPlayState = 'running';
+    }
+  });
+
+  // Touch/swipe: simple horizontal gesture rotates to the next/previous persona.
+  let touchStartX = null;
+
+  container.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+
+  container.addEventListener('touchend', (e) => {
+    if (touchStartX === null) return;
+
+    const delta = e.changedTouches[0].clientX - touchStartX;
+    touchStartX = null;
+
+    if (Math.abs(delta) < 40) return;
+
+    const step = 360 / total;
+    const direction = delta > 0 ? 1 : -1;
+
+    track.style.animationPlayState = 'paused';
+    track.style.transition = 'transform .75s cubic-bezier(.22,1,.36,1)';
+
+    const current = track.dataset.touchRotation
+      ? parseFloat(track.dataset.touchRotation)
+      : 0;
+
+    const next = current + direction * step;
+    track.dataset.touchRotation = String(next);
+    track.style.transform = `rotate(${next}deg)`;
+
+    window.setTimeout(() => {
+      track.style.transition = '';
+    }, 800);
+  }, { passive: true });
+
+  // Initial setup.
+  positionItems();
+  updateFeatured(items[0]);
+
+  // Recalculate radii after resize.
+  window.addEventListener('resize', positionItems, { passive: true });
+
+  // Keep the active persona synchronized with the slow animation.
+  let lastUpdate = 0;
+  function frame(timestamp) {
+    if (timestamp - lastUpdate > 180) {
+      updateActive();
+      lastUpdate = timestamp;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+"""
+
     <!-- ===== THE PROBLEM ===== -->
 <section class="container section">
   <h3 class="heading-serif heading-xl">You know what you mean.</h3>
@@ -2497,113 +2888,223 @@
     setTimeout(updateCarousel, 100);
 
 // ===== PREMIUM DYNAMIC PERSONAS =====
-document.addEventListener('DOMContentLoaded', function() {
-  const orbitItems = document.querySelectorAll('.orbit-item');
-  const featuredNumber = document.getElementById('featuredNumber');
-  const featuredName = document.getElementById('featuredName');
-  const featuredDesc = document.getElementById('featuredDesc');
-  const featuredIcon = document.getElementById('featuredIcon');
-  
-  const personaData = {
-    translator: { number: '01', name: 'The Translator', desc: 'Makes complexity make sense. You turn complex thoughts into clear, memorable messages.', icon: '🌐' },
-    listener: { number: '02', name: 'The Listener', desc: 'Hears what others miss. You read between the lines and understand the unspoken.', icon: '👂' },
-    amplifier: { number: '03', name: 'The Amplifier', desc: 'Energizes every room. Your presence and energy make ideas unforgettable.', icon: '📢' },
-    articulator: { number: '04', name: 'The Articulator', desc: 'Clarity in every word. You speak with precision and structure that commands respect.', icon: '🎯' },
-    influencer: { number: '05', name: 'The Influencer', desc: 'Moves people to action. Your words create momentum and drive decisions.', icon: '💫' },
-    interpreter: { number: '06', name: 'The Interpreter', desc: 'Reads between the lines. You understand what people truly mean.', icon: '🧠' },
-    filter: { number: '07', name: 'The Filter', desc: 'Chooses words with care. You speak with intention and precision.', icon: '🔍' },
-    emerging: { number: '08', name: 'The Emerging', desc: 'Growing into your voice. Your potential is just beginning to be seen.', icon: '🌱' },
-    misaligned: { number: '09', name: 'The Misaligned', desc: 'Finding your alignment. The gap between intent and impact is your opportunity.', icon: '🔄' }
+# Keep the header/badge/subtitle and the featured/CTA portions from the original,
+# while replacing the old orbit mechanics with the new 12-persona system.
+modified = original[:start] + new_orbit_css + "\n\n" + original[end:]
+
+css_path = Path("/mnt/data/the-unspoken-12-persona-orbit.css")
+css_path.write_text(modified, encoding="utf-8")
+
+js = r"""/* THE UNSPOKEN — Premium 12 Persona Orbit
+   Requires:
+   .persona-orbit-container
+   .persona-orbit-track
+   .orbit-item
+   .orbit-persona
+   .orbit-name
+   .orbit-number
+   Optional: #featuredPersonaName, #featuredPersonaDesc, #featuredPersonaNumber
+*/
+
+(() => {
+  const container = document.querySelector('.persona-orbit-container');
+  if (!container) return;
+
+  const track = container.querySelector('.persona-orbit-track');
+  if (!track) return;
+
+  const items = [...track.querySelectorAll('.orbit-item')];
+  if (!items.length) return;
+
+  // If you have 12 persona elements in the HTML, all 12 are positioned automatically.
+  // No manual top/right/bottom/left CSS is required.
+  const total = items.length;
+  const featuredName = document.querySelector('#featuredPersonaName, .featured-name');
+  const featuredDesc = document.querySelector('#featuredPersonaDesc, .featured-desc');
+  const featuredNumber = document.querySelector('#featuredPersonaNumber, .featured-number');
+
+  const descriptions = {
+    'The Translator': 'You make complexity make sense.',
+    'The Amplifier': 'You make ideas impossible to ignore.',
+    'The Articulator': 'You make thinking visible.',
+    'The Interpreter': 'You read what others miss.',
+    'The Filter': 'You know what matters.',
+    'The Emerging': 'You are finding your voice.',
+    'The Misaligned': 'Your intent and impact may not always meet.',
+    'The Strategist': 'You connect communication to direction.',
+    'The Architect': 'You build clarity into the bigger picture.',
+    'The Navigator': 'You find a way through complexity.',
+    'The Influencer': 'You move people toward action.',
+    'The Listener': 'You hear what is often left unsaid.'
   };
 
-  let currentPersona = 'translator';
-  let autoRotate = true;
-  let rotateInterval;
-
-  function updateFeatured(personaKey) {
-    const data = personaData[personaKey];
-    if (!data) return;
-    
-    featuredNumber.textContent = data.number;
-    featuredName.textContent = data.name;
-    featuredDesc.textContent = data.desc;
-    featuredIcon.textContent = data.icon;
-    
-    // Update active state on dots
-    orbitItems.forEach(item => {
-      item.classList.toggle('active', item.dataset.persona === personaKey);
-    });
-    
-    currentPersona = personaKey;
+  function getRadius() {
+    const styles = getComputedStyle(container);
+    return parseFloat(styles.getPropertyValue('--orbit-radius')) || 265;
   }
 
-  // Click on orbit item
-  orbitItems.forEach(item => {
-    item.addEventListener('click', function() {
-      const personaKey = this.dataset.persona;
-      updateFeatured(personaKey);
-      
-      // Reset auto-rotation timer
-      clearInterval(rotateInterval);
-      if (autoRotate) {
-        startAutoRotate();
-      }
-    });
-    
-    // Hover effect
-    item.addEventListener('mouseenter', function() {
-      const dot = this.querySelector('.orbit-dot');
-      if (dot) {
-        dot.style.transform = 'scale(1.5)';
-        dot.style.background = 'linear-gradient(135deg, #d4a84a, #fcd34d)';
-        dot.style.boxShadow = '0 0 40px rgba(184, 148, 60, 0.5)';
-      }
-    });
-    
-    item.addEventListener('mouseleave', function() {
-      const dot = this.querySelector('.orbit-dot');
-      if (dot) {
-        dot.style.transform = '';
-        dot.style.background = '';
-        dot.style.boxShadow = '';
-      }
-    });
-  });
-
-  // Auto-rotate personas
-  function startAutoRotate() {
-    const keys = Object.keys(personaData);
-    let index = 0;
-    
-    // Find current index
-    keys.forEach((key, i) => {
-      if (key === currentPersona) index = i;
-    });
-    
-    rotateInterval = setInterval(() => {
-      index = (index + 1) % keys.length;
-      updateFeatured(keys[index]);
-    }, 4000);
+  function getSize() {
+    const styles = getComputedStyle(container);
+    return parseFloat(styles.getPropertyValue('--orbit-size')) || 620;
   }
 
-  // Pause on hover over orbit container
-  const orbitContainer = document.querySelector('.persona-orbit-container');
-  orbitContainer.addEventListener('mouseenter', () => {
-    clearInterval(rotateInterval);
-  });
-  
-  orbitContainer.addEventListener('mouseleave', () => {
-    if (autoRotate) startAutoRotate();
+  function positionItems() {
+    const step = 360 / total;
+
+    items.forEach((item, index) => {
+      const angle = index * step - 90; // First persona starts at top.
+      item.style.setProperty('--angle', `${angle}deg`);
+      item.style.setProperty('--radius', `${getRadius()}px`);
+
+      // Keep an accessible/semantic index if not already supplied.
+      if (!item.dataset.personaIndex) {
+        item.dataset.personaIndex = String(index + 1).padStart(2, '0');
+      }
+    });
+  }
+
+  function personaName(item) {
+    const nameEl = item.querySelector('.orbit-name');
+    return nameEl ? nameEl.textContent.trim() : '';
+  }
+
+  function updateFeatured(item) {
+    if (!item) return;
+
+    const name = personaName(item);
+    const number = item.dataset.personaIndex || '';
+    const desc = descriptions[name] || item.dataset.description || '';
+
+    if (featuredName) featuredName.textContent = name;
+    if (featuredDesc) featuredDesc.textContent = desc;
+    if (featuredNumber) featuredNumber.textContent = number;
+  }
+
+  // Determine which persona is visually nearest the top of the orbit.
+  function updateActive() {
+    const rotationMatch = getComputedStyle(track).transform;
+    let rotation = 0;
+
+    if (rotationMatch && rotationMatch !== 'none') {
+      const values = rotationMatch.match(/matrix\(([^)]+)\)/);
+      if (values) {
+        const parts = values[1].split(',').map(Number);
+        rotation = Math.atan2(parts[1], parts[0]) * 180 / Math.PI;
+      }
+    }
+
+    let best = null;
+    let bestDistance = Infinity;
+
+    items.forEach((item, index) => {
+      const base = index * (360 / total) - 90;
+      const current = (base + rotation) % 360;
+      const normalized = ((current + 540) % 360) - 180;
+      const distance = Math.abs(normalized);
+
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = item;
+      }
+    });
+
+    items.forEach(item => {
+      item.classList.remove('is-active', 'is-dim');
+      if (item !== best && bestDistance < 28) item.classList.add('is-dim');
+    });
+
+    if (best && bestDistance < 28) {
+      best.classList.add('is-active');
+      updateFeatured(best);
+    }
+  }
+
+  // Clicking a persona pauses the orbit and smoothly rotates that persona to top.
+  items.forEach((item, index) => {
+    item.addEventListener('click', () => {
+      track.style.animationPlayState = 'paused';
+
+      const step = 360 / total;
+      const desired = -(index * step);
+
+      track.style.transition = 'transform 1.1s cubic-bezier(.22,1,.36,1)';
+      track.style.transform = `rotate(${desired}deg)`;
+
+      items.forEach(i => i.classList.remove('is-active', 'is-dim'));
+      item.classList.add('is-active');
+      updateFeatured(item);
+
+      window.setTimeout(() => {
+        track.style.transition = '';
+      }, 1150);
+    });
   });
 
-  // Start auto-rotation
-  startAutoRotate();
+  // Pause while pointer is over the orbit; resume when it leaves.
+  container.addEventListener('mouseenter', () => {
+    track.style.animationPlayState = 'paused';
+  });
 
-  // Initial load - show first persona
-  updateFeatured('translator');
-});
-    
-    
+  container.addEventListener('mouseleave', () => {
+    // Only resume if the user hasn't clicked to focus a persona.
+    if (!container.classList.contains('manual-focus')) {
+      track.style.animationPlayState = 'running';
+    }
+  });
+
+  // Touch/swipe: simple horizontal gesture rotates to the next/previous persona.
+  let touchStartX = null;
+
+  container.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+
+  container.addEventListener('touchend', (e) => {
+    if (touchStartX === null) return;
+
+    const delta = e.changedTouches[0].clientX - touchStartX;
+    touchStartX = null;
+
+    if (Math.abs(delta) < 40) return;
+
+    const step = 360 / total;
+    const direction = delta > 0 ? 1 : -1;
+
+    track.style.animationPlayState = 'paused';
+    track.style.transition = 'transform .75s cubic-bezier(.22,1,.36,1)';
+
+    const current = track.dataset.touchRotation
+      ? parseFloat(track.dataset.touchRotation)
+      : 0;
+
+    const next = current + direction * step;
+    track.dataset.touchRotation = String(next);
+    track.style.transform = `rotate(${next}deg)`;
+
+    window.setTimeout(() => {
+      track.style.transition = '';
+    }, 800);
+  }, { passive: true });
+
+  // Initial setup.
+  positionItems();
+  updateFeatured(items[0]);
+
+  // Recalculate radii after resize.
+  window.addEventListener('resize', positionItems, { passive: true });
+
+  // Keep the active persona synchronized with the slow animation.
+  let lastUpdate = 0;
+  function frame(timestamp) {
+    if (timestamp - lastUpdate > 180) {
+      updateActive();
+      lastUpdate = timestamp;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+"""
       
     // ===== LOGIN MODAL =====
     const signInBtn = document.getElementById('signInBtn');
