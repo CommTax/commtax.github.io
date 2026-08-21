@@ -1093,316 +1093,398 @@
   line-height: 1.7;
 }
 
-/* ===== PREMIUM 3D PERSONA ORBIT SYSTEM ===== */
+    /* ============================================================
+   THE UNSPOKEN — 3D PREMIUM PERSONA ORBIT
+   Fixed centre + true circular/spherical orbit + depth scaling.
+   Designed for the existing .persona-orbit HTML structure.
+   ============================================================ */
+
 .persona-orbit-container {
+  --orbit-size: 720px;
+  --orbit-x: 300px;
+  --orbit-y: 300px;
+  --orbit-depth: 150px;
+  --gold: #c8a45d;
+  --gold-soft: rgba(200,164,93,.28);
+  --ink: #090908;
   position: relative;
-  width: 620px;
-  height: 620px;
-  margin: 24px auto 46px;
+  width: var(--orbit-size);
+  height: var(--orbit-size);
+  margin: 10px auto 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
   isolation: isolate;
+  overflow: visible;
 }
 
+/* Ambient aura behind the whole system */
+.persona-orbit-container::before {
+  content: "";
+  position: absolute;
+  width: 74%;
+  height: 74%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,164,93,.10), transparent 67%);
+  filter: blur(24px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.persona-orbit-container::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  border: 1px solid rgba(200,164,93,.045);
+  box-shadow: inset 0 0 100px rgba(200,164,93,.025);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   ORBIT RINGS — elliptical perspective, not flat circles
+   ============================================================ */
 .orbit-ring {
   position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--orbit-x) * 2);
+  height: calc(var(--orbit-y) * 2);
+  transform: translate(-50%, -50%);
   border-radius: 50%;
   pointer-events: none;
-  border: 1px solid rgba(184, 148, 60, 0.10);
+  z-index: 1;
+  box-sizing: border-box;
 }
 
 .orbit-ring-1 {
-  width: 100%;
-  height: 100%;
-  box-shadow: inset 0 0 80px rgba(184, 148, 60, 0.03);
+  border: 1px solid rgba(200,164,93,.16);
+  box-shadow:
+    0 0 25px rgba(200,164,93,.025),
+    inset 0 0 25px rgba(200,164,93,.02);
 }
 
 .orbit-ring-2 {
-  width: 78%;
-  height: 78%;
-  border-color: rgba(184, 148, 60, 0.065);
+  width: calc(var(--orbit-x) * 1.56);
+  height: calc(var(--orbit-y) * 1.56);
+  border: 1px solid rgba(255,255,255,.035);
 }
 
 .orbit-ring-3 {
-  width: 56%;
-  height: 56%;
-  border-color: rgba(184, 148, 60, 0.045);
+  width: calc(var(--orbit-x) * 1.12);
+  height: calc(var(--orbit-y) * 1.12);
+  border: 1px dashed rgba(200,164,93,.07);
+  transform: translate(-50%, -50%) rotate(-14deg);
 }
 
-/* Center YOU */
+/* A subtle moving highlight around the ring */
+.orbit-ring-1::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 220deg,
+    transparent 0deg,
+    rgba(200,164,93,.40) 18deg,
+    transparent 42deg,
+    transparent 360deg
+  );
+  -webkit-mask: radial-gradient(transparent 98%, #000 99%);
+  mask: radial-gradient(transparent 98%, #000 99%);
+  animation: ringSweep 14s linear infinite;
+}
+
+@keyframes ringSweep { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   FIXED CENTRE — the visual anchor never moves
+   ============================================================ */
 .orbit-center {
   position: absolute;
-  width: 150px;
-  height: 150px;
+  width: 184px;
+  height: 184px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.10), transparent 30%), radial-gradient(circle, #171614 0%, #0d0c0b 68%, #070706 100%);
-  border: 1px solid rgba(184,148,60,.45);
+  z-index: 50;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: #f6f0e6;
-  z-index: 20;
-  box-shadow: 0 0 0 12px rgba(184,148,60,.025), 0 0 70px rgba(184,148,60,.16), inset 0 0 45px rgba(184,148,60,.05);
-  animation: centerBreath 5s ease-in-out infinite;
+  color: #f7f2e9;
+  background:
+    radial-gradient(circle at 33% 22%, rgba(255,255,255,.13), transparent 27%),
+    radial-gradient(circle at 70% 75%, rgba(200,164,93,.10), transparent 35%),
+    radial-gradient(circle, #1b1915 0%, #0d0c0b 63%, #050505 100%);
+  border: 1px solid rgba(200,164,93,.62);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.025),
+    0 0 0 12px rgba(200,164,93,.025),
+    0 0 65px rgba(200,164,93,.20),
+    0 25px 80px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.13),
+    inset 0 -20px 35px rgba(0,0,0,.30);
+  animation: centrePulse 5.5s ease-in-out infinite;
+}
+
+.orbit-center::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 1px solid rgba(200,164,93,.16);
+  box-shadow: 0 0 28px rgba(200,164,93,.10);
+}
+
+.orbit-center::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.035);
+  pointer-events: none;
 }
 
 .orbit-center-icon {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.2rem;
+  position: relative;
+  z-index: 2;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.08rem;
   font-weight: 500;
-  letter-spacing: 4px;
+  letter-spacing: 3.5px;
+  white-space: nowrap;
 }
 
 .orbit-center-label {
-  margin-top: 10px;
-  max-width: 100px;
-  font-size: .45rem;
-  line-height: 1.6;
+  position: relative;
+  z-index: 2;
+  margin-top: 12px;
+  max-width: 128px;
+  font-size: .48rem;
+  line-height: 1.65;
   font-weight: 600;
-  letter-spacing: 2px;
-  color: rgba(240,235,228,.72);
+  letter-spacing: 1.7px;
+  color: rgba(245,240,231,.62);
   text-transform: uppercase;
 }
 
-@keyframes centerBreath {
-  0%,100% { box-shadow: 0 0 0 12px rgba(184,148,60,.025), 0 0 60px rgba(184,148,60,.13), inset 0 0 45px rgba(184,148,60,.04); }
-  50% { box-shadow: 0 0 0 16px rgba(184,148,60,.035), 0 0 85px rgba(184,148,60,.21), inset 0 0 55px rgba(184,148,60,.07); }
+@keyframes centrePulse {
+  0%,100% {
+    box-shadow: 0 0 0 12px rgba(200,164,93,.025), 0 0 55px rgba(200,164,93,.16), 0 25px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.13), inset 0 -20px 35px rgba(0,0,0,.30);
+  }
+  50% {
+    box-shadow: 0 0 0 17px rgba(200,164,93,.035), 0 0 82px rgba(200,164,93,.24), 0 25px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.15), inset 0 -20px 35px rgba(0,0,0,.30);
+  }
 }
 
-/* Orbit Track */
+/* ============================================================
+   3D TRACK
+   JS positions each persona on a real spherical/elliptical path.
+   ============================================================ */
 .persona-orbit-track {
   position: absolute;
   inset: 0;
-  z-index: 8;
-  animation: personaOrbit 45s linear infinite;
-  transform-origin: center;
-  will-change: transform;
-}
-
-.persona-orbit-container:hover .persona-orbit-track {
-  animation-play-state: paused;
-}
-
-@keyframes personaOrbit {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ===== 3D PERSONA CARDS WITH COLORS ===== */
-.orbit-item {
-  --angle: 0deg;
-  --radius: 265px;
-  --persona-color: #b8943c;
-  --persona-glow: rgba(184, 148, 60, 0.4);
-  
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 130px;
-  height: 160px;
-  margin-left: -65px;
-  margin-top: -80px;
-  transform: rotate(var(--angle)) translateY(calc(var(--radius) * -1));
-  transform-origin: 65px 80px;
-  cursor: pointer;
-  z-index: 3;
-  transition: z-index .3s ease;
-  will-change: transform;
-  perspective: 1000px;
-}
-
-.orbit-item > .orbit-persona {
-  transform: rotate(calc(var(--angle) * -1));
+  z-index: 10;
   transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(.22,1,.36,1), box-shadow 0.4s ease;
+  pointer-events: none;
+}
+
+.orbit-item {
+  --depth-scale: 1;
+  --depth-opacity: 1;
+  --depth-blur: 0px;
+  --z: 0;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 118px;
+  height: 146px;
+  margin: -73px 0 0 -59px;
+  transform: translate3d(var(--x), var(--y), var(--z)) scale(var(--depth-scale));
+  transform-style: preserve-3d;
+  opacity: var(--depth-opacity);
+  filter: blur(var(--depth-blur));
+  will-change: transform, opacity, filter;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: filter .45s ease, opacity .45s ease;
+}
+
+/* Prevent old angle/track rotation rules from interfering */
+.orbit-item > .orbit-persona {
+  transform: none !important;
+}
+
+.orbit-persona {
+  position: relative;
   width: 100%;
   height: 100%;
-}
-
-/* ===== 3D CARD WITH COLOR VARIANTS ===== */
-.orbit-persona {
-  width: 130px;
-  height: 160px;
-  border-radius: 18px;
+  box-sizing: border-box;
+  border-radius: 20px;
+  padding: 15px 11px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 16px 12px;
-  box-sizing: border-box;
-  position: relative;
   overflow: hidden;
-  /* Base gradient with color variable */
-  background: radial-gradient(ellipse at 30% 20%, 
-    rgba(255,255,255,.15) 0%, 
-    var(--persona-color) 60%, 
-    rgba(0,0,0,.35) 100%
-  );
-  border: 1.5px solid rgba(255,255,255,.12);
-  box-shadow: 
-    0 10px 40px rgba(0,0,0,.3),
-    inset 0 1px 0 rgba(255,255,255,.15),
-    inset 0 -2px 0 rgba(0,0,0,.25),
-    0 0 60px var(--persona-glow);
-  transition: transform .55s cubic-bezier(.22,1,.36,1), 
-              border-color .4s ease, 
-              box-shadow .4s ease, 
-              background .4s ease;
+  color: #f6f1e8;
+
+  /* Dark luxury glass — no rainbow cards */
+  background:
+    radial-gradient(circle at 28% 12%, rgba(255,255,255,.16), transparent 28%),
+    linear-gradient(145deg, rgba(43,39,31,.96), rgba(15,14,12,.97) 62%, rgba(7,7,6,.99));
+
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow:
+    0 18px 45px rgba(0,0,0,.34),
+    0 0 0 1px rgba(200,164,93,.06),
+    0 0 30px rgba(200,164,93,.08),
+    inset 0 1px 0 rgba(255,255,255,.14),
+    inset 0 -16px 30px rgba(0,0,0,.35);
+  transform-style: preserve-3d;
+  transition:
+    transform .55s cubic-bezier(.22,1,.36,1),
+    border-color .45s ease,
+    box-shadow .45s ease,
+    background .45s ease;
 }
 
-/* 3D Card - Top Shine */
+/* Glass highlight */
 .orbit-persona::before {
-  content: '';
+  content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.12), transparent 60%);
+  inset: -30% -45%;
+  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.12) 47%, transparent 58%);
+  transform: translateX(-55%) rotate(8deg);
+  animation: cardSheen 7s ease-in-out infinite;
   pointer-events: none;
 }
 
-/* 3D Card - Inner Glow */
+/* Metallic bottom reflection */
 .orbit-persona::after {
-  content: '';
+  content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 55%;
-  background: linear-gradient(180deg, rgba(255,255,255,.15) 0%, transparent 100%);
+  left: 10%;
+  right: 10%;
+  bottom: 7px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200,164,93,.55), transparent);
+  box-shadow: 0 0 12px rgba(200,164,93,.20);
   pointer-events: none;
-  border-radius: 18px 18px 0 0;
 }
 
-/* ===== PERSONA COLOR VARIANTS ===== */
-.orbit-item[data-persona="translator"] { 
-  --persona-color: #4f8bc9; 
-  --persona-glow: rgba(79, 139, 201, 0.3);
-}
-.orbit-item[data-persona="amplifier"] { 
-  --persona-color: #e86f4a; 
-  --persona-glow: rgba(232, 111, 74, 0.3);
-}
-.orbit-item[data-persona="articulator"] { 
-  --persona-color: #4a9e6e; 
-  --persona-glow: rgba(74, 158, 110, 0.3);
-}
-.orbit-item[data-persona="interpreter"] { 
-  --persona-color: #9b6fc0; 
-  --persona-glow: rgba(155, 111, 192, 0.3);
-}
-.orbit-item[data-persona="filter"] { 
-  --persona-color: #d4a84a; 
-  --persona-glow: rgba(212, 168, 74, 0.3);
-}
-.orbit-item[data-persona="emerging"] { 
-  --persona-color: #5ba3a3; 
-  --persona-glow: rgba(91, 163, 163, 0.3);
-}
-.orbit-item[data-persona="misaligned"] { 
-  --persona-color: #c45a6a; 
-  --persona-glow: rgba(196, 90, 106, 0.3);
+@keyframes cardSheen {
+  0%, 72%, 100% { transform: translateX(-55%) rotate(8deg); opacity: 0; }
+  80% { opacity: .7; }
+  92% { transform: translateX(55%) rotate(8deg); opacity: 0; }
 }
 
-/* ===== ACTIVE / FRONT PERSONA - 3D POP ===== */
+/* The active front persona becomes the hero */
 .orbit-item.is-active {
-  z-index: 12;
+  z-index: 40 !important;
+  opacity: 1;
+  filter: none;
 }
 
 .orbit-item.is-active .orbit-persona {
-  transform: rotate(calc(var(--angle) * -1)) scale(1.18);
-  border-color: rgba(255,255,255,.3);
-  box-shadow: 
-    0 0 0 10px rgba(255,255,255,.04),
-    0 20px 50px rgba(0,0,0,.4),
-    0 0 80px var(--persona-glow),
-    inset 0 1px 0 rgba(255,255,255,.2);
-  background: radial-gradient(ellipse at 30% 20%, 
-    rgba(255,255,255,.2) 0%, 
-    var(--persona-color) 55%, 
-    rgba(0,0,0,.25) 100%
-  );
+  transform: translateZ(28px) scale(1.16);
+  border-color: rgba(216,179,102,.90);
+  background:
+    radial-gradient(circle at 28% 10%, rgba(255,255,255,.20), transparent 29%),
+    linear-gradient(145deg, rgba(60,52,38,.98), rgba(18,16,13,.99) 68%, #080807);
+  box-shadow:
+    0 26px 60px rgba(0,0,0,.50),
+    0 0 0 8px rgba(200,164,93,.035),
+    0 0 70px rgba(200,164,93,.34),
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -18px 35px rgba(0,0,0,.35);
 }
 
-/* ===== DIM PERSONAS (Depth Effect) ===== */
-.orbit-item.is-dim .orbit-persona {
-  opacity: .3;
-  transform: rotate(calc(var(--angle) * -1)) scale(.85);
-  filter: blur(1px) brightness(0.7);
-}
-
-/* ===== HOVER EFFECT ===== */
 .orbit-item:hover {
-  z-index: 15;
+  z-index: 45 !important;
+  opacity: 1 !important;
+  filter: none !important;
 }
 
 .orbit-item:hover .orbit-persona {
-  transform: rotate(calc(var(--angle) * -1)) scale(1.1);
-  border-color: rgba(255,255,255,.25);
-  box-shadow: 
-    0 15px 45px rgba(0,0,0,.35),
-    0 0 70px var(--persona-glow),
-    inset 0 1px 0 rgba(255,255,255,.2);
+  transform: translateZ(34px) scale(1.13);
+  border-color: rgba(216,179,102,.78);
+  box-shadow: 0 25px 55px rgba(0,0,0,.48), 0 0 55px rgba(200,164,93,.27), inset 0 1px 0 rgba(255,255,255,.18);
 }
 
-/* ===== CARD CONTENT ===== */
+/* ============================================================
+   CONTENT
+   ============================================================ */
 .orbit-number {
+  position: relative;
+  z-index: 2;
   display: block;
-  color: rgba(255,255,255,.6);
-  font-size: .45rem;
+  color: #c8a45d;
+  font-size: .46rem;
   font-weight: 700;
-  letter-spacing: 2.5px;
-  margin-bottom: 4px;
-  text-transform: uppercase;
-  text-shadow: 0 2px 8px rgba(0,0,0,.2);
+  letter-spacing: 2.2px;
+  margin-bottom: 7px;
 }
 
 .orbit-icon {
-  margin-bottom: 4px;
-  font-size: 1.8rem;
-  line-height: 1;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,.2));
+  position: relative;
+  z-index: 2;
+  width: 27px;
+  height: 27px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d9b66d;
+  font-size: .78rem;
+  border: 1px solid rgba(200,164,93,.42);
+  background: radial-gradient(circle, rgba(200,164,93,.13), transparent 70%);
+  box-shadow: 0 0 18px rgba(200,164,93,.10);
 }
 
 .orbit-name {
+  position: relative;
+  z-index: 2;
   display: block;
-  max-width: 100px;
-  color: #ffffff;
-  font-family: 'Playfair Display', serif;
-  font-size: .7rem;
-  line-height: 1.2;
-  letter-spacing: .5px;
+  max-width: 94px;
+  color: #f7f2e9;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: .69rem;
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: .35px;
   text-transform: uppercase;
-  text-shadow: 0 2px 12px rgba(0,0,0,.4);
+  text-shadow: 0 2px 15px rgba(0,0,0,.60);
 }
 
-/* ===== TOOLTIP ===== */
 .orbit-tooltip {
   position: absolute;
   left: 50%;
   top: calc(100% + 12px);
   transform: translateX(-50%) translateY(4px);
-  min-width: 150px;
-  max-width: 200px;
-  padding: 8px 14px;
-  background: rgba(13,12,11,.96);
-  color: #f0ebe4;
-  border: 1px solid rgba(184,148,60,.22);
-  border-radius: 8px;
+  min-width: 160px;
+  max-width: 205px;
+  padding: 9px 13px;
+  background: rgba(8,8,7,.96);
+  color: #eee8dd;
+  border: 1px solid rgba(200,164,93,.28);
+  border-radius: 9px;
   font-size: .55rem;
   line-height: 1.45;
   text-align: center;
   opacity: 0;
   visibility: hidden;
   transition: all .3s ease;
-  z-index: 30;
+  z-index: 80;
   pointer-events: none;
-  font-weight: 400;
 }
 
 .orbit-item:hover .orbit-tooltip {
@@ -1411,103 +1493,89 @@
   transform: translateX(-50%) translateY(0);
 }
 
-/* ===== FEATURED PERSONA CARD ===== */
+/* ============================================================
+   FEATURED REVEAL
+   ============================================================ */
 .featured-persona {
   max-width: 680px;
   margin: 0 auto 30px;
-  background: rgba(255,255,255,.88);
+  background: rgba(255,255,255,.92);
   border-radius: 18px;
   border: 1px solid #ede8e0;
-  box-shadow: 0 12px 42px rgba(0,0,0,.055);
+  box-shadow: 0 16px 50px rgba(0,0,0,.07);
   transition: all .5s ease;
   overflow: hidden;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
 }
 
 .featured-persona:hover {
   border-color: rgba(184,148,60,.55);
-  box-shadow: 0 18px 50px rgba(184,148,60,.10);
+  box-shadow: 0 20px 55px rgba(184,148,60,.11);
   transform: translateY(-2px);
 }
 
-.featured-persona-inner {
-  display: flex;
-  align-items: center;
-  padding: 26px 30px;
-  gap: 22px;
+.featured-persona-inner { display:flex; align-items:center; padding:26px 30px; gap:22px; }
+.featured-left { flex:1; }
+.featured-number { font-size:.55rem; font-weight:700; color:#b8943c; letter-spacing:1.5px; }
+.featured-name { font-family:'Playfair Display',serif; font-size:1.35rem; font-weight:700; color:#1a1917; margin:2px 0 4px; }
+.featured-desc { font-size:.85rem; color:#6e6a62; line-height:1.5; margin-bottom:6px; }
+.featured-link { color:#b8943c; font-weight:600; font-size:.8rem; text-decoration:none; }
+.featured-link:hover { text-decoration:underline; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .persona-orbit-container {
+    --orbit-size: 560px;
+    --orbit-x: 235px;
+    --orbit-y: 235px;
+    --orbit-depth: 110px;
+  }
+  .orbit-center { width:150px; height:150px; }
+  .orbit-item { width:96px; height:124px; margin:-62px 0 0 -48px; }
+  .orbit-name { font-size:.58rem; max-width:76px; }
 }
 
-.featured-left {
-  flex: 1;
+@media (max-width: 600px) {
+  .persona-orbit-container {
+    --orbit-size: 390px;
+    --orbit-x: 158px;
+    --orbit-y: 158px;
+    --orbit-depth: 70px;
+    margin-top: 5px;
+    margin-bottom: 30px;
+  }
+  .orbit-center { width:104px; height:104px; }
+  .orbit-center-icon { font-size:.68rem; letter-spacing:2px; }
+  .orbit-center-label { margin-top:7px; font-size:.32rem; letter-spacing:1.15px; max-width:72px; }
+  .orbit-item { width:68px; height:88px; margin:-44px 0 0 -34px; }
+  .orbit-persona { border-radius:13px; padding:9px 6px; }
+  .orbit-icon { width:19px; height:19px; font-size:.55rem; margin-bottom:4px; }
+  .orbit-name { font-size:.42rem; max-width:55px; }
+  .orbit-number { font-size:.31rem; letter-spacing:1.5px; margin-bottom:3px; }
+  .orbit-tooltip { display:none; }
+  .featured-persona-inner { flex-direction:column; text-align:center; padding:18px 16px; }
+  .featured-name { font-size:1.1rem; }
+  .featured-desc { font-size:.75rem; }
 }
 
-.featured-number {
-  font-size: .55rem;
-  font-weight: 700;
-  color: #b8943c;
-  letter-spacing: 1.5px;
+@media (max-width: 380px) {
+  .persona-orbit-container { --orbit-size:330px; --orbit-x:132px; --orbit-y:132px; }
+  .orbit-center { width:88px; height:88px; }
+  .orbit-center-icon { font-size:.58rem; letter-spacing:1.5px; }
+  .orbit-center-label { font-size:.27rem; max-width:60px; }
+  .orbit-item { width:58px; height:76px; margin:-38px 0 0 -29px; }
+  .orbit-name { font-size:.36rem; max-width:47px; }
+  .orbit-icon { display:none; }
 }
 
-.featured-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #1a1917;
-  margin: 2px 0 4px;
+@media (prefers-reduced-motion: reduce) {
+  .orbit-ring-1::after,
+  .orbit-center,
+  .orbit-persona::before { animation:none !important; }
 }
 
-.featured-desc {
-  font-size: .85rem;
-  color: #6e6a62;
-  line-height: 1.5;
-  margin-bottom: 6px;
-}
-
-.featured-link {
-  color: #b8943c;
-  font-weight: 600;
-  font-size: .8rem;
-  text-decoration: none;
-}
-
-.featured-link:hover {
-  text-decoration: underline;
-}
-
-.featured-right {
-  flex: 0 0 60px;
-}
-
-.featured-icon-wrapper {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #f8f5f0, #ede8e0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ede8e0;
-}
-
-.featured-icon {
-  font-size: 1.8rem;
-}
-
-/* Personas CTA */
-.personas-cta {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.personas-cta p {
-  font-size: 1.1rem;
-  color: #4d4a44;
-  margin-bottom: 14px;
-}
-
-.personas-cta p strong {
-  color: #b8943c;
-}
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
