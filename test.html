@@ -652,7 +652,7 @@
     .personas-cta p { font-size: 1.1rem; color: #4d4a44; margin-bottom: 14px; }
     .personas-cta p strong { color: #b8943c; }
 
-/* ===== STACKED CARDS - PREMIUM ===== */
+    /* ===== STACKED CARDS - PREMIUM STACKING EFFECT ===== */
 .explore-header {
   text-align: center;
   margin-bottom: 50px;
@@ -689,30 +689,51 @@
   color: #4d4a44;
 }
 
-/* Stacked Cards */
-.stacked-cards {
+/* Stacked Cards Container */
+.stacked-cards-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: center;
   max-width: 1000px;
   margin: 0 auto;
   padding: 0 20px;
+  position: relative;
+  min-height: 600px;
 }
 
+/* Individual Stacked Card */
 .stacked-card {
+  width: 100%;
   background: #ffffff;
   border-radius: 20px;
   border: 1px solid #ede8e0;
-  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  position: relative;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  position: sticky;
+  top: 80px;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+  margin-bottom: 20px;
+  z-index: 1;
 }
 
-.stacked-card:hover {
-  transform: translateY(-6px);
+/* Stacking effect - each card overlaps the one below */
+.stacked-card:nth-child(1) { z-index: 5; top: 80px; }
+.stacked-card:nth-child(2) { z-index: 4; top: 120px; }
+.stacked-card:nth-child(3) { z-index: 3; top: 160px; }
+.stacked-card:nth-child(4) { z-index: 2; top: 200px; }
+.stacked-card:nth-child(5) { z-index: 1; top: 240px; }
+
+/* Reduce the gap when scrolling past */
+.stacked-card:nth-child(1).is-scrolled-past { transform: scale(0.95) translateY(-40px); opacity: 0.3; }
+.stacked-card:nth-child(2).is-scrolled-past { transform: scale(0.95) translateY(-40px); opacity: 0.3; }
+.stacked-card:nth-child(3).is-scrolled-past { transform: scale(0.95) translateY(-40px); opacity: 0.3; }
+.stacked-card:nth-child(4).is-scrolled-past { transform: scale(0.95) translateY(-40px); opacity: 0.3; }
+
+.stacked-card.is-active {
+  transform: scale(1) translateY(0);
   border-color: #b8943c;
-  box-shadow: 0 20px 50px rgba(184, 148, 60, 0.06);
+  box-shadow: 0 20px 50px rgba(184, 148, 60, 0.08);
+  z-index: 10;
 }
 
 .stacked-card::before {
@@ -727,7 +748,7 @@
   transition: opacity 0.4s ease;
 }
 
-.stacked-card:hover::before {
+.stacked-card.is-active::before {
   opacity: 1;
 }
 
@@ -766,7 +787,7 @@
   transition: transform 0.3s ease;
 }
 
-.stacked-card:hover .stacked-card-image {
+.stacked-card.is-active .stacked-card-image {
   transform: scale(1.04);
 }
 
@@ -919,6 +940,14 @@
   color: #8a8680;
 }
 
+/* Progress indicator */
+.stacked-progress {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.75rem;
+  color: #8a8680;
+}
+
 /* Responsive */
 @media (max-width: 992px) {
   .stacked-card-inner {
@@ -943,6 +972,12 @@
   .stacked-card-title {
     font-size: 1.1rem;
   }
+  
+  .stacked-card:nth-child(1) { top: 60px; }
+  .stacked-card:nth-child(2) { top: 80px; }
+  .stacked-card:nth-child(3) { top: 100px; }
+  .stacked-card:nth-child(4) { top: 120px; }
+  .stacked-card:nth-child(5) { top: 140px; }
 }
 
 @media (max-width: 640px) {
@@ -983,6 +1018,12 @@
   .collection-item {
     padding: 6px 12px;
   }
+  
+  .stacked-card:nth-child(1) { top: 40px; }
+  .stacked-card:nth-child(2) { top: 50px; }
+  .stacked-card:nth-child(3) { top: 60px; }
+  .stacked-card:nth-child(4) { top: 70px; }
+  .stacked-card:nth-child(5) { top: 80px; }
 }
     
     /* ===== RESPONSIVE ===== */
@@ -1532,9 +1573,9 @@
     </div>
   </div>
 
-  <div class="stacked-cards" id="stackedCards">
+  <div class="stacked-cards-container" id="stackedCardsContainer">
     <!-- Card 1 -->
-    <div class="stacked-card">
+    <div class="stacked-card" data-index="0">
       <div class="stacked-card-inner">
         <div class="stacked-card-left">
           <span class="stacked-card-number">01</span>
@@ -1564,7 +1605,7 @@
     </div>
 
     <!-- Card 2 -->
-    <div class="stacked-card">
+    <div class="stacked-card" data-index="1">
       <div class="stacked-card-inner">
         <div class="stacked-card-left">
           <span class="stacked-card-number">02</span>
@@ -1590,7 +1631,7 @@
     </div>
 
     <!-- Card 3 -->
-    <div class="stacked-card">
+    <div class="stacked-card" data-index="2">
       <div class="stacked-card-inner">
         <div class="stacked-card-left">
           <span class="stacked-card-number">03</span>
@@ -1633,7 +1674,7 @@
     </div>
 
     <!-- Card 4 -->
-    <div class="stacked-card">
+    <div class="stacked-card" data-index="3">
       <div class="stacked-card-inner">
         <div class="stacked-card-left">
           <span class="stacked-card-number">04</span>
@@ -1653,6 +1694,32 @@
           <div class="stacked-card-image" style="background: linear-gradient(135deg, #2d1a2a, #4a2a3a);">
             <span class="stacked-card-icon">💡</span>
             <span class="stacked-card-label">Insights</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="stacked-card" data-index="4">
+      <div class="stacked-card-inner">
+        <div class="stacked-card-left">
+          <span class="stacked-card-number">05</span>
+          <h3 class="stacked-card-title">Masterclasses — Deep dives with experts</h3>
+          <p class="stacked-card-desc">Learn directly from the world's leading minds through in-depth masterclasses.</p>
+          <div class="stacked-card-topics">
+            <span>🎙️ leadership</span>
+            <span>🧠 psychology</span>
+            <span>🎯 strategy</span>
+          </div>
+          <div class="stacked-card-footer">
+            <span class="stacked-card-tag">🎓 Masterclass</span>
+            <span class="stacked-card-time">⏱️ 45 min</span>
+          </div>
+        </div>
+        <div class="stacked-card-right">
+          <div class="stacked-card-image" style="background: linear-gradient(135deg, #1a2a2a, #2a4a4a);">
+            <span class="stacked-card-icon">🎓</span>
+            <span class="stacked-card-label">Masterclass</span>
           </div>
         </div>
       </div>
@@ -2067,6 +2134,70 @@
         });
       }
 
+// ===== STACKED CARDS SCROLL EFFECT =====
+(function() {
+  const cards = document.querySelectorAll('.stacked-card');
+  const container = document.getElementById('stackedCardsContainer');
+  
+  if (!cards.length) return;
+
+  function updateCards() {
+    const containerRect = container.getBoundingClientRect();
+    const containerTop = containerRect.top;
+    const containerHeight = containerRect.height;
+    const viewportHeight = window.innerHeight;
+    
+    cards.forEach((card, index) => {
+      const cardRect = card.getBoundingClientRect();
+      const cardCenter = cardRect.top + cardRect.height / 2;
+      const cardTop = cardRect.top;
+      
+      // Calculate progress through the stack
+      const progress = (cardTop - containerTop) / (containerHeight - cardRect.height);
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+      
+      // Determine if card is active (visible in viewport)
+      const isVisible = cardRect.top < viewportHeight - 100 && cardRect.bottom > 100;
+      
+      if (isVisible) {
+        card.classList.add('is-active');
+        card.classList.remove('is-scrolled-past');
+        
+        // Scale and opacity based on progress
+        const scale = 1 - (clampedProgress * 0.05);
+        const opacity = 1 - (clampedProgress * 0.4);
+        card.style.transform = `scale(${scale})`;
+        card.style.opacity = Math.max(0.6, opacity);
+      } else if (cardRect.bottom < 0) {
+        card.classList.remove('is-active');
+        card.classList.add('is-scrolled-past');
+      } else {
+        card.classList.remove('is-active');
+        card.classList.remove('is-scrolled-past');
+        card.style.transform = '';
+        card.style.opacity = '';
+      }
+    });
+  }
+
+  // Throttled scroll handler
+  let ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      window.requestAnimationFrame(function() {
+        updateCards();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  window.addEventListener('resize', updateCards);
+  
+  // Initial update
+  setTimeout(updateCards, 100);
+})();
+      
       function createErrorElement() {
         var error = document.createElement('div');
         error.className = 'login-error';
