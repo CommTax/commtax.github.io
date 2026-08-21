@@ -1093,24 +1093,13 @@
   margin: 8px auto 0;
   line-height: 1.7;
 }
-src = Path("/mnt/data/Pasted text(20260821-050537).txt")
-original = src.read_text(encoding="utf-8")
 
-# Replace the existing orbit system with a cleaner 12-persona orbital system.
-start = original.index("/* ===== ORBIT CONTAINER ===== */")
-end = original.index("/* Featured Persona Card */")
 
-new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
-   The center stays fixed. Twelve personas orbit around it.
-   JavaScript assigns the 12 positions dynamically.
-=============================================================== */
-
+/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM ===== */
 .persona-orbit-container {
-  --orbit-size: 620px;
-  --orbit-radius: 265px;
   position: relative;
-  width: var(--orbit-size);
-  height: var(--orbit-size);
+  width: 620px;
+  height: 620px;
   margin: 24px auto 46px;
   display: flex;
   align-items: center;
@@ -1118,7 +1107,6 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
   isolation: isolate;
 }
 
-/* Very subtle atmospheric rings */
 .orbit-ring {
   position: absolute;
   border-radius: 50%;
@@ -1129,7 +1117,6 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
 .orbit-ring-1 {
   width: 100%;
   height: 100%;
-  box-shadow: inset 0 0 80px rgba(184, 148, 60, 0.025);
 }
 
 .orbit-ring-2 {
@@ -1144,36 +1131,12 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
   border-color: rgba(184, 148, 60, 0.045);
 }
 
-.orbit-ring::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    rgba(184,148,60,.10) 20deg,
-    transparent 42deg,
-    transparent 360deg
-  );
-  -webkit-mask: radial-gradient(transparent 65%, #000 66%);
-  mask: radial-gradient(transparent 65%, #000 66%);
-  animation: orbitGlowSweep 18s linear infinite;
-}
-
-@keyframes orbitGlowSweep {
-  to { transform: rotate(360deg); }
-}
-
-/* Fixed center */
 .orbit-center {
   position: absolute;
   width: 174px;
   height: 174px;
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 28%, rgba(255,255,255,.08), transparent 30%),
-    radial-gradient(circle, #171614 0%, #0d0c0b 68%, #070706 100%);
+  background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.08), transparent 30%), radial-gradient(circle, #171614 0%, #0d0c0b 68%, #070706 100%);
   border: 1px solid rgba(184,148,60,.42);
   display: flex;
   flex-direction: column;
@@ -1182,20 +1145,8 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
   text-align: center;
   color: #f6f0e6;
   z-index: 20;
-  box-shadow:
-    0 0 0 10px rgba(184,148,60,.025),
-    0 0 70px rgba(184,148,60,.16),
-    inset 0 0 45px rgba(184,148,60,.05);
+  box-shadow: 0 0 0 10px rgba(184,148,60,.025), 0 0 70px rgba(184,148,60,.16), inset 0 0 45px rgba(184,148,60,.05);
   animation: centerBreath 5s ease-in-out infinite;
-}
-
-.orbit-center::before {
-  content: "";
-  position: absolute;
-  inset: -7px;
-  border-radius: 50%;
-  border: 1px solid rgba(184,148,60,.10);
-  pointer-events: none;
 }
 
 .orbit-center-icon {
@@ -1203,7 +1154,6 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
   font-size: 1.35rem;
   font-weight: 500;
   letter-spacing: 4px;
-  line-height: 1;
 }
 
 .orbit-center-label {
@@ -1218,21 +1168,10 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
 }
 
 @keyframes centerBreath {
-  0%,100% {
-    box-shadow:
-      0 0 0 10px rgba(184,148,60,.025),
-      0 0 60px rgba(184,148,60,.13),
-      inset 0 0 45px rgba(184,148,60,.04);
-  }
-  50% {
-    box-shadow:
-      0 0 0 14px rgba(184,148,60,.035),
-      0 0 85px rgba(184,148,60,.21),
-      inset 0 0 55px rgba(184,148,60,.07);
-  }
+  0%,100% { box-shadow: 0 0 0 10px rgba(184,148,60,.025), 0 0 60px rgba(184,148,60,.13), inset 0 0 45px rgba(184,148,60,.04); }
+  50% { box-shadow: 0 0 0 14px rgba(184,148,60,.035), 0 0 85px rgba(184,148,60,.21), inset 0 0 55px rgba(184,148,60,.07); }
 }
 
-/* The rotating track. Keep the center independent. */
 .persona-orbit-track {
   position: absolute;
   inset: 0;
@@ -1248,15 +1187,12 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
 
 @keyframes personaOrbit {
   from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
-/* Persona positions are calculated by JS.
-   --angle is the starting angle and --radius is the orbit radius. */
 .orbit-item {
   --angle: 0deg;
   --radius: 265px;
-
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1264,11 +1200,7 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
   height: 104px;
   margin-left: -52px;
   margin-top: -52px;
-
-  transform:
-    rotate(var(--angle))
-    translateY(calc(var(--radius) * -1));
-
+  transform: rotate(var(--angle)) translateY(calc(var(--radius) * -1));
   transform-origin: 52px 52px;
   cursor: pointer;
   z-index: 3;
@@ -1276,7 +1208,6 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
   will-change: transform;
 }
 
-/* Counter-rotate the visual so names/icons remain upright. */
 .orbit-item > .orbit-persona {
   transform: rotate(calc(var(--angle) * -1));
 }
@@ -1292,44 +1223,23 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
   text-align: center;
   padding: 12px;
   box-sizing: border-box;
-
-  background:
-    radial-gradient(circle at 35% 28%, rgba(255,255,255,.09), transparent 30%),
-    rgba(18,17,15,.88);
-
+  background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.09), transparent 30%), rgba(18,17,15,.88);
   border: 1px solid rgba(184,148,60,.25);
-  box-shadow:
-    0 12px 35px rgba(0,0,0,.22),
-    inset 0 0 24px rgba(184,148,60,.025);
-
-  transition:
-    transform .55s cubic-bezier(.22,1,.36,1),
-    border-color .4s ease,
-    box-shadow .4s ease,
-    background .4s ease,
-    opacity .4s ease;
+  box-shadow: 0 12px 35px rgba(0,0,0,.22), inset 0 0 24px rgba(184,148,60,.025);
+  transition: transform .55s cubic-bezier(.22,1,.36,1), border-color .4s ease, box-shadow .4s ease, background .4s ease, opacity .4s ease;
 }
 
-/* Active/front persona */
 .orbit-item.is-active {
   z-index: 12;
 }
 
 .orbit-item.is-active .orbit-persona {
-  transform:
-    rotate(calc(var(--angle) * -1))
-    scale(1.22);
+  transform: rotate(calc(var(--angle) * -1)) scale(1.22);
   border-color: rgba(212,168,74,.90);
-  background:
-    radial-gradient(circle at 35% 28%, rgba(255,255,255,.13), transparent 30%),
-    rgba(28,25,19,.96);
-  box-shadow:
-    0 0 0 7px rgba(184,148,60,.035),
-    0 0 45px rgba(184,148,60,.34),
-    inset 0 0 28px rgba(184,148,60,.07);
+  background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.13), transparent 30%), rgba(28,25,19,.96);
+  box-shadow: 0 0 0 7px rgba(184,148,60,.035), 0 0 45px rgba(184,148,60,.34), inset 0 0 28px rgba(184,148,60,.07);
 }
 
-/* Quiet states create depth */
 .orbit-item.is-dim .orbit-persona {
   opacity: .52;
   transform: rotate(calc(var(--angle) * -1)) scale(.82);
@@ -1340,9 +1250,7 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
 }
 
 .orbit-item:hover .orbit-persona {
-  transform:
-    rotate(calc(var(--angle) * -1))
-    scale(1.14);
+  transform: rotate(calc(var(--angle) * -1)) scale(1.14);
   opacity: 1;
   border-color: rgba(212,168,74,.70);
   box-shadow: 0 0 38px rgba(184,148,60,.25);
@@ -1381,57 +1289,6 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
   font-size: .65rem;
 }
 
-/* Connection lines */
-.orbit-connector {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 1px;
-  height: var(--orbit-radius);
-  transform-origin: bottom center;
-  transform: rotate(var(--angle));
-  background: linear-gradient(
-    to top,
-    rgba(184,148,60,.13),
-    rgba(184,148,60,.03),
-    transparent
-  );
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Tiny orbit particles */
-.persona-orbit-container::before,
-.persona-orbit-container::after {
-  content: "";
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #d4a84a;
-  box-shadow: 0 0 12px rgba(212,168,74,.8);
-  opacity: .45;
-  pointer-events: none;
-  animation: particleDrift 7s ease-in-out infinite;
-}
-
-.persona-orbit-container::before {
-  top: 14%;
-  left: 22%;
-}
-
-.persona-orbit-container::after {
-  right: 16%;
-  bottom: 20%;
-  animation-delay: -3s;
-}
-
-@keyframes particleDrift {
-  0%,100% { transform: translate(0,0); opacity:.25; }
-  50% { transform: translate(12px,-18px); opacity:.8; }
-}
-
-/* Tooltip / intrigue copy */
 .orbit-tooltip {
   position: absolute;
   left: 50%;
@@ -1460,7 +1317,6 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
   transform: translateX(-50%) translateY(0);
 }
 
-/* ===== PREMIUM 12-PERSONA FEATURED REVEAL ===== */
 .featured-persona {
   max-width: 680px;
   margin: 0 auto 30px;
@@ -1541,7 +1397,30 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
   font-size: 1.8rem;
 }
 
-/* Personas CTA */
+/* Responsive */
+@media (max-width: 900px) {
+  .persona-orbit-container { width: 520px; height: 520px; }
+  .orbit-center { width: 145px; height: 145px; }
+  .orbit-item, .orbit-persona { width: 88px; height: 88px; }
+  .orbit-item { margin-left: -44px; margin-top: -44px; }
+  .orbit-name { font-size: .60rem; max-width: 70px; }
+  .orbit-icon { width: 17px; height: 17px; margin-bottom: 4px; }
+}
+
+@media (max-width: 600px) {
+  .persona-orbit-container { width: 360px; height: 360px; margin-top: 10px; margin-bottom: 28px; }
+  .orbit-center { width: 108px; height: 108px; }
+  .orbit-center-icon { font-size: .95rem; letter-spacing: 2.5px; }
+  .orbit-center-label { margin-top: 8px; font-size: .38rem; letter-spacing: 1.4px; max-width: 78px; }
+  .orbit-item, .orbit-persona { width: 66px; height: 66px; }
+  .orbit-item { margin-left: -33px; margin-top: -33px; }
+  .orbit-name { font-size: .47rem; max-width: 54px; }
+  .orbit-number { font-size: .38rem; margin-bottom: 2px; }
+  .orbit-icon { display: none; }
+  .orbit-tooltip { display: none; }
+  .featured-persona-inner { flex-direction: column; text-align: center; padding: 22px 18px; }
+}
+
 .personas-cta {
   text-align: center;
   margin-top: 20px;
@@ -1556,7 +1435,7 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
 .personas-cta p strong {
   color: #b8943c;
 }
-
+        
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
   .persona-orbit-container {
@@ -2289,225 +2168,170 @@ new_orbit_css = r"""/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM =====
   </div>
 </div>
 
-<!-- ===== THE 12 PERSONAS - PREMIUM DYNAMIC ===== -->
-  # Keep the header/badge/subtitle and the featured/CTA portions from the original,
-# while replacing the old orbit mechanics with the new 12-persona system.
-modified = original[:start] + new_orbit_css + "\n\n" + original[end:]
+  <!-- ===== THE 12 PERSONAS - PREMIUM DYNAMIC ===== -->
+<section class="container section" id="personas">
+  <div class="personas-header">
+    <span class="personas-badge">✦ THE 12 PERSONAS</span>
+    <h2 class="heading-serif heading-lg">12 Ways The World Can <span class="accent-gold">Experience You</span></h2>
+    <p class="personas-subtitle">You think. You express. You connect. But beneath the surface, there's a pattern — a persona that shapes how the world experiences you.</p>
+  </div>
 
-css_path = Path("/mnt/data/the-unspoken-12-persona-orbit.css")
-css_path.write_text(modified, encoding="utf-8")
+  <div class="persona-orbit-container">
+    <div class="orbit-ring orbit-ring-1"></div>
+    <div class="orbit-ring orbit-ring-2"></div>
+    <div class="orbit-ring orbit-ring-3"></div>
+    
+    <div class="orbit-center">
+      <span class="orbit-center-icon">✦</span>
+      <span class="orbit-center-label">THE UNSPOKEN<br>PERSONAS</span>
+    </div>
+    
+    <div class="persona-orbit-track" id="personaOrbitTrack">
+      <!-- Persona 1 -->
+      <div class="orbit-item" data-persona="translator">
+        <div class="orbit-persona">
+          <span class="orbit-number">01</span>
+          <span class="orbit-icon">🌐</span>
+          <span class="orbit-name">Translator</span>
+        </div>
+        <span class="orbit-tooltip">Makes complexity make sense</span>
+      </div>
+      
+      <!-- Persona 2 -->
+      <div class="orbit-item" data-persona="listener">
+        <div class="orbit-persona">
+          <span class="orbit-number">02</span>
+          <span class="orbit-icon">👂</span>
+          <span class="orbit-name">Listener</span>
+        </div>
+        <span class="orbit-tooltip">Hears what others miss</span>
+      </div>
+      
+      <!-- Persona 3 -->
+      <div class="orbit-item" data-persona="amplifier">
+        <div class="orbit-persona">
+          <span class="orbit-number">03</span>
+          <span class="orbit-icon">📢</span>
+          <span class="orbit-name">Amplifier</span>
+        </div>
+        <span class="orbit-tooltip">Makes ideas impossible to ignore</span>
+      </div>
+      
+      <!-- Persona 4 -->
+      <div class="orbit-item" data-persona="articulator">
+        <div class="orbit-persona">
+          <span class="orbit-number">04</span>
+          <span class="orbit-icon">🎯</span>
+          <span class="orbit-name">Articulator</span>
+        </div>
+        <span class="orbit-tooltip">Makes thinking visible</span>
+      </div>
+      
+      <!-- Persona 5 -->
+      <div class="orbit-item" data-persona="strategist">
+        <div class="orbit-persona">
+          <span class="orbit-number">05</span>
+          <span class="orbit-icon">🎯</span>
+          <span class="orbit-name">Strategist</span>
+        </div>
+        <span class="orbit-tooltip">Connects communication to direction</span>
+      </div>
+      
+      <!-- Persona 6 -->
+      <div class="orbit-item" data-persona="architect">
+        <div class="orbit-persona">
+          <span class="orbit-number">06</span>
+          <span class="orbit-icon">🏛️</span>
+          <span class="orbit-name">Architect</span>
+        </div>
+        <span class="orbit-tooltip">Builds clarity into the bigger picture</span>
+      </div>
+      
+      <!-- Persona 7 -->
+      <div class="orbit-item" data-persona="navigator">
+        <div class="orbit-persona">
+          <span class="orbit-number">07</span>
+          <span class="orbit-icon">🧭</span>
+          <span class="orbit-name">Navigator</span>
+        </div>
+        <span class="orbit-tooltip">Finds a way through complexity</span>
+      </div>
+      
+      <!-- Persona 8 -->
+      <div class="orbit-item" data-persona="influencer">
+        <div class="orbit-persona">
+          <span class="orbit-number">08</span>
+          <span class="orbit-icon">💫</span>
+          <span class="orbit-name">Influencer</span>
+        </div>
+        <span class="orbit-tooltip">Moves people toward action</span>
+      </div>
+      
+      <!-- Persona 9 -->
+      <div class="orbit-item" data-persona="interpreter">
+        <div class="orbit-persona">
+          <span class="orbit-number">09</span>
+          <span class="orbit-icon">🧠</span>
+          <span class="orbit-name">Interpreter</span>
+        </div>
+        <span class="orbit-tooltip">Reads what others miss</span>
+      </div>
+      
+      <!-- Persona 10 -->
+      <div class="orbit-item" data-persona="filter">
+        <div class="orbit-persona">
+          <span class="orbit-number">10</span>
+          <span class="orbit-icon">🔍</span>
+          <span class="orbit-name">Filter</span>
+        </div>
+        <span class="orbit-tooltip">Knows what matters</span>
+      </div>
+      
+      <!-- Persona 11 -->
+      <div class="orbit-item" data-persona="emerging">
+        <div class="orbit-persona">
+          <span class="orbit-number">11</span>
+          <span class="orbit-icon">🌱</span>
+          <span class="orbit-name">Emerging</span>
+        </div>
+        <span class="orbit-tooltip">Finding your voice</span>
+      </div>
+      
+      <!-- Persona 12 -->
+      <div class="orbit-item" data-persona="misaligned">
+        <div class="orbit-persona">
+          <span class="orbit-number">12</span>
+          <span class="orbit-icon">🔄</span>
+          <span class="orbit-name">Misaligned</span>
+        </div>
+        <span class="orbit-tooltip">Intent and impact may not meet</span>
+      </div>
+    </div>
+  </div>
 
-js = r"""/* THE UNSPOKEN — Premium 12 Persona Orbit
-   Requires:
-   .persona-orbit-container
-   .persona-orbit-track
-   .orbit-item
-   .orbit-persona
-   .orbit-name
-   .orbit-number
-   Optional: #featuredPersonaName, #featuredPersonaDesc, #featuredPersonaNumber
-*/
+  <!-- Featured Persona Card -->
+  <div class="featured-persona" id="featuredPersona">
+    <div class="featured-persona-inner">
+      <div class="featured-left">
+        <span class="featured-number" id="featuredNumber">01</span>
+        <h3 class="featured-name" id="featuredName">The Translator</h3>
+        <p class="featured-desc" id="featuredDesc">Makes complexity make sense. You turn complex thoughts into clear, memorable messages.</p>
+        <a href="#" class="featured-link">Explore Persona →</a>
+      </div>
+      <div class="featured-right">
+        <div class="featured-icon-wrapper">
+          <span class="featured-icon" id="featuredIcon">🌐</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-(() => {
-  const container = document.querySelector('.persona-orbit-container');
-  if (!container) return;
-
-  const track = container.querySelector('.persona-orbit-track');
-  if (!track) return;
-
-  const items = [...track.querySelectorAll('.orbit-item')];
-  if (!items.length) return;
-
-  // If you have 12 persona elements in the HTML, all 12 are positioned automatically.
-  // No manual top/right/bottom/left CSS is required.
-  const total = items.length;
-  const featuredName = document.querySelector('#featuredPersonaName, .featured-name');
-  const featuredDesc = document.querySelector('#featuredPersonaDesc, .featured-desc');
-  const featuredNumber = document.querySelector('#featuredPersonaNumber, .featured-number');
-
-  const descriptions = {
-    'The Translator': 'You make complexity make sense.',
-    'The Amplifier': 'You make ideas impossible to ignore.',
-    'The Articulator': 'You make thinking visible.',
-    'The Interpreter': 'You read what others miss.',
-    'The Filter': 'You know what matters.',
-    'The Emerging': 'You are finding your voice.',
-    'The Misaligned': 'Your intent and impact may not always meet.',
-    'The Strategist': 'You connect communication to direction.',
-    'The Architect': 'You build clarity into the bigger picture.',
-    'The Navigator': 'You find a way through complexity.',
-    'The Influencer': 'You move people toward action.',
-    'The Listener': 'You hear what is often left unsaid.'
-  };
-
-  function getRadius() {
-    const styles = getComputedStyle(container);
-    return parseFloat(styles.getPropertyValue('--orbit-radius')) || 265;
-  }
-
-  function getSize() {
-    const styles = getComputedStyle(container);
-    return parseFloat(styles.getPropertyValue('--orbit-size')) || 620;
-  }
-
-  function positionItems() {
-    const step = 360 / total;
-
-    items.forEach((item, index) => {
-      const angle = index * step - 90; // First persona starts at top.
-      item.style.setProperty('--angle', `${angle}deg`);
-      item.style.setProperty('--radius', `${getRadius()}px`);
-
-      // Keep an accessible/semantic index if not already supplied.
-      if (!item.dataset.personaIndex) {
-        item.dataset.personaIndex = String(index + 1).padStart(2, '0');
-      }
-    });
-  }
-
-  function personaName(item) {
-    const nameEl = item.querySelector('.orbit-name');
-    return nameEl ? nameEl.textContent.trim() : '';
-  }
-
-  function updateFeatured(item) {
-    if (!item) return;
-
-    const name = personaName(item);
-    const number = item.dataset.personaIndex || '';
-    const desc = descriptions[name] || item.dataset.description || '';
-
-    if (featuredName) featuredName.textContent = name;
-    if (featuredDesc) featuredDesc.textContent = desc;
-    if (featuredNumber) featuredNumber.textContent = number;
-  }
-
-  // Determine which persona is visually nearest the top of the orbit.
-  function updateActive() {
-    const rotationMatch = getComputedStyle(track).transform;
-    let rotation = 0;
-
-    if (rotationMatch && rotationMatch !== 'none') {
-      const values = rotationMatch.match(/matrix\(([^)]+)\)/);
-      if (values) {
-        const parts = values[1].split(',').map(Number);
-        rotation = Math.atan2(parts[1], parts[0]) * 180 / Math.PI;
-      }
-    }
-
-    let best = null;
-    let bestDistance = Infinity;
-
-    items.forEach((item, index) => {
-      const base = index * (360 / total) - 90;
-      const current = (base + rotation) % 360;
-      const normalized = ((current + 540) % 360) - 180;
-      const distance = Math.abs(normalized);
-
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        best = item;
-      }
-    });
-
-    items.forEach(item => {
-      item.classList.remove('is-active', 'is-dim');
-      if (item !== best && bestDistance < 28) item.classList.add('is-dim');
-    });
-
-    if (best && bestDistance < 28) {
-      best.classList.add('is-active');
-      updateFeatured(best);
-    }
-  }
-
-  // Clicking a persona pauses the orbit and smoothly rotates that persona to top.
-  items.forEach((item, index) => {
-    item.addEventListener('click', () => {
-      track.style.animationPlayState = 'paused';
-
-      const step = 360 / total;
-      const desired = -(index * step);
-
-      track.style.transition = 'transform 1.1s cubic-bezier(.22,1,.36,1)';
-      track.style.transform = `rotate(${desired}deg)`;
-
-      items.forEach(i => i.classList.remove('is-active', 'is-dim'));
-      item.classList.add('is-active');
-      updateFeatured(item);
-
-      window.setTimeout(() => {
-        track.style.transition = '';
-      }, 1150);
-    });
-  });
-
-  // Pause while pointer is over the orbit; resume when it leaves.
-  container.addEventListener('mouseenter', () => {
-    track.style.animationPlayState = 'paused';
-  });
-
-  container.addEventListener('mouseleave', () => {
-    // Only resume if the user hasn't clicked to focus a persona.
-    if (!container.classList.contains('manual-focus')) {
-      track.style.animationPlayState = 'running';
-    }
-  });
-
-  // Touch/swipe: simple horizontal gesture rotates to the next/previous persona.
-  let touchStartX = null;
-
-  container.addEventListener('touchstart', (e) => {
-    touchStartX = e.touches[0].clientX;
-  }, { passive: true });
-
-  container.addEventListener('touchend', (e) => {
-    if (touchStartX === null) return;
-
-    const delta = e.changedTouches[0].clientX - touchStartX;
-    touchStartX = null;
-
-    if (Math.abs(delta) < 40) return;
-
-    const step = 360 / total;
-    const direction = delta > 0 ? 1 : -1;
-
-    track.style.animationPlayState = 'paused';
-    track.style.transition = 'transform .75s cubic-bezier(.22,1,.36,1)';
-
-    const current = track.dataset.touchRotation
-      ? parseFloat(track.dataset.touchRotation)
-      : 0;
-
-    const next = current + direction * step;
-    track.dataset.touchRotation = String(next);
-    track.style.transform = `rotate(${next}deg)`;
-
-    window.setTimeout(() => {
-      track.style.transition = '';
-    }, 800);
-  }, { passive: true });
-
-  // Initial setup.
-  positionItems();
-  updateFeatured(items[0]);
-
-  // Recalculate radii after resize.
-  window.addEventListener('resize', positionItems, { passive: true });
-
-  // Keep the active persona synchronized with the slow animation.
-  let lastUpdate = 0;
-  function frame(timestamp) {
-    if (timestamp - lastUpdate > 180) {
-      updateActive();
-      lastUpdate = timestamp;
-    }
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-})();
-"""
-
+  <div class="personas-cta">
+    <p>This isn't just a quiz. It's a <strong>mirror</strong>.</p>
+    <a href="Personasnap.html" class="btn-paid">Discover My Persona →</a>
+  </div>
+</section>
+  
     <!-- ===== THE PROBLEM ===== -->
 <section class="container section">
   <h3 class="heading-serif heading-xl">You know what you mean.</h3>
@@ -2845,15 +2669,15 @@ js = r"""/* THE UNSPOKEN — Premium 12 Persona Orbit
     const prevBtn = document.getElementById('carouselPrev');
     const nextBtn = document.getElementById('carouselNext');
     const dots = document.querySelectorAll('.carousel-dot');
-    const cards = track.querySelectorAll('.journey-card-premium');
+    const cards = track ? track.querySelectorAll('.journey-card-premium') : [];
     const cardsPerView = window.innerWidth <= 992 ? 1 : 2;
     let currentIndex = 0;
     const totalSlides = Math.ceil(cards.length / cardsPerView);
 
     function updateCarousel() {
+      if (!cards.length) return;
       const slideWidth = cards[0].offsetWidth + 24;
       track.style.transform = `translateX(-${currentIndex * slideWidth * cardsPerView}px)`;
-      
       dots.forEach((dot, index) => {
         dot.classList.toggle('active', index === currentIndex);
       });
@@ -2866,246 +2690,170 @@ js = r"""/* THE UNSPOKEN — Premium 12 Persona Orbit
       updateCarousel();
     }
 
-    prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
-    nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
+    if (prevBtn && nextBtn) {
+      prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
+      nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
+    }
 
     dots.forEach((dot, index) => {
       dot.addEventListener('click', () => goToSlide(index));
     });
 
-    window.addEventListener('resize', () => {
-      const newCardsPerView = window.innerWidth <= 992 ? 1 : 2;
-      if (newCardsPerView !== cardsPerView) {
-        // Recalculate total slides
-        const newTotal = Math.ceil(cards.length / newCardsPerView);
-        if (currentIndex >= newTotal) currentIndex = newTotal - 1;
-        if (currentIndex < 0) currentIndex = 0;
-        updateCarousel();
-      }
-    });
-
-    // Initial update
     setTimeout(updateCarousel, 100);
 
-// ===== PREMIUM DYNAMIC PERSONAS =====
-# Keep the header/badge/subtitle and the featured/CTA portions from the original,
-# while replacing the old orbit mechanics with the new 12-persona system.
-modified = original[:start] + new_orbit_css + "\n\n" + original[end:]
+    // ===== PREMIUM 12-PERSONA ORBIT =====
+    const container = document.querySelector('.persona-orbit-container');
+    if (container) {
+      const orbitTrack = document.getElementById('personaOrbitTrack');
+      if (orbitTrack) {
+        const items = orbitTrack.querySelectorAll('.orbit-item');
+        const total = items.length;
+        const featuredName = document.getElementById('featuredName');
+        const featuredDesc = document.getElementById('featuredDesc');
+        const featuredNumber = document.getElementById('featuredNumber');
+        const featuredIcon = document.getElementById('featuredIcon');
 
-css_path = Path("/mnt/data/the-unspoken-12-persona-orbit.css")
-css_path.write_text(modified, encoding="utf-8")
+        const personaData = {
+          'translator': { name: 'The Translator', desc: 'Makes complexity make sense. You turn complex thoughts into clear, memorable messages.', icon: '🌐' },
+          'listener': { name: 'The Listener', desc: 'Hears what others miss. You read between the lines and understand the unspoken.', icon: '👂' },
+          'amplifier': { name: 'The Amplifier', desc: 'Makes ideas impossible to ignore. Your presence and energy make ideas unforgettable.', icon: '📢' },
+          'articulator': { name: 'The Articulator', desc: 'Makes thinking visible. You speak with precision and structure that commands respect.', icon: '🎯' },
+          'strategist': { name: 'The Strategist', desc: 'Connects communication to direction. You align words with outcomes.', icon: '🎯' },
+          'architect': { name: 'The Architect', desc: 'Builds clarity into the bigger picture. You create frameworks that stick.', icon: '🏛️' },
+          'navigator': { name: 'The Navigator', desc: 'Finds a way through complexity. You guide others through uncertainty.', icon: '🧭' },
+          'influencer': { name: 'The Influencer', desc: 'Moves people toward action. Your words create momentum and drive decisions.', icon: '💫' },
+          'interpreter': { name: 'The Interpreter', desc: 'Reads what others miss. You understand what people truly mean.', icon: '🧠' },
+          'filter': { name: 'The Filter', desc: 'Knows what matters. You speak with intention and precision.', icon: '🔍' },
+          'emerging': { name: 'The Emerging', desc: 'Finding your voice. Your potential is just beginning to be seen.', icon: '🌱' },
+          'misaligned': { name: 'The Misaligned', desc: 'Intent and impact may not meet. The gap is your opportunity.', icon: '🔄' }
+        };
 
-js = r"""/* THE UNSPOKEN — Premium 12 Persona Orbit
-   Requires:
-   .persona-orbit-container
-   .persona-orbit-track
-   .orbit-item
-   .orbit-persona
-   .orbit-name
-   .orbit-number
-   Optional: #featuredPersonaName, #featuredPersonaDesc, #featuredPersonaNumber
-*/
+        function updateFeatured(personaKey) {
+          const data = personaData[personaKey];
+          if (!data) return;
+          if (featuredName) featuredName.textContent = data.name;
+          if (featuredDesc) featuredDesc.textContent = data.desc;
+          if (featuredIcon) featuredIcon.textContent = data.icon;
+          if (featuredNumber) {
+            const index = Object.keys(personaData).indexOf(personaKey) + 1;
+            featuredNumber.textContent = String(index).padStart(2, '0');
+          }
+        }
 
-(() => {
-  const container = document.querySelector('.persona-orbit-container');
-  if (!container) return;
+        // Position items and handle clicks
+        items.forEach((item, index) => {
+          const step = 360 / total;
+          const angle = index * step - 90;
+          item.style.setProperty('--angle', `${angle}deg`);
+          
+          item.addEventListener('click', function() {
+            const personaKey = this.dataset.persona;
+            updateFeatured(personaKey);
+            
+            // Highlight active
+            items.forEach(i => i.classList.remove('is-active', 'is-dim'));
+            this.classList.add('is-active');
+            
+            // Pause animation
+            orbitTrack.style.animationPlayState = 'paused';
+          });
+        });
 
-  const track = container.querySelector('.persona-orbit-track');
-  if (!track) return;
+        // Hover effects
+        items.forEach(item => {
+          item.addEventListener('mouseenter', function() {
+            const personaKey = this.dataset.persona;
+            updateFeatured(personaKey);
+          });
+        });
 
-  const items = [...track.querySelectorAll('.orbit-item')];
-  if (!items.length) return;
-
-  // If you have 12 persona elements in the HTML, all 12 are positioned automatically.
-  // No manual top/right/bottom/left CSS is required.
-  const total = items.length;
-  const featuredName = document.querySelector('#featuredPersonaName, .featured-name');
-  const featuredDesc = document.querySelector('#featuredPersonaDesc, .featured-desc');
-  const featuredNumber = document.querySelector('#featuredPersonaNumber, .featured-number');
-
-  const descriptions = {
-    'The Translator': 'You make complexity make sense.',
-    'The Amplifier': 'You make ideas impossible to ignore.',
-    'The Articulator': 'You make thinking visible.',
-    'The Interpreter': 'You read what others miss.',
-    'The Filter': 'You know what matters.',
-    'The Emerging': 'You are finding your voice.',
-    'The Misaligned': 'Your intent and impact may not always meet.',
-    'The Strategist': 'You connect communication to direction.',
-    'The Architect': 'You build clarity into the bigger picture.',
-    'The Navigator': 'You find a way through complexity.',
-    'The Influencer': 'You move people toward action.',
-    'The Listener': 'You hear what is often left unsaid.'
-  };
-
-  function getRadius() {
-    const styles = getComputedStyle(container);
-    return parseFloat(styles.getPropertyValue('--orbit-radius')) || 265;
-  }
-
-  function getSize() {
-    const styles = getComputedStyle(container);
-    return parseFloat(styles.getPropertyValue('--orbit-size')) || 620;
-  }
-
-  function positionItems() {
-    const step = 360 / total;
-
-    items.forEach((item, index) => {
-      const angle = index * step - 90; // First persona starts at top.
-      item.style.setProperty('--angle', `${angle}deg`);
-      item.style.setProperty('--radius', `${getRadius()}px`);
-
-      // Keep an accessible/semantic index if not already supplied.
-      if (!item.dataset.personaIndex) {
-        item.dataset.personaIndex = String(index + 1).padStart(2, '0');
-      }
-    });
-  }
-
-  function personaName(item) {
-    const nameEl = item.querySelector('.orbit-name');
-    return nameEl ? nameEl.textContent.trim() : '';
-  }
-
-  function updateFeatured(item) {
-    if (!item) return;
-
-    const name = personaName(item);
-    const number = item.dataset.personaIndex || '';
-    const desc = descriptions[name] || item.dataset.description || '';
-
-    if (featuredName) featuredName.textContent = name;
-    if (featuredDesc) featuredDesc.textContent = desc;
-    if (featuredNumber) featuredNumber.textContent = number;
-  }
-
-  // Determine which persona is visually nearest the top of the orbit.
-  function updateActive() {
-    const rotationMatch = getComputedStyle(track).transform;
-    let rotation = 0;
-
-    if (rotationMatch && rotationMatch !== 'none') {
-      const values = rotationMatch.match(/matrix\(([^)]+)\)/);
-      if (values) {
-        const parts = values[1].split(',').map(Number);
-        rotation = Math.atan2(parts[1], parts[0]) * 180 / Math.PI;
+        // Set initial featured persona
+        if (items.length > 0) {
+          const firstKey = items[0].dataset.persona;
+          updateFeatured(firstKey);
+          items[0].classList.add('is-active');
+        }
       }
     }
 
-    let best = null;
-    let bestDistance = Infinity;
+    // ===== LOGIN MODAL =====
+    const signInBtn = document.getElementById('signInBtn');
+    const loginModal = document.getElementById('loginModal');
+    const loginModalClose = document.getElementById('loginModalClose');
+    const loginModalOverlay = document.getElementById('loginModalOverlay');
+    const loginForm = document.getElementById('loginForm');
 
-    items.forEach((item, index) => {
-      const base = index * (360 / total) - 90;
-      const current = (base + rotation) % 360;
-      const normalized = ((current + 540) % 360) - 180;
-      const distance = Math.abs(normalized);
+    if (signInBtn && loginModal) {
+      signInBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        loginModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      });
 
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        best = item;
+      function closeLoginModal() {
+        loginModal.style.display = 'none';
+        document.body.style.overflow = '';
+        if (loginForm) loginForm.reset();
+        const errorEl = document.querySelector('.login-error');
+        if (errorEl) errorEl.style.display = 'none';
       }
-    });
 
-    items.forEach(item => {
-      item.classList.remove('is-active', 'is-dim');
-      if (item !== best && bestDistance < 28) item.classList.add('is-dim');
-    });
-
-    if (best && bestDistance < 28) {
-      best.classList.add('is-active');
-      updateFeatured(best);
-    }
-  }
-
-  // Clicking a persona pauses the orbit and smoothly rotates that persona to top.
-  items.forEach((item, index) => {
-    item.addEventListener('click', () => {
-      track.style.animationPlayState = 'paused';
-
-      const step = 360 / total;
-      const desired = -(index * step);
-
-      track.style.transition = 'transform 1.1s cubic-bezier(.22,1,.36,1)';
-      track.style.transform = `rotate(${desired}deg)`;
-
-      items.forEach(i => i.classList.remove('is-active', 'is-dim'));
-      item.classList.add('is-active');
-      updateFeatured(item);
-
-      window.setTimeout(() => {
-        track.style.transition = '';
-      }, 1150);
-    });
-  });
-
-  // Pause while pointer is over the orbit; resume when it leaves.
-  container.addEventListener('mouseenter', () => {
-    track.style.animationPlayState = 'paused';
-  });
-
-  container.addEventListener('mouseleave', () => {
-    // Only resume if the user hasn't clicked to focus a persona.
-    if (!container.classList.contains('manual-focus')) {
-      track.style.animationPlayState = 'running';
-    }
-  });
-
-  // Touch/swipe: simple horizontal gesture rotates to the next/previous persona.
-  let touchStartX = null;
-
-  container.addEventListener('touchstart', (e) => {
-    touchStartX = e.touches[0].clientX;
-  }, { passive: true });
-
-  container.addEventListener('touchend', (e) => {
-    if (touchStartX === null) return;
-
-    const delta = e.changedTouches[0].clientX - touchStartX;
-    touchStartX = null;
-
-    if (Math.abs(delta) < 40) return;
-
-    const step = 360 / total;
-    const direction = delta > 0 ? 1 : -1;
-
-    track.style.animationPlayState = 'paused';
-    track.style.transition = 'transform .75s cubic-bezier(.22,1,.36,1)';
-
-    const current = track.dataset.touchRotation
-      ? parseFloat(track.dataset.touchRotation)
-      : 0;
-
-    const next = current + direction * step;
-    track.dataset.touchRotation = String(next);
-    track.style.transform = `rotate(${next}deg)`;
-
-    window.setTimeout(() => {
-      track.style.transition = '';
-    }, 800);
-  }, { passive: true });
-
-  // Initial setup.
-  positionItems();
-  updateFeatured(items[0]);
-
-  // Recalculate radii after resize.
-  window.addEventListener('resize', positionItems, { passive: true });
-
-  // Keep the active persona synchronized with the slow animation.
-  let lastUpdate = 0;
-  function frame(timestamp) {
-    if (timestamp - lastUpdate > 180) {
-      updateActive();
-      lastUpdate = timestamp;
-    }
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-})();
-"""
+      if (loginModalClose) {
+        loginModalClose.addEventListener('click', closeLoginModal);
+      }
       
+      if (loginModalOverlay) {
+        loginModalOverlay.addEventListener('click', closeLoginModal);
+      }
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && loginModal.style.display === 'flex') {
+          closeLoginModal();
+        }
+      });
+
+      if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const email = document.getElementById('loginEmail').value.trim();
+          const password = document.getElementById('loginPassword').value.trim();
+          const errorEl = document.querySelector('.login-error') || createErrorElement();
+          
+          if (!email || !password) {
+            errorEl.textContent = 'Please fill in all fields.';
+            errorEl.style.display = 'block';
+            return;
+          }
+          
+          errorEl.style.display = 'none';
+          const submitBtn = this.querySelector('.login-btn-primary');
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Logging in...';
+          
+          setTimeout(function() {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Log In →';
+            console.log('Login attempt:', { email, password });
+            closeLoginModal();
+          }, 1500);
+        });
+      }
+
+      function createErrorElement() {
+        const error = document.createElement('div');
+        error.className = 'login-error';
+        error.style.cssText = 'color: #dc2626; font-size: 0.85rem; display: none; margin-top: 4px;';
+        const form = document.getElementById('loginForm');
+        if (form) {
+          form.insertBefore(error, form.querySelector('.login-btn-primary'));
+        }
+        return error;
+      }
+    }
+  });
+</script>
+  
     // ===== LOGIN MODAL =====
     const signInBtn = document.getElementById('signInBtn');
     const loginModal = document.getElementById('loginModal');
