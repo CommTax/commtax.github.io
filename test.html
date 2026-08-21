@@ -1095,7 +1095,7 @@
 }
 
 
-/* ===== PREMIUM 12-PERSONA ORBIT SYSTEM ===== */
+/* ===== PREMIUM 3D PERSONA ORBIT SYSTEM ===== */
 .persona-orbit-container {
   position: relative;
   width: 620px;
@@ -1117,6 +1117,7 @@
 .orbit-ring-1 {
   width: 100%;
   height: 100%;
+  box-shadow: inset 0 0 80px rgba(184, 148, 60, 0.03);
 }
 
 .orbit-ring-2 {
@@ -1131,13 +1132,14 @@
   border-color: rgba(184, 148, 60, 0.045);
 }
 
+/* Center YOU */
 .orbit-center {
   position: absolute;
-  width: 174px;
-  height: 174px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.08), transparent 30%), radial-gradient(circle, #171614 0%, #0d0c0b 68%, #070706 100%);
-  border: 1px solid rgba(184,148,60,.42);
+  background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.10), transparent 30%), radial-gradient(circle, #171614 0%, #0d0c0b 68%, #070706 100%);
+  border: 1px solid rgba(184,148,60,.45);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1145,38 +1147,39 @@
   text-align: center;
   color: #f6f0e6;
   z-index: 20;
-  box-shadow: 0 0 0 10px rgba(184,148,60,.025), 0 0 70px rgba(184,148,60,.16), inset 0 0 45px rgba(184,148,60,.05);
+  box-shadow: 0 0 0 12px rgba(184,148,60,.025), 0 0 70px rgba(184,148,60,.16), inset 0 0 45px rgba(184,148,60,.05);
   animation: centerBreath 5s ease-in-out infinite;
 }
 
 .orbit-center-icon {
   font-family: 'Playfair Display', serif;
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 500;
   letter-spacing: 4px;
 }
 
 .orbit-center-label {
-  margin-top: 12px;
-  max-width: 110px;
-  font-size: .48rem;
-  line-height: 1.65;
+  margin-top: 10px;
+  max-width: 100px;
+  font-size: .45rem;
+  line-height: 1.6;
   font-weight: 600;
-  letter-spacing: 2.1px;
+  letter-spacing: 2px;
   color: rgba(240,235,228,.72);
   text-transform: uppercase;
 }
 
 @keyframes centerBreath {
-  0%,100% { box-shadow: 0 0 0 10px rgba(184,148,60,.025), 0 0 60px rgba(184,148,60,.13), inset 0 0 45px rgba(184,148,60,.04); }
-  50% { box-shadow: 0 0 0 14px rgba(184,148,60,.035), 0 0 85px rgba(184,148,60,.21), inset 0 0 55px rgba(184,148,60,.07); }
+  0%,100% { box-shadow: 0 0 0 12px rgba(184,148,60,.025), 0 0 60px rgba(184,148,60,.13), inset 0 0 45px rgba(184,148,60,.04); }
+  50% { box-shadow: 0 0 0 16px rgba(184,148,60,.035), 0 0 85px rgba(184,148,60,.21), inset 0 0 55px rgba(184,148,60,.07); }
 }
 
+/* Orbit Track */
 .persona-orbit-track {
   position: absolute;
   inset: 0;
   z-index: 8;
-  animation: personaOrbit 52s linear infinite;
+  animation: personaOrbit 45s linear infinite;
   transform-origin: center;
   will-change: transform;
 }
@@ -1190,118 +1193,170 @@
   to { transform: rotate(360deg); }
 }
 
+/* ===== 3D PERSONA CARDS ===== */
 .orbit-item {
   --angle: 0deg;
   --radius: 265px;
+  --persona-color: #b8943c;
+  
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 104px;
-  height: 104px;
-  margin-left: -52px;
-  margin-top: -52px;
+  width: 130px;
+  height: 160px;
+  margin-left: -65px;
+  margin-top: -80px;
   transform: rotate(var(--angle)) translateY(calc(var(--radius) * -1));
-  transform-origin: 52px 52px;
+  transform-origin: 65px 80px;
   cursor: pointer;
   z-index: 3;
   transition: z-index .3s ease;
   will-change: transform;
+  perspective: 800px;
 }
 
+/* The card container - rotates with orbit, but we counter-rotate the content */
 .orbit-item > .orbit-persona {
+  /* Counter-rotate to keep text upright */
   transform: rotate(calc(var(--angle) * -1));
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(.22,1,.36,1), box-shadow 0.4s ease;
 }
 
+/* 3D Card */
 .orbit-persona {
-  width: 104px;
-  height: 104px;
-  border-radius: 50%;
+  width: 130px;
+  height: 160px;
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 12px;
+  padding: 16px 12px;
   box-sizing: border-box;
-  background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.09), transparent 30%), rgba(18,17,15,.88);
-  border: 1px solid rgba(184,148,60,.25);
-  box-shadow: 0 12px 35px rgba(0,0,0,.22), inset 0 0 24px rgba(184,148,60,.025);
-  transition: transform .55s cubic-bezier(.22,1,.36,1), border-color .4s ease, box-shadow .4s ease, background .4s ease, opacity .4s ease;
+  background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.12) 0%, var(--persona-color) 70%, rgba(0,0,0,.3) 100%);
+  border: 1px solid rgba(255,255,255,.15);
+  box-shadow: 0 8px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.2);
+  transition: transform .55s cubic-bezier(.22,1,.36,1), border-color .4s ease, box-shadow .4s ease, background .4s ease;
+  position: relative;
+  overflow: hidden;
 }
 
+/* 3D Card Glow Effect */
+.orbit-persona::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.08), transparent 60%);
+  pointer-events: none;
+}
+
+/* 3D Card Shine */
+.orbit-persona::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,.1) 0%, transparent 100%);
+  pointer-events: none;
+  border-radius: 16px 16px 0 0;
+}
+
+/* Persona Color Variants */
+.orbit-item[data-persona="translator"] { --persona-color: #4f8bc9; }
+.orbit-item[data-persona="amplifier"] { --persona-color: #e86f4a; }
+.orbit-item[data-persona="articulator"] { --persona-color: #4a9e6e; }
+.orbit-item[data-persona="interpreter"] { --persona-color: #9b6fc0; }
+.orbit-item[data-persona="filter"] { --persona-color: #d4a84a; }
+.orbit-item[data-persona="emerging"] { --persona-color: #5ba3a3; }
+.orbit-item[data-persona="misaligned"] { --persona-color: #c45a6a; }
+
+/* Active/Front Persona - 3D pop effect */
 .orbit-item.is-active {
   z-index: 12;
 }
 
 .orbit-item.is-active .orbit-persona {
-  transform: rotate(calc(var(--angle) * -1)) scale(1.22);
-  border-color: rgba(212,168,74,.90);
-  background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.13), transparent 30%), rgba(28,25,19,.96);
-  box-shadow: 0 0 0 7px rgba(184,148,60,.035), 0 0 45px rgba(184,148,60,.34), inset 0 0 28px rgba(184,148,60,.07);
+  transform: rotate(calc(var(--angle) * -1)) scale(1.15);
+  border-color: rgba(255,255,255,.35);
+  box-shadow: 
+    0 0 0 8px rgba(255,255,255,.04),
+    0 15px 45px rgba(0,0,0,.35),
+    0 0 60px rgba(var(--persona-color), .25),
+    inset 0 1px 0 rgba(255,255,255,.2);
+  background: radial-gradient(ellipse at 30% 20%, 
+    rgba(255,255,255,.18) 0%, 
+    var(--persona-color) 65%, 
+    rgba(0,0,0,.25) 100%
+  );
 }
 
+/* Dim personas for depth */
 .orbit-item.is-dim .orbit-persona {
-  opacity: .52;
-  transform: rotate(calc(var(--angle) * -1)) scale(.82);
+  opacity: .35;
+  transform: rotate(calc(var(--angle) * -1)) scale(.88);
 }
 
+/* Hover effect */
 .orbit-item:hover {
   z-index: 15;
 }
 
 .orbit-item:hover .orbit-persona {
-  transform: rotate(calc(var(--angle) * -1)) scale(1.14);
-  opacity: 1;
-  border-color: rgba(212,168,74,.70);
-  box-shadow: 0 0 38px rgba(184,148,60,.25);
+  transform: rotate(calc(var(--angle) * -1)) scale(1.08);
+  border-color: rgba(255,255,255,.25);
+  box-shadow: 0 12px 40px rgba(0,0,0,.3), 0 0 50px rgba(var(--persona-color), .15);
 }
 
+/* Card Content - ALWAYS UPRIGHT */
 .orbit-number {
   display: block;
-  color: #b8943c;
-  font-size: .46rem;
+  color: rgba(255,255,255,.7);
+  font-size: .45rem;
   font-weight: 700;
-  letter-spacing: 1.8px;
-  margin-bottom: 5px;
-}
-
-.orbit-name {
-  display: block;
-  max-width: 82px;
-  color: #f0ebe4;
-  font-family: 'Playfair Display', serif;
-  font-size: .70rem;
-  line-height: 1.18;
-  letter-spacing: .4px;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
   text-transform: uppercase;
 }
 
 .orbit-icon {
-  margin-bottom: 6px;
-  width: 20px;
-  height: 20px;
-  border: 1px solid rgba(184,148,60,.42);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #d4a84a;
-  font-size: .65rem;
+  margin-bottom: 4px;
+  font-size: 1.6rem;
+  line-height: 1;
 }
 
+.orbit-name {
+  display: block;
+  max-width: 100px;
+  color: #ffffff;
+  font-family: 'Playfair Display', serif;
+  font-size: .7rem;
+  line-height: 1.2;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+
+/* Tooltip */
 .orbit-tooltip {
   position: absolute;
   left: 50%;
-  top: calc(100% + 9px);
+  top: calc(100% + 12px);
   transform: translateX(-50%) translateY(4px);
-  min-width: 145px;
-  max-width: 190px;
-  padding: 8px 12px;
+  min-width: 150px;
+  max-width: 200px;
+  padding: 8px 14px;
   background: rgba(13,12,11,.96);
   color: #f0ebe4;
   border: 1px solid rgba(184,148,60,.22);
   border-radius: 8px;
-  font-size: .56rem;
+  font-size: .55rem;
   line-height: 1.45;
   text-align: center;
   opacity: 0;
@@ -1309,6 +1364,7 @@
   transition: all .3s ease;
   z-index: 30;
   pointer-events: none;
+  font-weight: 400;
 }
 
 .orbit-item:hover .orbit-tooltip {
@@ -1317,15 +1373,17 @@
   transform: translateX(-50%) translateY(0);
 }
 
+/* ===== FEATURED PERSONA CARD ===== */
 .featured-persona {
   max-width: 680px;
   margin: 0 auto 30px;
-  background: rgba(255,255,255,.72);
+  background: rgba(255,255,255,.88);
   border-radius: 18px;
   border: 1px solid #ede8e0;
   box-shadow: 0 12px 42px rgba(0,0,0,.055);
   transition: all .5s ease;
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
 .featured-persona:hover {
@@ -1397,30 +1455,7 @@
   font-size: 1.8rem;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  .persona-orbit-container { width: 520px; height: 520px; }
-  .orbit-center { width: 145px; height: 145px; }
-  .orbit-item, .orbit-persona { width: 88px; height: 88px; }
-  .orbit-item { margin-left: -44px; margin-top: -44px; }
-  .orbit-name { font-size: .60rem; max-width: 70px; }
-  .orbit-icon { width: 17px; height: 17px; margin-bottom: 4px; }
-}
-
-@media (max-width: 600px) {
-  .persona-orbit-container { width: 360px; height: 360px; margin-top: 10px; margin-bottom: 28px; }
-  .orbit-center { width: 108px; height: 108px; }
-  .orbit-center-icon { font-size: .95rem; letter-spacing: 2.5px; }
-  .orbit-center-label { margin-top: 8px; font-size: .38rem; letter-spacing: 1.4px; max-width: 78px; }
-  .orbit-item, .orbit-persona { width: 66px; height: 66px; }
-  .orbit-item { margin-left: -33px; margin-top: -33px; }
-  .orbit-name { font-size: .47rem; max-width: 54px; }
-  .orbit-number { font-size: .38rem; margin-bottom: 2px; }
-  .orbit-icon { display: none; }
-  .orbit-tooltip { display: none; }
-  .featured-persona-inner { flex-direction: column; text-align: center; padding: 22px 18px; }
-}
-
+/* Personas CTA */
 .personas-cta {
   text-align: center;
   margin-top: 20px;
@@ -1435,7 +1470,45 @@
 .personas-cta p strong {
   color: #b8943c;
 }
-        
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .persona-orbit-container { width: 520px; height: 520px; }
+  .orbit-center { width: 130px; height: 130px; }
+  .orbit-item, .orbit-persona { width: 110px; height: 140px; }
+  .orbit-item { margin-left: -55px; margin-top: -70px; transform-origin: 55px 70px; }
+  .orbit-name { font-size: .6rem; max-width: 80px; }
+  .orbit-icon { font-size: 1.3rem; }
+}
+
+@media (max-width: 600px) {
+  .persona-orbit-container { width: 380px; height: 380px; margin-top: 10px; margin-bottom: 28px; }
+  .orbit-center { width: 100px; height: 100px; }
+  .orbit-center-icon { font-size: .9rem; letter-spacing: 2.5px; }
+  .orbit-center-label { margin-top: 6px; font-size: .35rem; max-width: 70px; }
+  .orbit-item, .orbit-persona { width: 80px; height: 105px; }
+  .orbit-item { margin-left: -40px; margin-top: -52px; transform-origin: 40px 52px; }
+  .orbit-name { font-size: .45rem; max-width: 60px; }
+  .orbit-number { font-size: .38rem; }
+  .orbit-icon { font-size: 1rem; }
+  .orbit-tooltip { display: none; }
+  .featured-persona-inner { flex-direction: column; text-align: center; padding: 18px 16px; }
+  .featured-name { font-size: 1.1rem; }
+  .featured-desc { font-size: .75rem; }
+}
+
+@media (max-width: 420px) {
+  .persona-orbit-container { width: 310px; height: 310px; }
+  .orbit-center { width: 80px; height: 80px; }
+  .orbit-center-icon { font-size: .7rem; }
+  .orbit-center-label { font-size: .28rem; max-width: 55px; }
+  .orbit-item, .orbit-persona { width: 65px; height: 85px; }
+  .orbit-item { margin-left: -32px; margin-top: -42px; transform-origin: 32px 42px; }
+  .orbit-name { font-size: .38rem; max-width: 48px; }
+  .orbit-number { font-size: .32rem; }
+  .orbit-icon { display: none; }
+}
+    
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
   .persona-orbit-container {
