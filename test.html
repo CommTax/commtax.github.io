@@ -1840,46 +1840,6 @@
   </div>
 </footer>
 
-<!-- ===== JAVASCRIPT ===== -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // ===== JOURNEY CAROUSEL =====
-    const track = document.getElementById('carouselTrack');
-    const prevBtn = document.getElementById('carouselPrev');
-    const nextBtn = document.getElementById('carouselNext');
-    const dots = document.querySelectorAll('.carousel-dot');
-    const cards = track ? track.querySelectorAll('.journey-card-premium') : [];
-    const cardsPerView = window.innerWidth <= 992 ? 1 : 2;
-    let currentIndex = 0;
-    const totalSlides = Math.ceil(cards.length / cardsPerView);
-
-    function updateCarousel() {
-      if (!cards.length) return;
-      const slideWidth = cards[0].offsetWidth + 24;
-      track.style.transform = `translateX(-${currentIndex * slideWidth * cardsPerView}px)`;
-      dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentIndex);
-      });
-    }
-
-    function goToSlide(index) {
-      if (index < 0) index = totalSlides - 1;
-      if (index >= totalSlides) index = 0;
-      currentIndex = index;
-      updateCarousel();
-    }
-
-    if (prevBtn && nextBtn) {
-      prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
-      nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
-    }
-
-    dots.forEach((dot, index) => {
-      dot.addEventListener('click', () => goToSlide(index));
-    });
-
-    setTimeout(updateCarousel, 100);
-
 // ===== 3D SPHERICAL ORBIT WITH EQUAL DISTANCE =====
 (function() {
   const container = document.querySelector('.persona-orbit-container');
@@ -1910,7 +1870,7 @@
 
   const state = {
     angle: 0,
-    speed: 0.0004,
+    speed: 0.00035, // Slightly slower for elegance
     paused: false,
     focused: false,
     lastTime: performance.now()
@@ -1919,20 +1879,19 @@
   let activePersona = null;
   let hoveredPersona = null;
 
-function updateCenter(personaKey) {
-  const data = personaData[personaKey];
-  if (!data) return;
-  
-  centerDesc.textContent = data.desc;
-  centerTag.textContent = '✦ Selected Persona';
-  
-  centerDesc.classList.add('visible');
-  centerTag.classList.add('visible');
-  centerDefault.style.display = 'none';
-}
+  function updateCenter(personaKey) {
+    const data = personaData[personaKey];
+    if (!data) return;
+    
+    centerDesc.textContent = data.desc;
+    centerTag.textContent = '✦ Selected Persona';
+    
+    centerDesc.classList.add('visible');
+    centerTag.classList.add('visible');
+    centerDefault.style.display = 'none';
+  }
 
   function resetCenter() {
-    centerName.classList.remove('visible');
     centerDesc.classList.remove('visible');
     centerTag.classList.remove('visible');
     centerDefault.style.display = 'block';
@@ -1948,56 +1907,43 @@ function updateCenter(personaKey) {
     let bestDepth = -Infinity;
 
     items.forEach((item, index) => {
-      // Calculate position on the circle - EQUAL DISTANCE from center
       const theta = state.angle + index * step - Math.PI / 2;
-      
-      // X and Y are on the circle (equal distance = radius)
       const x = Math.cos(theta) * radius;
       const y = Math.sin(theta) * radius;
-      
-      // Z creates the 3D depth effect - front/back movement
       const z = Math.sin(theta) * depth;
 
-      // Normalize depth for visual effects
       const normalizedDepth = (z + depth) / (2 * depth);
       const scale = 0.78 + normalizedDepth * 0.3;
       const opacity = 0.35 + normalizedDepth * 0.65;
       const blur = (1 - normalizedDepth) * 1.2;
 
-      // Apply transforms - EQUAL DISTANCE maintained
       item.style.transform = `translate3d(${x}px, ${y}px, ${z}px) scale(${scale})`;
       item.style.opacity = opacity;
       item.style.filter = `blur(${blur}px)`;
       
-      // Z-index based on depth
       const zIndex = Math.round(10 + normalizedDepth * 30);
       item.style.zIndex = zIndex;
 
-      // Track the front-most persona
       if (z > bestDepth) {
         bestDepth = z;
         active = item;
       }
 
-      // Add depth classes for styling
       item.classList.toggle('is-front', z > depth * 0.3);
       item.classList.toggle('is-back', z < -depth * 0.3);
     });
 
-    // Update active state if not focused on a specific persona
+    // Only update center with front persona if NOT focused and NOT hovered
     if (active && !state.focused && !hoveredPersona) {
       items.forEach(item => {
         item.classList.toggle('is-active', item === active);
       });
       
-      // Update center with the front persona
       const personaKey = active.dataset.persona;
-      if (personaKey && !state.focused) {
+      if (personaKey) {
         const data = personaData[personaKey];
         if (data) {
-          centerName.textContent = data.name;
           centerDesc.textContent = data.desc;
-          centerName.classList.add('visible');
           centerDesc.classList.add('visible');
           centerDefault.style.display = 'none';
           centerTag.classList.remove('visible');
@@ -2010,6 +1956,7 @@ function updateCenter(personaKey) {
     const dt = Math.min(now - state.lastTime, 40);
     state.lastTime = now;
     
+    // ✅ Rotation continues unless paused OR focused
     if (!state.paused && !state.focused) {
       state.angle += state.speed * dt;
     }
@@ -2018,47 +1965,45 @@ function updateCenter(personaKey) {
     requestAnimationFrame(tick);
   }
 
-  // Hover = preview
+  // ===== HOVER =====
   items.forEach(item => {
     item.addEventListener('mouseenter', function() {
       hoveredPersona = this;
       const personaKey = this.dataset.persona;
       const data = personaData[personaKey];
       if (data) {
-        centerName.textContent = data.name;
         centerDesc.textContent = data.desc;
-        centerName.classList.add('visible');
         centerDesc.classList.add('visible');
         centerDefault.style.display = 'none';
         centerTag.classList.remove('visible');
       }
-      state.paused = true;
+      state.paused = true; // Pause rotation on hover
     });
 
     item.addEventListener('mouseleave', function() {
       hoveredPersona = null;
+      // ✅ Resume rotation if not focused
       if (!state.focused) {
         state.paused = false;
-        // Reset to show the front persona
+        // Reset to show front persona
         resetCenter();
-        // Force a render to update
         render();
       }
     });
   });
 
-  // Click = full persona detail
+  // ===== CLICK =====
   items.forEach(item => {
     item.addEventListener('click', function(e) {
       e.stopPropagation();
       
       const personaKey = this.dataset.persona;
       
+      // If already active and focused, deselect
       if (this.classList.contains('is-active') && state.focused) {
-        // Deselect
         items.forEach(i => i.classList.remove('is-active'));
         state.focused = false;
-        state.paused = false;
+        state.paused = false; // ✅ Resume rotation
         resetCenter();
         render();
         return;
@@ -2068,30 +2013,30 @@ function updateCenter(personaKey) {
       items.forEach(i => i.classList.remove('is-active'));
       this.classList.add('is-active');
       state.focused = true;
-      state.paused = true;
+      state.paused = true; // Pause rotation when selected
       updateCenter(personaKey);
     });
   });
 
-  // Click outside to clear focus
+  // ===== CLICK OUTSIDE =====
   document.addEventListener('click', function(e) {
     if (!container.contains(e.target)) {
       items.forEach(i => i.classList.remove('is-active'));
       state.focused = false;
-      state.paused = false;
+      state.paused = false; // ✅ Resume rotation
       resetCenter();
     }
   });
 
-  // Double click to resume rotation
+  // ===== DOUBLE CLICK TO RESUME =====
   container.addEventListener('dblclick', function() {
     state.focused = false;
-    state.paused = false;
+    state.paused = false; // ✅ Resume rotation
     items.forEach(i => i.classList.remove('is-active'));
     resetCenter();
   });
 
-  // Touch support for mobile
+  // ===== TOUCH SUPPORT =====
   let touchStartX = null;
   container.addEventListener('touchstart', (e) => {
     touchStartX = e.touches[0].clientX;
@@ -2107,13 +2052,15 @@ function updateCenter(personaKey) {
     state.paused = true;
   }, { passive: true });
 
-  // Window resize
+  // ===== RESIZE =====
   window.addEventListener('resize', render, { passive: true });
 
-  // Start
+  // ===== START =====
   render();
   requestAnimationFrame(tick);
-})(); 
+})();
+
+  
     
     // ===== LOGIN MODAL =====
     const signInBtn = document.getElementById('signInBtn');
