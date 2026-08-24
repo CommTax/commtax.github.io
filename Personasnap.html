@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>The Unspoken · Premium Journey</title>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..600&display=swap" rel="stylesheet" />
@@ -1345,42 +1346,260 @@
                     <p id="reportPersonaDesc" style="font-size: 0.85rem; color: #1a3a55; max-width: 600px; margin: 0.3rem auto 0; line-height: 1.5; padding: 0 0.5rem;"></p>
                 </div>
 
-                <!-- SHARE CARD -->
-                <div style="padding: 1rem 0; border-bottom: 2px solid #f0f4ff;">
-                    <h3 style="font-size: 0.7rem; color: #6a8aaa; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; margin-bottom: 0.6rem;">📤 Share Your Persona</h3>
-                    
-                    <div class="share-card" id="shareCard">
-                        <div class="glow-effect"></div>
-                        <div class="border-glow"></div>
-                        
-                        <div class="brand">
-                            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Mini%20Logo%20Unspoken.png" alt="The Unspoken">
-                        </div>
-                        
-                        <div class="content">
-                            <p class="label">I Communicate As</p>
-                            <p class="persona-name" id="sharePersonaName">Loading...</p>
-                            <p class="user-name">— <span id="shareUserFullName">Professional</span></p>
-                            <p class="tagline" id="shareTagline">"Loading..."</p>
-                            
-                            <div class="traits">
-                                <div class="trait"><span>Clarity</span></div>
-                                <div class="trait"><span>Structure</span></div>
-                                <div class="trait"><span>Impact</span></div>
-                            </div>
-                            
-                            <div class="divider"></div>
-                            <p class="footer-text">What's Your Persona?</p>
-                            <p class="footer-url">theunspoken.co.in</p>
-                        </div>
-                        
-                        <div class="share-buttons">
-                            <button class="btn-share whatsapp" id="shareWhatsApp">📱 WhatsApp</button>
-                            <button class="btn-share instagram" id="shareInstagram">📸 Instagram</button>
-                            <button class="btn-share download" id="downloadCard">⬇️ Download</button>
-                        </div>
-                    </div>
+<!-- SHARE CARD - Premium Visual -->
+<div style="padding: 1rem 0; border-bottom: 2px solid #f0f4ff;">
+    <h3 style="font-size: 0.7rem; color: #6a8aaa; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; margin-bottom: 0.6rem;">📤 Share Your Persona</h3>
+    
+    <!-- PREMIUM SHARE CARD -->
+    <div id="shareCardContainer" style="
+        max-width: 400px;
+        margin: 0 auto;
+        background: linear-gradient(145deg, #0a0e1a, #1a1f2e);
+        border-radius: 1.5rem;
+        padding: 2rem 1.5rem;
+        border: 1.5px solid rgba(217,119,6,0.3);
+        box-shadow: 0 0 60px rgba(217,119,6,0.08), inset 0 0 60px rgba(217,119,6,0.02);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    ">
+        <!-- Premium Glow Effect -->
+        <div style="
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(217,119,6,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        "></div>
+        
+        <!-- Gold Border Glow -->
+        <div style="
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 1.6rem;
+            background: linear-gradient(135deg, rgba(217,119,6,0.2), rgba(217,119,6,0.05), rgba(217,119,6,0.2));
+            z-index: 0;
+            pointer-events: none;
+        "></div>
+        
+        <!-- Content -->
+        <div style="position: relative; z-index: 1;">
+            <!-- Brand -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Mini%20Logo%20Unspoken.png" alt="The Unspoken" style="height: 28px; width: auto;">
+                    <span style="color: rgba(255,255,255,0.4); font-size: 0.5rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 600;">The Unspoken</span>
                 </div>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <span style="display: inline-block; width: 6px; height: 6px; background: #d97706; border-radius: 50%;"></span>
+                    <span style="display: inline-block; width: 6px; height: 6px; background: #d97706; border-radius: 50%; opacity: 0.6;"></span>
+                    <span style="display: inline-block; width: 6px; height: 6px; background: #d97706; border-radius: 50%; opacity: 0.3;"></span>
+                </div>
+            </div>
+            
+            <!-- Label -->
+            <p style="
+                font-size: 0.55rem;
+                color: rgba(255,255,255,0.25);
+                letter-spacing: 3px;
+                text-transform: uppercase;
+                font-weight: 400;
+                margin-bottom: 0.3rem;
+            ">I Communicate As</p>
+            
+            <!-- Persona Name -->
+            <p id="sharePersonaName" style="
+                font-size: 2.2rem;
+                font-weight: 800;
+                color: #ffffff;
+                margin: 0;
+                line-height: 1.1;
+                text-shadow: 0 2px 20px rgba(217,119,6,0.15);
+                letter-spacing: -0.5px;
+            ">The Articulator</p>
+            
+            <!-- User Name -->
+            <p style="
+                font-size: 0.8rem;
+                color: rgba(255,255,255,0.3);
+                margin-top: 0.2rem;
+                letter-spacing: 0.5px;
+                font-weight: 300;
+            ">— <span id="shareUserFullName" style="color: rgba(255,255,255,0.5); font-weight: 400;">Professional</span></p>
+            
+            <!-- Tagline -->
+            <p id="shareTagline" style="
+                font-size: 0.75rem;
+                color: rgba(255,255,255,0.4);
+                margin: 0.5rem auto 0.8rem;
+                font-style: italic;
+                line-height: 1.5;
+                max-width: 280px;
+                font-weight: 300;
+                letter-spacing: 0.3px;
+            ">"Clarity is your superpower. Structure is your signature."</p>
+            
+            <!-- Golden Divider -->
+            <div style="
+                width: 50px;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, rgba(217,119,6,0.4), transparent);
+                margin: 0.5rem auto;
+            "></div>
+            
+            <!-- Traits Circles - Golden -->
+            <div style="display: flex; justify-content: center; gap: 0.8rem; margin: 0.6rem 0 0.8rem;">
+                <div style="
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 50%;
+                    border: 2px solid rgba(217,119,6,0.4);
+                    background: rgba(217,119,6,0.05);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    padding: 0.2rem;
+                    box-shadow: 0 0 20px rgba(217,119,6,0.05), inset 0 0 20px rgba(217,119,6,0.02);
+                ">
+                    <span style="
+                        font-size: 0.45rem;
+                        color: rgba(217,119,6,0.6);
+                        text-transform: uppercase;
+                        line-height: 1.2;
+                        font-weight: 600;
+                        letter-spacing: 0.5px;
+                    ">Clarity</span>
+                </div>
+                <div style="
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 50%;
+                    border: 2px solid rgba(217,119,6,0.4);
+                    background: rgba(217,119,6,0.05);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    padding: 0.2rem;
+                    box-shadow: 0 0 20px rgba(217,119,6,0.05), inset 0 0 20px rgba(217,119,6,0.02);
+                ">
+                    <span style="
+                        font-size: 0.45rem;
+                        color: rgba(217,119,6,0.6);
+                        text-transform: uppercase;
+                        line-height: 1.2;
+                        font-weight: 600;
+                        letter-spacing: 0.5px;
+                    ">Structure</span>
+                </div>
+                <div style="
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 50%;
+                    border: 2px solid rgba(217,119,6,0.4);
+                    background: rgba(217,119,6,0.05);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    padding: 0.2rem;
+                    box-shadow: 0 0 20px rgba(217,119,6,0.05), inset 0 0 20px rgba(217,119,6,0.02);
+                ">
+                    <span style="
+                        font-size: 0.45rem;
+                        color: rgba(217,119,6,0.6);
+                        text-transform: uppercase;
+                        line-height: 1.2;
+                        font-weight: 600;
+                        letter-spacing: 0.5px;
+                    ">Impact</span>
+                </div>
+            </div>
+            
+            <!-- Divider -->
+            <div style="
+                width: 30px;
+                height: 1px;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+                margin: 0.3rem auto;
+            "></div>
+            
+            <!-- Footer -->
+            <p style="
+                font-size: 0.4rem;
+                color: rgba(255,255,255,0.06);
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                font-weight: 400;
+                margin-bottom: 0.1rem;
+            ">Find Your Persona</p>
+            <p style="
+                font-size: 0.5rem;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                color: rgba(255,255,255,0.08);
+            ">theunspoken.co.in</p>
+        </div>
+    </div>
+    
+    <!-- Share Buttons -->
+    <div style="display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.8rem;">
+        <button class="btn-share whatsapp" id="shareWhatsApp" style="
+            background: rgba(37, 211, 102, 0.15);
+            color: #25D366;
+            border: 1px solid rgba(37, 211, 102, 0.2);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        ">
+            📱 WhatsApp
+        </button>
+        <button class="btn-share instagram" id="shareInstagram" style="
+            background: rgba(225, 48, 108, 0.15);
+            color: #E1306C;
+            border: 1px solid rgba(225, 48, 108, 0.2);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        ">
+            📸 Instagram
+        </button>
+        <button class="btn-share download" id="downloadCard" style="
+            background: rgba(217, 119, 6, 0.15);
+            color: #d97706;
+            border: 1px solid rgba(217, 119, 6, 0.2);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        ">
+            ⬇️ Download Image
+        </button>
+    </div>
+</div>
 
                 <!-- STRENGTH -->
                 <div class="report-section">
@@ -2596,6 +2815,135 @@ function populateReport(report, userDetails) {
     // START
     // ============================================================
     initAssessment();
+
+    // Download as Image
+document.getElementById('downloadCard')?.addEventListener('click', function() {
+    const card = document.getElementById('shareCardContainer');
+    
+    // Show loading state
+    this.textContent = '⏳ Generating...';
+    this.disabled = true;
+    
+    html2canvas(card, {
+        scale: 2, // Higher quality
+        backgroundColor: null, // Keep transparency
+        allowTaint: true,
+        useCORS: true,
+        logging: false,
+        width: 400,
+        height: card.scrollHeight
+    }).then(canvas => {
+        // Create download link
+        const link = document.createElement('a');
+        link.download = `my-communication-persona-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        // Reset button
+        this.textContent = '⬇️ Download Image';
+        this.disabled = false;
+    }).catch(error => {
+        console.error('Error generating image:', error);
+        this.textContent = '⬇️ Download Image';
+        this.disabled = false;
+        alert('Failed to generate image. Please try again.');
+    });
+});
+
+// Share to WhatsApp - send as image
+document.getElementById('shareWhatsApp')?.addEventListener('click', function() {
+    const card = document.getElementById('shareCardContainer');
+    
+    this.textContent = '⏳ Preparing...';
+    this.disabled = true;
+    
+    html2canvas(card, {
+        scale: 2,
+        backgroundColor: null,
+        allowTaint: true,
+        useCORS: true,
+        logging: false,
+        width: 400,
+        height: card.scrollHeight
+    }).then(canvas => {
+        // Convert to data URL and create a temporary link
+        const dataUrl = canvas.toDataURL('image/png');
+        
+        // For WhatsApp, we'll share as a file
+        const link = document.createElement('a');
+        link.download = `my-persona-${Date.now()}.png`;
+        link.href = dataUrl;
+        
+        // Open WhatsApp with the image
+        // Note: WhatsApp web doesn't support direct image upload via URL
+        // So we'll download and let user share manually
+        link.click();
+        
+        // Open WhatsApp with text message
+        const text = getShareText();
+        const url = `https://wa.me/?text=${encodeURIComponent(text + '\n\n📸 Check out my Communication Persona card! (Downloaded image attached)')}`;
+        window.open(url, '_blank');
+        
+        this.textContent = '📱 WhatsApp';
+        this.disabled = false;
+    }).catch(error => {
+        console.error('Error:', error);
+        // Fallback to text sharing
+        const text = getShareText();
+        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+        
+        this.textContent = '📱 WhatsApp';
+        this.disabled = false;
+    });
+});
+
+// Share to Instagram - copy text with instructions
+document.getElementById('shareInstagram')?.addEventListener('click', function() {
+    const card = document.getElementById('shareCardContainer');
+    
+    this.textContent = '⏳ Preparing...';
+    this.disabled = true;
+    
+    html2canvas(card, {
+        scale: 2,
+        backgroundColor: null,
+        allowTaint: true,
+        useCORS: true,
+        logging: false,
+        width: 400,
+        height: card.scrollHeight
+    }).then(canvas => {
+        // Download the image first
+        const link = document.createElement('a');
+        link.download = `my-persona-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        // Show instructions for Instagram
+        const text = getShareText();
+        navigator.clipboard.writeText(text + '\n\n📸 Post this image on your Instagram story or feed!');
+        alert('✅ Image downloaded! Post it on Instagram with this caption:\n\n' + text);
+        
+        this.textContent = '📸 Instagram';
+        this.disabled = false;
+    }).catch(error => {
+        console.error('Error:', error);
+        // Fallback
+        const text = getShareText();
+        navigator.clipboard.writeText(text);
+        alert('✅ Text copied to clipboard! Share it on Instagram.');
+        this.textContent = '📸 Instagram';
+        this.disabled = false;
+    });
+});
+
+function getShareText() {
+    const name = document.getElementById('shareUserFullName').textContent || 'Professional';
+    const persona = document.getElementById('sharePersonaName').textContent || 'The Articulator';
+    const tagline = document.getElementById('shareTagline').textContent || '"Your words have weight."';
+    return `🎯 My Communication Persona: ${persona}\n\n${tagline}\n\n— ${name}\n\nFind yours at theunspoken.co.in`;
+}
 
 })();
 </script>
