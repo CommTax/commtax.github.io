@@ -2424,33 +2424,33 @@ function calculatePersona(responses, userName) {
     // ============================================================
     // POPULATE REPORT
     // ============================================================
-    function populateReport(report, userDetails) {
-        document.getElementById('reportUserName').textContent = userDetails.name;
-        document.getElementById('reportPersonaName').textContent = report.persona_name;
-        document.getElementById('reportPersonaDesc').textContent = report.refined_description;
-        
-        document.getElementById('sharePersonaName').textContent = report.persona_name;
-        document.getElementById('shareUserFullName').textContent = userDetails.name;
-        document.getElementById('shareTagline').textContent = report.share_card_tagline;
-        
-        document.getElementById('reportStrength').textContent = report.natural_advantage;
-        document.getElementById('reportStrengthDesc').textContent = report.signature_strength_description;
-        document.getElementById('reportBlindSpot').textContent = report.blind_spot;
+function populateReport(report, userDetails) {
+    // These stay exactly as they are
+    document.getElementById('reportUserName').textContent = userDetails.name;
+    document.getElementById('reportPersonaName').textContent = report.persona_name;
+    document.getElementById('reportPersonaDesc').textContent = report.refined_description; // ✅ This already combines Q1 category + persona
+    
+    document.getElementById('sharePersonaName').textContent = report.persona_name;
+    document.getElementById('shareUserFullName').textContent = userDetails.name;
+    document.getElementById('shareTagline').textContent = report.share_card_tagline;
+    
+    document.getElementById('reportStrength').textContent = report.natural_advantage;
+    document.getElementById('reportStrengthDesc').textContent = report.signature_strength_description;
+    document.getElementById('reportBlindSpot').textContent = report.blind_spot;
 
-        // Add contextual message
-        const contextualMessage = getContextualMessage(report.reason);
-        const container = document.getElementById('contextualMessageContainer');
-        if (container && contextualMessage) {
-            container.innerHTML = `
-                <div class="contextual-message">
-                    <div class="message-text">
-                        <span class="message-icon">${contextualMessage.icon}</span>
-                        ${contextualMessage.text}
-                    </div>
+    // ✅ Contextual message based on Q2
+    const contextualMessage = getContextualMessage(report.reason);
+    const container = document.getElementById('contextualMessageContainer');
+    if (container && contextualMessage) {
+        container.innerHTML = `
+            <div class="contextual-message">
+                <div class="message-text">
+                    <span class="message-icon">${contextualMessage.icon}</span>
+                    ${contextualMessage.text}
                 </div>
-            `;
-        }
-
+            </div>
+        `;
+    }
         const fullData = {
             user: userDetails,
             responses: userResponses,
