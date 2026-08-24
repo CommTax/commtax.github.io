@@ -922,7 +922,7 @@
         @keyframes pulse {
     0%, 100% { opacity: 0.6; }
     50% { opacity: 1; }
-}
+        }
         
         /* ============================================================ */
         /* RESPONSIVE */
@@ -984,6 +984,29 @@
             .subhead { font-size: 0.75rem !important; margin: 0.1rem 0 0.4rem !important; }
             .progress-discreet .step-label { font-size: 0.55rem !important; }
         }
+
+        /* Contextual Message Styles */
+        .contextual-message {
+            background: #fef3c7;
+            border-radius: 1rem;
+            padding: 1.2rem 1.2rem;
+            border: 1px solid #fcd34d;
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+        .contextual-message .message-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+        .contextual-message .message-text {
+            font-size: 0.9rem;
+            color: #1a3a55;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        .contextual-message .message-text strong {
+            color: #b45309;
+        }
     </style>
 </head>
 <body>
@@ -1036,15 +1059,15 @@
         </div>
     </div>
 
-    <!-- ===== STEP 2: QUESTION B ===== -->
+    <!-- ===== STEP 2: QUESTION B (UPDATED) ===== -->
     <div class="step-card hidden" id="step2">
         <div class="flex-between">
-            <h2 id="questionBTitle">What do you want to achieve?</h2>
+            <h2 id="questionBTitle">What's actually bringing you here today?</h2>
             <span style="font-size: 0.65rem; color: #94a3b8; font-weight: 500;">02 / 10</span>
         </div>
-        <p class="subhead" id="questionBSubhead">Choose what matters most to you right now.</p>
+        <p class="subhead" id="questionBSubhead">Choose what feels most true for you right now.</p>
         <div id="questionBContainer" style="margin: 0.6rem 0;"></div>
-        <p class="premium-micro" id="questionBMicro">Choose what matters most to you right now.</p>
+        <p class="premium-micro" id="questionBMicro">There are no wrong choices. Pick what resonates.</p>
         <div class="progress-discreet">
             <span class="step-label">02 / 10</span>
             <div class="progress-line"><div class="fill" style="width:20%;"></div></div>
@@ -1286,7 +1309,7 @@
             <span style="font-size: 0.65rem; color: #94a3b8; font-weight: 500;">Complete</span>
         </div>
         <p class="subhead">We'll use this to personalize your communication profile and send your results.</p>
-        <div class="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/signature.png"><span class="icon-overlay">👤</span><span class="label">[ Professional profile ]</span></div>
+        <div class="cinematic-img"><span class="icon-overlay">👤</span><span class="label">[ Professional profile ]</span></div>
         <div class="detail-row">
             <input type="text" placeholder="Full name" id="fullName" />
             <input type="email" placeholder="Email address" id="email" />
@@ -1443,6 +1466,9 @@
                     </div>
                 </div>
 
+                <!-- CONTEXTUAL MESSAGE - Based on "What's bringing you here" -->
+                <div id="contextualMessageContainer" class="report-section" style="border-bottom: 2px solid #f0f4ff;"></div>
+
 <!-- NEXT MOVE - Premium Two-Column Pricing -->
 <div class="report-section" style="border-bottom: none; padding-bottom: 0.5rem;">
     <h3 class="section-title" style="font-size: 0.8rem; margin-bottom: 0.8rem;">🚀 Your Next Move</h3>
@@ -1486,9 +1512,9 @@
                 <li style="display: flex; align-items: flex-start; gap: 6px; font-weight: 600; color: #0a2a3f;">✓ Yours to keep</li>
             </ul>
             
-            <button onclick="window.initiateRazorpayPayment(499)" class="btn-primary" style="width: 100%; max-width: 100%; text-align: center; font-size: 0.8rem; padding: 0.6rem 0; background: #f0f4ff; color: #0a2a3f; border: 1.5px solid #dce8f3; box-shadow: none; border-radius: 60px; margin-top: auto;">
+            <a href="https://theunspoken.co.in/full-profile" class="btn-primary" style="width: 100%; max-width: 100%; text-align: center; font-size: 0.8rem; padding: 0.6rem 0; background: #f0f4ff; color: #0a2a3f; border: 1.5px solid #dce8f3; box-shadow: none; border-radius: 60px; margin-top: auto; text-decoration: none; display: block;">
                 → Unlock My Full Profile
-            </button>
+            </a>
         </div>
 
         <!-- Card 2: Communication, Evolved Daily (Subscription) -->
@@ -1516,9 +1542,9 @@
                 <li style="display: flex; align-items: flex-start; gap: 6px; font-weight: 600; color: #0a2a3f;">✓ Pays for itself in under 2 months vs. one-time</li>
             </ul>
             
-            <button onclick="window.initiateRazorpayPayment(299)" class="btn-gold" style="width: 100%; max-width: 100%; text-align: center; font-size: 0.8rem; padding: 0.6rem 0; border-radius: 60px; margin-top: auto;">
+            <a href="https://theunspoken.co.in/pricing" class="btn-gold" style="width: 100%; max-width: 100%; text-align: center; font-size: 0.8rem; padding: 0.6rem 0; border-radius: 60px; margin-top: auto; text-decoration: none; display: block;">
                 → Start My Membership
-            </button>
+            </a>
         </div>
     </div>
 
@@ -1539,10 +1565,12 @@
 
 <script>
 (function() {
-     // ============================================================
+    // ============================================================
     // GLOBAL VARIABLES
     // ============================================================
-    let loadingInterval = null;  // <-- ADD THIS LINE HERE
+    let loadingInterval = null;
+    let userReason = ''; // Store the reason from Question 2
+
     // ============================================================
     // QUESTIONS CONFIGURATION
     // ============================================================
@@ -1579,6 +1607,15 @@
             description: 'Explore / Undecided',
             image: 'https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Other.jpg'
         }
+    ];
+
+    // UPDATED: Question 2 options with new labels and values
+    const reasonOptions = [
+        { label: 'I have something coming up — interview, review, pitch, big conversation', value: 'upcoming' },
+        { label: 'I keep feeling overlooked or unheard at work', value: 'overlooked' },
+        { label: 'I want to understand myself better', value: 'understand' },
+        { label: 'I want to be a good orator and storyteller', value: 'orator' },
+        { label: 'Just curious what this is', value: 'curious' }
     ];
 
     // Common question with 5 options - FIXED: Properly formatted
@@ -1815,6 +1852,10 @@
         const aspirationResponse = responses.find(r => r.question_code === 'Q8');
         const aspiration = aspirationResponse ? aspirationResponse.answer : '';
 
+        // Get the reason from Question 2 (B)
+        const reasonResponse = responses.find(r => r.question_code === 'B');
+        const reason = reasonResponse ? reasonResponse.answer : '';
+
         return {
             persona_name: persona.name,
             refined_description: fullDesc,
@@ -1827,8 +1868,39 @@
             category: category,
             aspiration: aspiration,
             primary_dimension: primary,
-            secondary_dimension: secondary
+            secondary_dimension: secondary,
+            reason: reason // Store the reason
         };
+    }
+
+    // ============================================================
+    // CONTEXTUAL MESSAGE GENERATOR
+    // ============================================================
+    function getContextualMessage(reason) {
+        const messages = {
+            'upcoming': {
+                icon: '🎯',
+                text: 'Your <strong>[Interview/Review/Pitch]</strong> is close. The gap between what you mean and what they\'ll hear won\'t close on its own between now and then. The full mapping shows you exactly where it opens — and how to close it before it counts.'
+            },
+            'overlooked': {
+                icon: '👀',
+                text: 'This isn\'t the first time. It\'s a <strong>pattern</strong>, not a bad day — and patterns don\'t fix themselves by being noticed once. The full mapping shows you where it\'s actually happening, so it stops repeating.'
+            },
+            'understand': {
+                icon: '🧠',
+                text: 'You\'ve got the shape of it. The full mapping is where it gets <strong>specific</strong> — not a type, but exactly how it plays out in your meetings, your writing, your pauses.'
+            },
+            'orator': {
+                icon: '🎙️',
+                text: 'You want to <strong>command the room</strong>. The full mapping shows you exactly what\'s working, what\'s not, and what you can sharpen — not just for the big moments, but every day.'
+            },
+            'curious': {
+                icon: '🔍',
+                text: 'You\'ve got the shape of it. The full mapping is where it gets <strong>specific</strong> — not a type, but exactly how it plays out in your meetings, your writing, your pauses.'
+            }
+        };
+
+        return messages[reason] || messages['curious'];
     }
 
     // ============================================================
@@ -1932,6 +2004,89 @@
         });
     }
 
+    function renderReasonOptions(containerId, options, selectedCallback) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const icons = ['🎯', '👀', '🧠', '🎙️', '🔍'];
+
+        let html = `<div style="display:grid; grid-template-columns:1fr; gap:0.6rem;">`;
+        if (window.innerWidth > 640) {
+            html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">`;
+        }
+        
+        options.forEach((opt, index) => {
+            const icon = icons[index % icons.length];
+            html += `
+                <div class="reason-card" data-value="${opt.value}" style="
+                    padding:0.8rem 1rem; 
+                    border-radius:1.2rem; 
+                    border:2px solid #e2edf7; 
+                    cursor:pointer; 
+                    transition:all 0.3s ease; 
+                    text-align:left; 
+                    background: #f8fafc;
+                    min-height: 85px;
+                    display: flex;
+                    align-items: center;
+                    gap: 14px;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        width:44px; 
+                        height:44px; 
+                        border-radius:50%; 
+                        flex-shrink:0;
+                        background: #fef3c7;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.4rem;
+                    ">
+                        <span>${icon}</span>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:0.85rem; font-weight:600; color:#0a2a3f; line-height:1.3;">
+                            ${opt.label}
+                        </div>
+                    </div>
+                    <div class="selection-check" style="
+                        position:absolute;
+                        right:12px;
+                        top:50%;
+                        transform:translateY(-50%);
+                        opacity:0;
+                        transition:all 0.3s ease;
+                        color:#d97706;
+                        font-size:1.2rem;
+                        font-weight:700;
+                    ">✓</div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+
+        container.querySelectorAll('.reason-card').forEach(card => {
+            const checkmark = card.querySelector('.selection-check');
+            card.addEventListener('click', function() {
+                container.querySelectorAll('.reason-card').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.borderColor = '#e2edf7';
+                    b.style.background = '#f8fafc';
+                    const check = b.querySelector('.selection-check');
+                    if (check) check.style.opacity = '0';
+                });
+                this.classList.add('active');
+                this.style.borderColor = '#d97706';
+                this.style.background = 'linear-gradient(135deg, #fef3c7, #fde68a)';
+                if (checkmark) checkmark.style.opacity = '1';
+                if (selectedCallback) selectedCallback(this.dataset.value);
+            });
+        });
+    }
+
     function renderCommOptions(containerId, question, selectedCallback) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -2018,92 +2173,6 @@
         });
     }
 
-    function renderCommonOptions(containerId, options, selectedCallback) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        const defaultIcons = ['🌟', '🚀', '💼', '🎯', '💡'];
-
-        let html = `<div style="display:grid; grid-template-columns:1fr; gap:0.6rem;">`;
-        if (window.innerWidth > 640) {
-            html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">`;
-        }
-        
-        options.forEach((opt, index) => {
-            const icon = defaultIcons[index % defaultIcons.length];
-            html += `
-                <div class="age-card human-face-card" data-value="${opt.value}" style="
-                    padding:0.8rem 1rem; 
-                    border-radius:1.2rem; 
-                    border:2px solid #e2edf7; 
-                    cursor:pointer; 
-                    transition:all 0.3s ease; 
-                    text-align:left; 
-                    background: #f8fafc;
-                    min-height: 85px;
-                    display: flex;
-                    align-items: center;
-                    gap: 14px;
-                    position: relative;
-                    overflow: hidden;
-                ">
-                    <div style="
-                        width:56px; 
-                        height:56px; 
-                        border-radius:50%; 
-                        flex-shrink:0;
-                        overflow:hidden;
-                        border:2px solid rgba(255,255,255,0.8);
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-                        background: #e2e8f0;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 1.8rem;
-                    ">
-                        <span style="font-size:1.8rem;">${icon}</span>
-                    </div>
-                    <div style="flex:1; min-width:0;">
-                        <div style="font-size:0.85rem; font-weight:600; color:#0a2a3f; line-height:1.3;">
-                            ${opt.label}
-                        </div>
-                    </div>
-                    <div class="selection-check" style="
-                        position:absolute;
-                        right:12px;
-                        top:50%;
-                        transform:translateY(-50%);
-                        opacity:0;
-                        transition:all 0.3s ease;
-                        color:#d97706;
-                        font-size:1.2rem;
-                        font-weight:700;
-                    ">✓</div>
-                </div>
-            `;
-        });
-        html += `</div>`;
-        container.innerHTML = html;
-
-        container.querySelectorAll('.human-face-card').forEach(card => {
-            const checkmark = card.querySelector('.selection-check');
-            card.addEventListener('click', function() {
-                container.querySelectorAll('.human-face-card').forEach(b => {
-                    b.classList.remove('active');
-                    b.style.borderColor = '#e2edf7';
-                    b.style.background = '#f8fafc';
-                    const check = b.querySelector('.selection-check');
-                    if (check) check.style.opacity = '0';
-                });
-                this.classList.add('active');
-                this.style.borderColor = '#d97706';
-                this.style.background = 'linear-gradient(135deg, #fef3c7, #fde68a)';
-                if (checkmark) checkmark.style.opacity = '1';
-                if (selectedCallback) selectedCallback(this.dataset.value);
-            });
-        });
-    }
-
     // ============================================================
     // INITIALIZE ASSESSMENT
     // ============================================================
@@ -2115,10 +2184,10 @@
             document.getElementById('step1Next').dataset.selected = value;
         });
 
-        // Step 2: Common question - FIXED: Using renderCommonOptions
-        document.getElementById('questionBTitle').textContent = 'What do you want to achieve?';
-        document.getElementById('questionBSubhead').textContent = 'Choose what matters most to you right now.';
-        renderCommonOptions('questionBContainer', commonOptions, (value) => {
+        // Step 2: Updated question with reason options
+        document.getElementById('questionBTitle').textContent = "What's actually bringing you here today?";
+        document.getElementById('questionBSubhead').textContent = 'Choose what feels most true for you right now.';
+        renderReasonOptions('questionBContainer', reasonOptions, (value) => {
             document.getElementById('step2Next').dataset.selected = value;
         });
 
@@ -2197,6 +2266,7 @@
         const selected = e.target.dataset.selected;
         if (!selected) { alert('Please select an option.'); return; }
         storeResponse('B', selected);
+        userReason = selected; // Store the reason for later use
         q1Index = 0;
         showStep('step3');
         loadCommQuestions(1);
@@ -2236,100 +2306,88 @@
         }
     });
 
-// ============================================================
-// LOADING ANIMATION FOR STEP 6
-// ============================================================
-function startLoadingAnimation() {
-    const steps = [
-        { id: 'loadingStep1', target: 70 },
-        { id: 'loadingStep2', target: 75 },
-        { id: 'loadingStep3', target: 85 },
-        { id: 'loadingStep4', target: 95 }
-    ];
-    
-    let currentStep = 0;
-    const statusMessages = [
-        '📖 Reading your responses...',
-        '🧩 Mapping your communication patterns...',
-        '🔗 Connecting the signals...',
-        '🎯 Finding your communication persona...'
-    ];
-    
-    const statusEl = document.getElementById('loadingStatus');
-    
-    // Animate each step sequentially
-    function animateNextStep() {
-        if (currentStep >= steps.length) {
+    // ============================================================
+    // LOADING ANIMATION FOR STEP 6
+    // ============================================================
+    function startLoadingAnimation() {
+        const steps = [
+            { id: 'loadingStep1', target: 70 },
+            { id: 'loadingStep2', target: 75 },
+            { id: 'loadingStep3', target: 85 },
+            { id: 'loadingStep4', target: 95 }
+        ];
+        
+        let currentStep = 0;
+        const statusMessages = [
+            '📖 Reading your responses...',
+            '🧩 Mapping your communication patterns...',
+            '🔗 Connecting the signals...',
+            '🎯 Finding your communication persona...'
+        ];
+        
+        const statusEl = document.getElementById('loadingStatus');
+        
+        function animateNextStep() {
+            if (currentStep >= steps.length) {
+                statusEl.textContent = '✅ Analysis complete! Your persona is ready.';
+                statusEl.style.color = '#059669';
+                statusEl.style.animation = 'none';
+                return;
+            }
+            
+            const step = steps[currentStep];
+            const bar = document.getElementById(step.id);
+            let progress = 0;
+            
+            statusEl.textContent = statusMessages[currentStep];
+            
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 8) + 2;
+                if (progress >= step.target) {
+                    progress = step.target;
+                    clearInterval(interval);
+                    currentStep++;
+                    setTimeout(animateNextStep, 300);
+                }
+                bar.style.width = progress + '%';
+            }, 100);
+        }
+        
+        animateNextStep();
+        
+        setTimeout(() => {
+            if (loadingInterval) {
+                clearInterval(loadingInterval);
+                loadingInterval = null;
+            }
+            steps.forEach(s => {
+                document.getElementById(s.id).style.width = s.target + '%';
+            });
+            const statusEl = document.getElementById('loadingStatus');
             statusEl.textContent = '✅ Analysis complete! Your persona is ready.';
             statusEl.style.color = '#059669';
             statusEl.style.animation = 'none';
-            return;
-        }
-        
-        const step = steps[currentStep];
-        const bar = document.getElementById(step.id);
-        let progress = 0;
-        
-        statusEl.textContent = statusMessages[currentStep];
-        
-        const interval = setInterval(() => {
-            progress += Math.floor(Math.random() * 8) + 2;
-            if (progress >= step.target) {
-                progress = step.target;
-                clearInterval(interval);
-                currentStep++;
-                setTimeout(animateNextStep, 300);
-            }
-            bar.style.width = progress + '%';
-        }, 100);
+        }, 8000);
     }
-    
-    // Start with step 1
-    animateNextStep();
-    
-    // Clean up after 8 seconds (safety)
-    setTimeout(() => {
-        if (loadingInterval) {
-            clearInterval(loadingInterval);
-            loadingInterval = null;
-        }
-        // Ensure all bars are complete
-        steps.forEach(s => {
-            document.getElementById(s.id).style.width = s.target + '%';
-        });
-        const statusEl = document.getElementById('loadingStatus');
-        statusEl.textContent = '✅ Analysis complete! Your persona is ready.';
-        statusEl.style.color = '#059669';
-        statusEl.style.animation = 'none';
-    }, 8000);
-}
 
-// Step 6: Show loading screen with animation
-document.getElementById('step6Next')?.addEventListener('click', function(e) {
-    // This is now handled by the reveal button
-});
-
-// Reveal Persona Button
-document.getElementById('revealPersonaBtn')?.addEventListener('click', function() {
-    // Start loading animation
-    startLoadingAnimation();
-    
-    // Enable the button after animation completes
-    const btn = this;
-    btn.disabled = true;
-    btn.textContent = '⏳ Analyzing...';
-    btn.style.opacity = '0.7';
-    btn.style.cursor = 'default';
-    
-    // Navigate to step 7 after delay
-    setTimeout(() => {
-        showStep('step7');
-        btn.disabled = false;
-        btn.textContent = '🔍 Reveal My Persona →';
-        btn.style.opacity = '1';
-        btn.style.cursor = 'pointer';
-    }, 5000);
-});
+    // Reveal Persona Button
+    document.getElementById('revealPersonaBtn')?.addEventListener('click', function() {
+        startLoadingAnimation();
+        
+        const btn = this;
+        btn.disabled = true;
+        btn.textContent = '⏳ Analyzing...';
+        btn.style.opacity = '0.7';
+        btn.style.cursor = 'default';
+        
+        setTimeout(() => {
+            showStep('step7');
+            btn.disabled = false;
+            btn.textContent = '🔍 Reveal My Persona →';
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+        }, 5000);
+    });
 
     document.getElementById('step7Next').addEventListener('click', () => {
         const name = document.getElementById('fullName').value.trim();
@@ -2363,6 +2421,20 @@ document.getElementById('revealPersonaBtn')?.addEventListener('click', function(
         document.getElementById('reportStrengthDesc').textContent = report.signature_strength_description;
         document.getElementById('reportBlindSpot').textContent = report.blind_spot;
 
+        // Add contextual message
+        const contextualMessage = getContextualMessage(report.reason);
+        const container = document.getElementById('contextualMessageContainer');
+        if (container && contextualMessage) {
+            container.innerHTML = `
+                <div class="contextual-message">
+                    <div class="message-text">
+                        <span class="message-icon">${contextualMessage.icon}</span>
+                        ${contextualMessage.text}
+                    </div>
+                </div>
+            `;
+        }
+
         const fullData = {
             user: userDetails,
             responses: userResponses,
@@ -2390,14 +2462,12 @@ document.getElementById('revealPersonaBtn')?.addEventListener('click', function(
     });
 
     document.getElementById('shareInstagram')?.addEventListener('click', function() {
-        // Instagram sharing - copy to clipboard with instructions
         const text = getShareText();
         navigator.clipboard.writeText(text + '\n\n📸 Share this on your Instagram story!');
         alert('✅ Text copied to clipboard! Paste it on your Instagram story.');
     });
 
     document.getElementById('downloadCard')?.addEventListener('click', function() {
-        // Simple download - create a text file
         const text = getShareText();
         const blob = new Blob([text], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
@@ -2408,170 +2478,46 @@ document.getElementById('revealPersonaBtn')?.addEventListener('click', function(
         URL.revokeObjectURL(url);
     });
 
-// ============================================================
-// SEND TO BACKEND - For leads table
-// ============================================================
-async function sendToBackend(data) {
-    try {
-        const response = await fetch('https://unspoken-backend-yvbi.onrender.com/api/leads', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+    // ============================================================
+    // SEND TO BACKEND - For leads table
+    // ============================================================
+    async function sendToBackend(data) {
+        try {
+            const response = await fetch('https://unspoken-backend-yvbi.onrender.com/api/leads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    full_name: data.user.name,
+                    email: data.user.email,
+                    phone: data.user.phone,
+                    reason: data.report.reason || ''
+                })
+            });
+            
+            const result = await response.json();
+            console.log('✅ Backend response:', result);
+            
+            if (result.success) {
+                console.log('✅ Lead saved successfully!');
+                if (result.lead) {
+                    console.log('Lead ID:', result.lead.lead_id);
+                }
+            } else {
+                console.log('⚠️ Error saving lead:', result.message);
+            }
+            
+        } catch (error) {
+            console.log('⚠️ Backend not available, data saved locally:', error);
+            localStorage.setItem('unspoken_lead_backup', JSON.stringify({
                 full_name: data.user.name,
                 email: data.user.email,
-                phone: data.user.phone
-            })
-        });
-        
-        const result = await response.json();
-        console.log('✅ Backend response:', result);
-        
-        if (result.success) {
-            console.log('✅ Lead saved successfully!');
-            if (result.lead) {
-                console.log('Lead ID:', result.lead.lead_id);
-            }
-        } else {
-            console.log('⚠️ Error saving lead:', result.message);
+                phone: data.user.phone,
+                reason: data.report.reason || '',
+                timestamp: new Date().toISOString()
+            }));
         }
-        
-    } catch (error) {
-        console.log('⚠️ Backend not available, data saved locally:', error);
-        localStorage.setItem('unspoken_lead_backup', JSON.stringify({
-            full_name: data.user.name,
-            email: data.user.email,
-            phone: data.user.phone,
-            timestamp: new Date().toISOString()
-        }));
     }
-}
 
-// ============================================================
-// LOADING ANIMATION FOR STEP 6 (Premium Dynamic Loading)
-// ============================================================
-function startLoadingAnimation() {
-    // Configuration for each loading step
-    const steps = [
-        { 
-            id: 'loadingStep1', 
-            percentId: 'loadingPercent1',
-            message: '📖 Reading your responses...',
-            duration: 1800,
-            target: 100
-        },
-        { 
-            id: 'loadingStep2', 
-            percentId: 'loadingPercent2',
-            message: '🧩 Mapping your communication patterns...',
-            duration: 2000,
-            target: 100
-        },
-        { 
-            id: 'loadingStep3', 
-            percentId: 'loadingPercent3',
-            message: '🔗 Connecting the signals...',
-            duration: 1800,
-            target: 100
-        },
-        { 
-            id: 'loadingStep4', 
-            percentId: 'loadingPercent4',
-            message: '🎯 Finding your communication persona...',
-            duration: 2000,
-            target: 100
-        }
-    ];
-    
-    let currentStep = 0;
-    const statusEl = document.getElementById('loadingStatus');
-    
-    function animateStep(index) {
-        if (index >= steps.length) {
-            // All steps complete
-            if (statusEl) {
-                statusEl.textContent = '✅ Analysis complete! Your persona is ready.';
-                statusEl.style.color = '#059669';
-                statusEl.style.animation = 'none';
-            }
-            // Update the reveal button state
-            const btn = document.getElementById('revealPersonaBtn');
-            if (btn) {
-                btn.disabled = false;
-                btn.textContent = '🔍 Reveal My Persona →';
-                btn.style.opacity = '1';
-                btn.style.cursor = 'pointer';
-            }
-            return;
-        }
-        
-        const step = steps[index];
-        const bar = document.getElementById(step.id);
-        const percentEl = document.getElementById(step.percentId);
-        let progress = 0;
-        const increment = 100 / (step.duration / 50);
-        
-        // Update status message
-        if (statusEl) {
-            statusEl.textContent = step.message;
-            statusEl.style.color = '#4a6a8a';
-            statusEl.style.animation = 'pulse 1.5s ease-in-out infinite';
-        }
-        
-        // Animate from 0 to 100
-        const interval = setInterval(() => {
-            progress += increment;
-            if (progress >= 100) {
-                progress = 100;
-                clearInterval(interval);
-                // Move to next step after a short pause
-                setTimeout(() => {
-                    currentStep++;
-                    animateStep(currentStep);
-                }, 300);
-            }
-            // Update bar width
-            if (bar) bar.style.width = progress + '%';
-            // Update percentage text
-            if (percentEl) percentEl.textContent = Math.round(progress) + '%';
-        }, 50);
-    }
-    
-    // Reset all bars to 0 first
-    steps.forEach(s => {
-        const bar = document.getElementById(s.id);
-        const percentEl = document.getElementById(s.percentId);
-        if (bar) bar.style.width = '0%';
-        if (percentEl) percentEl.textContent = '0%';
-    });
-    
-    // Disable the reveal button during animation
-    const btn = document.getElementById('revealPersonaBtn');
-    if (btn) {
-        btn.disabled = true;
-        btn.textContent = '⏳ Analyzing...';
-        btn.style.opacity = '0.7';
-        btn.style.cursor = 'default';
-    }
-    
-    // Start the animation
-    animateStep(0);
-}
-
-// Reveal Persona Button
-document.getElementById('revealPersonaBtn')?.addEventListener('click', function() {
-    // Start the dynamic loading animation
-    startLoadingAnimation();
-    
-    // Navigate to step 7 after animation completes (about 8 seconds)
-    setTimeout(() => {
-        // Check if all steps are complete
-        const statusEl = document.getElementById('loadingStatus');
-        if (statusEl && statusEl.textContent.includes('Analysis complete')) {
-            showStep('step7');
-        }
-    }, 8500);
-});
-    
     // ============================================================
     // BACK BUTTONS
     // ============================================================
@@ -2594,83 +2540,41 @@ document.getElementById('revealPersonaBtn')?.addEventListener('click', function(
         }
     });
 
-document.getElementById('step6Back').addEventListener('click', () => {
-    // Reset all loading bars and percentages
-    ['loadingStep1', 'loadingStep2', 'loadingStep3', 'loadingStep4'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.width = '0%';
+    document.getElementById('step6Back').addEventListener('click', () => {
+        ['loadingStep1', 'loadingStep2', 'loadingStep3', 'loadingStep4'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.width = '0%';
+        });
+        ['loadingPercent1', 'loadingPercent2', 'loadingPercent3', 'loadingPercent4'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = '0%';
+        });
+        
+        const statusEl = document.getElementById('loadingStatus');
+        if (statusEl) {
+            statusEl.textContent = '⏳ Analyzing your communication patterns...';
+            statusEl.style.color = '#94a3b8';
+            statusEl.style.animation = 'pulse 1.5s ease-in-out infinite';
+        }
+        
+        const btn = document.getElementById('revealPersonaBtn');
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '🔍 Reveal My Persona →';
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+        }
+        
+        if (loadingInterval) {
+            clearInterval(loadingInterval);
+            loadingInterval = null;
+        }
+        
+        showStep('step5');
     });
-    ['loadingPercent1', 'loadingPercent2', 'loadingPercent3', 'loadingPercent4'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = '0%';
-    });
-    
-    const statusEl = document.getElementById('loadingStatus');
-    if (statusEl) {
-        statusEl.textContent = '⏳ Analyzing your communication patterns...';
-        statusEl.style.color = '#94a3b8';
-        statusEl.style.animation = 'pulse 1.5s ease-in-out infinite';
-    }
-    
-    // Reset the reveal button
-    const btn = document.getElementById('revealPersonaBtn');
-    if (btn) {
-        btn.disabled = false;
-        btn.textContent = '🔍 Reveal My Persona →';
-        btn.style.opacity = '1';
-        btn.style.cursor = 'pointer';
-    }
-    
-    if (loadingInterval) {
-        clearInterval(loadingInterval);
-        loadingInterval = null;
-    }
-    
-    showStep('step5');
-});
     
     document.getElementById('step7Back').addEventListener('click', () => showStep('step6'));
     document.getElementById('step8Back').addEventListener('click', () => showStep('step7'));
-
-    // ============================================================
-    // PAYMENT HANDLERS
-    // ============================================================
-function initiateRazorpayPayment(amount = 299) {
-    const options = {
-        "key": "rzp_live_TN9VVH5DwiHx0L",
-        "amount": amount * 100,
-        "currency": "INR",
-        "name": "The Unspoken",
-        "description": amount === 499 ? 'Full Profile - One Time' : 'Communication Evolved Daily',
-        "image": "https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Mini%20Logo%20Unspoken.png",
-        "prefill": {
-            "name": document.getElementById('fullName')?.value || "",
-            "email": document.getElementById('email')?.value || "",
-            "contact": document.getElementById('phone')?.value || ""
-        },
-        "theme": { "color": "#d97706" }
-    };
-
-    const rzp = new Razorpay(options);
-    rzp.open();
-    
-    rzp.on('payment.failed', function(response) {
-        console.error('Payment failed:', response.error);
-        alert('Payment failed. Please try again.');
-    });
-
-    rzp.on('payment.success', function(response) {
-        console.log('Payment successful:', response);
-        alert('✨ Payment successful! You unlocked your full Persona Journey.');
-    });
-}
-// ✅ NO 're' HERE!
-
-    document.getElementById('payAndEnrollBtn')?.addEventListener('click', () => initiateRazorpayPayment(299));
-    document.getElementById('goDeeperBtn')?.addEventListener('click', () => initiateRazorpayPayment(499));
-    document.getElementById('viewPricingBtn')?.addEventListener('click', () => {
-        window.location.href = 'https://theunspoken.co.in/Pricing';
-    });
 
     // ============================================================
     // START
