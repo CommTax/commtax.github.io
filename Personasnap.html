@@ -1722,157 +1722,173 @@
         }
     ];
 
-    // ============================================================
-    // PERSONA SCORING ENGINE
-    // ============================================================
-    function calculatePersona(responses, userName) {
-        const scores = {
-            clarity: 0,
-            structure: 0,
-            expression: 0,
-            understanding: 0,
-            confidence: 0,
-            influence: 0
-        };
+// ============================================================
+// PERSONA SCORING ENGINE - FIXED
+// ============================================================
+function calculatePersona(responses, userName) {
+    const scores = {
+        clarity: 0,
+        structure: 0,
+        expression: 0,
+        understanding: 0,
+        confidence: 0,
+        influence: 0
+    };
 
-        responses.forEach(r => {
-            const q = commQuestions.find(q => q.question_code === r.question_code);
-            if (!q || q.isAspiration) return;
-            
-            const option = q.options.find(o => o.label === r.answer);
-            if (!option) return;
-            
-            if (scores[option.dimension] !== undefined) {
-                scores[option.dimension] += option.score;
-            }
-        });
+    // Count how many questions were answered (excluding aspiration)
+    let questionCount = 0;
 
-        const maxPossible = 21;
-        Object.keys(scores).forEach(key => {
-            scores[key] = Math.min(Math.max(Math.round((scores[key] / maxPossible) * 100), 0), 100);
-        });
-
-        const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-        const primary = sorted[0][0];
-        const secondary = sorted[1][0];
-
-        const personaMap = {
-            'clarity_structure': { 
-                name: 'The Articulator', 
-                desc: 'You speak with precision and organization. Your ideas are clear, logical, and easy to follow.',
-                strength: 'Clear and organized communication',
-                strengthDesc: 'You have a natural ability to structure your thoughts and express them with clarity.',
-                blindSpot: 'Your structure can read as distance before people feel your intent behind it',
-                tagline: '"Clarity is your superpower. Structure is your signature."'
-            },
-            'clarity_understanding': { 
-                name: 'The Translator', 
-                desc: 'You make complex ideas simple while understanding your audience. You bridge gaps effortlessly.',
-                strength: 'Simplification and empathy',
-                strengthDesc: 'You can take complex concepts and make them accessible to any audience.',
-                blindSpot: 'You make hard things look easy — sometimes too easy for people to see the work behind it',
-                tagline: '"You turn complexity into clarity."'
-            },
-            'expression_confidence': { 
-                name: 'The Amplifier', 
-                desc: 'You bring energy and confidence to every conversation. People are drawn to your presence.',
-                strength: 'Energy and presence',
-                strengthDesc: 'You naturally energize others and create engaging experiences.',
-                blindSpot: 'Your energy can fill a room faster than quieter voices can find space in it',
-                tagline: '"Your energy moves rooms."'
-            },
-            'understanding_influence': { 
-                name: 'The Interpreter', 
-                desc: 'You read between the lines and understand what people truly mean. You build deep connections.',
-                strength: 'Empathy and insight',
-                strengthDesc: 'You understand people\'s unspoken needs and build trust naturally.',
-                blindSpot: 'You absorb the room so fully that your own read can get lost in it',
-                tagline: '"You hear what\'s not being said."'
-            },
-            'structure_confidence': { 
-                name: 'The Architect', 
-                desc: 'You build ideas with precision and deliver them with conviction. Your arguments are compelling.',
-                strength: 'Logical structure and conviction',
-                strengthDesc: 'You combine clear reasoning with confident delivery.',
-                blindSpot: 'Your precision can feel like distance before people know your intent',
-                tagline: '"You build ideas that stand strong."'
-            },
-            'clarity_expression': { 
-                name: 'The Storyteller', 
-                desc: 'You explain ideas with clarity and bring them to life with energy. People remember your words.',
-                strength: 'Clarity and engagement',
-                strengthDesc: 'You make complex ideas simple and memorable.',
-                blindSpot: 'How you say it can outrun what you are actually saying',
-                tagline: '"You make ideas unforgettable."'
-            },
-            'understanding_clarity': { 
-                name: 'The Connector', 
-                desc: 'You understand people deeply and explain ideas in ways that resonate with them.',
-                strength: 'Empathy and clarity',
-                strengthDesc: 'You bridge the gap between understanding and expression.',
-                blindSpot: 'Your instinct to get it right can slow down when it lands',
-                tagline: '"You connect people with ideas."'
-            },
-            'default': { 
-                name: 'The Articulator', 
-                desc: 'You have a natural ability to communicate clearly and effectively.',
-                strength: 'Communication',
-                strengthDesc: 'You express yourself with clarity and purpose.',
-                blindSpot: 'You move fast enough that finer details sometimes get left behind',
-                tagline: '"Your words have weight."'
-            }
-        };
-
-        let personaKey = `${primary}_${secondary}`;
-        let persona = personaMap[personaKey] || personaMap['default'];
-
-        const avgScore = Object.values(scores).reduce((a, b) => a + b, 0) / Object.values(scores).length;
-        if (avgScore < 20) {
-            persona = {
-                name: 'The Emerging',
-                desc: "You're on a journey of growth. Your communication skills are developing and you have great potential ahead.",
-                strength: 'Growth mindset',
-                strengthDesc: 'You have the foundation to build powerful communication skills.',
-                blindSpot: 'Your caution can read as hesitation before people see your certainty',
-                tagline: '"Your voice is still finding its power."'
-            };
+    responses.forEach(r => {
+        const q = commQuestions.find(q => q.question_code === r.question_code);
+        if (!q || q.isAspiration) return;
+        
+        const option = q.options.find(o => o.label === r.answer);
+        if (!option) return;
+        
+        questionCount++;
+        if (scores[option.dimension] !== undefined) {
+            scores[option.dimension] += option.score;
         }
+    });
 
-        const category = responses.find(r => r.question_code === 'A')?.answer || '';
-        const categoryRefinements = {
-            'building': ' As someone building their career, your communication skills are developing.',
-            'stepping-up': ' As someone stepping into greater responsibility, your communication is evolving.',
-            'business': ' As an entrepreneur, your communication shapes your brand.',
-            'skills': ' As a student, you\'re building communication skills for the future.',
-            'other': ' You\'re exploring your communication style.'
-        };
-        const refinement = categoryRefinements[category] || '';
-        const fullDesc = persona.desc + refinement;
+    // Calculate max possible per dimension based on answered questions
+    // Each question gives up to 3 points per dimension
+    const maxPossible = questionCount * 3;
+    
+    // Normalize scores to percentages
+    Object.keys(scores).forEach(key => {
+        if (maxPossible > 0) {
+            scores[key] = Math.min(Math.max(Math.round((scores[key] / maxPossible) * 100), 0), 100);
+        } else {
+            scores[key] = 0;
+        }
+    });
 
-        const aspirationResponse = responses.find(r => r.question_code === 'Q8');
-        const aspiration = aspirationResponse ? aspirationResponse.answer : '';
+    const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    const primary = sorted[0][0];
+    const secondary = sorted[1][0];
 
-        // Get the reason from Question 2 (B)
-        const reasonResponse = responses.find(r => r.question_code === 'B');
-        const reason = reasonResponse ? reasonResponse.answer : '';
+    // Only show "The Emerging" if ALL scores are below 20%
+    const highestScore = sorted[0][1];
+    const isEmerging = highestScore < 20;
 
-        return {
-            persona_name: persona.name,
-            refined_description: fullDesc,
-            natural_advantage: persona.strength,
-            signature_strength_description: persona.strengthDesc,
-            blind_spot: persona.blindSpot,
-            share_card_tagline: persona.tagline,
-            user_name: userName,
-            scores: scores,
-            category: category,
-            aspiration: aspiration,
-            primary_dimension: primary,
-            secondary_dimension: secondary,
-            reason: reason // Store the reason
+    const personaMap = {
+        'clarity_structure': { 
+            name: 'The Articulator', 
+            desc: 'You speak with precision and organization. Your ideas are clear, logical, and easy to follow.',
+            strength: 'Clear and organized communication',
+            strengthDesc: 'You have a natural ability to structure your thoughts and express them with clarity.',
+            blindSpot: 'Your structure can read as distance before people feel your intent behind it',
+            tagline: '"Clarity is your superpower. Structure is your signature."'
+        },
+        'clarity_understanding': { 
+            name: 'The Translator', 
+            desc: 'You make complex ideas simple while understanding your audience. You bridge gaps effortlessly.',
+            strength: 'Simplification and empathy',
+            strengthDesc: 'You can take complex concepts and make them accessible to any audience.',
+            blindSpot: 'You make hard things look easy — sometimes too easy for people to see the work behind it',
+            tagline: '"You turn complexity into clarity."'
+        },
+        'expression_confidence': { 
+            name: 'The Amplifier', 
+            desc: 'You bring energy and confidence to every conversation. People are drawn to your presence.',
+            strength: 'Energy and presence',
+            strengthDesc: 'You naturally energize others and create engaging experiences.',
+            blindSpot: 'Your energy can fill a room faster than quieter voices can find space in it',
+            tagline: '"Your energy moves rooms."'
+        },
+        'understanding_influence': { 
+            name: 'The Interpreter', 
+            desc: 'You read between the lines and understand what people truly mean. You build deep connections.',
+            strength: 'Empathy and insight',
+            strengthDesc: 'You understand people\'s unspoken needs and build trust naturally.',
+            blindSpot: 'You absorb the room so fully that your own read can get lost in it',
+            tagline: '"You hear what\'s not being said."'
+        },
+        'structure_confidence': { 
+            name: 'The Architect', 
+            desc: 'You build ideas with precision and deliver them with conviction. Your arguments are compelling.',
+            strength: 'Logical structure and conviction',
+            strengthDesc: 'You combine clear reasoning with confident delivery.',
+            blindSpot: 'Your precision can feel like distance before people know your intent',
+            tagline: '"You build ideas that stand strong."'
+        },
+        'clarity_expression': { 
+            name: 'The Storyteller', 
+            desc: 'You explain ideas with clarity and bring them to life with energy. People remember your words.',
+            strength: 'Clarity and engagement',
+            strengthDesc: 'You make complex ideas simple and memorable.',
+            blindSpot: 'How you say it can outrun what you are actually saying',
+            tagline: '"You make ideas unforgettable."'
+        },
+        'understanding_clarity': { 
+            name: 'The Connector', 
+            desc: 'You understand people deeply and explain ideas in ways that resonate with them.',
+            strength: 'Empathy and clarity',
+            strengthDesc: 'You bridge the gap between understanding and expression.',
+            blindSpot: 'Your instinct to get it right can slow down when it lands',
+            tagline: '"You connect people with ideas."'
+        },
+        'default': { 
+            name: 'The Articulator', 
+            desc: 'You have a natural ability to communicate clearly and effectively.',
+            strength: 'Communication',
+            strengthDesc: 'You express yourself with clarity and purpose.',
+            blindSpot: 'You move fast enough that finer details sometimes get left behind',
+            tagline: '"Your words have weight."'
+        }
+    };
+
+    let personaKey = `${primary}_${secondary}`;
+    let persona = personaMap[personaKey] || personaMap['default'];
+
+    // Apply "The Emerging" only if truly low across all dimensions
+    if (isEmerging) {
+        persona = {
+            name: 'The Emerging',
+            desc: "You're on a journey of growth. Your communication skills are developing and you have great potential ahead.",
+            strength: 'Growth mindset',
+            strengthDesc: 'You have the foundation to build powerful communication skills.',
+            blindSpot: 'Your caution can read as hesitation before people see your certainty',
+            tagline: '"Your voice is still finding its power."'
         };
     }
 
+    const category = responses.find(r => r.question_code === 'A')?.answer || '';
+    const categoryRefinements = {
+        'building': ' As someone building their career, your communication skills are developing.',
+        'stepping-up': ' As someone stepping into greater responsibility, your communication is evolving.',
+        'business': ' As an entrepreneur, your communication shapes your brand.',
+        'skills': ' As a student, you\'re building communication skills for the future.',
+        'other': ' You\'re exploring your communication style.'
+    };
+    const refinement = categoryRefinements[category] || '';
+    const fullDesc = persona.desc + refinement;
+
+    const aspirationResponse = responses.find(r => r.question_code === 'Q8');
+    const aspiration = aspirationResponse ? aspirationResponse.answer : '';
+
+    const reasonResponse = responses.find(r => r.question_code === 'B');
+    const reason = reasonResponse ? reasonResponse.answer : '';
+
+    return {
+        persona_name: persona.name,
+        refined_description: fullDesc,
+        natural_advantage: persona.strength,
+        signature_strength_description: persona.strengthDesc,
+        blind_spot: persona.blindSpot,
+        share_card_tagline: persona.tagline,
+        user_name: userName,
+        scores: scores,
+        category: category,
+        aspiration: aspiration,
+        primary_dimension: primary,
+        secondary_dimension: secondary,
+        reason: reason
+    };
+}
+    
+   
     // ============================================================
     // CONTEXTUAL MESSAGE GENERATOR
     // ============================================================
