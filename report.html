@@ -1371,12 +1371,13 @@
 
 <!-- ===== THE OTHER PATTERNS IN THE SYSTEM ===== -->
 <div style="margin-bottom: 20px;" id="otherPatternsContainer">
-    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-        <span style="font-size: 0.7rem; color: #b8943c;">✦</span>
-        <h4 style="font-size: 0.6rem; color: #6a8aaa; letter-spacing: 1px; text-transform: uppercase; font-weight: 600;">The Other Patterns in the System</h4>
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <span style="font-size: 0.6rem; color: #b8943c;">✦</span>
+        <h4 style="font-size: 0.6rem; color: #6a8aaa; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600;">The Other Patterns in the System</h4>
+        <div style="flex: 1; height: 1px; background: linear-gradient(90deg, #eef2f6, transparent);"></div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;" id="otherPatternsGrid">
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;" id="otherPatternsGrid">
         <!-- Will be populated dynamically by JavaScript -->
     </div>
 </div>
@@ -2083,16 +2084,6 @@ function renderReport(report) {
     const blindSpotDesc = safeGet(persona, 'blind_spot_description', '');
 
     // ===== PERSONA DATA MAPPING =====
-    const personaDataMap = {
-        'TRANSLATOR': { icon: '🌐', tagline: 'Makes complexity make sense' },
-        'AMPLIFIER': { icon: '📢', tagline: 'Makes ideas impossible to ignore' },
-        'ARTICULATOR': { icon: '🎯', tagline: 'Makes thinking visible' },
-        'INTERPRETER': { icon: '🧠', tagline: 'Reads what others miss' },
-        'FILTER': { icon: '🔍', tagline: 'Knows what matters' },
-        'EMERGING': { icon: '🌱', tagline: 'Finding your voice' },
-        'MISALIGNED': { icon: '🔄', tagline: 'Intent and impact may not meet' }
-    };
-
     const personaTaglineMap = {
         'TRANSLATOR': 'Turns complexity into clarity',
         'AMPLIFIER': 'Ideas → Momentum',
@@ -2113,32 +2104,45 @@ function renderReport(report) {
     const allPersonas = Object.keys(personaDataMap);
     const otherPersonas = allPersonas.filter(p => p !== personaCode);
 
-    // Populate Other Patterns Grid
-    const grid = document.getElementById('otherPatternsGrid');
-    if (grid) {
-        grid.innerHTML = '';
-        otherPersonas.forEach(personaKey => {
-            const data = personaDataMap[personaKey];
-            const tagline = personaTaglineMap[personaKey] || data.tagline;
-            
-            const card = document.createElement('div');
-            card.style.cssText = `
-                background: rgba(255,255,255,0.03);
-                border-radius: 8px;
-                padding: 8px 10px;
-                border: 1px solid rgba(255,255,255,0.04);
-                text-align: center;
-                transition: all 0.3s ease;
-                cursor: default;
-            `;
-            card.innerHTML = `
-                <span style="font-size: 0.65rem; display: block;">${data.icon}</span>
-                <span style="font-size: 0.55rem; font-weight: 600; color: rgba(255,255,255,0.6);">The ${personaKey.charAt(0).toUpperCase() + personaKey.slice(1).toLowerCase()}</span>
-                <span style="font-size: 0.45rem; color: rgba(255,255,255,0.2); display: block;">${tagline}</span>
-            `;
-            grid.appendChild(card);
+// Populate Other Patterns Grid
+const grid = document.getElementById('otherPatternsGrid');
+if (grid) {
+    grid.innerHTML = '';
+    otherPersonas.forEach(personaKey => {
+        const tagline = personaTaglineMap[personaKey] || '';
+        const displayName = personaKey.charAt(0).toUpperCase() + personaKey.slice(1).toLowerCase();
+        
+        const card = document.createElement('div');
+        card.style.cssText = `
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 14px 16px;
+            border: 1px solid #eef2f6;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: default;
+        `;
+        // Hover effect with JavaScript
+        card.addEventListener('mouseenter', function() {
+            this.style.borderColor = '#b8943c';
+            this.style.background = '#fef3c7';
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 4px 16px rgba(184, 148, 60, 0.08)';
         });
-    }
+        card.addEventListener('mouseleave', function() {
+            this.style.borderColor = '#eef2f6';
+            this.style.background = '#f8fafc';
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+        
+        card.innerHTML = `
+            <span style="font-size: 0.6rem; font-weight: 700; color: #0a2a3f; letter-spacing: 0.3px; display: block;">The ${displayName}</span>
+            <span style="font-size: 0.5rem; color: #6a8aaa; display: block; letter-spacing: 0.2px; font-weight: 400; margin-top: 2px;">${tagline}</span>
+        `;
+        grid.appendChild(card);
+    });
+}
 
     // Continue with the rest of your existing renderReport code...
     document.getElementById('reportName').textContent = userName;
