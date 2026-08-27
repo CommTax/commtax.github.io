@@ -29,26 +29,26 @@
     .accent-gold { color: #b8943c; }
 
     /* ----- BUTTONS ----- */
-.btn-free {
-  display: inline-block;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 14px 36px;
-  border-radius: 60px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
-  letter-spacing: 0.3px;
-}
-.btn-free:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-}
+    .btn-free {
+      display: inline-block;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 14px 36px;
+      border-radius: 60px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+      letter-spacing: 0.3px;
+    }
+    .btn-free:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    }
 
     .btn-paid {
       display: inline-block;
@@ -97,7 +97,36 @@
     .nav-links a { text-decoration: none; color: #3d3a34; font-weight: 500; font-size: 0.95rem; transition: color 0.2s; }
     .nav-links a:hover { color: #b8943c; }
 
-    /* ----- LOGIN MODAL (shortened) ----- */
+    /* Pulse animation for recording indicator */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.8); }
+    }
+
+    /* Slide up for results */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Timer warning flash */
+    @keyframes timer-warning {
+      0%, 100% { color: #dc2626; }
+      50% { color: #b8943c; }
+    }
+
+    .timer-warning {
+      animation: timer-warning 0.5s ease-in-out 3;
+    }
+
+    /* Mode button active state */
+    .mode-btn.active {
+      background: #b8943c;
+      color: #ffffff;
+      border-color: #b8943c;
+    }
+
+    /* ----- LOGIN MODAL ----- */
     .login-modal {
       position: fixed;
       top: 0;
@@ -192,7 +221,7 @@
       .login-form-options { flex-direction: column; gap: 8px; align-items: flex-start; }
     }
 
-    /* ----- HERO (shortened) ----- */
+    /* ===== HERO - 5 PAIN ROTATION ===== */
     .hero {
       display: flex;
       align-items: center;
@@ -216,7 +245,7 @@
       margin-bottom: 24px;
     }
     .hero .rotating-container {
-      height: 180px;
+      height: 220px;
       overflow: hidden;
       position: relative;
       margin-bottom: 8px;
@@ -228,29 +257,36 @@
       top: 0;
       opacity: 0;
       transform: translateY(30px);
-      animation: fadeSlide 12.5s infinite;
+      animation: fadeSlide 15s infinite;
     }
-    .hero .rotating-pair .line1 {
-      font-size: 4.8rem;
-      line-height: 1.05;
-      font-family: 'Playfair Display', serif;
+    .hero .rotating-pair .pain-label {
+      font-size: 1.2rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      color: #b8943c;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
     }
-    .hero .rotating-pair .line1 .highlight { font-style: italic; color: #b8943c; }
-    .hero .rotating-pair .line2 {
-      font-size: 3rem;
-      font-weight: 400;
-      color: #3d3a34;
+    .hero .rotating-pair .inner-voice {
+      font-size: 2.2rem;
+      line-height: 1.2;
       font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      color: #1a1917;
+      font-style: italic;
+    }
+    .hero .rotating-pair .outcome {
+      font-size: 1.6rem;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      color: #b8943c;
       margin-top: 4px;
     }
-    .hero .rotating-pair .line2 .highlight { font-style: italic; color: #b8943c; }
     .hero .rotating-pair:nth-child(1) { animation-delay: 0s; }
-    .hero .rotating-pair:nth-child(2) { animation-delay: 2.5s; }
-    .hero .rotating-pair:nth-child(3) { animation-delay: 5s; }
-    .hero .rotating-pair:nth-child(4) { animation-delay: 7.5s; }
-    .hero .rotating-pair:nth-child(5) { animation-delay: 10s; }
+    .hero .rotating-pair:nth-child(2) { animation-delay: 3s; }
+    .hero .rotating-pair:nth-child(3) { animation-delay: 6s; }
+    .hero .rotating-pair:nth-child(4) { animation-delay: 9s; }
+    .hero .rotating-pair:nth-child(5) { animation-delay: 12s; }
     @keyframes fadeSlide {
       0% { opacity: 0; transform: translateY(30px); }
       5% { opacity: 1; transform: translateY(0); }
@@ -258,7 +294,13 @@
       22% { opacity: 0; transform: translateY(-30px); }
       100% { opacity: 0; }
     }
-    .hero .tagline { font-size: 1.25rem; font-weight: 500; color: #b8943c; margin-bottom: 12px; margin-top: 8px; }
+    .hero .tagline {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #b8943c;
+      margin-bottom: 12px;
+      margin-top: 8px;
+    }
     .hero p { font-size: 1.1rem; color: #4d4a44; max-width: 460px; margin-bottom: 28px; }
     .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
     .hero-micro { font-size: 0.85rem; color: #6e6a62; margin-top: 12px; }
@@ -352,861 +394,672 @@
       .trust-strip-highlight .tags span::after { display: none; }
     }
 
-/* ===== 3D SPHERICAL ORBIT SYSTEM - PREMIUM (UPDATED) ===== */
-.personas-header {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-.personas-badge {
-  display: inline-block;
-  background: rgba(184, 148, 60, 0.1);
-  color: #b8943c;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  padding: 6px 20px;
-  border-radius: 40px;
-  border: 1px solid rgba(184, 148, 60, 0.15);
-  position: relative;
-}
-.personas-badge::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border-radius: 40px;
-  background: linear-gradient(135deg, rgba(184, 148, 60, 0.2), transparent, rgba(184, 148, 60, 0.2));
-  z-index: -1;
-  animation: badgePulse 3s ease-in-out infinite;
-}
-@keyframes badgePulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-
-.personas-subtitle {
-  font-size: 1rem;
-  color: #6e6a62;
-  max-width: 600px;
-  margin: 8px auto 0;
-  line-height: 1.7;
-}
-
-.persona-orbit-container {
-  --orbit-size: 700px;
-  --orbit-radius: 270px;
-  --orbit-depth: 120px;
-  position: relative;
-  width: var(--orbit-size);
-  height: var(--orbit-size);
-  margin: 10px auto 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  perspective: 1200px;
-  perspective-origin: 50% 50%;
-  isolation: isolate;
-}
-
-.persona-orbit-container::before {
-  content: "";
-  position: absolute;
-  width: 85%;
-  height: 85%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(245, 240, 231, 0.3), transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Orbit Rings - subtle, refined */
-.orbit-ring {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 1;
-  box-sizing: border-box;
-}
-.orbit-ring-1 {
-  width: calc(var(--orbit-radius) * 2);
-  height: calc(var(--orbit-radius) * 2);
-  border: 0.5px solid rgba(200, 180, 150, 0.12);
-}
-.orbit-ring-2 {
-  width: calc(var(--orbit-radius) * 1.5);
-  height: calc(var(--orbit-radius) * 1.5);
-  border: 0.5px solid rgba(200, 180, 150, 0.06);
-}
-.orbit-ring-3 {
-  width: calc(var(--orbit-radius) * 0.9);
-  height: calc(var(--orbit-radius) * 0.9);
-  border: 0.5px dashed rgba(200, 180, 150, 0.05);
-}
-
-/* Fixed Center - Same background, larger text, bold border */
-.orbit-center {
-  position: absolute;
-  width: 220px;
-  height: 220px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  z-index: 50;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 30px;
-  /* Same background as before */
-  background: radial-gradient(circle at 40% 30%, rgba(255, 248, 240, 0.95), rgba(248, 242, 235, 0.98));
-  /* Bolder border */
-  border: 2px solid rgba(184, 148, 60, 0.5);
-  box-shadow: 
-    0 0 0 1px rgba(184, 148, 60, 0.08),
-    0 20px 60px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Center text - larger font sizes */
-.orbit-center .center-persona-desc {
-  font-size: 0.9rem;  /* Increased from 0.75rem */
-  color: #4d4a44;
-  line-height: 1.5;
-  max-width: 180px;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.5s ease 0.1s;
-  font-weight: 500;
-}
-.orbit-center .center-persona-desc.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.orbit-center .center-persona-tag {
-  font-size: 0.6rem;  /* Increased from 0.5rem */
-  font-weight: 700;
-  color: #b8943c;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-top: 6px;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.5s ease 0.2s;
-}
-.orbit-center .center-persona-tag.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.orbit-center .center-default-text {
-  font-size: 0.75rem;  /* Increased from 0.65rem */
-  color: rgba(26, 25, 23, 0.25);
-  line-height: 1.6;
-  max-width: 140px;
-  font-weight: 400;
-}
-
-/* Center sparkle and label */
-.orbit-center .center-sparkle {
-  font-size: 0.8rem;  /* Increased from 0.7rem */
-  color: #b8943c;
-  letter-spacing: 2px;
-  margin-bottom: 2px;
-}
-.orbit-center .center-label {
-  font-size: 0.6rem;  /* Increased from 0.5rem */
-  font-weight: 700;
-  color: #b8943c;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  opacity: 0.6;
-}
-
-/* 3D Track */
-.persona-orbit-track {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  transform-style: preserve-3d;
-  pointer-events: none;
-}
-
-/* Premium Flat Disc Nodes - Larger, Bolder Text */
-.orbit-item {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 120px;
-  height: 120px;
-  margin: -60px 0 0 -60px;
-  transform-style: preserve-3d;
-  will-change: transform, opacity, filter;
-  pointer-events: auto;
-  cursor: pointer;
-  z-index: 5;
-  transition: z-index 0.3s ease;
-}
-
-.orbit-persona {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 12px;
-  box-sizing: border-box;
-  background: #2d2a24;
-  border: 0.5px solid rgba(200, 180, 150, 0.08);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.02);
-  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* LARGER + BOLDER text on all nodes */
-.orbit-name {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;  /* Increased from 0.7rem */
-  font-weight: 700;    /* Increased from 600 to 700 (bold) */
-  color: rgba(245, 240, 235, 0.9);
-  letter-spacing: 0.3px;
-  text-transform: none;
-  line-height: 1.2;
-  transition: all 0.4s ease;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
-}
-
-/* Front nodes - even larger, brighter */
-.orbit-item.is-front .orbit-persona {
-  background: #33302a;
-  border-color: rgba(200, 180, 150, 0.12);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-}
-.orbit-item.is-front .orbit-name {
-  font-size: 0.95rem;  /* Even larger for front nodes */
-  font-weight: 700;
-}
-
-/* Back nodes - dimmer but text still readable */
-.orbit-item.is-back .orbit-persona {
-  opacity: 0.35;
-  transform: scale(0.85);
-}
-.orbit-item.is-back .orbit-name {
-  font-size: 0.65rem;  /* Smaller but still readable */
-  font-weight: 600;
-  opacity: 0.7;
-}
-
-/* Hover - refined */
-.orbit-item:hover {
-  z-index: 40;
-}
-.orbit-item:hover .orbit-persona {
-  background: #3a3630;
-  border-color: rgba(200, 180, 150, 0.15);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  transform: scale(1.06);
-}
-.orbit-item:hover .orbit-name {
-  color: rgba(245, 240, 235, 0.95);
-  font-size: 0.95rem;
-  font-weight: 700;
-}
-
-/* Selected = Gold ring + gold text (no glow/gradient) */
-.orbit-item.is-active {
-  z-index: 45;
-}
-.orbit-item.is-active .orbit-persona {
-  background: #2d2a24;
-  border: 2px solid #b8943c;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  transform: scale(1.1);
-}
-.orbit-item.is-active .orbit-name {
-  color: #b8943c;
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-/* Tooltip - subtle */
-.orbit-tooltip {
-  position: absolute;
-  bottom: calc(100% + 12px);
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.5rem;
-  font-weight: 400;
-  color: rgba(26, 25, 23, 0.2);
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-  opacity: 0;
-  transition: all 0.3s ease;
-  pointer-events: none;
-}
-.orbit-item:hover .orbit-tooltip {
-  opacity: 1;
-  color: rgba(26, 25, 23, 0.4);
-}
-
-.personas-cta {
-  text-align: center;
-  margin-top: 20px;
-}
-.personas-cta p {
-  font-size: 1.1rem;
-  color: #4d4a44;
-  margin-bottom: 14px;
-}
-.personas-cta p strong {
-  color: #b8943c;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 992px) {
-  .persona-orbit-container { --orbit-size: 560px; --orbit-radius: 210px; --orbit-depth: 90px; }
-  .orbit-center { width: 180px; height: 180px; padding: 24px; }
-  .orbit-center .center-persona-desc { font-size: 0.75rem; }
-  .orbit-center .center-default-text { font-size: 0.65rem; }
-  .orbit-item { width: 100px; height: 100px; margin: -50px 0 0 -50px; }
-  .orbit-name { font-size: 0.7rem; }
-  .orbit-item.is-front .orbit-name { font-size: 0.8rem; }
-  .orbit-item.is-back .orbit-name { font-size: 0.55rem; }
-}
-@media (max-width: 768px) {
-  .persona-orbit-container { --orbit-size: 420px; --orbit-radius: 155px; --orbit-depth: 65px; }
-  .orbit-center { width: 150px; height: 150px; padding: 20px; }
-  .orbit-center .center-persona-desc { font-size: 0.65rem; max-width: 140px; }
-  .orbit-center .center-default-text { font-size: 0.55rem; max-width: 110px; }
-  .orbit-item { width: 80px; height: 80px; margin: -40px 0 0 -40px; }
-  .orbit-name { font-size: 0.55rem; }
-  .orbit-item.is-front .orbit-name { font-size: 0.65rem; }
-  .orbit-item.is-back .orbit-name { font-size: 0.45rem; }
-  .orbit-tooltip { display: none; }
-}
-@media (max-width: 480px) {
-  .persona-orbit-container { --orbit-size: 340px; --orbit-radius: 125px; --orbit-depth: 50px; margin: 10px auto 20px; }
-  .orbit-center { width: 120px; height: 120px; padding: 16px; }
-  .orbit-center .center-persona-desc { font-size: 0.55rem; max-width: 100px; }
-  .orbit-center .center-default-text { font-size: 0.45rem; max-width: 90px; }
-  .orbit-item { width: 65px; height: 65px; margin: -32px 0 0 -32px; }
-  .orbit-name { font-size: 0.42rem; }
-  .orbit-item.is-front .orbit-name { font-size: 0.5rem; }
-  .orbit-item.is-back .orbit-name { font-size: 0.35rem; }
-}
-    
-    
-
-
-    /* ===== STACKED CARDS - PREMIUM STACKING EFFECT ===== */
-.explore-header {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-.explore-badge {
-  display: inline-block;
-  background: rgba(184, 148, 60, 0.1);
-  color: #b8943c;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  padding: 6px 20px;
-  border-radius: 40px;
-  border: 1px solid rgba(184, 148, 60, 0.15);
-  margin-bottom: 12px;
-}
-
-.explore-tags {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-}
-
-.explore-tags span {
-  background: #f4f0ea;
-  padding: 4px 16px;
-  border-radius: 40px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #4d4a44;
-}
-
-/* Stacked Cards Container */
-.stacked-cards-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 20px;
-  position: relative;
-  min-height: 600px;
-}
-
-/* Individual Stacked Card */
-.stacked-card {
-  width: 100%;
-  background: #ffffff;
-  border-radius: 20px;
-  border: 1px solid #ede8e0;
-  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  position: sticky;
-  top: 80px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
-  margin-bottom: 20px;
-  z-index: 1;
-}
-
-/* Stacking effect - each card overlaps the one below */
-.stacked-card:nth-child(1) { z-index: 5; top: 80px; }
-.stacked-card:nth-child(2) { z-index: 4; top: 120px; }
-.stacked-card:nth-child(3) { z-index: 3; top: 160px; }
-.stacked-card:nth-child(4) { z-index: 2; top: 200px; }
-.stacked-card:nth-child(5) { z-index: 1; top: 240px; }
-
-/* Reduce the gap when scrolling past */
-.stacked-card:nth-child(1).is-scrolled-past { transform: scale(0.95) translateY(-40px); opacity: 0.3; }
-.stacked-card:nth-child(2).is-scrolled-past { transform: scale(0.95) translateY(-40px); opacity: 0.3; }
-.stacked-card:nth-child(3).is-scrolled-past { transform: scale(0.95) translateY(-40px); opacity: 0.3; }
-.stacked-card:nth-child(4).is-scrolled-past { transform: scale(0.95) translateY(-40px); opacity: 0.3; }
-
-.stacked-card.is-active {
-  transform: scale(1) translateY(0);
-  border-color: #b8943c;
-  box-shadow: 0 20px 50px rgba(184, 148, 60, 0.08);
-  z-index: 10;
-}
-
-.stacked-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #b8943c, #fcd34d, #b8943c);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.stacked-card.is-active::before {
-  opacity: 1;
-}
-
-.stacked-card-inner {
-  display: flex;
-  padding: 28px 30px;
-  gap: 24px;
-  align-items: stretch;
-}
-
-.stacked-card-left {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.stacked-card-right {
-  flex: 0 0 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.stacked-card-image {
-  width: 140px;
-  height: 140px;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #f0ebe4;
-  flex-shrink: 0;
-  transition: transform 0.3s ease;
-}
-
-.stacked-card.is-active .stacked-card-image {
-  transform: scale(1.04);
-}
-
-.stacked-card-icon {
-  font-size: 2.8rem;
-  margin-bottom: 4px;
-}
-
-.stacked-card-label {
-  font-size: 0.55rem;
-  font-weight: 500;
-  opacity: 0.7;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.stacked-card-number {
-  font-size: 0.5rem;
-  font-weight: 700;
-  color: #b8943c;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.stacked-card-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #1a1917;
-  line-height: 1.3;
-  margin: 0;
-}
-
-.stacked-card-desc {
-  font-size: 0.85rem;
-  color: #6e6a62;
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* Quiz Options */
-.stacked-card-options {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin: 4px 0;
-}
-
-.stacked-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #f8f5f0;
-  padding: 8px 16px;
-  border-radius: 40px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #4d4a44;
-  border: 1px solid transparent;
-}
-
-.stacked-option:hover {
-  background: #fef3c7;
-  border-color: #b8943c;
-}
-
-.stacked-option input[type="radio"] {
-  accent-color: #b8943c;
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
-
-/* Topics */
-.stacked-card-topics {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.stacked-card-topics span {
-  background: #f4f0ea;
-  padding: 3px 12px;
-  border-radius: 40px;
-  font-size: 0.65rem;
-  font-weight: 500;
-  color: #4d4a44;
-}
-
-/* Collections */
-.stacked-card-collections {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.collection-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #f8f5f0;
-  padding: 8px 14px;
-  border-radius: 12px;
-  border: 1px solid #ede8e0;
-  transition: all 0.3s ease;
-}
-
-.collection-item:hover {
-  border-color: #b8943c;
-  background: #fef3c7;
-}
-
-.collection-icon {
-  font-size: 1.2rem;
-}
-
-.collection-title {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #1a1917;
-}
-
-.collection-experts {
-  font-size: 0.6rem;
-  color: #6e6a62;
-}
-
-/* Footer */
-.stacked-card-footer {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  padding-top: 8px;
-  border-top: 1px solid #f5f2ed;
-}
-
-.stacked-card-tag {
-  font-size: 0.6rem;
-  font-weight: 600;
-  color: #b8943c;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.stacked-card-time {
-  font-size: 0.6rem;
-  color: #8a8680;
-}
-
-/* Progress indicator */
-.stacked-progress {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.75rem;
-  color: #8a8680;
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-  .stacked-card-inner {
-    padding: 24px 24px;
-    flex-direction: column;
-  }
-  
-  .stacked-card-right {
-    flex: 1;
-    justify-content: center;
-  }
-  
-  .stacked-card-image {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .stacked-card-icon {
-    font-size: 2rem;
-  }
-  
-  .stacked-card-title {
-    font-size: 1.1rem;
-  }
-  
-  .stacked-card:nth-child(1) { top: 60px; }
-  .stacked-card:nth-child(2) { top: 80px; }
-  .stacked-card:nth-child(3) { top: 100px; }
-  .stacked-card:nth-child(4) { top: 120px; }
-  .stacked-card:nth-child(5) { top: 140px; }
-}
-
-@media (max-width: 640px) {
-  .stacked-card-inner {
-    padding: 20px 16px;
-  }
-  
-  .stacked-card-title {
-    font-size: 1rem;
-  }
-  
-  .stacked-card-options {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .stacked-card-collections {
-    flex-direction: column;
-  }
-  
-  .stacked-card-right {
-    flex: 1;
-  }
-  
-  .stacked-card-image {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .stacked-card-icon {
-    font-size: 1.6rem;
-  }
-  
-  .stacked-card-label {
-    font-size: 0.45rem;
-  }
-  
-  .collection-item {
-    padding: 6px 12px;
-  }
-  
-  .stacked-card:nth-child(1) { top: 40px; }
-  .stacked-card:nth-child(2) { top: 50px; }
-  .stacked-card:nth-child(3) { top: 60px; }
-  .stacked-card:nth-child(4) { top: 70px; }
-  .stacked-card:nth-child(5) { top: 80px; }
-}
-    
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 992px) {
-      .persona-orbit-container { --orbit-size: 560px; --orbit-radius: 210px; --orbit-depth: 90px; }
-      .orbit-center { width: 180px; height: 180px; padding: 24px; }
-      .orbit-item { width: 100px; height: 100px; margin: -50px 0 0 -50px; }
-      .orbit-name { font-size: 0.55rem; }
-    }
-    @media (max-width: 768px) {
-      .persona-orbit-container { --orbit-size: 420px; --orbit-radius: 155px; --orbit-depth: 65px; }
-      .orbit-center { width: 150px; height: 150px; padding: 20px; }
-      .center-persona-desc { font-size: 0.65rem; max-width: 140px; }
-      .center-default-text { font-size: 0.55rem; max-width: 110px; }
-      .orbit-item { width: 80px; height: 80px; margin: -40px 0 0 -40px; }
-      .orbit-name { font-size: 0.45rem; letter-spacing: 0.5px; }
-      .orbit-tooltip { display: none; }
-    }
-    @media (max-width: 480px) {
-      .persona-orbit-container { --orbit-size: 340px; --orbit-radius: 125px; --orbit-depth: 50px; margin: 10px auto 20px; }
-      .orbit-center { width: 120px; height: 120px; padding: 16px; }
-      .center-persona-desc { font-size: 0.55rem; max-width: 100px; }
-      .center-default-text { font-size: 0.45rem; max-width: 90px; }
-      .orbit-item { width: 65px; height: 65px; margin: -32px 0 0 -32px; }
-      .orbit-name { font-size: 0.38rem; letter-spacing: 0.3px; }
+    /* ===== 3D SPHERICAL ORBIT SYSTEM ===== */
+    .personas-header {
+      text-align: center;
+      margin-bottom: 50px;
     }
 
-/* ===== SINGLE JOURNEY CARD - RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .journey-card-inner {
-    padding: 24px 20px !important;
-  }
-  
-  .journey-card-title {
-    font-size: 1.6rem !important;
-  }
-  
-  .journey-card-subtitle {
-    font-size: 0.85rem !important;
-  }
-  
-  .journey-card-footer {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-  
-  .journey-card-footer a {
-    text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .journey-card-inner {
-    padding: 20px 16px !important;
-  }
-  
-  .journey-card-title {
-    font-size: 1.3rem !important;
-  }
-  
-  .journey-card-tags span {
-    font-size: 0.6rem !important;
-    padding: 3px 10px !important;
-  }
-  
-  .journey-card-outcome {
-    font-size: 0.95rem !important;
-  }
-}
- 
- 
-    .steps {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      margin-top: 40px;
-      flex-wrap: wrap;
+    .personas-badge {
+      display: inline-block;
+      background: rgba(184, 148, 60, 0.1);
+      color: #b8943c;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 6px 20px;
+      border-radius: 40px;
+      border: 1px solid rgba(184, 148, 60, 0.15);
       position: relative;
     }
-    .steps::before {
+    .personas-badge::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 40px;
+      background: linear-gradient(135deg, rgba(184, 148, 60, 0.2), transparent, rgba(184, 148, 60, 0.2));
+      z-index: -1;
+      animation: badgePulse 3s ease-in-out infinite;
+    }
+    @keyframes badgePulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+    .personas-subtitle {
+      font-size: 1rem;
+      color: #6e6a62;
+      max-width: 600px;
+      margin: 8px auto 0;
+      line-height: 1.7;
+    }
+
+    .persona-orbit-container {
+      --orbit-size: 700px;
+      --orbit-radius: 270px;
+      --orbit-depth: 120px;
+      position: relative;
+      width: var(--orbit-size);
+      height: var(--orbit-size);
+      margin: 10px auto 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      perspective-origin: 50% 50%;
+      isolation: isolate;
+    }
+
+    .persona-orbit-container::before {
       content: "";
       position: absolute;
-      top: 28px;
-      left: 40px;
-      right: 40px;
-      height: 2px;
-      background: #d0c8bc;
+      width: 85%;
+      height: 85%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245, 240, 231, 0.3), transparent 70%);
+      pointer-events: none;
       z-index: 0;
     }
-    .step-item {
-      flex: 1;
-      min-width: 120px;
-      text-align: center;
-      position: relative;
+
+    .orbit-ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      pointer-events: none;
       z-index: 1;
-      background: #faf8f5;
-      padding: 0 8px;
+      box-sizing: border-box;
     }
-    .step-num { display: inline-block; width: 48px; height: 48px; background: #b8943c; color: #1a1917; border-radius: 50%; font-weight: 700; line-height: 48px; font-size: 1.1rem; margin-bottom: 12px; }
-    .step-item h4 { font-weight: 600; font-size: 1rem; }
-    .step-item p { font-size: 0.85rem; color: #5e5a54; }
-
-    .learn-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 28px;
-      margin-top: 32px;
+    .orbit-ring-1 {
+      width: calc(var(--orbit-radius) * 2);
+      height: calc(var(--orbit-radius) * 2);
+      border: 0.5px solid rgba(200, 180, 150, 0.12);
     }
-    .learn-card { background: #f4f0ea; padding: 28px 20px; border-radius: 24px; transition: background 0.2s; text-align: center; }
-    .learn-card:hover { background: #ede8e0; }
-    .learn-card .icon { font-size: 2.5rem; display: block; margin-bottom: 12px; }
-    .learn-card h4 { font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
-    .learn-card p { font-size: 0.85rem; color: #4d4a44; }
+    .orbit-ring-2 {
+      width: calc(var(--orbit-radius) * 1.5);
+      height: calc(var(--orbit-radius) * 1.5);
+      border: 0.5px solid rgba(200, 180, 150, 0.06);
+    }
+    .orbit-ring-3 {
+      width: calc(var(--orbit-radius) * 0.9);
+      height: calc(var(--orbit-radius) * 0.9);
+      border: 0.5px dashed rgba(200, 180, 150, 0.05);
+    }
 
-    .practice-mock {
-      background: #1a1917;
+    .orbit-center {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+      background: radial-gradient(circle at 40% 30%, rgba(255, 248, 240, 0.95), rgba(248, 242, 235, 0.98));
+      border: 2px solid rgba(184, 148, 60, 0.5);
+      box-shadow: 
+        0 0 0 1px rgba(184, 148, 60, 0.08),
+        0 20px 60px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .orbit-center .center-persona-desc {
+      font-size: 0.9rem;
+      color: #4d4a44;
+      line-height: 1.5;
+      max-width: 180px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.5s ease 0.1s;
+      font-weight: 500;
+    }
+    .orbit-center .center-persona-desc.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .orbit-center .center-persona-tag {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #b8943c;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 6px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.5s ease 0.2s;
+    }
+    .orbit-center .center-persona-tag.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .orbit-center .center-default-text {
+      font-size: 0.75rem;
+      color: rgba(26, 25, 23, 0.25);
+      line-height: 1.6;
+      max-width: 140px;
+      font-weight: 400;
+    }
+
+    .persona-orbit-track {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      transform-style: preserve-3d;
+      pointer-events: none;
+    }
+
+    .orbit-item {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 120px;
+      height: 120px;
+      margin: -60px 0 0 -60px;
+      transform-style: preserve-3d;
+      will-change: transform, opacity, filter;
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 5;
+      transition: z-index 0.3s ease;
+    }
+
+    .orbit-persona {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px;
+      box-sizing: border-box;
+      background: #2d2a24;
+      border: 0.5px solid rgba(200, 180, 150, 0.08);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .orbit-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: rgba(245, 240, 235, 0.9);
+      letter-spacing: 0.3px;
+      text-transform: none;
+      line-height: 1.2;
+      transition: all 0.4s ease;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .orbit-item.is-front .orbit-persona {
+      background: #33302a;
+      border-color: rgba(200, 180, 150, 0.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+    .orbit-item.is-front .orbit-name { font-size: 0.95rem; font-weight: 700; }
+
+    .orbit-item.is-back .orbit-persona {
+      opacity: 0.35;
+      transform: scale(0.85);
+    }
+    .orbit-item.is-back .orbit-name {
+      font-size: 0.65rem;
+      font-weight: 600;
+      opacity: 0.7;
+    }
+
+    .orbit-item:hover {
+      z-index: 40;
+    }
+    .orbit-item:hover .orbit-persona {
+      background: #3a3630;
+      border-color: rgba(200, 180, 150, 0.15);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      transform: scale(1.06);
+    }
+    .orbit-item:hover .orbit-name {
+      color: rgba(245, 240, 235, 0.95);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .orbit-item.is-active {
+      z-index: 45;
+    }
+    .orbit-item.is-active .orbit-persona {
+      background: #2d2a24;
+      border: 2px solid #b8943c;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      transform: scale(1.1);
+    }
+    .orbit-item.is-active .orbit-name {
+      color: #b8943c;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .orbit-tooltip {
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.5rem;
+      font-weight: 400;
+      color: rgba(26, 25, 23, 0.2);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    .orbit-item:hover .orbit-tooltip {
+      opacity: 1;
+      color: rgba(26, 25, 23, 0.4);
+    }
+
+    .personas-cta {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .personas-cta p {
+      font-size: 1.1rem;
+      color: #4d4a44;
+      margin-bottom: 14px;
+    }
+    .personas-cta p strong {
+      color: #b8943c;
+    }
+
+    /* ===== STACKED CARDS ===== */
+    .explore-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .explore-badge {
+      display: inline-block;
+      background: rgba(184, 148, 60, 0.1);
+      color: #b8943c;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 6px 20px;
+      border-radius: 40px;
+      border: 1px solid rgba(184, 148, 60, 0.15);
+      margin-bottom: 12px;
+    }
+
+    .explore-tags {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .explore-tags span {
+      background: #f4f0ea;
+      padding: 4px 16px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #4d4a44;
+    }
+
+    .stacked-cards-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      min-height: 600px;
+    }
+
+    .stacked-card {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #ede8e0;
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      position: sticky;
+      top: 80px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+      margin-bottom: 20px;
+      z-index: 1;
+    }
+
+    .stacked-card:nth-child(1) { z-index: 5; top: 80px; }
+    .stacked-card:nth-child(2) { z-index: 4; top: 120px; }
+    .stacked-card:nth-child(3) { z-index: 3; top: 160px; }
+    .stacked-card:nth-child(4) { z-index: 2; top: 200px; }
+    .stacked-card:nth-child(5) { z-index: 1; top: 240px; }
+
+    .stacked-card.is-active {
+      transform: scale(1) translateY(0);
+      border-color: #b8943c;
+      box-shadow: 0 20px 50px rgba(184, 148, 60, 0.08);
+      z-index: 10;
+    }
+
+    .stacked-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #b8943c, #fcd34d, #b8943c);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .stacked-card.is-active::before {
+      opacity: 1;
+    }
+
+    .stacked-card-inner {
+      display: flex;
+      padding: 28px 30px;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .stacked-card-left {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .stacked-card-right {
+      flex: 0 0 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stacked-card-image {
+      width: 140px;
+      height: 140px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       color: #f0ebe4;
-      border-radius: 32px;
-      padding: 32px 28px;
-      max-width: 600px;
-      margin: 24px auto 0;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
     }
-    .practice-mock .mock-quote { font-size: 1.2rem; font-weight: 400; font-style: italic; margin-bottom: 16px; }
-    .practice-mock .mock-btn { background: #b8943c; border: none; color: #1a1917; font-weight: 600; padding: 12px 28px; border-radius: 40px; font-size: 0.95rem; cursor: default; }
-    .practice-mock .mock-feedback { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
-    .practice-mock .mock-feedback span { background: #2d2a24; padding: 6px 16px; border-radius: 40px; font-size: 0.85rem; }
+
+    .stacked-card.is-active .stacked-card-image {
+      transform: scale(1.04);
+    }
+
+    .stacked-card-icon {
+      font-size: 2.8rem;
+      margin-bottom: 4px;
+    }
+
+    .stacked-card-label {
+      font-size: 0.55rem;
+      font-weight: 500;
+      opacity: 0.7;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .stacked-card-number {
+      font-size: 0.5rem;
+      font-weight: 700;
+      color: #b8943c;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .stacked-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1a1917;
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    .stacked-card-desc {
+      font-size: 0.85rem;
+      color: #6e6a62;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .stacked-card-options {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 4px 0;
+    }
+
+    .stacked-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8f5f0;
+      padding: 8px 16px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #4d4a44;
+      border: 1px solid transparent;
+    }
+
+    .stacked-option:hover {
+      background: #fef3c7;
+      border-color: #b8943c;
+    }
+
+    .stacked-option input[type="radio"] {
+      accent-color: #b8943c;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .stacked-card-topics {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stacked-card-topics span {
+      background: #f4f0ea;
+      padding: 3px 12px;
+      border-radius: 40px;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: #4d4a44;
+    }
+
+    .stacked-card-collections {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .collection-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8f5f0;
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: 1px solid #ede8e0;
+      transition: all 0.3s ease;
+    }
+
+    .collection-item:hover {
+      border-color: #b8943c;
+      background: #fef3c7;
+    }
+
+    .collection-icon {
+      font-size: 1.2rem;
+    }
+
+    .collection-title {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #1a1917;
+    }
+
+    .collection-experts {
+      font-size: 0.6rem;
+      color: #6e6a62;
+    }
+
+    .stacked-card-footer {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid #f5f2ed;
+    }
+
+    .stacked-card-tag {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #b8943c;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .stacked-card-time {
+      font-size: 0.6rem;
+      color: #8a8680;
+    }
+
+    /* ===== JOURNEY CARD ===== */
+    .journey-card {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 28px;
+      border: 1px solid #ede8e0;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .journey-card .gold-bar {
+      height: 4px;
+      background: linear-gradient(90deg, #b8943c, #fcd34d, #b8943c);
+    }
+
+    .journey-card .journey-body {
+      padding: 32px 36px 28px;
+    }
+
+    .journey-card .journey-badge {
+      font-size: 0.55rem;
+      font-weight: 700;
+      color: #b8943c;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .journey-card .journey-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1917;
+      margin: 4px 0 0;
+      letter-spacing: -0.5px;
+    }
+
+    .journey-card .journey-title span {
+      color: #b8943c;
+    }
+
+    .journey-card .journey-subtitle {
+      font-size: 0.95rem;
+      color: #4d4a44;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .journey-card .journey-divider {
+      border-top: 1px solid #f0ebe4;
+      margin: 16px 0;
+    }
+
+    .journey-card .journey-outcome-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #8a8680;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .journey-card .journey-outcome {
+      font-size: 1.1rem;
+      color: #1a1917;
+      font-weight: 500;
+      font-style: italic;
+    }
+
+    .journey-card .journey-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .journey-card .journey-tags span {
+      font-size: 0.7rem;
+      color: #1a1917;
+      background: #f4f0ea;
+      padding: 4px 14px;
+      border-radius: 40px;
+      font-weight: 500;
+    }
+
+    .journey-card .journey-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #f0ebe4;
+    }
+
+    .journey-card .journey-delivery {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #b8943c;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
 
     .community-grid {
       display: grid;
@@ -1239,102 +1092,23 @@
     .footer-col a:hover { color: #b8943c; }
     .footer-social { display: flex; gap: 16px; }
 
-    /* Bento Grid */
-    .bento-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: auto auto;
-      gap: 16px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    .bento-card {
-      position: relative;
-      border-radius: 20px;
-      padding: 28px 24px;
-      background: #ffffff;
-      border: 1px solid #ede8e0;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-      overflow: hidden;
-      min-height: 160px;
-    }
-    .bento-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    .bento-card:hover::before { opacity: 1; }
-    .bento-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06); border-color: #b8943c; }
-    .bento-card-1 { grid-column: 1 / 2; grid-row: 1 / 3; min-height: 340px; }
-    .bento-card-1::before { background: linear-gradient(90deg, #4f8bc9, #6ba3e0); }
-    .bento-card-2 { grid-column: 2 / 3; grid-row: 1 / 2; }
-    .bento-card-2::before { background: linear-gradient(90deg, #4a9e6e, #6bc49a); }
-    .bento-card-3 { grid-column: 3 / 4; grid-row: 1 / 2; }
-    .bento-card-3::before { background: linear-gradient(90deg, #e86f4a, #f08a6a); }
-    .bento-card-4 { grid-column: 2 / 3; grid-row: 2 / 3; }
-    .bento-card-4::before { background: linear-gradient(90deg, #9b6fc0, #b88fd6); }
-    .bento-card-5 { grid-column: 3 / 4; grid-row: 2 / 3; }
-    .bento-card-5::before { background: linear-gradient(90deg, #d4a84a, #e8c06a); }
-    .bento-card-inner { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; }
-    .bento-icon { font-size: 2rem; margin-bottom: 8px; transition: transform 0.3s ease; }
-    .bento-card:hover .bento-icon { transform: scale(1.1) rotate(-5deg); }
-    .bento-number { font-size: 0.5rem; font-weight: 700; color: #b8943c; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
-    .bento-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: #1a1917; margin-bottom: 4px; }
-    .bento-desc { font-size: 0.85rem; color: #6e6a62; line-height: 1.5; flex: 1; }
-    .bento-hover-content { margin-top: 12px; opacity: 0; transform: translateY(8px); transition: all 0.3s ease; }
-    .bento-card:hover .bento-hover-content { opacity: 1; transform: translateY(0); }
-    .bento-tag {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: #b8943c;
-      letter-spacing: 0.5px;
-      padding: 4px 16px;
-      border-radius: 40px;
-      background: rgba(184, 148, 60, 0.08);
-      border: 1px solid rgba(184, 148, 60, 0.15);
-      transition: all 0.3s ease;
-    }
-    .bento-card:hover .bento-tag { background: #b8943c; color: #ffffff; border-color: #b8943c; }
-    @media (max-width: 992px) {
-      .bento-grid { grid-template-columns: 1fr 1fr; }
-      .bento-card-1 { grid-column: 1 / 2; grid-row: 1 / 3; min-height: 280px; }
-      .bento-card-2 { grid-column: 2 / 3; grid-row: 1 / 2; }
-      .bento-card-3 { grid-column: 2 / 3; grid-row: 2 / 3; }
-      .bento-card-4 { grid-column: 1 / 2; grid-row: 3 / 4; }
-      .bento-card-5 { grid-column: 2 / 3; grid-row: 3 / 4; }
-    }
-    @media (max-width: 640px) {
-      .bento-grid { grid-template-columns: 1fr; }
-      .bento-card { min-height: 120px !important; padding: 20px 18px; }
-      .bento-card-1 { grid-column: 1 / 2; grid-row: auto; min-height: 120px !important; }
-      .bento-card-2, .bento-card-3, .bento-card-4, .bento-card-5 { grid-column: 1 / 2; grid-row: auto; }
-      .bento-icon { font-size: 1.4rem; }
-      .bento-title { font-size: 1rem; }
-    }
-
-    /* Responsive */
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 992px) {
       .hero { flex-direction: column; flex-wrap: wrap; min-height: auto; gap: 40px; }
       .hero-left, .hero-right { flex: 1 1 100%; width: 100%; }
-      .hero .rotating-pair .line1 { font-size: 3.6rem; }
-      .hero .rotating-pair .line2 { font-size: 2.4rem; }
-      .hero .rotating-container { height: 150px; }
+      .hero .rotating-pair .inner-voice { font-size: 1.8rem; }
+      .hero .rotating-pair .outcome { font-size: 1.4rem; }
+      .hero .rotating-container { height: 180px; }
       .heading-xl { font-size: 3rem; }
       .heading-lg { font-size: 2.4rem; }
-      .steps::before { display: none; }
-      .problem-flow { flex-direction: column; align-items: stretch; }
-      .problem-arrow { transform: rotate(90deg); }
-      .journey-carousel-track .journey-card-premium { min-width: calc(100% - 0px); flex: 0 0 calc(100% - 0px); }
-      .journey-carousel-container { padding: 0 10px; }
-      .carousel-btn { width: 36px; height: 36px; font-size: 0.9rem; }
+      .persona-orbit-container { --orbit-size: 560px; --orbit-radius: 210px; --orbit-depth: 90px; }
+      .orbit-center { width: 180px; height: 180px; padding: 24px; }
+      .orbit-item { width: 100px; height: 100px; margin: -50px 0 0 -50px; }
+      .orbit-name { font-size: 0.7rem; }
+      .orbit-item.is-front .orbit-name { font-size: 0.8rem; }
+      .orbit-item.is-back .orbit-name { font-size: 0.55rem; }
     }
+
     @media (max-width: 768px) {
       .container { padding: 0 16px; }
       .navbar { flex-direction: row; gap: 12px; flex-wrap: wrap; }
@@ -1342,20 +1116,61 @@
       .logo-text { font-size: 1.2rem; }
       .nav-links { gap: 12px; flex-wrap: wrap; justify-content: center; }
       .nav-links a { font-size: 0.8rem; }
-      .hero .rotating-pair .line1 { font-size: 2.6rem; }
-      .hero .rotating-pair .line2 { font-size: 1.8rem; }
-      .hero .rotating-container { height: 120px; }
+      .hero .rotating-pair .inner-voice { font-size: 1.4rem; }
+      .hero .rotating-pair .outcome { font-size: 1.2rem; }
+      .hero .rotating-pair .pain-label { font-size: 1rem; }
+      .hero .rotating-container { height: 150px; }
       .hero-badge { font-size: 0.75rem; padding: 6px 16px; }
-      .btn-primary { width: 100%; text-align: center; }
       .section { padding: 48px 0; }
       .footer { flex-direction: column; }
-      .journey-card-premium .journey-card-inner { flex-direction: column; padding: 20px 16px; }
-      .journey-card-premium .journey-card-right { flex: 1; justify-content: center; }
-      .journey-card-premium .journey-image { width: 80px; height: 80px; }
-      .journey-card-premium .journey-icon { font-size: 2rem; }
+      .persona-orbit-container { --orbit-size: 420px; --orbit-radius: 155px; --orbit-depth: 65px; }
+      .orbit-center { width: 150px; height: 150px; padding: 20px; }
+      .orbit-center .center-persona-desc { font-size: 0.65rem; max-width: 140px; }
+      .orbit-item { width: 80px; height: 80px; margin: -40px 0 0 -40px; }
+      .orbit-name { font-size: 0.55rem; }
+      .orbit-item.is-front .orbit-name { font-size: 0.65rem; }
+      .orbit-item.is-back .orbit-name { font-size: 0.45rem; }
+      .orbit-tooltip { display: none; }
+      .stacked-card-inner { padding: 24px 24px; flex-direction: column; }
+      .stacked-card-right { flex: 1; justify-content: center; }
+      .stacked-card-image { width: 100px; height: 100px; }
+      .stacked-card-icon { font-size: 2rem; }
+      .stacked-card-title { font-size: 1.1rem; }
+      .stacked-card:nth-child(1) { top: 60px; }
+      .stacked-card:nth-child(2) { top: 80px; }
+      .stacked-card:nth-child(3) { top: 100px; }
+      .stacked-card:nth-child(4) { top: 120px; }
+      .stacked-card:nth-child(5) { top: 140px; }
     }
-    @media (max-width: 640px) { .persona-grid { grid-template-columns: 1fr 1fr; } }
-    @media (prefers-reduced-motion: reduce) { .orbit-ring-1::after, .orbit-center, .orbit-persona::before { animation: none !important; } }
+
+    @media (max-width: 480px) {
+      .persona-orbit-container { --orbit-size: 340px; --orbit-radius: 125px; --orbit-depth: 50px; margin: 10px auto 20px; }
+      .orbit-center { width: 120px; height: 120px; padding: 16px; }
+      .orbit-center .center-persona-desc { font-size: 0.55rem; max-width: 100px; }
+      .orbit-center .center-default-text { font-size: 0.45rem; max-width: 90px; }
+      .orbit-item { width: 65px; height: 65px; margin: -32px 0 0 -32px; }
+      .orbit-name { font-size: 0.42rem; }
+      .orbit-item.is-front .orbit-name { font-size: 0.5rem; }
+      .orbit-item.is-back .orbit-name { font-size: 0.35rem; }
+      .stacked-card-inner { padding: 20px 16px; }
+      .stacked-card-title { font-size: 1rem; }
+      .stacked-card-options { flex-direction: column; gap: 8px; }
+      .stacked-card-collections { flex-direction: column; }
+      .stacked-card-right { flex: 1; }
+      .stacked-card-image { width: 80px; height: 80px; }
+      .stacked-card-icon { font-size: 1.6rem; }
+      .stacked-card-label { font-size: 0.45rem; }
+      .collection-item { padding: 6px 12px; }
+      .stacked-card:nth-child(1) { top: 40px; }
+      .stacked-card:nth-child(2) { top: 50px; }
+      .stacked-card:nth-child(3) { top: 60px; }
+      .stacked-card:nth-child(4) { top: 70px; }
+      .stacked-card:nth-child(5) { top: 80px; }
+      .journey-card .journey-body { padding: 20px 16px; }
+      .journey-card .journey-title { font-size: 1.3rem; }
+      .journey-card .journey-footer { flex-direction: column; align-items: stretch; }
+      .journey-card .journey-footer a { text-align: center; }
+    }
   </style>
 </head>
 <body>
@@ -1409,22 +1224,43 @@
   </div>
 </div>
 
-<!-- ===== HERO ===== -->
+<!-- ===== HERO - 5 PAIN ROTATION ===== -->
 <section class="container hero">
   <div class="hero-left">
-    <div class="hero-badge">Uncover what your words leave unspoken</div>
+    <div class="hero-badge">You're better than how you sometimes sound.</div>
+    <p>Uncover what's getting lost between what you mean and how you land</p>
     <div class="rotating-container">
-      <div class="rotating-pair"><div class="line1 heading-serif">What You <span class="highlight">Mean</span></div><div class="line2">What They <span class="highlight">Hear</span></div></div>
-      <div class="rotating-pair"><div class="line1 heading-serif">What You <span class="highlight">Know</span></div><div class="line2">What They <span class="highlight">Understand</span></div></div>
-      <div class="rotating-pair"><div class="line1 heading-serif">Who You <span class="highlight">Are</span></div><div class="line2">How You're <span class="highlight">Experienced</span></div></div>
-      <div class="rotating-pair"><div class="line1 heading-serif">What You <span class="highlight">Say</span></div><div class="line2">What They <span class="highlight">Remember</span></div></div>
-      <div class="rotating-pair"><div class="line1 heading-serif">Your <span class="highlight">Potential</span></div><div class="line2">Your <span class="highlight">Impact</span></div></div>
+      <!-- 1: RAMBLING -->
+      <div class="rotating-pair">
+        <div class="pain-label">RAMBLING → CLARITY</div>
+        <div class="inner-voice">"I take too long to get to the point."</div>
+      </div>
+      <!-- 2: UNCLEAR -->
+      <div class="rotating-pair">
+        <div class="pain-label">UNCLEAR → PRECISION</div>
+        <div class="inner-voice">"I know what I mean, but they don't."</div>
+      </div>
+      <!-- 3: SCATTERED -->
+      <div class="rotating-pair">
+        <div class="pain-label">SCATTERED → STRUCTURE</div>
+        <div class="inner-voice">"My ideas come out all over the place."</div>
+      </div>
+      <!-- 4: FORGETTABLE -->
+      <div class="rotating-pair">
+        <div class="pain-label">FORGETTABLE → IMPACT</div>
+        <div class="inner-voice">"I said it, but it didn't stick."</div>
+      </div>
+      <!-- 5: UNCOMPELLING -->
+      <div class="rotating-pair">
+        <div class="pain-label">UNCOMPELLING → INFLUENCE</div>
+        <div class="inner-voice">"People hear me. But do they lean in?"</div>
+      </div>
     </div>
     <div class="tagline">Understand the gap. Close the gap.</div>
     <div class="hero-actions">
       <a href="Personasnap.html" class="btn-free">Let's Begin</a>
-      </div>
-    <div class="hero-micro">Free · 2-minutes · No credit card</div>
+    </div>
+    <div class="hero-micro">Try Now · 60 second · Instant</div>
   </div>
   <div class="hero-right">
     <div class="video-card">
@@ -1453,103 +1289,399 @@
   </div>
 </div>
 
-<!-- ===== THE 7 PERSONAS - 3D SPHERICAL ORBIT (PREMIUM) ===== -->
-<section class="container section" id="personas">
-  <div class="personas-header">
-    <span class="personas-badge">✦ THE 7 PERSONAS</span>
-    <h2 class="heading-serif heading-lg">7 Ways The World Can <span class="accent-gold">Experience You</span></h2>
-    <p class="personas-subtitle">You think. You express. You connect. But beneath the surface, there's a pattern — a persona that shapes how the world experiences you.</p>
+<!-- ===== MVP TRY IMMEDIATELY - PREMIUM ===== -->
+<section class="container section" id="try-it-now" style="background: linear-gradient(135deg, #faf8f5, #f5f0ea); border-radius: 32px; margin: 40px auto; padding: 60px 40px; border-bottom: none; position: relative; overflow: hidden;">
+  
+  <!-- Decorative Background -->
+  <div style="position: absolute; top: -200px; right: -200px; width: 500px; height: 500px; border-radius: 50%; background: rgba(184, 148, 60, 0.03); pointer-events: none;"></div>
+  <div style="position: absolute; bottom: -100px; left: -100px; width: 300px; height: 300px; border-radius: 50%; background: rgba(184, 148, 60, 0.02); pointer-events: none;"></div>
+
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 40px; position: relative; z-index: 1;">
+    <span style="display: inline-block; background: rgba(184, 148, 60, 0.12); color: #b8943c; font-size: 0.6rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 6px 20px; border-radius: 40px; border: 1px solid rgba(184, 148, 60, 0.15); margin-bottom: 12px;">⚡ TRY IT NOW</span>
+    <h2 class="heading-serif heading-lg">See How <span class="accent-gold">You Actually Come</span> Across</h2>
+    <p style="font-size: 1rem; color: #6e6a62; max-width: 600px; margin: 8px auto 0; line-height: 1.7;">One situation. One response. One honest assessment.</p>
   </div>
 
-  <div class="persona-orbit-container">
-    <div class="orbit-ring orbit-ring-1"></div>
-    <div class="orbit-ring orbit-ring-2"></div>
-    <div class="orbit-ring orbit-ring-3"></div>
-    
-    <!-- CENTER REVEAL CARD -->
-    <div class="orbit-center" id="orbitCenter">
-      <!-- Gold Sparkle Mark -->
-      <span style="font-size: 0.7rem; color: #b8943c; letter-spacing: 2px; margin-bottom: 2px;">✦</span>
-      <!-- Persona Label (small caps, muted gold) -->
-      <span style="font-size: 0.5rem; font-weight: 600; color: #b8943c; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6;">Persona</span>
-      <!-- Description -->
-      <p class="center-persona-desc" id="centerPersonaDesc">Hover or tap a persona</p>
-      <!-- Tag -->
-      <span class="center-persona-tag" id="centerPersonaTag"></span>
-      <!-- Default text -->
-      <span class="center-default-text" id="centerDefaultText">Hover or tap a persona to explore</span>
+<!-- Attempt Tracking -->
+<div style="max-width: 900px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: #ffffff; border-radius: 16px; padding: 14px 24px; border: 1px solid #ede8e0;">
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <span style="font-size: 0.8rem; font-weight: 600; color: #4d4a44;">Attempt <span id="currentAttemptDisplay">1</span> of <span id="maxAttemptDisplay">3</span></span>
+    <div style="display: flex; gap: 8px;" id="attemptDots">
+      <span class="attempt-dot" data-attempt="0" style="display: inline-block; width: 32px; height: 32px; border-radius: 50%; background: #b8943c; color: #fff; text-align: center; line-height: 32px; font-size: 0.7rem; font-weight: 700;">1</span>
+      <span class="attempt-dot" data-attempt="1" style="display: inline-block; width: 32px; height: 32px; border-radius: 50%; background: #ede8e0; color: #8a8680; text-align: center; line-height: 32px; font-size: 0.7rem; font-weight: 700;">2</span>
+      <span class="attempt-dot" data-attempt="2" style="display: inline-block; width: 32px; height: 32px; border-radius: 50%; background: #ede8e0; color: #8a8680; text-align: center; line-height: 32px; font-size: 0.7rem; font-weight: 700;">3</span>
     </div>
-    
-    <div class="persona-orbit-track" id="personaOrbitTrack">
-      <!-- Translator -->
-      <div class="orbit-item" data-persona="translator">
-        <div class="orbit-persona">
-          <span class="orbit-name">Translator</span>
-        </div>
-        <span class="orbit-tooltip">Makes complexity make sense</span>
-      </div>
-      <!-- Amplifier -->
-      <div class="orbit-item" data-persona="amplifier">
-        <div class="orbit-persona">
-          <span class="orbit-name">Amplifier</span>
-        </div>
-        <span class="orbit-tooltip">Makes ideas impossible to ignore</span>
-      </div>
-      <!-- Articulator -->
-      <div class="orbit-item" data-persona="articulator">
-        <div class="orbit-persona">
-          <span class="orbit-name">Articulator</span>
-        </div>
-        <span class="orbit-tooltip">Makes thinking visible</span>
-      </div>
-      <!-- Interpreter -->
-      <div class="orbit-item" data-persona="interpreter">
-        <div class="orbit-persona">
-          <span class="orbit-name">Interpreter</span>
-        </div>
-        <span class="orbit-tooltip">Reads what others miss</span>
-      </div>
-      <!-- Filter (Gold ring + gold text when active) -->
-      <div class="orbit-item" data-persona="filter">
-        <div class="orbit-persona">
-          <span class="orbit-name">Filter</span>
-        </div>
-        <span class="orbit-tooltip">Knows what matters</span>
-      </div>
-      <!-- Emerging -->
-      <div class="orbit-item" data-persona="emerging">
-        <div class="orbit-persona">
-          <span class="orbit-name">Emerging</span>
-        </div>
-        <span class="orbit-tooltip">Finding your voice</span>
-      </div>
-      <!-- Misaligned -->
-      <div class="orbit-item" data-persona="misaligned">
-        <div class="orbit-persona">
-          <span class="orbit-name">Misaligned</span>
-        </div>
-        <span class="orbit-tooltip">Intent and impact may not meet</span>
-      </div>
+  </div>
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <span style="font-size: 0.75rem; color: #8a8680;">Best: <span id="bestScoreDisplay">—</span></span>
+    <span style="font-size: 0.7rem; font-weight: 600; color: #b8943c; background: #fef3c7; padding: 2px 12px; border-radius: 40px;" id="attemptsLeftBadge">3 attempts left</span>
+  </div>
+</div>
+
+  <!-- Step 1: Scenario Selection -->
+  <div style="max-width: 900px; margin: 0 auto 32px; position: relative; z-index: 1;">
+    <p style="font-weight: 600; margin-bottom: 16px; font-size: 0.9rem; color: #4d4a44; display: flex; align-items: center; gap: 8px;">
+      <span style="display: inline-flex; align-items: center; justify-content: center; background: #b8943c; color: #fff; width: 24px; height: 24px; border-radius: 50%; font-size: 0.7rem; font-weight: 700;">1</span>
+      Choose a moment that matters:
+    </p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+      <button class="scenario-btn" data-scenario="0" style="background: #ffffff; border: 2px solid #ede8e0; border-radius: 16px; padding: 16px 20px; font-size: 0.85rem; font-weight: 500; color: #4d4a44; cursor: pointer; transition: all 0.3s ease; font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 1.4rem;">📋</span>
+        <div><div style="font-weight: 600;">Meeting Room</div><div style="font-size: 0.7rem; color: #8a8680;">manager challenges your idea</div></div>
+      </button>
+      <button class="scenario-btn" data-scenario="1" style="background: #ffffff; border: 2px solid #ede8e0; border-radius: 16px; padding: 16px 20px; font-size: 0.85rem; font-weight: 500; color: #4d4a44; cursor: pointer; transition: all 0.3s ease; font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 1.4rem;">💼</span>
+        <div><div style="font-weight: 600;">Client Objection</div><div style="font-size: 0.7rem; color: #8a8680;">Handle pushback</div></div>
+      </button>
+      <button class="scenario-btn" data-scenario="2" style="background: #ffffff; border: 2px solid #ede8e0; border-radius: 16px; padding: 16px 20px; font-size: 0.85rem; font-weight: 500; color: #4d4a44; cursor: pointer; transition: all 0.3s ease; font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 1.4rem;">🚀</span>
+        <div><div style="font-weight: 600;">Promotion Ask</div><div style="font-size: 0.7rem; color: #8a8680;">Make the case</div></div>
+      </button>
+      <button class="scenario-btn" data-scenario="3" style="background: #ffffff; border: 2px solid #ede8e0; border-radius: 16px; padding: 16px 20px; font-size: 0.85rem; font-weight: 500; color: #4d4a44; cursor: pointer; transition: all 0.3s ease; font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 1.4rem;">🔴</span>
+        <div><div style="font-weight: 600;">Difficult Feedback</div><div style="font-size: 0.7rem; color: #8a8680;">Address underperformance</div></div>
+      </button>
+      <button class="scenario-btn" data-scenario="4" style="background: #ffffff; border: 2px solid #ede8e0; border-radius: 16px; padding: 16px 20px; font-size: 0.85rem; font-weight: 500; color: #4d4a44; cursor: pointer; transition: all 0.3s ease; font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 1.4rem;">🎤</span>
+        <div><div style="font-weight: 600;">Interview</div><div style="font-size: 0.7rem; color: #8a8680;">"Make your introduction memorable"</div></div>
+      </button>
     </div>
   </div>
 
-  <!-- "Mirror" tagline - serif, italic, gold -->
-  <div class="personas-cta">
-    <p style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic; color: #b8943c; margin-bottom: 16px;">This isn't just a quiz. It's a mirror.</p>
-    <a href="Personasnap.html" class="btn-free">Let's Begin →</a>
+  <!-- Step 2: Challenge Area -->
+  <div style="max-width: 900px; margin: 0 auto; background: #ffffff; border-radius: 28px; border: 1px solid #ede8e0; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.06); position: relative; z-index: 1;" id="challengeArea">
+    
+    <!-- Challenge Header -->
+    <div style="padding: 24px 32px 0 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #f5f2ed;">
+      <div>
+        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 2px; text-transform: uppercase;">CHALLENGE</span>
+        <p id="scenarioContext" style="font-size: 1rem; color: #1a1917; margin-top: 2px; font-weight: 500; min-height: 28px;">Select a scenario to begin.</p>
+      </div>
+      <div id="timerDisplay" style="font-size: 2rem; font-weight: 700; color: #b8943c; font-variant-numeric: tabular-nums; min-width: 80px; text-align: right; font-family: 'Inter', monospace;">00:45</div>
+    </div>
+
+    <!-- Scenario Question (Hidden until challenge starts) -->
+    <div id="questionDisplay" style="padding: 0 32px; max-height: 0; overflow: hidden; transition: all 0.5s ease; background: #fefcf8; border-bottom: 1px solid #f5f2ed;">
+      <div style="padding: 20px 0;">
+        <span style="font-size: 0.6rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">YOUR TASK</span>
+        <p id="scenarioQuestion" style="font-size: 1.1rem; color: #1a1917; margin-top: 4px; line-height: 1.6; font-style: italic;">Select a scenario to see the question.</p>
+      </div>
+    </div>
+
+    <!-- Mode Selection + Controls -->
+    <div style="padding: 20px 32px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; border-bottom: 1px solid #f5f2ed;">
+      <span style="font-weight: 600; font-size: 0.85rem; color: #4d4a44; display: flex; align-items: center; gap: 8px;">
+        <span style="display: inline-flex; align-items: center; justify-content: center; background: #b8943c; color: #fff; width: 24px; height: 24px; border-radius: 50%; font-size: 0.7rem; font-weight: 700;">2</span>
+        Choose your response mode:
+      </span>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto;">
+        <button id="voiceModeBtn" class="mode-btn active" style="background: #b8943c; color: #fff; border: 2px solid #b8943c; border-radius: 40px; padding: 8px 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: inherit; display: flex; align-items: center; gap: 8px;">
+          🎙️ Voice <span style="font-size: 0.65rem; font-weight: 400; opacity: 0.8;">45s</span>
+        </button>
+        <button id="textModeBtn" class="mode-btn" style="background: #f4f0ea; color: #4d4a44; border: 2px solid transparent; border-radius: 40px; padding: 8px 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: inherit; display: flex; align-items: center; gap: 8px;">
+          ⌨️ Text <span style="font-size: 0.65rem; font-weight: 400; opacity: 0.8;">90s</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Response Area -->
+    <div style="padding: 24px 32px 32px 32px;">
+      <!-- Live Transcription / Text Input -->
+      <div style="position: relative;">
+        <div id="voiceTranscript" style="display: block; background: #faf8f5; border-radius: 16px; padding: 20px 24px; min-height: 120px; border: 2px dashed #ede8e0; transition: all 0.3s ease; font-size: 1rem; color: #1a1917; line-height: 1.7;">
+          <span style="color: #8a8680; font-style: italic;">Speak or type your response here...</span>
+        </div>
+        <textarea id="textInput" style="display: none; width: 100%; padding: 20px 24px; border: 2px solid #ede8e0; border-radius: 16px; font-size: 1rem; font-family: inherit; resize: vertical; min-height: 120px; transition: border-color 0.3s ease; background: #faf8f5;" placeholder="Type your response here..."></textarea>
+        
+        <!-- Recording Indicator -->
+        <div id="recordingIndicator" style="display: none; position: absolute; top: 12px; right: 16px; align-items: center; gap: 8px; background: rgba(220, 38, 38, 0.08); padding: 4px 16px 4px 12px; border-radius: 40px; border: 1px solid rgba(220, 38, 38, 0.2);">
+          <span style="display: inline-block; width: 10px; height: 10px; background: #dc2626; border-radius: 50%; animation: pulse-dot 1s infinite;"></span>
+          <span style="font-size: 0.75rem; font-weight: 600; color: #dc2626;">REC</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; align-items: center; justify-content: space-between;">
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+          <button id="startChallengeBtn" style="background: linear-gradient(135deg, #b8943c, #a07f30); color: #ffffff; font-weight: 600; font-size: 0.9rem; padding: 12px 28px; border-radius: 60px; border: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 16px rgba(184, 148, 60, 0.25); font-family: inherit; display: flex; align-items: center; gap: 8px;" disabled>
+            ▶ Take Challenge
+          </button>
+          <button id="resetBtn" style="background: transparent; color: #8a8680; font-weight: 500; font-size: 0.8rem; padding: 10px 20px; border-radius: 60px; border: 1px solid #ede8e0; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
+            Reset
+          </button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span id="wordCountDisplay" style="font-size: 0.75rem; color: #8a8680;">0 words</span>
+          <span id="statusBadge" style="font-size: 0.65rem; font-weight: 600; color: #8a8680; background: #f4f0ea; padding: 4px 14px; border-radius: 40px;">Ready</span>
+        </div>
+      </div>
+    </div>
   </div>
-  <div style="text-align: center; margin-top: 8px;">
-    <span style="font-size: 0.75rem; color: #8a8680;">Free · 2-minutes · No credit card</span>
+
+   <!-- Step 3: Results (Hidden Initially) -->
+<div id="resultsContainer" style="max-width: 900px; margin: 40px auto 0; display: none; position: relative; z-index: 1; animation: slideUp 0.6s ease;">
+  
+  <!-- Attempt Summary -->
+  <div style="text-align: center; margin-bottom: 16px;">
+    <span style="font-size: 0.8rem; color: #6e6a62;" id="attemptSummary">Attempt 1 of 3</span>
   </div>
+
+  <!-- Score Cards - 5 Dimensions -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px;">
+    <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+      <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Clarity</span>
+      <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreClarity">—</div>
+      <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
+        <div id="barClarity" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+      </div>
+    </div>
+    <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+      <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Precision</span>
+      <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scorePrecision">—</div>
+      <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
+        <div id="barPrecision" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+      </div>
+    </div>
+    <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+      <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Structure</span>
+      <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreStructure">—</div>
+      <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
+        <div id="barStructure" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+      </div>
+    </div>
+    <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+      <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Impact</span>
+      <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreImpact">—</div>
+      <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
+        <div id="barImpact" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+      </div>
+    </div>
+    <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+      <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Influence</span>
+      <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreInfluence">—</div>
+      <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
+        <div id="barInfluence" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Improvement Box -->
+  <div id="improvementBox" style="display: none; background: #fef3c7; border-radius: 16px; padding: 20px 24px; border: 1px solid #fcd34d; text-align: center; margin-bottom: 24px;">
+    <span style="font-size: 2.4rem; font-weight: 700; color: #b8943c;" id="improvementScore">+0</span>
+    <span style="font-size: 0.9rem; color: #4d4a44;" id="improvementText">points improvement from your first attempt</span>
+  </div>
+
+  <!-- Feedback & Better Version -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+    <!-- Feedback -->
+    <div style="background: #faf8f5; border-radius: 20px; padding: 28px 24px; border: 1px solid #ede8e0;">
+      <h4 style="font-size: 0.9rem; font-weight: 700; color: #1a1917; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        🔍 What's Getting Lost
+      </h4>
+      <ul id="feedbackList" style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: #4d4a44; line-height: 1.8;">
+        <li style="padding: 6px 0; color: #8a8680; font-style: italic;">Complete a challenge to see feedback.</li>
+      </ul>
+    </div>
+
+    <!-- Better Version -->
+    <div style="background: #fef3c7; border-radius: 20px; padding: 28px 24px; border: 1px solid #fcd34d;">
+      <h4 style="font-size: 0.9rem; font-weight: 700; color: #1a1917; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        ✨ Better Version
+      </h4>
+      <p id="betterVersion" style="font-size: 0.9rem; color: #1a1917; line-height: 1.7; font-style: italic; min-height: 60px;">Your improved response will appear here.</p>
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(184, 148, 60, 0.2);">
+        <span style="font-size: 0.7rem; color: #b8943c; font-weight: 600;">Why this works:</span>
+        <ul id="betterWhyList" style="list-style: none; padding: 0; margin: 4px 0 0; font-size: 0.8rem; color: #4d4a44; line-height: 1.6;">
+          <li style="padding: 2px 0; color: #8a8680; font-style: italic;">Complete a challenge to see the breakdown.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 24px;">
+    <button id="tryAgainBtn" style="background: linear-gradient(135deg, #b8943c, #a07f30); color: #ffffff; font-weight: 600; font-size: 0.9rem; padding: 12px 32px; border-radius: 60px; border: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 16px rgba(184, 148, 60, 0.25); font-family: inherit;">🔄 Try Again</button>
+    <button id="newScenarioBtn" style="background: transparent; color: #1a1917; font-weight: 600; font-size: 0.9rem; padding: 12px 32px; border-radius: 60px; border: 1.5px solid #d0c8bc; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">📋 New Scenario</button>
+  </div>
+
+  <div style="text-align:center; margin-top: 12px;">
+    <span style="font-size: 0.75rem; color: #8a8680;" id="attemptsLeftText">2 attempts remaining</span>
+  </div>
+</div>
+    
+    <!-- Score Cards - 5 Dimensions -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 32px;">
+      <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Clarity</span>
+        <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreClarity">—</div>
+        <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
+          <div id="barClarity" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+        </div>
+      </div>
+      <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Precision</span>
+        <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scorePrecision">—</div>
+        <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
+          <div id="barPrecision" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+        </div>
+      </div>
+      <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Structure</span>
+        <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreStructure">—</div>
+        <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
+          <div id="barStructure" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+        </div>
+      </div>
+      <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Impact</span>
+        <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreImpact">—</div>
+        <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
+          <div id="barImpact" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+        </div>
+      </div>
+      <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
+        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Influence</span>
+        <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreInfluence">—</div>
+        <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
+          <div id="barInfluence" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback & Better Version -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+      <!-- Feedback -->
+      <div style="background: #faf8f5; border-radius: 20px; padding: 28px 24px; border: 1px solid #ede8e0;">
+        <h4 style="font-size: 0.9rem; font-weight: 700; color: #1a1917; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+          🔍 What's Getting Lost
+        </h4>
+        <ul id="feedbackList" style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: #4d4a44; line-height: 1.8;">
+          <li style="padding: 6px 0; color: #8a8680; font-style: italic;">Complete a challenge to see feedback.</li>
+        </ul>
+      </div>
+
+      <!-- Better Version -->
+      <div style="background: #fef3c7; border-radius: 20px; padding: 28px 24px; border: 1px solid #fcd34d;">
+        <h4 style="font-size: 0.9rem; font-weight: 700; color: #1a1917; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+          ✨ Better Version
+        </h4>
+        <p id="betterVersion" style="font-size: 0.9rem; color: #1a1917; line-height: 1.7; font-style: italic; min-height: 60px;">Your improved response will appear here.</p>
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(184, 148, 60, 0.2);">
+          <span style="font-size: 0.7rem; color: #b8943c; font-weight: 600;">Why this works:</span>
+          <ul id="betterWhyList" style="list-style: none; padding: 0; margin: 4px 0 0; font-size: 0.8rem; color: #4d4a44; line-height: 1.6;">
+            <li style="padding: 2px 0; color: #8a8680; font-style: italic;">Complete a challenge to see the breakdown.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+<!-- ===== PERSONA REVEAL (After 3 attempts) ===== -->
+<div id="personaReveal" style="max-width: 900px; margin: 40px auto 0; display: none; position: relative; z-index: 1; animation: slideUp 0.8s ease;">
+  
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 32px;">
+    <span style="display: inline-block; background: rgba(184, 148, 60, 0.12); color: #b8943c; font-size: 0.6rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 6px 20px; border-radius: 40px; border: 1px solid rgba(184, 148, 60, 0.15); margin-bottom: 16px;">🧠 YOUR PATTERN</span>
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: #1a1917; line-height: 1.2;">
+      We've now seen you communicate <span style="color: #b8943c;">three times</span>.
+    </h3>
+    <p style="font-size: 1.1rem; color: #4d4a44; margin-top: 8px; max-width: 600px; margin-left: auto; margin-right: auto;">
+      And a pattern is starting to emerge.
+    </p>
+  </div>
+
+  <!-- Pattern Summary -->
+  <div style="background: #ffffff; border-radius: 24px; border: 1px solid #ede8e0; padding: 32px 36px; margin-bottom: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.03);">
+    <p style="font-size: 0.95rem; color: #4d4a44; margin-bottom: 20px; line-height: 1.7;">
+      Across three different responses, you consistently showed:
+    </p>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <!-- Strongest Signal -->
+      <div style="background: #f0fdf4; border-radius: 16px; padding: 20px 24px; border: 1px solid #bbf7d0;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+          <span style="font-size: 1.2rem;">✦</span>
+          <span style="font-size: 0.65rem; font-weight: 700; color: #16a34a; text-transform: uppercase; letter-spacing: 1px;">Strongest Signal</span>
+        </div>
+        <div style="font-size: 1.6rem; font-weight: 700; color: #1a1917;" id="revealStrength">CLARITY</div>
+        <p style="font-size: 0.85rem; color: #4d4a44; margin-top: 4px;" id="revealStrengthDesc">You tend to make your core message understandable once you commit to it.</p>
+      </div>
+      
+      <!-- Growth Edge -->
+      <div style="background: #fef3c7; border-radius: 16px; padding: 20px 24px; border: 1px solid #fcd34d;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+          <span style="font-size: 1.2rem;">✦</span>
+          <span style="font-size: 0.65rem; font-weight: 700; color: #b8943c; text-transform: uppercase; letter-spacing: 1px;">Recurring Growth Edge</span>
+        </div>
+        <div style="font-size: 1.6rem; font-weight: 700; color: #1a1917;" id="revealGrowth">INFLUENCE</div>
+        <p style="font-size: 0.85rem; color: #4d4a44; margin-top: 4px;" id="revealGrowthDesc">You explain your position well, but your strongest recommendation sometimes arrives too softly.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Persona Card -->
+  <div style="background: #1a1917; border-radius: 24px; padding: 40px 48px; color: #f0ebe4; text-align: center; margin-bottom: 24px;">
+    <div style="font-size: 0.6rem; font-weight: 700; color: #b8943c; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;">✦ Your Communication Pattern</div>
+    <div style="font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 700; color: #ffffff; margin: 4px 0;" id="revealPersonaName">The Translator</div>
+    <div style="font-size: 1.1rem; color: #d0c8bc; margin-bottom: 16px;" id="revealPersonaDesc">You make complexity make sense.</div>
+    <div style="border-top: 1px solid #2d2a24; padding-top: 16px; margin-top: 4px;">
+      <p style="font-size: 0.85rem; color: #8a8680;">
+        This is only the surface. We've identified your pattern.<br />
+        Now discover what makes you communicate this way.
+      </p>
+    </div>
+  </div>
+
+  <!-- Feature List -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px;">
+    <div style="display: flex; align-items: center; gap: 10px; background: #ffffff; border-radius: 12px; padding: 12px 18px; border: 1px solid #ede8e0; font-size: 0.8rem; color: #4d4a44;">
+      <span style="font-size: 1rem;">🧠</span> What makes you communicate this way
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; background: #ffffff; border-radius: 12px; padding: 12px 18px; border: 1px solid #ede8e0; font-size: 0.8rem; color: #4d4a44;">
+      <span style="font-size: 1rem;">⚡</span> When your strength becomes a limitation
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; background: #ffffff; border-radius: 12px; padding: 12px 18px; border: 1px solid #ede8e0; font-size: 0.8rem; color: #4d4a44;">
+      <span style="font-size: 1rem;">👥</span> How you may be experienced in meetings
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; background: #ffffff; border-radius: 12px; padding: 12px 18px; border: 1px solid #ede8e0; font-size: 0.8rem; color: #4d4a44;">
+      <span style="font-size: 1rem;">🔍</span> Your hidden communication habits
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; background: #ffffff; border-radius: 12px; padding: 12px 18px; border: 1px solid #ede8e0; font-size: 0.8rem; color: #4d4a44;">
+      <span style="font-size: 1rem;">🎯</span> What gets lost when the stakes are high
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; background: #ffffff; border-radius: 12px; padding: 12px 18px; border: 1px solid #ede8e0; font-size: 0.8rem; color: #4d4a44;">
+      <span style="font-size: 1rem;">📈</span> Your personalised improvement roadmap
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; background: #ffffff; border-radius: 12px; padding: 12px 18px; border: 1px solid #ede8e0; font-size: 0.8rem; color: #4d4a44;">
+      <span style="font-size: 1rem;">✅</span> Which situations you naturally handle well
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; background: #ffffff; border-radius: 12px; padding: 12px 18px; border: 1px solid #ede8e0; font-size: 0.8rem; color: #4d4a44;">
+      <span style="font-size: 1rem;">⚠️</span> Where your communication may cost you influence
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div style="text-align: center; padding: 8px 0 16px;">
+    <p style="font-size: 0.95rem; color: #6e6a62; margin-bottom: 16px;">
+      See Your Full Communication Pattern<br />
+      <span style="font-size: 0.85rem;">Unlock your personalised deep-dive</span>
+    </p>
+    <a href="Personasnap.html" class="btn-free" style="padding: 14px 44px; font-size: 1rem;">
+      Explore My Pattern →
+    </a>
+  </div>
+</div>
+  
+    <!-- CTA -->
+    <div style="text-align: center; margin-top: 32px;">
+      <p style="font-size: 0.9rem; color: #6e6a62; margin-bottom: 16px;">Want unlimited practice, personalized journeys, and real progress tracking?</p>
+      <a href="Personasnap.html" class="btn-free" style="padding: 14px 40px;">Start Your Transformation →</a>
+    </div>
+  </div>
+
 </section>
 
-  
-<!-- ===== BENTO GRID ===== -->
-<section class="container section">
-  <h3 class="heading-serif heading-lg">What You Say Is Only Part of the Story</h3>
-  <p style="font-size:1.1rem; color:#4d4a44; max-width:100%; margin-bottom: 32px;">Discover the five dimensions behind how you think, express, connect and create impact.</p>
-  
-<!-- ===== JOURNEY - SINGLE PREMIUM CARD ===== -->
+<!-- ===== JOURNEY SECTION ===== -->
 <section class="container section" id="journeys" style="padding: 60px 0;">
   <div style="text-align: center; margin-bottom: 40px;">
     <span style="display: inline-block; background: rgba(184, 148, 60, 0.1); color: #b8943c; font-size: 0.6rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 6px 20px; border-radius: 40px; border: 1px solid rgba(184, 148, 60, 0.15); margin-bottom: 12px;">✦ YOUR JOURNEY</span>
@@ -1557,96 +1689,52 @@
     <p style="font-size: 1rem; color: #6e6a62; max-width: 600px; margin: 8px auto 0; line-height: 1.7;">One journey. Six weeks. A lifetime of clarity.</p>
   </div>
 
-  <!-- Premium Journey Card -->
-  <div style="max-width: 900px; margin: 0 auto; background: #ffffff; border-radius: 28px; border: 1px solid #ede8e0; box-shadow: 0 4px 24px rgba(0,0,0,0.04); overflow: hidden; transition: all 0.3s ease;">
-    
-    <!-- Gold Accent Top -->
-    <div style="height: 4px; background: linear-gradient(90deg, #b8943c, #fcd34d, #b8943c);"></div>
-    
-    <div style="padding: 32px 36px 28px;">
-      
-      <!-- Header: Title + Badge -->
+  <div class="journey-card">
+    <div class="gold-bar"></div>
+    <div class="journey-body">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
         <div>
-          <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 2px; text-transform: uppercase;">✦ FEATURED JOURNEY</span>
-          <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #1a1917; margin: 4px 0 0; letter-spacing: -0.5px;">The <span style="color: #b8943c;">Clarity</span> Journey</h3>
+          <span class="journey-badge">✦ FEATURED JOURNEY</span>
+          <h3 class="journey-title">The <span>Clarity</span> Journey</h3>
         </div>
-        <span style="
-          font-size: 0.5rem;
-          color: #2563eb;
-          letter-spacing: 0.5px;
-          text-transform: uppercase;
-          font-weight: 700;
-          background: #eff6ff;
-          padding: 4px 16px;
-          border-radius: 40px;
-          border: 1px solid #dbeafe;
-          white-space: nowrap;
-        ">● Active Now</span>
+        <span style="font-size: 0.5rem; color: #2563eb; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; background: #eff6ff; padding: 4px 16px; border-radius: 40px; border: 1px solid #dbeafe; white-space: nowrap;">● Active Now</span>
       </div>
       
-      <!-- Subtitle -->
-      <p style="font-size: 0.95rem; color: #4d4a44; margin-bottom: 16px; line-height: 1.6;">
-        Discern, diagnose, define, challenge, weigh, and decide — six weeks toward thinking you can stand behind.
-      </p>
+      <p class="journey-subtitle">Discern, diagnose, define, challenge, weigh, and decide — six weeks toward thinking you can stand behind.</p>
       
-      <!-- Divider -->
-      <div style="border-top: 1px solid #f0ebe4; margin: 16px 0;"></div>
+      <div class="journey-divider"></div>
       
-      <!-- Outcome -->
       <div style="margin-bottom: 16px;">
-        <p style="font-size: 0.6rem; font-weight: 700; color: #8a8680; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">OUTCOME</p>
-        <p style="font-size: 1.1rem; color: #1a1917; font-weight: 500; font-style: italic;">"I know what I think — and I know why."</p>
+        <p class="journey-outcome-label">OUTCOME</p>
+        <p class="journey-outcome">"I know what I think — and I know why."</p>
       </div>
       
-      <!-- Skills/Tags -->
-      <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
-        <span style="font-size: 0.7rem; color: #1a1917; background: #f4f0ea; padding: 4px 14px; border-radius: 40px; font-weight: 500;">🟢 Cognitive clarity</span>
-        <span style="font-size: 0.7rem; color: #1a1917; background: #f4f0ea; padding: 4px 14px; border-radius: 40px; font-weight: 500;">🟢 Strategic reasoning</span>
-        <span style="font-size: 0.7rem; color: #8a8680; background: #f4f0ea; padding: 4px 14px; border-radius: 40px; font-weight: 500;">⚪ Critical thinking</span>
+      <div class="journey-tags">
+        <span>🟢 Cognitive clarity</span>
+        <span>🟢 Strategic reasoning</span>
+        <span>⚪ Critical thinking</span>
       </div>
       
-      <!-- Divider -->
-      <div style="border-top: 1px solid #f0ebe4; margin: 12px 0 16px;"></div>
+      <div class="journey-divider"></div>
       
-      <!-- Footer: Delivery + CTA -->
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 0.6rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">💬 Thinking · Weekdays on WhatsApp</span>
-        </div>
-        <a href="#" style="
-          display: inline-block;
-          background: linear-gradient(135deg, #b8943c, #a07f30);
-          color: #ffffff;
-          font-weight: 600;
-          font-size: 0.85rem;
-          padding: 10px 28px;
-          border-radius: 60px;
-          text-decoration: none;
-          border: none;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          box-shadow: 0 4px 16px rgba(184, 148, 60, 0.25);
-          letter-spacing: 0.3px;
-        ">Start journey →</a>
+      <div class="journey-footer">
+        <span class="journey-delivery">💬 Thinking · Weekdays on WhatsApp</span>
+        <a href="#" style="display: inline-block; background: linear-gradient(135deg, #b8943c, #a07f30); color: #ffffff; font-weight: 600; font-size: 0.85rem; padding: 10px 28px; border-radius: 60px; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 16px rgba(184, 148, 60, 0.25); letter-spacing: 0.3px;">Start journey →</a>
       </div>
-      
     </div>
   </div>
 
-  <!-- Extra small note -->
   <div style="text-align: center; margin-top: 20px;">
     <p style="font-size: 0.75rem; color: #8a8680;">Join thousands of professionals sharpening their thinking, one week at a time.</p>
   </div>
 </section>
 
-  
-<!-- ===== STACKED CARDS - PREMIUM INTERACTIVE SECTION ===== -->
+<!-- ===== STACKED CARDS ===== -->
 <section class="container section" id="explore">
   <div class="explore-header">
     <span class="explore-badge">✦ INTERACTIVE FEATURES</span>
-    <h2 class="heading-serif heading-lg">A Better Way to Build the<span class="accent-gold">Skill</span></h2>
-    <span> Practice it daily. Understand what makes it work. See yourself getting better</span>
+    <h2 class="heading-serif heading-lg">A Better Way to Build the <span class="accent-gold">Skill</span></h2>
+    <span>Practice it daily. Understand what makes it work. See yourself getting better</span>
     <div class="explore-tags">
       <span>📋 to-do's</span>
       <span>🧠 quizzes</span>
@@ -1672,7 +1760,6 @@
               <input type="radio" name="WhatsApp Practice" value="beyonce" />
               <span>WhatsApp Practice</span>
             </label>
-            
             <label class="stacked-option">
               <input type="radio" name="Practice anywhere" value="beyonce" />
               <span>Practice anywhere</span>
@@ -1697,7 +1784,7 @@
       <div class="stacked-card-inner">
         <div class="stacked-card-left">
           <span class="stacked-card-number">02</span>
-          <h3 class="stacked-card-title">02 — Adaptive Learning : Your next challenge responds to your last one.</h3>
+          <h3 class="stacked-card-title">Adaptive Learning: Your next challenge responds to your last one.</h3>
           <p class="stacked-card-desc">Your responses shape what comes next. Get follow-up questions, feedback and another attempt based on how you actually communicate.</p>
           <div class="stacked-card-topics">
             <span>📚 case-studies</span>
@@ -1768,7 +1855,7 @@
       <div class="stacked-card-inner">
         <div class="stacked-card-left">
           <span class="stacked-card-number">04</span>
-          <h3 class="stacked-card-title">Expert Sessions :Understand the thinking behind the skill.</h3>
+          <h3 class="stacked-card-title">Expert Sessions: Understand the thinking behind the skill.</h3>
           <p class="stacked-card-desc">Learn the structures and principles that make great communication work—from professionals who lead teams, make decisions and interview people every day.</p>
           <div class="stacked-card-topics">
             <span>💡 wisdom</span>
@@ -1788,29 +1875,10 @@
         </div>
       </div>
     </div>
+  </div>
 
   <div style="text-align: center; margin-top: 32px;">
     <a href="#" class="btn-paid">Explore All Lessons →</a>
-  </div>
-</section>
-
-<!-- ===== PRACTICE ===== -->
-<section class="container section">
-  <h2 class="heading-serif heading-lg">Don't just learn it. Prove you can do it</h2>
-  <div class="practice-mock">
-    <div class="mock-quote">"I'm not convinced you're ready for the next level."</div>
-    <p style="font-weight:500; margin-bottom:8px;">Your challenge: respond in 60 seconds.</p>
-    <button class="mock-btn" style="cursor:default;">🎙 Record your response</button>
-    <div class="mock-feedback">
-      <span>Clarity — 78</span>
-      <span>Structure — 71</span>
-      <span>Confidence — 84</span>
-      <span>Influence — 63</span>
-    </div>
-    <div style="margin-top:16px; border-top:1px solid #3d3a34; padding-top:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-      <span style="font-weight:600;">Try Again</span>
-      <span style="color:#b8943c; font-weight:600;">You improved by 11%</span>
-    </div>
   </div>
 </section>
 
@@ -1830,9 +1898,9 @@
 
 <!-- ===== FINAL CTA ===== -->
 <section class="container section" style="text-align:center; border-bottom: none;">
- <a href="Personasnap.html" class="btn-free" style="padding:18px 56px; font-size:1.2rem;">Let's Begin </a>
-        </div>
-    <div class="hero-micro">Free · 2-minutes · No credit card</div>
+  <a href="Personasnap.html" class="btn-free" style="padding:18px 56px; font-size:1.2rem;">Let's Begin</a>
+  <div style="margin-top: 12px;">
+    <span style="font-size: 0.75rem; color: #8a8680;">Free · 2-minutes · No credit card</span>
   </div>
 </section>
 
@@ -1884,43 +1952,6 @@
 <!-- ===== JAVASCRIPT ===== -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // ===== CAROUSEL =====
-    const track = document.getElementById('carouselTrack');
-    const prevBtn = document.getElementById('carouselPrev');
-    const nextBtn = document.getElementById('carouselNext');
-    const dots = document.querySelectorAll('.carousel-dot');
-    const cards = track ? track.querySelectorAll('.journey-card-premium') : [];
-    const cardsPerView = window.innerWidth <= 992 ? 1 : 2;
-    let currentIndex = 0;
-    const totalSlides = Math.ceil(cards.length / cardsPerView);
-
-    function updateCarousel() {
-      if (!cards.length) return;
-      const slideWidth = cards[0].offsetWidth + 24;
-      track.style.transform = 'translateX(-' + (currentIndex * slideWidth * cardsPerView) + 'px)';
-      dots.forEach(function(dot, index) {
-        dot.classList.toggle('active', index === currentIndex);
-      });
-    }
-
-    function goToSlide(index) {
-      if (index < 0) index = totalSlides - 1;
-      if (index >= totalSlides) index = 0;
-      currentIndex = index;
-      updateCarousel();
-    }
-
-    if (prevBtn && nextBtn) {
-      prevBtn.addEventListener('click', function() { goToSlide(currentIndex - 1); });
-      nextBtn.addEventListener('click', function() { goToSlide(currentIndex + 1); });
-    }
-
-    dots.forEach(function(dot, index) {
-      dot.addEventListener('click', function() { goToSlide(index); });
-    });
-
-    setTimeout(updateCarousel, 100);
-
     // ===== 3D SPHERICAL ORBIT =====
     (function() {
       var container = document.querySelector('.persona-orbit-container');
@@ -1973,7 +2004,7 @@
         centerDesc.classList.remove('visible');
         centerTag.classList.remove('visible');
         centerDefault.style.display = 'block';
-        centerDesc.textContent = 'Hover or click a persona to explore';
+        centerDesc.textContent = 'Hover or tap a persona to explore';
       }
 
       function render() {
@@ -1982,7 +2013,6 @@
         var total = items.length;
         var step = (Math.PI * 2) / total;
 
-        var active = null;
         var bestDepth = -Infinity;
 
         items.forEach(function(item, index) {
@@ -2005,20 +2035,25 @@
 
           if (z > bestDepth) {
             bestDepth = z;
-            active = item;
           }
 
           item.classList.toggle('is-front', z > depth * 0.3);
           item.classList.toggle('is-back', z < -depth * 0.3);
         });
 
-        if (active && !state.focused && !hoveredPersona) {
+        if (!state.focused && !hoveredPersona) {
           items.forEach(function(item) {
-            item.classList.toggle('is-active', item === active);
+            item.classList.remove('is-active');
           });
           
-          var personaKey = active.dataset.persona;
-          if (personaKey) {
+          var active = items.reduce(function(a, b) {
+            var aZ = parseFloat(a.style.transform.match(/translate3d\([^,]+,\s*[^,]+,\s*([^)]+)\)/)?.[1] || -Infinity);
+            var bZ = parseFloat(b.style.transform.match(/translate3d\([^,]+,\s*[^,]+,\s*([^)]+)\)/)?.[1] || -Infinity);
+            return aZ > bZ ? a : b;
+          });
+          
+          if (active) {
+            var personaKey = active.dataset.persona;
             var data = personaData[personaKey];
             if (data) {
               centerDesc.textContent = data.desc;
@@ -2133,6 +2168,882 @@
       requestAnimationFrame(tick);
     })();
 
+    // ===== STACKED CARDS SCROLL EFFECT =====
+    (function() {
+      const cards = document.querySelectorAll('.stacked-card');
+      const container = document.getElementById('stackedCardsContainer');
+      
+      if (!cards.length) return;
+
+      function updateCards() {
+        const containerRect = container.getBoundingClientRect();
+        const containerTop = containerRect.top;
+        const containerHeight = containerRect.height;
+        const viewportHeight = window.innerHeight;
+        
+        cards.forEach((card, index) => {
+          const cardRect = card.getBoundingClientRect();
+          const cardTop = cardRect.top;
+          
+          const progress = (cardTop - containerTop) / (containerHeight - cardRect.height);
+          const clampedProgress = Math.max(0, Math.min(1, progress));
+          
+          const isVisible = cardRect.top < viewportHeight - 100 && cardRect.bottom > 100;
+          
+          if (isVisible) {
+            card.classList.add('is-active');
+            const scale = 1 - (clampedProgress * 0.05);
+            card.style.transform = 'scale(' + scale + ')';
+            card.style.opacity = Math.max(0.6, 1 - (clampedProgress * 0.4));
+          } else {
+            card.classList.remove('is-active');
+            card.style.transform = '';
+            card.style.opacity = '';
+          }
+        });
+      }
+
+      let ticking = false;
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          window.requestAnimationFrame(function() {
+            updateCards();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+
+      window.addEventListener('resize', updateCards);
+      setTimeout(updateCards, 100);
+    })();
+
+    // ===== MVP TRY IMMEDIATELY - FULL LOGIC =====
+   
+    // ===== MVP TRY IMMEDIATELY - FULL LOGIC =====
+(function() {
+  // ---------- SCENARIOS ----------
+  const scenarios = [
+    {
+      title: "Project Delay",
+      context: "Your team missed a key deadline. You need to update your manager.",
+      question: "Your manager asks: 'What happened with the deadline, and what's your plan to fix it?' Respond in 45 seconds (voice) or 90 seconds (text).",
+      better: "We're behind on the project timeline due to unexpected technical dependencies. I've identified the bottlenecks and created a recovery plan. We can deliver by Friday if we reprioritize the backlog. I'll share the detailed plan after this meeting. Does that approach work for you?"
+    },
+    {
+      title: "Client Objection",
+      context: "A client says your proposal is too expensive. You need to respond and keep the deal alive.",
+      question: "The client says: 'Your price is 30% higher than your competitor's. Why should we go with you?' Respond in 45 seconds (voice) or 90 seconds (text).",
+      better: "I understand budget is a concern. Let me walk you through the ROI — this solution saves you 30% on operational costs within the first year. I can also offer a phased deployment to spread the cost. Would a 6-month payment plan work for your team?"
+    },
+    {
+      title: "Promotion Ask",
+      context: "You want to ask your manager for a promotion. Draft your pitch.",
+      question: "Your manager says: 'Tell me why you deserve a promotion right now.' Respond in 45 seconds (voice) or 90 seconds (text).",
+      better: "I'd like to discuss advancing to the next level. Over the past year, I've exceeded my targets by 20%, led two successful product launches, and taken on mentorship responsibilities. I believe I'm ready to take on more strategic ownership. Can we schedule time next week to discuss this?"
+    },
+    {
+      title: "Difficult Feedback",
+      context: "You need to give constructive feedback to a teammate who's been underperforming.",
+      question: "Your teammate asks: 'Is there anything I could be doing better?' Respond in 45 seconds (voice) or 90 seconds (text).",
+      better: "I want to discuss your recent deliverables. I've noticed a few inconsistencies in quality and missed deadlines. I know you're capable of great work — what support do you need from me to get back on track? Let's work together to improve this."
+    },
+    {
+      title: "Interview Question",
+      context: "You're in a job interview. The interviewer asks the classic opening question.",
+      question: "Interviewer: 'Tell me about yourself.' Respond in 45 seconds (voice) or 90 seconds (text).",
+      better: "I'm a product manager with 5 years of experience in fintech. I led the launch of a mobile banking app that grew to 200K users in 6 months. I specialize in bridging the gap between business goals and technical execution. I'm looking to bring that expertise to a scaling startup like yours."
+    }
+  ];
+
+  // ---------- DOM ELEMENTS ----------
+  const scenarioBtns = document.querySelectorAll('.scenario-btn');
+  const scenarioContext = document.getElementById('scenarioContext');
+  const scenarioQuestion = document.getElementById('scenarioQuestion');
+  const questionDisplay = document.getElementById('questionDisplay');
+  const startBtn = document.getElementById('startChallengeBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const voiceModeBtn = document.getElementById('voiceModeBtn');
+  const textModeBtn = document.getElementById('textModeBtn');
+  const voiceTranscript = document.getElementById('voiceTranscript');
+  const textInput = document.getElementById('textInput');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const recordingIndicator = document.getElementById('recordingIndicator');
+  const wordCountDisplay = document.getElementById('wordCountDisplay');
+  const statusBadge = document.getElementById('statusBadge');
+  const resultsContainer = document.getElementById('resultsContainer');
+  const personaReveal = document.getElementById('personaReveal');
+  const revealStrength = document.getElementById('revealStrength');
+  const revealStrengthDesc = document.getElementById('revealStrengthDesc');
+  const revealGrowth = document.getElementById('revealGrowth');
+  const revealGrowthDesc = document.getElementById('revealGrowthDesc');
+  const revealPersonaName = document.getElementById('revealPersonaName');
+  const revealPersonaDesc = document.getElementById('revealPersonaDesc');
+
+  // Attempt tracking elements
+  const currentAttemptDisplay = document.getElementById('currentAttemptDisplay');
+  const maxAttemptDisplay = document.getElementById('maxAttemptDisplay');
+  const attemptDots = document.querySelectorAll('.attempt-dot');
+  const bestScoreDisplay = document.getElementById('bestScoreDisplay');
+  const attemptsLeftBadge = document.getElementById('attemptsLeftBadge');
+  const attemptsLeftText = document.getElementById('attemptsLeftText');
+  const tryAgainBtn = document.getElementById('tryAgainBtn');
+  const newScenarioBtn = document.getElementById('newScenarioBtn');
+  const improvementBox = document.getElementById('improvementBox');
+  const improvementScore = document.getElementById('improvementScore');
+  const improvementText = document.getElementById('improvementText');
+  const attemptSummary = document.getElementById('attemptSummary');
+
+  // ---------- STATE ----------
+  let selectedScenario = null;
+  let isVoiceMode = true;
+  let isRecording = false;
+  let isChallengeActive = false;
+  let timerInterval = null;
+  let timeLeft = 45;
+  let maxTime = 45;
+  let recognition = null;
+  let fullTranscript = '';
+  let isAnalyzing = false;
+
+  // Attempt tracking state
+  let currentAttempt = 0;
+  const maxAttempts = 3;
+  let attemptData = [];
+  let bestScore = null;
+  let isComplete = false;
+
+  // ---------- SCENARIO SELECTION ----------
+  scenarioBtns.forEach((btn, index) => {
+    btn.addEventListener('click', function() {
+      scenarioBtns.forEach(b => {
+        b.style.borderColor = '#ede8e0';
+        b.style.background = '#ffffff';
+      });
+      this.style.borderColor = '#b8943c';
+      this.style.background = '#fef3c7';
+      
+      selectedScenario = index;
+      scenarioContext.textContent = scenarios[index].context;
+      scenarioQuestion.textContent = scenarios[index].question;
+      questionDisplay.style.maxHeight = '200px';
+      questionDisplay.style.padding = '0 32px';
+      startBtn.disabled = false;
+      
+      // Reset attempt tracking
+      currentAttempt = 0;
+      attemptData = [];
+      bestScore = null;
+      isComplete = false;
+      resultsContainer.style.display = 'none';
+      updateAttemptUI();
+      resetChallenge();
+    });
+  });
+
+  // ---------- MODE SWITCHING ----------
+  voiceModeBtn.addEventListener('click', function() {
+    if (isChallengeActive) return;
+    isVoiceMode = true;
+    this.classList.add('active');
+    textModeBtn.classList.remove('active');
+    voiceTranscript.style.display = 'block';
+    textInput.style.display = 'none';
+    timerDisplay.textContent = '00:45';
+    timeLeft = 45;
+    maxTime = 45;
+    resetChallenge();
+  });
+
+  textModeBtn.addEventListener('click', function() {
+    if (isChallengeActive) return;
+    isVoiceMode = false;
+    this.classList.add('active');
+    voiceModeBtn.classList.remove('active');
+    voiceTranscript.style.display = 'none';
+    textInput.style.display = 'block';
+    timerDisplay.textContent = '01:30';
+    timeLeft = 90;
+    maxTime = 90;
+    resetChallenge();
+  });
+
+  // ---------- SPEECH RECOGNITION ----------
+  function initSpeechRecognition() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      statusBadge.textContent = '⚠️ Speech not supported';
+      statusBadge.style.color = '#dc2626';
+      return false;
+    }
+    
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-IN';
+    
+    recognition.onresult = function(event) {
+      let interim = '';
+      let final = '';
+      
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          final += transcript;
+        } else {
+          interim += transcript;
+        }
+      }
+      
+      fullTranscript += final;
+      const displayText = fullTranscript + (interim ? ' ' + interim : '');
+      voiceTranscript.textContent = displayText || '🎙️ Listening...';
+      voiceTranscript.style.color = '#1a1917';
+      voiceTranscript.style.fontStyle = 'normal';
+      updateWordCount(displayText);
+    };
+    
+    recognition.onerror = function(event) {
+      console.error('Speech recognition error:', event.error);
+      if (event.error === 'not-allowed') {
+        statusBadge.textContent = '⚠️ Mic access denied';
+        statusBadge.style.color = '#dc2626';
+      }
+    };
+    
+    recognition.onend = function() {
+      if (isRecording && isChallengeActive) {
+        try { recognition.start(); } catch (e) {}
+      }
+    };
+    
+    return true;
+  }
+
+  function startRecording() {
+    if (!recognition) {
+      const supported = initSpeechRecognition();
+      if (!supported) return;
+    }
+    
+    try {
+      recognition.start();
+      isRecording = true;
+      recordingIndicator.style.display = 'flex';
+      statusBadge.textContent = '🔴 Recording';
+      statusBadge.style.color = '#dc2626';
+      voiceTranscript.textContent = '🎙️ Listening...';
+      voiceTranscript.style.color = '#8a8680';
+      voiceTranscript.style.fontStyle = 'italic';
+    } catch (e) {}
+  }
+
+  function stopRecording() {
+    if (recognition && isRecording) {
+      try { recognition.stop(); } catch (e) {}
+      isRecording = false;
+      recordingIndicator.style.display = 'none';
+      statusBadge.textContent = '⏹️ Stopped';
+      statusBadge.style.color = '#8a8680';
+    }
+  }
+
+  // ---------- TIMER ----------
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimerDisplay();
+      
+      if (timeLeft <= 5) {
+        timerDisplay.classList.add('timer-warning');
+      }
+      
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        timerDisplay.classList.remove('timer-warning');
+        endChallenge();
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    const mins = Math.floor(timeLeft / 60);
+    const secs = timeLeft % 60;
+    timerDisplay.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+  }
+
+  // ---------- CHALLENGE CONTROL ----------
+  function startChallenge() {
+    if (selectedScenario === null) {
+      alert('Please select a scenario first.');
+      return;
+    }
+    if (isAnalyzing) return;
+    if (currentAttempt >= maxAttempts) {
+      alert('You\'ve completed all 3 attempts for this scenario. Try a new scenario!');
+      return;
+    }
+    
+    resultsContainer.style.display = 'none';
+    fullTranscript = '';
+    
+    if (isVoiceMode) {
+      voiceTranscript.textContent = '🎙️ Listening...';
+      voiceTranscript.style.color = '#8a8680';
+      voiceTranscript.style.fontStyle = 'italic';
+    } else {
+      textInput.value = '';
+    }
+    
+    maxTime = isVoiceMode ? 45 : 90;
+    timeLeft = maxTime;
+    updateTimerDisplay();
+    timerDisplay.classList.remove('timer-warning');
+    
+    isChallengeActive = true;
+    startBtn.disabled = true;
+    startBtn.textContent = '⏳ ...';
+    startBtn.style.opacity = '0.6';
+    statusBadge.textContent = isVoiceMode ? '🎙️ Speak now' : '⌨️ Type now';
+    statusBadge.style.color = '#b8943c';
+    
+    voiceModeBtn.style.opacity = '0.5';
+    textModeBtn.style.opacity = '0.5';
+    voiceModeBtn.style.cursor = 'not-allowed';
+    textModeBtn.style.cursor = 'not-allowed';
+    
+    startTimer();
+    
+    if (isVoiceMode) {
+      startRecording();
+    } else {
+      textInput.focus();
+    }
+  }
+
+  function endChallenge() {
+    isChallengeActive = false;
+    stopRecording();
+    clearInterval(timerInterval);
+    timerDisplay.classList.remove('timer-warning');
+    
+    startBtn.disabled = false;
+    startBtn.textContent = '▶ Take Challenge';
+    startBtn.style.opacity = '1';
+    statusBadge.textContent = '✅ Complete';
+    statusBadge.style.color = '#16a34a';
+    
+    voiceModeBtn.style.opacity = '1';
+    textModeBtn.style.opacity = '1';
+    voiceModeBtn.style.cursor = 'pointer';
+    textModeBtn.style.cursor = 'pointer';
+    
+    analyzeResponse();
+  }
+
+  function resetChallenge() {
+    clearInterval(timerInterval);
+    stopRecording();
+    isChallengeActive = false;
+    isRecording = false;
+    fullTranscript = '';
+    
+    timerDisplay.classList.remove('timer-warning');
+    updateTimerDisplay();
+    
+    if (isVoiceMode) {
+      voiceTranscript.textContent = '🎙️ Speak or type your response here...';
+      voiceTranscript.style.color = '#8a8680';
+      voiceTranscript.style.fontStyle = 'italic';
+    } else {
+      textInput.value = '';
+    }
+    
+    recordingIndicator.style.display = 'none';
+    startBtn.disabled = selectedScenario === null;
+    startBtn.textContent = '▶ Take Challenge';
+    startBtn.style.opacity = '1';
+    statusBadge.textContent = 'Ready';
+    statusBadge.style.color = '#8a8680';
+    wordCountDisplay.textContent = '0 words';
+    
+    voiceModeBtn.style.opacity = '1';
+    textModeBtn.style.opacity = '1';
+    voiceModeBtn.style.cursor = 'pointer';
+    textModeBtn.style.cursor = 'pointer';
+  }
+
+  // ---------- WORD COUNT ----------
+  function updateWordCount(text) {
+    const words = text.trim().split(/\s+/).filter(function(w) { return w.length > 0; });
+    wordCountDisplay.textContent = words.length + ' words';
+    return words.length;
+  }
+
+  // ---------- TEXT INPUT ----------
+  textInput.addEventListener('input', function() {
+    if (isChallengeActive) {
+      updateWordCount(this.value);
+    }
+  });
+
+  // ---------- ANALYZE (AI Placeholder - Ready for Backend) ----------
+  function analyzeResponse() {
+    isAnalyzing = true;
+    statusBadge.textContent = '🧠 Analyzing...';
+    statusBadge.style.color = '#b8943c';
+    
+    let responseText = '';
+    if (isVoiceMode) {
+      responseText = voiceTranscript.textContent.replace('🎙️ Listening...', '').replace('🎙️ Speak or type your response here...', '').trim();
+      if (responseText === '' || responseText === '🎙️ Speak or type your response here...') {
+        responseText = 'No response detected. Try again.';
+      }
+    } else {
+      responseText = textInput.value.trim();
+      if (responseText === '') {
+        responseText = 'No response typed. Try again.';
+      }
+    }
+    
+    // ----- BACKEND INTEGRATION POINT -----
+    // Replace this setTimeout with your API call:
+    /*
+    fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        scenario: selectedScenario,
+        response: responseText,
+        mode: isVoiceMode ? 'voice' : 'text',
+        attempt: currentAttempt + 1
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      handleAnalysisResult(data);
+    })
+    .catch(error => {
+      console.error('API Error:', error);
+      const mockResult = generateScores(responseText);
+      handleAnalysisResult({ scores: mockResult, betterVersion: scenarios[selectedScenario].better });
+    });
+    */
+    
+    // ----- MOCK (Remove when backend is ready) -----
+    setTimeout(function() {
+      var scores = generateScores(responseText);
+      handleAnalysisResult({ 
+        scores: scores, 
+        betterVersion: scenarios[selectedScenario] ? scenarios[selectedScenario].better : 'No improved version available.'
+      });
+    }, 1500);
+  }
+
+  // ---------- SCORE GENERATION (Replace with AI) ----------
+  function generateScores(text) {
+    var wordCount = text.split(/\s+/).length;
+    var hasStructure = /first|second|finally|next|then|firstly|secondly/.test(text);
+    var hasClearAsk = /\?|please|recommend|suggest|propose|request/.test(text);
+    var hasNumbers = /\d/.test(text);
+    var hasConfidence = /I believe|I know|I'm confident|I'm sure|I think/.test(text);
+    var hasImpact = /deliver|achieve|result|outcome|success|goal/.test(text);
+    
+    return {
+      clarity: Math.min(92, Math.max(35, 55 + (hasClearAsk ? 22 : 0) + (wordCount > 15 ? 8 : 0) + Math.floor(Math.random() * 10))),
+      precision: Math.min(92, Math.max(30, 45 + (hasNumbers ? 25 : 0) + (wordCount > 20 ? 8 : 0) + Math.floor(Math.random() * 10))),
+      structure: Math.min(92, Math.max(25, 35 + (hasStructure ? 30 : 0) + (wordCount > 20 ? 8 : 0) + Math.floor(Math.random() * 10))),
+      impact: Math.min(92, Math.max(30, 45 + (hasImpact ? 20 : 0) + (hasClearAsk ? 12 : 0) + Math.floor(Math.random() * 10))),
+      influence: Math.min(92, Math.max(25, 35 + (hasConfidence ? 22 : 0) + (hasClearAsk ? 18 : 0) + Math.floor(Math.random() * 10)))
+    };
+  }
+
+  // ---------- HANDLE ANALYSIS RESULT ----------
+  function handleAnalysisResult(result) {
+    isAnalyzing = false;
+    statusBadge.textContent = '✅ Analyzed';
+    statusBadge.style.color = '#16a34a';
+    
+    // Store attempt data
+    var attemptEntry = {
+      attempt: currentAttempt + 1,
+      scores: result.scores,
+      betterVersion: result.betterVersion || 'No improved version available.'
+    };
+    attemptData.push(attemptEntry);
+    
+    // Update best score
+    var avgScore = Object.values(result.scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+    if (bestScore === null || avgScore > bestScore) {
+      bestScore = avgScore;
+    }
+    
+    // Display results
+    displayResults(currentAttempt);
+    
+    // Show results section
+    resultsContainer.style.display = 'block';
+    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
+    // Update attempt counter
+    currentAttempt++;
+    updateAttemptUI();
+    
+    // Check if all attempts done
+    if (currentAttempt >= maxAttempts) {
+      isComplete = true;
+      startBtn.disabled = true;
+      startBtn.textContent = '✅ All attempts used';
+      attemptsLeftText.textContent = 'All 3 attempts completed! Try a new scenario.';
+      tryAgainBtn.textContent = '🔄 View All Attempts';
+    } else {
+      var remaining = maxAttempts - currentAttempt;
+      attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
+    }
+  }
+
+  // ---------- DISPLAY RESULTS ----------
+  function displayResults(attemptIndex) {
+    var data = attemptData[attemptIndex];
+    if (!data) return;
+    
+    var scores = data.scores;
+    
+    // Update score cards
+    var dimensions = ['Clarity', 'Precision', 'Structure', 'Impact', 'Influence'];
+    dimensions.forEach(function(dim, index) {
+      var key = dim.toLowerCase();
+      var score = scores[key] || 50;
+      setTimeout(function() {
+        document.getElementById('score' + dim).textContent = score;
+        document.getElementById('bar' + dim).style.width = score + '%';
+      }, index * 100);
+    });
+    
+    // Update feedback
+    var list = document.getElementById('feedbackList');
+    var items = [];
+    
+    if (scores.clarity < 65) {
+      items.push('⚠️ <strong>Unclear</strong> — Your main point isn\'t obvious. State your core message upfront.');
+    } else if (scores.clarity < 80) {
+      items.push('🟡 <strong>Moderately Clear</strong> — Your point is there, but could be sharper.');
+    } else {
+      items.push('✅ <strong>Clear</strong> — Your main point comes through effectively.');
+    }
+    
+    if (scores.precision < 65) {
+      items.push('⚠️ <strong>Vague</strong> — Use specific numbers, dates, or concrete examples.');
+    } else if (scores.precision < 80) {
+      items.push('🟡 <strong>Somewhat Precise</strong> — Add more specific details.');
+    } else {
+      items.push('✅ <strong>Precise</strong> — Good use of specific details.');
+    }
+    
+    if (scores.structure < 65) {
+      items.push('⚠️ <strong>Scattered</strong> — Try: Context → Problem → Solution → Ask.');
+    } else if (scores.structure < 80) {
+      items.push('🟡 <strong>Partly Structured</strong> — Could be more organized.');
+    } else {
+      items.push('✅ <strong>Structured</strong> — Clear logical flow.');
+    }
+    
+    if (scores.impact < 65) {
+      items.push('⚠️ <strong>Forgettable</strong> — What\'s the one thing you want them to remember?');
+    } else if (scores.impact < 80) {
+      items.push('🟡 <strong>Moderate Impact</strong> — End with a strong closing statement.');
+    } else {
+      items.push('✅ <strong>Impactful</strong> — Memorable and leaves a strong impression.');
+    }
+    
+    if (scores.influence < 65) {
+      items.push('⚠️ <strong>Uncompelling</strong> — Add a clear call to action.');
+    } else if (scores.influence < 80) {
+      items.push('🟡 <strong>Somewhat Compelling</strong> — Strengthen your ask.');
+    } else {
+      items.push('✅ <strong>Influential</strong> — Compelling case with clear action.');
+    }
+    
+    list.innerHTML = items.map(function(item) {
+      return '<li style="padding: 6px 0; border-bottom: 1px solid #f5f2ed; line-height: 1.6;">' + item + '</li>';
+    }).join('');
+    
+    // Update better version
+    if (data.betterVersion) {
+      document.getElementById('betterVersion').textContent = data.betterVersion;
+      var whyList = document.getElementById('betterWhyList');
+      whyList.innerHTML = 
+        '<li style="padding: 3px 0;">• <strong>Clarity:</strong> States the main point immediately</li>' +
+        '<li style="padding: 3px 0;">• <strong>Structure:</strong> Follows a logical flow: Context → Action → Ask</li>' +
+        '<li style="padding: 3px 0;">• <strong>Influence:</strong> Ends with a clear, actionable question</li>' +
+        '<li style="padding: 3px 0;">• <strong>Precision:</strong> Uses specific, concrete language</li>';
+    }
+    
+    // Update improvement
+    if (attemptData.length > 1) {
+      var firstAvg = Object.values(attemptData[0].scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+      var currentAvg = Object.values(scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+      var diff = Math.round(currentAvg - firstAvg);
+      improvementBox.style.display = 'block';
+      improvementScore.textContent = (diff > 0 ? '+' : '') + diff;
+      improvementText.textContent = 'points ' + (diff >= 0 ? 'improvement' : 'decline') + ' from your first attempt';
+      if (diff > 0) {
+        improvementScore.style.color = '#16a34a';
+      } else if (diff < 0) {
+        improvementScore.style.color = '#dc2626';
+      } else {
+        improvementScore.style.color = '#b8943c';
+      }
+    } else {
+      improvementBox.style.display = 'none';
+    }
+    
+    // Update attempt summary
+    attemptSummary.textContent = 'Attempt ' + (attemptIndex + 1) + ' of 3';
+  }
+
+// ---------- UPDATE ATTEMPT UI ----------
+function updateAttemptUI() {
+  currentAttemptDisplay.textContent = Math.min(currentAttempt + 1, maxAttempts);
+  if (maxAttemptDisplay) maxAttemptDisplay.textContent = maxAttempts;
+  
+  if (bestScore !== null) {
+    bestScoreDisplay.textContent = Math.round(bestScore);
+  } else {
+    bestScoreDisplay.textContent = '—';
+  }
+  
+  // Update dots
+  attemptDots.forEach(function(dot, index) {
+    dot.style.background = '#ede8e0';
+    dot.style.color = '#8a8680';
+    if (index < attemptData.length) {
+      dot.style.background = '#b8943c';
+      dot.style.color = '#ffffff';
+      if (attemptData.length > 1) {
+        var scores = attemptData[index].scores;
+        var avg = Object.values(scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+        var bestAvg = -Infinity;
+        attemptData.forEach(function(d) {
+          var a = Object.values(d.scores).reduce(function(x, y) { return x + y; }, 0) / 5;
+          if (a > bestAvg) bestAvg = a;
+        });
+        if (avg >= bestAvg && attemptData.length > 1) {
+          dot.style.background = '#16a34a';
+          dot.style.color = '#ffffff';
+          dot.textContent = '★';
+        } else {
+          dot.textContent = index + 1;
+        }
+      } else {
+        dot.textContent = index + 1;
+      }
+    } else {
+      dot.textContent = index + 1;
+    }
+  });
+  
+  // Update badge
+  var remaining = maxAttempts - currentAttempt;
+  if (remaining > 0) {
+    attemptsLeftBadge.textContent = remaining + ' attempts left';
+    attemptsLeftBadge.style.background = '#fef3c7';
+    attemptsLeftBadge.style.color = '#b8943c';
+  } else {
+    attemptsLeftBadge.textContent = '✅ Complete';
+    attemptsLeftBadge.style.background = '#f0fdf4';
+    attemptsLeftBadge.style.color = '#16a34a';
+    // SHOW PERSONA REVEAL after 3 attempts
+    showPersonaReveal();
+  }
+}
+
+// ---------- SHOW PERSONA REVEAL ----------
+function showPersonaReveal() {
+  // Calculate strongest and weakest dimensions from all attempts
+  if (attemptData.length < 3) return;
+  
+  // Aggregate scores across all attempts
+  var dims = ['clarity', 'precision', 'structure', 'impact', 'influence'];
+  var labels = {
+    clarity: 'CLARITY',
+    precision: 'PRECISION',
+    structure: 'STRUCTURE',
+    impact: 'IMPACT',
+    influence: 'INFLUENCE'
+  };
+  var descs = {
+    clarity: 'You tend to make your core message understandable once you commit to it.',
+    precision: 'You use specific, concrete language that leaves little room for ambiguity.',
+    structure: 'You organize your thoughts in a logical, easy-to-follow sequence.',
+    impact: 'Your messages have a lasting impression on those who hear them.',
+    influence: 'You have a natural ability to persuade and move others to action.'
+  };
+  var growthDescs = {
+    clarity: 'Sometimes you state your point so directly that nuance gets lost.',
+    precision: 'You can get so specific that you miss the bigger picture.',
+    structure: 'Your structure can become rigid, making you less adaptable in conversation.',
+    impact: 'Your strong delivery can sometimes overwhelm softer messages.',
+    influence: 'You explain your position well, but your strongest recommendation sometimes arrives too softly.'
+  };
+  
+  var totals = {};
+  dims.forEach(function(d) {
+    totals[d] = 0;
+    attemptData.forEach(function(entry) {
+      if (entry.scores && entry.scores[d] !== undefined) {
+        totals[d] += entry.scores[d];
+      }
+    });
+  });
+  
+  // Find strongest and weakest
+  var strongest = dims.reduce(function(a, b) { return totals[a] > totals[b] ? a : b; });
+  var weakest = dims.reduce(function(a, b) { return totals[a] < totals[b] ? a : b; });
+  
+  // Update reveal UI
+  revealStrength.textContent = labels[strongest] || 'CLARITY';
+  revealStrengthDesc.textContent = descs[strongest] || 'You tend to make your core message understandable.';
+  revealGrowth.textContent = labels[weakest] || 'INFLUENCE';
+  revealGrowthDesc.textContent = growthDescs[weakest] || 'Your strongest recommendation sometimes arrives too softly.';
+  
+  // Persona mapping based on strongest dimension
+  var personaMap = {
+    clarity: { name: 'The Translator', desc: 'You make complexity make sense.' },
+    precision: { name: 'The Articulator', desc: 'You speak with clarity and command.' },
+    structure: { name: 'The Architect', desc: 'You build ideas that stand firm.' },
+    impact: { name: 'The Amplifier', desc: 'Your presence makes ideas unforgettable.' },
+    influence: { name: 'The Catalyst', desc: 'You move people to action.' }
+  };
+  
+  var persona = personaMap[strongest] || personaMap.clarity;
+  revealPersonaName.textContent = persona.name;
+  revealPersonaDesc.textContent = persona.desc;
+  
+  // Show the reveal section
+  personaReveal.style.display = 'block';
+  personaReveal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  
+  // Hide results container if it's showing
+  resultsContainer.style.display = 'none';
+}
+  
+
+  // ---------- EVENT LISTENERS ----------
+  startBtn.addEventListener('click', startChallenge);
+  
+  resetBtn.addEventListener('click', function() {
+    resetChallenge();
+    resultsContainer.style.display = 'none';
+    questionDisplay.style.maxHeight = '0';
+    questionDisplay.style.padding = '0 32px';
+    scenarioContext.textContent = 'Select a scenario to begin.';
+    selectedScenario = null;
+    startBtn.disabled = true;
+    scenarioBtns.forEach(function(b) {
+      b.style.borderColor = '#ede8e0';
+      b.style.background = '#ffffff';
+    });
+    // Reset attempt tracking
+    currentAttempt = 0;
+    attemptData = [];
+    bestScore = null;
+    isComplete = false;
+    updateAttemptUI();
+    attemptSummary.textContent = 'Attempt 1 of 3';
+    tryAgainBtn.textContent = '🔄 Try Again';
+  });
+
+ // Try Again button
+tryAgainBtn.addEventListener('click', function() {
+  if (isComplete || currentAttempt >= maxAttempts) {
+    // Show all attempts summary - scroll to results
+    personaReveal.style.display = 'none';  // <-- ADD THIS LINE
+    resultsContainer.style.display = 'block';
+    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (attemptData.length > 0) {
+      displayResults(attemptData.length - 1);
+    }
+    return;
+  }
+  // Reset for next attempt
+  personaReveal.style.display = 'none';  // <-- ADD THIS LINE
+  resetChallenge();
+  resultsContainer.style.display = 'none';
+  // Clear score displays
+  var dims = ['Clarity', 'Precision', 'Structure', 'Impact', 'Influence'];
+  dims.forEach(function(d) {
+    document.getElementById('score' + d).textContent = '—';
+    document.getElementById('bar' + d).style.width = '0%';
+  });
+  document.getElementById('feedbackList').innerHTML = 
+    '<li style="padding: 6px 0; color: #8a8680; font-style: italic;">Complete a challenge to see feedback.</li>';
+  document.getElementById('betterVersion').textContent = 'Your improved response will appear here.';
+  var whyList = document.getElementById('betterWhyList');
+  whyList.innerHTML = '<li style="padding: 2px 0; color: #8a8680; font-style: italic;">Complete a challenge to see the breakdown.</li>';
+  improvementBox.style.display = 'none';
+  startBtn.disabled = false;
+  startBtn.textContent = '▶ Take Challenge';
+  statusBadge.textContent = 'Ready';
+  statusBadge.className = 'challenge-status';
+  statusBadge.style.color = '#8a8680';
+  if (isVoiceMode) {
+    voiceTranscript.textContent = '🎙️ Speak or type your response here...';
+    voiceTranscript.style.color = '#8a8680';
+    voiceTranscript.style.fontStyle = 'italic';
+  } else {
+    textInput.value = '';
+    textInput.focus();
+  }
+  attemptSummary.textContent = 'Attempt ' + (currentAttempt + 1) + ' of 3';
+});
+
+// New Scenario button
+newScenarioBtn.addEventListener('click', function() {
+  personaReveal.style.display = 'none';  // <-- ADD THIS LINE
+  resultsContainer.style.display = 'none';
+  selectedScenario = null;
+  currentAttempt = 0;
+  attemptData = [];
+  bestScore = null;
+  isComplete = false;
+  startBtn.disabled = true;
+  scenarioContext.textContent = 'Select a scenario to begin.';
+  questionDisplay.textContent = 'Select a scenario to see your challenge.';
+  questionDisplay.style.maxHeight = '0';
+  questionDisplay.style.padding = '0 32px';
+  scenarioBtns.forEach(function(b) {
+    b.classList.remove('active');
+    b.style.borderColor = '#ede8e0';
+    b.style.background = '#ffffff';
+  });
+  resetChallenge();
+  updateAttemptUI();
+  attemptSummary.textContent = 'Attempt 1 of 3';
+  tryAgainBtn.textContent = '🔄 Try Again';
+  document.querySelector('.experience-grid').scrollIntoView({ behavior: 'smooth' });
+});
+
+  // ---------- KEYBOARD SHORTCUTS ----------
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey && isChallengeActive && !isVoiceMode) {
+      e.preventDefault();
+      endChallenge();
+    }
+  });
+
+  // ---------- INIT ----------
+  function init() {
+    initSpeechRecognition();
+    updateTimerDisplay();
+    updateAttemptUI();
+    resultsContainer.style.display = 'none';
+  }
+  
+  init();
+
+})();
+       
     // ===== LOGIN MODAL =====
     var signInBtn = document.getElementById('signInBtn');
     var loginModal = document.getElementById('loginModal');
@@ -2191,76 +3102,11 @@
           setTimeout(function() {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Log In →';
-            console.log('Login attempt:', { email: email, password: password });
             closeLoginModal();
           }, 1500);
         });
       }
 
-// ===== STACKED CARDS SCROLL EFFECT =====
-(function() {
-  const cards = document.querySelectorAll('.stacked-card');
-  const container = document.getElementById('stackedCardsContainer');
-  
-  if (!cards.length) return;
-
-  function updateCards() {
-    const containerRect = container.getBoundingClientRect();
-    const containerTop = containerRect.top;
-    const containerHeight = containerRect.height;
-    const viewportHeight = window.innerHeight;
-    
-    cards.forEach((card, index) => {
-      const cardRect = card.getBoundingClientRect();
-      const cardCenter = cardRect.top + cardRect.height / 2;
-      const cardTop = cardRect.top;
-      
-      // Calculate progress through the stack
-      const progress = (cardTop - containerTop) / (containerHeight - cardRect.height);
-      const clampedProgress = Math.max(0, Math.min(1, progress));
-      
-      // Determine if card is active (visible in viewport)
-      const isVisible = cardRect.top < viewportHeight - 100 && cardRect.bottom > 100;
-      
-      if (isVisible) {
-        card.classList.add('is-active');
-        card.classList.remove('is-scrolled-past');
-        
-        // Scale and opacity based on progress
-        const scale = 1 - (clampedProgress * 0.05);
-        const opacity = 1 - (clampedProgress * 0.4);
-        card.style.transform = `scale(${scale})`;
-        card.style.opacity = Math.max(0.6, opacity);
-      } else if (cardRect.bottom < 0) {
-        card.classList.remove('is-active');
-        card.classList.add('is-scrolled-past');
-      } else {
-        card.classList.remove('is-active');
-        card.classList.remove('is-scrolled-past');
-        card.style.transform = '';
-        card.style.opacity = '';
-      }
-    });
-  }
-
-  // Throttled scroll handler
-  let ticking = false;
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      window.requestAnimationFrame(function() {
-        updateCards();
-        ticking = false;
-      });
-      ticking = true;
-    }
-  });
-
-  window.addEventListener('resize', updateCards);
-  
-  // Initial update
-  setTimeout(updateCards, 100);
-})();
-      
       function createErrorElement() {
         var error = document.createElement('div');
         error.className = 'login-error';
