@@ -2,15 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Unspoken · Understand the gap. Close the gap.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
   <style>
-    /* ----- RESET & BASE ----- */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    /* ===== RESET & BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
     body {
       font-family: 'Inter', sans-serif;
       background: #faf8f5;
@@ -19,299 +25,185 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
-    .section { padding: 80px 0; border-bottom: 1px solid #ede8e0; }
-    .section:last-of-type { border-bottom: none; }
-
-    .heading-serif { font-family: 'Playfair Display', serif; font-weight: 700; letter-spacing: -0.02em; }
-    .heading-xl { font-size: 4rem; line-height: 1.1; }
-    .heading-lg { font-size: 3rem; line-height: 1.2; }
-    .accent-gold { color: #b8943c; }
-
-    /* ----- BUTTONS ----- */
-    .btn-free {
-      display: inline-block;
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      color: #ffffff;
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 14px 36px;
-      border-radius: 60px;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
-      letter-spacing: 0.3px;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
     }
-    .btn-free:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    .section {
+      padding: 80px 0;
+      border-bottom: 1px solid #ede8e0;
+    }
+    .section:last-of-type {
+      border-bottom: none;
     }
 
-    .btn-paid {
+    .heading-serif {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .heading-lg {
+      font-size: 3rem;
+      line-height: 1.15;
+    }
+    .accent-gold {
+      color: #b8943c;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary {
       display: inline-block;
       background: linear-gradient(135deg, #b8943c, #a07f30);
       color: #ffffff;
       font-weight: 600;
-      font-size: 1.1rem;
-      padding: 16px 44px;
+      font-size: 1rem;
+      padding: 14px 40px;
       border-radius: 60px;
       text-decoration: none;
       border: none;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 6px 20px rgba(184, 148, 60, 0.3);
+      box-shadow: 0 4px 16px rgba(184, 148, 60, 0.25);
       letter-spacing: 0.3px;
+      font-family: inherit;
     }
-    .btn-paid:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(184, 148, 60, 0.45); background: linear-gradient(135deg, #a07f30, #8a6d1f); }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(184, 148, 60, 0.35);
+      background: linear-gradient(135deg, #a07f30, #8a6d1f);
+    }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
 
-    .btn-ghost {
+    .btn-secondary {
       display: inline-block;
       background: transparent;
       color: #1a1917;
-      font-weight: 500;
-      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 12px 32px;
       border-radius: 60px;
       text-decoration: none;
-      border: 1px solid #d0c8bc;
-      transition: all 0.2s ease;
-    }
-    .btn-ghost:hover { border-color: #b8943c; color: #b8943c; }
-
-    /* ----- NAV ----- */
-    .navbar {
-      padding: 16px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #ede8e0;
-    }
-    .logo-link { display: flex; align-items: center; text-decoration: none; gap: 10px; }
-    .logo-img { height: 40px; width: auto; display: block; }
-    .logo-text { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; color: #1a1917; }
-    .logo-text span { color: #b8943c; }
-    .nav-links { display: flex; gap: 28px; align-items: center; }
-    .nav-links a { text-decoration: none; color: #3d3a34; font-weight: 500; font-size: 0.95rem; transition: color 0.2s; }
-    .nav-links a:hover { color: #b8943c; }
-
-    /* Pulse animation for recording indicator */
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.3; transform: scale(0.8); }
-    }
-
-    /* Slide up for results */
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Timer warning flash */
-    @keyframes timer-warning {
-      0%, 100% { color: #dc2626; }
-      50% { color: #b8943c; }
-    }
-
-    .timer-warning {
-      animation: timer-warning 0.5s ease-in-out 3;
-    }
-
-    /* Mode button active state */
-    .mode-btn.active {
-      background: #b8943c;
-      color: #ffffff;
-      border-color: #b8943c;
-    }
-
-    /* ----- LOGIN MODAL ----- */
-    .login-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .login-modal-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(8px);
-    }
-    .login-modal-content {
-      position: relative;
-      background: #ffffff;
-      border-radius: 24px;
-      padding: 40px 36px;
-      max-width: 440px;
-      width: 90%;
-      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
-      animation: loginSlideUp 0.3s ease;
-    }
-    @keyframes loginSlideUp {
-      from { opacity: 0; transform: translateY(30px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .login-modal-close {
-      position: absolute;
-      top: 16px;
-      right: 20px;
-      background: none;
-      border: none;
-      font-size: 1.8rem;
-      color: #8a8680;
+      border: 1.5px solid #d0c8bc;
       cursor: pointer;
-      transition: color 0.2s;
-      line-height: 1;
-    }
-    .login-modal-close:hover { color: #1a1917; }
-    .login-modal-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: #1a1917; margin-bottom: 20px; }
-    .login-modal-logo span { color: #b8943c; }
-    .login-modal-header h2 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #1a1917; margin-bottom: 4px; }
-    .login-modal-subtitle { color: #6e6a62; font-size: 0.95rem; margin-bottom: 24px; }
-    .login-modal-form { display: flex; flex-direction: column; gap: 16px; }
-    .login-form-group label { display: block; font-weight: 600; font-size: 0.85rem; color: #1a1917; margin-bottom: 4px; }
-    .login-form-group input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1.5px solid #e2ddd6;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      transition: border-color 0.2s;
-      background: #faf8f5;
+      transition: all 0.2s ease;
       font-family: inherit;
     }
-    .login-form-group input:focus { outline: none; border-color: #b8943c; box-shadow: 0 0 0 4px rgba(184, 148, 60, 0.1); }
-    .login-form-options { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
-    .login-remember { display: flex; align-items: center; gap: 6px; color: #6e6a62; cursor: pointer; }
-    .login-remember input[type="checkbox"] { accent-color: #b8943c; width: 16px; height: 16px; cursor: pointer; }
-    .login-forgot { color: #b8943c; text-decoration: none; font-weight: 500; }
-    .login-forgot:hover { text-decoration: underline; }
-    .login-btn-primary {
-      background: linear-gradient(135deg, #b8943c, #a07f30);
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 60px;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 16px rgba(184, 148, 60, 0.3);
-      margin-top: 4px;
-    }
-    .login-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(184, 148, 60, 0.4); }
-    .login-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
-    .login-modal-footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid #ede8e0; text-align: center; font-size: 0.9rem; color: #6e6a62; }
-    .login-join-link { color: #b8943c; text-decoration: none; font-weight: 600; }
-    .login-join-link:hover { text-decoration: underline; }
-    .login-error { color: #dc2626; font-size: 0.85rem; display: none; margin-top: 4px; }
-    @media (max-width: 480px) {
-      .login-modal-content { padding: 28px 20px; max-width: 100%; margin: 16px; border-radius: 20px; }
-      .login-modal-header h2 { font-size: 1.6rem; }
-      .login-form-options { flex-direction: column; gap: 8px; align-items: flex-start; }
+    .btn-secondary:hover {
+      border-color: #b8943c;
+      color: #b8943c;
     }
 
-    /* ===== HERO - 5 PAIN ROTATION ===== */
+    .btn-outline-gold {
+      display: inline-block;
+      background: transparent;
+      color: #b8943c;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 10px 28px;
+      border-radius: 60px;
+      text-decoration: none;
+      border: 1.5px solid #b8943c;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .btn-outline-gold:hover {
+      background: #b8943c;
+      color: #ffffff;
+    }
+
+    /* ===== HERO ===== */
     .hero {
       display: flex;
       align-items: center;
       gap: 60px;
       padding: 60px 0 80px;
-      flex-wrap: nowrap;
-      min-height: 80vh;
+      min-height: 90vh;
     }
-    .hero-left { flex: 1 1 48%; min-width: 0; }
-    .hero-right { flex: 1 1 48%; min-width: 0; }
+    .hero-left {
+      flex: 1 1 50%;
+    }
+    .hero-right {
+      flex: 1 1 50%;
+    }
     .hero-badge {
       display: inline-block;
-      background: #e8e0d5;
-      color: #4d4237;
-      font-size: 0.9rem;
+      font-size: 0.75rem;
       font-weight: 600;
-      padding: 8px 22px;
+      color: #b8943c;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: rgba(184, 148, 60, 0.08);
+      padding: 6px 20px;
       border-radius: 40px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(184, 148, 60, 0.12);
     }
-    .hero .rotating-container {
-      height: 220px;
-      overflow: hidden;
-      position: relative;
-      margin-bottom: 8px;
-    }
-    .hero .rotating-pair {
-      position: absolute;
-      width: 100%;
-      left: 0;
-      top: 0;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeSlide 15s infinite;
-    }
-    .hero .rotating-pair .pain-label {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #b8943c;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 2px;
-    }
-    .hero .rotating-pair .inner-voice {
-      font-size: 2.2rem;
-      line-height: 1.2;
+    .hero h1 {
       font-family: 'Playfair Display', serif;
-      font-weight: 400;
-      color: #1a1917;
-      font-style: italic;
-    }
-    .hero .rotating-pair .outcome {
-      font-size: 1.6rem;
+      font-size: 3.6rem;
       font-weight: 700;
-      font-family: 'Playfair Display', serif;
-      color: #b8943c;
-      margin-top: 4px;
-    }
-    .hero .rotating-pair:nth-child(1) { animation-delay: 0s; }
-    .hero .rotating-pair:nth-child(2) { animation-delay: 3s; }
-    .hero .rotating-pair:nth-child(3) { animation-delay: 6s; }
-    .hero .rotating-pair:nth-child(4) { animation-delay: 9s; }
-    .hero .rotating-pair:nth-child(5) { animation-delay: 12s; }
-    @keyframes fadeSlide {
-      0% { opacity: 0; transform: translateY(30px); }
-      5% { opacity: 1; transform: translateY(0); }
-      18% { opacity: 1; transform: translateY(0); }
-      22% { opacity: 0; transform: translateY(-30px); }
-      100% { opacity: 0; }
-    }
-    .hero .tagline {
-      font-size: 1.25rem;
-      font-weight: 500;
-      color: #b8943c;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
       margin-bottom: 12px;
+    }
+    .hero h1 span {
+      color: #b8943c;
+    }
+    .hero-sub {
+      font-size: 1.2rem;
+      color: #4d4a44;
+      max-width: 480px;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    .hero-rotating {
+      margin: 24px 0 28px;
+    }
+    .hero-rotating-item {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #1a1917;
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero-rotating-item .label {
+      font-weight: 700;
+      color: #b8943c;
+      letter-spacing: 1px;
+      min-width: 140px;
+    }
+    .hero-rotating-item .voice {
+      font-style: italic;
+      color: #6e6a62;
+      font-size: 0.95rem;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
       margin-top: 8px;
     }
-    .hero p { font-size: 1.1rem; color: #4d4a44; max-width: 460px; margin-bottom: 28px; }
-    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
-    .hero-micro { font-size: 0.85rem; color: #6e6a62; margin-top: 12px; }
+    .hero-micro {
+      font-size: 0.8rem;
+      color: #8a8680;
+      margin-top: 12px;
+    }
 
-    /* ----- VIDEO CARD ----- */
+    /* ===== VIDEO CARD ===== */
     .video-card {
       background: #1a1917;
       border-radius: 28px;
       padding: 16px;
-      box-shadow: 0 30px 50px rgba(0,0,0,0.08);
-      position: relative;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
     }
     .video-wrapper {
       position: relative;
@@ -319,10 +211,6 @@
       overflow: hidden;
       aspect-ratio: 16 / 9;
       background: #2d2a24;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
     }
     .video-wrapper video {
       width: 100%;
@@ -338,1900 +226,999 @@
       text-align: center;
       color: #f0ebe4;
       font-weight: 500;
-      font-size: 0.9rem;
-      letter-spacing: 0.5px;
-      background: linear-gradient(transparent, rgba(0,0,0,0.6));
+      font-size: 0.85rem;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
       padding: 30px 20px 16px;
       pointer-events: none;
-      z-index: 1;
     }
 
-    /* ----- TRUST STRIP ----- */
-    .trust-strip-highlight {
-      background: linear-gradient(135deg, #fef3c7, #fde68a);
-      border: 2px solid #b8943c;
-      border-radius: 14px;
-      padding: 16px 32px;
-      margin: 24px auto 20px;
-      max-width: 1000px;
+    /* ===== EXPERIENCE ===== */
+    .experience-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+      margin: 24px 0 32px;
+    }
+    .exp-btn {
+      background: #ffffff;
+      border: 2px solid #ede8e0;
+      border-radius: 16px;
+      padding: 16px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      font-weight: 500;
+      color: #4d4a44;
+    }
+    .exp-btn:hover {
+      border-color: #b8943c;
+      background: #fefcf8;
+    }
+    .exp-btn.active {
+      border-color: #b8943c;
+      background: #fef3c7;
+    }
+    .exp-btn .icon {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .exp-btn .title {
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .exp-btn .sub {
+      font-size: 0.65rem;
+      color: #8a8680;
+    }
+
+    .mode-selector {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin: 16px 0 20px;
+      flex-wrap: wrap;
+    }
+    .mode-btn {
+      padding: 10px 24px;
+      border-radius: 40px;
+      border: 2px solid #ede8e0;
+      background: #ffffff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      color: #4d4a44;
+    }
+    .mode-btn.active {
+      background: #b8943c;
+      color: #ffffff;
+      border-color: #b8943c;
+    }
+    .mode-btn:hover:not(.active) {
+      border-color: #b8943c;
+    }
+
+    .challenge-box {
+      background: #ffffff;
+      border-radius: 24px;
+      border: 1px solid #ede8e0;
+      padding: 28px 32px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .challenge-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
-      box-shadow: 0 4px 20px rgba(184, 148, 60, 0.12);
+      margin-bottom: 16px;
     }
-    .trust-strip-highlight .label {
-      font-weight: 800;
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #8a6d1f;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .trust-strip-highlight .tags {
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-      font-weight: 700;
-      color: #1a1917;
-      font-size: 1.05rem;
-      letter-spacing: 0.3px;
-    }
-    .trust-strip-highlight .tags span { padding: 2px 0; position: relative; }
-    .trust-strip-highlight .tags span::after {
-      content: "✦";
-      color: #b8943c;
-      margin-left: 10px;
-      font-size: 0.5rem;
-    }
-    .trust-strip-highlight .tags span:last-child::after { display: none; }
-    @media (max-width: 768px) {
-      .trust-strip-highlight { flex-direction: column; align-items: flex-start; padding: 14px 20px; max-width: 100%; }
-      .trust-strip-highlight .tags { gap: 14px; font-size: 0.9rem; }
-      .trust-strip-highlight .tags span::after { display: none; }
-    }
-
-    /* ===== 3D SPHERICAL ORBIT SYSTEM ===== */
-    .personas-header {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-
-    .personas-badge {
-      display: inline-block;
-      background: rgba(184, 148, 60, 0.1);
-      color: #b8943c;
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      padding: 6px 20px;
-      border-radius: 40px;
-      border: 1px solid rgba(184, 148, 60, 0.15);
-      position: relative;
-    }
-    .personas-badge::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      border-radius: 40px;
-      background: linear-gradient(135deg, rgba(184, 148, 60, 0.2), transparent, rgba(184, 148, 60, 0.2));
-      z-index: -1;
-      animation: badgePulse 3s ease-in-out infinite;
-    }
-    @keyframes badgePulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-
-    .personas-subtitle {
-      font-size: 1rem;
-      color: #6e6a62;
-      max-width: 600px;
-      margin: 8px auto 0;
-      line-height: 1.7;
-    }
-
-    .persona-orbit-container {
-      --orbit-size: 700px;
-      --orbit-radius: 270px;
-      --orbit-depth: 120px;
-      position: relative;
-      width: var(--orbit-size);
-      height: var(--orbit-size);
-      margin: 10px auto 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      perspective: 1200px;
-      perspective-origin: 50% 50%;
-      isolation: isolate;
-    }
-
-    .persona-orbit-container::before {
-      content: "";
-      position: absolute;
-      width: 85%;
-      height: 85%;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(245, 240, 231, 0.3), transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .orbit-ring {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 1;
-      box-sizing: border-box;
-    }
-    .orbit-ring-1 {
-      width: calc(var(--orbit-radius) * 2);
-      height: calc(var(--orbit-radius) * 2);
-      border: 0.5px solid rgba(200, 180, 150, 0.12);
-    }
-    .orbit-ring-2 {
-      width: calc(var(--orbit-radius) * 1.5);
-      height: calc(var(--orbit-radius) * 1.5);
-      border: 0.5px solid rgba(200, 180, 150, 0.06);
-    }
-    .orbit-ring-3 {
-      width: calc(var(--orbit-radius) * 0.9);
-      height: calc(var(--orbit-radius) * 0.9);
-      border: 0.5px dashed rgba(200, 180, 150, 0.05);
-    }
-
-    .orbit-center {
-      position: absolute;
-      width: 220px;
-      height: 220px;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      z-index: 50;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 30px;
-      background: radial-gradient(circle at 40% 30%, rgba(255, 248, 240, 0.95), rgba(248, 242, 235, 0.98));
-      border: 2px solid rgba(184, 148, 60, 0.5);
-      box-shadow: 
-        0 0 0 1px rgba(184, 148, 60, 0.08),
-        0 20px 60px rgba(0, 0, 0, 0.04),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-      transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .orbit-center .center-persona-desc {
+    .challenge-context {
       font-size: 0.9rem;
       color: #4d4a44;
-      line-height: 1.5;
-      max-width: 180px;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.5s ease 0.1s;
       font-weight: 500;
     }
-    .orbit-center .center-persona-desc.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .orbit-center .center-persona-tag {
-      font-size: 0.6rem;
+    .challenge-timer {
+      font-size: 2.2rem;
       font-weight: 700;
       color: #b8943c;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-top: 6px;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.5s ease 0.2s;
+      font-family: 'Inter', monospace;
+      font-variant-numeric: tabular-nums;
     }
-    .orbit-center .center-persona-tag.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .challenge-timer.warning {
+      animation: timerFlash 0.5s ease-in-out 3;
     }
-
-    .orbit-center .center-default-text {
-      font-size: 0.75rem;
-      color: rgba(26, 25, 23, 0.25);
-      line-height: 1.6;
-      max-width: 140px;
-      font-weight: 400;
+    @keyframes timerFlash {
+      0%,
+      100% {
+        color: #dc2626;
+      }
+      50% {
+        color: #b8943c;
+      }
     }
-
-    .persona-orbit-track {
-      position: absolute;
-      inset: 0;
-      z-index: 10;
-      transform-style: preserve-3d;
-      pointer-events: none;
-    }
-
-    .orbit-item {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 120px;
-      height: 120px;
-      margin: -60px 0 0 -60px;
-      transform-style: preserve-3d;
-      will-change: transform, opacity, filter;
-      pointer-events: auto;
-      cursor: pointer;
-      z-index: 5;
-      transition: z-index 0.3s ease;
-    }
-
-    .orbit-persona {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 12px;
-      box-sizing: border-box;
-      background: #2d2a24;
-      border: 0.5px solid rgba(200, 180, 150, 0.08);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.02);
-      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .orbit-name {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: rgba(245, 240, 235, 0.9);
-      letter-spacing: 0.3px;
-      text-transform: none;
-      line-height: 1.2;
-      transition: all 0.4s ease;
-      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
-    }
-
-    .orbit-item.is-front .orbit-persona {
-      background: #33302a;
-      border-color: rgba(200, 180, 150, 0.12);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-    }
-    .orbit-item.is-front .orbit-name { font-size: 0.95rem; font-weight: 700; }
-
-    .orbit-item.is-back .orbit-persona {
-      opacity: 0.35;
-      transform: scale(0.85);
-    }
-    .orbit-item.is-back .orbit-name {
-      font-size: 0.65rem;
-      font-weight: 600;
-      opacity: 0.7;
-    }
-
-    .orbit-item:hover {
-      z-index: 40;
-    }
-    .orbit-item:hover .orbit-persona {
-      background: #3a3630;
-      border-color: rgba(200, 180, 150, 0.15);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-      transform: scale(1.06);
-    }
-    .orbit-item:hover .orbit-name {
-      color: rgba(245, 240, 235, 0.95);
+    .challenge-question {
+      background: #faf8f5;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      font-style: italic;
+      color: #1a1917;
       font-size: 0.95rem;
-      font-weight: 700;
+      border-left: 3px solid #b8943c;
+      min-height: 50px;
     }
-
-    .orbit-item.is-active {
-      z-index: 45;
-    }
-    .orbit-item.is-active .orbit-persona {
-      background: #2d2a24;
-      border: 2px solid #b8943c;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-      transform: scale(1.1);
-    }
-    .orbit-item.is-active .orbit-name {
-      color: #b8943c;
-      font-weight: 700;
+    .challenge-response {
+      min-height: 100px;
+      background: #faf8f5;
+      border-radius: 12px;
+      padding: 16px 20px;
+      border: 2px dashed #ede8e0;
       font-size: 0.95rem;
-    }
-
-    .orbit-tooltip {
-      position: absolute;
-      bottom: calc(100% + 12px);
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.5rem;
-      font-weight: 400;
-      color: rgba(26, 25, 23, 0.2);
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-      opacity: 0;
+      color: #1a1917;
       transition: all 0.3s ease;
-      pointer-events: none;
+      margin-bottom: 16px;
     }
-    .orbit-item:hover .orbit-tooltip {
-      opacity: 1;
-      color: rgba(26, 25, 23, 0.4);
+    .challenge-response.recording {
+      border-color: #dc2626;
+      background: #fef2f2;
     }
-
-    .personas-cta {
-      text-align: center;
-      margin-top: 20px;
+    .challenge-response textarea {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 0.95rem;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      min-height: 80px;
     }
-    .personas-cta p {
-      font-size: 1.1rem;
-      color: #4d4a44;
-      margin-bottom: 14px;
-    }
-    .personas-cta p strong {
-      color: #b8943c;
-    }
-
-    /* ===== STACKED CARDS ===== */
-    .explore-header {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-
-    .explore-badge {
-      display: inline-block;
-      background: rgba(184, 148, 60, 0.1);
-      color: #b8943c;
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      padding: 6px 20px;
-      border-radius: 40px;
-      border: 1px solid rgba(184, 148, 60, 0.15);
-      margin-bottom: 12px;
-    }
-
-    .explore-tags {
+    .challenge-controls {
       display: flex;
-      justify-content: center;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
-      margin-top: 16px;
+      align-items: center;
+      justify-content: space-between;
     }
-
-    .explore-tags span {
+    .challenge-status {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #8a8680;
       background: #f4f0ea;
       padding: 4px 16px;
       border-radius: 40px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: #4d4a44;
+    }
+    .challenge-status.recording {
+      color: #dc2626;
+      background: #fef2f2;
+    }
+    .challenge-status.done {
+      color: #16a34a;
+      background: #f0fdf4;
+    }
+    .challenge-status.analyzing {
+      color: #b8943c;
+      background: #fef3c7;
     }
 
-    .stacked-cards-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 20px;
-      position: relative;
-      min-height: 600px;
+    /* ===== RESULTS ===== */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin: 24px 0 32px;
     }
-
-    .stacked-card {
-      width: 100%;
+    .result-card {
       background: #ffffff;
-      border-radius: 20px;
-      border: 1px solid #ede8e0;
-      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-      position: sticky;
-      top: 80px;
-      overflow: hidden;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
-      margin-bottom: 20px;
-      z-index: 1;
-    }
-
-    .stacked-card:nth-child(1) { z-index: 5; top: 80px; }
-    .stacked-card:nth-child(2) { z-index: 4; top: 120px; }
-    .stacked-card:nth-child(3) { z-index: 3; top: 160px; }
-    .stacked-card:nth-child(4) { z-index: 2; top: 200px; }
-    .stacked-card:nth-child(5) { z-index: 1; top: 240px; }
-
-    .stacked-card.is-active {
-      transform: scale(1) translateY(0);
-      border-color: #b8943c;
-      box-shadow: 0 20px 50px rgba(184, 148, 60, 0.08);
-      z-index: 10;
-    }
-
-    .stacked-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #b8943c, #fcd34d, #b8943c);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    .stacked-card.is-active::before {
-      opacity: 1;
-    }
-
-    .stacked-card-inner {
-      display: flex;
-      padding: 28px 30px;
-      gap: 24px;
-      align-items: stretch;
-    }
-
-    .stacked-card-left {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .stacked-card-right {
-      flex: 0 0 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .stacked-card-image {
-      width: 140px;
-      height: 140px;
       border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #f0ebe4;
-      flex-shrink: 0;
-      transition: transform 0.3s ease;
+      padding: 20px 16px;
+      text-align: center;
+      border: 1px solid #ede8e0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
     }
-
-    .stacked-card.is-active .stacked-card-image {
-      transform: scale(1.04);
-    }
-
-    .stacked-card-icon {
-      font-size: 2.8rem;
-      margin-bottom: 4px;
-    }
-
-    .stacked-card-label {
+    .result-card .label {
       font-size: 0.55rem;
-      font-weight: 500;
-      opacity: 0.7;
+      font-weight: 700;
+      color: #b8943c;
       letter-spacing: 1px;
       text-transform: uppercase;
     }
-
-    .stacked-card-number {
-      font-size: 0.5rem;
-      font-weight: 700;
-      color: #b8943c;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .stacked-card-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
+    .result-card .score {
+      font-size: 2.4rem;
       font-weight: 700;
       color: #1a1917;
-      line-height: 1.3;
-      margin: 0;
-    }
-
-    .stacked-card-desc {
-      font-size: 0.85rem;
-      color: #6e6a62;
-      line-height: 1.6;
-      margin: 0;
-    }
-
-    .stacked-card-options {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
       margin: 4px 0;
     }
-
-    .stacked-option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #f8f5f0;
-      padding: 8px 16px;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #4d4a44;
-      border: 1px solid transparent;
-    }
-
-    .stacked-option:hover {
-      background: #fef3c7;
-      border-color: #b8943c;
-    }
-
-    .stacked-option input[type="radio"] {
-      accent-color: #b8943c;
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-    }
-
-    .stacked-card-topics {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .stacked-card-topics span {
-      background: #f4f0ea;
-      padding: 3px 12px;
-      border-radius: 40px;
-      font-size: 0.65rem;
-      font-weight: 500;
-      color: #4d4a44;
-    }
-
-    .stacked-card-collections {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .collection-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #f8f5f0;
-      padding: 8px 14px;
-      border-radius: 12px;
-      border: 1px solid #ede8e0;
-      transition: all 0.3s ease;
-    }
-
-    .collection-item:hover {
-      border-color: #b8943c;
-      background: #fef3c7;
-    }
-
-    .collection-icon {
-      font-size: 1.2rem;
-    }
-
-    .collection-title {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #1a1917;
-    }
-
-    .collection-experts {
-      font-size: 0.6rem;
-      color: #6e6a62;
-    }
-
-    .stacked-card-footer {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      padding-top: 8px;
-      border-top: 1px solid #f5f2ed;
-    }
-
-    .stacked-card-tag {
-      font-size: 0.6rem;
-      font-weight: 600;
-      color: #b8943c;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-
-    .stacked-card-time {
-      font-size: 0.6rem;
-      color: #8a8680;
-    }
-
-    /* ===== JOURNEY CARD ===== */
-    .journey-card {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #ffffff;
-      border-radius: 28px;
-      border: 1px solid #ede8e0;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.04);
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .journey-card .gold-bar {
+    .result-card .bar {
       height: 4px;
-      background: linear-gradient(90deg, #b8943c, #fcd34d, #b8943c);
+      background: #ede8e0;
+      border-radius: 4px;
+      overflow: hidden;
     }
-
-    .journey-card .journey-body {
-      padding: 32px 36px 28px;
+    .result-card .bar .fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #b8943c, #fcd34d);
+      width: 0%;
+      transition: width 1.2s ease;
     }
-
-    .journey-card .journey-badge {
-      font-size: 0.55rem;
-      font-weight: 700;
-      color: #b8943c;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .journey-card .journey-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      font-weight: 700;
-      color: #1a1917;
-      margin: 4px 0 0;
-      letter-spacing: -0.5px;
-    }
-
-    .journey-card .journey-title span {
-      color: #b8943c;
-    }
-
-    .journey-card .journey-subtitle {
-      font-size: 0.95rem;
-      color: #4d4a44;
-      margin-bottom: 16px;
-      line-height: 1.6;
-    }
-
-    .journey-card .journey-divider {
-      border-top: 1px solid #f0ebe4;
-      margin: 16px 0;
-    }
-
-    .journey-card .journey-outcome-label {
+    .result-card .attempt-label {
       font-size: 0.6rem;
-      font-weight: 700;
       color: #8a8680;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 4px;
+      margin-top: 6px;
     }
 
-    .journey-card .journey-outcome {
-      font-size: 1.1rem;
-      color: #1a1917;
-      font-weight: 500;
-      font-style: italic;
+    .result-improvement {
+      background: #fef3c7;
+      border-radius: 16px;
+      padding: 20px 24px;
+      border: 1px solid #fcd34d;
+      text-align: center;
+      margin: 16px 0 24px;
     }
-
-    .journey-card .journey-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .journey-card .journey-tags span {
-      font-size: 0.7rem;
-      color: #1a1917;
-      background: #f4f0ea;
-      padding: 4px 14px;
-      border-radius: 40px;
-      font-weight: 500;
-    }
-
-    .journey-card .journey-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      padding-top: 16px;
-      border-top: 1px solid #f0ebe4;
-    }
-
-    .journey-card .journey-delivery {
-      font-size: 0.6rem;
+    .result-improvement .big {
+      font-size: 2.4rem;
       font-weight: 700;
       color: #b8943c;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+    }
+    .result-improvement .sub {
+      font-size: 0.9rem;
+      color: #4d4a44;
     }
 
-    .community-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 24px;
-      margin-top: 32px;
-    }
-    .community-item { background: #f4f0ea; padding: 24px 20px; border-radius: 24px; text-align: center; transition: background 0.2s; }
-    .community-item:hover { background: #ede8e0; }
-    .community-item .icon { font-size: 2rem; display: block; margin-bottom: 8px; }
-    .community-item h4 { font-size: 1rem; font-weight: 600; }
-
-    .faq-item { border-bottom: 1px solid #ede8e0; padding: 18px 0; }
-    .faq-item summary { font-weight: 600; font-size: 1.05rem; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-    .faq-item summary::-webkit-details-marker { display: none; }
-    .faq-item summary::after { content: "+"; font-size: 1.4rem; color: #b8943c; }
-    .faq-item[open] summary::after { content: "−"; }
-    .faq-item p { margin-top: 12px; color: #4d4a44; max-width: 700px; }
-
-    .footer {
-      padding: 48px 0 32px;
-      border-top: 1px solid #ede8e0;
+    .attempt-history {
       display: flex;
+      gap: 16px;
+      justify-content: center;
       flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 32px;
+      margin: 16px 0 24px;
     }
-    .footer-col h4 { font-weight: 600; margin-bottom: 12px; }
-    .footer-col a { display: block; color: #4d4a44; text-decoration: none; padding: 4px 0; font-size: 0.9rem; }
-    .footer-col a:hover { color: #b8943c; }
-    .footer-social { display: flex; gap: 16px; }
+    .attempt-dot {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      border: 2px solid #ede8e0;
+      background: #ffffff;
+      color: #8a8680;
+    }
+    .attempt-dot.active {
+      border-color: #b8943c;
+      background: #fef3c7;
+      color: #b8943c;
+    }
+    .attempt-dot.best {
+      border-color: #16a34a;
+      background: #f0fdf4;
+      color: #16a34a;
+    }
+    .attempt-dot .small {
+      font-size: 0.5rem;
+    }
+
+    .feedback-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 24px 0 32px;
+    }
+    .feedback-box {
+      background: #faf8f5;
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid #ede8e0;
+    }
+    .feedback-box h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1a1917;
+      margin-bottom: 12px;
+    }
+    .feedback-box ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .feedback-box ul li {
+      padding: 6px 0;
+      font-size: 0.85rem;
+      color: #4d4a44;
+      border-bottom: 1px solid #f0ebe4;
+      line-height: 1.5;
+    }
+    .feedback-box ul li:last-child {
+      border-bottom: none;
+    }
+    .feedback-box.better {
+      background: #fef3c7;
+      border-color: #fcd34d;
+    }
+    .feedback-box.better ul li {
+      border-color: rgba(184, 148, 60, 0.15);
+    }
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 992px) {
-      .hero { flex-direction: column; flex-wrap: wrap; min-height: auto; gap: 40px; }
-      .hero-left, .hero-right { flex: 1 1 100%; width: 100%; }
-      .hero .rotating-pair .inner-voice { font-size: 1.8rem; }
-      .hero .rotating-pair .outcome { font-size: 1.4rem; }
-      .hero .rotating-container { height: 180px; }
-      .heading-xl { font-size: 3rem; }
-      .heading-lg { font-size: 2.4rem; }
-      .persona-orbit-container { --orbit-size: 560px; --orbit-radius: 210px; --orbit-depth: 90px; }
-      .orbit-center { width: 180px; height: 180px; padding: 24px; }
-      .orbit-item { width: 100px; height: 100px; margin: -50px 0 0 -50px; }
-      .orbit-name { font-size: 0.7rem; }
-      .orbit-item.is-front .orbit-name { font-size: 0.8rem; }
-      .orbit-item.is-back .orbit-name { font-size: 0.55rem; }
+      .hero {
+        flex-direction: column;
+        padding: 40px 0 60px;
+        min-height: auto;
+        gap: 40px;
+      }
+      .hero h1 {
+        font-size: 2.8rem;
+      }
+      .heading-lg {
+        font-size: 2.4rem;
+      }
+      .feedback-section {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 768px) {
-      .container { padding: 0 16px; }
-      .navbar { flex-direction: row; gap: 12px; flex-wrap: wrap; }
-      .logo-img { height: 32px; }
-      .logo-text { font-size: 1.2rem; }
-      .nav-links { gap: 12px; flex-wrap: wrap; justify-content: center; }
-      .nav-links a { font-size: 0.8rem; }
-      .hero .rotating-pair .inner-voice { font-size: 1.4rem; }
-      .hero .rotating-pair .outcome { font-size: 1.2rem; }
-      .hero .rotating-pair .pain-label { font-size: 1rem; }
-      .hero .rotating-container { height: 150px; }
-      .hero-badge { font-size: 0.75rem; padding: 6px 16px; }
-      .section { padding: 48px 0; }
-      .footer { flex-direction: column; }
-      .persona-orbit-container { --orbit-size: 420px; --orbit-radius: 155px; --orbit-depth: 65px; }
-      .orbit-center { width: 150px; height: 150px; padding: 20px; }
-      .orbit-center .center-persona-desc { font-size: 0.65rem; max-width: 140px; }
-      .orbit-item { width: 80px; height: 80px; margin: -40px 0 0 -40px; }
-      .orbit-name { font-size: 0.55rem; }
-      .orbit-item.is-front .orbit-name { font-size: 0.65rem; }
-      .orbit-item.is-back .orbit-name { font-size: 0.45rem; }
-      .orbit-tooltip { display: none; }
-      .stacked-card-inner { padding: 24px 24px; flex-direction: column; }
-      .stacked-card-right { flex: 1; justify-content: center; }
-      .stacked-card-image { width: 100px; height: 100px; }
-      .stacked-card-icon { font-size: 2rem; }
-      .stacked-card-title { font-size: 1.1rem; }
-      .stacked-card:nth-child(1) { top: 60px; }
-      .stacked-card:nth-child(2) { top: 80px; }
-      .stacked-card:nth-child(3) { top: 100px; }
-      .stacked-card:nth-child(4) { top: 120px; }
-      .stacked-card:nth-child(5) { top: 140px; }
+      .container {
+        padding: 0 16px;
+      }
+      .section {
+        padding: 48px 0;
+      }
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .hero-rotating-item {
+        font-size: 0.9rem;
+        flex-wrap: wrap;
+      }
+      .hero-rotating-item .label {
+        min-width: 100px;
+        font-size: 0.8rem;
+      }
+      .challenge-box {
+        padding: 20px 16px;
+      }
+      .challenge-timer {
+        font-size: 1.8rem;
+      }
+      .results-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .experience-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .exp-btn {
+        padding: 12px 14px;
+      }
+      .exp-btn .icon {
+        font-size: 1.2rem;
+      }
+      .mode-selector {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .mode-btn {
+        text-align: center;
+      }
+      .challenge-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .result-improvement .big {
+        font-size: 1.8rem;
+      }
+      .attempt-history {
+        gap: 10px;
+      }
+      .attempt-dot {
+        width: 40px;
+        height: 40px;
+        font-size: 0.65rem;
+      }
     }
 
     @media (max-width: 480px) {
-      .persona-orbit-container { --orbit-size: 340px; --orbit-radius: 125px; --orbit-depth: 50px; margin: 10px auto 20px; }
-      .orbit-center { width: 120px; height: 120px; padding: 16px; }
-      .orbit-center .center-persona-desc { font-size: 0.55rem; max-width: 100px; }
-      .orbit-center .center-default-text { font-size: 0.45rem; max-width: 90px; }
-      .orbit-item { width: 65px; height: 65px; margin: -32px 0 0 -32px; }
-      .orbit-name { font-size: 0.42rem; }
-      .orbit-item.is-front .orbit-name { font-size: 0.5rem; }
-      .orbit-item.is-back .orbit-name { font-size: 0.35rem; }
-      .stacked-card-inner { padding: 20px 16px; }
-      .stacked-card-title { font-size: 1rem; }
-      .stacked-card-options { flex-direction: column; gap: 8px; }
-      .stacked-card-collections { flex-direction: column; }
-      .stacked-card-right { flex: 1; }
-      .stacked-card-image { width: 80px; height: 80px; }
-      .stacked-card-icon { font-size: 1.6rem; }
-      .stacked-card-label { font-size: 0.45rem; }
-      .collection-item { padding: 6px 12px; }
-      .stacked-card:nth-child(1) { top: 40px; }
-      .stacked-card:nth-child(2) { top: 50px; }
-      .stacked-card:nth-child(3) { top: 60px; }
-      .stacked-card:nth-child(4) { top: 70px; }
-      .stacked-card:nth-child(5) { top: 80px; }
-      .journey-card .journey-body { padding: 20px 16px; }
-      .journey-card .journey-title { font-size: 1.3rem; }
-      .journey-card .journey-footer { flex-direction: column; align-items: stretch; }
-      .journey-card .journey-footer a { text-align: center; }
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      .hero-sub {
+        font-size: 1rem;
+      }
+      .hero-rotating-item {
+        font-size: 0.8rem;
+        padding: 4px 0;
+      }
+      .hero-rotating-item .label {
+        min-width: 80px;
+        font-size: 0.7rem;
+      }
+      .results-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .result-card {
+        padding: 14px 10px;
+      }
+      .result-card .score {
+        font-size: 1.8rem;
+      }
+      .feedback-section {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .feedback-box {
+        padding: 18px 16px;
+      }
     }
   </style>
 </head>
 <body>
-<div id="top"></div>
 
-<!-- ===== NAV ===== -->
-<div class="container">
-  <nav class="navbar">
-    <a href="#top" class="logo-link">
-      <img src="https://github.com/CommTax/commtax.github.io/blob/main/Mini%20Logo%20Unspoken.png?raw=true" alt="The Unspoken Logo" class="logo-img" />
-      <span class="logo-text">The <span>Unspoken</span></span>
-    </a>
-    <div class="nav-links">
-      <a href="#personas">Persona</a>
-      <a href="#journeys">Journeys</a>
-      <a href="#community">Community</a>
-      <a href="#faq">FAQ</a>
-      <a href="#" class="btn-ghost" id="signInBtn" style="border-color:#b8943c; padding:8px 20px; font-size:0.85rem;">Sign In</a>
-    </div>
-  </nav>
-</div>
+  <!-- ============================================================ -->
+  <!-- 01 — HERO                                                    -->
+  <!-- ============================================================ -->
+  <section class="container hero">
+    <div class="hero-left">
+      <div class="hero-badge">✦ The Unspoken</div>
+      <h1>You're better than<br />how you <span>sometimes sound</span>.</h1>
+      <p class="hero-sub">Uncover what's getting lost between what you mean and how you land.</p>
 
-<!-- ===== LOGIN MODAL ===== -->
-<div id="loginModal" class="login-modal" style="display: none;">
-  <div class="login-modal-overlay" id="loginModalOverlay"></div>
-  <div class="login-modal-content">
-    <button class="login-modal-close" id="loginModalClose">&times;</button>
-    <div class="login-modal-header">
-      <div class="login-modal-logo">The <span>Unspoken</span></div>
-      <h2>Welcome Back</h2>
-      <p class="login-modal-subtitle">Continue your Unspoken journey.</p>
-    </div>
-    <form id="loginForm" class="login-modal-form">
-      <div class="login-form-group">
-        <label for="loginEmail">Email / User ID</label>
-        <input type="text" id="loginEmail" placeholder="Enter your email or User ID" required />
+      <div class="hero-rotating">
+        <div class="hero-rotating-item">
+          <span class="label">RAMBLING → CLARITY</span>
+          <span class="voice">"I take too long to get to the point."</span>
+        </div>
+        <div class="hero-rotating-item">
+          <span class="label">UNCLEAR → PRECISION</span>
+          <span class="voice">"I know what I mean, but they don't."</span>
+        </div>
+        <div class="hero-rotating-item">
+          <span class="label">SCATTERED → STRUCTURE</span>
+          <span class="voice">"My ideas come out all over the place."</span>
+        </div>
+        <div class="hero-rotating-item">
+          <span class="label">FORGETTABLE → IMPACT</span>
+          <span class="voice">"I said it, but it didn't stick."</span>
+        </div>
+        <div class="hero-rotating-item">
+          <span class="label">UNCOMPELLING → INFLUENCE</span>
+          <span class="voice">"People hear me. But do they lean in?"</span>
+        </div>
       </div>
-      <div class="login-form-group">
-        <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" placeholder="Enter your password" required />
-      </div>
-      <div class="login-form-options">
-        <label class="login-remember"><input type="checkbox" id="loginRemember" /> Remember me</label>
-        <a href="#" class="login-forgot">Forgot password?</a>
-      </div>
-      <button type="submit" class="login-btn-primary">Log In →</button>
-    </form>
-    <div class="login-modal-footer">
-      <p>Don't have access yet? <a href="https://theunspoken.co.in/Pricing" class="login-join-link">Explore Plans →</a></p>
-    </div>
-  </div>
-</div>
 
-<!-- ===== HERO - 5 PAIN ROTATION ===== -->
-<section class="container hero">
-  <div class="hero-left">
-    <div class="hero-badge">You're better than how you sometimes sound.</div>
-    <p>Uncover what's getting lost between what you mean and how you land</p>
-    <div class="rotating-container">
-      <!-- 1: RAMBLING -->
-      <div class="rotating-pair">
-        <div class="pain-label">RAMBLING → CLARITY</div>
-        <div class="inner-voice">"I take too long to get to the point."</div>
+      <div class="hero-actions">
+        <a href="#experience" class="btn-primary">Try the 60-Second Impact Test →</a>
       </div>
-      <!-- 2: UNCLEAR -->
-      <div class="rotating-pair">
-        <div class="pain-label">UNCLEAR → PRECISION</div>
-        <div class="inner-voice">"I know what I mean, but they don't."</div>
-      </div>
-      <!-- 3: SCATTERED -->
-      <div class="rotating-pair">
-        <div class="pain-label">SCATTERED → STRUCTURE</div>
-        <div class="inner-voice">"My ideas come out all over the place."</div>
-      </div>
-      <!-- 4: FORGETTABLE -->
-      <div class="rotating-pair">
-        <div class="pain-label">FORGETTABLE → IMPACT</div>
-        <div class="inner-voice">"I said it, but it didn't stick."</div>
-      </div>
-      <!-- 5: UNCOMPELLING -->
-      <div class="rotating-pair">
-        <div class="pain-label">UNCOMPELLING → INFLUENCE</div>
-        <div class="inner-voice">"People hear me. But do they lean in?"</div>
-      </div>
-    </div>
-    <div class="tagline">Understand the gap. Close the gap.</div>
-    <div class="hero-actions">
-      <a href="Personasnap.html" class="btn-free">Let's Begin</a>
-    </div>
-    <div class="hero-micro">Try Now · 60 second · Instant</div>
-  </div>
-  <div class="hero-right">
-    <div class="video-card">
-      <div class="video-wrapper" id="heroVideoWrapper">
-        <video autoplay muted loop playsinline>
-          <source src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Herovideo.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-        <div class="video-overlay-text">See what the world experiences when you communicate.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== TRUST STRIP ===== -->
-<div class="container">
-  <div class="trust-strip-highlight">
-    <span class="label">🎯 Built for ambitious professionals</span>
-    <div class="tags">
-      <span>Communication</span>
-      <span>Leadership</span>
-      <span>Career</span>
-      <span>Confidence</span>
-      <span>Influence</span>
-    </div>
-  </div>
-</div>
-
-<!-- ===== MVP TRY IMMEDIATELY - PREMIUM ===== -->
-<section class="container section" id="try-it-now" style="background: linear-gradient(135deg, #faf8f5, #f5f0ea); border-radius: 32px; margin: 40px auto; padding: 60px 40px; border-bottom: none; position: relative; overflow: hidden;">
-  
-  <!-- Decorative Background -->
-  <div style="position: absolute; top: -200px; right: -200px; width: 500px; height: 500px; border-radius: 50%; background: rgba(184, 148, 60, 0.03); pointer-events: none;"></div>
-  <div style="position: absolute; bottom: -100px; left: -100px; width: 300px; height: 300px; border-radius: 50%; background: rgba(184, 148, 60, 0.02); pointer-events: none;"></div>
-
-  <!-- Header -->
-  <div style="text-align: center; margin-bottom: 40px; position: relative; z-index: 1;">
-    <span style="display: inline-block; background: rgba(184, 148, 60, 0.12); color: #b8943c; font-size: 0.6rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 6px 20px; border-radius: 40px; border: 1px solid rgba(184, 148, 60, 0.15); margin-bottom: 12px;">⚡ TRY IT NOW</span>
-    <h2 class="heading-serif heading-lg">See How <span class="accent-gold">You Actually Come</span> Across</h2>
-    <p style="font-size: 1rem; color: #6e6a62; max-width: 600px; margin: 8px auto 0; line-height: 1.7;">One situation. One response. One honest assessment.</p>
-  </div>
-
-  <!-- Step 1: Scenario Selection -->
-  <div style="max-width: 900px; margin: 0 auto 32px; position: relative; z-index: 1;">
-    <p style="font-weight: 600; margin-bottom: 16px; font-size: 0.9rem; color: #4d4a44; display: flex; align-items: center; gap: 8px;">
-      <span style="display: inline-flex; align-items: center; justify-content: center; background: #b8943c; color: #fff; width: 24px; height: 24px; border-radius: 50%; font-size: 0.7rem; font-weight: 700;">1</span>
-      Choose a moment that matters:
-    </p>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-      <button class="scenario-btn" data-scenario="0" style="background: #ffffff; border: 2px solid #ede8e0; border-radius: 16px; padding: 16px 20px; font-size: 0.85rem; font-weight: 500; color: #4d4a44; cursor: pointer; transition: all 0.3s ease; font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 1.4rem;">📋</span>
-        <div><div style="font-weight: 600;">Meeting Room</div><div style="font-size: 0.7rem; color: #8a8680;">manager challenges your idea</div></div>
-      </button>
-      <button class="scenario-btn" data-scenario="1" style="background: #ffffff; border: 2px solid #ede8e0; border-radius: 16px; padding: 16px 20px; font-size: 0.85rem; font-weight: 500; color: #4d4a44; cursor: pointer; transition: all 0.3s ease; font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 1.4rem;">💼</span>
-        <div><div style="font-weight: 600;">Client Objection</div><div style="font-size: 0.7rem; color: #8a8680;">Handle pushback</div></div>
-      </button>
-      <button class="scenario-btn" data-scenario="2" style="background: #ffffff; border: 2px solid #ede8e0; border-radius: 16px; padding: 16px 20px; font-size: 0.85rem; font-weight: 500; color: #4d4a44; cursor: pointer; transition: all 0.3s ease; font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 1.4rem;">🚀</span>
-        <div><div style="font-weight: 600;">Promotion Ask</div><div style="font-size: 0.7rem; color: #8a8680;">Make the case</div></div>
-      </button>
-      <button class="scenario-btn" data-scenario="3" style="background: #ffffff; border: 2px solid #ede8e0; border-radius: 16px; padding: 16px 20px; font-size: 0.85rem; font-weight: 500; color: #4d4a44; cursor: pointer; transition: all 0.3s ease; font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 1.4rem;">🔴</span>
-        <div><div style="font-weight: 600;">Difficult Feedback</div><div style="font-size: 0.7rem; color: #8a8680;">Address underperformance</div></div>
-      </button>
-      <button class="scenario-btn" data-scenario="4" style="background: #ffffff; border: 2px solid #ede8e0; border-radius: 16px; padding: 16px 20px; font-size: 0.85rem; font-weight: 500; color: #4d4a44; cursor: pointer; transition: all 0.3s ease; font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 1.4rem;">🎤</span>
-        <div><div style="font-weight: 600;">Interview</div><div style="font-size: 0.7rem; color: #8a8680;">"Make your introduction memorable"</div></div>
-      </button>
-    </div>
-  </div>
-
-  <!-- Step 2: Challenge Area -->
-  <div style="max-width: 900px; margin: 0 auto; background: #ffffff; border-radius: 28px; border: 1px solid #ede8e0; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.06); position: relative; z-index: 1;" id="challengeArea">
-    
-    <!-- Challenge Header -->
-    <div style="padding: 24px 32px 0 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #f5f2ed;">
-      <div>
-        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 2px; text-transform: uppercase;">CHALLENGE</span>
-        <p id="scenarioContext" style="font-size: 1rem; color: #1a1917; margin-top: 2px; font-weight: 500; min-height: 28px;">Select a scenario to begin.</p>
-      </div>
-      <div id="timerDisplay" style="font-size: 2rem; font-weight: 700; color: #b8943c; font-variant-numeric: tabular-nums; min-width: 80px; text-align: right; font-family: 'Inter', monospace;">00:45</div>
+      <div class="hero-micro">Free · 60 seconds · No credit card</div>
     </div>
 
-    <!-- Scenario Question (Hidden until challenge starts) -->
-    <div id="questionDisplay" style="padding: 0 32px; max-height: 0; overflow: hidden; transition: all 0.5s ease; background: #fefcf8; border-bottom: 1px solid #f5f2ed;">
-      <div style="padding: 20px 0;">
-        <span style="font-size: 0.6rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">YOUR TASK</span>
-        <p id="scenarioQuestion" style="font-size: 1.1rem; color: #1a1917; margin-top: 4px; line-height: 1.6; font-style: italic;">Select a scenario to see the question.</p>
+    <div class="hero-right">
+      <div class="video-card">
+        <div class="video-wrapper">
+          <video autoplay muted loop playsinline>
+            <source src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Herovideo.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div class="video-overlay-text">See what the world experiences when you communicate.</div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <!-- Mode Selection + Controls -->
-    <div style="padding: 20px 32px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; border-bottom: 1px solid #f5f2ed;">
-      <span style="font-weight: 600; font-size: 0.85rem; color: #4d4a44; display: flex; align-items: center; gap: 8px;">
-        <span style="display: inline-flex; align-items: center; justify-content: center; background: #b8943c; color: #fff; width: 24px; height: 24px; border-radius: 50%; font-size: 0.7rem; font-weight: 700;">2</span>
-        Choose your response mode:
-      </span>
-      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto;">
-        <button id="voiceModeBtn" class="mode-btn active" style="background: #b8943c; color: #fff; border: 2px solid #b8943c; border-radius: 40px; padding: 8px 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: inherit; display: flex; align-items: center; gap: 8px;">
-          🎙️ Voice <span style="font-size: 0.65rem; font-weight: 400; opacity: 0.8;">45s</span>
+  <!-- ============================================================ -->
+  <!-- 02 — EXPERIENCE                                              -->
+  <!-- ============================================================ -->
+  <section class="container section" id="experience">
+    <div style="text-align: center; max-width: 700px; margin: 0 auto 32px;">
+      <span style="display:inline-block; background:rgba(184,148,60,0.1); color:#b8943c; font-size:0.6rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; padding:6px 20px; border-radius:40px; border:1px solid rgba(184,148,60,0.15); margin-bottom:12px;">⚡ EXPERIENCE</span>
+      <h2 class="heading-serif heading-lg">See How You <span class="accent-gold">Actually Come</span> Across</h2>
+      <p style="font-size:1rem; color:#6e6a62; margin-top:8px;">One situation. One response. One honest assessment. <strong>3 attempts</strong> to improve.</p>
+    </div>
+
+    <div style="max-width: 800px; margin: 0 auto;">
+      <!-- Attempt Counter -->
+      <div style="display:flex; justify-content:center; gap:16px; margin-bottom:20px; flex-wrap:wrap;" id="attemptIndicator">
+        <span style="font-size:0.85rem; font-weight:600; color:#8a8680;">Attempt <span id="currentAttemptDisplay">1</span> of 3</span>
+        <span style="font-size:0.85rem; font-weight:600; color:#b8943c;" id="bestScoreDisplay">Best: —</span>
+      </div>
+
+      <p style="font-weight:600; font-size:0.9rem; color:#4d4a44; margin-bottom:12px;">Choose a moment that matters:</p>
+      <div class="experience-grid" id="scenarioGrid">
+        <button class="exp-btn" data-scenario="0">
+          <span class="icon">📋</span>
+          <span class="title">Meeting</span>
+          <span class="sub">manager challenges your idea</span>
         </button>
-        <button id="textModeBtn" class="mode-btn" style="background: #f4f0ea; color: #4d4a44; border: 2px solid transparent; border-radius: 40px; padding: 8px 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: inherit; display: flex; align-items: center; gap: 8px;">
-          ⌨️ Text <span style="font-size: 0.65rem; font-weight: 400; opacity: 0.8;">90s</span>
+        <button class="exp-btn" data-scenario="1">
+          <span class="icon">💼</span>
+          <span class="title">Client</span>
+          <span class="sub">handle pushback</span>
+        </button>
+        <button class="exp-btn" data-scenario="2">
+          <span class="icon">🚀</span>
+          <span class="title">Promotion</span>
+          <span class="sub">make the case</span>
+        </button>
+        <button class="exp-btn" data-scenario="3">
+          <span class="icon">🔴</span>
+          <span class="title">Difficult Conversation</span>
+          <span class="sub">address underperformance</span>
+        </button>
+        <button class="exp-btn" data-scenario="4">
+          <span class="icon">🎤</span>
+          <span class="title">Interview</span>
+          <span class="sub">make your introduction memorable</span>
         </button>
       </div>
-    </div>
 
-    <!-- Response Area -->
-    <div style="padding: 24px 32px 32px 32px;">
-      <!-- Live Transcription / Text Input -->
-      <div style="position: relative;">
-        <div id="voiceTranscript" style="display: block; background: #faf8f5; border-radius: 16px; padding: 20px 24px; min-height: 120px; border: 2px dashed #ede8e0; transition: all 0.3s ease; font-size: 1rem; color: #1a1917; line-height: 1.7;">
-          <span style="color: #8a8680; font-style: italic;">Speak or type your response here...</span>
-        </div>
-        <textarea id="textInput" style="display: none; width: 100%; padding: 20px 24px; border: 2px solid #ede8e0; border-radius: 16px; font-size: 1rem; font-family: inherit; resize: vertical; min-height: 120px; transition: border-color 0.3s ease; background: #faf8f5;" placeholder="Type your response here..."></textarea>
-        
-        <!-- Recording Indicator -->
-        <div id="recordingIndicator" style="display: none; position: absolute; top: 12px; right: 16px; align-items: center; gap: 8px; background: rgba(220, 38, 38, 0.08); padding: 4px 16px 4px 12px; border-radius: 40px; border: 1px solid rgba(220, 38, 38, 0.2);">
-          <span style="display: inline-block; width: 10px; height: 10px; background: #dc2626; border-radius: 50%; animation: pulse-dot 1s infinite;"></span>
-          <span style="font-size: 0.75rem; font-weight: 600; color: #dc2626;">REC</span>
-        </div>
+      <div class="mode-selector">
+        <span style="font-weight:600; font-size:0.85rem; color:#4d4a44;">Response mode:</span>
+        <button class="mode-btn active" id="voiceModeBtn">🎙️ Voice · 45s</button>
+        <button class="mode-btn" id="textModeBtn">⌨️ Text · 90s</button>
       </div>
 
-      <!-- Controls -->
-      <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; align-items: center; justify-content: space-between;">
-        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-          <button id="startChallengeBtn" style="background: linear-gradient(135deg, #b8943c, #a07f30); color: #ffffff; font-weight: 600; font-size: 0.9rem; padding: 12px 28px; border-radius: 60px; border: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 16px rgba(184, 148, 60, 0.25); font-family: inherit; display: flex; align-items: center; gap: 8px;" disabled>
-            ▶ Take Challenge
-          </button>
-          <button id="resetBtn" style="background: transparent; color: #8a8680; font-weight: 500; font-size: 0.8rem; padding: 10px 20px; border-radius: 60px; border: 1px solid #ede8e0; cursor: pointer; transition: all 0.2s ease; font-family: inherit;">
-            Reset
-          </button>
+      <!-- Challenge Box -->
+      <div class="challenge-box">
+        <div class="challenge-header">
+          <span class="challenge-context" id="scenarioContext">Select a scenario to begin.</span>
+          <span class="challenge-timer" id="timerDisplay">00:45</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span id="wordCountDisplay" style="font-size: 0.75rem; color: #8a8680;">0 words</span>
-          <span id="statusBadge" style="font-size: 0.65rem; font-weight: 600; color: #8a8680; background: #f4f0ea; padding: 4px 14px; border-radius: 40px;">Ready</span>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Step 3: Results (Hidden Initially) -->
-  <div id="resultsContainer" style="max-width: 900px; margin: 40px auto 0; display: none; position: relative; z-index: 1; animation: slideUp 0.6s ease;">
-    
-    <!-- Score Cards - 5 Dimensions -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 32px;">
-      <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
-        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Clarity</span>
-        <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreClarity">—</div>
-        <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
-          <div id="barClarity" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+        <div class="challenge-question" id="questionDisplay">
+          Select a scenario to see your challenge.
         </div>
-      </div>
-      <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
-        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Precision</span>
-        <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scorePrecision">—</div>
-        <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
-          <div id="barPrecision" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+
+        <div class="challenge-response" id="responseArea">
+          <textarea id="textInput" placeholder="Type your response here..." style="display:none;"></textarea>
+          <div id="voiceTranscript" style="min-height:80px; color:#8a8680; font-style:italic;">Speak or type your response here...</div>
         </div>
-      </div>
-      <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
-        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Structure</span>
-        <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreStructure">—</div>
-        <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
-          <div id="barStructure" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
-        </div>
-      </div>
-      <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
-        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Impact</span>
-        <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreImpact">—</div>
-        <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
-          <div id="barImpact" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
-        </div>
-      </div>
-      <div style="background: #ffffff; border-radius: 16px; padding: 20px 16px; text-align: center; border: 1px solid #ede8e0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: all 0.3s ease;">
-        <span style="font-size: 0.55rem; font-weight: 700; color: #b8943c; letter-spacing: 1px; text-transform: uppercase;">Influence</span>
-        <div style="font-size: 2.2rem; font-weight: 700; color: #1a1917; margin: 4px 0;" id="scoreInfluence">—</div>
-        <div style="height: 4px; background: #ede8e0; border-radius: 4px; overflow: hidden;">
-          <div id="barInfluence" style="height: 100%; width: 0%; background: linear-gradient(90deg, #b8943c, #fcd34d); border-radius: 4px; transition: width 1.2s ease;"></div>
+
+        <div class="challenge-controls">
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <button class="btn-primary" id="startBtn" style="font-size:0.85rem; padding:10px 28px;" disabled>▶ Begin Assessment</button>
+            <button class="btn-secondary" id="resetBtn" style="font-size:0.8rem; padding:8px 20px;">Reset</button>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <span id="wordCount" style="font-size:0.75rem; color:#8a8680;">0 words</span>
+            <span class="challenge-status" id="statusBadge">Ready</span>
+          </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Feedback & Better Version -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+  <!-- ============================================================ -->
+  <!-- 03 — RESULTS                                                 -->
+  <!-- ============================================================ -->
+  <section class="container section" id="resultsSection" style="display:none;">
+    <div style="text-align: center; max-width: 700px; margin: 0 auto 32px;">
+      <span style="display:inline-block; background:rgba(184,148,60,0.1); color:#b8943c; font-size:0.6rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; padding:6px 20px; border-radius:40px; border:1px solid rgba(184,148,60,0.15); margin-bottom:12px;">📊 RESULTS</span>
+      <h2 class="heading-serif heading-lg">Your Communication <span class="accent-gold">Performance</span></h2>
+      <p style="font-size:1rem; color:#6e6a62; margin-top:8px;" id="attemptSummary">Attempt 1 of 3</p>
+    </div>
+
+    <div style="max-width: 800px; margin: 0 auto;">
+      <!-- Attempt History Dots -->
+      <div class="attempt-history" id="attemptHistory">
+        <div class="attempt-dot active" data-attempt="0">1</div>
+        <div class="attempt-dot" data-attempt="1">2</div>
+        <div class="attempt-dot" data-attempt="2">3</div>
+      </div>
+
+      <!-- Score Grid -->
+      <div class="results-grid" id="scoreGrid">
+        <div class="result-card">
+          <span class="label">Clarity</span>
+          <div class="score" id="scoreClarity">—</div>
+          <div class="bar"><div class="fill" id="barClarity"></div></div>
+        </div>
+        <div class="result-card">
+          <span class="label">Precision</span>
+          <div class="score" id="scorePrecision">—</div>
+          <div class="bar"><div class="fill" id="barPrecision"></div></div>
+        </div>
+        <div class="result-card">
+          <span class="label">Structure</span>
+          <div class="score" id="scoreStructure">—</div>
+          <div class="bar"><div class="fill" id="barStructure"></div></div>
+        </div>
+        <div class="result-card">
+          <span class="label">Impact</span>
+          <div class="score" id="scoreImpact">—</div>
+          <div class="bar"><div class="fill" id="barImpact"></div></div>
+        </div>
+        <div class="result-card">
+          <span class="label">Influence</span>
+          <div class="score" id="scoreInfluence">—</div>
+          <div class="bar"><div class="fill" id="barInfluence"></div></div>
+        </div>
+      </div>
+
+      <!-- Improvement -->
+      <div class="result-improvement" id="improvementBox" style="display:none;">
+        <span class="big" id="improvementScore">+0</span>
+        <span class="sub" id="improvementText">points improvement from your first attempt</span>
+      </div>
+
       <!-- Feedback -->
-      <div style="background: #faf8f5; border-radius: 20px; padding: 28px 24px; border: 1px solid #ede8e0;">
-        <h4 style="font-size: 0.9rem; font-weight: 700; color: #1a1917; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-          🔍 What's Getting Lost
-        </h4>
-        <ul id="feedbackList" style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: #4d4a44; line-height: 1.8;">
-          <li style="padding: 6px 0; color: #8a8680; font-style: italic;">Complete a challenge to see feedback.</li>
-        </ul>
-      </div>
-
-      <!-- Better Version -->
-      <div style="background: #fef3c7; border-radius: 20px; padding: 28px 24px; border: 1px solid #fcd34d;">
-        <h4 style="font-size: 0.9rem; font-weight: 700; color: #1a1917; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-          ✨ Better Version
-        </h4>
-        <p id="betterVersion" style="font-size: 0.9rem; color: #1a1917; line-height: 1.7; font-style: italic; min-height: 60px;">Your improved response will appear here.</p>
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(184, 148, 60, 0.2);">
-          <span style="font-size: 0.7rem; color: #b8943c; font-weight: 600;">Why this works:</span>
-          <ul id="betterWhyList" style="list-style: none; padding: 0; margin: 4px 0 0; font-size: 0.8rem; color: #4d4a44; line-height: 1.6;">
-            <li style="padding: 2px 0; color: #8a8680; font-style: italic;">Complete a challenge to see the breakdown.</li>
+      <div class="feedback-section">
+        <div class="feedback-box">
+          <h4>🔍 What got lost</h4>
+          <ul id="feedbackList">
+            <li style="color:#8a8680; font-style:italic;">Complete an attempt to see feedback.</li>
+          </ul>
+        </div>
+        <div class="feedback-box better">
+          <h4>✨ Your next move</h4>
+          <ul id="nextMoveList">
+            <li style="color:#8a8680; font-style:italic;">Complete an attempt to see your next move.</li>
           </ul>
         </div>
       </div>
-    </div>
 
-    <!-- CTA -->
-    <div style="text-align: center; margin-top: 32px;">
-      <p style="font-size: 0.9rem; color: #6e6a62; margin-bottom: 16px;">Want unlimited practice, personalized journeys, and real progress tracking?</p>
-      <a href="Personasnap.html" class="btn-free" style="padding: 14px 40px;">Start Your Transformation →</a>
-    </div>
-  </div>
+      <!-- Action Buttons -->
+      <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin-top:16px;">
+        <button class="btn-primary" id="tryAgainBtn" style="font-size:0.9rem; padding:12px 32px;">🔄 Try Again</button>
+        <button class="btn-secondary" id="newScenarioBtn" style="font-size:0.9rem; padding:12px 32px;">📋 New Scenario</button>
+      </div>
 
-</section>
-
-<!-- ===== THE 7 PERSONAS - 3D SPHERICAL ORBIT ===== -->
-<section class="container section" id="personas">
-  <div class="personas-header">
-    <span class="personas-badge">✦ THE 7 PERSONAS</span>
-    <h2 class="heading-serif heading-lg">7 Ways The World Can <span class="accent-gold">Experience You</span></h2>
-    <p class="personas-subtitle">You think. You express. You connect. But beneath the surface, there's a pattern — a persona that shapes how the world experiences you.</p>
-  </div>
-
-  <div class="persona-orbit-container">
-    <div class="orbit-ring orbit-ring-1"></div>
-    <div class="orbit-ring orbit-ring-2"></div>
-    <div class="orbit-ring orbit-ring-3"></div>
-    
-    <!-- CENTER REVEAL CARD -->
-    <div class="orbit-center" id="orbitCenter">
-      <span style="font-size: 0.7rem; color: #b8943c; letter-spacing: 2px; margin-bottom: 2px;">✦</span>
-      <span style="font-size: 0.5rem; font-weight: 600; color: #b8943c; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6;">Persona</span>
-      <p class="center-persona-desc" id="centerPersonaDesc">Hover or tap a persona</p>
-      <span class="center-persona-tag" id="centerPersonaTag"></span>
-      <span class="center-default-text" id="centerDefaultText">Hover or tap a persona to explore</span>
-    </div>
-    
-    <div class="persona-orbit-track" id="personaOrbitTrack">
-      <!-- Translator -->
-      <div class="orbit-item" data-persona="translator">
-        <div class="orbit-persona">
-          <span class="orbit-name">Translator</span>
-        </div>
-        <span class="orbit-tooltip">Makes complexity make sense</span>
-      </div>
-      <!-- Amplifier -->
-      <div class="orbit-item" data-persona="amplifier">
-        <div class="orbit-persona">
-          <span class="orbit-name">Amplifier</span>
-        </div>
-        <span class="orbit-tooltip">Makes ideas impossible to ignore</span>
-      </div>
-      <!-- Articulator -->
-      <div class="orbit-item" data-persona="articulator">
-        <div class="orbit-persona">
-          <span class="orbit-name">Articulator</span>
-        </div>
-        <span class="orbit-tooltip">Makes thinking visible</span>
-      </div>
-      <!-- Interpreter -->
-      <div class="orbit-item" data-persona="interpreter">
-        <div class="orbit-persona">
-          <span class="orbit-name">Interpreter</span>
-        </div>
-        <span class="orbit-tooltip">Reads what others miss</span>
-      </div>
-      <!-- Filter -->
-      <div class="orbit-item" data-persona="filter">
-        <div class="orbit-persona">
-          <span class="orbit-name">Filter</span>
-        </div>
-        <span class="orbit-tooltip">Knows what matters</span>
-      </div>
-      <!-- Emerging -->
-      <div class="orbit-item" data-persona="emerging">
-        <div class="orbit-persona">
-          <span class="orbit-name">Emerging</span>
-        </div>
-        <span class="orbit-tooltip">Finding your voice</span>
-      </div>
-      <!-- Misaligned -->
-      <div class="orbit-item" data-persona="misaligned">
-        <div class="orbit-persona">
-          <span class="orbit-name">Misaligned</span>
-        </div>
-        <span class="orbit-tooltip">Intent and impact may not meet</span>
+      <div style="text-align:center; margin-top:12px;">
+        <span style="font-size:0.75rem; color:#8a8680;" id="attemptsLeftText">2 attempts remaining</span>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="personas-cta">
-    <p style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic; color: #b8943c; margin-bottom: 16px;">This isn't just a quiz. It's a mirror.</p>
-    <a href="Personasnap.html" class="btn-free">Let's Begin →</a>
-  </div>
-  <div style="text-align: center; margin-top: 8px;">
-    <span style="font-size: 0.75rem; color: #8a8680;">Free · 2-minutes · No credit card</span>
-  </div>
-</section>
+  <!-- ============================================================ -->
+  <!-- 04 — PERSONA (Placeholder)                                   -->
+  <!-- ============================================================ -->
+  <section class="container section" id="persona" style="display:none;">
+    <div style="text-align:center; max-width:700px; margin:0 auto 32px;">
+      <span style="display:inline-block; background:rgba(184,148,60,0.1); color:#b8943c; font-size:0.6rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; padding:6px 20px; border-radius:40px; border:1px solid rgba(184,148,60,0.15); margin-bottom:12px;">🧠 PERSONA</span>
+      <h2 class="heading-serif heading-lg">Your Communication <span class="accent-gold">Pattern</span></h2>
+    </div>
+    <div style="max-width:600px; margin:0 auto; background:#1a1917; border-radius:28px; padding:40px 48px; color:#f0ebe4; text-align:center;">
+      <div style="font-size:0.6rem; font-weight:700; color:#b8943c; letter-spacing:2px; text-transform:uppercase;">Your Persona</div>
+      <div style="font-family:'Playfair Display', serif; font-size:2.8rem; font-weight:700; color:#ffffff; margin:8px 0 4px;">The Translator</div>
+      <div style="font-size:1.1rem; color:#d0c8bc; margin-bottom:20px;">You make complexity make sense.</div>
+      <div style="display:flex; justify-content:center; gap:32px; flex-wrap:wrap;">
+        <div style="text-align:center;"><div style="font-size:0.6rem; font-weight:600; color:#8a8680; text-transform:uppercase;">Strength</div><div style="font-size:1.1rem; font-weight:600; color:#b8943c;">Clarity</div></div>
+        <div style="text-align:center;"><div style="font-size:0.6rem; font-weight:600; color:#8a8680; text-transform:uppercase;">Growth Edge</div><div style="font-size:1.1rem; font-weight:600; color:#b8943c;">Influence</div></div>
+      </div>
+      <div style="margin-top:20px; font-size:0.85rem; color:#8a8680; border-top:1px solid #2d2a24; padding-top:20px;">Your communication is not fixed. It's trainable.</div>
+    </div>
+  </section>
 
-<!-- ===== JOURNEY SECTION ===== -->
-<section class="container section" id="journeys" style="padding: 60px 0;">
-  <div style="text-align: center; margin-bottom: 40px;">
-    <span style="display: inline-block; background: rgba(184, 148, 60, 0.1); color: #b8943c; font-size: 0.6rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 6px 20px; border-radius: 40px; border: 1px solid rgba(184, 148, 60, 0.15); margin-bottom: 12px;">✦ YOUR JOURNEY</span>
-    <h2 class="heading-serif heading-lg">Start Your <span class="accent-gold">Communication Journey</span></h2>
-    <p style="font-size: 1rem; color: #6e6a62; max-width: 600px; margin: 8px auto 0; line-height: 1.7;">One journey. Six weeks. A lifetime of clarity.</p>
-  </div>
+  <!-- ============================================================ -->
+  <!-- 05 — JOURNEY (Placeholder)                                   -->
+  <!-- ============================================================ -->
+  <section class="container section" id="journey" style="display:none;">
+    <div style="text-align:center; max-width:700px; margin:0 auto 32px;">
+      <span style="display:inline-block; background:rgba(184,148,60,0.1); color:#b8943c; font-size:0.6rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; padding:6px 20px; border-radius:40px; border:1px solid rgba(184,148,60,0.15); margin-bottom:12px;">🚀 JOURNEY</span>
+      <h2 class="heading-serif heading-lg">Your Next <span class="accent-gold">Level</span></h2>
+    </div>
+    <div style="max-width:600px; margin:0 auto; background:#ffffff; border-radius:28px; border:1px solid #ede8e0; padding:32px 36px; box-shadow:0 4px 24px rgba(0,0,0,0.03);">
+      <div style="height:4px; background:linear-gradient(90deg,#b8943c,#fcd34d,#b8943c); border-radius:4px; margin-bottom:20px;"></div>
+      <div style="font-size:0.55rem; font-weight:700; color:#b8943c; letter-spacing:2px; text-transform:uppercase;">✦ Your Next Level</div>
+      <h3 style="font-family:'Playfair Display', serif; font-size:2rem; font-weight:700; color:#1a1917; margin:4px 0 8px;">The <span style="color:#b8943c;">Influence</span> Journey</h3>
+      <div style="font-size:0.95rem; color:#4d4a44; line-height:1.6;">6 weeks · Personalised practice · Daily challenges</div>
+      <div style="margin:16px 0 20px; background:#faf8f5; border-radius:12px; padding:14px 20px; font-style:italic; color:#1a1917; border-left:3px solid #b8943c;">From being understood → to being followed.</div>
+      <button class="btn-primary" style="width:100%; text-align:center;">Start Journey →</button>
+    </div>
+  </section>
 
-  <div class="journey-card">
-    <div class="gold-bar"></div>
-    <div class="journey-body">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
-        <div>
-          <span class="journey-badge">✦ FEATURED JOURNEY</span>
-          <h3 class="journey-title">The <span>Clarity</span> Journey</h3>
-        </div>
-        <span style="font-size: 0.5rem; color: #2563eb; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; background: #eff6ff; padding: 4px 16px; border-radius: 40px; border: 1px solid #dbeafe; white-space: nowrap;">● Active Now</span>
+  <!-- ============================================================ -->
+  <!-- 06 — THE ENGINE (Placeholder)                                -->
+  <!-- ============================================================ -->
+  <section class="container section" id="engine" style="display:none;">
+    <div style="text-align:center; max-width:700px; margin:0 auto 32px;">
+      <span style="display:inline-block; background:rgba(184,148,60,0.1); color:#b8943c; font-size:0.6rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; padding:6px 20px; border-radius:40px; border:1px solid rgba(184,148,60,0.15); margin-bottom:12px;">⚙️ THE ENGINE</span>
+      <h2 class="heading-serif heading-lg">Don't just learn communication.<br /><span class="accent-gold">Practise it.</span></h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px,1fr)); gap:20px; max-width:800px; margin:0 auto;">
+      <div style="background:#ffffff; border-radius:16px; padding:24px 20px; border:1px solid #ede8e0; text-align:center;">
+        <div style="font-size:2.4rem; display:block; margin-bottom:8px;">🎯</div>
+        <h4 style="font-size:1rem; font-weight:600; color:#1a1917;">Real situations</h4>
       </div>
-      
-      <p class="journey-subtitle">Discern, diagnose, define, challenge, weigh, and decide — six weeks toward thinking you can stand behind.</p>
-      
-      <div class="journey-divider"></div>
-      
-      <div style="margin-bottom: 16px;">
-        <p class="journey-outcome-label">OUTCOME</p>
-        <p class="journey-outcome">"I know what I think — and I know why."</p>
+      <div style="background:#ffffff; border-radius:16px; padding:24px 20px; border:1px solid #ede8e0; text-align:center;">
+        <div style="font-size:2.4rem; display:block; margin-bottom:8px;">🤖</div>
+        <h4 style="font-size:1rem; font-weight:600; color:#1a1917;">AI feedback</h4>
       </div>
-      
-      <div class="journey-tags">
-        <span>🟢 Cognitive clarity</span>
-        <span>🟢 Strategic reasoning</span>
-        <span>⚪ Critical thinking</span>
+      <div style="background:#ffffff; border-radius:16px; padding:24px 20px; border:1px solid #ede8e0; text-align:center;">
+        <div style="font-size:2.4rem; display:block; margin-bottom:8px;">🔄</div>
+        <h4 style="font-size:1rem; font-weight:600; color:#1a1917;">Retry</h4>
       </div>
-      
-      <div class="journey-divider"></div>
-      
-      <div class="journey-footer">
-        <span class="journey-delivery">💬 Thinking · Weekdays on WhatsApp</span>
-        <a href="#" style="display: inline-block; background: linear-gradient(135deg, #b8943c, #a07f30); color: #ffffff; font-weight: 600; font-size: 0.85rem; padding: 10px 28px; border-radius: 60px; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 16px rgba(184, 148, 60, 0.25); letter-spacing: 0.3px;">Start journey →</a>
+      <div style="background:#ffffff; border-radius:16px; padding:24px 20px; border:1px solid #ede8e0; text-align:center;">
+        <div style="font-size:2.4rem; display:block; margin-bottom:8px;">📈</div>
+        <h4 style="font-size:1rem; font-weight:600; color:#1a1917;">Progress</h4>
+      </div>
+      <div style="background:#ffffff; border-radius:16px; padding:24px 20px; border:1px solid #ede8e0; text-align:center;">
+        <div style="font-size:2.4rem; display:block; margin-bottom:8px;">📚</div>
+        <h4 style="font-size:1rem; font-weight:600; color:#1a1917;">Expert frameworks</h4>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div style="text-align: center; margin-top: 20px;">
-    <p style="font-size: 0.75rem; color: #8a8680;">Join thousands of professionals sharpening their thinking, one week at a time.</p>
-  </div>
-</section>
-
-<!-- ===== STACKED CARDS ===== -->
-<section class="container section" id="explore">
-  <div class="explore-header">
-    <span class="explore-badge">✦ INTERACTIVE FEATURES</span>
-    <h2 class="heading-serif heading-lg">A Better Way to Build the <span class="accent-gold">Skill</span></h2>
-    <span>Practice it daily. Understand what makes it work. See yourself getting better</span>
-    <div class="explore-tags">
-      <span>📋 to-do's</span>
-      <span>🧠 quizzes</span>
-      <span>🎬 videos</span>
-      <span>📥 downloadable</span>
-    </div>
-  </div>
-
-  <div class="stacked-cards-container" id="stackedCardsContainer">
-    <!-- Card 1 -->
-    <div class="stacked-card" data-index="0">
-      <div class="stacked-card-inner">
-        <div class="stacked-card-left">
-          <span class="stacked-card-number">01</span>
-          <h3 class="stacked-card-title">Daily Practice: Build the habit where you already are.</h3>
-          <p class="stacked-card-desc">Short real-world scenarios delivered on WhatsApp. Respond whenever you have a few minutes—by text or voice.</p>
-          <div class="stacked-card-options">
-            <label class="stacked-option">
-              <input type="radio" name="Real-Situations" value="jobs" />
-              <span>Real-Situations</span>
-            </label>
-            <label class="stacked-option">
-              <input type="radio" name="WhatsApp Practice" value="beyonce" />
-              <span>WhatsApp Practice</span>
-            </label>
-            <label class="stacked-option">
-              <input type="radio" name="Practice anywhere" value="beyonce" />
-              <span>Practice anywhere</span>
-            </label>
-          </div>
-          <div class="stacked-card-footer">
-            <span class="stacked-card-tag">🧠 Quiz</span>
-            <span class="stacked-card-time">⏱️ 5 -10 min/day</span>
-          </div>
-        </div>
-        <div class="stacked-card-right">
-          <div class="stacked-card-image" style="background: linear-gradient(135deg, #2d2a24, #4a4438);">
-            <span class="stacked-card-icon">🧠</span>
-            <span class="stacked-card-label">Intelligence</span>
-          </div>
-        </div>
+  <!-- ============================================================ -->
+  <!-- 07 — ORATORY (Placeholder)                                   -->
+  <!-- ============================================================ -->
+  <section class="container section" id="oratory" style="display:none;">
+    <div style="background:linear-gradient(135deg,#1a1917,#2d2a24); border-radius:32px; padding:60px 48px; color:#f0ebe4; text-align:center; max-width:900px; margin:0 auto;">
+      <div style="font-size:0.6rem; font-weight:700; color:#b8943c; letter-spacing:2px; text-transform:uppercase;">✦ ORATORY</div>
+      <h2 style="font-family:'Playfair Display', serif; font-size:2.8rem; font-weight:700; color:#ffffff; margin:8px 0 12px;">Become the speaker people <span style="color:#b8943c;">lean in</span> to hear.</h2>
+      <div style="font-size:1.1rem; color:#d0c8bc; max-width:600px; margin:0 auto 24px;">Develop presence, storytelling, persuasion, delivery, influence, and oratory.</div>
+      <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+        <span style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); padding:6px 20px; border-radius:40px; font-size:0.8rem; font-weight:500; color:#d0c8bc;">Presence</span>
+        <span style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); padding:6px 20px; border-radius:40px; font-size:0.8rem; font-weight:500; color:#d0c8bc;">Storytelling</span>
+        <span style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); padding:6px 20px; border-radius:40px; font-size:0.8rem; font-weight:500; color:#d0c8bc;">Persuasion</span>
+        <span style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); padding:6px 20px; border-radius:40px; font-size:0.8rem; font-weight:500; color:#d0c8bc;">Delivery</span>
+        <span style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); padding:6px 20px; border-radius:40px; font-size:0.8rem; font-weight:500; color:#d0c8bc;">Influence</span>
+        <span style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); padding:6px 20px; border-radius:40px; font-size:0.8rem; font-weight:500; color:#d0c8bc;">Oratory</span>
       </div>
     </div>
+  </section>
 
-    <!-- Card 2 -->
-    <div class="stacked-card" data-index="1">
-      <div class="stacked-card-inner">
-        <div class="stacked-card-left">
-          <span class="stacked-card-number">02</span>
-          <h3 class="stacked-card-title">Adaptive Learning: Your next challenge responds to your last one.</h3>
-          <p class="stacked-card-desc">Your responses shape what comes next. Get follow-up questions, feedback and another attempt based on how you actually communicate.</p>
-          <div class="stacked-card-topics">
-            <span>📚 case-studies</span>
-            <span>📦 Personalised feedback</span>
-            <span>💡 Follow-up questions</span>
-            <span>💡 Retry & improve</span>
-          </div>
-          <div class="stacked-card-footer">
-            <span class="stacked-card-tag">📚 Library</span>
-            <span class="stacked-card-time">🎯 50+ lessons</span>
-          </div>
-        </div>
-        <div class="stacked-card-right">
-          <div class="stacked-card-image" style="background: linear-gradient(135deg, #1a2a3a, #2d4a5a);">
-            <span class="stacked-card-icon">📚</span>
-            <span class="stacked-card-label">Explore</span>
-          </div>
-        </div>
+  <!-- ============================================================ -->
+  <!-- 08 — COMMUNITY (Placeholder)                                 -->
+  <!-- ============================================================ -->
+  <section class="container section" id="community" style="display:none;">
+    <div style="text-align:center; max-width:700px; margin:0 auto 32px;">
+      <span style="display:inline-block; background:rgba(184,148,60,0.1); color:#b8943c; font-size:0.6rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; padding:6px 20px; border-radius:40px; border:1px solid rgba(184,148,60,0.15); margin-bottom:12px;">👥 COMMUNITY</span>
+      <h2 class="heading-serif heading-lg">Keep getting <span class="accent-gold">better</span> together.</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:20px; max-width:700px; margin:0 auto;">
+      <div style="background:#ffffff; border-radius:16px; padding:24px 20px; text-align:center; border:1px solid #ede8e0;">
+        <div style="font-size:2rem; display:block; margin-bottom:8px;">🏆</div>
+        <h4 style="font-size:0.95rem; font-weight:600; color:#1a1917;">Challenges</h4>
+      </div>
+      <div style="background:#ffffff; border-radius:16px; padding:24px 20px; text-align:center; border:1px solid #ede8e0;">
+        <div style="font-size:2rem; display:block; margin-bottom:8px;">💬</div>
+        <h4 style="font-size:0.95rem; font-weight:600; color:#1a1917;">Peer Feedback</h4>
+      </div>
+      <div style="background:#ffffff; border-radius:16px; padding:24px 20px; text-align:center; border:1px solid #ede8e0;">
+        <div style="font-size:2rem; display:block; margin-bottom:8px;">🎓</div>
+        <h4 style="font-size:0.95rem; font-weight:600; color:#1a1917;">Expert Insights</h4>
+      </div>
+      <div style="background:#ffffff; border-radius:16px; padding:24px 20px; text-align:center; border:1px solid #ede8e0;">
+        <div style="font-size:2rem; display:block; margin-bottom:8px;">📊</div>
+        <h4 style="font-size:0.95rem; font-weight:600; color:#1a1917;">Progress Milestones</h4>
       </div>
     </div>
+  </section>
 
-    <!-- Card 3 -->
-    <div class="stacked-card" data-index="2">
-      <div class="stacked-card-inner">
-        <div class="stacked-card-left">
-          <span class="stacked-card-number">03</span>
-          <h3 class="stacked-card-title">Weekly Progress: See the change, not just the effort.</h3>
-          <p class="stacked-card-desc">Your weekly dashboard shows where you're improving, where patterns are holding you back, and what to focus on next.</p>
-          <div class="stacked-card-collections">
-            <div class="collection-item">
-              <span class="collection-icon">📘</span>
-              <div>
-                <span class="collection-title">6 Lessons</span>
-                <span class="collection-experts">Progress dashboard</span>
-              </div>
-            </div>
-            <div class="collection-item">
-              <span class="collection-icon">📗</span>
-              <div>
-                <span class="collection-title">Patterns</span>
-                <span class="collection-experts">Weekly focus</span>
-              </div>
-            </div>
-            <div class="collection-item">
-              <span class="collection-icon">📕</span>
-              <div>
-                <span class="collection-title">8 Lessons</span>
-                <span class="collection-experts">Inspired by 10 Experts</span>
-              </div>
-            </div>
-          </div>
-          <div class="stacked-card-footer">
-            <span class="stacked-card-tag">📦 Collections</span>
-            <span class="stacked-card-time">✨ Curated</span>
-          </div>
-        </div>
-        <div class="stacked-card-right">
-          <div class="stacked-card-image" style="background: linear-gradient(135deg, #2a1a2a, #4a2a3a);">
-            <span class="stacked-card-icon">📦</span>
-            <span class="stacked-card-label">Collections</span>
-          </div>
-        </div>
+  <!-- ============================================================ -->
+  <!-- 09 — CTA                                                     -->
+  <!-- ============================================================ -->
+  <section class="container section" id="cta" style="text-align:center; border-bottom:none; padding:60px 0 40px;">
+    <h2 class="heading-serif" style="font-size:2.8rem; font-weight:700; color:#1a1917;">Your next conversation is <span class="accent-gold">coming</span>.</h2>
+    <p style="font-size:1.1rem; color:#4d4a44; max-width:500px; margin:8px auto 24px;">Be better at it.</p>
+    <a href="#experience" class="btn-primary" style="padding:18px 56px; font-size:1.2rem;">Start Your Communication Practice →</a>
+    <div style="font-size:0.8rem; color:#8a8680; margin-top:12px;">Free to start · 60 seconds · No credit card</div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- FOOTER                                                       -->
+  <!-- ============================================================ -->
+  <footer class="container footer" style="padding:48px 0 32px; border-top:1px solid #ede8e0; display:flex; flex-wrap:wrap; justify-content:space-between; gap:32px;">
+    <div class="footer-col">
+      <h4 style="font-family:'Playfair Display',serif; font-size:1.4rem;">The <span style="color:#b8943c;">Unspoken</span></h4>
+      <p style="color:#4d4a44; font-size:0.9rem;">Discover · Learn · Practice · Improve</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <a href="#">About</a>
+      <a href="#">Persona Assessment</a>
+      <a href="#">Programs</a>
+      <a href="#">Community</a>
+      <a href="#">FAQ</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <div class="footer-social" style="display:flex; gap:16px;">
+        <a href="#">LinkedIn</a>
+        <a href="#">Instagram</a>
+        <a href="#">YouTube</a>
       </div>
     </div>
+  </footer>
 
-    <!-- Card 4 -->
-    <div class="stacked-card" data-index="3">
-      <div class="stacked-card-inner">
-        <div class="stacked-card-left">
-          <span class="stacked-card-number">04</span>
-          <h3 class="stacked-card-title">Expert Sessions: Understand the thinking behind the skill.</h3>
-          <p class="stacked-card-desc">Learn the structures and principles that make great communication work—from professionals who lead teams, make decisions and interview people every day.</p>
-          <div class="stacked-card-topics">
-            <span>💡 wisdom</span>
-            <span>📖 Live/recorded sessions</span>
-            <span>🧠 psychology</span>
-          </div>
-          <div class="stacked-card-footer">
-            <span class="stacked-card-tag">💡 Proven frameworks</span>
-            <span class="stacked-card-time">⏰ Real-world experience</span>
-          </div>
-        </div>
-        <div class="stacked-card-right">
-          <div class="stacked-card-image" style="background: linear-gradient(135deg, #2d1a2a, #4a2a3a);">
-            <span class="stacked-card-icon">💡</span>
-            <span class="stacked-card-label">Insights</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- ============================================================ -->
+  <!-- JAVASCRIPT                                                   -->
+  <!-- ============================================================ -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
 
-  <div style="text-align: center; margin-top: 32px;">
-    <a href="#" class="btn-paid">Explore All Lessons →</a>
-  </div>
-</section>
+      // ============================================================
+      // DATA
+      // ============================================================
+      const scenarios = [{
+        title: "Meeting Room",
+        context: "Your team missed a key deadline. You need to update your manager.",
+        question: "Your manager asks: 'What happened with the deadline, and what's your plan to fix it?' Respond in 45 seconds (voice) or 90 seconds (text).",
+        better: "We're behind on the project timeline due to unexpected technical dependencies. I've identified the bottlenecks and created a recovery plan. We can deliver by Friday if we reprioritize the backlog. I'll share the detailed plan after this meeting. Does that approach work for you?"
+      }, {
+        title: "Client Objection",
+        context: "A client says your proposal is too expensive. You need to respond and keep the deal alive.",
+        question: "The client says: 'Your price is 30% higher than your competitor's. Why should we go with you?' Respond in 45 seconds (voice) or 90 seconds (text).",
+        better: "I understand budget is a concern. Let me walk you through the ROI — this solution saves you 30% on operational costs within the first year. I can also offer a phased deployment to spread the cost. Would a 6-month payment plan work for your team?"
+      }, {
+        title: "Promotion Ask",
+        context: "You want to ask your manager for a promotion. Draft your pitch.",
+        question: "Your manager says: 'Tell me why you deserve a promotion right now.' Respond in 45 seconds (voice) or 90 seconds (text).",
+        better: "I'd like to discuss advancing to the next level. Over the past year, I've exceeded my targets by 20%, led two successful product launches, and taken on mentorship responsibilities. I believe I'm ready to take on more strategic ownership. Can we schedule time next week to discuss this?"
+      }, {
+        title: "Difficult Feedback",
+        context: "You need to give constructive feedback to a teammate who's been underperforming.",
+        question: "Your teammate asks: 'Is there anything I could be doing better?' Respond in 45 seconds (voice) or 90 seconds (text).",
+        better: "I want to discuss your recent deliverables. I've noticed a few inconsistencies in quality and missed deadlines. I know you're capable of great work — what support do you need from me to get back on track? Let's work together to improve this."
+      }, {
+        title: "Interview Question",
+        context: "You're in a job interview. The interviewer asks the classic opening question.",
+        question: "Interviewer: 'Tell me about yourself.' Respond in 45 seconds (voice) or 90 seconds (text).",
+        better: "I'm a product manager with 5 years of experience in fintech. I led the launch of a mobile banking app that grew to 200K users in 6 months. I specialize in bridging the gap between business goals and technical execution. I'm looking to bring that expertise to a scaling startup like yours."
+      }];
 
-<!-- ===== COMMUNITY ===== -->
-<section class="container section" id="community">
-  <h2 class="heading-serif heading-lg">Keep improving together.</h2>
-  <p style="font-size:1.1rem; color:#4d4a44; max-width:560px;">Join a community of ambitious professionals working on how they think, communicate, lead and grow.</p>
-  <div class="community-grid">
-    <div class="community-item"><span class="icon">🏆</span><h4>Weekly Challenges</h4></div>
-    <div class="community-item"><span class="icon">💬</span><h4>Practice Prompts</h4></div>
-    <div class="community-item"><span class="icon">🤝</span><h4>Peer Feedback</h4></div>
-    <div class="community-item"><span class="icon">🎓</span><h4>Expert Insights</h4></div>
-    <div class="community-item"><span class="icon">📊</span><h4>Progress Milestones</h4></div>
-  </div>
-  <p style="margin-top:16px; color:#6e6a62; font-size:0.9rem;">Community members: <strong>[COMMUNITY_MEMBER_COUNT]</strong></p>
-</section>
-
-<!-- ===== FINAL CTA ===== -->
-<section class="container section" style="text-align:center; border-bottom: none;">
-  <a href="Personasnap.html" class="btn-free" style="padding:18px 56px; font-size:1.2rem;">Let's Begin</a>
-  <div style="margin-top: 12px;">
-    <span style="font-size: 0.75rem; color: #8a8680;">Free · 2-minutes · No credit card</span>
-  </div>
-</section>
-
-<!-- ===== FAQ ===== -->
-<section class="container section" id="faq" style="border-bottom:1px solid #ede8e0;">
-  <h2 class="heading-serif heading-lg" style="margin-bottom:24px;">Frequently Asked Questions</h2>
-  <div class="faq-item"><details><summary>What is The Unspoken?</summary><p>The Unspoken is a platform that helps you understand your communication persona and provides a personalized path to improve how you communicate, lead, and influence.</p></details></div>
-  <div class="faq-item"><details><summary>Who is The Unspoken for?</summary><p>For ambitious professionals who want to close the gap between what they mean and what others experience.</p></details></div>
-  <div class="faq-item"><details><summary>What do I get from the free persona assessment?</summary><p>You get your Communication Persona, key strengths, blind spots, and a clear next step for improvement.</p></details></div>
-  <div class="faq-item"><details><summary>How long does the assessment take?</summary><p>About 5–10 minutes for the free version, and up to 20 minutes for the complete version.</p></details></div>
-  <div class="faq-item"><details><summary>What is a Communication Persona?</summary><p>It's your unique pattern of communication — how you naturally express yourself and how others perceive you.</p></details></div>
-  <div class="faq-item"><details><summary>Do I need to complete lessons every day?</summary><p>No. You set your own pace, but we recommend small daily actions for best results.</p></details></div>
-  <div class="faq-item"><details><summary>Is The Unspoken only about communication?</summary><p>It starts with communication, but expands into leadership, confidence, influence, and career growth.</p></details></div>
-  <div class="faq-item"><details><summary>Can I cancel my membership?</summary><p>Yes, you can cancel anytime from your account settings.</p></details></div>
-  <div class="faq-item"><details><summary>Is there a community?</summary><p>Yes, members get access to a community of peers, challenges, and expert insights.</p></details></div>
-</section>
-
-<!-- ===== FOOTER ===== -->
-<footer class="container footer">
-  <div class="footer-col">
-    <h4 style="font-family:'Playfair Display',serif; font-size:1.4rem;">The <span style="color:#b8943c;">Unspoken</span></h4>
-    <p style="color:#4d4a44; font-size:0.9rem;">Discover · Learn · Practice · Improve</p>
-  </div>
-  <div class="footer-col">
-    <h4>Navigate</h4>
-    <a href="#">About</a>
-    <a href="#">Persona Assessment</a>
-    <a href="#">Programs</a>
-    <a href="#">Community</a>
-    <a href="#">Blog</a>
-    <a href="#">FAQ</a>
-  </div>
-  <div class="footer-col">
-    <h4>Legal</h4>
-    <a href="#">Privacy</a>
-    <a href="#">Terms</a>
-    <a href="#">Contact</a>
-  </div>
-  <div class="footer-col">
-    <h4>Connect</h4>
-    <div class="footer-social">
-      <a href="#">LinkedIn</a>
-      <a href="#">Instagram</a>
-      <a href="#">YouTube</a>
-    </div>
-  </div>
-</footer>
-
-<!-- ===== JAVASCRIPT ===== -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // ===== 3D SPHERICAL ORBIT =====
-    (function() {
-      var container = document.querySelector('.persona-orbit-container');
-      if (!container) return;
-
-      var track = container.querySelector('.persona-orbit-track');
-      var items = [].slice.call(container.querySelectorAll('.orbit-item'));
-      if (!track || !items.length) return;
-
-      var centerDesc = document.getElementById('centerPersonaDesc');
-      var centerTag = document.getElementById('centerPersonaTag');
-      var centerDefault = document.getElementById('centerDefaultText');
-
-      var personaData = {
-        'translator': { desc: 'Makes complexity make sense. You turn complex thoughts into clear, memorable messages.' },
-        'amplifier': { desc: 'Makes ideas impossible to ignore. Your presence and energy make ideas unforgettable.' },
-        'articulator': { desc: 'Makes thinking visible. You speak with precision and structure that commands respect.' },
-        'interpreter': { desc: 'Reads what others miss. You understand what people truly mean.' },
-        'filter': { desc: 'Knows what matters. You speak with intention and precision.' },
-        'emerging': { desc: 'Finding your voice. Your potential is just beginning to be seen.' },
-        'misaligned': { desc: 'Intent and impact may not meet. The gap is your opportunity.' }
+      // ============================================================
+      // STATE
+      // ============================================================
+      let state = {
+        selectedScenario: null,
+        isVoiceMode: true,
+        isChallengeActive: false,
+        isRecording: false,
+        isAnalyzing: false,
+        timerInterval: null,
+        timeLeft: 45,
+        maxTime: 45,
+        recognition: null,
+        fullTranscript: '',
+        currentAttempt: 0, // 0, 1, 2
+        maxAttempts: 3,
+        attemptData: [], // Stores { scores, feedback, betterVersion, response }
+        bestScore: null,
+        isComplete: false
       };
 
-      function getVar(name, fallback) {
-        var value = parseFloat(getComputedStyle(container).getPropertyValue(name));
-        return Number.isFinite(value) ? value : fallback;
-      }
-
-      var state = {
-        angle: 0,
-        speed: 0.00035,
-        paused: false,
-        focused: false,
-        lastTime: performance.now()
-      };
-
-      var hoveredPersona = null;
-
-      function updateCenter(personaKey) {
-        var data = personaData[personaKey];
-        if (!data) return;
-        centerDesc.textContent = data.desc;
-        centerTag.textContent = '✦ Selected Persona';
-        centerDesc.classList.add('visible');
-        centerTag.classList.add('visible');
-        centerDefault.style.display = 'none';
-      }
-
-      function resetCenter() {
-        centerDesc.classList.remove('visible');
-        centerTag.classList.remove('visible');
-        centerDefault.style.display = 'block';
-        centerDesc.textContent = 'Hover or tap a persona to explore';
-      }
-
-      function render() {
-        var radius = getVar('--orbit-radius', 270);
-        var depth = getVar('--orbit-depth', 120);
-        var total = items.length;
-        var step = (Math.PI * 2) / total;
-
-        var bestDepth = -Infinity;
-
-        items.forEach(function(item, index) {
-          var theta = state.angle + index * step - Math.PI / 2;
-          var x = Math.cos(theta) * radius;
-          var y = Math.sin(theta) * radius;
-          var z = Math.sin(theta) * depth;
-
-          var normalizedDepth = (z + depth) / (2 * depth);
-          var scale = 0.78 + normalizedDepth * 0.3;
-          var opacity = 0.35 + normalizedDepth * 0.65;
-          var blur = (1 - normalizedDepth) * 1.2;
-
-          item.style.transform = 'translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px) scale(' + scale + ')';
-          item.style.opacity = opacity;
-          item.style.filter = 'blur(' + blur + 'px)';
-          
-          var zIndex = Math.round(10 + normalizedDepth * 30);
-          item.style.zIndex = zIndex;
-
-          if (z > bestDepth) {
-            bestDepth = z;
-          }
-
-          item.classList.toggle('is-front', z > depth * 0.3);
-          item.classList.toggle('is-back', z < -depth * 0.3);
-        });
-
-        if (!state.focused && !hoveredPersona) {
-          items.forEach(function(item) {
-            item.classList.remove('is-active');
-          });
-          
-          var active = items.reduce(function(a, b) {
-            var aZ = parseFloat(a.style.transform.match(/translate3d\([^,]+,\s*[^,]+,\s*([^)]+)\)/)?.[1] || -Infinity);
-            var bZ = parseFloat(b.style.transform.match(/translate3d\([^,]+,\s*[^,]+,\s*([^)]+)\)/)?.[1] || -Infinity);
-            return aZ > bZ ? a : b;
-          });
-          
-          if (active) {
-            var personaKey = active.dataset.persona;
-            var data = personaData[personaKey];
-            if (data) {
-              centerDesc.textContent = data.desc;
-              centerDesc.classList.add('visible');
-              centerDefault.style.display = 'none';
-              centerTag.classList.remove('visible');
-            }
-          }
-        }
-      }
-
-      function tick(now) {
-        var dt = Math.min(now - state.lastTime, 40);
-        state.lastTime = now;
-        
-        if (!state.paused && !state.focused) {
-          state.angle += state.speed * dt;
-        }
-        
-        render();
-        requestAnimationFrame(tick);
-      }
-
-      // ===== HOVER =====
-      items.forEach(function(item) {
-        item.addEventListener('mouseenter', function() {
-          hoveredPersona = this;
-          var personaKey = this.dataset.persona;
-          var data = personaData[personaKey];
-          if (data) {
-            centerDesc.textContent = data.desc;
-            centerDesc.classList.add('visible');
-            centerDefault.style.display = 'none';
-            centerTag.classList.remove('visible');
-          }
-          state.paused = true;
-        });
-
-        item.addEventListener('mouseleave', function() {
-          hoveredPersona = null;
-          if (!state.focused) {
-            state.paused = false;
-            resetCenter();
-            render();
-          }
-        });
-      });
-
-      // ===== CLICK =====
-      items.forEach(function(item) {
-        item.addEventListener('click', function(e) {
-          e.stopPropagation();
-          
-          var personaKey = this.dataset.persona;
-          
-          if (this.classList.contains('is-active') && state.focused) {
-            items.forEach(function(i) { i.classList.remove('is-active'); });
-            state.focused = false;
-            state.paused = false;
-            resetCenter();
-            render();
-            return;
-          }
-          
-          items.forEach(function(i) { i.classList.remove('is-active'); });
-          this.classList.add('is-active');
-          state.focused = true;
-          state.paused = true;
-          updateCenter(personaKey);
-        });
-      });
-
-      // ===== CLICK OUTSIDE =====
-      document.addEventListener('click', function(e) {
-        if (!container.contains(e.target)) {
-          items.forEach(function(i) { i.classList.remove('is-active'); });
-          state.focused = false;
-          state.paused = false;
-          resetCenter();
-        }
-      });
-
-      // ===== DOUBLE CLICK =====
-      container.addEventListener('dblclick', function() {
-        state.focused = false;
-        state.paused = false;
-        items.forEach(function(i) { i.classList.remove('is-active'); });
-        resetCenter();
-      });
-
-      // ===== TOUCH =====
-      var touchStartX = null;
-      container.addEventListener('touchstart', function(e) {
-        touchStartX = e.touches[0].clientX;
-      }, { passive: true });
-
-      container.addEventListener('touchend', function(e) {
-        if (touchStartX === null) return;
-        var delta = e.changedTouches[0].clientX - touchStartX;
-        touchStartX = null;
-        if (Math.abs(delta) < 30) return;
-        state.angle += delta > 0 ? 0.3 : -0.3;
-        state.focused = true;
-        state.paused = true;
-      }, { passive: true });
-
-      // ===== RESIZE =====
-      window.addEventListener('resize', render, { passive: true });
-
-      // ===== START =====
-      render();
-      requestAnimationFrame(tick);
-    })();
-
-    // ===== STACKED CARDS SCROLL EFFECT =====
-    (function() {
-      const cards = document.querySelectorAll('.stacked-card');
-      const container = document.getElementById('stackedCardsContainer');
-      
-      if (!cards.length) return;
-
-      function updateCards() {
-        const containerRect = container.getBoundingClientRect();
-        const containerTop = containerRect.top;
-        const containerHeight = containerRect.height;
-        const viewportHeight = window.innerHeight;
-        
-        cards.forEach((card, index) => {
-          const cardRect = card.getBoundingClientRect();
-          const cardTop = cardRect.top;
-          
-          const progress = (cardTop - containerTop) / (containerHeight - cardRect.height);
-          const clampedProgress = Math.max(0, Math.min(1, progress));
-          
-          const isVisible = cardRect.top < viewportHeight - 100 && cardRect.bottom > 100;
-          
-          if (isVisible) {
-            card.classList.add('is-active');
-            const scale = 1 - (clampedProgress * 0.05);
-            card.style.transform = 'scale(' + scale + ')';
-            card.style.opacity = Math.max(0.6, 1 - (clampedProgress * 0.4));
-          } else {
-            card.classList.remove('is-active');
-            card.style.transform = '';
-            card.style.opacity = '';
-          }
-        });
-      }
-
-      let ticking = false;
-      window.addEventListener('scroll', function() {
-        if (!ticking) {
-          window.requestAnimationFrame(function() {
-            updateCards();
-            ticking = false;
-          });
-          ticking = true;
-        }
-      });
-
-      window.addEventListener('resize', updateCards);
-      setTimeout(updateCards, 100);
-    })();
-
-    // ===== MVP TRY IMMEDIATELY - FULL LOGIC =====
-    (function() {
-      // ---------- SCENARIOS ----------
-      const scenarios = [
-        {
-          title: "Project Delay",
-          context: "Your team missed a key deadline. You need to update your manager.",
-          question: "Your manager asks: 'What happened with the deadline, and what's your plan to fix it?' Respond in 45 seconds (voice) or 90 seconds (text).",
-          better: "We're behind on the project timeline due to unexpected technical dependencies. I've identified the bottlenecks and created a recovery plan. We can deliver by Friday if we reprioritize the backlog. I'll share the detailed plan after this meeting. Does that approach work for you?"
-        },
-        {
-          title: "Client Objection",
-          context: "A client says your proposal is too expensive. You need to respond and keep the deal alive.",
-          question: "The client says: 'Your price is 30% higher than your competitor's. Why should we go with you?' Respond in 45 seconds (voice) or 90 seconds (text).",
-          better: "I understand budget is a concern. Let me walk you through the ROI — this solution saves you 30% on operational costs within the first year. I can also offer a phased deployment to spread the cost. Would a 6-month payment plan work for your team?"
-        },
-        {
-          title: "Promotion Ask",
-          context: "You want to ask your manager for a promotion. Draft your pitch.",
-          question: "Your manager says: 'Tell me why you deserve a promotion right now.' Respond in 45 seconds (voice) or 90 seconds (text).",
-          better: "I'd like to discuss advancing to the next level. Over the past year, I've exceeded my targets by 20%, led two successful product launches, and taken on mentorship responsibilities. I believe I'm ready to take on more strategic ownership. Can we schedule time next week to discuss this?"
-        },
-        {
-          title: "Difficult Feedback",
-          context: "You need to give constructive feedback to a teammate who's been underperforming.",
-          question: "Your teammate asks: 'Is there anything I could be doing better?' Respond in 45 seconds (voice) or 90 seconds (text).",
-          better: "I want to discuss your recent deliverables. I've noticed a few inconsistencies in quality and missed deadlines. I know you're capable of great work — what support do you need from me to get back on track? Let's work together to improve this."
-        },
-        {
-          title: "Interview Question",
-          context: "You're in a job interview. The interviewer asks the classic opening question.",
-          question: "Interviewer: 'Tell me about yourself.' Respond in 45 seconds (voice) or 90 seconds (text).",
-          better: "I'm a product manager with 5 years of experience in fintech. I led the launch of a mobile banking app that grew to 200K users in 6 months. I specialize in bridging the gap between business goals and technical execution. I'm looking to bring that expertise to a scaling startup like yours."
-        }
-      ];
-
-      // ---------- DOM ELEMENTS ----------
-      const scenarioBtns = document.querySelectorAll('.scenario-btn');
+      // ============================================================
+      // DOM REFS
+      // ============================================================
+      const scenarioBtns = document.querySelectorAll('.exp-btn');
       const scenarioContext = document.getElementById('scenarioContext');
-      const scenarioQuestion = document.getElementById('scenarioQuestion');
       const questionDisplay = document.getElementById('questionDisplay');
-      const startBtn = document.getElementById('startChallengeBtn');
+      const startBtn = document.getElementById('startBtn');
       const resetBtn = document.getElementById('resetBtn');
       const voiceModeBtn = document.getElementById('voiceModeBtn');
       const textModeBtn = document.getElementById('textModeBtn');
       const voiceTranscript = document.getElementById('voiceTranscript');
       const textInput = document.getElementById('textInput');
       const timerDisplay = document.getElementById('timerDisplay');
-      const recordingIndicator = document.getElementById('recordingIndicator');
-      const wordCountDisplay = document.getElementById('wordCountDisplay');
+      const wordCountDisplay = document.getElementById('wordCount');
       const statusBadge = document.getElementById('statusBadge');
-      const resultsContainer = document.getElementById('resultsContainer');
+      const resultsSection = document.getElementById('resultsSection');
+      const currentAttemptDisplay = document.getElementById('currentAttemptDisplay');
+      const bestScoreDisplay = document.getElementById('bestScoreDisplay');
+      const attemptsLeftText = document.getElementById('attemptsLeftText');
+      const tryAgainBtn = document.getElementById('tryAgainBtn');
+      const newScenarioBtn = document.getElementById('newScenarioBtn');
 
-      // ---------- STATE ----------
-      let selectedScenario = null;
-      let isVoiceMode = true;
-      let isRecording = false;
-      let isChallengeActive = false;
-      let timerInterval = null;
-      let timeLeft = 45;
-      let maxTime = 45;
-      let recognition = null;
-      let fullTranscript = '';
-      let isAnalyzing = false;
+      // Results elements
+      const scoreIds = ['Clarity', 'Precision', 'Structure', 'Impact', 'Influence'];
+      const scoreEls = {};
+      const barEls = {};
+      scoreIds.forEach(id => {
+        scoreEls[id] = document.getElementById('score' + id);
+        barEls[id] = document.getElementById('bar' + id);
+      });
+      const feedbackList = document.getElementById('feedbackList');
+      const nextMoveList = document.getElementById('nextMoveList');
+      const improvementBox = document.getElementById('improvementBox');
+      const improvementScore = document.getElementById('improvementScore');
+      const improvementText = document.getElementById('improvementText');
+      const attemptHistory = document.getElementById('attemptHistory');
 
-      // ---------- SCENARIO SELECTION ----------
+      // ============================================================
+      // SCENARIO SELECTION
+      // ============================================================
       scenarioBtns.forEach((btn, index) => {
         btn.addEventListener('click', function() {
           scenarioBtns.forEach(b => {
+            b.classList.remove('active');
             b.style.borderColor = '#ede8e0';
-            b.style.background = '#ffffff';
           });
+          this.classList.add('active');
           this.style.borderColor = '#b8943c';
-          this.style.background = '#fef3c7';
-          
-          selectedScenario = index;
+
+          state.selectedScenario = index;
+          state.currentAttempt = 0;
+          state.attemptData = [];
+          state.bestScore = null;
+          state.isComplete = false;
+          state.fullTranscript = '';
+
           scenarioContext.textContent = scenarios[index].context;
-          scenarioQuestion.textContent = scenarios[index].question;
-          questionDisplay.style.maxHeight = '200px';
-          questionDisplay.style.padding = '0 32px';
+          questionDisplay.textContent = scenarios[index].question;
           startBtn.disabled = false;
+
+          // Reset UI
           resetChallenge();
+          resultsSection.style.display = 'none';
+          updateAttemptDisplay();
+          updateAttemptDots();
+
+          // Reset score displays
+          scoreIds.forEach(id => {
+            scoreEls[id].textContent = '—';
+            barEls[id].style.width = '0%';
+          });
+          feedbackList.innerHTML =
+            '<li style="color:#8a8680; font-style:italic;">Complete an attempt to see feedback.</li>';
+          nextMoveList.innerHTML =
+            '<li style="color:#8a8680; font-style:italic;">Complete an attempt to see your next move.</li>';
+          improvementBox.style.display = 'none';
         });
       });
 
-      // ---------- MODE SWITCHING ----------
+      // ============================================================
+      // MODE SWITCHING
+      // ============================================================
       voiceModeBtn.addEventListener('click', function() {
-        if (isChallengeActive) return;
-        isVoiceMode = true;
+        if (state.isChallengeActive) return;
+        state.isVoiceMode = true;
         this.classList.add('active');
         textModeBtn.classList.remove('active');
         voiceTranscript.style.display = 'block';
         textInput.style.display = 'none';
         timerDisplay.textContent = '00:45';
-        timeLeft = 45;
-        maxTime = 45;
+        state.timeLeft = 45;
+        state.maxTime = 45;
         resetChallenge();
       });
 
       textModeBtn.addEventListener('click', function() {
-        if (isChallengeActive) return;
-        isVoiceMode = false;
+        if (state.isChallengeActive) return;
+        state.isVoiceMode = false;
         this.classList.add('active');
         voiceModeBtn.classList.remove('active');
         voiceTranscript.style.display = 'none';
         textInput.style.display = 'block';
         timerDisplay.textContent = '01:30';
-        timeLeft = 90;
-        maxTime = 90;
+        state.timeLeft = 90;
+        state.maxTime = 90;
         resetChallenge();
       });
 
-      // ---------- SPEECH RECOGNITION ----------
+      // ============================================================
+      // SPEECH RECOGNITION
+      // ============================================================
       function initSpeechRecognition() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-          statusBadge.textContent = '⚠️ Speech not supported';
-          statusBadge.style.color = '#dc2626';
+          statusBadge.textContent = '⚠️ Not supported';
+          statusBadge.classList.add('done');
           return false;
         }
-        
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'en-IN';
-        
-        recognition.onresult = function(event) {
+        state.recognition = new SpeechRecognition();
+        state.recognition.continuous = true;
+        state.recognition.interimResults = true;
+        state.recognition.lang = 'en-IN';
+
+        state.recognition.onresult = function(event) {
           let interim = '';
           let final = '';
-          
           for (let i = event.resultIndex; i < event.results.length; i++) {
             const transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
@@ -2240,123 +1227,129 @@
               interim += transcript;
             }
           }
-          
-          fullTranscript += final;
-          const displayText = fullTranscript + (interim ? ' ' + interim : '');
+          state.fullTranscript += final;
+          const displayText = state.fullTranscript + (interim ? ' ' + interim : '');
           voiceTranscript.textContent = displayText || '🎙️ Listening...';
           voiceTranscript.style.color = '#1a1917';
           voiceTranscript.style.fontStyle = 'normal';
           updateWordCount(displayText);
         };
-        
-        recognition.onerror = function(event) {
-          console.error('Speech recognition error:', event.error);
+
+        state.recognition.onerror = function(event) {
+          console.error('Speech error:', event.error);
           if (event.error === 'not-allowed') {
-            statusBadge.textContent = '⚠️ Mic access denied';
-            statusBadge.style.color = '#dc2626';
+            statusBadge.textContent = '⚠️ Mic denied';
+            statusBadge.classList.add('done');
           }
         };
-        
-        recognition.onend = function() {
-          if (isRecording && isChallengeActive) {
-            try { recognition.start(); } catch (e) {}
+
+        state.recognition.onend = function() {
+          if (state.isRecording && state.isChallengeActive) {
+            try { state.recognition.start(); } catch (e) {}
           }
         };
-        
         return true;
       }
 
       function startRecording() {
-        if (!recognition) {
+        if (!state.recognition) {
           const supported = initSpeechRecognition();
           if (!supported) return;
         }
-        
         try {
-          recognition.start();
-          isRecording = true;
-          recordingIndicator.style.display = 'flex';
+          state.recognition.start();
+          state.isRecording = true;
           statusBadge.textContent = '🔴 Recording';
-          statusBadge.style.color = '#dc2626';
+          statusBadge.classList.add('recording');
           voiceTranscript.textContent = '🎙️ Listening...';
           voiceTranscript.style.color = '#8a8680';
           voiceTranscript.style.fontStyle = 'italic';
+          document.getElementById('responseArea').classList.add('recording');
         } catch (e) {}
       }
 
       function stopRecording() {
-        if (recognition && isRecording) {
-          try { recognition.stop(); } catch (e) {}
-          isRecording = false;
-          recordingIndicator.style.display = 'none';
+        if (state.recognition && state.isRecording) {
+          try { state.recognition.stop(); } catch (e) {}
+          state.isRecording = false;
+          statusBadge.classList.remove('recording');
+          document.getElementById('responseArea').classList.remove('recording');
           statusBadge.textContent = '⏹️ Stopped';
-          statusBadge.style.color = '#8a8680';
         }
       }
 
-      // ---------- TIMER ----------
+      // ============================================================
+      // TIMER
+      // ============================================================
       function startTimer() {
-        timerInterval = setInterval(() => {
-          timeLeft--;
+        state.timerInterval = setInterval(() => {
+          state.timeLeft--;
           updateTimerDisplay();
-          
-          if (timeLeft <= 5) {
-            timerDisplay.classList.add('timer-warning');
+          if (state.timeLeft <= 5) {
+            timerDisplay.classList.add('warning');
           }
-          
-          if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            timerDisplay.classList.remove('timer-warning');
+          if (state.timeLeft <= 0) {
+            clearInterval(state.timerInterval);
+            timerDisplay.classList.remove('warning');
             endChallenge();
           }
         }, 1000);
       }
 
       function updateTimerDisplay() {
-        const mins = Math.floor(timeLeft / 60);
-        const secs = timeLeft % 60;
+        const mins = Math.floor(state.timeLeft / 60);
+        const secs = state.timeLeft % 60;
         timerDisplay.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
       }
 
-      // ---------- CHALLENGE CONTROL ----------
+      // ============================================================
+      // CHALLENGE CONTROL
+      // ============================================================
       function startChallenge() {
-        if (selectedScenario === null) {
+        if (state.selectedScenario === null) {
           alert('Please select a scenario first.');
           return;
         }
-        if (isAnalyzing) return;
-        
-        resultsContainer.style.display = 'none';
-        fullTranscript = '';
-        
-        if (isVoiceMode) {
+        if (state.isAnalyzing) return;
+        if (state.currentAttempt >= state.maxAttempts) {
+          alert('You\'ve completed all 3 attempts for this scenario. Try a new scenario!');
+          return;
+        }
+
+        // Reset for new attempt
+        state.fullTranscript = '';
+        resultsSection.style.display = 'none';
+
+        if (state.isVoiceMode) {
           voiceTranscript.textContent = '🎙️ Listening...';
           voiceTranscript.style.color = '#8a8680';
           voiceTranscript.style.fontStyle = 'italic';
+          voiceTranscript.style.display = 'block';
+          textInput.style.display = 'none';
         } else {
           textInput.value = '';
+          textInput.style.display = 'block';
+          voiceTranscript.style.display = 'none';
         }
-        
-        maxTime = isVoiceMode ? 45 : 90;
-        timeLeft = maxTime;
+
+        state.timeLeft = state.maxTime;
         updateTimerDisplay();
-        timerDisplay.classList.remove('timer-warning');
-        
-        isChallengeActive = true;
+        timerDisplay.classList.remove('warning');
+
+        state.isChallengeActive = true;
         startBtn.disabled = true;
-        startBtn.textContent = '⏳ ...';
-        startBtn.style.opacity = '0.6';
-        statusBadge.textContent = isVoiceMode ? '🎙️ Speak now' : '⌨️ Type now';
-        statusBadge.style.color = '#b8943c';
-        
+        startBtn.textContent = '⏳ In Progress...';
+        statusBadge.textContent = state.isVoiceMode ? '🎙️ Speak now' : '⌨️ Type now';
+        statusBadge.classList.remove('done', 'recording', 'analyzing');
+
         voiceModeBtn.style.opacity = '0.5';
         textModeBtn.style.opacity = '0.5';
         voiceModeBtn.style.cursor = 'not-allowed';
         textModeBtn.style.cursor = 'not-allowed';
-        
+
         startTimer();
-        
-        if (isVoiceMode) {
+
+        if (state.isVoiceMode) {
           startRecording();
         } else {
           textInput.focus();
@@ -2364,310 +1357,453 @@
       }
 
       function endChallenge() {
-        isChallengeActive = false;
+        state.isChallengeActive = false;
         stopRecording();
-        clearInterval(timerInterval);
-        timerDisplay.classList.remove('timer-warning');
-        
+        clearInterval(state.timerInterval);
+        timerDisplay.classList.remove('warning');
+
         startBtn.disabled = false;
-        startBtn.textContent = '▶ Take Challenge';
-        startBtn.style.opacity = '1';
+        startBtn.textContent = '▶ Begin Assessment';
         statusBadge.textContent = '✅ Complete';
-        statusBadge.style.color = '#16a34a';
-        
+        statusBadge.classList.add('done');
+
         voiceModeBtn.style.opacity = '1';
         textModeBtn.style.opacity = '1';
         voiceModeBtn.style.cursor = 'pointer';
         textModeBtn.style.cursor = 'pointer';
-        
-        analyzeResponse();
+
+        // Get response text
+        let responseText = '';
+        if (state.isVoiceMode) {
+          responseText = voiceTranscript.textContent.replace('🎙️ Listening...', '').replace('🎙️ Speak or type your response here...', '').trim();
+          if (responseText === '' || responseText === '🎙️ Listening...' || responseText === '🎙️ Speak or type your response here...') {
+            responseText = 'No response detected.';
+          }
+        } else {
+          responseText = textInput.value.trim();
+          if (responseText === '') {
+            responseText = 'No response typed.';
+          }
+        }
+
+        // Analyze
+        analyzeResponse(responseText);
       }
 
       function resetChallenge() {
-        clearInterval(timerInterval);
+        clearInterval(state.timerInterval);
         stopRecording();
-        isChallengeActive = false;
-        isRecording = false;
-        fullTranscript = '';
-        
-        timerDisplay.classList.remove('timer-warning');
+        state.isChallengeActive = false;
+        state.isRecording = false;
+        state.fullTranscript = '';
+
+        timerDisplay.classList.remove('warning');
         updateTimerDisplay();
-        
-        if (isVoiceMode) {
+
+        if (state.isVoiceMode) {
+          voiceTranscript.textContent = '🎙️ Speak or type your response here...';
+          voiceTranscript.style.color = '#8a8680';
+          voiceTranscript.style.fontStyle = 'italic';
+          voiceTranscript.style.display = 'block';
+          textInput.style.display = 'none';
+        } else {
+          textInput.value = '';
+          textInput.style.display = 'block';
+          voiceTranscript.style.display = 'none';
+        }
+
+        startBtn.disabled = state.selectedScenario === null;
+        startBtn.textContent = '▶ Begin Assessment';
+        statusBadge.textContent = 'Ready';
+        statusBadge.className = 'challenge-status';
+        wordCountDisplay.textContent = '0 words';
+        document.getElementById('responseArea').classList.remove('recording');
+
+        voiceModeBtn.style.opacity = '1';
+        textModeBtn.style.opacity = '1';
+        voiceModeBtn.style.cursor = 'pointer';
+        textModeBtn.style.cursor = 'pointer';
+      }
+
+      // ============================================================
+      // WORD COUNT
+      // ============================================================
+      function updateWordCount(text) {
+        const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+        wordCountDisplay.textContent = words.length + ' words';
+        return words.length;
+      }
+
+      textInput.addEventListener('input', function() {
+        if (state.isChallengeActive) {
+          updateWordCount(this.value);
+        }
+      });
+
+      // ============================================================
+      // ANALYZE - BACKEND READY
+      // ============================================================
+      function analyzeResponse(responseText) {
+        state.isAnalyzing = true;
+        statusBadge.textContent = '🧠 Analyzing...';
+        statusBadge.className = 'challenge-status analyzing';
+
+        // ----- BACKEND INTEGRATION POINT -----
+        // Replace this with your actual API call:
+        //
+        // fetch('/api/analyze', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({
+        //     scenario: state.selectedScenario,
+        //     response: responseText,
+        //     mode: state.isVoiceMode ? 'voice' : 'text',
+        //     attempt: state.currentAttempt + 1
+        //   })
+        // })
+        // .then(res => res.json())
+        // .then(data => {
+        //   handleAnalysisResult(data);
+        // })
+        // .catch(error => {
+        //   console.error('API Error:', error);
+        //   // Fallback to mock
+        //   const mockResult = generateMockResult(responseText);
+        //   handleAnalysisResult(mockResult);
+        // });
+
+        // ----- MOCK (Replace with above) -----
+        setTimeout(() => {
+          const mockResult = generateMockResult(responseText);
+          handleAnalysisResult(mockResult);
+        }, 1500);
+      }
+
+      // ----- MOCK GENERATOR (Replace with real AI) -----
+      function generateMockResult(text) {
+        const wordCount = text.split(/\s+/).length;
+        const hasStructure = /first|second|finally|next|then/.test(text);
+        const hasClearAsk = /\?|please|recommend|suggest|propose/.test(text);
+        const hasNumbers = /\d/.test(text);
+        const hasConfidence = /I believe|I know|I'm confident|I'm sure/.test(text);
+        const hasImpact = /deliver|achieve|result|outcome|success/.test(text);
+
+        // Add some randomness but base on actual content
+        const base = 50;
+        const clarity = Math.min(92, Math.max(35, base + (hasClearAsk ? 22 : 0) + (wordCount > 15 ? 8 : 0) + Math.floor(Math.random() * 10)));
+        const precision = Math.min(92, Math.max(30, base + (hasNumbers ? 25 : 0) + (wordCount > 20 ? 8 : 0) + Math.floor(Math.random() * 10)));
+        const structure = Math.min(92, Math.max(25, base + (hasStructure ? 30 : 0) + (wordCount > 20 ? 8 : 0) + Math.floor(Math.random() * 10)));
+        const impact = Math.min(92, Math.max(30, base + (hasImpact ? 20 : 0) + (hasClearAsk ? 12 : 0) + Math.floor(Math.random() * 10)));
+        const influence = Math.min(92, Math.max(25, base + (hasConfidence ? 22 : 0) + (hasClearAsk ? 18 : 0) + Math.floor(Math.random() * 10)));
+
+        const scores = { clarity, precision, structure, impact, influence };
+
+        // Generate feedback based on lowest scores
+        const feedback = [];
+        const nextMoves = [];
+        const dims = [
+          { key: 'clarity', label: 'Clarity', low: 'Your main point isn\'t obvious. State your core message upfront.' },
+          { key: 'precision', label: 'Precision', low: 'Use specific numbers, dates, or concrete examples.' },
+          { key: 'structure', label: 'Structure', low: 'Try: Context → Problem → Solution → Ask.' },
+          { key: 'impact', label: 'Impact', low: 'What\'s the one thing you want them to remember?' },
+          { key: 'influence', label: 'Influence', low: 'Add a clear call to action or recommendation.' }
+        ];
+
+        dims.forEach(d => {
+          if (scores[d.key] < 60) {
+            feedback.push('⚠️ <strong>' + d.label + ':</strong> ' + d.low);
+            nextMoves.push('• Improve <strong>' + d.label + '</strong> — ' + d.low);
+          }
+        });
+
+        if (feedback.length === 0) {
+          feedback.push('✅ Strong communication across all dimensions!');
+          nextMoves.push('• Fine-tune your delivery for even greater impact.');
+        }
+
+        if (feedback.length > 2) {
+          feedback.push('💡 Focus on one area at a time for fastest improvement.');
+        }
+
+        // Get the scenario's better version
+        const scenario = scenarios[state.selectedScenario];
+        const betterVersion = scenario ? scenario.better : '';
+
+        return {
+          scores: scores,
+          feedback: feedback,
+          betterVersion: betterVersion,
+          nextMoves: nextMoves
+        };
+      }
+
+      // ============================================================
+      // HANDLE ANALYSIS RESULT
+      // ============================================================
+      function handleAnalysisResult(result) {
+        state.isAnalyzing = false;
+        statusBadge.textContent = '✅ Analyzed';
+        statusBadge.className = 'challenge-status done';
+
+        // Store attempt data
+        const attemptEntry = {
+          attempt: state.currentAttempt + 1,
+          scores: result.scores,
+          feedback: result.feedback,
+          betterVersion: result.betterVersion,
+          nextMoves: result.nextMoves || []
+        };
+        state.attemptData.push(attemptEntry);
+
+        // Update best score
+        const avgScore = Object.values(result.scores).reduce((a, b) => a + b, 0) / 5;
+        if (state.bestScore === null || avgScore > state.bestScore) {
+          state.bestScore = avgScore;
+        }
+
+        // Display results
+        displayResults(state.currentAttempt);
+
+        // Show results section
+        resultsSection.style.display = 'block';
+        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Update attempt counter
+        state.currentAttempt++;
+        updateAttemptDisplay();
+
+        // Check if all attempts done
+        if (state.currentAttempt >= state.maxAttempts) {
+          state.isComplete = true;
+          startBtn.disabled = true;
+          startBtn.textContent = '✅ All attempts used';
+          attemptsLeftText.textContent = 'All 3 attempts completed! Try a new scenario.';
+          tryAgainBtn.textContent = '🔄 View All Attempts';
+        } else {
+          const remaining = state.maxAttempts - state.currentAttempt;
+          attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
+        }
+      }
+
+      // ============================================================
+      // DISPLAY RESULTS
+      // ============================================================
+      function displayResults(attemptIndex) {
+        const data = state.attemptData[attemptIndex];
+        if (!data) return;
+
+        const scores = data.scores;
+
+        // Update score cards
+        scoreIds.forEach(id => {
+          const key = id.toLowerCase();
+          const score = scores[key] || 50;
+          scoreEls[id].textContent = score;
+          barEls[id].style.width = score + '%';
+        });
+
+        // Update feedback
+        if (data.feedback && data.feedback.length > 0) {
+          feedbackList.innerHTML = data.feedback.map(item =>
+            '<li style="padding: 6px 0; border-bottom: 1px solid #f0ebe4; line-height: 1.6;">' + item + '</li>'
+          ).join('');
+        } else {
+          feedbackList.innerHTML = '<li style="padding: 6px 0; color:#8a8680; font-style:italic;">No feedback available.</li>';
+        }
+
+        // Update next moves / better version
+        if (data.betterVersion) {
+          const betterText = data.betterVersion || 'No improved version available.';
+          nextMoveList.innerHTML = '<li style="padding: 6px 0; line-height: 1.6;">' + betterText + '</li>';
+          // Add next moves if available
+          if (data.nextMoves && data.nextMoves.length > 0) {
+            nextMoveList.innerHTML += data.nextMoves.map(item =>
+              '<li style="padding: 6px 0; line-height: 1.6; color:#4d4a44; font-size:0.85rem;">' + item + '</li>'
+            ).join('');
+          }
+        } else {
+          nextMoveList.innerHTML = '<li style="padding: 6px 0; color:#8a8680; font-style:italic;">No next move available.</li>';
+        }
+
+        // Update improvement if more than 1 attempt
+        if (state.attemptData.length > 1) {
+          const firstAvg = Object.values(state.attemptData[0].scores).reduce((a, b) => a + b, 0) / 5;
+          const currentAvg = Object.values(scores).reduce((a, b) => a + b, 0) / 5;
+          const diff = Math.round(currentAvg - firstAvg);
+          improvementBox.style.display = 'block';
+          improvementScore.textContent = (diff > 0 ? '+' : '') + diff;
+          improvementText.textContent = 'points ' + (diff >= 0 ? 'improvement' : 'decline') + ' from your first attempt';
+          if (diff > 0) {
+            improvementScore.style.color = '#16a34a';
+          } else if (diff < 0) {
+            improvementScore.style.color = '#dc2626';
+          } else {
+            improvementScore.style.color = '#b8943c';
+          }
+        } else {
+          improvementBox.style.display = 'none';
+        }
+
+        // Update attempt dots
+        updateAttemptDots();
+
+        // Update summary
+        document.getElementById('attemptSummary').textContent = 'Attempt ' + (attemptIndex + 1) + ' of 3';
+      }
+
+      // ============================================================
+      // UI UPDATES
+      // ============================================================
+      function updateAttemptDisplay() {
+        currentAttemptDisplay.textContent = Math.min(state.currentAttempt + 1, state.maxAttempts);
+        if (state.bestScore !== null) {
+          bestScoreDisplay.textContent = 'Best: ' + Math.round(state.bestScore);
+        } else {
+          bestScoreDisplay.textContent = 'Best: —';
+        }
+        const remaining = state.maxAttempts - state.currentAttempt;
+        attemptsLeftText.textContent = remaining > 0 ? remaining + ' attempts remaining' : 'All attempts completed!';
+      }
+
+      function updateAttemptDots() {
+        const dots = attemptHistory.querySelectorAll('.attempt-dot');
+        dots.forEach((dot, index) => {
+          dot.className = 'attempt-dot';
+          if (index < state.attemptData.length) {
+            dot.classList.add('active');
+            // Check if this is the best attempt
+            const scores = state.attemptData[index].scores;
+            const avg = Object.values(scores).reduce((a, b) => a + b, 0) / 5;
+            let bestAvg = -Infinity;
+            state.attemptData.forEach(d => {
+              const a = Object.values(d.scores).reduce((x, y) => x + y, 0) / 5;
+              if (a > bestAvg) bestAvg = a;
+            });
+            if (avg >= bestAvg && state.attemptData.length > 1) {
+              dot.classList.add('best');
+              dot.textContent = '★';
+            } else {
+              dot.textContent = index + 1;
+            }
+          } else {
+            dot.textContent = index + 1;
+          }
+        });
+      }
+
+      // ============================================================
+      // BUTTON EVENTS
+      // ============================================================
+      startBtn.addEventListener('click', startChallenge);
+
+      resetBtn.addEventListener('click', function() {
+        resetChallenge();
+        resultsSection.style.display = 'none';
+        // Reset score displays
+        scoreIds.forEach(id => {
+          scoreEls[id].textContent = '—';
+          barEls[id].style.width = '0%';
+        });
+        feedbackList.innerHTML =
+          '<li style="color:#8a8680; font-style:italic;">Complete an attempt to see feedback.</li>';
+        nextMoveList.innerHTML =
+          '<li style="color:#8a8680; font-style:italic;">Complete an attempt to see your next move.</li>';
+        improvementBox.style.display = 'none';
+        document.getElementById('attemptSummary').textContent = 'Attempt 1 of 3';
+      });
+
+      tryAgainBtn.addEventListener('click', function() {
+        if (state.isComplete || state.currentAttempt >= state.maxAttempts) {
+          // Show all attempts summary
+          showAllAttemptsSummary();
+          return;
+        }
+        // Reset for next attempt
+        resetChallenge();
+        resultsSection.style.display = 'none';
+        // Clear score displays
+        scoreIds.forEach(id => {
+          scoreEls[id].textContent = '—';
+          barEls[id].style.width = '0%';
+        });
+        feedbackList.innerHTML =
+          '<li style="color:#8a8680; font-style:italic;">Complete an attempt to see feedback.</li>';
+        nextMoveList.innerHTML =
+          '<li style="color:#8a8680; font-style:italic;">Complete an attempt to see your next move.</li>';
+        improvementBox.style.display = 'none';
+        startBtn.disabled = false;
+        startBtn.textContent = '▶ Begin Assessment';
+        statusBadge.textContent = 'Ready';
+        statusBadge.className = 'challenge-status';
+        // Focus on response area
+        if (state.isVoiceMode) {
           voiceTranscript.textContent = '🎙️ Speak or type your response here...';
           voiceTranscript.style.color = '#8a8680';
           voiceTranscript.style.fontStyle = 'italic';
         } else {
           textInput.value = '';
+          textInput.focus();
         }
-        
-        recordingIndicator.style.display = 'none';
-        startBtn.disabled = selectedScenario === null;
-        startBtn.textContent = '▶ Take Challenge';
-        startBtn.style.opacity = '1';
-        statusBadge.textContent = 'Ready';
-        statusBadge.style.color = '#8a8680';
-        wordCountDisplay.textContent = '0 words';
-        
-        voiceModeBtn.style.opacity = '1';
-        textModeBtn.style.opacity = '1';
-        voiceModeBtn.style.cursor = 'pointer';
-        textModeBtn.style.cursor = 'pointer';
-      }
-
-      // ---------- WORD COUNT ----------
-      function updateWordCount(text) {
-        const words = text.trim().split(/\s+/).filter(function(w) { return w.length > 0; });
-        wordCountDisplay.textContent = words.length + ' words';
-        return words.length;
-      }
-
-      // ---------- TEXT INPUT ----------
-      textInput.addEventListener('input', function() {
-        if (isChallengeActive) {
-          updateWordCount(this.value);
-        }
+        document.getElementById('attemptSummary').textContent = 'Attempt ' + (state.currentAttempt + 1) + ' of 3';
       });
 
-      // ---------- ANALYZE (AI Placeholder) ----------
-      function analyzeResponse() {
-        isAnalyzing = true;
-        statusBadge.textContent = '🧠 Analyzing...';
-        statusBadge.style.color = '#b8943c';
-        
-        let responseText = '';
-        if (isVoiceMode) {
-          responseText = voiceTranscript.textContent.replace('🎙️ Listening...', '').replace('🎙️ Speak or type your response here...', '').trim();
-          if (responseText === '' || responseText === '🎙️ Speak or type your response here...') {
-            responseText = 'No response detected. Try again.';
-          }
-        } else {
-          responseText = textInput.value.trim();
-          if (responseText === '') {
-            responseText = 'No response typed. Try again.';
-          }
+      function showAllAttemptsSummary() {
+        // This could show a detailed breakdown of all attempts
+        // For now, just scroll to results and show the latest
+        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Show the last attempt
+        if (state.attemptData.length > 0) {
+          displayResults(state.attemptData.length - 1);
         }
-        
-        setTimeout(function() {
-          var scores = generateScores(responseText);
-          displayResults(responseText, scores);
-          isAnalyzing = false;
-          statusBadge.textContent = '✅ Analyzed';
-          statusBadge.style.color = '#16a34a';
-        }, 1500);
+        alert('You\'ve completed all 3 attempts! Your best score: ' + Math.round(state.bestScore) + '\nTry a new scenario to keep improving.');
       }
 
-      // ---------- SCORE GENERATION (Replace with AI) ----------
-      function generateScores(text) {
-        var wordCount = text.split(/\s+/).length;
-        var hasStructure = /first|second|finally|next|then|firstly|secondly/.test(text);
-        var hasClearAsk = /\?|please|recommend|suggest|propose|request/.test(text);
-        var hasNumbers = /\d/.test(text);
-        var hasConfidence = /I believe|I know|I'm confident|I'm sure|I think/.test(text);
-        var hasImpact = /deliver|achieve|result|outcome|success|goal/.test(text);
-        
-        return {
-          clarity: Math.min(92, Math.max(35, 55 + (hasClearAsk ? 22 : 0) + (wordCount > 15 ? 8 : 0) + Math.floor(Math.random() * 10))),
-          precision: Math.min(92, Math.max(30, 45 + (hasNumbers ? 25 : 0) + (wordCount > 20 ? 8 : 0) + Math.floor(Math.random() * 10))),
-          structure: Math.min(92, Math.max(25, 35 + (hasStructure ? 30 : 0) + (wordCount > 20 ? 8 : 0) + Math.floor(Math.random() * 10))),
-          impact: Math.min(92, Math.max(30, 45 + (hasImpact ? 20 : 0) + (hasClearAsk ? 12 : 0) + Math.floor(Math.random() * 10))),
-          influence: Math.min(92, Math.max(25, 35 + (hasConfidence ? 22 : 0) + (hasClearAsk ? 18 : 0) + Math.floor(Math.random() * 10)))
-        };
-      }
-
-      // ---------- DISPLAY RESULTS ----------
-      function displayResults(response, scores) {
-        resultsContainer.style.display = 'block';
-        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        
-        var dimensions = ['Clarity', 'Precision', 'Structure', 'Impact', 'Influence'];
-        dimensions.forEach(function(dim, index) {
-          var key = dim.toLowerCase();
-          var score = scores[key] || 50;
-          setTimeout(function() {
-            document.getElementById('score' + dim).textContent = score;
-            document.getElementById('bar' + dim).style.width = score + '%';
-          }, index * 100);
-        });
-        
-        displayFeedback(scores);
-        
-        if (selectedScenario !== null) {
-          displayBetterVersion(selectedScenario, response);
-        }
-      }
-
-      function displayFeedback(scores) {
-        var list = document.getElementById('feedbackList');
-        var items = [];
-        
-        if (scores.clarity < 65) {
-          items.push('⚠️ <strong>Unclear</strong> — Your main point isn\'t obvious. State your core message upfront.');
-        } else if (scores.clarity < 80) {
-          items.push('🟡 <strong>Moderately Clear</strong> — Your point is there, but could be sharper.');
-        } else {
-          items.push('✅ <strong>Clear</strong> — Your main point comes through effectively.');
-        }
-        
-        if (scores.precision < 65) {
-          items.push('⚠️ <strong>Vague</strong> — Use specific numbers, dates, or concrete examples.');
-        } else if (scores.precision < 80) {
-          items.push('🟡 <strong>Somewhat Precise</strong> — Add more specific details.');
-        } else {
-          items.push('✅ <strong>Precise</strong> — Good use of specific details.');
-        }
-        
-        if (scores.structure < 65) {
-          items.push('⚠️ <strong>Scattered</strong> — Try: Context → Problem → Solution → Ask.');
-        } else if (scores.structure < 80) {
-          items.push('🟡 <strong>Partly Structured</strong> — Could be more organized.');
-        } else {
-          items.push('✅ <strong>Structured</strong> — Clear logical flow.');
-        }
-        
-        if (scores.impact < 65) {
-          items.push('⚠️ <strong>Forgettable</strong> — What\'s the one thing you want them to remember?');
-        } else if (scores.impact < 80) {
-          items.push('🟡 <strong>Moderate Impact</strong> — End with a strong closing statement.');
-        } else {
-          items.push('✅ <strong>Impactful</strong> — Memorable and leaves a strong impression.');
-        }
-        
-        if (scores.influence < 65) {
-          items.push('⚠️ <strong>Uncompelling</strong> — Add a clear call to action.');
-        } else if (scores.influence < 80) {
-          items.push('🟡 <strong>Somewhat Compelling</strong> — Strengthen your ask.');
-        } else {
-          items.push('✅ <strong>Influential</strong> — Compelling case with clear action.');
-        }
-        
-        list.innerHTML = items.map(function(item) {
-          return '<li style="padding: 6px 0; border-bottom: 1px solid #f5f2ed; line-height: 1.6;">' + item + '</li>';
-        }).join('');
-      }
-
-      function displayBetterVersion(scenarioIndex, original) {
-        var scenario = scenarios[scenarioIndex];
-        document.getElementById('betterVersion').textContent = scenario.better;
-        
-        var whyList = document.getElementById('betterWhyList');
-        whyList.innerHTML = 
-          '<li style="padding: 3px 0;">• <strong>Clarity:</strong> States the main point immediately</li>' +
-          '<li style="padding: 3px 0;">• <strong>Structure:</strong> Follows a logical flow: Context → Action → Ask</li>' +
-          '<li style="padding: 3px 0;">• <strong>Influence:</strong> Ends with a clear, actionable question</li>' +
-          '<li style="padding: 3px 0;">• <strong>Precision:</strong> Uses specific, concrete language</li>';
-      }
-
-      // ---------- EVENT LISTENERS ----------
-      startBtn.addEventListener('click', startChallenge);
-      
-      resetBtn.addEventListener('click', function() {
-        resetChallenge();
-        resultsContainer.style.display = 'none';
-        questionDisplay.style.maxHeight = '0';
-        questionDisplay.style.padding = '0 32px';
-        scenarioContext.textContent = 'Select a scenario to begin.';
-        selectedScenario = null;
+      newScenarioBtn.addEventListener('click', function() {
+        // Reset everything and scroll to scenario selection
+        resultsSection.style.display = 'none';
+        state.selectedScenario = null;
+        state.currentAttempt = 0;
+        state.attemptData = [];
+        state.bestScore = null;
+        state.isComplete = false;
         startBtn.disabled = true;
-        scenarioBtns.forEach(function(b) {
+        scenarioContext.textContent = 'Select a scenario to begin.';
+        questionDisplay.textContent = 'Select a scenario to see your challenge.';
+        scenarioBtns.forEach(b => {
+          b.classList.remove('active');
           b.style.borderColor = '#ede8e0';
-          b.style.background = '#ffffff';
         });
+        resetChallenge();
+        updateAttemptDisplay();
+        document.getElementById('attemptSummary').textContent = 'Attempt 1 of 3';
+        // Scroll to scenario grid
+        document.querySelector('.experience-grid').scrollIntoView({ behavior: 'smooth' });
       });
 
-      // ---------- KEYBOARD SHORTCUTS ----------
+      // ============================================================
+      // KEYBOARD SHORTCUTS
+      // ============================================================
       document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey && isChallengeActive && !isVoiceMode) {
+        if (e.key === 'Enter' && !e.shiftKey && state.isChallengeActive && !state.isVoiceMode) {
           e.preventDefault();
           endChallenge();
         }
       });
 
-      // ---------- INIT ----------
+      // ============================================================
+      // INIT
+      // ============================================================
       function init() {
         initSpeechRecognition();
         updateTimerDisplay();
+        updateAttemptDisplay();
+        // Hide results initially
+        resultsSection.style.display = 'none';
       }
-      
+
       init();
 
-    })();
-
-    // ===== LOGIN MODAL =====
-    var signInBtn = document.getElementById('signInBtn');
-    var loginModal = document.getElementById('loginModal');
-    var loginModalClose = document.getElementById('loginModalClose');
-    var loginModalOverlay = document.getElementById('loginModalOverlay');
-    var loginForm = document.getElementById('loginForm');
-
-    if (signInBtn && loginModal) {
-      signInBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        loginModal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-      });
-
-      function closeLoginModal() {
-        loginModal.style.display = 'none';
-        document.body.style.overflow = '';
-        if (loginForm) loginForm.reset();
-        var errorEl = document.querySelector('.login-error');
-        if (errorEl) errorEl.style.display = 'none';
-      }
-
-      if (loginModalClose) {
-        loginModalClose.addEventListener('click', closeLoginModal);
-      }
-      
-      if (loginModalOverlay) {
-        loginModalOverlay.addEventListener('click', closeLoginModal);
-      }
-
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && loginModal.style.display === 'flex') {
-          closeLoginModal();
-        }
-      });
-
-      if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          var email = document.getElementById('loginEmail').value.trim();
-          var password = document.getElementById('loginPassword').value.trim();
-          var errorEl = document.querySelector('.login-error') || createErrorElement();
-          
-          if (!email || !password) {
-            errorEl.textContent = 'Please fill in all fields.';
-            errorEl.style.display = 'block';
-            return;
-          }
-          
-          errorEl.style.display = 'none';
-          var submitBtn = this.querySelector('.login-btn-primary');
-          submitBtn.disabled = true;
-          submitBtn.textContent = 'Logging in...';
-          
-          setTimeout(function() {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Log In →';
-            closeLoginModal();
-          }, 1500);
-        });
-      }
-
-      function createErrorElement() {
-        var error = document.createElement('div');
-        error.className = 'login-error';
-        error.style.cssText = 'color: #dc2626; font-size: 0.85rem; display: none; margin-top: 4px;';
-        var form = document.getElementById('loginForm');
-        if (form) {
-          form.insertBefore(error, form.querySelector('.login-btn-primary'));
-        }
-        return error;
-      }
-    }
-  });
-</script>
+    });
+  </script>
 </body>
 </html>
