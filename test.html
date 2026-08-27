@@ -3024,6 +3024,29 @@ newScenarioBtn.addEventListener('click', function() {
   document.querySelector('.experience-grid').scrollIntoView({ behavior: 'smooth' });
 });
 
+function displayBetterVersion(scenarioIndex, original) {
+    // Get the latest attempt result
+    var latestResult = attemptData[attemptData.length - 1];
+    
+    if (latestResult && latestResult.betterVersion) {
+        document.getElementById('betterVersion').textContent = latestResult.betterVersion;
+        
+        var whyList = document.getElementById('betterWhyList');
+        if (latestResult.whyItWorks && latestResult.whyItWorks.length > 0) {
+            whyList.innerHTML = latestResult.whyItWorks.map(function(item) {
+                return '<li style="padding: 3px 0;">• ' + item + '</li>';
+            }).join('');
+        } else {
+            whyList.innerHTML = 
+                '<li style="padding: 3px 0;">• <strong>Clarity:</strong> States the main point immediately</li>' +
+                '<li style="padding: 3px 0;">• <strong>Structure:</strong> Follows a logical flow: Context → Action → Ask</li>' +
+                '<li style="padding: 3px 0;">• <strong>Influence:</strong> Ends with a clear, actionable question</li>' +
+                '<li style="padding: 3px 0;">• <strong>Precision:</strong> Uses specific, concrete language</li>';
+        }
+    }
+}
+  
+
   // ---------- KEYBOARD SHORTCUTS ----------
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && !e.shiftKey && isChallengeActive && !isVoiceMode) {
