@@ -2228,31 +2228,28 @@
       title: "Project Delay",
       context: "Your team missed a key deadline. You need to update your manager.",
       question: "Your manager asks: 'What happened with the deadline, and what's your plan to fix it?' Respond in 45 seconds (voice) or 90 seconds (text).",
-      better: "We're behind on the project timeline due to unexpected technical dependencies. I've identified the bottlenecks and created a recovery plan. We can deliver by Friday if we reprioritize the backlog. I'll share the detailed plan after this meeting. Does that approach work for you?"
-    },
+          },
     {
       title: "Client Objection",
       context: "A client says your proposal is too expensive. You need to respond and keep the deal alive.",
       question: "The client says: 'Your price is 30% higher than your competitor's. Why should we go with you?' Respond in 45 seconds (voice) or 90 seconds (text).",
-      better: "I understand budget is a concern. Let me walk you through the ROI — this solution saves you 30% on operational costs within the first year. I can also offer a phased deployment to spread the cost. Would a 6-month payment plan work for your team?"
-    },
+          },
     {
       title: "Promotion Ask",
       context: "You want to ask your manager for a promotion. Draft your pitch.",
       question: "Your manager says: 'Tell me why you deserve a promotion right now.' Respond in 45 seconds (voice) or 90 seconds (text).",
-      better: "I'd like to discuss advancing to the next level. Over the past year, I've exceeded my targets by 20%, led two successful product launches, and taken on mentorship responsibilities. I believe I'm ready to take on more strategic ownership. Can we schedule time next week to discuss this?"
+      
     },
     {
       title: "Difficult Feedback",
       context: "You need to give constructive feedback to a teammate who's been underperforming.",
       question: "Your teammate asks: 'Is there anything I could be doing better?' Respond in 45 seconds (voice) or 90 seconds (text).",
-      better: "I want to discuss your recent deliverables. I've noticed a few inconsistencies in quality and missed deadlines. I know you're capable of great work — what support do you need from me to get back on track? Let's work together to improve this."
-    },
+          },
     {
       title: "Interview Question",
       context: "You're in a job interview. The interviewer asks the classic opening question.",
       question: "Interviewer: 'Tell me about yourself.' Respond in 45 seconds (voice) or 90 seconds (text).",
-      better: "I'm a product manager with 5 years of experience in fintech. I led the launch of a mobile banking app that grew to 200K users in 6 months. I specialize in bridging the gap between business goals and technical execution. I'm looking to bring that expertise to a scaling startup like yours."
+      
     }
   ];
 
@@ -2588,24 +2585,110 @@
   });
 
   // ---------- ANALYZE (AI Placeholder - Ready for Backend) ----------
-  function analyzeResponse() {
-    isAnalyzing = true;
-    statusBadge.textContent = '🧠 Analyzing...';
-    statusBadge.style.color = '#b8943c';
-    
-    let responseText = '';
-    if (isVoiceMode) {
-      responseText = voiceTranscript.textContent.replace('🎙️ Listening...', '').replace('🎙️ Speak or type your response here...', '').trim();
-      if (responseText === '' || responseText === '🎙️ Speak or type your response here...') {
-        responseText = 'No response detected. Try again.';
-      }
-    } else {
-      responseText = textInput.value.trim();
-      if (responseText === '') {
-        responseText = 'No response typed. Try again.';
-      }
+function analyzeResponse() {
+  isAnalyzing = true;
+  statusBadge.textContent = '🧠 Analyzing...';
+  statusBadge.style.color = '#b8943c';
+  
+  let responseText = '';
+  if (isVoiceMode) {
+    responseText = voiceTranscript.textContent.replace('🎙️ Listening...', '').replace('🎙️ Speak or type your response here...', '').trim();
+    if (responseText === '' || responseText === '🎙️ Speak or type your response here...') {
+      responseText = 'No response detected. Try again.';
     }
-    
+  } else {
+    responseText = textInput.value.trim();
+    if (responseText === '') {
+      responseText = 'No response typed. Try again.';
+    }
+  }
+  
+  // Build payload
+  const payload = {
+    scenario_id: selectedScenario,
+    attempts: [
+      {
+        attempt: currentAttempt + 1,
+        response: responseText,
+        mode: isVoiceMode ? 'voice' : 'text'
+      }
+    ]
+  };
+  
+  // ----- BACKEND CALL -----
+  fetch('https://your-backend-url.com/api/communication/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      // Get the latest attempt result
+      const latestResult = data.attempts[data.attempts.length - 1];
+      
+      // Store ALL data from backend (including betterVersion and whyItWorks)
+      const result = {
+        attempt: latestResult.attempt,
+        mode: latestResult.mode,
+        response: latestResult.response,
+        scores: latestResult.scores,
+        feedback: latestResult.feedback,
+        betterVersion: latestResult.betterVersion,     // ✅ FROM BACKEND/AI
+        whyItWorks: latestResult.whyItWorks            // ✅ FROM BACKEND/AI
+      };
+      
+      // Store in attemptData
+      if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
+        attemptData[attemptData.length - 1] = result;
+      } else {
+        attemptData.push(result);
+      }
+      
+      // Update best score
+      var avgScore = Object.values(result.scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+      if (bestScore === null || avgScore > bestScore) {
+        bestScore = avgScore;
+      }
+      
+      // Display results with AI data
+      displayResults(currentAttempt);
+      resultsContainer.style.display = 'block';
+      resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      currentAttempt++;
+      updateAttemptUI();
+      
+      // Check if all attempts done
+      if (currentAttempt >= maxAttempts) {
+        isComplete = true;
+        startBtn.disabled = true;
+        startBtn.textContent = '✅ All attempts used';
+        attemptsLeftText.textContent = 'All 3 attempts completed!';
+        tryAgainBtn.textContent = '🔄 View All Attempts';
+        
+        // Show persona reveal if available
+        if (data.persona) {
+          showPersonaReveal(data.persona);
+        }
+      } else {
+        var remaining = maxAttempts - currentAttempt;
+        attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
+      }
+      
+      isAnalyzing = false;
+      statusBadge.textContent = '✅ Analyzed';
+      statusBadge.style.color = '#16a34a';
+    } else {
+      throw new Error(data.message || 'Analysis failed');
+    }
+  })
+  .catch(function(error) {
+    console.error('API Error:', error);
+    // Fallback to mock
+    handleMockFallback(responseText);
+  });
+}
     // ----- BACKEND INTEGRATION POINT -----
     // Replace this setTimeout with your API call:
     /*
@@ -2703,100 +2786,73 @@
   }
 
   // ---------- DISPLAY RESULTS ----------
-  function displayResults(attemptIndex) {
-    var data = attemptData[attemptIndex];
-    if (!data) return;
-    
-    var scores = data.scores;
-    
-    // Update score cards
-    var dimensions = ['Clarity', 'Precision', 'Structure', 'Impact', 'Influence'];
-    dimensions.forEach(function(dim, index) {
-      var key = dim.toLowerCase();
-      var score = scores[key] || 50;
-      setTimeout(function() {
-        document.getElementById('score' + dim).textContent = score;
-        document.getElementById('bar' + dim).style.width = score + '%';
-      }, index * 100);
-    });
-    
-    // Update feedback
-    var list = document.getElementById('feedbackList');
-    var items = [];
-    
-    if (scores.clarity < 65) {
-      items.push('⚠️ <strong>Unclear</strong> — Your main point isn\'t obvious. State your core message upfront.');
-    } else if (scores.clarity < 80) {
-      items.push('🟡 <strong>Moderately Clear</strong> — Your point is there, but could be sharper.');
-    } else {
-      items.push('✅ <strong>Clear</strong> — Your main point comes through effectively.');
-    }
-    
-    if (scores.precision < 65) {
-      items.push('⚠️ <strong>Vague</strong> — Use specific numbers, dates, or concrete examples.');
-    } else if (scores.precision < 80) {
-      items.push('🟡 <strong>Somewhat Precise</strong> — Add more specific details.');
-    } else {
-      items.push('✅ <strong>Precise</strong> — Good use of specific details.');
-    }
-    
-    if (scores.structure < 65) {
-      items.push('⚠️ <strong>Scattered</strong> — Try: Context → Problem → Solution → Ask.');
-    } else if (scores.structure < 80) {
-      items.push('🟡 <strong>Partly Structured</strong> — Could be more organized.');
-    } else {
-      items.push('✅ <strong>Structured</strong> — Clear logical flow.');
-    }
-    
-    if (scores.impact < 65) {
-      items.push('⚠️ <strong>Forgettable</strong> — What\'s the one thing you want them to remember?');
-    } else if (scores.impact < 80) {
-      items.push('🟡 <strong>Moderate Impact</strong> — End with a strong closing statement.');
-    } else {
-      items.push('✅ <strong>Impactful</strong> — Memorable and leaves a strong impression.');
-    }
-    
-    if (scores.influence < 65) {
-      items.push('⚠️ <strong>Uncompelling</strong> — Add a clear call to action.');
-    } else if (scores.influence < 80) {
-      items.push('🟡 <strong>Somewhat Compelling</strong> — Strengthen your ask.');
-    } else {
-      items.push('✅ <strong>Influential</strong> — Compelling case with clear action.');
-    }
-    
-    list.innerHTML = items.map(function(item) {
+function displayResults(attemptIndex) {
+  var data = attemptData[attemptIndex];
+  if (!data) return;
+  
+  var scores = data.scores;
+  
+  // Update score cards
+  var dimensions = ['Clarity', 'Precision', 'Structure', 'Impact', 'Influence'];
+  dimensions.forEach(function(dim, index) {
+    var key = dim.toLowerCase();
+    var score = scores[key] || 50;
+    setTimeout(function() {
+      document.getElementById('score' + dim).textContent = score;
+      document.getElementById('bar' + dim).style.width = score + '%';
+    }, index * 100);
+  });
+  
+  // Update feedback - FROM BACKEND/AI
+  var list = document.getElementById('feedbackList');
+  if (data.feedback && data.feedback.length > 0) {
+    list.innerHTML = data.feedback.map(function(item) {
       return '<li style="padding: 6px 0; border-bottom: 1px solid #f5f2ed; line-height: 1.6;">' + item + '</li>';
     }).join('');
-    
-    // Update better version
-    if (data.betterVersion) {
-      document.getElementById('betterVersion').textContent = data.betterVersion;
-      var whyList = document.getElementById('betterWhyList');
-      whyList.innerHTML = 
-        '<li style="padding: 3px 0;">• <strong>Clarity:</strong> States the main point immediately</li>' +
-        '<li style="padding: 3px 0;">• <strong>Structure:</strong> Follows a logical flow: Context → Action → Ask</li>' +
-        '<li style="padding: 3px 0;">• <strong>Influence:</strong> Ends with a clear, actionable question</li>' +
-        '<li style="padding: 3px 0;">• <strong>Precision:</strong> Uses specific, concrete language</li>';
-    }
-    
-    // Update improvement
-    if (attemptData.length > 1) {
-      var firstAvg = Object.values(attemptData[0].scores).reduce(function(a, b) { return a + b; }, 0) / 5;
-      var currentAvg = Object.values(scores).reduce(function(a, b) { return a + b; }, 0) / 5;
-      var diff = Math.round(currentAvg - firstAvg);
-      improvementBox.style.display = 'block';
-      improvementScore.textContent = (diff > 0 ? '+' : '') + diff;
-      improvementText.textContent = 'points ' + (diff >= 0 ? 'improvement' : 'decline') + ' from your first attempt';
-      if (diff > 0) {
-        improvementScore.style.color = '#16a34a';
-      } else if (diff < 0) {
-        improvementScore.style.color = '#dc2626';
-      } else {
-        improvementScore.style.color = '#b8943c';
-      }
+  } else {
+    list.innerHTML = '<li style="padding: 6px 0; color: #8a8680; font-style: italic;">No feedback available.</li>';
+  }
+  
+  // Update Better Version - FROM BACKEND/AI
+  if (data.betterVersion) {
+    document.getElementById('betterVersion').textContent = data.betterVersion;
+  } else {
+    document.getElementById('betterVersion').textContent = 'No improved version available.';
+  }
+  
+  // Update Why It Works - FROM BACKEND/AI
+  var whyList = document.getElementById('betterWhyList');
+  if (data.whyItWorks && data.whyItWorks.length > 0) {
+    whyList.innerHTML = data.whyItWorks.map(function(item) {
+      return '<li style="padding: 3px 0;">• ' + item + '</li>';
+    }).join('');
+  } else {
+    whyList.innerHTML = 
+      '<li style="padding: 3px 0; color: #8a8680; font-style: italic;">No breakdown available.</li>';
+  }
+  
+  // Update improvement
+  if (attemptData.length > 1) {
+    var firstAvg = Object.values(attemptData[0].scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+    var currentAvg = Object.values(scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+    var diff = Math.round(currentAvg - firstAvg);
+    improvementBox.style.display = 'block';
+    improvementScore.textContent = (diff > 0 ? '+' : '') + diff;
+    improvementText.textContent = 'points ' + (diff >= 0 ? 'improvement' : 'decline') + ' from your first attempt';
+    if (diff > 0) {
+      improvementScore.style.color = '#16a34a';
+    } else if (diff < 0) {
+      improvementScore.style.color = '#dc2626';
     } else {
-      improvementBox.style.display = 'none';
+      improvementScore.style.color = '#b8943c';
     }
+  } else {
+    improvementBox.style.display = 'none';
+  }
+  
+  attemptSummary.textContent = 'Attempt ' + (attemptIndex + 1) + ' of 3';
+}
+
     
     // Update attempt summary
     attemptSummary.textContent = 'Attempt ' + (attemptIndex + 1) + ' of 3';
@@ -2859,63 +2915,78 @@ function updateAttemptUI() {
 }
 
 // ---------- SHOW PERSONA REVEAL ----------
-function showPersonaReveal() {
-  // Calculate strongest and weakest dimensions from all attempts
-  if (attemptData.length < 3) return;
-  
-  // Aggregate scores across all attempts
-  var dims = ['clarity', 'precision', 'structure', 'impact', 'influence'];
-  var labels = {
-    clarity: 'CLARITY',
-    precision: 'PRECISION',
-    structure: 'STRUCTURE',
-    impact: 'IMPACT',
-    influence: 'INFLUENCE'
-  };
-  var descs = {
-    clarity: 'You tend to make your core message understandable once you commit to it.',
-    precision: 'You use specific, concrete language that leaves little room for ambiguity.',
-    structure: 'You organize your thoughts in a logical, easy-to-follow sequence.',
-    impact: 'Your messages have a lasting impression on those who hear them.',
-    influence: 'You have a natural ability to persuade and move others to action.'
-  };
-  var growthDescs = {
-    clarity: 'Sometimes you state your point so directly that nuance gets lost.',
-    precision: 'You can get so specific that you miss the bigger picture.',
-    structure: 'Your structure can become rigid, making you less adaptable in conversation.',
-    impact: 'Your strong delivery can sometimes overwhelm softer messages.',
-    influence: 'You explain your position well, but your strongest recommendation sometimes arrives too softly.'
-  };
-  
-  var totals = {};
-  dims.forEach(function(d) {
-    totals[d] = 0;
+function showPersonaReveal(personaData) {
+  // If personaData is passed from backend, use it
+  if (personaData) {
+    revealStrength.textContent = personaData.strength_label || 'CLARITY';
+    revealStrengthDesc.textContent = personaData.strength_desc || 'You tend to make your core message understandable once you commit to it.';
+    revealGrowth.textContent = personaData.growth_label || 'INFLUENCE';
+    revealGrowthDesc.textContent = personaData.growth_desc || 'You explain your position well, but your strongest recommendation sometimes arrives too softly.';
+    revealPersonaName.textContent = personaData.name || 'The Translator';
+    revealPersonaDesc.textContent = personaData.description || 'You make complexity make sense.';
+  } else {
+    // Fallback: calculate from attempts
+    if (attemptData.length < 3) return;
+    
+    var dims = ['clarity', 'precision', 'structure', 'impact', 'influence'];
+    var totals = { clarity: 0, precision: 0, structure: 0, impact: 0, influence: 0 };
     attemptData.forEach(function(entry) {
-      if (entry.scores && entry.scores[d] !== undefined) {
-        totals[d] += entry.scores[d];
+      if (entry.scores) {
+        dims.forEach(function(d) {
+          totals[d] += entry.scores[d] || 0;
+        });
       }
     });
-  });
+    
+    var strongest = dims.reduce(function(a, b) { return totals[a] > totals[b] ? a : b; });
+    var weakest = dims.reduce(function(a, b) { return totals[a] < totals[b] ? a : b; });
+    
+    var labels = {
+      clarity: 'CLARITY',
+      precision: 'PRECISION',
+      structure: 'STRUCTURE',
+      impact: 'IMPACT',
+      influence: 'INFLUENCE'
+    };
+    
+    var descs = {
+      clarity: 'You tend to make your core message understandable once you commit to it.',
+      precision: 'You use specific, concrete language that leaves little room for ambiguity.',
+      structure: 'You organize your thoughts in a logical, easy-to-follow sequence.',
+      impact: 'Your messages have a lasting impression on those who hear them.',
+      influence: 'You have a natural ability to persuade and move others to action.'
+    };
+    
+    var growthDescs = {
+      clarity: 'Sometimes you state your point so directly that nuance gets lost.',
+      precision: 'You can get so specific that you miss the bigger picture.',
+      structure: 'Your structure can become rigid, making you less adaptable in conversation.',
+      impact: 'Your strong delivery can sometimes overwhelm softer messages.',
+      influence: 'You explain your position well, but your strongest recommendation sometimes arrives too softly.'
+    };
+    
+    var personaMap = {
+      clarity: { name: 'The Translator', desc: 'You make complexity make sense.' },
+      precision: { name: 'The Articulator', desc: 'You speak with clarity and command.' },
+      structure: { name: 'The Architect', desc: 'You build ideas that stand firm.' },
+      impact: { name: 'The Amplifier', desc: 'Your presence makes ideas unforgettable.' },
+      influence: { name: 'The Catalyst', desc: 'You move people to action.' }
+    };
+    
+    var persona = personaMap[strongest] || personaMap.clarity;
+    
+    revealStrength.textContent = labels[strongest] || 'CLARITY';
+    revealStrengthDesc.textContent = descs[strongest] || 'You tend to make your core message understandable.';
+    revealGrowth.textContent = labels[weakest] || 'INFLUENCE';
+    revealGrowthDesc.textContent = growthDescs[weakest] || 'Your strongest recommendation sometimes arrives too softly.';
+    revealPersonaName.textContent = persona.name;
+    revealPersonaDesc.textContent = persona.desc;
+  }
   
-  // Find strongest and weakest
-  var strongest = dims.reduce(function(a, b) { return totals[a] > totals[b] ? a : b; });
-  var weakest = dims.reduce(function(a, b) { return totals[a] < totals[b] ? a : b; });
-  
-  // Update reveal UI
-  revealStrength.textContent = labels[strongest] || 'CLARITY';
-  revealStrengthDesc.textContent = descs[strongest] || 'You tend to make your core message understandable.';
-  revealGrowth.textContent = labels[weakest] || 'INFLUENCE';
-  revealGrowthDesc.textContent = growthDescs[weakest] || 'Your strongest recommendation sometimes arrives too softly.';
-  
-  // Persona mapping based on strongest dimension
-  var personaMap = {
-    clarity: { name: 'The Translator', desc: 'You make complexity make sense.' },
-    precision: { name: 'The Articulator', desc: 'You speak with clarity and command.' },
-    structure: { name: 'The Architect', desc: 'You build ideas that stand firm.' },
-    impact: { name: 'The Amplifier', desc: 'Your presence makes ideas unforgettable.' },
-    influence: { name: 'The Catalyst', desc: 'You move people to action.' }
-  };
-  
+  personaReveal.style.display = 'block';
+  personaReveal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  resultsContainer.style.display = 'none';
+}
   var persona = personaMap[strongest] || personaMap.clarity;
   revealPersonaName.textContent = persona.name;
   revealPersonaDesc.textContent = persona.desc;
