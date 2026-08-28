@@ -274,6 +274,9 @@
       animation: blink 0.8s step-end infinite;
       vertical-align: text-bottom;
     }
+    .hero .rotating-pair .inner-voice .cursor.hidden {
+      display: none;
+    }
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
@@ -427,25 +430,6 @@
       overflow: hidden;
       margin: 30px 0;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
-    }
-    .practice-section .glow-bg {
-      position: absolute;
-      border-radius: 50%;
-      pointer-events: none;
-    }
-    .practice-section .glow-bg-1 {
-      width: 400px;
-      height: 400px;
-      background: rgba(184, 148, 60, 0.02);
-      top: -200px;
-      right: -200px;
-    }
-    .practice-section .glow-bg-2 {
-      width: 300px;
-      height: 300px;
-      background: rgba(184, 148, 60, 0.015);
-      bottom: -100px;
-      left: -100px;
     }
 
     .practice-section .section-header {
@@ -1388,35 +1372,35 @@
         <div class="rotating-pair">
           <div class="pain-label">RAMBLING → CONCISE</div>
           <div class="inner-voice" data-text='"I take too long to get to the point."'>
-            <span class="typing-text"></span><span class="cursor"></span>
+            <span class="typing-text"></span>
           </div>
         </div>
         <!-- 2: UNCLEAR -->
         <div class="rotating-pair">
           <div class="pain-label">UNCLEAR → PRECISION</div>
           <div class="inner-voice" data-text='"I know what I mean, but it doesn\'t come out that way."'>
-            <span class="typing-text"></span><span class="cursor"></span>
+            <span class="typing-text"></span>
           </div>
         </div>
         <!-- 3: SCATTERED -->
         <div class="rotating-pair">
           <div class="pain-label">SCATTERED → STRUCTURE</div>
           <div class="inner-voice" data-text='"My ideas come out all over the place."'>
-            <span class="typing-text"></span><span class="cursor"></span>
+            <span class="typing-text"></span>
           </div>
         </div>
         <!-- 4: FORGETTABLE -->
         <div class="rotating-pair">
           <div class="pain-label">FORGETTABLE → IMPACT</div>
           <div class="inner-voice" data-text='"I get my point across, but it doesn\'t leave an impression."'>
-            <span class="typing-text"></span><span class="cursor"></span>
+            <span class="typing-text"></span>
           </div>
         </div>
         <!-- 5: UNCOMPELLING -->
         <div class="rotating-pair">
           <div class="pain-label">UNCOMPELLING → INFLUENCE</div>
           <div class="inner-voice" data-text='"People hear my words, but they don\'t feel the message."'>
-            <span class="typing-text"></span><span class="cursor"></span>
+            <span class="typing-text"></span>
           </div>
         </div>
       </div>
@@ -1458,9 +1442,6 @@
   <!-- ================================================================ -->
   <section class="container" id="practice">
     <div class="practice-section">
-      <div class="glow-bg glow-bg-1"></div>
-      <div class="glow-bg glow-bg-2"></div>
-
       <div class="section-header">
         <span class="badge">⚡ Try It Now</span>
         <h2 class="heading-lg">See How <span class="text-gold">You Actually Come</span> Across</h2>
@@ -1895,57 +1876,55 @@
       // ================================================================
       const rotatingPairs = document.querySelectorAll('.rotating-pair');
       
-      rotatingPairs.forEach((pair, index) => {
+      rotatingPairs.forEach((pair) => {
         const innerVoice = pair.querySelector('.inner-voice');
         const text = innerVoice.getAttribute('data-text') || '';
         const typingSpan = innerVoice.querySelector('.typing-text');
-        const cursor = innerVoice.querySelector('.cursor');
         
         let charIndex = 0;
         let isTyping = false;
+        let interval = null;
         
-        // Start typing when this pair becomes visible
         function startTyping() {
           if (isTyping) return;
           isTyping = true;
           charIndex = 0;
           typingSpan.textContent = '';
           
-          const interval = setInterval(() => {
+          interval = setInterval(() => {
             if (charIndex < text.length) {
               typingSpan.textContent += text.charAt(charIndex);
               charIndex++;
             } else {
               clearInterval(interval);
+              interval = null;
               isTyping = false;
-              // Keep cursor blinking
             }
-          }, 40); // Typing speed - fast enough to create anxiety
+          }, 45);
         }
         
-        // Reset typing when pair fades out
         function resetTyping() {
+          if (interval) {
+            clearInterval(interval);
+            interval = null;
+          }
           isTyping = false;
           charIndex = 0;
           typingSpan.textContent = '';
         }
         
-        // Observe visibility changes using animation events
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-              const style = window.getComputedStyle(pair);
-              const opacity = parseFloat(style.opacity);
-              const transform = style.transform;
-              
-              if (opacity > 0.5 && transform.includes('translateY(0px)')) {
-                // This pair is visible - start typing
-                setTimeout(startTyping, 400);
-              } else if (opacity < 0.1) {
-                resetTyping();
-              }
-            }
-          });
+        // Observe visibility changes
+        const observer = new MutationObserver(() => {
+          const style = window.getComputedStyle(pair);
+          const opacity = parseFloat(style.opacity);
+          const transform = style.transform;
+          
+          if (opacity > 0.5 && transform.includes('translateY(0px)')) {
+            // This pair is visible - start typing
+            setTimeout(startTyping, 300);
+          } else if (opacity < 0.1) {
+            resetTyping();
+          }
         });
         
         observer.observe(pair, { attributes: true, attributeFilter: ['style'] });
@@ -1956,7 +1935,7 @@
           const opacity = parseFloat(style.opacity);
           const transform = style.transform;
           if (opacity > 0.5 && transform.includes('translateY(0px)')) {
-            setTimeout(startTyping, 600);
+            setTimeout(startTyping, 500);
           }
         }, 500);
       });
