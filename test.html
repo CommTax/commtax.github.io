@@ -50,6 +50,7 @@
       max-width: 420px;
       margin: 0 auto;
       animation: floatIn 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
     }
 
     @keyframes floatIn {
@@ -86,17 +87,15 @@
       line-height: 1.6;
     }
 
-    /* Glow accent */
     .auth-card::before {
       content: '';
       position: absolute;
-      top: -2px;
+      top: -1px;
       left: 50%;
       transform: translateX(-50%);
       width: 60%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #c8a97e, transparent);
-      opacity: 0.4;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200, 169, 126, 0.3), transparent);
     }
 
     .form-group {
@@ -175,7 +174,6 @@
       color: #f5d6a8;
     }
 
-    /* Skip button */
     .skip-auth {
       display: flex;
       align-items: center;
@@ -396,9 +394,8 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #c8a97e, transparent);
-      opacity: 0.3;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200, 169, 126, 0.2), transparent);
     }
     .step-card.active {
       display: block;
@@ -467,6 +464,7 @@
       line-height: 1.4;
       position: relative;
       overflow: hidden;
+      user-select: none;
     }
     .option-btn::after {
       content: '';
@@ -812,7 +810,6 @@
       }
     }
 
-    /* Scrollbar styling */
     ::-webkit-scrollbar {
       width: 4px;
     }
@@ -1506,7 +1503,7 @@
         case 2:
           return state.profile.goal !== null;
         case 3:
-          return state.profile.context.situation !== null;
+          return state.profile.context.situation !== null && state.profile.context.situation !== undefined;
         case 4:
           return state.profile.focus.length > 0;
         default:
@@ -1550,6 +1547,7 @@
         }
       } catch (e) {}
 
+      // STEP 1: Identity
       document.querySelectorAll('#identityOptions .option-btn').forEach(btn => {
         btn.addEventListener('click', function() {
           document.querySelectorAll('#identityOptions .option-btn').forEach(b => b.classList.remove('selected'));
@@ -1576,6 +1574,7 @@
         goToStep(2);
       });
 
+      // STEP 2: Goal
       document.querySelectorAll('#goalOptions .option-btn').forEach(btn => {
         btn.addEventListener('click', function() {
           document.querySelectorAll('#goalOptions .option-btn').forEach(b => b.classList.remove('selected'));
@@ -1590,16 +1589,19 @@
         goToStep(3);
       });
 
+      // STEP 3: Context - handled in renderContextStep
       document.getElementById('step3Next').addEventListener('click', function() {
         if (!state.profile.context.situation) return;
         goToStep(4);
       });
 
+      // STEP 4: Focus
       document.getElementById('step4Next').addEventListener('click', function() {
         if (state.profile.focus.length === 0) return;
         goToStep(5);
       });
 
+      // STEP 5: Final
       document.getElementById('step5Next').addEventListener('click', function() {
         try {
           localStorage.setItem('unspokenProfile', JSON.stringify(state.profile));
@@ -1655,24 +1657,44 @@
 
       container.innerHTML = html;
 
+      // --- FIX: Proper event handling for context options ---
       const contextOptions = container.querySelectorAll('.context-option');
       const followUpDiv = container.querySelector('#contextFollowUp');
       const followUpInput = container.querySelector('#contextFollowUpInput');
 
+      // Function to update state and enable button
+      function updateContextSelection(value, label) {
+        state.profile.context.situation = value;
+        state.profile.context.situationLabel = label || value;
+        document.getElementById('step3Next').disabled = false;
+      }
+
       contextOptions.forEach(btn => {
         btn.addEventListener('click', function() {
+          // Deselect all
           contextOptions.forEach(b => b.classList.remove('selected'));
+          // Select this
           this.classList.add('selected');
-          state.profile.context.situation = this.dataset.value;
-          state.profile.context.situationLabel = this.textContent.trim();
+
+          const value = this.dataset.value;
+          const label = this.textContent.trim();
+
+          // Update state
+          updateContextSelection(value, label);
+
+          // Show follow-up if it exists
           if (followUpDiv) {
             followUpDiv.style.display = 'block';
             if (followUpInput) {
               followUpInput.value = '';
-              if (this.dataset.value.startsWith('other-')) followUpInput.focus();
+              state.profile.context.detail = '';
+              if (value.startsWith('other-')) {
+                followUpInput.focus();
+              }
             }
           }
-          if (followUpInput) state.profile.context.detail = followUpInput.value || '';
+
+          // Ensure button is enabled
           document.getElementById('step3Next').disabled = false;
         });
       });
@@ -1683,12 +1705,15 @@
         });
       }
 
+      // Pre-select if already selected
       if (state.profile.context.situation) {
         contextOptions.forEach(btn => {
           if (btn.dataset.value === state.profile.context.situation) {
             btn.classList.add('selected');
             document.getElementById('step3Next').disabled = false;
-            if (followUpDiv) followUpDiv.style.display = 'block';
+            if (followUpDiv) {
+              followUpDiv.style.display = 'block';
+            }
             if (followUpInput && state.profile.context.detail) {
               followUpInput.value = state.profile.context.detail;
             }
