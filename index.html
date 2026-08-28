@@ -265,21 +265,8 @@
       font-style: italic;
       min-height: 60px;
     }
-    .hero .rotating-pair .inner-voice .cursor {
-      display: inline-block;
-      width: 2px;
-      height: 1.1em;
-      background: #b8943c;
-      margin-left: 2px;
-      animation: blink 0.8s step-end infinite;
-      vertical-align: text-bottom;
-    }
-    .hero .rotating-pair .inner-voice .cursor.hidden {
-      display: none;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
+    .hero .rotating-pair .inner-voice .typing-text {
+      display: inline;
     }
     
     .hero .rotating-pair:nth-child(1) { animation-delay: 0s; }
@@ -1872,72 +1859,93 @@
     document.addEventListener('DOMContentLoaded', function() {
 
       // ================================================================
-      // TYPING ANIMATION FOR HERO
+      // TYPING ANIMATION FOR HERO - SIMPLIFIED & RELIABLE
       // ================================================================
       const rotatingPairs = document.querySelectorAll('.rotating-pair');
+      const allTypingTexts = document.querySelectorAll('.typing-text');
       
-      rotatingPairs.forEach((pair) => {
+      // Store all text data
+      const textData = [];
+      rotatingPairs.forEach((pair, index) => {
         const innerVoice = pair.querySelector('.inner-voice');
         const text = innerVoice.getAttribute('data-text') || '';
-        const typingSpan = innerVoice.querySelector('.typing-text');
+        const typingSpan = pair.querySelector('.typing-text');
+        textData.push({
+          element: typingSpan,
+          text: text,
+          pair: pair,
+          isTyping: false,
+          interval: null,
+          charIndex: 0
+        });
+      });
+
+      // Function to start typing for a specific pair
+      function startTypingForPair(index) {
+        const data = textData[index];
+        if (!data || data.isTyping) return;
         
-        let charIndex = 0;
-        let isTyping = false;
-        let interval = null;
+        data.isTyping = true;
+        data.charIndex = 0;
+        data.element.textContent = '';
         
-        function startTyping() {
-          if (isTyping) return;
-          isTyping = true;
-          charIndex = 0;
-          typingSpan.textContent = '';
-          
-          interval = setInterval(() => {
-            if (charIndex < text.length) {
-              typingSpan.textContent += text.charAt(charIndex);
-              charIndex++;
-            } else {
-              clearInterval(interval);
-              interval = null;
-              isTyping = false;
-            }
-          }, 45);
-        }
-        
-        function resetTyping() {
-          if (interval) {
-            clearInterval(interval);
-            interval = null;
+        data.interval = setInterval(() => {
+          if (data.charIndex < data.text.length) {
+            data.element.textContent += data.text.charAt(data.charIndex);
+            data.charIndex++;
+          } else {
+            clearInterval(data.interval);
+            data.interval = null;
+            data.isTyping = false;
           }
-          isTyping = false;
-          charIndex = 0;
-          typingSpan.textContent = '';
-        }
+        }, 45);
+      }
+
+      // Function to reset typing for a specific pair
+      function resetTypingForPair(index) {
+        const data = textData[index];
+        if (!data) return;
         
-        // Observe visibility changes
-        const observer = new MutationObserver(() => {
+        if (data.interval) {
+          clearInterval(data.interval);
+          data.interval = null;
+        }
+        data.isTyping = false;
+        data.charIndex = 0;
+        data.element.textContent = '';
+      }
+
+      // Check which pair is visible and trigger typing
+      function checkAndStartTyping() {
+        rotatingPairs.forEach((pair, index) => {
           const style = window.getComputedStyle(pair);
           const opacity = parseFloat(style.opacity);
           const transform = style.transform;
           
+          // Check if this pair is visible (opacity > 0.5 and not translated up)
           if (opacity > 0.5 && transform.includes('translateY(0px)')) {
-            // This pair is visible - start typing
-            setTimeout(startTyping, 300);
+            // This pair is visible - start typing if not already
+            if (!textData[index].isTyping && textData[index].element.textContent === '') {
+              setTimeout(() => startTypingForPair(index), 300);
+            }
           } else if (opacity < 0.1) {
-            resetTyping();
+            // This pair is hidden - reset
+            resetTypingForPair(index);
           }
         });
-        
-        observer.observe(pair, { attributes: true, attributeFilter: ['style'] });
-        
-        // Initial check
-        setTimeout(() => {
-          const style = window.getComputedStyle(pair);
-          const opacity = parseFloat(style.opacity);
-          const transform = style.transform;
-          if (opacity > 0.5 && transform.includes('translateY(0px)')) {
-            setTimeout(startTyping, 500);
-          }
-        }, 500);
+      }
+
+      // Initial check after page loads
+      setTimeout(checkAndStartTyping, 800);
+
+      // Check every time animation might change
+      setInterval(checkAndStartTyping, 1000);
+
+      // Also check on animation iteration
+      rotatingPairs.forEach((pair) => {
+        pair.addEventListener('animationiteration', () => {
+          setTimeout(checkAndStartTyping, 100);
+        });
       });
 
       // ================================================================
@@ -1985,7 +1993,6 @@
           bestScore = null;
           isComplete = false;
           resultsContainer.style.display = 'none';
-          updateAttemptUI();
           resetChallenge();
           goToSlide(index);
         });
@@ -2375,7 +2382,6 @@
         resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         currentAttempt++;
-        updateAttemptUI();
 
         if (currentAttempt >= maxAttempts) {
           isComplete = true;
@@ -2507,10 +2513,6 @@
         attemptSummary.textContent = 'Attempt ' + (attemptIndex + 1) + ' of 3';
       }
 
-      function updateAttemptUI() {
-        // Hidden - only used internally
-      }
-
       function showPersonaReveal(personaData) {
         if (attemptData.length < 3) return;
 
@@ -2581,7 +2583,6 @@
         attemptData = [];
         bestScore = null;
         isComplete = false;
-        updateAttemptUI();
         tryAgainBtn.textContent = '🔄 Try Again';
         personaReveal.style.display = 'none';
       });
@@ -2637,7 +2638,6 @@
         questionDisplay.classList.remove('open');
         scenarioCards.forEach(function(c) { c.classList.remove('selected'); });
         resetChallenge();
-        updateAttemptUI();
         tryAgainBtn.textContent = '🔄 Try Again';
         goToSlide(0);
       });
@@ -2655,7 +2655,6 @@
       function init() {
         initSpeechRecognition();
         updateTimerDisplay();
-        updateAttemptUI();
         resultsContainer.style.display = 'none';
       }
 
