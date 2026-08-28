@@ -891,4 +891,424 @@
       ],
       leadership: [
         { value: 'leadership-presence', label: 'Leadership presence' },
-        { value: 'executive-presence', label: '
+        { value: 'executive-presence', label: 'Executive presence' },
+        { value: 'influence', label: 'Influencing teams' },
+        { value: 'storytelling', label: 'Strategic storytelling' }
+      ],
+      difficult: [
+        { value: 'confidence', label: 'Confidence in tough moments' },
+        { value: 'difficult-questions', label: 'Handling difficult questions' },
+        { value: 'conciseness', label: 'Being concise under pressure' },
+        { value: 'influence', label: 'Finding common ground' }
+      ],
+      negotiation: [
+        { value: 'confidence', label: 'Confidence in negotiation' },
+        { value: 'persuasion', label: 'Persuasion & leverage' },
+        { value: 'difficult-questions', label: 'Handling objections' },
+        { value: 'influence', label: 'Creating win-win outcomes' }
+      ],
+      general: [
+        { value: 'confidence', label: 'General confidence' },
+        { value: 'conciseness', label: 'Being concise' },
+        { value: 'storytelling', label: 'Storytelling' },
+        { value: 'influence', label: 'Influence' }
+      ]
+    };
+
+    // ================================================================
+    // DOM REFS
+    // ================================================================
+    const stepCards = document.querySelectorAll('.step-card');
+    const progressDots = document.querySelectorAll('.progress-dot');
+    const progressLines = document.querySelectorAll('.progress-line');
+
+    // ================================================================
+    // NAVIGATION
+    // ================================================================
+    function goToStep(step) {
+      if (step < 1 || step > 5) return;
+
+      // Validate before moving forward
+      if (step > state.currentStep) {
+        if (!validateStep(state.currentStep)) return;
+      }
+
+      state.currentStep = step;
+
+      // Update cards
+      stepCards.forEach((card, i) => {
+        const stepNum = parseInt(card.dataset.step);
+        card.classList.toggle('active', stepNum === step);
+      });
+
+      // Update progress
+      progressDots.forEach((dot, i) => {
+        const dotStep = parseInt(dot.dataset.step);
+        dot.classList.remove('active', 'completed');
+        if (dotStep === step) dot.classList.add('active');
+        else if (dotStep < step) dot.classList.add('completed');
+      });
+
+      progressLines.forEach((line, i) => {
+        line.classList.toggle('completed', i < step - 1);
+      });
+
+      // Render context step if needed
+      if (step === 3) renderContextStep();
+      if (step === 4) renderFocusStep();
+      if (step === 5) renderProfileStep();
+
+      // Scroll to top of card
+      const activeCard = document.querySelector('.step-card.active');
+      if (activeCard) {
+        activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function validateStep(step) {
+      switch (step) {
+        case 1:
+          return state.profile.identity !== null;
+        case 2:
+          return state.profile.goal !== null;
+        case 3:
+          return state.profile.context.situation !== null && state.profile.context.situation !== undefined;
+        case 4:
+          return state.profile.focus.length > 0;
+        default:
+          return true;
+      }
+    }
+
+    // ================================================================
+    // STEP 1: IDENTITY
+    // ================================================================
+    const identityOptions = document.querySelectorAll('#identityOptions .option-btn');
+    const otherIdentityInput = document.getElementById('otherIdentityInput');
+    const otherIdentityText = document.getElementById('otherIdentityText');
+
+    identityOptions.forEach(btn => {
+      btn.addEventListener('click', function() {
+        identityOptions.forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+
+        const value = this.dataset.value;
+        state.profile.identity = value;
+
+        if (value === 'other') {
+          otherIdentityInput.style.display = 'block';
+          otherIdentityText.focus();
+        } else {
+          otherIdentityInput.style.display = 'none';
+          state.profile.identityOther = null;
+        }
+
+        document.getElementById('step1Next').disabled = false;
+      });
+    });
+
+    otherIdentityText.addEventListener('input', function() {
+      state.profile.identityOther = this.value.trim() || null;
+      document.getElementById('step1Next').disabled = !this.value.trim();
+    });
+
+    document.getElementById('step1Next').addEventListener('click', function() {
+      if (state.profile.identity === 'other' && !state.profile.identityOther) return;
+      goToStep(2);
+    });
+
+    // ================================================================
+    // STEP 2: GOAL
+    // ================================================================
+    const goalOptions = document.querySelectorAll('#goalOptions .option-btn');
+
+    goalOptions.forEach(btn => {
+      btn.addEventListener('click', function() {
+        goalOptions.forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        state.profile.goal = this.dataset.value;
+        document.getElementById('step2Next').disabled = false;
+      });
+    });
+
+    document.getElementById('step2Next').addEventListener('click', function() {
+      if (!state.profile.goal) return;
+      goToStep(3);
+    });
+
+    // ================================================================
+    // STEP 3: CONTEXT
+    // ================================================================
+    function renderContextStep() {
+      const container = document.getElementById('contextContainer');
+      const goal = state.profile.goal;
+      const config = contextConfigs[goal];
+
+      if (!config) {
+        container.innerHTML = `
+          <div class="form-group">
+            <label>Tell us more about your situation</label>
+            <textarea id="contextCustom" rows="3" style="width:100%;padding:12px 16px;border:2px solid #ede8e0;border-radius:12px;font-family:inherit;background:#faf8f5;resize:vertical;" placeholder="Describe your communication context..."></textarea>
+          </div>
+        `;
+        document.getElementById('step3Next').disabled = false;
+        return;
+      }
+
+      let html = `
+        <p style="font-weight:600;margin-bottom:12px;font-size:0.95rem;">${config.title}</p>
+        <p style="color:#6e6a62;font-size:0.85rem;margin-bottom:16px;">${config.desc}</p>
+        <div class="option-grid single-col" id="contextOptions">
+      `;
+
+      config.options.forEach(opt => {
+        html += `
+          <button class="option-btn context-option" data-value="${opt.value}">
+            <span>${opt.label}</span>
+          </button>
+        `;
+      });
+
+      html += `</div>`;
+
+      if (config.followUp && config.followUp.input) {
+        html += `
+          <div id="contextFollowUp" style="margin-top:16px;display:none;">
+            <div class="form-group">
+              <label>${config.followUp.label}</label>
+              <input type="text" id="contextFollowUpInput" placeholder="${config.followUp.placeholder}" />
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+
+      // Event listeners for context options
+      const contextOptions = container.querySelectorAll('.context-option');
+      const followUpDiv = container.querySelector('#contextFollowUp');
+      const followUpInput = container.querySelector('#contextFollowUpInput');
+
+      contextOptions.forEach(btn => {
+        btn.addEventListener('click', function() {
+          contextOptions.forEach(b => b.classList.remove('selected'));
+          this.classList.add('selected');
+
+          const value = this.dataset.value;
+          state.profile.context.situation = value;
+          state.profile.context.situationLabel = this.textContent.trim();
+
+          // Show follow-up if it's an "other" or if config has followUp
+          if (followUpDiv) {
+            const isOther = value.startsWith('other-');
+            followUpDiv.style.display = isOther ? 'block' : 'block';
+            if (followUpInput) {
+              followUpInput.value = '';
+              if (isOther) followUpInput.focus();
+            }
+          }
+
+          // Store context value
+          if (followUpInput) {
+            state.profile.context.detail = followUpInput.value || '';
+          }
+
+          document.getElementById('step3Next').disabled = false;
+        });
+      });
+
+      if (followUpInput) {
+        followUpInput.addEventListener('input', function() {
+          state.profile.context.detail = this.value || '';
+        });
+      }
+
+      // Pre-select if already selected
+      if (state.profile.context.situation) {
+        contextOptions.forEach(btn => {
+          if (btn.dataset.value === state.profile.context.situation) {
+            btn.classList.add('selected');
+            document.getElementById('step3Next').disabled = false;
+            if (followUpDiv) followUpDiv.style.display = 'block';
+            if (followUpInput && state.profile.context.detail) {
+              followUpInput.value = state.profile.context.detail;
+            }
+          }
+        });
+      }
+
+      // Update title/desc
+      document.getElementById('step3Title').textContent = config.title || 'Define your context';
+      document.getElementById('step3Desc').textContent = config.desc || 'Tell us more about your specific situation.';
+    }
+
+    document.getElementById('step3Next').addEventListener('click', function() {
+      if (!state.profile.context.situation) return;
+      goToStep(4);
+    });
+
+    // ================================================================
+    // STEP 4: FOCUS
+    // ================================================================
+    function renderFocusStep() {
+      const container = document.getElementById('focusOptions');
+      const goal = state.profile.goal;
+      const options = focusMap[goal] || focusMap.general;
+
+      // Clear and rebuild
+      container.innerHTML = '';
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.dataset.value = opt.value;
+        btn.innerHTML = `
+          <span>${opt.label}</span>
+        `;
+        btn.addEventListener('click', function() {
+          this.classList.toggle('selected');
+          const value = this.dataset.value;
+          if (this.classList.contains('selected')) {
+            if (!state.profile.focus.includes(value)) {
+              state.profile.focus.push(value);
+            }
+          } else {
+            state.profile.focus = state.profile.focus.filter(v => v !== value);
+          }
+          document.getElementById('step4Next').disabled = state.profile.focus.length === 0;
+        });
+        container.appendChild(btn);
+      });
+
+      // Pre-select if already selected
+      state.profile.focus.forEach(fv => {
+        container.querySelectorAll('.option-btn').forEach(btn => {
+          if (btn.dataset.value === fv) {
+            btn.classList.add('selected');
+          }
+        });
+      });
+
+      document.getElementById('step4Next').disabled = state.profile.focus.length === 0;
+    }
+
+    document.getElementById('step4Next').addEventListener('click', function() {
+      if (state.profile.focus.length === 0) return;
+      goToStep(5);
+    });
+
+    // ================================================================
+    // STEP 5: PROFILE
+    // ================================================================
+    function renderProfileStep() {
+      const p = state.profile;
+
+      // Summary
+      const summary = document.getElementById('profileSummary');
+      const identityDisplay = p.identity === 'other' ? p.identityOther : p.identity;
+      const identityLabels = {
+        student: 'Student',
+        'early-career': 'Early-career professional',
+        senior: 'Senior professional / Leader',
+        freelancer: 'Freelancer / Independent professional',
+        building: 'Building my communication'
+      };
+      const goalLabels = {
+        interview: 'Interview & introductions',
+        confidence: 'Speaking with confidence',
+        clarity: 'Explaining ideas clearly',
+        presenting: 'Presenting & storytelling',
+        influencing: 'Influencing & persuading',
+        leadership: 'Leadership communication',
+        difficult: 'Difficult conversations',
+        negotiation: 'Negotiation & asking for more',
+        general: 'General communication growth'
+      };
+
+      const focusLabels = {
+        confidence: 'Answering confidently',
+        conciseness: 'Being concise',
+        storytelling: 'Telling compelling stories',
+        'difficult-questions': 'Handling difficult questions',
+        introduction: 'Making a memorable introduction',
+        'leadership-presence': 'Showing leadership presence',
+        persuasion: 'Persuading the other person',
+        'executive-presence': 'Executive presence',
+        influence: 'Influence & impact'
+      };
+
+      summary.innerHTML = `
+        <div class="summary-item"><span class="summary-label">Who you are</span><span class="summary-value">${identityLabels[identityDisplay] || identityDisplay || 'Not specified'}</span></div>
+        <div class="summary-item"><span class="summary-label">Your primary goal</span><span class="summary-value">${goalLabels[p.goal] || p.goal || 'Not specified'}</span></div>
+        <div class="summary-item"><span class="summary-label">Your context</span><span class="summary-value">${p.context.situationLabel || p.context.situation || 'Not specified'}</span></div>
+        ${p.context.detail ? `<div class="summary-item"><span class="summary-label">Additional detail</span><span class="summary-value">${p.context.detail}</span></div>` : ''}
+        <div class="summary-item"><span class="summary-label">Practice focus</span><span class="summary-value">${p.focus.map(f => focusLabels[f] || f).join(', ')}</span></div>
+      `;
+
+      // Dashboard preview
+      document.getElementById('previewName').textContent = 'You';
+      document.getElementById('previewMission').textContent = `Your current mission: ${goalLabels[p.goal] || p.goal || 'Communication growth'}`;
+      document.getElementById('previewGrowthEdge').textContent = 'Clarity → Influence';
+
+      const focusContainer = document.getElementById('previewFocus');
+      focusContainer.innerHTML = p.focus.map(f => `<span>${focusLabels[f] || f}</span>`).join('');
+
+      // Enable final button
+      document.getElementById('step5Next').addEventListener('click', function() {
+        // Store profile in localStorage for persistence
+        try {
+          localStorage.setItem('unspokenProfile', JSON.stringify(state.profile));
+        } catch (e) {}
+
+        // Redirect to practice dashboard
+        alert('🎉 Your Communication Practice Profile is ready!\n\nYou\'ll now be redirected to your personalized practice dashboard.');
+        // window.location.href = 'dashboard.html';
+      });
+    }
+
+    // ================================================================
+    // INIT
+    // ================================================================
+    // Load saved profile if exists
+    try {
+      const saved = localStorage.getItem('unspokenProfile');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        Object.assign(state.profile, parsed);
+        // Auto-fill step 1 selections
+        if (state.profile.identity) {
+          identityOptions.forEach(btn => {
+            if (btn.dataset.value === state.profile.identity) {
+              btn.classList.add('selected');
+              document.getElementById('step1Next').disabled = false;
+            }
+          });
+          if (state.profile.identity === 'other' && state.profile.identityOther) {
+            otherIdentityInput.style.display = 'block';
+            otherIdentityText.value = state.profile.identityOther;
+          }
+        }
+        if (state.profile.goal) {
+          goalOptions.forEach(btn => {
+            if (btn.dataset.value === state.profile.goal) {
+              btn.classList.add('selected');
+              document.getElementById('step2Next').disabled = false;
+            }
+          });
+        }
+        if (state.profile.focus.length > 0) {
+          document.getElementById('step4Next').disabled = false;
+        }
+        // Go to step 5 if profile is complete
+        if (state.profile.identity && state.profile.goal && state.profile.context.situation && state.profile.focus.length >
+          0) {
+          goToStep(5);
+        }
+      }
+    } catch (e) {}
+
+    console.log('🎯 The Unspoken · Communication Practice Profile');
+    console.log('📋 Profile state:', state.profile);
+  </script>
+
+</body>
+</html>
