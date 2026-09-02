@@ -2609,6 +2609,84 @@ function analyzeResponse() {
     }
   }
 
+    // --- Build attempts array with ALL attempts ---
+  const attempts = [];
+    // Add previous attempts from attemptData
+  attemptData.forEach(function(prevAttempt) {
+    attempts.push({
+      attempt: prevAttempt.attempt,
+      response: prevAttempt.response,
+      mode: prevAttempt.mode || 'text'
+    });
+  });
+
+      // Add current attempt
+  attempts.push({
+    attempt: currentAttempt + 1,
+    response: responseText,
+    mode: isVoiceMode ? 'voice' : 'text'
+  });
+
+  // --- SIMPLE PAYLOAD - Matches backend exactly ---
+  const payload = {
+    scenario_id: selectedScenario,
+    attempts: attempts
+  };
+
+  console.log('📤 Sending to backend:', JSON.stringify(payload, null, 2));
+
+
+  // ----- BACKEND CALL -----
+  // REPLACE with your actual Render URL
+  const BACKEND_URL = 'https://unspoken-backend.onrender.com'; // ← CHANGE THIS TO YOUR URL
+  
+  fetch(BACKEND_URL + '/api/communication/analyze', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(res => {
+    console.log('📥 Response status:', res.status);
+    if (!res.ok) {
+      throw new Error('API returned ' + res.status + ': ' + res.statusText);
+    }
+    return res.json();
+  })
+  .then(data => {
+    console.log('✅ Backend response:', data);
+    
+    if (data.success) {
+      // Get the latest attempt result from backend
+      const latestAttempt = data.attempts[data.attempts.length - 1];
+      
+      // Create result object from backend data
+      const result = {
+        attempt: currentAttempt + 1,
+        mode: isVoiceMode ? 'voice' : 'text',
+        response: responseText,
+        scores: latestAttempt.scores,
+        feedback: latestAttempt.feedback,
+        betterVersion: latestAttempt.betterVersion,
+        whyItWorks: latestAttempt.whyItWorks || []
+      };
+      
+      handleAnalysisResult(result, data);
+    } else {
+      throw new Error(data.message || 'Analysis failed');
+    }
+  })
+  .catch(function(error) {
+    console.error('❌ Backend Error:', error);
+    console.log('⚠️ Falling back to mock analysis');
+    statusBadge.textContent = '⚠️ Using fallback analysis';
+    statusBadge.style.color = '#dc2626';
+    // Fallback to mock
+    handleMockAnalysis(responseText);
+  });
+}
+  
   // Build enhanced payload with coaching context
   const payload = {
     // Core data
@@ -2678,7 +2756,7 @@ function analyzeResponse() {
   };
 
   // ----- BACKEND CALL WITH COACHING PROMPTS -----
-  fetch('https://your-backend-url.com/api/communication/analyze', {
+  fetch('https://unspoken-backend.onrender.com/api/communication/analyze', {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
@@ -2716,8 +2794,9 @@ function analyzeResponse() {
   });
 }
 
+
 // Modified to handle both API and mock results
-function handleAnalysisResult(result) {
+        function handleAnalysisResult(result, backendData) {
   // Store in attemptData
   if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
     attemptData[attemptData.length - 1] = result;
@@ -2739,8 +2818,8 @@ function handleAnalysisResult(result) {
   currentAttempt++;
   updateAttemptUI();
 
-  // Check if all attempts done
-  if (currentAttempt >= maxAttempts) {
+  // Check if all attempts done - use backend's is_complete flag
+  if (backendData && backendData.is_complete) {
     isComplete = true;
     startBtn.disabled = true;
     startBtn.textContent = '✅ All attempts used';
@@ -2749,15 +2828,20 @@ function handleAnalysisResult(result) {
     
     // Show attempt tracking now that all attempts are complete
     document.getElementById('attemptTrackingWrapper').style.display = 'flex';
-  } else {
-    var remaining = maxAttempts - currentAttempt;
+    
+    // Show persona from backend
+    if (backendData.persona) {
+      showPersonaReveal(backendData.persona);
+    }
+  } else if (backendData) {
+    var remaining = backendData.attempts_remaining || (maxAttempts - currentAttempt);
     attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
   }
 
   isAnalyzing = false;
   statusBadge.textContent = '✅ Analyzed';
   statusBadge.style.color = '#16a34a';
-}      
+}   
 
         // ---------- SCORE GENERATION (Replace with AI) ----------
         function generateScores(text) {
