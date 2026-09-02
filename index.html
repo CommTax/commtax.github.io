@@ -2589,121 +2589,119 @@ function updateAttemptUI() {
           }
         });
 
-        // ---------- ANALYZE (Backend Integration) ----------
-        function analyzeResponse() {
-          isAnalyzing = true;
-          statusBadge.textContent = '🧠 Analyzing...';
-          statusBadge.style.color = '#b8943c';
+// ---------- ANALYZE (Backend Integration) ----------
+function analyzeResponse() {
+  isAnalyzing = true;
+  statusBadge.textContent = '🧠 Analyzing...';
+  statusBadge.style.color = '#b8943c';
 
-          let responseText = '';
-          if (isVoiceMode) {
-            responseText = voiceTranscript.textContent.replace('🎙️ Listening...', '').replace(
-              '🎙️ Speak or type your response here...', '').trim();
-            if (responseText === '' || responseText === '🎙️ Speak or type your response here...') {
-              responseText = 'No response detected. Try again.';
-            }
-          } else {
-            responseText = textInput.value.trim();
-            if (responseText === '') {
-              responseText = 'No response typed. Try again.';
-            }
-          }
+  let responseText = '';
+  if (isVoiceMode) {
+    responseText = voiceTranscript.textContent.replace('🎙️ Listening...', '').replace(
+      '🎙️ Speak or type your response here...', '').trim();
+    if (responseText === '' || responseText === '🎙️ Speak or type your response here...') {
+      responseText = 'No response detected. Try again.';
+    }
+  } else {
+    responseText = textInput.value.trim();
+    if (responseText === '') {
+      responseText = 'No response typed. Try again.';
+    }
+  }
 
-          // Build payload for backend
-          const payload = {
-            scenario_id: selectedScenario,
-            attempts: [{
-              attempt: currentAttempt + 1,
-              response: responseText,
-              mode: isVoiceMode ? 'voice' : 'text'
-            }]
-          };
+  // Build payload for backend
+  const payload = {
+    scenario_id: selectedScenario,
+    response: responseText,
+    attempt: currentAttempt + 1,
+    mode: isVoiceMode ? 'voice' : 'text',
+    previous_attempts: attemptData // Send all previous attempts for context
+  };
 
-          // ----- BACKEND CALL -----
-          // Uncomment this when backend is ready:
-          /*
-          fetch('https://your-backend-url.com/api/communication/analyze', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          })
-          .then(res => res.json())
-          .then(data => {
-            if (data.success) {
-              handleAnalysisResult(data);
-            } else {
-              throw new Error(data.message || 'Analysis failed');
-            }
-          })
-          .catch(function(error) {
-            console.error('API Error:', error);
-            handleMockAnalysis(responseText);
-          });
-          */
+  // ----- BACKEND CALL - ACTIVE -----
+  fetch('https://your-backend-url.com/api/communication/analyze', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      // 'Authorization': 'Bearer ' + getAuthToken() // If you need auth
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(res => {
+    if (!res.ok) {
+      throw new Error('API returned ' + res.status);
+    }
+    return res.json();
+  })
+  .then(data => {
+    if (data.success) {
+      // Store the result from your backend
+      const result = {
+        attempt: currentAttempt + 1,
+        mode: isVoiceMode ? 'voice' : 'text',
+        response: responseText,
+        scores: data.scores, // Should contain clarity, precision, structure, impact, influence
+        feedback: data.feedback, // Array of feedback items
+        betterVersion: data.better_version || data.betterVersion,
+        whyItWorks: data.why_it_works || data.whyItWorks || []
+      };
+      
+      handleAnalysisResult(result);
+    } else {
+      throw new Error(data.message || 'Analysis failed');
+    }
+  })
+  .catch(function(error) {
+    console.error('API Error:', error);
+    // Fallback to mock if API fails
+    statusBadge.textContent = '⚠️ Using fallback analysis';
+    statusBadge.style.color = '#dc2626';
+    handleMockAnalysis(responseText);
+  });
+}
 
-          // ----- MOCK (Remove when backend is ready) -----
-          setTimeout(function() {
-            handleMockAnalysis(responseText);
-          }, 1500);
-        }
+// Modified to handle both API and mock results
+function handleAnalysisResult(result) {
+  // Store in attemptData
+  if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
+    attemptData[attemptData.length - 1] = result;
+  } else {
+    attemptData.push(result);
+  }
 
-        // ---------- MOCK ANALYSIS (Replace with backend) ----------
-        function handleMockAnalysis(responseText) {
-          var scores = generateScores(responseText);
-          var feedback = generateFeedback(scores);
+  // Update best score
+  var avgScore = Object.values(result.scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+  if (bestScore === null || avgScore > bestScore) {
+    bestScore = avgScore;
+  }
 
-          var result = {
-            attempt: currentAttempt + 1,
-            mode: isVoiceMode ? 'voice' : 'text',
-            response: responseText,
-            scores: scores,
-            feedback: feedback,
-            betterVersion: generateBetterVersion(responseText, selectedScenario),
-            whyItWorks: [
-              "Clarity: States the main point immediately",
-              "Structure: Follows a logical flow: Context → Action → Ask",
-              "Influence: Ends with a clear, actionable question",
-              "Precision: Uses specific, concrete language"
-            ]
-          };
+  // Display results
+  displayResults(currentAttempt);
+  resultsContainer.style.display = 'block';
+  resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-          // Store in attemptData
-          if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
-            attemptData[attemptData.length - 1] = result;
-          } else {
-            attemptData.push(result);
-          }
+  currentAttempt++;
+  updateAttemptUI();
 
-          // Update best score
-          var avgScore = Object.values(result.scores).reduce(function(a, b) { return a + b; }, 0) / 5;
-          if (bestScore === null || avgScore > bestScore) {
-            bestScore = avgScore;
-          }
+  // Check if all attempts done
+  if (currentAttempt >= maxAttempts) {
+    isComplete = true;
+    startBtn.disabled = true;
+    startBtn.textContent = '✅ All attempts used';
+    attemptsLeftText.textContent = 'All 3 attempts completed!';
+    tryAgainBtn.textContent = '🔄 View All Attempts';
+    
+    // Show attempt tracking now that all attempts are complete
+    document.getElementById('attemptTrackingWrapper').style.display = 'flex';
+  } else {
+    var remaining = maxAttempts - currentAttempt;
+    attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
+  }
 
-          // Display results
-          displayResults(currentAttempt);
-          resultsContainer.style.display = 'block';
-          resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-          currentAttempt++;
-          updateAttemptUI();
-
-          // Check if all attempts done
-          if (currentAttempt >= maxAttempts) {
-            isComplete = true;
-            startBtn.disabled = true;
-            startBtn.textContent = '✅ All attempts used';
-            attemptsLeftText.textContent = 'All 3 attempts completed!';
-            tryAgainBtn.textContent = '🔄 View All Attempts';
-          } else {
-            var remaining = maxAttempts - currentAttempt;
-            attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
-          }
-
-          isAnalyzing = false;
-          statusBadge.textContent = '✅ Analyzed';
-          statusBadge.style.color = '#16a34a';
-        }
+  isAnalyzing = false;
+  statusBadge.textContent = '✅ Analyzed';
+  statusBadge.style.color = '#16a34a';
+}      
 
         // ---------- SCORE GENERATION (Replace with AI) ----------
         function generateScores(text) {
