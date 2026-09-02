@@ -2796,7 +2796,15 @@ function analyzeResponse() {
 
 
 // Modified to handle both API and mock results
-        function handleAnalysisResult(result, backendData) {
+
+// ============================================================
+// HANDLE ANALYSIS RESULT - Place this after the analyzeResponse function
+// ============================================================
+
+function handleAnalysisResult(result, backendData) {
+  console.log('📊 Handling analysis result for attempt:', result.attempt);
+  console.log('📦 Backend data received:', backendData);
+  
   // Store in attemptData
   if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
     attemptData[attemptData.length - 1] = result;
@@ -2831,6 +2839,7 @@ function analyzeResponse() {
     
     // Show persona from backend
     if (backendData.persona) {
+      console.log('🎭 Persona from backend:', backendData.persona);
       showPersonaReveal(backendData.persona);
     }
   } else if (backendData) {
@@ -2841,9 +2850,8 @@ function analyzeResponse() {
   isAnalyzing = false;
   statusBadge.textContent = '✅ Analyzed';
   statusBadge.style.color = '#16a34a';
-}   
-
-        // ---------- SCORE GENERATION (Replace with AI) ----------
+}
+         // ---------- SCORE GENERATION (Replace with AI) ----------
         function generateScores(text) {
           var wordCount = text.split(/\s+/).length;
           var hasStructure = /first|second|finally|next|then|firstly|secondly/.test(text);
