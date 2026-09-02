@@ -2123,64 +2123,46 @@
     </div>
   </footer>
 
-  <!-- ===== JAVASCRIPT ===== -->
+  <!-- ===== JAVASCRIPT - FIXED VERSION ===== -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-// Add this to the DOMContentLoaded event listener
+      // ===== CAROUSEL CONTROLS =====
+      (function() {
+        const carousel = document.getElementById('scenarioCarousel');
+        const prevBtn = document.getElementById('carouselPrev');
+        const nextBtn = document.getElementById('carouselNext');
+        const dots = document.querySelectorAll('.carousel-dot');
+        let currentSlide = 0;
+        const totalSlides = 2;
 
-// ===== CAROUSEL CONTROLS =====
-(function() {
-  const carousel = document.getElementById('scenarioCarousel');
-  const prevBtn = document.getElementById('carouselPrev');
-  const nextBtn = document.getElementById('carouselNext');
-  const dots = document.querySelectorAll('.carousel-dot');
-  let currentSlide = 0;
-  const totalSlides = 2;
+        function updateCarousel(index) {
+          currentSlide = index;
+          carousel.style.transform = 'translateX(-' + (index * 100) + '%)';
+          dots.forEach(function(dot, i) {
+            dot.style.background = i === index ? '#b8943c' : '#ede8e0';
+          });
+        }
 
-  function updateCarousel(index) {
-    currentSlide = index;
-    carousel.style.transform = 'translateX(-' + (index * 100) + '%)';
-    dots.forEach(function(dot, i) {
-      dot.style.background = i === index ? '#b8943c' : '#ede8e0';
-    });
-  }
+        if (prevBtn) {
+          prevBtn.addEventListener('click', function() {
+            updateCarousel((currentSlide - 1 + totalSlides) % totalSlides);
+          });
+        }
 
-  if (prevBtn) {
-    prevBtn.addEventListener('click', function() {
-      updateCarousel((currentSlide - 1 + totalSlides) % totalSlides);
-    });
-  }
+        if (nextBtn) {
+          nextBtn.addEventListener('click', function() {
+            updateCarousel((currentSlide + 1) % totalSlides);
+          });
+        }
 
-  if (nextBtn) {
-    nextBtn.addEventListener('click', function() {
-      updateCarousel((currentSlide + 1) % totalSlides);
-    });
-  }
+        dots.forEach(function(dot) {
+          dot.addEventListener('click', function() {
+            updateCarousel(parseInt(this.dataset.index));
+          });
+        });
+      })();
 
-  dots.forEach(function(dot) {
-    dot.addEventListener('click', function() {
-      updateCarousel(parseInt(this.dataset.index));
-    });
-  });
-})();
-
-// Modify the updateAttemptUI function to show/hide attempt tracking
-function updateAttemptUI() {
-  const attemptWrapper = document.getElementById('attemptTrackingWrapper');
-  const remaining = maxAttempts - currentAttempt;
-  
-  // Show attempt tracking only when all 3 attempts are done OR after first attempt
-  if (attemptData.length > 0) {
-    attemptWrapper.style.display = 'flex';
-  } else {
-    attemptWrapper.style.display = 'none';
-  }
-  
-  currentAttemptDisplay.textContent = Math.min(currentAttempt + 1, maxAttempts);
-  // ... rest of existing code ...
-}
-      
       // ===== STACKED CARDS SCROLL EFFECT =====
       (function() {
         const cards = document.querySelectorAll('.stacked-card');
@@ -2246,7 +2228,6 @@ function updateAttemptUI() {
           title: "Promotion Ask",
           context: "You want to ask your manager for a promotion. Draft your pitch.",
           question: "Your manager says: 'Tell me why you deserve a promotion right now.'"
-
         }, {
           title: "Difficult Feedback",
           context: "You need to give constructive feedback to a teammate who's been underperforming.",
@@ -2255,7 +2236,6 @@ function updateAttemptUI() {
           title: "Interview Question",
           context: "You're in a job interview. The interviewer asks the classic opening question.",
           question: "Interviewer: 'Tell me about yourself.'"
-
         }];
 
         // ---------- DOM ELEMENTS ----------
@@ -2589,318 +2569,265 @@ function updateAttemptUI() {
           }
         });
 
-// ---------- ANALYZE (Backend Integration) ----------
-function analyzeResponse() {
-  isAnalyzing = true;
-  statusBadge.textContent = '🧠 Analyzing...';
-  statusBadge.style.color = '#b8943c';
+        // ---------- ANALYZE (Backend Integration) ----------
+        function analyzeResponse() {
+          isAnalyzing = true;
+          statusBadge.textContent = '🧠 Analyzing...';
+          statusBadge.style.color = '#b8943c';
 
-  let responseText = '';
-  if (isVoiceMode) {
-    responseText = voiceTranscript.textContent.replace('🎙️ Listening...', '').replace(
-      '🎙️ Speak or type your response here...', '').trim();
-    if (responseText === '' || responseText === '🎙️ Speak or type your response here...') {
-      responseText = 'No response detected. Try again.';
-    }
-  } else {
-    responseText = textInput.value.trim();
-    if (responseText === '') {
-      responseText = 'No response typed. Try again.';
-    }
-  }
+          let responseText = '';
+          if (isVoiceMode) {
+            responseText = voiceTranscript.textContent.replace('🎙️ Listening...', '').replace(
+              '🎙️ Speak or type your response here...', '').trim();
+            if (responseText === '' || responseText === '🎙️ Speak or type your response here...') {
+              responseText = 'No response detected. Try again.';
+            }
+          } else {
+            responseText = textInput.value.trim();
+            if (responseText === '') {
+              responseText = 'No response typed. Try again.';
+            }
+          }
 
-  // --- Build attempts array with ALL attempts ---
-  const attempts = [];
-  
-  // Add previous attempts from attemptData
-  attemptData.forEach(function(prevAttempt) {
-    attempts.push({
-      attempt: prevAttempt.attempt,
-      response: prevAttempt.response,
-      mode: prevAttempt.mode || 'text'
-    });
-  });
-  
-  // Add current attempt
-  attempts.push({
-    attempt: currentAttempt + 1,
-    response: responseText,
-    mode: isVoiceMode ? 'voice' : 'text'
-  });
+          // --- Build attempts array with ALL attempts ---
+          const attempts = [];
+          
+          // Add previous attempts from attemptData
+          attemptData.forEach(function(prevAttempt) {
+            attempts.push({
+              attempt: prevAttempt.attempt,
+              response: prevAttempt.response,
+              mode: prevAttempt.mode || 'text'
+            });
+          });
+          
+          // Add current attempt
+          attempts.push({
+            attempt: currentAttempt + 1,
+            response: responseText,
+            mode: isVoiceMode ? 'voice' : 'text'
+          });
 
-  // --- ENHANCED PAYLOAD WITH COACHING INSTRUCTIONS ---
-  const payload = {
-    scenario_id: selectedScenario,
-    attempts: attempts,
-    
-    // Coaching Instructions
-    coaching_instructions: {
-      analysis_dimensions: [
-        {
-          name: 'clarity',
-          description: 'How clearly the main point comes across. Is the core message immediately understandable?'
-        },
-        {
-          name: 'precision', 
-          description: 'How specific and concrete the language is. Are there vague statements that could be more specific?'
-        },
-        {
-          name: 'structure',
-          description: 'How well the response is organized. Is there a logical flow? Does it have a clear beginning, middle, and end?'
-        },
-        {
-          name: 'impact',
-          description: 'How memorable and compelling the message is. Would someone remember this after the conversation?'
-        },
-        {
-          name: 'influence',
-          description: 'How persuasive and actionable the response is. Does it move the listener to agreement or action?'
+          // --- ENHANCED PAYLOAD WITH COACHING INSTRUCTIONS ---
+          const payload = {
+            scenario_id: selectedScenario,
+            attempts: attempts,
+            
+            // Coaching Instructions
+            coaching_instructions: {
+              analysis_dimensions: [
+                {
+                  name: 'clarity',
+                  description: 'How clearly the main point comes across. Is the core message immediately understandable?'
+                },
+                {
+                  name: 'precision', 
+                  description: 'How specific and concrete the language is. Are there vague statements that could be more specific?'
+                },
+                {
+                  name: 'structure',
+                  description: 'How well the response is organized. Is there a logical flow? Does it have a clear beginning, middle, and end?'
+                },
+                {
+                  name: 'impact',
+                  description: 'How memorable and compelling the message is. Would someone remember this after the conversation?'
+                },
+                {
+                  name: 'influence',
+                  description: 'How persuasive and actionable the response is. Does it move the listener to agreement or action?'
+                }
+              ],
+              
+              feedback_style: {
+                tone: 'constructive and supportive coach',
+                format: 'specific, actionable observations with examples from their response',
+                priority: 'highlight the biggest opportunities for improvement first'
+              },
+              
+              better_version_instructions: [
+                'Rewrite their response incorporating the feedback',
+                'Maintain their authentic voice and style',
+                'Show exactly how to apply the feedback',
+                'Keep it concise and natural'
+              ],
+              
+              why_it_works_instructions: [
+                'Explain the communication principles applied',
+                'Connect each improvement to the analysis dimensions',
+                'Make it educational so they learn for next time'
+              ],
+              
+              user_context: {
+                experience_level: 'professional',
+                goal: 'improve workplace communication effectiveness',
+                previous_attempts_count: attemptData.length
+              }
+            }
+          };
+
+          console.log('📤 Sending to backend with coaching:', JSON.stringify(payload, null, 2));
+
+          // ----- BACKEND CALL -----
+          const BACKEND_URL = 'https://unspoken-backend.onrender.com'; // YOUR BACKEND URL
+          
+          fetch(BACKEND_URL + '/api/communication/analyze', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          })
+          .then(function(res) {
+            console.log('📥 Response status:', res.status);
+            if (!res.ok) {
+              throw new Error('API returned ' + res.status + ': ' + res.statusText);
+            }
+            return res.json();
+          })
+          .then(function(data) {
+            console.log('✅ Backend response:', data);
+            
+            if (data.success) {
+              var latestAttempt = data.attempts[data.attempts.length - 1];
+              
+              var result = {
+                attempt: currentAttempt + 1,
+                mode: isVoiceMode ? 'voice' : 'text',
+                response: responseText,
+                scores: latestAttempt.scores,
+                feedback: latestAttempt.feedback,
+                betterVersion: latestAttempt.betterVersion,
+                whyItWorks: latestAttempt.whyItWorks || []
+              };
+              
+              handleAnalysisResult(result, data);
+            } else {
+              throw new Error(data.message || 'Analysis failed');
+            }
+          })
+          .catch(function(error) {
+            console.error('❌ Backend Error:', error);
+            console.log('⚠️ Falling back to mock analysis');
+            statusBadge.textContent = '⚠️ Using fallback analysis';
+            statusBadge.style.color = '#dc2626';
+            handleMockAnalysis(responseText);
+          });
         }
-      ],
-      
-      feedback_style: {
-        tone: 'constructive and supportive coach',
-        format: 'specific, actionable observations with examples from their response',
-        priority: 'highlight the biggest opportunities for improvement first'
-      },
-      
-      better_version_instructions: [
-        'Rewrite their response incorporating the feedback',
-        'Maintain their authentic voice and style',
-        'Show exactly how to apply the feedback',
-        'Keep it concise and natural'
-      ],
-      
-      why_it_works_instructions: [
-        'Explain the communication principles applied',
-        'Connect each improvement to the analysis dimensions',
-        'Make it educational so they learn for next time'
-      ],
-      
-      user_context: {
-        experience_level: 'professional',
-        goal: 'improve workplace communication effectiveness',
-        previous_attempts_count: attemptData.length
-      }
-    }
-  };
 
-  console.log('📤 Sending to backend with coaching:', JSON.stringify(payload, null, 2));
+        // ---------- HANDLE ANALYSIS RESULT ----------
+        function handleAnalysisResult(result, backendData) {
+          console.log('📊 Handling analysis result for attempt:', result.attempt);
+          console.log('📦 Backend data received:', backendData);
+          
+          // Store in attemptData
+          if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
+            attemptData[attemptData.length - 1] = result;
+          } else {
+            attemptData.push(result);
+          }
 
-  // ----- BACKEND CALL -----
-  const BACKEND_URL = 'https://unspoken-backend.onrender.com'; // YOUR BACKEND URL
-  
-  fetch(BACKEND_URL + '/api/communication/analyze', {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  })
-  .then(function(res) {
-    console.log('📥 Response status:', res.status);
-    if (!res.ok) {
-      throw new Error('API returned ' + res.status + ': ' + res.statusText);
-    }
-    return res.json();
-  })
-  .then(function(data) {
-    console.log('✅ Backend response:', data);
-    
-    if (data.success) {
-      var latestAttempt = data.attempts[data.attempts.length - 1];
-      
-      var result = {
-        attempt: currentAttempt + 1,
-        mode: isVoiceMode ? 'voice' : 'text',
-        response: responseText,
-        scores: latestAttempt.scores,
-        feedback: latestAttempt.feedback,
-        betterVersion: latestAttempt.betterVersion,
-        whyItWorks: latestAttempt.whyItWorks || []
-      };
-      
-      handleAnalysisResult(result, data);
-    } else {
-      throw new Error(data.message || 'Analysis failed');
-    }
-  })
-  .catch(function(error) {
-    console.error('❌ Backend Error:', error);
-    console.log('⚠️ Falling back to mock analysis');
-    statusBadge.textContent = '⚠️ Using fallback analysis';
-    statusBadge.style.color = '#dc2626';
-    handleMockAnalysis(responseText);
-  });
-}
+          // Update best score
+          var avgScore = Object.values(result.scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+          if (bestScore === null || avgScore > bestScore) {
+            bestScore = avgScore;
+          }
 
-        
-  
-  // Build enhanced payload with coaching context
-  const payload = {
-    // Core data
-    scenario_id: selectedScenario,
-    scenario_context: scenarios[selectedScenario].context,
-    scenario_question: scenarios[selectedScenario].question,
-    response: responseText,
-    attempt: currentAttempt + 1,
-    mode: isVoiceMode ? 'voice' : 'text',
-    previous_attempts: attemptData,
+          // Display results
+          displayResults(currentAttempt);
+          resultsContainer.style.display = 'block';
+          resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    // --- CRITICAL: Coaching Instructions ---
-    coaching_instructions: {
-      // What we want the AI to analyze
-      analysis_dimensions: [
-        {
-          name: 'clarity',
-          description: 'How clearly the main point comes across. Is the core message immediately understandable?'
-        },
-        {
-          name: 'precision', 
-          description: 'How specific and concrete the language is. Are there vague statements that could be more specific?'
-        },
-        {
-          name: 'structure',
-          description: 'How well the response is organized. Is there a logical flow? Does it have a clear beginning, middle, and end?'
-        },
-        {
-          name: 'impact',
-          description: 'How memorable and compelling the message is. Would someone remember this after the conversation?'
-        },
-        {
-          name: 'influence',
-          description: 'How persuasive and actionable the response is. Does it move the listener to agreement or action?'
+          currentAttempt++;
+          updateAttemptUI();
+
+          // Check if all attempts done - use backend's is_complete flag
+          if (backendData && backendData.is_complete) {
+            isComplete = true;
+            startBtn.disabled = true;
+            startBtn.textContent = '✅ All attempts used';
+            attemptsLeftText.textContent = 'All 3 attempts completed!';
+            tryAgainBtn.textContent = '🔄 View All Attempts';
+            
+            // Show attempt tracking now that all attempts are complete
+            document.getElementById('attemptTrackingWrapper').style.display = 'flex';
+            
+            // Show persona from backend
+            if (backendData.persona) {
+              console.log('🎭 Persona from backend:', backendData.persona);
+              showPersonaReveal(backendData.persona);
+            }
+          } else if (backendData) {
+            var remaining = backendData.attempts_remaining || (maxAttempts - currentAttempt);
+            attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
+          }
+
+          isAnalyzing = false;
+          statusBadge.textContent = '✅ Analyzed';
+          statusBadge.style.color = '#16a34a';
         }
-      ],
-      
-      // How we want the feedback structured
-      feedback_style: {
-        tone: 'constructive and supportive coach',
-        format: 'specific, actionable observations with examples from their response',
-        priority: 'highlight the biggest opportunities for improvement first'
-      },
-      
-      // What we want in the "Better Version"
-      better_version_instructions: [
-        'Rewrite their response incorporating the feedback',
-        'Maintain their authentic voice and style',
-        'Show exactly how to apply the feedback',
-        'Keep it concise and natural'
-      ],
-      
-      // Why it works explanation
-      why_it_works_instructions: [
-        'Explain the communication principles applied',
-        'Connect each improvement to the analysis dimensions',
-        'Make it educational so they learn for next time'
-      ],
-      
-      // Context about the user
-      user_context: {
-        experience_level: 'professional',
-        goal: 'improve workplace communication effectiveness',
-        previous_attempts_count: attemptData.length
-      }
-    }
-  };
 
-  // ----- BACKEND CALL WITH COACHING PROMPTS -----
-  fetch('https://unspoken-backend.onrender.com/api/communication/analyze', {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      // 'Authorization': 'Bearer ' + getAuthToken()
-    },
-    body: JSON.stringify(payload)
-  })
-  .then(res => {
-    if (!res.ok) {
-      throw new Error('API returned ' + res.status);
-    }
-    return res.json();
-  })
-  .then(data => {
-    if (data.success) {
-      const result = {
-        attempt: currentAttempt + 1,
-        mode: isVoiceMode ? 'voice' : 'text',
-        response: responseText,
-        scores: data.scores,
-        feedback: data.feedback,
-        betterVersion: data.better_version || data.betterVersion,
-        whyItWorks: data.why_it_works || data.whyItWorks || []
-      };
-      handleAnalysisResult(result);
-    } else {
-      throw new Error(data.message || 'Analysis failed');
-    }
-  })
-  .catch(function(error) {
-    console.error('API Error:', error);
-    statusBadge.textContent = '⚠️ Using fallback analysis';
-    statusBadge.style.color = '#dc2626';
-    handleMockAnalysis(responseText);
-  });
-}
+        // ---------- HANDLE MOCK ANALYSIS ----------
+        function handleMockAnalysis(responseText) {
+          var scores = generateScores(responseText);
+          var feedback = generateFeedback(scores);
 
+          var result = {
+            attempt: currentAttempt + 1,
+            mode: isVoiceMode ? 'voice' : 'text',
+            response: responseText,
+            scores: scores,
+            feedback: feedback,
+            betterVersion: generateBetterVersion(responseText, selectedScenario),
+            whyItWorks: [
+              "Clarity: States the main point immediately",
+              "Structure: Follows a logical flow: Context → Action → Ask",
+              "Influence: Ends with a clear, actionable question",
+              "Precision: Uses specific, concrete language"
+            ]
+          };
 
-// Modified to handle both API and mock results
+          // Store in attemptData
+          if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
+            attemptData[attemptData.length - 1] = result;
+          } else {
+            attemptData.push(result);
+          }
 
-// ============================================================
-// HANDLE ANALYSIS RESULT - Place this after the analyzeResponse function
-// ============================================================
+          // Update best score
+          var avgScore = Object.values(result.scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+          if (bestScore === null || avgScore > bestScore) {
+            bestScore = avgScore;
+          }
 
-function handleAnalysisResult(result, backendData) {
-  console.log('📊 Handling analysis result for attempt:', result.attempt);
-  console.log('📦 Backend data received:', backendData);
-  
-  // Store in attemptData
-  if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
-    attemptData[attemptData.length - 1] = result;
-  } else {
-    attemptData.push(result);
-  }
+          // Display results
+          displayResults(currentAttempt);
+          resultsContainer.style.display = 'block';
+          resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // Update best score
-  var avgScore = Object.values(result.scores).reduce(function(a, b) { return a + b; }, 0) / 5;
-  if (bestScore === null || avgScore > bestScore) {
-    bestScore = avgScore;
-  }
+          currentAttempt++;
+          updateAttemptUI();
 
-  // Display results
-  displayResults(currentAttempt);
-  resultsContainer.style.display = 'block';
-  resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Check if all attempts done
+          if (currentAttempt >= maxAttempts) {
+            isComplete = true;
+            startBtn.disabled = true;
+            startBtn.textContent = '✅ All attempts used';
+            attemptsLeftText.textContent = 'All 3 attempts completed!';
+            tryAgainBtn.textContent = '🔄 View All Attempts';
+            
+            document.getElementById('attemptTrackingWrapper').style.display = 'flex';
+            showPersonaReveal(null);
+          } else {
+            var remaining = maxAttempts - currentAttempt;
+            attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
+          }
 
-  currentAttempt++;
-  updateAttemptUI();
+          isAnalyzing = false;
+          statusBadge.textContent = '✅ Analyzed';
+          statusBadge.style.color = '#16a34a';
+        }
 
-  // Check if all attempts done - use backend's is_complete flag
-  if (backendData && backendData.is_complete) {
-    isComplete = true;
-    startBtn.disabled = true;
-    startBtn.textContent = '✅ All attempts used';
-    attemptsLeftText.textContent = 'All 3 attempts completed!';
-    tryAgainBtn.textContent = '🔄 View All Attempts';
-    
-    // Show attempt tracking now that all attempts are complete
-    document.getElementById('attemptTrackingWrapper').style.display = 'flex';
-    
-    // Show persona from backend
-    if (backendData.persona) {
-      console.log('🎭 Persona from backend:', backendData.persona);
-      showPersonaReveal(backendData.persona);
-    }
-  } else if (backendData) {
-    var remaining = backendData.attempts_remaining || (maxAttempts - currentAttempt);
-    attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
-  }
-
-  isAnalyzing = false;
-  statusBadge.textContent = '✅ Analyzed';
-  statusBadge.style.color = '#16a34a';
-}
-         // ---------- SCORE GENERATION (Replace with AI) ----------
+        // ---------- SCORE GENERATION ----------
         function generateScores(text) {
           var wordCount = text.split(/\s+/).length;
           var hasStructure = /first|second|finally|next|then|firstly|secondly/.test(text);
@@ -2910,16 +2837,11 @@ function handleAnalysisResult(result, backendData) {
           var hasImpact = /deliver|achieve|result|outcome|success|goal/.test(text);
 
           return {
-            clarity: Math.min(92, Math.max(35, 55 + (hasClearAsk ? 22 : 0) + (wordCount > 15 ? 8 : 0) + Math.floor(Math
-              .random() * 10))),
-            precision: Math.min(92, Math.max(30, 45 + (hasNumbers ? 25 : 0) + (wordCount > 20 ? 8 : 0) + Math.floor(Math
-              .random() * 10))),
-            structure: Math.min(92, Math.max(25, 35 + (hasStructure ? 30 : 0) + (wordCount > 20 ? 8 : 0) + Math.floor(Math
-              .random() * 10))),
-            impact: Math.min(92, Math.max(30, 45 + (hasImpact ? 20 : 0) + (hasClearAsk ? 12 : 0) + Math.floor(Math.random() *
-              10))),
-            influence: Math.min(92, Math.max(25, 35 + (hasConfidence ? 22 : 0) + (hasClearAsk ? 18 : 0) + Math.floor(Math
-              .random() * 10)))
+            clarity: Math.min(92, Math.max(35, 55 + (hasClearAsk ? 22 : 0) + (wordCount > 15 ? 8 : 0) + Math.floor(Math.random() * 10))),
+            precision: Math.min(92, Math.max(30, 45 + (hasNumbers ? 25 : 0) + (wordCount > 20 ? 8 : 0) + Math.floor(Math.random() * 10))),
+            structure: Math.min(92, Math.max(25, 35 + (hasStructure ? 30 : 0) + (wordCount > 20 ? 8 : 0) + Math.floor(Math.random() * 10))),
+            impact: Math.min(92, Math.max(30, 45 + (hasImpact ? 20 : 0) + (hasClearAsk ? 12 : 0) + Math.floor(Math.random() * 10))),
+            influence: Math.min(92, Math.max(25, 35 + (hasConfidence ? 22 : 0) + (hasClearAsk ? 18 : 0) + Math.floor(Math.random() * 10)))
           };
         }
 
@@ -2956,7 +2878,6 @@ function handleAnalysisResult(result, backendData) {
 
         // ---------- GENERATE BETTER VERSION ----------
         function generateBetterVersion(text, scenarioIndex) {
-          // Default better versions per scenario
           var betterVersions = [
             "We're behind on the project timeline due to unexpected technical dependencies. I've identified the bottlenecks and created a recovery plan. We can deliver by Friday if we reprioritize the backlog. I'll share the detailed plan after this meeting. Does that approach work for you?",
             "I understand budget is a concern. Let me walk you through the ROI — this solution saves you 30% on operational costs within the first year. I can also offer a phased deployment to spread the cost. Would a 6-month payment plan work for your team?",
@@ -3096,7 +3017,6 @@ function handleAnalysisResult(result, backendData) {
 
         // ---------- SHOW PERSONA REVEAL ----------
         function showPersonaReveal(personaData) {
-          // If personaData is passed from backend, use it
           if (personaData) {
             revealStrength.textContent = personaData.strength_label || 'CLARITY';
             revealStrengthDesc.textContent = personaData.strength_desc ||
@@ -3107,7 +3027,6 @@ function handleAnalysisResult(result, backendData) {
             revealPersonaName.textContent = personaData.name || 'The Translator';
             revealPersonaDesc.textContent = personaData.description || 'You make complexity make sense.';
           } else {
-            // Fallback: calculate from attempts
             if (attemptData.length < 3) return;
 
             var dims = ['clarity', 'precision', 'structure', 'impact', 'influence'];
@@ -3187,7 +3106,6 @@ function handleAnalysisResult(result, backendData) {
             b.style.borderColor = '#ede8e0';
             b.style.background = '#ffffff';
           });
-          // Reset attempt tracking
           currentAttempt = 0;
           attemptData = [];
           bestScore = null;
@@ -3197,10 +3115,8 @@ function handleAnalysisResult(result, backendData) {
           tryAgainBtn.textContent = '🔄 Try Again';
         });
 
-        // Try Again button
         tryAgainBtn.addEventListener('click', function() {
           if (isComplete || currentAttempt >= maxAttempts) {
-            // Show all attempts summary - scroll to results
             personaReveal.style.display = 'none';
             resultsContainer.style.display = 'block';
             resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3209,11 +3125,9 @@ function handleAnalysisResult(result, backendData) {
             }
             return;
           }
-          // Reset for next attempt
           personaReveal.style.display = 'none';
           resetChallenge();
           resultsContainer.style.display = 'none';
-          // Clear score displays
           var dims = ['Clarity', 'Precision', 'Structure', 'Impact', 'Influence'];
           dims.forEach(function(d) {
             document.getElementById('score' + d).textContent = '—';
@@ -3242,7 +3156,6 @@ function handleAnalysisResult(result, backendData) {
           attemptSummary.textContent = 'Attempt ' + (currentAttempt + 1) + ' of 3';
         });
 
-        // New Scenario button
         newScenarioBtn.addEventListener('click', function() {
           personaReveal.style.display = 'none';
           resultsContainer.style.display = 'none';
