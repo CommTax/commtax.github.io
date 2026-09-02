@@ -2609,21 +2609,80 @@ function analyzeResponse() {
     }
   }
 
-  // Build payload for backend
+  // Build enhanced payload with coaching context
   const payload = {
+    // Core data
     scenario_id: selectedScenario,
+    scenario_context: scenarios[selectedScenario].context,
+    scenario_question: scenarios[selectedScenario].question,
     response: responseText,
     attempt: currentAttempt + 1,
     mode: isVoiceMode ? 'voice' : 'text',
-    previous_attempts: attemptData // Send all previous attempts for context
+    previous_attempts: attemptData,
+
+    // --- CRITICAL: Coaching Instructions ---
+    coaching_instructions: {
+      // What we want the AI to analyze
+      analysis_dimensions: [
+        {
+          name: 'clarity',
+          description: 'How clearly the main point comes across. Is the core message immediately understandable?'
+        },
+        {
+          name: 'precision', 
+          description: 'How specific and concrete the language is. Are there vague statements that could be more specific?'
+        },
+        {
+          name: 'structure',
+          description: 'How well the response is organized. Is there a logical flow? Does it have a clear beginning, middle, and end?'
+        },
+        {
+          name: 'impact',
+          description: 'How memorable and compelling the message is. Would someone remember this after the conversation?'
+        },
+        {
+          name: 'influence',
+          description: 'How persuasive and actionable the response is. Does it move the listener to agreement or action?'
+        }
+      ],
+      
+      // How we want the feedback structured
+      feedback_style: {
+        tone: 'constructive and supportive coach',
+        format: 'specific, actionable observations with examples from their response',
+        priority: 'highlight the biggest opportunities for improvement first'
+      },
+      
+      // What we want in the "Better Version"
+      better_version_instructions: [
+        'Rewrite their response incorporating the feedback',
+        'Maintain their authentic voice and style',
+        'Show exactly how to apply the feedback',
+        'Keep it concise and natural'
+      ],
+      
+      // Why it works explanation
+      why_it_works_instructions: [
+        'Explain the communication principles applied',
+        'Connect each improvement to the analysis dimensions',
+        'Make it educational so they learn for next time'
+      ],
+      
+      // Context about the user
+      user_context: {
+        experience_level: 'professional',
+        goal: 'improve workplace communication effectiveness',
+        previous_attempts_count: attemptData.length
+      }
+    }
   };
 
-  // ----- BACKEND CALL - ACTIVE -----
+  // ----- BACKEND CALL WITH COACHING PROMPTS -----
   fetch('https://your-backend-url.com/api/communication/analyze', {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
-      // 'Authorization': 'Bearer ' + getAuthToken() // If you need auth
+      // 'Authorization': 'Bearer ' + getAuthToken()
     },
     body: JSON.stringify(payload)
   })
@@ -2635,17 +2694,15 @@ function analyzeResponse() {
   })
   .then(data => {
     if (data.success) {
-      // Store the result from your backend
       const result = {
         attempt: currentAttempt + 1,
         mode: isVoiceMode ? 'voice' : 'text',
         response: responseText,
-        scores: data.scores, // Should contain clarity, precision, structure, impact, influence
-        feedback: data.feedback, // Array of feedback items
+        scores: data.scores,
+        feedback: data.feedback,
         betterVersion: data.better_version || data.betterVersion,
         whyItWorks: data.why_it_works || data.whyItWorks || []
       };
-      
       handleAnalysisResult(result);
     } else {
       throw new Error(data.message || 'Analysis failed');
@@ -2653,7 +2710,6 @@ function analyzeResponse() {
   })
   .catch(function(error) {
     console.error('API Error:', error);
-    // Fallback to mock if API fails
     statusBadge.textContent = '⚠️ Using fallback analysis';
     statusBadge.style.color = '#dc2626';
     handleMockAnalysis(responseText);
