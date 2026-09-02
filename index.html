@@ -2609,9 +2609,10 @@ function analyzeResponse() {
     }
   }
 
-    // --- Build attempts array with ALL attempts ---
+  // --- Build attempts array with ALL attempts ---
   const attempts = [];
-    // Add previous attempts from attemptData
+  
+  // Add previous attempts from attemptData
   attemptData.forEach(function(prevAttempt) {
     attempts.push({
       attempt: prevAttempt.attempt,
@@ -2619,26 +2620,75 @@ function analyzeResponse() {
       mode: prevAttempt.mode || 'text'
     });
   });
-
-      // Add current attempt
+  
+  // Add current attempt
   attempts.push({
     attempt: currentAttempt + 1,
     response: responseText,
     mode: isVoiceMode ? 'voice' : 'text'
   });
 
-  // --- SIMPLE PAYLOAD - Matches backend exactly ---
+  // --- ENHANCED PAYLOAD WITH COACHING INSTRUCTIONS ---
   const payload = {
     scenario_id: selectedScenario,
-    attempts: attempts
+    attempts: attempts,
+    
+    // Coaching Instructions
+    coaching_instructions: {
+      analysis_dimensions: [
+        {
+          name: 'clarity',
+          description: 'How clearly the main point comes across. Is the core message immediately understandable?'
+        },
+        {
+          name: 'precision', 
+          description: 'How specific and concrete the language is. Are there vague statements that could be more specific?'
+        },
+        {
+          name: 'structure',
+          description: 'How well the response is organized. Is there a logical flow? Does it have a clear beginning, middle, and end?'
+        },
+        {
+          name: 'impact',
+          description: 'How memorable and compelling the message is. Would someone remember this after the conversation?'
+        },
+        {
+          name: 'influence',
+          description: 'How persuasive and actionable the response is. Does it move the listener to agreement or action?'
+        }
+      ],
+      
+      feedback_style: {
+        tone: 'constructive and supportive coach',
+        format: 'specific, actionable observations with examples from their response',
+        priority: 'highlight the biggest opportunities for improvement first'
+      },
+      
+      better_version_instructions: [
+        'Rewrite their response incorporating the feedback',
+        'Maintain their authentic voice and style',
+        'Show exactly how to apply the feedback',
+        'Keep it concise and natural'
+      ],
+      
+      why_it_works_instructions: [
+        'Explain the communication principles applied',
+        'Connect each improvement to the analysis dimensions',
+        'Make it educational so they learn for next time'
+      ],
+      
+      user_context: {
+        experience_level: 'professional',
+        goal: 'improve workplace communication effectiveness',
+        previous_attempts_count: attemptData.length
+      }
+    }
   };
 
-  console.log('📤 Sending to backend:', JSON.stringify(payload, null, 2));
-
+  console.log('📤 Sending to backend with coaching:', JSON.stringify(payload, null, 2));
 
   // ----- BACKEND CALL -----
-  // REPLACE with your actual Render URL
-  const BACKEND_URL = 'https://unspoken-backend.onrender.com'; // ← CHANGE THIS TO YOUR URL
+  const BACKEND_URL = 'https://unspoken-backend.onrender.com'; // YOUR BACKEND URL
   
   fetch(BACKEND_URL + '/api/communication/analyze', {
     method: 'POST',
@@ -2647,22 +2697,20 @@ function analyzeResponse() {
     },
     body: JSON.stringify(payload)
   })
-  .then(res => {
+  .then(function(res) {
     console.log('📥 Response status:', res.status);
     if (!res.ok) {
       throw new Error('API returned ' + res.status + ': ' + res.statusText);
     }
     return res.json();
   })
-  .then(data => {
+  .then(function(data) {
     console.log('✅ Backend response:', data);
     
     if (data.success) {
-      // Get the latest attempt result from backend
-      const latestAttempt = data.attempts[data.attempts.length - 1];
+      var latestAttempt = data.attempts[data.attempts.length - 1];
       
-      // Create result object from backend data
-      const result = {
+      var result = {
         attempt: currentAttempt + 1,
         mode: isVoiceMode ? 'voice' : 'text',
         response: responseText,
@@ -2682,10 +2730,11 @@ function analyzeResponse() {
     console.log('⚠️ Falling back to mock analysis');
     statusBadge.textContent = '⚠️ Using fallback analysis';
     statusBadge.style.color = '#dc2626';
-    // Fallback to mock
     handleMockAnalysis(responseText);
   });
 }
+
+        
   
   // Build enhanced payload with coaching context
   const payload = {
