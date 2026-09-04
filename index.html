@@ -2971,23 +2971,38 @@
             console.log('✅ Backend response:', data);
             
             if (data.success) {
-              var latestAttempt = data.attempts[data.attempts.length - 1];
+                  // Check if attempts array exists and has data
+    if (data.attempts && data.attempts.length > 0) {
+      var latestAttempt = data.attempts[data.attempts.length - 1];
               
-              var result = {
-                attempt: currentAttempt + 1,
-                mode: isVoiceMode ? 'voice' : 'text',
-                response: responseText,
-                scores: latestAttempt.scores,
-                feedback: latestAttempt.feedback,
-                betterVersion: latestAttempt.betterVersion,
-                whyItWorks: latestAttempt.whyItWorks || []
-              };
+      var result = {
+        attempt: currentAttempt + 1,
+        mode: isVoiceMode ? 'voice' : 'text',
+        response: responseText,
+        scores: latestAttempt.scores || {},
+        // All the new fields - with fallbacks
+        what_you_meant: latestAttempt.what_you_meant || '',
+        what_you_said: latestAttempt.what_you_said || '',
+        what_landed: latestAttempt.what_landed || '',
+        what_got_lost: latestAttempt.what_got_lost || '',
+        the_unspoken_gap: latestAttempt.the_unspoken_gap || '',
+        why_it_matters: latestAttempt.why_it_matters || '',
+        one_thing_to_change: latestAttempt.one_thing_to_change || '',
+        behavioral_evidence: latestAttempt.behavioral_evidence || [],
+        patterns_detected: latestAttempt.patterns_detected || [],
+        better_version: latestAttempt.better_version || latestAttempt.betterVersion || '',
+        why_better: latestAttempt.why_better || latestAttempt.whyItWorks || []
+      };
+      
               
-              handleAnalysisResult(result, data);
-            } else {
-              throw new Error(data.message || 'Analysis failed');
-            }
-          })
+    handleAnalysisResult(result, data);
+    } else {
+      throw new Error('No attempt data in response');
+    }
+  } else {
+    throw new Error(data.message || 'Analysis failed');
+  }
+})
           .catch(function(error) {
             console.error('❌ Backend Error:', error);
             console.log('⚠️ Falling back to mock analysis');
@@ -3069,7 +3084,7 @@ function displayResults(attemptIndex) {
     }, index * 100);
   });
 
-  // ===== NEW: Update Deep Analysis Fields =====
+  // ===== NEW: Update Deep Analysis Fields with Null Checks =====
   
   // What You Meant
   var whatYouMeantEl = document.getElementById('whatYouMeant');
@@ -3163,7 +3178,8 @@ function displayResults(attemptIndex) {
 
   // Update improvement box
   if (attemptData.length > 1) {
-    var firstAvg = Object.values(attemptData[0].scores || {}).reduce(function(a, b) { return a + b; }, 0) / 5;
+    var firstScores = attemptData[0].scores || {};
+    var firstAvg = Object.values(firstScores).reduce(function(a, b) { return a + b; }, 0) / 5;
     var currentScores = data.scores || {};
     var currentAvg = Object.values(currentScores).reduce(function(a, b) { return a + b; }, 0) / 5;
     var diff = Math.round(currentAvg - firstAvg);
@@ -3193,6 +3209,7 @@ function displayResults(attemptIndex) {
     attemptSummaryEl.textContent = 'Attempt ' + (attemptIndex + 1) + ' of 3';
   }
 }
+       
       
 // ---------- HANDLE MOCK ANALYSIS ----------
 function handleMockAnalysis(responseText) {
