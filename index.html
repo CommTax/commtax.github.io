@@ -2410,7 +2410,7 @@
     </div>
   </footer>
 
-  <!-- ===== JAVASCRIPT - FIXED VERSION ===== -->
+  <!-- ===== JAVASCRIPT - FINAL CORRECT VERSION ===== -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -2955,7 +2955,7 @@
           console.log('📤 Sending to backend with coaching:', JSON.stringify(payload, null, 2));
 
           // ----- BACKEND CALL -----
-          const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com'; // YOUR BACKEND URL
+          const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
           
           fetch(BACKEND_URL + '/api/communication/analyze', {
             method: 'POST',
@@ -2975,38 +2975,37 @@
             console.log('✅ Backend response:', data);
             
             if (data.success) {
-                  // Check if attempts array exists and has data
-    if (data.attempts && data.attempts.length > 0) {
-      var latestAttempt = data.attempts[data.attempts.length - 1];
-              
-      var result = {
-        attempt: currentAttempt + 1,
-        mode: isVoiceMode ? 'voice' : 'text',
-        response: responseText,
-        scores: latestAttempt.scores || {},
-        // All the new fields - with fallbacks
-        what_you_meant: latestAttempt.what_you_meant || '',
-        what_you_said: latestAttempt.what_you_said || '',
-        what_landed: latestAttempt.what_landed || '',
-        what_got_lost: latestAttempt.what_got_lost || '',
-        the_unspoken_gap: latestAttempt.the_unspoken_gap || '',
-        why_it_matters: latestAttempt.why_it_matters || '',
-        one_thing_to_change: latestAttempt.one_thing_to_change || '',
-        behavioral_evidence: latestAttempt.behavioral_evidence || [],
-        patterns_detected: latestAttempt.patterns_detected || [],
-        better_version: latestAttempt.better_version || latestAttempt.betterVersion || '',
-        why_better: latestAttempt.why_better || latestAttempt.whyItWorks || []
-      };
-      
-              
-    handleAnalysisResult(result, data);
-    } else {
-      throw new Error('No attempt data in response');
-    }
-  } else {
-    throw new Error(data.message || 'Analysis failed');
-  }
-})
+              // Check if attempts array exists and has data
+              if (data.attempts && data.attempts.length > 0) {
+                var latestAttempt = data.attempts[data.attempts.length - 1];
+                
+                var result = {
+                  attempt: currentAttempt + 1,
+                  mode: isVoiceMode ? 'voice' : 'text',
+                  response: responseText,
+                  scores: latestAttempt.scores || {},
+                  // All the new fields - with fallbacks
+                  what_you_meant: latestAttempt.what_you_meant || '',
+                  what_you_said: latestAttempt.what_you_said || '',
+                  what_landed: latestAttempt.what_landed || '',
+                  what_got_lost: latestAttempt.what_got_lost || '',
+                  the_unspoken_gap: latestAttempt.the_unspoken_gap || '',
+                  why_it_matters: latestAttempt.why_it_matters || '',
+                  one_thing_to_change: latestAttempt.one_thing_to_change || '',
+                  behavioral_evidence: latestAttempt.behavioral_evidence || [],
+                  patterns_detected: latestAttempt.patterns_detected || [],
+                  better_version: latestAttempt.better_version || latestAttempt.betterVersion || '',
+                  why_better: latestAttempt.why_better || latestAttempt.whyItWorks || []
+                };
+                
+                handleAnalysisResult(result, data);
+              } else {
+                throw new Error('No attempt data in response');
+              }
+            } else {
+              throw new Error(data.message || 'Analysis failed');
+            }
+          })
           .catch(function(error) {
             console.error('❌ Backend Error:', error);
             console.log('⚠️ Falling back to mock analysis');
@@ -3016,333 +3015,332 @@
           });
         }
 
-// ---------- HANDLE ANALYSIS RESULT ----------
-function handleAnalysisResult(result, backendData) {
-  console.log('📊 Handling analysis result for attempt:', result.attempt);
-  console.log('📦 Backend data received:', backendData);
-  
-  // Store in attemptData - now with all fields
-  if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
-    attemptData[attemptData.length - 1] = result;
-  } else {
-    attemptData.push(result);
-  }
+        // ---------- HANDLE ANALYSIS RESULT ----------
+        function handleAnalysisResult(result, backendData) {
+          console.log('📊 Handling analysis result for attempt:', result.attempt);
+          console.log('📦 Backend data received:', backendData);
+          
+          // Store in attemptData - now with all fields
+          if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
+            attemptData[attemptData.length - 1] = result;
+          } else {
+            attemptData.push(result);
+          }
 
-  // Update best score
-  var scores = result.scores || {};
-  var avgScore = Object.values(scores).reduce(function(a, b) { return a + b; }, 0) / 5;
-  if (bestScore === null || avgScore > bestScore) {
-    bestScore = avgScore;
-  }
+          // Update best score
+          var scores = result.scores || {};
+          var avgScore = Object.values(scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+          if (bestScore === null || avgScore > bestScore) {
+            bestScore = avgScore;
+          }
 
-  // Display results with all fields
-  displayResults(currentAttempt);
-  resultsContainer.style.display = 'block';
-  resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Display results with all fields
+          displayResults(currentAttempt);
+          resultsContainer.style.display = 'block';
+          resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  currentAttempt++;
-  updateAttemptUI();
+          currentAttempt++;
+          updateAttemptUI();
 
-  // Check if all attempts done
-  if (backendData && backendData.is_complete) {
-    isComplete = true;
-    startBtn.disabled = true;
-    startBtn.textContent = '✅ All attempts used';
-    attemptsLeftText.textContent = 'All 3 attempts completed!';
-    tryAgainBtn.textContent = '🔄 View All Attempts';
-    
-    document.getElementById('attemptTrackingWrapper').style.display = 'flex';
-    
-    // Show emerging persona from backend
-    if (backendData.emerging_persona) {
-      console.log('🎭 Emerging Persona from backend:', backendData.emerging_persona);
-      showPersonaReveal(backendData.emerging_persona, backendData);
-    }
-  } else if (backendData) {
-    var remaining = backendData.attempts_remaining || (maxAttempts - currentAttempt);
-    attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
-  }
+          // Check if all attempts done
+          if (backendData && backendData.is_complete) {
+            isComplete = true;
+            startBtn.disabled = true;
+            startBtn.textContent = '✅ All attempts used';
+            attemptsLeftText.textContent = 'All 3 attempts completed!';
+            tryAgainBtn.textContent = '🔄 View All Attempts';
+            
+            document.getElementById('attemptTrackingWrapper').style.display = 'flex';
+            
+            // Show emerging persona from backend
+            if (backendData.emerging_persona) {
+              console.log('🎭 Emerging Persona from backend:', backendData.emerging_persona);
+              showPersonaReveal(backendData.emerging_persona, backendData);
+            }
+          } else if (backendData) {
+            var remaining = backendData.attempts_remaining || (maxAttempts - currentAttempt);
+            attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
+          }
 
-  isAnalyzing = false;
-  statusBadge.textContent = '✅ Analyzed';
-  statusBadge.style.color = '#16a34a';
-}
+          isAnalyzing = false;
+          statusBadge.textContent = '✅ Analyzed';
+          statusBadge.style.color = '#16a34a';
+        }
 
-// ---------- DISPLAY RESULTS ----------
-function displayResults(attemptIndex) {
-  var data = attemptData[attemptIndex];
-  if (!data) return;
+        // ---------- DISPLAY RESULTS ----------
+        function displayResults(attemptIndex) {
+          var data = attemptData[attemptIndex];
+          if (!data) return;
 
-  var scores = data.scores || {};
+          var scores = data.scores || {};
 
-  // Update score cards
-  var dimensions = ['Clarity', 'Precision', 'Structure', 'Impact', 'Influence'];
-  dimensions.forEach(function(dim, index) {
-    var key = dim.toLowerCase();
-    var score = scores[key] || 50;
-    setTimeout(function() {
-      var scoreEl = document.getElementById('score' + dim);
-      var barEl = document.getElementById('bar' + dim);
-      if (scoreEl) scoreEl.textContent = score;
-      if (barEl) barEl.style.width = score + '%';
-    }, index * 100);
-  });
+          // Update score cards
+          var dimensions = ['Clarity', 'Precision', 'Structure', 'Impact', 'Influence'];
+          dimensions.forEach(function(dim, index) {
+            var key = dim.toLowerCase();
+            var score = scores[key] || 50;
+            setTimeout(function() {
+              var scoreEl = document.getElementById('score' + dim);
+              var barEl = document.getElementById('bar' + dim);
+              if (scoreEl) scoreEl.textContent = score;
+              if (barEl) barEl.style.width = score + '%';
+            }, index * 100);
+          });
 
-  // ===== NEW: Update Deep Analysis Fields with Null Checks =====
-  
-  // What You Meant
-  var whatYouMeantEl = document.getElementById('whatYouMeant');
-  if (whatYouMeantEl) {
-    whatYouMeantEl.textContent = data.what_you_meant || 'Analysis not available for this attempt.';
-  }
+          // ===== NEW: Update Deep Analysis Fields with Null Checks =====
+          
+          // What You Meant
+          var whatYouMeantEl = document.getElementById('whatYouMeant');
+          if (whatYouMeantEl) {
+            whatYouMeantEl.textContent = data.what_you_meant || 'Analysis not available for this attempt.';
+          }
 
-  // What You Said
-  var whatYouSaidEl = document.getElementById('whatYouSaid');
-  if (whatYouSaidEl) {
-    whatYouSaidEl.textContent = data.what_you_said || data.response || 'No response available.';
-  }
+          // What You Said
+          var whatYouSaidEl = document.getElementById('whatYouSaid');
+          if (whatYouSaidEl) {
+            whatYouSaidEl.textContent = data.what_you_said || data.response || 'No response available.';
+          }
 
-  // What Landed
-  var whatLandedEl = document.getElementById('whatLanded');
-  if (whatLandedEl) {
-    whatLandedEl.textContent = data.what_landed || 'Analysis pending...';
-  }
+          // What Landed
+          var whatLandedEl = document.getElementById('whatLanded');
+          if (whatLandedEl) {
+            whatLandedEl.textContent = data.what_landed || 'Analysis pending...';
+          }
 
-  // What Got Lost
-  var whatGotLostEl = document.getElementById('whatGotLost');
-  if (whatGotLostEl) {
-    whatGotLostEl.textContent = data.what_got_lost || 'Analysis pending...';
-  }
+          // What Got Lost
+          var whatGotLostEl = document.getElementById('whatGotLost');
+          if (whatGotLostEl) {
+            whatGotLostEl.textContent = data.what_got_lost || 'Analysis pending...';
+          }
 
-  // The Unspoken Gap
-  var unspokenGapEl = document.getElementById('unspokenGap');
-  if (unspokenGapEl) {
-    unspokenGapEl.textContent = data.the_unspoken_gap || 'Analysis pending...';
-  }
+          // The Unspoken Gap
+          var unspokenGapEl = document.getElementById('unspokenGap');
+          if (unspokenGapEl) {
+            unspokenGapEl.textContent = data.the_unspoken_gap || 'Analysis pending...';
+          }
 
-  // Why It Matters
-  var whyItMattersEl = document.getElementById('whyItMatters');
-  if (whyItMattersEl) {
-    whyItMattersEl.textContent = data.why_it_matters || 'Analysis pending...';
-  }
+          // Why It Matters
+          var whyItMattersEl = document.getElementById('whyItMatters');
+          if (whyItMattersEl) {
+            whyItMattersEl.textContent = data.why_it_matters || 'Analysis pending...';
+          }
 
-  // One Thing to Change
-  var oneThingToChangeEl = document.getElementById('oneThingToChange');
-  if (oneThingToChangeEl) {
-    oneThingToChangeEl.textContent = data.one_thing_to_change || 'Analysis pending...';
-  }
+          // One Thing to Change
+          var oneThingToChangeEl = document.getElementById('oneThingToChange');
+          if (oneThingToChangeEl) {
+            oneThingToChangeEl.textContent = data.one_thing_to_change || 'Analysis pending...';
+          }
 
-  // Behavioral Evidence
-  var behavioralEvidenceEl = document.getElementById('behavioralEvidence');
-  if (behavioralEvidenceEl) {
-    if (data.behavioral_evidence && data.behavioral_evidence.length > 0) {
-      behavioralEvidenceEl.innerHTML = data.behavioral_evidence.map(function(item) {
-        return '<li style="padding: 6px 0; border-bottom: 1px solid #f5f2ed; line-height: 1.6;">• ' + item + '</li>';
-      }).join('');
-    } else {
-      behavioralEvidenceEl.innerHTML = '<li style="padding: 6px 0; color: #8a8680; font-style: italic;">No behavioral evidence captured yet.</li>';
-    }
-  }
+          // Behavioral Evidence
+          var behavioralEvidenceEl = document.getElementById('behavioralEvidence');
+          if (behavioralEvidenceEl) {
+            if (data.behavioral_evidence && data.behavioral_evidence.length > 0) {
+              behavioralEvidenceEl.innerHTML = data.behavioral_evidence.map(function(item) {
+                return '<li style="padding: 6px 0; border-bottom: 1px solid #f5f2ed; line-height: 1.6;">• ' + item + '</li>';
+              }).join('');
+            } else {
+              behavioralEvidenceEl.innerHTML = '<li style="padding: 6px 0; color: #8a8680; font-style: italic;">No behavioral evidence captured yet.</li>';
+            }
+          }
 
-  // Patterns Detected
-  var patternsDetectedEl = document.getElementById('patternsDetected');
-  if (patternsDetectedEl) {
-    if (data.patterns_detected && data.patterns_detected.length > 0) {
-      patternsDetectedEl.innerHTML = data.patterns_detected.map(function(item) {
-        return '<li style="padding: 6px 0; border-bottom: 1px solid #f5f2ed; line-height: 1.6;">• ' + item + '</li>';
-      }).join('');
-    } else {
-      patternsDetectedEl.innerHTML = '<li style="padding: 6px 0; color: #8a8680; font-style: italic;">No patterns detected yet.</li>';
-    }
-  }
+          // Patterns Detected
+          var patternsDetectedEl = document.getElementById('patternsDetected');
+          if (patternsDetectedEl) {
+            if (data.patterns_detected && data.patterns_detected.length > 0) {
+              patternsDetectedEl.innerHTML = data.patterns_detected.map(function(item) {
+                return '<li style="padding: 6px 0; border-bottom: 1px solid #f5f2ed; line-height: 1.6;">• ' + item + '</li>';
+              }).join('');
+            } else {
+              patternsDetectedEl.innerHTML = '<li style="padding: 6px 0; color: #8a8680; font-style: italic;">No patterns detected yet.</li>';
+            }
+          }
 
-  // Better Version
-  var betterVersionEl = document.getElementById('betterVersion');
-  if (betterVersionEl) {
-    if (data.better_version) {
-      betterVersionEl.textContent = data.better_version;
-      betterVersionEl.style.fontStyle = 'normal';
-    } else {
-      betterVersionEl.textContent = 'No improved version available.';
-      betterVersionEl.style.fontStyle = 'italic';
-    }
-  }
+          // Better Version
+          var betterVersionEl = document.getElementById('betterVersion');
+          if (betterVersionEl) {
+            if (data.better_version) {
+              betterVersionEl.textContent = data.better_version;
+              betterVersionEl.style.fontStyle = 'normal';
+            } else {
+              betterVersionEl.textContent = 'No improved version available.';
+              betterVersionEl.style.fontStyle = 'italic';
+            }
+          }
 
-  // Why Better
-  var betterWhyListEl = document.getElementById('betterWhyList');
-  if (betterWhyListEl) {
-    if (data.why_better && data.why_better.length > 0) {
-      betterWhyListEl.innerHTML = data.why_better.map(function(item) {
-        return '<li style="padding: 3px 0;">• ' + item + '</li>';
-      }).join('');
-    } else {
-      betterWhyListEl.innerHTML = '<li style="padding: 3px 0; color: #8a8680; font-style: italic;">No breakdown available.</li>';
-    }
-  }
+          // Why Better
+          var betterWhyListEl = document.getElementById('betterWhyList');
+          if (betterWhyListEl) {
+            if (data.why_better && data.why_better.length > 0) {
+              betterWhyListEl.innerHTML = data.why_better.map(function(item) {
+                return '<li style="padding: 3px 0;">• ' + item + '</li>';
+              }).join('');
+            } else {
+              betterWhyListEl.innerHTML = '<li style="padding: 3px 0; color: #8a8680; font-style: italic;">No breakdown available.</li>';
+            }
+          }
 
-  // Update improvement box
-  if (attemptData.length > 1) {
-    var firstScores = attemptData[0].scores || {};
-    var firstAvg = Object.values(firstScores).reduce(function(a, b) { return a + b; }, 0) / 5;
-    var currentScores = data.scores || {};
-    var currentAvg = Object.values(currentScores).reduce(function(a, b) { return a + b; }, 0) / 5;
-    var diff = Math.round(currentAvg - firstAvg);
-    var improvementBox = document.getElementById('improvementBox');
-    var improvementScoreEl = document.getElementById('improvementScore');
-    var improvementTextEl = document.getElementById('improvementText');
-    
-    if (improvementBox) improvementBox.style.display = 'block';
-    if (improvementScoreEl) improvementScoreEl.textContent = (diff > 0 ? '+' : '') + diff;
-    if (improvementTextEl) {
-      improvementTextEl.textContent = 'points ' + (diff >= 0 ? 'improvement' : 'decline') + ' from your first attempt';
-    }
-    if (diff > 0 && improvementScoreEl) {
-      improvementScoreEl.style.color = '#16a34a';
-    } else if (diff < 0 && improvementScoreEl) {
-      improvementScoreEl.style.color = '#dc2626';
-    } else if (improvementScoreEl) {
-      improvementScoreEl.style.color = '#b8943c';
-    }
-  } else {
-    var improvementBox = document.getElementById('improvementBox');
-    if (improvementBox) improvementBox.style.display = 'none';
-  }
+          // Update improvement box
+          if (attemptData.length > 1) {
+            var firstScores = attemptData[0].scores || {};
+            var firstAvg = Object.values(firstScores).reduce(function(a, b) { return a + b; }, 0) / 5;
+            var currentScores = data.scores || {};
+            var currentAvg = Object.values(currentScores).reduce(function(a, b) { return a + b; }, 0) / 5;
+            var diff = Math.round(currentAvg - firstAvg);
+            var improvementBox = document.getElementById('improvementBox');
+            var improvementScoreEl = document.getElementById('improvementScore');
+            var improvementTextEl = document.getElementById('improvementText');
+            
+            if (improvementBox) improvementBox.style.display = 'block';
+            if (improvementScoreEl) improvementScoreEl.textContent = (diff > 0 ? '+' : '') + diff;
+            if (improvementTextEl) {
+              improvementTextEl.textContent = 'points ' + (diff >= 0 ? 'improvement' : 'decline') + ' from your first attempt';
+            }
+            if (diff > 0 && improvementScoreEl) {
+              improvementScoreEl.style.color = '#16a34a';
+            } else if (diff < 0 && improvementScoreEl) {
+              improvementScoreEl.style.color = '#dc2626';
+            } else if (improvementScoreEl) {
+              improvementScoreEl.style.color = '#b8943c';
+            }
+          } else {
+            var improvementBox = document.getElementById('improvementBox');
+            if (improvementBox) improvementBox.style.display = 'none';
+          }
 
-  var attemptSummaryEl = document.getElementById('attemptSummary');
-  if (attemptSummaryEl) {
-    attemptSummaryEl.textContent = 'Attempt ' + (attemptIndex + 1) + ' of 3';
-  }
-}
-       
-      
-// ---------- HANDLE MOCK ANALYSIS ----------
-function handleMockAnalysis(responseText) {
-  var scores = generateScores(responseText);
-  var scenarioIndex = selectedScenario || 0;
-  
-  // Generate scenario-specific mock analysis
-  var mockAnalysis = getMockDeepAnalysis(responseText, scenarioIndex);
+          var attemptSummaryEl = document.getElementById('attemptSummary');
+          if (attemptSummaryEl) {
+            attemptSummaryEl.textContent = 'Attempt ' + (attemptIndex + 1) + ' of 3';
+          }
+        }
 
-  var result = {
-    attempt: currentAttempt + 1,
-    mode: isVoiceMode ? 'voice' : 'text',
-    response: responseText,
-    scores: scores,
-    // New fields from deep analysis
-    what_you_meant: mockAnalysis.what_you_meant || 'You intended to communicate your message effectively.',
-    what_you_said: responseText,
-    what_landed: mockAnalysis.what_landed || 'The listener likely heard your message but may have missed some nuance.',
-    what_got_lost: mockAnalysis.what_got_lost || 'Some of the impact and specificity got lost in the delivery.',
-    the_unspoken_gap: mockAnalysis.the_unspoken_gap || 'The gap between your intention and how it was perceived.',
-    why_it_matters: mockAnalysis.why_it_matters || 'This affects how your message is received and acted upon.',
-    one_thing_to_change: mockAnalysis.one_thing_to_change || 'Make your core message more prominent and specific.',
-    behavioral_evidence: mockAnalysis.behavioral_evidence || ['Communication patterns observed from your response.'],
-    patterns_detected: mockAnalysis.patterns_detected || ['Your communication style shows potential for greater impact.'],
-    better_version: generateBetterVersion(responseText, selectedScenario),
-    why_better: [
-      'Clear structure makes it easy to follow',
-      'Specific details add credibility',
-      'Strong closing leaves a lasting impression'
-    ]
-  };
+        // ---------- HANDLE MOCK ANALYSIS ----------
+        function handleMockAnalysis(responseText) {
+          var scores = generateScores(responseText);
+          var scenarioIndex = selectedScenario || 0;
+          
+          // Generate scenario-specific mock analysis
+          var mockAnalysis = getMockDeepAnalysis(responseText, scenarioIndex);
 
-  // Store in attemptData
-  if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
-    attemptData[attemptData.length - 1] = result;
-  } else {
-    attemptData.push(result);
-  }
+          var result = {
+            attempt: currentAttempt + 1,
+            mode: isVoiceMode ? 'voice' : 'text',
+            response: responseText,
+            scores: scores,
+            // New fields from deep analysis
+            what_you_meant: mockAnalysis.what_you_meant || 'You intended to communicate your message effectively.',
+            what_you_said: responseText,
+            what_landed: mockAnalysis.what_landed || 'The listener likely heard your message but may have missed some nuance.',
+            what_got_lost: mockAnalysis.what_got_lost || 'Some of the impact and specificity got lost in the delivery.',
+            the_unspoken_gap: mockAnalysis.the_unspoken_gap || 'The gap between your intention and how it was perceived.',
+            why_it_matters: mockAnalysis.why_it_matters || 'This affects how your message is received and acted upon.',
+            one_thing_to_change: mockAnalysis.one_thing_to_change || 'Make your core message more prominent and specific.',
+            behavioral_evidence: mockAnalysis.behavioral_evidence || ['Communication patterns observed from your response.'],
+            patterns_detected: mockAnalysis.patterns_detected || ['Your communication style shows potential for greater impact.'],
+            better_version: generateBetterVersion(responseText, selectedScenario),
+            why_better: [
+              'Clear structure makes it easy to follow',
+              'Specific details add credibility',
+              'Strong closing leaves a lasting impression'
+            ]
+          };
 
-  // Update best score
-  var avgScore = Object.values(result.scores).reduce(function(a, b) { return a + b; }, 0) / 5;
-  if (bestScore === null || avgScore > bestScore) {
-    bestScore = avgScore;
-  }
+          // Store in attemptData
+          if (attemptData.length > 0 && attemptData[attemptData.length - 1].attempt === result.attempt) {
+            attemptData[attemptData.length - 1] = result;
+          } else {
+            attemptData.push(result);
+          }
 
-  // Display results
-  displayResults(currentAttempt);
-  resultsContainer.style.display = 'block';
-  resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Update best score
+          var avgScore = Object.values(result.scores).reduce(function(a, b) { return a + b; }, 0) / 5;
+          if (bestScore === null || avgScore > bestScore) {
+            bestScore = avgScore;
+          }
 
-  currentAttempt++;
-  updateAttemptUI();
+          // Display results
+          displayResults(currentAttempt);
+          resultsContainer.style.display = 'block';
+          resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // Check if all attempts done
-  if (currentAttempt >= maxAttempts) {
-    isComplete = true;
-    startBtn.disabled = true;
-    startBtn.textContent = '✅ All attempts used';
-    attemptsLeftText.textContent = 'All 3 attempts completed!';
-    tryAgainBtn.textContent = '🔄 View All Attempts';
-    
-    document.getElementById('attemptTrackingWrapper').style.display = 'flex';
-    showPersonaReveal(null, null);
-  } else {
-    var remaining = maxAttempts - currentAttempt;
-    attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
-  }
+          currentAttempt++;
+          updateAttemptUI();
 
-  isAnalyzing = false;
-  statusBadge.textContent = '✅ Analyzed';
-  statusBadge.style.color = '#16a34a';
-}
-// ---------- MOCK DEEP ANALYSIS ----------
-function getMockDeepAnalysis(text, scenarioIndex) {
-  var scenarios = {
-    0: { // Deadline
-      what_you_meant: 'You wanted to explain the deadline situation and show you\'re taking responsibility.',
-      what_landed: 'The listener likely heard uncertainty and lack of a concrete solution.',
-      what_got_lost: 'Your confidence, specific plan, and accountability got lost.',
-      the_unspoken_gap: 'Between taking responsibility and showing you have it under control.',
-      why_it_matters: 'This affects trust and confidence in your ability to deliver.',
-      one_thing_to_change: 'Start with the solution, not the problem.',
-      behavioral_evidence: [
-        'You mention the problem but don\'t lead with a solution',
-        'Vague timeline references instead of specific dates',
-        'No mention of lessons learned or prevention'
-      ],
-      patterns_detected: [
-        'Tendency to explain rather than solve',
-        'Under-communicating accountability',
-        'Missing action-oriented language'
-      ]
-    },
-    4: { // Interview
-      what_you_meant: 'You wanted to present yourself as a capable, enthusiastic candidate.',
-      what_landed: 'The interviewer likely heard uncertainty and lack of clarity.',
-      what_got_lost: 'Your specific achievements, passion, and value proposition got lost.',
-      the_unspoken_gap: 'Between having potential and communicating it effectively.',
-      why_it_matters: 'This is your only chance to make a first impression.',
-      one_thing_to_change: 'Structure: Who you are → What you\'ve done → Why you\'re a fit.',
-      behavioral_evidence: [
-        'No clear opening statement about who you are',
-        'Vague descriptions of experience',
-        'No closing statement about why you want the role'
-      ],
-      patterns_detected: [
-        'Under-communicating achievements',
-        'Lack of storytelling structure',
-        'Missing enthusiasm indicators'
-      ]
-    }
-  };
+          // Check if all attempts done
+          if (currentAttempt >= maxAttempts) {
+            isComplete = true;
+            startBtn.disabled = true;
+            startBtn.textContent = '✅ All attempts used';
+            attemptsLeftText.textContent = 'All 3 attempts completed!';
+            tryAgainBtn.textContent = '🔄 View All Attempts';
+            
+            document.getElementById('attemptTrackingWrapper').style.display = 'flex';
+            showPersonaReveal(null, null);
+          } else {
+            var remaining = maxAttempts - currentAttempt;
+            attemptsLeftText.textContent = remaining + ' attempt' + (remaining > 1 ? 's' : '') + ' remaining';
+          }
 
-  // Default for other scenarios
-  var defaultAnalysis = {
-    what_you_meant: 'You intended to communicate your message effectively.',
-    what_landed: 'The listener likely heard your message but may have missed some nuance.',
-    what_got_lost: 'Some of the impact and specificity got lost in the delivery.',
-    the_unspoken_gap: 'The gap between your intention and how it was perceived.',
-    why_it_matters: 'This affects how your message is received and acted upon.',
-    one_thing_to_change: 'Make your core message more prominent and specific.',
-    behavioral_evidence: ['Communication patterns observed from your response.'],
-    patterns_detected: ['Your communication style shows potential for greater impact.']
-  };
+          isAnalyzing = false;
+          statusBadge.textContent = '✅ Analyzed';
+          statusBadge.style.color = '#16a34a';
+        }
 
-  return scenarios[scenarioIndex] || defaultAnalysis;
-}
-        
-        
+        // ---------- MOCK DEEP ANALYSIS ----------
+        function getMockDeepAnalysis(text, scenarioIndex) {
+          var scenarios = {
+            0: { // Deadline
+              what_you_meant: 'You wanted to explain the deadline situation and show you\'re taking responsibility.',
+              what_landed: 'The listener likely heard uncertainty and lack of a concrete solution.',
+              what_got_lost: 'Your confidence, specific plan, and accountability got lost.',
+              the_unspoken_gap: 'Between taking responsibility and showing you have it under control.',
+              why_it_matters: 'This affects trust and confidence in your ability to deliver.',
+              one_thing_to_change: 'Start with the solution, not the problem.',
+              behavioral_evidence: [
+                'You mention the problem but don\'t lead with a solution',
+                'Vague timeline references instead of specific dates',
+                'No mention of lessons learned or prevention'
+              ],
+              patterns_detected: [
+                'Tendency to explain rather than solve',
+                'Under-communicating accountability',
+                'Missing action-oriented language'
+              ]
+            },
+            4: { // Interview
+              what_you_meant: 'You wanted to present yourself as a capable, enthusiastic candidate.',
+              what_landed: 'The interviewer likely heard uncertainty and lack of clarity.',
+              what_got_lost: 'Your specific achievements, passion, and value proposition got lost.',
+              the_unspoken_gap: 'Between having potential and communicating it effectively.',
+              why_it_matters: 'This is your only chance to make a first impression.',
+              one_thing_to_change: 'Structure: Who you are → What you\'ve done → Why you\'re a fit.',
+              behavioral_evidence: [
+                'No clear opening statement about who you are',
+                'Vague descriptions of experience',
+                'No closing statement about why you want the role'
+              ],
+              patterns_detected: [
+                'Under-communicating achievements',
+                'Lack of storytelling structure',
+                'Missing enthusiasm indicators'
+              ]
+            }
+          };
+
+          // Default for other scenarios
+          var defaultAnalysis = {
+            what_you_meant: 'You intended to communicate your message effectively.',
+            what_landed: 'The listener likely heard your message but may have missed some nuance.',
+            what_got_lost: 'Some of the impact and specificity got lost in the delivery.',
+            the_unspoken_gap: 'The gap between your intention and how it was perceived.',
+            why_it_matters: 'This affects how your message is received and acted upon.',
+            one_thing_to_change: 'Make your core message more prominent and specific.',
+            behavioral_evidence: ['Communication patterns observed from your response.'],
+            patterns_detected: ['Your communication style shows potential for greater impact.']
+          };
+
+          return scenarios[scenarioIndex] || defaultAnalysis;
+        }
+
         // ---------- SCORE GENERATION ----------
         function generateScores(text) {
           var wordCount = text.split(/\s+/).length;
@@ -3404,77 +3402,6 @@ function getMockDeepAnalysis(text, scenarioIndex) {
           return betterVersions[scenarioIndex] || betterVersions[0];
         }
 
-        // ---------- DISPLAY RESULTS ----------
-        function displayResults(attemptIndex) {
-          var data = attemptData[attemptIndex];
-          if (!data) return;
-
-          var scores = data.scores;
-
-          // Update score cards
-          var dimensions = ['Clarity', 'Precision', 'Structure', 'Impact', 'Influence'];
-          dimensions.forEach(function(dim, index) {
-            var key = dim.toLowerCase();
-            var score = scores[key] || 50;
-            setTimeout(function() {
-              document.getElementById('score' + dim).textContent = score;
-              document.getElementById('bar' + dim).style.width = score + '%';
-            }, index * 100);
-          });
-
-          // Update feedback
-          var list = document.getElementById('feedbackList');
-          if (data.feedback && data.feedback.length > 0) {
-            list.innerHTML = data.feedback.map(function(item) {
-              return '<li style="padding: 6px 0; border-bottom: 1px solid #f5f2ed; line-height: 1.6;">' + item +
-                '</li>';
-            }).join('');
-          } else {
-            list.innerHTML =
-              '<li style="padding: 6px 0; color: #8a8680; font-style: italic;">No feedback available.</li>';
-          }
-
-          // Update Better Version
-          if (data.betterVersion) {
-            document.getElementById('betterVersion').textContent = data.betterVersion;
-          } else {
-            document.getElementById('betterVersion').textContent = 'No improved version available.';
-          }
-
-          // Update Why It Works
-          var whyList = document.getElementById('betterWhyList');
-          if (data.whyItWorks && data.whyItWorks.length > 0) {
-            whyList.innerHTML = data.whyItWorks.map(function(item) {
-              return '<li style="padding: 3px 0;">• ' + item + '</li>';
-            }).join('');
-          } else {
-            whyList.innerHTML =
-              '<li style="padding: 3px 0; color: #8a8680; font-style: italic;">No breakdown available.</li>';
-          }
-
-          // Update improvement
-          if (attemptData.length > 1) {
-            var firstAvg = Object.values(attemptData[0].scores).reduce(function(a, b) { return a + b; }, 0) / 5;
-            var currentAvg = Object.values(scores).reduce(function(a, b) { return a + b; }, 0) / 5;
-            var diff = Math.round(currentAvg - firstAvg);
-            improvementBox.style.display = 'block';
-            improvementScore.textContent = (diff > 0 ? '+' : '') + diff;
-            improvementText.textContent = 'points ' + (diff >= 0 ? 'improvement' : 'decline') +
-              ' from your first attempt';
-            if (diff > 0) {
-              improvementScore.style.color = '#16a34a';
-            } else if (diff < 0) {
-              improvementScore.style.color = '#dc2626';
-            } else {
-              improvementScore.style.color = '#b8943c';
-            }
-          } else {
-            improvementBox.style.display = 'none';
-          }
-
-          attemptSummary.textContent = 'Attempt ' + (attemptIndex + 1) + ' of 3';
-        }
-
         // ---------- UPDATE ATTEMPT UI ----------
         function updateAttemptUI() {
           currentAttemptDisplay.textContent = Math.min(currentAttempt + 1, maxAttempts);
@@ -3531,90 +3458,91 @@ function getMockDeepAnalysis(text, scenarioIndex) {
           }
         }
 
-       // ---------- SHOW PERSONA REVEAL ----------
-function showPersonaReveal(personaData, backendData) {
-  if (personaData) {
-    revealStrength.textContent = personaData.strength_label || 'CLARITY';
-    revealStrengthDesc.textContent = personaData.strength_desc ||
-      'You tend to make your core message understandable once you commit to it.';
-    revealGrowth.textContent = personaData.growth_label || 'INFLUENCE';
-    revealGrowthDesc.textContent = personaData.growth_desc ||
-      'You explain your position well, but your strongest recommendation sometimes arrives too softly.';
-    revealPersonaName.textContent = personaData.name || 'The Translator';
-    revealPersonaDesc.textContent = personaData.description || 'You make complexity make sense.';
-  } else {
-    // Fallback persona calculation from attempts
-    if (attemptData.length < 3) return;
+        // ---------- SHOW PERSONA REVEAL ----------
+        function showPersonaReveal(personaData, backendData) {
+          if (personaData) {
+            revealStrength.textContent = personaData.strength_label || 'CLARITY';
+            revealStrengthDesc.textContent = personaData.strength_desc ||
+              'You tend to make your core message understandable once you commit to it.';
+            revealGrowth.textContent = personaData.growth_label || 'INFLUENCE';
+            revealGrowthDesc.textContent = personaData.growth_desc ||
+              'You explain your position well, but your strongest recommendation sometimes arrives too softly.';
+            revealPersonaName.textContent = personaData.name || 'The Translator';
+            revealPersonaDesc.textContent = personaData.description || 'You make complexity make sense.';
+          } else {
+            // Fallback persona calculation from attempts
+            if (attemptData.length < 3) return;
 
-    var dims = ['clarity', 'precision', 'structure', 'impact', 'influence'];
-    var totals = { clarity: 0, precision: 0, structure: 0, impact: 0, influence: 0 };
-    attemptData.forEach(function(entry) {
-      if (entry.scores) {
-        dims.forEach(function(d) {
-          totals[d] += entry.scores[d] || 0;
-        });
-      }
-    });
+            var dims = ['clarity', 'precision', 'structure', 'impact', 'influence'];
+            var totals = { clarity: 0, precision: 0, structure: 0, impact: 0, influence: 0 };
+            attemptData.forEach(function(entry) {
+              if (entry.scores) {
+                dims.forEach(function(d) {
+                  totals[d] += entry.scores[d] || 0;
+                });
+              }
+            });
 
-    var strongest = dims.reduce(function(a, b) { return totals[a] > totals[b] ? a : b; });
-    var weakest = dims.reduce(function(a, b) { return totals[a] < totals[b] ? a : b; });
+            var strongest = dims.reduce(function(a, b) { return totals[a] > totals[b] ? a : b; });
+            var weakest = dims.reduce(function(a, b) { return totals[a] < totals[b] ? a : b; });
 
-    var labels = {
-      clarity: 'CLARITY',
-      precision: 'PRECISION',
-      structure: 'STRUCTURE',
-      impact: 'IMPACT',
-      influence: 'INFLUENCE'
-    };
+            var labels = {
+              clarity: 'CLARITY',
+              precision: 'PRECISION',
+              structure: 'STRUCTURE',
+              impact: 'IMPACT',
+              influence: 'INFLUENCE'
+            };
 
-    var descs = {
-      clarity: 'You tend to make your core message understandable once you commit to it.',
-      precision: 'You use specific, concrete language that leaves little room for ambiguity.',
-      structure: 'You organize your thoughts in a logical, easy-to-follow sequence.',
-      impact: 'Your messages have a lasting impression on those who hear them.',
-      influence: 'You have a natural ability to persuade and move others to action.'
-    };
+            var descs = {
+              clarity: 'You tend to make your core message understandable once you commit to it.',
+              precision: 'You use specific, concrete language that leaves little room for ambiguity.',
+              structure: 'You organize your thoughts in a logical, easy-to-follow sequence.',
+              impact: 'Your messages have a lasting impression on those who hear them.',
+              influence: 'You have a natural ability to persuade and move others to action.'
+            };
 
-    var growthDescs = {
-      clarity: 'Sometimes you state your point so directly that nuance gets lost.',
-      precision: 'You can get so specific that you miss the bigger picture.',
-      structure: 'Your structure can become rigid, making you less adaptable in conversation.',
-      impact: 'Your strong delivery can sometimes overwhelm softer messages.',
-      influence: 'You explain your position well, but your strongest recommendation sometimes arrives too softly.'
-    };
+            var growthDescs = {
+              clarity: 'Sometimes you state your point so directly that nuance gets lost.',
+              precision: 'You can get so specific that you miss the bigger picture.',
+              structure: 'Your structure can become rigid, making you less adaptable in conversation.',
+              impact: 'Your strong delivery can sometimes overwhelm softer messages.',
+              influence: 'You explain your position well, but your strongest recommendation sometimes arrives too softly.'
+            };
 
-    var personaMap = {
-      clarity: { name: 'The Translator', desc: 'You make complexity make sense.' },
-      precision: { name: 'The Articulator', desc: 'You speak with clarity and command.' },
-      structure: { name: 'The Architect', desc: 'You build ideas that stand firm.' },
-      impact: { name: 'The Amplifier', desc: 'Your presence makes ideas unforgettable.' },
-      influence: { name: 'The Catalyst', desc: 'You move people to action.' }
-    };
+            var personaMap = {
+              clarity: { name: 'The Translator', desc: 'You make complexity make sense.' },
+              precision: { name: 'The Articulator', desc: 'You speak with clarity and command.' },
+              structure: { name: 'The Architect', desc: 'You build ideas that stand firm.' },
+              impact: { name: 'The Amplifier', desc: 'Your presence makes ideas unforgettable.' },
+              influence: { name: 'The Catalyst', desc: 'You move people to action.' }
+            };
 
-    var persona = personaMap[strongest] || personaMap.clarity;
+            var persona = personaMap[strongest] || personaMap.clarity;
 
-    revealStrength.textContent = labels[strongest] || 'CLARITY';
-    revealStrengthDesc.textContent = descs[strongest] || 'You tend to make your core message understandable.';
-    revealGrowth.textContent = labels[weakest] || 'INFLUENCE';
-    revealGrowthDesc.textContent = growthDescs[weakest] || 'Your strongest recommendation sometimes arrives too softly.';
-    revealPersonaName.textContent = persona.name;
-    revealPersonaDesc.textContent = persona.desc;
-  }
+            revealStrength.textContent = labels[strongest] || 'CLARITY';
+            revealStrengthDesc.textContent = descs[strongest] || 'You tend to make your core message understandable.';
+            revealGrowth.textContent = labels[weakest] || 'INFLUENCE';
+            revealGrowthDesc.textContent = growthDescs[weakest] || 'Your strongest recommendation sometimes arrives too softly.';
+            revealPersonaName.textContent = persona.name;
+            revealPersonaDesc.textContent = persona.desc;
+          }
 
-  personaReveal.style.display = 'block';
-  personaReveal.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  resultsContainer.style.display = 'none';
-  
-  // Show paid prompt if available
-  if (backendData && backendData.prompt_for_paid) {
-    var paidMessage = document.getElementById('paidPromptMessage');
-    if (paidMessage) {
-      paidMessage.style.display = 'block';
-      paidMessage.innerHTML = backendData.paid_message || 
-        'You\'ve only seen one conversation. Unlock your full Unspoken Profile for ₹499.';
-    }
-  }
-}
+          personaReveal.style.display = 'block';
+          personaReveal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          resultsContainer.style.display = 'none';
+          
+          // Show paid prompt if available
+          if (backendData && backendData.prompt_for_paid) {
+            var paidMessage = document.getElementById('paidPromptMessage');
+            if (paidMessage) {
+              paidMessage.style.display = 'block';
+              paidMessage.innerHTML = backendData.paid_message || 
+                'You\'ve only seen one conversation. Unlock your full Unspoken Profile for ₹499.';
+            }
+          }
+        }
+
         // ---------- EVENT LISTENERS ----------
         startBtn.addEventListener('click', startChallenge);
 
