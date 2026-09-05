@@ -477,7 +477,7 @@
       margin-top: 12px;
     }
 
-    /* ===== VIDEO CARD ===== */
+    /* ===== VIDEO CARD - FIXED ===== */
     .video-card {
       background: #1a1917;
       border-radius: 28px;
@@ -497,8 +497,9 @@
     .video-wrapper video {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       display: block;
+      background: #1a1917;
     }
     .video-overlay-text {
       position: absolute;
@@ -1520,11 +1521,11 @@
     <div class="hero-right">
       <div class="video-card">
         <div class="video-wrapper">
-          <video autoplay loop muted playsinline poster="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80">
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-businesswoman-giving-a-presentation-in-a-meeting-42880-large.mp4" type="video/mp4" />
+          <video autoplay loop muted playsinline>
+            <source src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Herovideo.mp4" type="video/mp4" />
             Your browser does not support video playback.
           </video>
-          <div class="video-overlay-text">See how AI turns unspoken intent into executive presence</div>
+          <div class="video-overlay-text">See what the world experiences when you communicate.</div>
         </div>
       </div>
     </div>
@@ -1811,7 +1812,7 @@
     </footer>
   </div>
 
-  <!-- ===== JAVASCRIPT ===== -->
+  <!-- ===== JAVASCRIPT - WITH DEBUGGING ===== -->
   <script>
     // ============================================================
     // BACKEND CONFIGURATION
@@ -2037,12 +2038,10 @@
           console.log('Recognition already started');
         }
 
-        // Waveform animation interval
         const waveInterval = setInterval(() => {
           if (isRecording) animateWaveform(true);
         }, 150);
 
-        // Timer interval
         timerInterval = setInterval(() => {
           seconds++;
           updateTimer();
@@ -2077,7 +2076,6 @@
         }
         animateWaveform(false);
 
-        // If no speech detected, use a default message
         const finalText = recordedText.trim() || 'I am a professional with experience in my field. I am passionate about what I do and I am looking to grow and contribute more.';
         console.log('📝 Recorded text:', finalText);
         
@@ -2096,7 +2094,7 @@
       });
 
       // ============================================================
-      // BACKEND ANALYSIS
+      // BACKEND ANALYSIS - WITH DEBUGGING
       // ============================================================
       function analyzeWithBackend(text, mode, questionType) {
         const resultsContent = document.getElementById('resultsContent');
@@ -2126,12 +2124,25 @@
             body: JSON.stringify(payload)
           })
           .then(response => {
+            console.log('📥 Response status:', response.status);
             if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             return response.json();
           })
           .then(data => {
-            console.log('✅ Backend response:', data);
-            renderResults(data);
+            console.log('✅ Backend response received:', data);
+            console.log('📊 Response structure:', Object.keys(data));
+            
+            // Check if data has the expected structure
+            if (data && data.metrics) {
+              console.log('✅ Metrics found:', data.metrics);
+              renderResults(data);
+            } else if (data && data.success === false) {
+              console.error('❌ Backend returned error:', data.message);
+              renderMockResults(text, mode, questionType);
+            } else {
+              console.warn('⚠️ Unexpected response format, using mock data');
+              renderMockResults(text, mode, questionType);
+            }
           })
           .catch(error => {
             console.error('❌ Backend error:', error);
@@ -2162,8 +2173,6 @@
         const influence = m.influence || 0;
 
         const getBarClass = (val) => val >= 70 ? 'high' : val >= 45 ? 'medium' : 'low';
-
-        // Generate waveform bars
         const waveData = aw.wave_data || [80,90,95,85,75,70,55,45,30,20,15,12,10,8,10,12,15,18,15,12];
 
         resultsContent.innerHTML = `
@@ -2171,7 +2180,6 @@
             <span style="display: inline-block; background: #fef3c7; color: #b8943c; padding: 4px 20px; border-radius: 40px; font-weight: 700; font-size: 0.75rem; letter-spacing: 1px;">✦ Your Impact Analysis</span>
           </div>
 
-          <!-- Premium Metrics Grid -->
           <div class="premium-metrics-grid">
             <div class="metric-item">
               <span class="metric-value">${clarity}</span>
@@ -2200,7 +2208,6 @@
             </div>
           </div>
 
-          <!-- Premium Insight Cards -->
           <div class="premium-insight-grid">
             <div class="insight-card gap-card">
               <span class="insight-label">💭 What You Meant</span>
@@ -2231,7 +2238,6 @@
             </div>
           </div>
 
-          <!-- Behavioral Evidence -->
           <div style="background: #ffffff; border-radius: 16px; padding: 18px 20px; border: 1px solid #ede8e0; margin: 12px 0;">
             <span style="font-size:0.55rem; font-weight:700; color:#3b82f6; text-transform:uppercase; letter-spacing:1.5px;">🔍 Behavioral Evidence</span>
             <ul class="evidence-list">
@@ -2241,7 +2247,6 @@
             </ul>
           </div>
 
-          <!-- Patterns Detected -->
           <div style="background: #ffffff; border-radius: 16px; padding: 18px 20px; border: 1px solid #ede8e0; margin: 12px 0;">
             <span style="font-size:0.55rem; font-weight:700; color:#8b5cf6; text-transform:uppercase; letter-spacing:1.5px;">🧠 Patterns Detected</span>
             <div class="pattern-tags">
@@ -2251,7 +2256,6 @@
             </div>
           </div>
 
-          <!-- WOW Feature Cards -->
           <div class="wow-grid">
             <div class="wow-card">
               <span class="wow-badge">⚡ Instant Mirror</span>
@@ -2328,7 +2332,6 @@
             </div>
           </div>
 
-          <!-- Pattern Diagnosis -->
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 14px;">
             <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid #ede8e0;">
               <span style="font-size:1.6rem; display:block;">🔍</span>
@@ -2350,7 +2353,6 @@
             </div>
           </div>
 
-          <!-- PAYWALL CTA -->
           <div class="paywall-cta">
             <h4>🔓 Unlock Your Complete Transformation</h4>
             <p>You've seen the gap. Now get the fix.</p>
@@ -2400,7 +2402,6 @@
           });
         });
 
-        // Update text submit button
         textSubmitBtn.textContent = 'Analyze My Response →';
         textSubmitBtn.disabled = false;
       }
@@ -2409,6 +2410,7 @@
       // MOCK RESULTS (Fallback)
       // ============================================================
       function renderMockResults(text, mode, questionType) {
+        console.log('📊 Using mock data fallback');
         const mockData = {
           metrics: {
             clarity: Math.floor(40 + Math.random() * 50),
@@ -2491,7 +2493,6 @@
       console.log('🚀 The Unspoken — Understand the gap. Close the gap.');
       console.log('🔗 Backend URL:', BACKEND_URL);
 
-      // Force the text submit button to be enabled initially
       setTimeout(() => {
         textSubmitBtn.disabled = false;
       }, 500);
