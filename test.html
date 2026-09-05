@@ -956,8 +956,8 @@
       });
 
 
-// ============================================================
-// BACKEND ANALYSIS - FIXED FOR ARRAY RESPONSE
+      // ============================================================
+// BACKEND ANALYSIS - CORRECTLY HANDLING THE RESPONSE
 // ============================================================
 function analyzeWithBackend(text, mode, questionType) {
     const resultsContent = document.getElementById('resultsContent');
@@ -993,10 +993,24 @@ function analyzeWithBackend(text, mode, questionType) {
       })
       .then(data => {
         console.log('✅ Backend response received:', data);
-        console.log('📊 Response type:', typeof data);
-        console.log('📊 Is Array?', Array.isArray(data));
-        console.log('📊 Array length:', Array.isArray(data) ? data.length : 'N/A');
         
+        // The response IS the data - it has metrics, gap, diagnosis, etc.
+        // Just pass it directly to renderResults
+        if (data && data.metrics) {
+          console.log('✅ Rendering results with data');
+          renderResults(data);
+        } else {
+          console.warn('⚠️ No metrics found in response, using mock data');
+          renderMockResults(text, mode, questionType);
+        }
+      })
+      .catch(error => {
+        console.error('❌ Backend error:', error);
+        renderMockResults(text, mode, questionType);
+      });
+}
+
+     
         // ============================================================
         // FIX: Handle array response - the data is in the last element
         // ============================================================
@@ -1169,262 +1183,290 @@ function analyzeWithBackend(text, mode, questionType) {
         return null;
       }
 
-      // ============================================================
-      // RENDER RESULTS
-      // ============================================================
-      function renderResults(data) {
-        const resultsContent = document.getElementById('resultsContent');
+// ============================================================
+// RENDER RESULTS - COMPLETE VERSION
+// ============================================================
+function renderResults(data) {
+    console.log('📊 Rendering results with data:', data);
+    
+    const resultsContent = document.getElementById('resultsContent');
+    if (!resultsContent) {
+        console.error('❌ resultsContent element not found');
+        return;
+    }
 
-        const m = data.metrics || {};
-        const g = data.gap || {};
-        const be = data.behavioral_evidence || { evidence_list: [] };
-        const pd = data.patterns_detected || { pattern_list: [] };
-        const im = data.instant_mirror || {};
-        const br = data.before_after_rewrite || {};
-        const snr = data.signal_to_noise || {};
-        const aw = data.attention_waveform || {};
-        const diag = data.diagnosis || {};
+    // Extract data with proper fallbacks
+    const m = data.metrics || {};
+    const g = data.gap || {};
+    const be = data.behavioral_evidence || { evidence_list: [] };
+    const pd = data.patterns_detected || { pattern_list: [] };
+    const im = data.instant_mirror || {};
+    const br = data.before_after_rewrite || {};
+    const snr = data.signal_to_noise || {};
+    const aw = data.attention_waveform || {};
+    const diag = data.diagnosis || {};
 
-        const clarity = m.clarity || 0;
-        const precision = m.precision || 0;
-        const structure = m.structure || 0;
-        const impact = m.impact || 0;
-        const influence = m.influence || 0;
+    const clarity = m.clarity || 0;
+    const precision = m.precision || 0;
+    const structure = m.structure || 0;
+    const impact = m.impact || 0;
+    const influence = m.influence || 0;
 
-        const getBarClass = (val) => val >= 70 ? 'high' : val >= 45 ? 'medium' : 'low';
-        const waveData = aw.wave_data || [80, 90, 95, 85, 75, 70, 55, 45, 30, 20, 15, 12, 10, 8, 10, 12, 15, 18, 15, 12];
+    console.log('📊 Scores:', { clarity, precision, structure, impact, influence });
 
-        resultsContent.innerHTML = `
-          <div style="text-align: center; margin-bottom: 16px;">
-            <span style="display: inline-block; background: #fef3c7; color: #b8943c; padding: 4px 20px; border-radius: 40px; font-weight: 700; font-size: 0.75rem; letter-spacing: 1px;">✦ Your Impact Analysis</span>
+    const getBarClass = (val) => val >= 70 ? 'high' : val >= 45 ? 'medium' : 'low';
+    const waveData = aw.wave_data || [80, 90, 95, 85, 75, 70, 55, 45, 30, 20, 15, 12, 10, 8, 10, 12, 15, 18, 15, 12];
+
+    // Convert wave data from 0-1 to 0-100 for display
+    const displayWaveData = waveData.map(v => v * 100);
+
+    resultsContent.innerHTML = `
+      <div style="text-align: center; margin-bottom: 16px;">
+        <span style="display: inline-block; background: #fef3c7; color: #b8943c; padding: 4px 20px; border-radius: 40px; font-weight: 700; font-size: 0.75rem; letter-spacing: 1px;">✦ Your Impact Analysis</span>
+      </div>
+
+      <!-- Premium Metrics Grid -->
+      <div class="premium-metrics-grid">
+        <div class="metric-item">
+          <span class="metric-value">${clarity}</span>
+          <span class="metric-label">Clarity</span>
+          <div class="metric-bar"><div class="fill ${getBarClass(clarity)}" style="width:${clarity}%;"></div></div>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">${precision}</span>
+          <span class="metric-label">Precision</span>
+          <div class="metric-bar"><div class="fill ${getBarClass(precision)}" style="width:${precision}%;"></div></div>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">${structure}</span>
+          <span class="metric-label">Structure</span>
+          <div class="metric-bar"><div class="fill ${getBarClass(structure)}" style="width:${structure}%;"></div></div>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">${impact}</span>
+          <span class="metric-label">Impact</span>
+          <div class="metric-bar"><div class="fill ${getBarClass(impact)}" style="width:${impact}%;"></div></div>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">${influence}</span>
+          <span class="metric-label">Influence</span>
+          <div class="metric-bar"><div class="fill ${getBarClass(influence)}" style="width:${influence}%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Premium Insight Cards -->
+      <div class="premium-insight-grid">
+        <div class="insight-card gap-card">
+          <span class="insight-label">💭 What You Meant</span>
+          <div class="insight-title">${g.what_you_meant || 'Analysis pending...'}</div>
+          <div class="insight-desc">${g.what_you_meant ? '' : 'Your internal intent is being analyzed.'}</div>
+        </div>
+        <div class="insight-card gap-card">
+          <span class="insight-label">👂 What Landed</span>
+          <div class="insight-title">${g.what_landed || 'Analysis pending...'}</div>
+          <div class="insight-desc">${g.what_landed ? '' : 'How your message was perceived.'}</div>
+        </div>
+        <div class="insight-card gap-card">
+          <span class="insight-label">🌀 What Got Lost</span>
+          <div class="insight-title">${g.what_got_lost || 'Analysis pending...'}</div>
+          <div class="insight-desc">${g.what_got_lost ? '' : 'What didn\'t get communicated effectively.'}</div>
+        </div>
+        <div class="insight-card gap-card">
+          <span class="insight-label">⚡ The Unspoken Gap</span>
+          <div class="insight-title">${g.unspoken_gap || 'Analysis pending...'}</div>
+          <div class="insight-desc">${g.unspoken_gap ? '' : 'The gap between intention and delivery.'}</div>
+        </div>
+        <div class="insight-card" style="grid-column: 1 / -1;">
+          <span class="insight-label">🎯 Why It Matters</span>
+          <div class="insight-title">${g.why_it_matters || 'Analysis pending...'}</div>
+          <div class="insight-highlight">
+            <strong>${g.why_it_matters ? '' : 'First impressions matter.'}</strong> ${g.why_it_matters || 'Your communication needs to be crisp, confident, and compelling.'}
           </div>
+        </div>
+      </div>
 
-          <div class="premium-metrics-grid">
-            <div class="metric-item">
-              <span class="metric-value">${clarity}</span>
-              <span class="metric-label">Clarity</span>
-              <div class="metric-bar"><div class="fill ${getBarClass(clarity)}" style="width:${clarity}%;"></div></div>
+      <!-- Behavioral Evidence -->
+      <div style="background: #ffffff; border-radius: 16px; padding: 18px 20px; border: 1px solid #ede8e0; margin: 12px 0;">
+        <span style="font-size:0.55rem; font-weight:700; color:#3b82f6; text-transform:uppercase; letter-spacing:1.5px;">🔍 Behavioral Evidence</span>
+        <ul class="evidence-list">
+          ${be.evidence_list && be.evidence_list.length > 0 
+            ? be.evidence_list.map(e => `<li>${e}</li>`).join('') 
+            : '<li style="color:#8a8680; font-style:italic;">Complete a challenge to see evidence.</li>'}
+        </ul>
+      </div>
+
+      <!-- Patterns Detected -->
+      <div style="background: #ffffff; border-radius: 16px; padding: 18px 20px; border: 1px solid #ede8e0; margin: 12px 0;">
+        <span style="font-size:0.55rem; font-weight:700; color:#8b5cf6; text-transform:uppercase; letter-spacing:1.5px;">🧠 Patterns Detected</span>
+        <div class="pattern-tags">
+          ${pd.pattern_list && pd.pattern_list.length > 0 
+            ? pd.pattern_list.map(p => `<span class="highlight">${p}</span>`).join('') 
+            : '<span style="color:#8a8680; font-style:italic;">Complete a challenge to see patterns.</span>'}
+        </div>
+      </div>
+
+      <!-- WOW Feature Cards -->
+      <div class="wow-grid">
+        <div class="wow-card">
+          <span class="wow-badge">⚡ Instant Mirror</span>
+          <h4 class="wow-title">The "First 10 Seconds" Audit</h4>
+          <div class="wow-content">
+            <p style="font-size:0.8rem; color:#6e6a62; margin-bottom:6px;">You spent <strong style="color:#dc2626;">${im.time_to_point || 18} seconds</strong> getting to your main point.</p>
+            <div class="wow-highlight">
+              <div style="margin-bottom:4px;"><span class="label-bad">❌ Where you started:</span> <em>"${im.opened_with || 'Well, I think...'}"</em></div>
+              <div><span class="label-good">🎯 Where your actual point landed:</span> <em>"${im.actual_point || 'Your main point here.'}"</em></div>
             </div>
-            <div class="metric-item">
-              <span class="metric-value">${precision}</span>
-              <span class="metric-label">Precision</span>
-              <div class="metric-bar"><div class="fill ${getBarClass(precision)}" style="width:${precision}%;"></div></div>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value">${structure}</span>
-              <span class="metric-label">Structure</span>
-              <div class="metric-bar"><div class="fill ${getBarClass(structure)}" style="width:${structure}%;"></div></div>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value">${impact}</span>
-              <span class="metric-label">Impact</span>
-              <div class="metric-bar"><div class="fill ${getBarClass(impact)}" style="width:${impact}%;"></div></div>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value">${influence}</span>
-              <span class="metric-label">Influence</span>
-              <div class="metric-bar"><div class="fill ${getBarClass(influence)}" style="width:${influence}%;"></div></div>
-            </div>
+            <p style="font-size:0.75rem; color:#6e6a62; margin-top:4px;">💡 ${im.insight || 'Executives may lose focus before you get to the point.'}</p>
           </div>
+        </div>
 
-          <div class="premium-insight-grid">
-            <div class="insight-card gap-card">
-              <span class="insight-label">💭 What You Meant</span>
-              <div class="insight-title">${g.what_you_meant || 'You wanted to communicate your message effectively.'}</div>
-              <div class="insight-desc">${g.what_you_meant ? '' : 'Your internal intent is being analyzed.'}</div>
-            </div>
-            <div class="insight-card gap-card">
-              <span class="insight-label">👂 What Landed</span>
-              <div class="insight-title">${g.what_landed || 'The listener heard your message but may have missed nuance.'}</div>
-              <div class="insight-desc">${g.what_landed ? '' : 'How your message was perceived.'}</div>
-            </div>
-            <div class="insight-card gap-card">
-              <span class="insight-label">🌀 What Got Lost</span>
-              <div class="insight-title">${g.what_got_lost || 'Some impact and specificity got lost in delivery.'}</div>
-              <div class="insight-desc">${g.what_got_lost ? '' : 'What didn\'t get communicated effectively.'}</div>
-            </div>
-            <div class="insight-card gap-card">
-              <span class="insight-label">⚡ The Unspoken Gap</span>
-              <div class="insight-title">${g.unspoken_gap || 'Between your intention and how it was perceived.'}</div>
-              <div class="insight-desc">${g.unspoken_gap ? '' : 'The gap between intention and delivery.'}</div>
-            </div>
-            <div class="insight-card" style="grid-column: 1 / -1;">
-              <span class="insight-label">🎯 Why It Matters</span>
-              <div class="insight-title">${g.why_it_matters || 'This affects how your message is received and acted upon.'}</div>
-              <div class="insight-highlight">
-                <strong>${g.why_it_matters ? '' : 'First impressions matter.'}</strong> ${g.why_it_matters || 'Your communication needs to be crisp, confident, and compelling.'}
+        <div class="wow-card">
+          <span class="wow-badge">✍️ AI Articulator</span>
+          <h4 class="wow-title">Before & After Rewrite</h4>
+          <div class="wow-content">
+            <div class="side-by-side">
+              <div class="before">
+                <span class="label">What You Said</span>
+                <div class="text">"${br.what_you_said || 'Your original response...'}"</div>
+              </div>
+              <div class="after">
+                <span class="label">Executive Version</span>
+                <div class="text">"${br.executive_version || 'Improved version...'}"</div>
               </div>
             </div>
+            <p style="font-size:0.7rem; color:#16a34a; font-weight:500;">⚡ ${br.improvement_metrics?.shorter_by_percent || 73}% shorter · ${br.improvement_metrics?.impact_multiplier || 2}x more impactful</p>
           </div>
+        </div>
 
-          <div style="background: #ffffff; border-radius: 16px; padding: 18px 20px; border: 1px solid #ede8e0; margin: 12px 0;">
-            <span style="font-size:0.55rem; font-weight:700; color:#3b82f6; text-transform:uppercase; letter-spacing:1.5px;">🔍 Behavioral Evidence</span>
-            <ul class="evidence-list">
-              ${be.evidence_list && be.evidence_list.length > 0 
-                ? be.evidence_list.map(e => `<li>${e}</li>`).join('') 
-                : '<li style="color:#8a8680; font-style:italic;">Complete a challenge to see evidence.</li>'}
-            </ul>
-          </div>
-
-          <div style="background: #ffffff; border-radius: 16px; padding: 18px 20px; border: 1px solid #ede8e0; margin: 12px 0;">
-            <span style="font-size:0.55rem; font-weight:700; color:#8b5cf6; text-transform:uppercase; letter-spacing:1.5px;">🧠 Patterns Detected</span>
-            <div class="pattern-tags">
-              ${pd.pattern_list && pd.pattern_list.length > 0 
-                ? pd.pattern_list.map(p => `<span class="highlight">${p}</span>`).join('') 
-                : '<span style="color:#8a8680; font-style:italic;">Complete a challenge to see patterns.</span>'}
-            </div>
-          </div>
-
-          <div class="wow-grid">
-            <div class="wow-card">
-              <span class="wow-badge">⚡ Instant Mirror</span>
-              <h4 class="wow-title">The "First 10 Seconds" Audit</h4>
-              <div class="wow-content">
-                <p style="font-size:0.8rem; color:#6e6a62; margin-bottom:6px;">You spent <strong style="color:#dc2626;">${im.time_to_point || 18} seconds</strong> getting to your main point.</p>
-                <div class="wow-highlight">
-                  <div style="margin-bottom:4px;"><span class="label-bad">❌ Where you started:</span> <em>"${im.opened_with || 'Well, I think...'}"</em></div>
-                  <div><span class="label-good">🎯 Where your actual point landed:</span> <em>"${im.actual_point || 'Your main point here.'}"</em></div>
+        <div class="wow-card">
+          <span class="wow-badge">📊 Signal-to-Noise Ratio</span>
+          <h4 class="wow-title">Your SNR Metric</h4>
+          <div class="wow-content">
+            <div class="snr-display">
+              <div class="snr-circle" style="background: linear-gradient(135deg, #fef3c7, #fde68a); color: #8a6d1f;">
+                ${snr.snr_percentage || 38}%
+                <span class="snr-label">SNR</span>
+              </div>
+              <div class="snr-details">
+                <div class="snr-bar-track">
+                  <div class="snr-bar-fill" style="width:${snr.snr_percentage || 38}%;"></div>
                 </div>
-                <p style="font-size:0.75rem; color:#6e6a62; margin-top:4px;">💡 ${im.insight || 'Executives may lose focus before you get to the point.'}</p>
-              </div>
-            </div>
-
-            <div class="wow-card">
-              <span class="wow-badge">✍️ AI Articulator</span>
-              <h4 class="wow-title">Before & After Rewrite</h4>
-              <div class="wow-content">
-                <div class="side-by-side">
-                  <div class="before">
-                    <span class="label">What You Said</span>
-                    <div class="text">"${br.what_you_said || 'Your original response...'}"</div>
-                  </div>
-                  <div class="after">
-                    <span class="label">Executive Version</span>
-                    <div class="text">"${br.executive_version || 'Improved version...'}"</div>
-                  </div>
+                <div class="snr-stats">
+                  <span><strong>${snr.noise_percentage || 62}%</strong> Noise</span>
+                  <span><strong>${snr.signal_percentage || 38}%</strong> Signal</span>
                 </div>
-                <p style="font-size:0.7rem; color:#16a34a; font-weight:500;">⚡ ${br.improvement_metrics?.shorter_by_percent || 73}% shorter · ${br.improvement_metrics?.impact_multiplier || 2}x more impactful</p>
-              </div>
-            </div>
-
-            <div class="wow-card">
-              <span class="wow-badge">📊 Signal-to-Noise Ratio</span>
-              <h4 class="wow-title">Your SNR Metric</h4>
-              <div class="wow-content">
-                <div class="snr-display">
-                  <div class="snr-circle" style="background: linear-gradient(135deg, #fef3c7, #fde68a); color: #8a6d1f;">
-                    ${snr.snr_percentage || 38}%
-                    <span class="snr-label">SNR</span>
-                  </div>
-                  <div class="snr-details">
-                    <div class="snr-bar-track">
-                      <div class="snr-bar-fill" style="width:${snr.snr_percentage || 38}%;"></div>
-                    </div>
-                    <div class="snr-stats">
-                      <span><strong>${snr.noise_percentage || 62}%</strong> Noise</span>
-                      <span><strong>${snr.signal_percentage || 38}%</strong> Signal</span>
-                    </div>
-                    <p style="font-size:0.7rem; color:#6e6a62; margin-top:4px;">${snr.filler_content || 'Your response contained filler words and redundant qualifiers.'}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="wow-card">
-              <span class="wow-badge">📈 Attention Waveform</span>
-              <h4 class="wow-title">Stakeholder Attention Map</h4>
-              <div class="wow-content">
-                <div class="attention-waveform">
-                  <div class="wave-container" id="attentionWaveform">
-                    ${waveData.map((val, i) => `
-                      <div class="wave-bar ${i < 6 ? 'high' : i < 9 ? 'medium' : 'dropoff'}" style="height:${Math.max(5, val)}%;"></div>
-                    `).join('')}
-                  </div>
-                  <div class="wave-labels">
-                    <span>0:00</span>
-                    <span style="color:#dc2626; font-weight:600;">🔴 Attention Dropoff</span>
-                    <span>0:45</span>
-                  </div>
-                  <div class="wave-annotation">⚠️ ${aw.annotation || 'You lost executive impact at second 14'}</div>
-                </div>
+                <p style="font-size:0.7rem; color:#6e6a62; margin-top:4px;">${snr.filler_content || 'Your response contained filler words and redundant qualifiers.'}</p>
               </div>
             </div>
           </div>
+        </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 14px;">
-            <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid #ede8e0;">
-              <span style="font-size:1.6rem; display:block;">🔍</span>
-              <span style="font-size:0.55rem; font-weight:700; color:#b8943c; letter-spacing:1px; text-transform:uppercase;">Your Pattern</span>
-              <p style="font-weight:600; color:#1a1917; font-size:0.95rem;">${diag.pattern_name || 'The Amplifier'}</p>
-              <p style="font-size:0.7rem; color:#6e6a62;">${diag.pattern_description || 'You pre-justify under pressure'}</p>
-            </div>
-            <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid #ede8e0;">
-              <span style="font-size:1.6rem; display:block;">⏱️</span>
-              <span style="font-size:0.55rem; font-weight:700; color:#b8943c; letter-spacing:1px; text-transform:uppercase;">Time to Point</span>
-              <p style="font-weight:600; color:#1a1917; font-size:0.95rem;">${diag.time_to_point || 18} seconds</p>
-              <p style="font-size:0.7rem; color:#6e6a62;">Target: Under ${diag.target_time || 5} seconds</p>
-            </div>
-            <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid #ede8e0;">
-              <span style="font-size:1.6rem; display:block;">🎯</span>
-              <span style="font-size:0.55rem; font-weight:700; color:#b8943c; letter-spacing:1px; text-transform:uppercase;">Impact Score</span>
-              <p style="font-weight:600; color:#1a1917; font-size:0.95rem;">${diag.impact_score || 42}/100</p>
-              <p style="font-size:0.7rem; color:#6e6a62;">${diag.impact_level || 'Room for executive presence'}</p>
+        <div class="wow-card">
+          <span class="wow-badge">📈 Attention Waveform</span>
+          <h4 class="wow-title">Stakeholder Attention Map</h4>
+          <div class="wow-content">
+            <div class="attention-waveform">
+              <div class="wave-container" id="attentionWaveform">
+                ${displayWaveData.map((val, i) => `
+                  <div class="wave-bar ${i < 6 ? 'high' : i < 9 ? 'medium' : 'dropoff'}" style="height:${Math.max(5, val)}%;"></div>
+                `).join('')}
+              </div>
+              <div class="wave-labels">
+                <span>0:00</span>
+                <span style="color:#dc2626; font-weight:600;">🔴 Attention Dropoff</span>
+                <span>0:45</span>
+              </div>
+              <div class="wave-annotation">⚠️ ${aw.annotation || 'You lost executive impact at second 14'}</div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div class="paywall-cta">
-            <h4>🔓 Unlock Your Complete Transformation</h4>
-            <p>You've seen the gap. Now get the fix.</p>
-            <div class="features-list">
-              <span>✅ 3-step exercise to fix your opening 10 seconds</span>
-              <span>✅ Live audio-guided practice sessions</span>
-              <span>✅ Personalized feedback on your exact scenario</span>
-            </div>
-            <a href="https://theunspoken.co.in/Pricing" class="btn-paid">Start Your Journey →</a>
-            <p style="font-size:0.7rem; color:#6e6a62; margin-top:6px;">7-day free trial · Cancel anytime</p>
-          </div>
-        `;
+      <!-- Pattern Diagnosis -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 14px;">
+        <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid #ede8e0;">
+          <span style="font-size:1.6rem; display:block;">🔍</span>
+          <span style="font-size:0.55rem; font-weight:700; color:#b8943c; letter-spacing:1px; text-transform:uppercase;">Your Pattern</span>
+          <p style="font-weight:600; color:#1a1917; font-size:0.95rem;">${diag.pattern_name || 'The Amplifier'}</p>
+          <p style="font-size:0.7rem; color:#6e6a62;">${diag.pattern_description || 'You pre-justify under pressure'}</p>
+        </div>
+        <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid #ede8e0;">
+          <span style="font-size:1.6rem; display:block;">⏱️</span>
+          <span style="font-size:0.55rem; font-weight:700; color:#b8943c; letter-spacing:1px; text-transform:uppercase;">Time to Point</span>
+          <p style="font-weight:600; color:#1a1917; font-size:0.95rem;">${diag.time_to_point || 18} seconds</p>
+          <p style="font-size:0.7rem; color:#6e6a62;">Target: Under ${diag.target_time || 5} seconds</p>
+        </div>
+        <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid #ede8e0;">
+          <span style="font-size:1.6rem; display:block;">🎯</span>
+          <span style="font-size:0.55rem; font-weight:700; color:#b8943c; letter-spacing:1px; text-transform:uppercase;">Impact Score</span>
+          <p style="font-weight:600; color:#1a1917; font-size:0.95rem;">${diag.impact_score || 42}/100</p>
+          <p style="font-size:0.7rem; color:#6e6a62;">${diag.impact_level || 'Room for executive presence'}</p>
+        </div>
+      </div>
 
-        // Animate bars
-        setTimeout(() => {
-          document.querySelectorAll('.metric-bar .fill').forEach(el => {
-            const w = el.style.width;
-            el.style.width = '0%';
-            setTimeout(() => { el.style.width = w; }, 50);
-          });
-          document.querySelectorAll('.snr-bar-fill').forEach(el => {
-            const w = el.style.width;
-            el.style.width = '0%';
-            setTimeout(() => { el.style.width = w; }, 50);
-          });
-        }, 100);
+      <!-- PAYWALL CTA -->
+      <div class="paywall-cta">
+        <h4>🔓 Unlock Your Complete Transformation</h4>
+        <p>You've seen the gap. Now get the fix.</p>
+        <div class="features-list">
+          <span>✅ 3-step exercise to fix your opening 10 seconds</span>
+          <span>✅ Live audio-guided practice sessions</span>
+          <span>✅ Personalized feedback on your exact scenario</span>
+        </div>
+        <a href="https://theunspoken.co.in/Pricing" class="btn-paid">Start Your Journey →</a>
+        <p style="font-size:0.7rem; color:#6e6a62; margin-top:6px;">7-day free trial · Cancel anytime</p>
+      </div>
+    `;
 
-        // Waveform hover effects
-        document.querySelectorAll('#attentionWaveform .wave-bar').forEach((bar, index) => {
-          bar.addEventListener('mouseenter', () => {
-            const label = document.querySelector('.wave-annotation');
-            if (index < 6) {
-              label.textContent = '✅ High attention — stakeholder is engaged';
-              label.style.color = '#16a34a';
-            } else if (index < 9) {
-              label.textContent = '⚠️ Attention starting to wane';
-              label.style.color = '#f59e0b';
-            } else {
-              label.textContent = '🔴 Attention lost — message is no longer landing';
-              label.style.color = '#dc2626';
-            }
-          });
-          bar.addEventListener('mouseleave', () => {
-            const label = document.querySelector('.wave-annotation');
-            label.textContent = aw.annotation || '⚠️ You lost executive impact at second 14';
-            label.style.color = '#dc2626';
-          });
-        });
+    console.log('✅ Results rendered successfully');
 
-        textSubmitBtn.textContent = 'Analyze My Response →';
-        textSubmitBtn.disabled = false;
-      }
+    // Animate bars after rendering
+    setTimeout(() => {
+      document.querySelectorAll('.metric-bar .fill').forEach(el => {
+        const w = el.style.width;
+        el.style.width = '0%';
+        setTimeout(() => { el.style.width = w; }, 50);
+      });
+      document.querySelectorAll('.snr-bar-fill').forEach(el => {
+        const w = el.style.width;
+        el.style.width = '0%';
+        setTimeout(() => { el.style.width = w; }, 50);
+      });
+    }, 100);
 
+    // Waveform hover effects
+    document.querySelectorAll('#attentionWaveform .wave-bar').forEach((bar, index) => {
+      bar.addEventListener('mouseenter', () => {
+        const label = document.querySelector('.wave-annotation');
+        if (index < 6) {
+          label.textContent = '✅ High attention — stakeholder is engaged';
+          label.style.color = '#16a34a';
+        } else if (index < 9) {
+          label.textContent = '⚠️ Attention starting to wane';
+          label.style.color = '#f59e0b';
+        } else {
+          label.textContent = '🔴 Attention lost — message is no longer landing';
+          label.style.color = '#dc2626';
+        }
+      });
+      bar.addEventListener('mouseleave', () => {
+        const label = document.querySelector('.wave-annotation');
+        label.textContent = aw.annotation || '⚠️ You lost executive impact at second 14';
+        label.style.color = '#dc2626';
+      });
+    });
+
+    textSubmitBtn.textContent = 'Analyze My Response →';
+    textSubmitBtn.disabled = false;
+}
+
+    
+
+
+
+
+
+    
       // ============================================================
       // MOCK RESULTS (Fallback)
       // ============================================================
