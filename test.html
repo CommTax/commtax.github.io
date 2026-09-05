@@ -955,69 +955,198 @@
         }
       });
 
+
       // ============================================================
-      // BACKEND ANALYSIS - WITH PROPER PARSING
-      // ============================================================
-      function analyzeWithBackend(text, mode, questionType) {
-        const resultsContent = document.getElementById('resultsContent');
-        resultsContent.innerHTML = `
-          <div style="text-align: center; padding: 40px;">
-            <div style="display: inline-block; width: 50px; height: 50px; border: 4px solid #ede8e0; border-top-color: #b8943c; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <p style="margin-top: 16px; color: #6e6a62;">Analyzing your communication...</p>
-          </div>
-          <style>
-            @keyframes spin { to { transform: rotate(360deg); } }
-          </style>
-        `;
-        resultsDisplay.classList.add('is-visible');
-        resultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+// BACKEND ANALYSIS - FIXED FOR ARRAY RESPONSE
+// ============================================================
+function analyzeWithBackend(text, mode, questionType) {
+    const resultsContent = document.getElementById('resultsContent');
+    resultsContent.innerHTML = `
+      <div style="text-align: center; padding: 40px;">
+        <div style="display: inline-block; width: 50px; height: 50px; border: 4px solid #ede8e0; border-top-color: #b8943c; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <p style="margin-top: 16px; color: #6e6a62;">Analyzing your communication...</p>
+      </div>
+      <style>
+        @keyframes spin { to { transform: rotate(360deg); } }
+      </style>
+    `;
+    resultsDisplay.classList.add('is-visible');
+    resultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-        const payload = {
-          text: text,
-          mode: mode,
-          question_type: questionType
-        };
+    const payload = {
+      text: text,
+      mode: mode,
+      question_type: questionType
+    };
 
-        console.log('📤 Sending to backend:', payload);
+    console.log('📤 Sending to backend:', payload);
 
-        fetch(`${BACKEND_URL}/api/communication/analyze/premium`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          })
-          .then(response => {
-            console.log('📥 Response status:', response.status);
-            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            return response.json();
-          })
-          .then(data => {
-            console.log('✅ Backend response received:', data);
-            
-            // Check if data has the expected structure
-            if (data && data.metrics) {
-              console.log('✅ Metrics found:', data.metrics);
-              renderResults(data);
-            } else if (data && data.success === false) {
-              console.error('❌ Backend returned error:', data.message);
-              renderMockResults(text, mode, questionType);
-            } else {
-              // Try to parse if data is in a different format
-              console.warn('⚠️ Unexpected response format, attempting to parse...');
-              // If data is an array or has different structure, try to map it
-              const parsedData = parseBackendResponse(data);
-              if (parsedData) {
-                renderResults(parsedData);
-              } else {
-                renderMockResults(text, mode, questionType);
+    fetch(`${BACKEND_URL}/api/communication/analyze/premium`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(response => {
+        console.log('📥 Response status:', response.status);
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        return response.json();
+      })
+      .then(data => {
+        console.log('✅ Backend response received:', data);
+        console.log('📊 Response type:', typeof data);
+        console.log('📊 Is Array?', Array.isArray(data));
+        if (Array.isArray(data)) {
+          console.log('📊 Array length:', data.length);
+          console.log('📊 Last element:', data[data.length - 1]);
+        }
+        
+        // --- FIX: Handle array response ---
+        let responseData = data;
+        
+        // If data is an array, the last element likely contains the analysis
+        if (Array.isArray(data) && data.length > 0) {
+          console.log('🔄 Response is an array, using last element');
+          responseData = data[data.length - 1];
+          
+          // If the last element has a 'scores' property, it's the analysis data
+          if (responseData && responseData.scores) {
+            console.log('✅ Found scores in array element');
+            // Transform to expected format
+            const transformedData = {
+              metrics: responseData.scores || {},
+              gap: {
+                what_you_meant: responseData.what_you_meant || '',
+                what_landed: responseData.what_landed || '',
+                what_got_lost: responseData.what_got_lost || '',
+                unspoken_gap: responseData.the_unspoken_gap || '',
+                why_it_matters: responseData.why_it_matters || ''
+              },
+              behavioral_evidence: {
+                evidence_list: responseData.behavioral_evidence || []
+              },
+              patterns_detected: {
+                pattern_list: responseData.patterns_detected || []
+              },
+              instant_mirror: {
+                time_to_point: responseData.time_to_point || 18,
+                opened_with: responseData.opened_with || '',
+                actual_point: responseData.actual_point || '',
+                insight: responseData.insight || ''
+              },
+              before_after_rewrite: {
+                what_you_said: responseData.what_you_said || '',
+                executive_version: responseData.better_version || responseData.betterVersion || '',
+                improvement_metrics: {
+                  shorter_by_percent: 73,
+                  impact_multiplier: 2
+                }
+              },
+              signal_to_noise: {
+                snr_percentage: responseData.snr_percentage || 38,
+                noise_percentage: responseData.noise_percentage || 62,
+                signal_percentage: responseData.signal_percentage || 38,
+                word_count: responseData.word_count || 0,
+                needed_words: responseData.needed_words || 0,
+                filler_content: responseData.filler_content || ''
+              },
+              attention_waveform: {
+                dropoff_second: responseData.dropoff_second || 14,
+                wave_data: responseData.wave_data || [80, 90, 95, 85, 75, 70, 55, 45, 30, 20, 15, 12, 10, 8, 10, 12, 15, 18, 15, 12],
+                annotation: responseData.annotation || 'You lost executive impact at second 14'
+              },
+              diagnosis: {
+                pattern_name: responseData.pattern_name || 'The Amplifier',
+                pattern_description: responseData.pattern_description || 'You pre-justify under pressure',
+                time_to_point: responseData.time_to_point || 18,
+                target_time: responseData.target_time || 5,
+                impact_score: responseData.impact_score || 42,
+                impact_level: responseData.impact_level || 'Room for executive presence'
               }
-            }
-          })
-          .catch(error => {
-            console.error('❌ Backend error:', error);
-            renderMockResults(text, mode, questionType);
-          });
-      }
-
+            };
+            console.log('✅ Transformed data:', transformedData);
+            renderResults(transformedData);
+            return;
+          }
+        }
+        
+        // If data has metrics directly
+        if (responseData && responseData.metrics) {
+          console.log('✅ Metrics found directly');
+          renderResults(responseData);
+          return;
+        }
+        
+        // If data has attempts array (nested)
+        if (responseData && responseData.attempts && Array.isArray(responseData.attempts) && responseData.attempts.length > 0) {
+          console.log('🔄 Found attempts array, using last attempt');
+          const lastAttempt = responseData.attempts[responseData.attempts.length - 1];
+          if (lastAttempt && lastAttempt.scores) {
+            const transformedData = {
+              metrics: lastAttempt.scores || {},
+              gap: {
+                what_you_meant: lastAttempt.what_you_meant || '',
+                what_landed: lastAttempt.what_landed || '',
+                what_got_lost: lastAttempt.what_got_lost || '',
+                unspoken_gap: lastAttempt.the_unspoken_gap || '',
+                why_it_matters: lastAttempt.why_it_matters || ''
+              },
+              behavioral_evidence: {
+                evidence_list: lastAttempt.behavioral_evidence || []
+              },
+              patterns_detected: {
+                pattern_list: lastAttempt.patterns_detected || []
+              },
+              instant_mirror: {
+                time_to_point: lastAttempt.time_to_point || 18,
+                opened_with: lastAttempt.opened_with || '',
+                actual_point: lastAttempt.actual_point || '',
+                insight: lastAttempt.insight || ''
+              },
+              before_after_rewrite: {
+                what_you_said: lastAttempt.what_you_said || '',
+                executive_version: lastAttempt.better_version || '',
+                improvement_metrics: {
+                  shorter_by_percent: 73,
+                  impact_multiplier: 2
+                }
+              },
+              signal_to_noise: {
+                snr_percentage: lastAttempt.snr_percentage || 38,
+                noise_percentage: lastAttempt.noise_percentage || 62,
+                signal_percentage: lastAttempt.signal_percentage || 38,
+                word_count: lastAttempt.word_count || 0,
+                needed_words: lastAttempt.needed_words || 0,
+                filler_content: lastAttempt.filler_content || ''
+              },
+              attention_waveform: {
+                dropoff_second: lastAttempt.dropoff_second || 14,
+                wave_data: lastAttempt.wave_data || [80, 90, 95, 85, 75, 70, 55, 45, 30, 20, 15, 12, 10, 8, 10, 12, 15, 18, 15, 12],
+                annotation: lastAttempt.annotation || 'You lost executive impact at second 14'
+              },
+              diagnosis: {
+                pattern_name: lastAttempt.pattern_name || 'The Amplifier',
+                pattern_description: lastAttempt.pattern_description || 'You pre-justify under pressure',
+                time_to_point: lastAttempt.time_to_point || 18,
+                target_time: lastAttempt.target_time || 5,
+                impact_score: lastAttempt.impact_score || 42,
+                impact_level: lastAttempt.impact_level || 'Room for executive presence'
+              }
+            };
+            renderResults(transformedData);
+            return;
+          }
+        }
+        
+        // If nothing worked, use mock data
+        console.warn('⚠️ Could not parse response, using mock data');
+        renderMockResults(text, mode, questionType);
+      })
+      .catch(error => {
+        console.error('❌ Backend error:', error);
+        renderMockResults(text, mode, questionType);
+      });
+}
+     
       // ============================================================
       // PARSE BACKEND RESPONSE - HANDLES DIFFERENT FORMATS
       // ============================================================
