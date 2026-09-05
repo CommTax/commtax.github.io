@@ -956,7 +956,7 @@
       });
 
 
-      // ============================================================
+// ============================================================
 // BACKEND ANALYSIS - FIXED FOR ARRAY RESPONSE
 // ============================================================
 function analyzeWithBackend(text, mode, questionType) {
@@ -995,158 +995,54 @@ function analyzeWithBackend(text, mode, questionType) {
         console.log('✅ Backend response received:', data);
         console.log('📊 Response type:', typeof data);
         console.log('📊 Is Array?', Array.isArray(data));
-        if (Array.isArray(data)) {
-          console.log('📊 Array length:', data.length);
-          console.log('📊 Last element:', data[data.length - 1]);
-        }
+        console.log('📊 Array length:', Array.isArray(data) ? data.length : 'N/A');
         
-        // --- FIX: Handle array response ---
+        // ============================================================
+        // FIX: Handle array response - the data is in the last element
+        // ============================================================
         let responseData = data;
         
-        // If data is an array, the last element likely contains the analysis
+        // If the response is an array, the last element contains the analysis
         if (Array.isArray(data) && data.length > 0) {
-          console.log('🔄 Response is an array, using last element');
-          responseData = data[data.length - 1];
+          console.log('🔄 Response is an array, extracting last element');
+          const lastElement = data[data.length - 1];
+          console.log('📊 Last element keys:', Object.keys(lastElement));
           
-          // If the last element has a 'scores' property, it's the analysis data
-          if (responseData && responseData.scores) {
-            console.log('✅ Found scores in array element');
-            // Transform to expected format
-            const transformedData = {
-              metrics: responseData.scores || {},
-              gap: {
-                what_you_meant: responseData.what_you_meant || '',
-                what_landed: responseData.what_landed || '',
-                what_got_lost: responseData.what_got_lost || '',
-                unspoken_gap: responseData.the_unspoken_gap || '',
-                why_it_matters: responseData.why_it_matters || ''
-              },
-              behavioral_evidence: {
-                evidence_list: responseData.behavioral_evidence || []
-              },
-              patterns_detected: {
-                pattern_list: responseData.patterns_detected || []
-              },
-              instant_mirror: {
-                time_to_point: responseData.time_to_point || 18,
-                opened_with: responseData.opened_with || '',
-                actual_point: responseData.actual_point || '',
-                insight: responseData.insight || ''
-              },
-              before_after_rewrite: {
-                what_you_said: responseData.what_you_said || '',
-                executive_version: responseData.better_version || responseData.betterVersion || '',
-                improvement_metrics: {
-                  shorter_by_percent: 73,
-                  impact_multiplier: 2
-                }
-              },
-              signal_to_noise: {
-                snr_percentage: responseData.snr_percentage || 38,
-                noise_percentage: responseData.noise_percentage || 62,
-                signal_percentage: responseData.signal_percentage || 38,
-                word_count: responseData.word_count || 0,
-                needed_words: responseData.needed_words || 0,
-                filler_content: responseData.filler_content || ''
-              },
-              attention_waveform: {
-                dropoff_second: responseData.dropoff_second || 14,
-                wave_data: responseData.wave_data || [80, 90, 95, 85, 75, 70, 55, 45, 30, 20, 15, 12, 10, 8, 10, 12, 15, 18, 15, 12],
-                annotation: responseData.annotation || 'You lost executive impact at second 14'
-              },
-              diagnosis: {
-                pattern_name: responseData.pattern_name || 'The Amplifier',
-                pattern_description: responseData.pattern_description || 'You pre-justify under pressure',
-                time_to_point: responseData.time_to_point || 18,
-                target_time: responseData.target_time || 5,
-                impact_score: responseData.impact_score || 42,
-                impact_level: responseData.impact_level || 'Room for executive presence'
+          // Check if the last element has the metrics we need
+          if (lastElement && lastElement.metrics) {
+            console.log('✅ Found metrics in last element');
+            responseData = lastElement;
+          } else {
+            // Try to find an element with metrics
+            for (let i = data.length - 1; i >= 0; i--) {
+              if (data[i] && data[i].metrics) {
+                console.log(`✅ Found metrics at index ${i}`);
+                responseData = data[i];
+                break;
               }
-            };
-            console.log('✅ Transformed data:', transformedData);
-            renderResults(transformedData);
-            return;
+            }
           }
         }
         
-        // If data has metrics directly
+        // Now check if we have the data we need
         if (responseData && responseData.metrics) {
-          console.log('✅ Metrics found directly');
+          console.log('✅ Metrics found:', responseData.metrics);
+          console.log('✅ Gap found:', responseData.gap);
+          console.log('✅ Diagnosis found:', responseData.diagnosis);
           renderResults(responseData);
-          return;
+        } else {
+          console.warn('⚠️ Could not find metrics in response');
+          console.warn('Response data:', responseData);
+          renderMockResults(text, mode, questionType);
         }
-        
-        // If data has attempts array (nested)
-        if (responseData && responseData.attempts && Array.isArray(responseData.attempts) && responseData.attempts.length > 0) {
-          console.log('🔄 Found attempts array, using last attempt');
-          const lastAttempt = responseData.attempts[responseData.attempts.length - 1];
-          if (lastAttempt && lastAttempt.scores) {
-            const transformedData = {
-              metrics: lastAttempt.scores || {},
-              gap: {
-                what_you_meant: lastAttempt.what_you_meant || '',
-                what_landed: lastAttempt.what_landed || '',
-                what_got_lost: lastAttempt.what_got_lost || '',
-                unspoken_gap: lastAttempt.the_unspoken_gap || '',
-                why_it_matters: lastAttempt.why_it_matters || ''
-              },
-              behavioral_evidence: {
-                evidence_list: lastAttempt.behavioral_evidence || []
-              },
-              patterns_detected: {
-                pattern_list: lastAttempt.patterns_detected || []
-              },
-              instant_mirror: {
-                time_to_point: lastAttempt.time_to_point || 18,
-                opened_with: lastAttempt.opened_with || '',
-                actual_point: lastAttempt.actual_point || '',
-                insight: lastAttempt.insight || ''
-              },
-              before_after_rewrite: {
-                what_you_said: lastAttempt.what_you_said || '',
-                executive_version: lastAttempt.better_version || '',
-                improvement_metrics: {
-                  shorter_by_percent: 73,
-                  impact_multiplier: 2
-                }
-              },
-              signal_to_noise: {
-                snr_percentage: lastAttempt.snr_percentage || 38,
-                noise_percentage: lastAttempt.noise_percentage || 62,
-                signal_percentage: lastAttempt.signal_percentage || 38,
-                word_count: lastAttempt.word_count || 0,
-                needed_words: lastAttempt.needed_words || 0,
-                filler_content: lastAttempt.filler_content || ''
-              },
-              attention_waveform: {
-                dropoff_second: lastAttempt.dropoff_second || 14,
-                wave_data: lastAttempt.wave_data || [80, 90, 95, 85, 75, 70, 55, 45, 30, 20, 15, 12, 10, 8, 10, 12, 15, 18, 15, 12],
-                annotation: lastAttempt.annotation || 'You lost executive impact at second 14'
-              },
-              diagnosis: {
-                pattern_name: lastAttempt.pattern_name || 'The Amplifier',
-                pattern_description: lastAttempt.pattern_description || 'You pre-justify under pressure',
-                time_to_point: lastAttempt.time_to_point || 18,
-                target_time: lastAttempt.target_time || 5,
-                impact_score: lastAttempt.impact_score || 42,
-                impact_level: lastAttempt.impact_level || 'Room for executive presence'
-              }
-            };
-            renderResults(transformedData);
-            return;
-          }
-        }
-        
-        // If nothing worked, use mock data
-        console.warn('⚠️ Could not parse response, using mock data');
-        renderMockResults(text, mode, questionType);
       })
       .catch(error => {
         console.error('❌ Backend error:', error);
         renderMockResults(text, mode, questionType);
       });
 }
-     
+
+      
       // ============================================================
       // PARSE BACKEND RESPONSE - HANDLES DIFFERENT FORMATS
       // ============================================================
