@@ -1,376 +1,1615 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Unspoken - Communication Orbit</title>
-    <style>
-        /* Import Premium Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@200;400;600&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Unspoken · Understand the gap. Close the gap.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+  <style>
+    /* ----- RESET & BASE ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #faf8f5;
+      color: #1a1917;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+    .section {
+      padding: 80px 0;
+      border-bottom: 1px solid #ede8e0;
+    }
+    .section:last-of-type {
+      border-bottom: none;
+    }
 
-        body {
-            background-color: #030305;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            font-family: 'Montserrat', sans-serif;
-            color: #ffffff;
-        }
+    .heading-serif {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .heading-xl {
+      font-size: 4rem;
+      line-height: 1.1;
+    }
+    .heading-lg {
+      font-size: 3rem;
+      line-height: 1.2;
+    }
+    .accent-gold {
+      color: #b8943c;
+    }
 
-        /* 9:16 Portrait Canvas Aspect Ratio Container */
-        .canvas-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            max-width: 85vh; /* Maintains 9:16 aspect ratio */
-            max-height: 100vh;
-            background: radial-gradient(circle at center, #0d0f18 0%, #030305 100%);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 40px 10px;
-        }
+    /* ----- BUTTONS ----- */
+    .btn-free {
+      display: inline-block;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 14px 36px;
+      border-radius: 60px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+      letter-spacing: 0.3px;
+    }
+    .btn-free:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    }
 
-        /* Ambient Glow Backlight */
-        .ambient-glow {
-            position: absolute;
-            width: 320px;
-            height: 320px;
-            background: radial-gradient(circle, rgba(138, 43, 226, 0.18) 0%, rgba(0, 212, 255, 0.05) 50%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            filter: blur(40px);
-            pointer-events: none;
-        }
+    .btn-paid {
+      display: inline-block;
+      background: linear-gradient(135deg, #b8943c, #a07f30);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 16px 44px;
+      border-radius: 60px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 6px 20px rgba(184, 148, 60, 0.3);
+      letter-spacing: 0.3px;
+    }
+    .btn-paid:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(184, 148, 60, 0.45);
+      background: linear-gradient(135deg, #a07f30, #8a6d1f);
+    }
 
-        canvas#particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
+    .btn-ghost {
+      display: inline-block;
+      background: transparent;
+      color: #1a1917;
+      font-weight: 500;
+      padding: 12px 24px;
+      border-radius: 60px;
+      text-decoration: none;
+      border: 1px solid #d0c8bc;
+      transition: all 0.2s ease;
+    }
+    .btn-ghost:hover {
+      border-color: #b8943c;
+      color: #b8943c;
+    }
 
-        /* Header / Branding */
-        .header {
-            z-index: 10;
-            text-align: center;
-            margin-top: 20px;
-        }
+    /* ----- NAV ----- */
+    .navbar {
+      padding: 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #ede8e0;
+    }
+    .logo-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 10px;
+    }
+    .logo-img {
+      height: 40px;
+      width: auto;
+      display: block;
+    }
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #1a1917;
+    }
+    .logo-text span {
+      color: #b8943c;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #3d3a34;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: #b8943c;
+    }
 
-        .brand-title {
-            font-family: 'Cinzel', serif;
-            font-size: 24px;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #ffffff 0%, #a1a8c3 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-        }
+    /* Pulse animation for recording indicator */
+    @keyframes pulse-dot {
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.3;
+        transform: scale(0.8);
+      }
+    }
 
-        .brand-subtitle {
-            font-size: 9px;
-            letter-spacing: 4px;
-            color: #626982;
-            text-transform: uppercase;
-            margin-top: 6px;
-        }
+    /* Slide up for results */
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-        /* 3D Orbit Stage */
-        .stage {
-            position: relative;
-            width: 100%;
-            height: 55%;
-            perspective: 1000px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 5;
-        }
+    /* Timer warning flash */
+    @keyframes timer-warning {
+      0%,
+      100% {
+        color: #dc2626;
+      }
+      50% {
+        color: #b8943c;
+      }
+    }
 
-        .orbit-container {
-            position: relative;
-            width: 360px;
-            height: 360px;
-            transform-style: preserve-3d;
-            /* Updated: Reduced tilt from rotateX(65deg) to rotateX(40deg) for better readability */
-            transform: rotateX(40deg) rotateY(-5deg);
-        }
+    .timer-warning {
+      animation: timer-warning 0.5s ease-in-out 3;
+    }
 
-        /* Elliptical Path Rings */
-        .orbit-ring {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 0 20px rgba(138, 43, 226, 0.25), inset 0 0 15px rgba(0, 212, 255, 0.12);
-        }
+    /* Mode button active state */
+    .mode-btn.active {
+      background: #b8943c;
+      color: #ffffff;
+      border-color: #b8943c;
+    }
 
-        .orbit-ring-inner {
-            position: absolute;
-            top: 15%;
-            left: 15%;
-            width: 70%;
-            height: 70%;
-            border-radius: 50%;
-            border: 1px dashed rgba(255, 255, 255, 0.08);
-        }
+    /* ----- LOGIN MODAL ----- */
+    .login-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+    .login-modal-content {
+      position: relative;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 40px 36px;
+      max-width: 440px;
+      width: 90%;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
+      animation: loginSlideUp 0.3s ease;
+    }
+    @keyframes loginSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .login-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      color: #8a8680;
+      cursor: pointer;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+    .login-modal-close:hover {
+      color: #1a1917;
+    }
+    .login-modal-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1a1917;
+      margin-bottom: 20px;
+    }
+    .login-modal-logo span {
+      color: #b8943c;
+    }
+    .login-modal-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1917;
+      margin-bottom: 4px;
+    }
+    .login-modal-subtitle {
+      color: #6e6a62;
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+    .login-modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .login-form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1a1917;
+      margin-bottom: 4px;
+    }
+    .login-form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid #e2ddd6;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+      background: #faf8f5;
+      font-family: inherit;
+    }
+    .login-form-group input:focus {
+      outline: none;
+      border-color: #b8943c;
+      box-shadow: 0 0 0 4px rgba(184, 148, 60, 0.1);
+    }
+    .login-form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .login-remember {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #6e6a62;
+      cursor: pointer;
+    }
+    .login-remember input[type="checkbox"] {
+      accent-color: #b8943c;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+    .login-forgot {
+      color: #b8943c;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .login-forgot:hover {
+      text-decoration: underline;
+    }
+    .login-btn-primary {
+      background: linear-gradient(135deg, #b8943c, #a07f30);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(184, 148, 60, 0.3);
+      margin-top: 4px;
+    }
+    .login-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(184, 148, 60, 0.4);
+    }
+    .login-btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    .login-modal-footer {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #ede8e0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #6e6a62;
+    }
+    .login-join-link {
+      color: #b8943c;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .login-join-link:hover {
+      text-decoration: underline;
+    }
+    .login-error {
+      color: #dc2626;
+      font-size: 0.85rem;
+      display: none;
+      margin-top: 4px;
+    }
+    @media (max-width: 480px) {
+      .login-modal-content {
+        padding: 28px 20px;
+        max-width: 100%;
+        margin: 16px;
+        border-radius: 20px;
+      }
+      .login-modal-header h2 {
+        font-size: 1.6rem;
+      }
+      .login-form-options {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+    }
 
-        /* Central Core Node */
-        .core-node {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 10px;
-            height: 10px;
-            background: #ffffff;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px #ffffff, 0 0 35px #8a2be2;
-        }
+    /* ===== HERO - 5 PAIN ROTATION ===== */
+    .hero {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      padding: 60px 0 80px;
+      flex-wrap: nowrap;
+      min-height: 80vh;
+    }
+    .hero-left {
+      flex: 1 1 48%;
+      min-width: 0;
+    }
+    .hero-right {
+      flex: 1 1 48%;
+      min-width: 0;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: #e8e0d5;
+      color: #4d4237;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 8px 22px;
+      border-radius: 40px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero .rotating-container {
+      height: 130px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 0;
+    }
+    .hero .rotating-pair {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeSlide 15s infinite;
+    }
+    .hero .rotating-pair .pain-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #b8943c;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .hero .rotating-pair .inner-voice {
+      font-size: 2rem;
+      line-height: 1.2;
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      color: #1a1917;
+      font-style: italic;
+    }
+    .hero .rotating-pair:nth-child(1) {
+      animation-delay: 0s;
+    }
+    .hero .rotating-pair:nth-child(2) {
+      animation-delay: 3s;
+    }
+    .hero .rotating-pair:nth-child(3) {
+      animation-delay: 6s;
+    }
+    .hero .rotating-pair:nth-child(4) {
+      animation-delay: 9s;
+    }
+    .hero .rotating-pair:nth-child(5) {
+      animation-delay: 12s;
+    }
+    @keyframes fadeSlide {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      5% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      18% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      22% {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+    .hero .tagline {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #b8943c;
+      margin-bottom: 12px;
+      margin-top: 4px;
+      padding-top: 2px;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: #4d4a44;
+      max-width: 460px;
+      margin-bottom: 16px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .hero-micro {
+      font-size: 0.85rem;
+      color: #6e6a62;
+      margin-top: 12px;
+    }
 
-        /* Persona Nodes & Labels */
-        .node {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            transform-style: preserve-3d;
-        }
+    /* ----- VIDEO CARD ----- */
+    .video-card {
+      background: #1a1917;
+      border-radius: 28px;
+      padding: 16px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.08);
+      position: relative;
+    }
+    .video-wrapper {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      background: #2d2a24;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .video-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .video-overlay-text {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: #f0ebe4;
+      font-weight: 500;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+      padding: 30px 20px 16px;
+      pointer-events: none;
+      z-index: 1;
+    }
 
-        .node-dot {
-            width: 14px;
-            height: 14px;
-            background: #00d4ff;
-            border-radius: 50%;
-            position: absolute;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 12px #00d4ff, 0 0 24px #00d4ff;
-        }
+    /* ----- TRUST STRIP ----- */
+    .trust-strip-highlight {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 2px solid #b8943c;
+      border-radius: 14px;
+      padding: 16px 32px;
+      margin: 24px auto 20px;
+      max-width: 1000px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(184, 148, 60, 0.12);
+    }
+    .trust-strip-highlight .label {
+      font-weight: 800;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #8a6d1f;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .trust-strip-highlight .tags {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-weight: 700;
+      color: #1a1917;
+      font-size: 1.05rem;
+      letter-spacing: 0.3px;
+    }
+    .trust-strip-highlight .tags span {
+      padding: 2px 0;
+      position: relative;
+    }
+    .trust-strip-highlight .tags span::after {
+      content: "✦";
+      color: #b8943c;
+      margin-left: 10px;
+      font-size: 0.5rem;
+    }
+    .trust-strip-highlight .tags span:last-child::after {
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .trust-strip-highlight {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 14px 20px;
+        max-width: 100%;
+      }
+      .trust-strip-highlight .tags {
+        gap: 14px;
+        font-size: 0.9rem;
+      }
+      .trust-strip-highlight .tags span::after {
+        display: none;
+      }
+    }
 
-        /* Custom glow colors for specific personas */
-        .node[data-persona="Misaligned"] .node-dot {
-            background: #ff3366;
-            box-shadow: 0 0 10px #ff3366, 0 0 20px #ff3366;
-        }
+    /* ===== STACKED CARDS ===== */
+    .explore-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
 
-        .node[data-persona="Emerging"] .node-dot {
-            background: #ffbb00;
-            box-shadow: 0 0 10px #ffbb00, 0 0 20px #ffbb00;
-        }
+    .explore-badge {
+      display: inline-block;
+      background: rgba(184, 148, 60, 0.1);
+      color: #b8943c;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 6px 20px;
+      border-radius: 40px;
+      border: 1px solid rgba(184, 148, 60, 0.15);
+      margin-bottom: 12px;
+    }
 
-        .node-label {
-            position: absolute;
-            top: -28px;
-            left: 50%;
-            /* Counter-rotate set to -40deg to match the new orbit tilt */
-            transform: translateX(-50%) rotateX(-40deg);
-            white-space: nowrap;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #ffffff;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 6px rgba(255, 255, 255, 0.4);
-            pointer-events: none;
-        }
+    .explore-tags {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
 
-        /* Footer / Bottom Line Statement */
-        .footer {
-            z-index: 10;
-            text-align: center;
-            max-width: 85%;
-            margin-bottom: 30px;
-        }
+    .explore-tags span {
+      background: #f4f0ea;
+      padding: 4px 16px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #4d4a44;
+    }
 
-        .bottom-line {
-            font-size: 13px;
-            line-height: 1.6;
-            font-weight: 200;
-            color: #a0a7ba;
-            letter-spacing: 0.5px;
-        }
+    .stacked-cards-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      min-height: 600px;
+    }
 
-        .highlight {
-            color: #ffffff;
-            font-weight: 400;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            padding-bottom: 2px;
-        }
-    </style>
+    .stacked-card {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #ede8e0;
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      position: sticky;
+      top: 80px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+      margin-bottom: 20px;
+      z-index: 1;
+    }
+
+    .stacked-card:nth-child(1) {
+      z-index: 5;
+      top: 80px;
+    }
+    .stacked-card:nth-child(2) {
+      z-index: 4;
+      top: 120px;
+    }
+    .stacked-card:nth-child(3) {
+      z-index: 3;
+      top: 160px;
+    }
+    .stacked-card:nth-child(4) {
+      z-index: 2;
+      top: 200px;
+    }
+    .stacked-card:nth-child(5) {
+      z-index: 1;
+      top: 240px;
+    }
+
+    .stacked-card.is-active {
+      transform: scale(1) translateY(0);
+      border-color: #b8943c;
+      box-shadow: 0 20px 50px rgba(184, 148, 60, 0.08);
+      z-index: 10;
+    }
+
+    .stacked-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #b8943c, #fcd34d, #b8943c);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .stacked-card.is-active::before {
+      opacity: 1;
+    }
+
+    .stacked-card-inner {
+      display: flex;
+      padding: 28px 30px;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .stacked-card-left {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .stacked-card-right {
+      flex: 0 0 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stacked-card-image {
+      width: 140px;
+      height: 140px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #f0ebe4;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+
+    .stacked-card.is-active .stacked-card-image {
+      transform: scale(1.04);
+    }
+
+    .stacked-card-icon {
+      font-size: 2.8rem;
+      margin-bottom: 4px;
+    }
+
+    .stacked-card-label {
+      font-size: 0.55rem;
+      font-weight: 500;
+      opacity: 0.7;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .stacked-card-number {
+      font-size: 0.5rem;
+      font-weight: 700;
+      color: #b8943c;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .stacked-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1a1917;
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    .stacked-card-desc {
+      font-size: 0.85rem;
+      color: #6e6a62;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .stacked-card-options {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 4px 0;
+    }
+
+    .stacked-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8f5f0;
+      padding: 8px 16px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #4d4a44;
+      border: 1px solid transparent;
+    }
+
+    .stacked-option:hover {
+      background: #fef3c7;
+      border-color: #b8943c;
+    }
+
+    .stacked-option input[type="radio"] {
+      accent-color: #b8943c;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .stacked-card-topics {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stacked-card-topics span {
+      background: #f4f0ea;
+      padding: 3px 12px;
+      border-radius: 40px;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: #4d4a44;
+    }
+
+    .stacked-card-collections {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .collection-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8f5f0;
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: 1px solid #ede8e0;
+      transition: all 0.3s ease;
+    }
+
+    .collection-item:hover {
+      border-color: #b8943c;
+      background: #fef3c7;
+    }
+
+    .collection-icon {
+      font-size: 1.2rem;
+    }
+
+    .collection-title {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #1a1917;
+    }
+
+    .collection-experts {
+      font-size: 0.6rem;
+      color: #6e6a62;
+    }
+
+    .stacked-card-footer {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid #f5f2ed;
+    }
+
+    .stacked-card-tag {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #b8943c;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .stacked-card-time {
+      font-size: 0.6rem;
+      color: #8a8680;
+    }
+
+    /* ===== JOURNEY CARD ===== */
+    .journey-card {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 28px;
+      border: 1px solid #ede8e0;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .journey-card .gold-bar {
+      height: 4px;
+      background: linear-gradient(90deg, #b8943c, #fcd34d, #b8943c);
+    }
+
+    .journey-card .journey-body {
+      padding: 32px 36px 28px;
+    }
+
+    .journey-card .journey-badge {
+      font-size: 0.55rem;
+      font-weight: 700;
+      color: #b8943c;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .journey-card .journey-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1917;
+      margin: 4px 0 0;
+      letter-spacing: -0.5px;
+    }
+
+    .journey-card .journey-title span {
+      color: #b8943c;
+    }
+
+    .journey-card .journey-subtitle {
+      font-size: 0.95rem;
+      color: #4d4a44;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .journey-card .journey-divider {
+      border-top: 1px solid #f0ebe4;
+      margin: 16px 0;
+    }
+
+    .journey-card .journey-outcome-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #8a8680;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .journey-card .journey-outcome {
+      font-size: 1.1rem;
+      color: #1a1917;
+      font-weight: 500;
+      font-style: italic;
+    }
+
+    .journey-card .journey-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .journey-card .journey-tags span {
+      font-size: 0.7rem;
+      color: #1a1917;
+      background: #f4f0ea;
+      padding: 4px 14px;
+      border-radius: 40px;
+      font-weight: 500;
+    }
+
+    .journey-card .journey-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #f0ebe4;
+    }
+
+    .journey-card .journey-delivery {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #b8943c;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .community-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+    .community-item {
+      background: #f4f0ea;
+      padding: 24px 20px;
+      border-radius: 24px;
+      text-align: center;
+      transition: background 0.2s;
+    }
+    .community-item:hover {
+      background: #ede8e0;
+    }
+    .community-item .icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .community-item h4 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid #ede8e0;
+      padding: 18px 0;
+    }
+    .faq-item summary {
+      font-weight: 600;
+      font-size: 1.05rem;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+    .faq-item summary::after {
+      content: "+";
+      font-size: 1.4rem;
+      color: #b8943c;
+    }
+    .faq-item[open] summary::after {
+      content: "−";
+    }
+    .faq-item p {
+      margin-top: 12px;
+      color: #4d4a44;
+      max-width: 700px;
+    }
+
+    .footer {
+      padding: 48px 0 32px;
+      border-top: 1px solid #ede8e0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 32px;
+    }
+    .footer-col h4 {
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .footer-col a {
+      display: block;
+      color: #4d4a44;
+      text-decoration: none;
+      padding: 4px 0;
+      font-size: 0.9rem;
+    }
+    .footer-col a:hover {
+      color: #b8943c;
+    }
+    .footer-social {
+      display: flex;
+      gap: 16px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 992px) {
+      .hero {
+        flex-direction: column;
+        flex-wrap: wrap;
+        min-height: auto;
+        gap: 40px;
+      }
+      .hero-left,
+      .hero-right {
+        flex: 1 1 100%;
+        width: 100%;
+      }
+      .hero .rotating-pair .inner-voice {
+        font-size: 1.6rem;
+      }
+      .hero .rotating-container {
+        height: 110px;
+      }
+      .heading-xl {
+        font-size: 3rem;
+      }
+      .heading-lg {
+        font-size: 2.4rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 16px;
+      }
+      .navbar {
+        flex-direction: row;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .logo-img {
+        height: 32px;
+      }
+      .logo-text {
+        font-size: 1.2rem;
+      }
+      .nav-links {
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .nav-links a {
+        font-size: 0.8rem;
+      }
+      .hero .rotating-pair .inner-voice {
+        font-size: 1.3rem;
+      }
+      .hero .rotating-pair .pain-label {
+        font-size: 1rem;
+      }
+      .hero .rotating-container {
+        height: 95px;
+      }
+      .hero-badge {
+        font-size: 0.75rem;
+        padding: 6px 16px;
+      }
+      .section {
+        padding: 48px 0;
+      }
+      .footer {
+        flex-direction: column;
+      }
+      .stacked-card-inner {
+        padding: 24px 24px;
+        flex-direction: column;
+      }
+      .stacked-card-right {
+        flex: 1;
+        justify-content: center;
+      }
+      .stacked-card-image {
+        width: 100px;
+        height: 100px;
+      }
+      .stacked-card-icon {
+        font-size: 2rem;
+      }
+      .stacked-card-title {
+        font-size: 1.1rem;
+      }
+      .stacked-card:nth-child(1) {
+        top: 60px;
+      }
+      .stacked-card:nth-child(2) {
+        top: 80px;
+      }
+      .stacked-card:nth-child(3) {
+        top: 100px;
+      }
+      .stacked-card:nth-child(4) {
+        top: 120px;
+      }
+      .stacked-card:nth-child(5) {
+        top: 140px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stacked-card-inner {
+        padding: 20px 16px;
+      }
+      .stacked-card-title {
+        font-size: 1rem;
+      }
+      .stacked-card-options {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .stacked-card-collections {
+        flex-direction: column;
+      }
+      .stacked-card-right {
+        flex: 1;
+      }
+      .stacked-card-image {
+        width: 80px;
+        height: 80px;
+      }
+      .stacked-card-icon {
+        font-size: 1.6rem;
+      }
+      .stacked-card-label {
+        font-size: 0.45rem;
+      }
+      .collection-item {
+        padding: 6px 12px;
+      }
+      .stacked-card:nth-child(1) {
+        top: 40px;
+      }
+      .stacked-card:nth-child(2) {
+        top: 50px;
+      }
+      .stacked-card:nth-child(3) {
+        top: 60px;
+      }
+      .stacked-card:nth-child(4) {
+        top: 70px;
+      }
+      .stacked-card:nth-child(5) {
+        top: 80px;
+      }
+      .journey-card .journey-body {
+        padding: 20px 16px;
+      }
+      .journey-card .journey-title {
+        font-size: 1.3rem;
+      }
+      .journey-card .journey-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .journey-card .journey-footer a {
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div id="top"></div>
 
-    <div class="canvas-container">
-        <!-- Ambient Glow Backlight -->
-        <div class="ambient-glow"></div>
+  <!-- ===== NAV ===== -->
+  <div class="container">
+    <nav class="navbar">
+      <a href="#top" class="logo-link">
+        <img src="https://github.com/CommTax/commtax.github.io/blob/main/Mini%20Logo%20Unspoken.png?raw=true" alt="The Unspoken Logo" class="logo-img" />
+        <span class="logo-text">The <span>Unspoken</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="#journeys">Journeys</a>
+        <a href="#community">Community</a>
+        <a href="#faq">FAQ</a>
+        <a href="hero.html" class="btn-persona" style="background: linear-gradient(135deg, #b8943c, #a07f30); color: #ffffff; padding: 8px 20px; border-radius: 40px; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: all 0.3s ease; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+          <span>✦</span> Know Your Pattern
+        </a>
+        <a href="#" class="btn-ghost" id="signInBtn" style="border-color:#b8943c; padding:8px 20px; font-size:0.85rem;">Sign In</a>
+      </div>
+    </nav>
+  </div>
 
-        <!-- Floating Dust Particles Canvas -->
-        <canvas id="particles"></canvas>
-
-        <!-- Top Header / Branding -->
-        <div class="header">
-            <div class="brand-title">The Unspoken</div>
-            <div class="brand-subtitle">Communication Dynamics</div>
+  <!-- ===== LOGIN MODAL ===== -->
+  <div id="loginModal" class="login-modal" style="display: none;">
+    <div class="login-modal-overlay" id="loginModalOverlay"></div>
+    <div class="login-modal-content">
+      <button class="login-modal-close" id="loginModalClose">&times;</button>
+      <div class="login-modal-header">
+        <div class="login-modal-logo">The <span>Unspoken</span></div>
+        <h2>Welcome Back</h2>
+        <p class="login-modal-subtitle">Continue your Unspoken journey.</p>
+      </div>
+      <form id="loginForm" class="login-modal-form">
+        <div class="login-form-group">
+          <label for="loginEmail">Email / User ID</label>
+          <input type="text" id="loginEmail" placeholder="Enter your email or User ID" required />
         </div>
-
-        <!-- 3D Orbit Stage -->
-        <div class="stage">
-            <div class="orbit-container">
-                <div class="orbit-ring"></div>
-                <div class="orbit-ring-inner"></div>
-                <div class="core-node"></div>
-
-                <!-- 7 Persona Nodes Container -->
-                <div id="nodes-group"></div>
-            </div>
+        <div class="login-form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required />
         </div>
-
-        <!-- Bottom Line Text -->
-        <div class="footer">
-            <p class="bottom-line">
-                There is a <span class="highlight">pattern underneath</span> the way you communicate.
-            </p>
+        <div class="login-form-options">
+          <label class="login-remember"><input type="checkbox" id="loginRemember" /> Remember me</label>
+          <a href="#" class="login-forgot">Forgot password?</a>
         </div>
+        <button type="submit" class="login-btn-primary">Log In →</button>
+      </form>
+      <div class="login-modal-footer">
+        <p>Don't have access yet? <a href="https://theunspoken.co.in/Pricing" class="login-join-link">Explore Plans →</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HERO - 5 PAIN ROTATION ===== -->
+  <section class="container hero">
+    <div class="hero-left">
+      <div class="hero-badge">You're better than how you sometimes sound.</div>
+      <p>Uncover what's getting lost between what you mean and how you land</p>
+      <div class="rotating-container">
+        <!-- 1: RAMBLING -->
+        <div class="rotating-pair">
+          <div class="pain-label">RAMBLING → CONCISE</div>
+          <div class="inner-voice">"I take too long to get to the point."</div>
+        </div>
+        <!-- 2: UNCLEAR -->
+        <div class="rotating-pair">
+          <div class="pain-label">UNCLEAR → PRECISION</div>
+          <div class="inner-voice">"I know what I mean, but it doesn't come out that way."</div>
+        </div>
+        <!-- 3: SCATTERED -->
+        <div class="rotating-pair">
+          <div class="pain-label">SCATTERED → STRUCTURE</div>
+          <div class="inner-voice">"My ideas come out all over the place."</div>
+        </div>
+        <!-- 4: FORGETTABLE -->
+        <div class="rotating-pair">
+          <div class="pain-label">FORGETTABLE → IMPACT</div>
+          <div class="inner-voice">"I get my point across, but it doesn't leave an impression"</div>
+        </div>
+        <!-- 5: UNCOMPELLING -->
+        <div class="rotating-pair">
+          <div class="pain-label">UNCOMPELLING → INFLUENCE</div>
+          <div class="inner-voice">"People hear my words, but they don't feel the message"</div>
+        </div>
+      </div>
+      <div class="tagline">Understand the gap. Close the gap.</div>
+      <div class="hero-actions">
+        <a href="#try-it-now" class="btn-free">Take the 60-Sec Impact Test →</a>
+      </div>
+      <div class="hero-micro">Free · 60 seconds · Instant feedback</div>
+    </div>
+    <div class="hero-right">
+      <div class="video-card">
+        <div class="video-wrapper">
+          <video autoplay loop muted playsinline poster="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-businesswoman-giving-a-presentation-in-a-meeting-42880-large.mp4" type="video/mp4" />
+            Your browser does not support video playback.
+          </video>
+          <div class="video-overlay-text">See how AI turns unspoken intent into executive presence</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TRUST STRIP ===== -->
+  <div class="container">
+    <div class="trust-strip-highlight">
+      <div class="label"><span>✦</span> Tailored For</div>
+      <div class="tags">
+        <span>Executive Presence</span>
+        <span>High-Stakes Pitches</span>
+        <span>Team Alignment</span>
+        <span>Leadership Communication</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STACKED CARDS SECTION ===== -->
+  <section class="section container" id="explore">
+    <div class="explore-header">
+      <div class="explore-badge">Interactive Diagnostic</div>
+      <h2 class="heading-serif heading-lg">Identify Your <span class="accent-gold">Communication Gap</span></h2>
+      <div class="explore-tags">
+        <span>Structure & Focus</span>
+        <span>Tone & Impact</span>
+        <span>Audience Reception</span>
+      </div>
     </div>
 
-    <script>
-        // --- 1. SETUP PERSONAS & ORBIT ANIMATION ---
-        const personas = [
-            "Translator",
-            "Amplifier",
-            "Articulator",
-            "Interpreter",
-            "Filter",
-            "Emerging",
-            "Misaligned"
-        ];
+    <div class="stacked-cards-container">
+      <!-- Card 1 -->
+      <div class="stacked-card is-active">
+        <div class="stacked-card-inner">
+          <div class="stacked-card-left">
+            <span class="stacked-card-number">01 / DIAGNOSTIC</span>
+            <h3 class="stacked-card-title">What happens when you speak spontaneously in meetings?</h3>
+            <p class="stacked-card-desc">Select the option that best mirrors your default response under pressure.</p>
+            <div class="stacked-card-options">
+              <label class="stacked-option"><input type="radio" name="q1" /> I talk around the point before finding it</label>
+              <label class="stacked-option"><input type="radio" name="q1" /> I over-explain background context</label>
+              <label class="stacked-option"><input type="radio" name="q1" /> I freeze or state a minimalist point</label>
+            </div>
+            <div class="stacked-card-footer">
+              <span class="stacked-card-tag">Pattern Analysis</span>
+              <span class="stacked-card-time">1 min read</span>
+            </div>
+          </div>
+          <div class="stacked-card-right">
+            <div class="stacked-card-image" style="background: linear-gradient(135deg, #2d2a24, #1a1917);">
+              <span class="stacked-card-icon">🎙️</span>
+              <span class="stacked-card-label">Spontaneous</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        const nodesGroup = document.getElementById('nodes-group');
-        const radius = 180; // Orbital ring radius in px
-        const totalNodes = personas.length;
-        const nodeElements = [];
+      <!-- Card 2 -->
+      <div class="stacked-card">
+        <div class="stacked-card-inner">
+          <div class="stacked-card-left">
+            <span class="stacked-card-number">02 / FOCUS</span>
+            <h3 class="stacked-card-title">How is your message currently received by stakeholders?</h3>
+            <p class="stacked-card-desc">Understanding audience response helps pinpoint structural leaks.</p>
+            <div class="stacked-card-topics">
+              <span>Interrupted frequently</span>
+              <span>Asked "What's the TL;DR?"</span>
+              <span>Polite nod, no action</span>
+            </div>
+            <div class="stacked-card-footer">
+              <span class="stacked-card-tag">Audience Friction</span>
+              <span class="stacked-card-time">2 min read</span>
+            </div>
+          </div>
+          <div class="stacked-card-right">
+            <div class="stacked-card-image" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+              <span class="stacked-card-icon">🎯</span>
+              <span class="stacked-card-label">Impact</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        // Generate Node Elements
-        personas.forEach((persona, index) => {
-            const node = document.createElement('div');
-            node.className = 'node';
-            node.setAttribute('data-persona', persona);
+      <!-- Card 3 -->
+      <div class="stacked-card">
+        <div class="stacked-card-inner">
+          <div class="stacked-card-left">
+            <span class="stacked-card-number">03 / SOLUTIONS</span>
+            <h3 class="stacked-card-title">Targeted Frameworks for Immediate Clarity</h3>
+            <p class="stacked-card-desc">Choose a core objective to unlock tailored exercises and AI feedback.</p>
+            <div class="stacked-card-collections">
+              <div class="collection-item">
+                <span class="collection-icon">⚡</span>
+                <div>
+                  <span class="collection-title">Bottom-Line First (BLUF)</span>
+                  <span class="collection-experts">Clarity & Brevity</span>
+                </div>
+              </div>
+              <div class="collection-item">
+                <span class="collection-icon">🏛️</span>
+                <div>
+                  <span class="collection-title">Pyramid Structure</span>
+                  <span class="collection-experts">Executive Presentations</span>
+                </div>
+              </div>
+            </div>
+            <div class="stacked-card-footer">
+              <span class="stacked-card-tag">Frameworks</span>
+              <span class="stacked-card-time">3 min read</span>
+            </div>
+          </div>
+          <div class="stacked-card-right">
+            <div class="stacked-card-image" style="background: linear-gradient(135deg, #b8943c, #8a6d1f);">
+              <span class="stacked-card-icon">💡</span>
+              <span class="stacked-card-label">Strategy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            const dot = document.createElement('div');
-            dot.className = 'node-dot';
+  <!-- ===== JOURNEY CARD ===== -->
+  <section class="section container" id="journeys">
+    <div class="journey-card">
+      <div class="gold-bar"></div>
+      <div class="journey-body">
+        <span class="journey-badge">Featured Program</span>
+        <h3 class="journey-title">The Executive <span>Clarity Journey</span></h3>
+        <p class="journey-subtitle">A structured 4-week transformation powered by real-time voice feedback and personalized behavioral prompts.</p>
+        <div class="journey-tags">
+          <span>Concise Delivery</span>
+          <span>Strategic Storytelling</span>
+          <span>Gravitas & Tone</span>
+        </div>
+        <div class="journey-divider"></div>
+        <div class="journey-outcome-label">Primary Outcome</div>
+        <div class="journey-outcome">"Say in 30 seconds what used to take 3 minutes — without losing nuance."</div>
+        <div class="journey-footer">
+          <span class="journey-delivery">Interactive · Daily 5-Min Exercises</span>
+          <a href="https://theunspoken.co.in/Pricing" class="btn-paid">Start Your Journey →</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            const label = document.createElement('div');
-            label.className = 'node-label';
-            label.innerText = persona;
+  <!-- ===== COMMUNITY SECTION ===== -->
+  <section class="section container" id="community">
+    <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+      <h2 class="heading-serif heading-lg">Designed for <span class="accent-gold">High-Stakes Speakers</span></h2>
+      <p style="color: #6e6a62; margin-top: 12px;">Join thousands of leaders refining their spoken impact every day.</p>
+    </div>
+    <div class="community-grid">
+      <div class="community-item">
+        <span class="icon">🚀</span>
+        <h4>Founders & CEOs</h4>
+        <p style="font-size: 0.85rem; color: #6e6a62; margin-top: 6px;">Investor pitches & vision alignment</p>
+      </div>
+      <div class="community-item">
+        <span class="icon">💼</span>
+        <h4>Product & Tech Leads</h4>
+        <p style="font-size: 0.85rem; color: #6e6a62; margin-top: 6px;">Translating complexity into strategy</p>
+      </div>
+      <div class="community-item">
+        <span class="icon">📈</span>
+        <h4>Consultants & Managers</h4>
+        <p style="font-size: 0.85rem; color: #6e6a62; margin-top: 6px;">Client persuasiveness & authority</p>
+      </div>
+    </div>
+  </section>
 
-            node.appendChild(dot);
-            node.appendChild(label);
-            nodesGroup.appendChild(node);
+  <!-- ===== FAQ SECTION ===== -->
+  <section class="section container" id="faq">
+    <div style="max-width: 800px; margin: 0 auto;">
+      <h2 class="heading-serif heading-lg" style="text-align: center; margin-bottom: 32px;">Frequently Asked Questions</h2>
+      <details class="faq-item">
+        <summary>How does the 60-second impact test work?</summary>
+        <p>You record a short audio snippet answering a prompt. Our AI analyzes cadence, structure, clarity, and filler word density to give you an immediate report on your primary communication pattern.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is my voice data kept private?</summary>
+        <p>Yes. Voice recordings are processed securely, never sold to third parties, and stored only to track your personal progress within your secure profile.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How quickly can I expect results?</summary>
+        <p>Most users notice a conscious shift in their meeting structure within 3 to 5 days of practicing 5-minute daily modules.</p>
+      </details>
+    </div>
+  </section>
 
-            nodeElements.push({
-                element: node,
-                label: label,
-                angle: (index / totalNodes) * Math.PI * 2
-            });
-        });
+  <!-- ===== FOOTER ===== -->
+  <div class="container">
+    <footer class="footer">
+      <div class="footer-col">
+        <div class="logo-text" style="font-size: 1.3rem;">The <span>Unspoken</span></div>
+        <p style="font-size: 0.85rem; color: #6e6a62; margin-top: 8px;">Understand the gap. Close the gap.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <a href="#journeys">Journeys</a>
+        <a href="#explore">Diagnostic</a>
+        <a href="#community">Community</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact Us</a>
+      </div>
+    </footer>
+  </div>
 
-        // Reduced rotation speed for a slower, smoother rotation (previously 0.005)
-        let rotationSpeed = 0.002;
+  <!-- ===== INTERACTION JAVASCRIPT ===== -->
+  <script>
+    // Login Modal Toggle logic
+    const signInBtn = document.getElementById('signInBtn');
+    const loginModal = document.getElementById('loginModal');
+    const loginModalOverlay = document.getElementById('loginModalOverlay');
+    const loginModalClose = document.getElementById('loginModalClose');
 
-        function animateOrbit() {
-            nodeElements.forEach((nodeObj) => {
-                // Update angle for continuous rotation
-                nodeObj.angle += rotationSpeed;
+    if (signInBtn && loginModal) {
+      signInBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        loginModal.style.display = 'flex';
+      });
 
-                // Calculate 3D position on 2D plane
-                const x = Math.cos(nodeObj.angle) * radius;
-                const y = Math.sin(nodeObj.angle) * radius;
+      const closeModal = () => {
+        loginModal.style.display = 'none';
+      };
 
-                // Position node relative to orbit center
-                nodeObj.element.style.transform = `translate3d(${x}px, ${y}px, 0px)`;
+      loginModalOverlay.addEventListener('click', closeModal);
+      loginModalClose.addEventListener('click', closeModal);
+    }
 
-                // Depth-based Opacity & Scaling for 3D realism
-                const depth = (Math.sin(nodeObj.angle) + 1) / 2; // 0 (back) to 1 (front)
-                const scale = 0.85 + (depth * 0.3); // Kept text larger when in back
-                const opacity = 0.5 + (depth * 0.5); // Slightly higher min-opacity for front readability
-
-                nodeObj.label.style.opacity = opacity;
-                nodeObj.label.style.transform = `translateX(-50%) rotateX(-40deg) scale(${scale})`;
-            });
-
-            requestAnimationFrame(animateOrbit);
-        }
-
-        animateOrbit();
-
-        // --- 2. BACKGROUND FLOATING PARTICLES ---
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        const particleCount = 40;
-        const particles = [];
-
-        for (let i = 0; i < particleCount; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                radius: Math.random() * 1.5 + 0.5,
-                alpha: Math.random() * 0.5 + 0.1,
-                speedY: - (Math.random() * 0.2 + 0.05),
-                speedX: (Math.random() - 0.5) * 0.15
-            });
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach(p => {
-                p.y += p.speedY;
-                p.x += p.speedX;
-
-                // Loop particles smoothly
-                if (p.y < 0) p.y = canvas.height;
-                if (p.x < 0) p.x = canvas.width;
-                if (p.x > canvas.width) p.x = 0;
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-                ctx.fill();
-            });
-
-            requestAnimationFrame(animateParticles);
-        }
-
-        animateParticles();
-    </script>
+    // Stacked Cards interactive focus
+    const cards = document.querySelectorAll('.stacked-card');
+    cards.forEach((card) => {
+      card.addEventListener('click', () => {
+        cards.forEach((c) => c.classList.remove('is-active'));
+        card.classList.add('is-active');
+      });
+    });
+  </script>
 </body>
 </html>
