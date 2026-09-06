@@ -3132,7 +3132,7 @@ function showErrorState(message) {
   textSubmitBtn.disabled = false;
 }
 
-// ============================================================
+      // ============================================================
 // RENDER RESULTS - With Premium Loading States & Blurred Content
 // ============================================================
 
@@ -3235,27 +3235,18 @@ function renderResults(data, userText) {
       </ul>
     </div>
 
-    <!-- ===== LOCKED CONTENT - HEADINGS VISIBLE, DATA HIDDEN ===== -->
-    <div style="position: relative; margin: 20px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light);">
+    <!-- ===== LOCKED CONTENT - FIXED: HEADINGS VISIBLE, DATA HIDDEN ===== -->
+    <div style="position: relative; margin: 20px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: #ffffff;">
       
-      <!-- Blur Overlay -->
-      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; backdrop-filter: blur(8px); background: rgba(255,255,255,0.25); z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 16px;">
-        <div style="text-align: center; padding: 30px;">
-          <span style="display: inline-block; background: var(--gold); color: #ffffff; font-size: 0.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 8px 20px; border-radius: 40px; margin-bottom: 10px;">🔒 Premium Insights</span>
-          <p style="font-size: 0.95rem; font-weight: 600; color: var(--ink);">See your complete communication analysis</p>
-          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Upgrade to see your scores across all dimensions</p>
-        </div>
-      </div>
-      
-      <!-- Locked Content - HEADINGS VISIBLE, DATA HIDDEN/BLURRED -->
-      <div style="padding: 20px; position: relative; z-index: 1; pointer-events: none; user-select: none;">
+      <!-- Locked Content - HEADINGS VISIBLE, DATA BLURRED -->
+      <div style="padding: 20px; position: relative; z-index: 1; filter: blur(4px); opacity: 0.35; pointer-events: none; user-select: none;">
         
-        <!-- Metrics Grid - Headings VISIBLE, Scores HIDDEN -->
+        <!-- Metrics Grid - Headings VISIBLE -->
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size:0.6rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px;">📊 Communication Metrics</span>
           </div>
-          <div class="premium-metrics-grid" style="opacity: 0.3; filter: blur(4px);">
+          <div class="premium-metrics-grid">
             ${['Clarity','Precision','Structure','Impact','Influence'].map((label) => {
               return `
                 <div class="metric-item" style="background: #f8f5f0; border-color: #e0d8d0;">
@@ -3270,12 +3261,12 @@ function renderResults(data, userText) {
           </div>
         </div>
 
-        <!-- Insight Cards - Headings VISIBLE, Content HIDDEN -->
+        <!-- Insight Cards - Headings VISIBLE -->
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size:0.6rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px;">🧠 Communication Insights</span>
           </div>
-          <div class="premium-insight-grid" style="opacity: 0.3; filter: blur(4px);">
+          <div class="premium-insight-grid">
             <div class="insight-card gap-card" style="background: #f8f5f0; border-color: #e0d8d0;">
               <span class="insight-label" style="color: var(--gold);">💭 What You Meant</span>
               <div class="insight-title" style="color: #b0a8a0;">••••••••••</div>
@@ -3297,12 +3288,12 @@ function renderResults(data, userText) {
           </div>
         </div>
 
-        <!-- WOW Cards - Headings VISIBLE, Content HIDDEN -->
-        <div style="margin-bottom: 16px;">
+        <!-- WOW Cards - Headings VISIBLE -->
+        <div style="margin-bottom: 0;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size:0.6rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px;">⚡ Premium Features</span>
           </div>
-          <div class="wow-grid" style="opacity: 0.3; filter: blur(4px);">
+          <div class="wow-grid">
             
             <!-- Instant Mirror -->
             <div class="wow-card" style="background: #f8f5f0; border-color: #e0d8d0;">
@@ -3360,6 +3351,15 @@ function renderResults(data, userText) {
           </div>
         </div>
       </div>
+
+      <!-- OVERLAY - SEMI-TRANSPARENT (Doesn't block headings) -->
+      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); z-index: 2; display: flex; align-items: center; justify-content: center; border-radius: 16px; border: 1px solid rgba(184,148,60,0.15);">
+        <div style="text-align: center; padding: 20px;">
+          <span style="display: inline-block; background: var(--gold); color: #ffffff; font-size: 0.55rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 6px 16px; border-radius: 40px; margin-bottom: 6px;">🔒 Premium Insights</span>
+          <p style="font-size: 0.85rem; font-weight: 500; color: var(--ink); margin: 0;">See your complete communication analysis</p>
+          <p style="font-size: 0.7rem; color: var(--text-muted); margin: 2px 0 0;">Upgrade to see your scores across all dimensions</p>
+        </div>
+      </div>
     </div>
 
     <!-- ===== UNLOCK BANNER ===== -->
@@ -3406,11 +3406,6 @@ function renderResults(data, userText) {
   textSubmitBtn.disabled = false;
   console.log('✅ Results rendered with blurred premium content');
 }
-      
-
-
-
-
       
       // ============================================================
       // KNOW YOUR PATTERN BUTTON
