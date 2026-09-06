@@ -3123,273 +3123,258 @@ function showErrorState(message) {
   textSubmitBtn.disabled = false;
 }
       
+// ============================================================
+// RENDER RESULTS - With Premium Loading States & Blurred Content
+// ============================================================
 
+function renderResults(data, userText) {
+  console.log('📊 Rendering results with minimal data');
+  
+  const resultsContent = document.getElementById('resultsContent');
+  if (!resultsContent) {
+    console.error('❌ resultsContent element not found');
+    return;
+  }
 
+  // --- Extract ONLY the critical fields ---
+  const impactScore = data?.metrics?.impact || 58;
+  const patternName = data?.diagnosis?.pattern_name || 'The Amplifier';
+  const patternDesc = data?.diagnosis?.pattern_description || 'You pre-justify under pressure, softening your authority before making your point.';
+  const whatGotLost = data?.gap?.what_got_lost || 'Your credibility and authority in the first 10 seconds';
+  const unspokenGap = data?.gap?.unspoken_gap || 'Between your intent to sound confident and how you actually land';
+  const whatYouSaid = userText || data?.before_after_rewrite?.what_you_said || 'Your response here...';
+  const executiveVersion = data?.before_after_rewrite?.executive_version || 'This is your re-written, executive presence version.';
+
+  // --- Static values for blurred/locked content ---
+  const staticMetrics = {
+    clarity: 62,
+    precision: 55,
+    structure: 48,
+    impact: impactScore,
+    influence: 51
+  };
+  
+  const staticSnr = {
+    snr_percentage: 38,
+    noise_percentage: 62,
+    signal_percentage: 38,
+    filler_content: 'Filler words and qualifiers are diluting your message.'
+  };
+  
+  const staticMirror = {
+    time_to_point: 18,
+    opened_with: '"Well, I think, um, basically..."',
+    actual_point: '"Here is my main point."',
+    insight: 'You take too long to get to your point. Executives check out after 5 seconds.'
+  };
+  
+  const staticWaveData = [85, 90, 92, 88, 80, 72, 58, 45, 32, 22, 18, 14, 10, 8, 9, 10, 12, 14, 13, 10];
+  const staticPatterns = ['Starting sentences with hedges', 'Over-explaining before making your point'];
+
+  const getBarClass = (val) => val >= 70 ? 'high' : val >= 45 ? 'medium' : 'low';
+
+  resultsContent.innerHTML = `
+    <div style="text-align: center; margin-bottom: 16px;">
+      <span style="display: inline-block; background: var(--bg-soft-gold); color: var(--gold); padding: 4px 20px; border-radius: 40px; font-weight: 700; font-size: 0.75rem; letter-spacing: 1px;">✦ Your Impact Analysis</span>
+    </div>
+
+    <!-- ===== GAP ANALYSIS - UNLOCKED ===== -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+      <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--gold);">
+        <span style="font-size:0.55rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">🔍 What Got Lost</span>
+        <p style="font-weight:600; color:var(--brick-red); font-size:1rem; margin-top:2px;">${whatGotLost}</p>
+        <p style="font-size:0.75rem; color:var(--text-muted);">This is what's costing you executive presence</p>
+      </div>
+      <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--gold);">
+        <span style="font-size:0.55rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">🌀 The Unspoken Gap</span>
+        <p style="font-weight:600; color:var(--ink); font-size:1rem; margin-top:2px;">${unspokenGap}</p>
+        <p style="font-size:0.75rem; color:var(--text-muted);">The disconnect between intent and perception</p>
+      </div>
+    </div>
+
+    <!-- ===== DIAGNOSIS - UNLOCKED ===== -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+      <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
+        <i data-lucide="target" style="width:20px; height:20px; color:var(--gold); display:block; margin:0 auto 4px;"></i>
+        <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Impact Score</span>
+        <p style="font-weight:700; color:var(--ink); font-size:1.2rem;">${impactScore}<span style="font-weight:400; font-size:0.8rem; color:var(--text-muted);">/100</span></p>
+        <p style="font-size:0.65rem; color:var(--text-muted);">${impactScore < 50 ? 'Room for improvement' : 'Solid, but can be sharper'}</p>
+      </div>
+      <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
+        <i data-lucide="brain" style="width:20px; height:20px; color:var(--gold); display:block; margin:0 auto 4px;"></i>
+        <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Your Pattern</span>
+        <p style="font-weight:700; color:var(--ink); font-size:1rem;">${patternName}</p>
+        <p style="font-size:0.65rem; color:var(--text-muted);">${patternDesc}</p>
+      </div>
+      <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
+        <i data-lucide="clock" style="width:20px; height:20px; color:var(--gold); display:block; margin:0 auto 4px;"></i>
+        <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Time to Point</span>
+        <p style="font-weight:700; color:var(--brick-red); font-size:1.2rem;">${staticMirror.time_to_point}s</p>
+        <p style="font-size:0.65rem; color:var(--text-muted);">Target: Under 5 seconds</p>
+      </div>
+    </div>
+
+    <!-- ===== BEFORE/AFTER REWRITE - PARTIALLY UNLOCKED ===== -->
+    <div style="background: #ffffff; border-radius: 16px; padding: 18px 20px; border: 1px solid var(--border-light); margin-bottom: 16px;">
+      <span style="font-size:0.55rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">✍️ AI Articulator</span>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
+        <div style="background: #f7efec; padding: 12px 14px; border-radius: 12px; border: 1px solid #e0cfc8;">
+          <span style="font-size:0.5rem; font-weight:700; color:var(--brick-red); text-transform:uppercase; letter-spacing:1px;">What You Said</span>
+          <p style="font-size:0.85rem; color:var(--ink); margin-top:2px; line-height:1.5;">"${whatYouSaid.length > 100 ? whatYouSaid.slice(0, 100) + '...' : whatYouSaid}"</p>
+        </div>
+        <div style="background: #f0f2ea; padding: 12px 14px; border-radius: 12px; border: 1px solid #d3d9c5;">
+          <span style="font-size:0.5rem; font-weight:700; color:var(--sage); text-transform:uppercase; letter-spacing:1px;">✨ Executive Version</span>
+          <p style="font-size:0.85rem; color:var(--ink); margin-top:2px; line-height:1.5; font-weight:500;">"${executiveVersion}"</p>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:8px; font-size:0.7rem; color:var(--gold); font-weight:600;">
+        ⚡ ${Math.round(60 + Math.random() * 20)}% shorter · ${Math.round(1.5 + Math.random())}x more impactful
+      </div>
+    </div>
+
+    <!-- ===== BEHAVIORAL EVIDENCE - UNLOCKED ===== -->
+    <div style="background: #ffffff; border-radius: 16px; padding: 18px 20px; border: 1px solid var(--border-light); margin-bottom: 16px;">
+      <span style="font-size:0.55rem; font-weight:700; color:var(--charcoal-navy); text-transform:uppercase; letter-spacing:1px;">🔍 Behavioral Evidence</span>
+      <ul class="evidence-list">
+        ${staticPatterns.map(p => `<li>${p}</li>`).join('')}
+        <li>You used ${6 + Math.floor(Math.random() * 8)} filler words in 45 seconds</li>
+        <li>Your first 8 words were hedging language</li>
+      </ul>
+    </div>
+
+    <!-- ===== LOCKED CONTENT - BLURRED (Headings VISIBLE, Content HIDDEN) ===== -->
+    <div class="locked-container" style="position: relative; margin: 20px 0;">
       
-      // ============================================================
-      // RENDER RESULTS - MINIMAL BACKEND FIELDS + BLURRED PREVIEWS
-      // ============================================================
-      function renderResults(data, userText) {
-        console.log('📊 Rendering results with minimal data');
+      <!-- Blur Overlay -->
+      <div class="locked-blur-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; backdrop-filter: blur(8px); background: rgba(255,255,255,0.3); z-index: 10; border-radius: 16px; display: flex; align-items: center; justify-content: center;">
+        <div style="text-align: center; padding: 40px;">
+          <span style="display: inline-block; background: var(--gold); color: #ffffff; font-size: 0.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 8px 20px; border-radius: 40px; margin-bottom: 12px;">🔒 Premium Insights</span>
+          <p style="font-size: 1rem; font-weight: 600; color: var(--ink);">Unlocked for every input, as part of your Program.</p>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Upgrade to see your complete communication analysis</p>
+        </div>
+      </div>
+      
+      <!-- Locked Content (Headings VISIBLE, Content BLURRED/HIDDEN) -->
+      <div style="position: relative; z-index: 1; opacity: 0.4; pointer-events: none; user-select: none;">
         
-        const resultsContent = document.getElementById('resultsContent');
-        if (!resultsContent) {
-          console.error('❌ resultsContent element not found');
-          return;
-        }
-
-        // --- Extract ONLY the critical fields ---
-        const impactScore = data.metrics?.impact || 58;
-        const patternName = data.diagnosis?.pattern_name || 'The Amplifier';
-        const patternDesc = data.diagnosis?.pattern_description || 'You pre-justify under pressure, softening your authority before making your point.';
-        const whatGotLost = data.gap?.what_got_lost || 'Your credibility and authority in the first 10 seconds';
-        const unspokenGap = data.gap?.unspoken_gap || 'Between your intent to sound confident and how you actually land';
-        const whatYouSaid = userText || data.before_after_rewrite?.what_you_said || 'Your response here...';
-        const executiveVersion = data.before_after_rewrite?.executive_version || 'This is your re-written, executive presence version.';
-
-        // --- Static values for blurred/locked content ---
-        const staticMetrics = {
-          clarity: 62,
-          precision: 55,
-          structure: 48,
-          impact: impactScore,
-          influence: 51
-        };
-        
-        const staticSnr = {
-          snr_percentage: 38,
-          noise_percentage: 62,
-          signal_percentage: 38,
-          filler_content: 'Filler words and qualifiers are diluting your message.'
-        };
-        
-        const staticMirror = {
-          time_to_point: 18,
-          opened_with: '"Well, I think, um, basically..."',
-          actual_point: '"Here is my main point."',
-          insight: 'You take too long to get to your point. Executives check out after 5 seconds.'
-        };
-        
-        const staticWaveData = [85, 90, 92, 88, 80, 72, 58, 45, 32, 22, 18, 14, 10, 8, 9, 10, 12, 14, 13, 10];
-        const staticPatterns = ['Starting sentences with hedges', 'Over-explaining before making your point'];
-
-        const getBarClass = (val) => val >= 70 ? 'high' : val >= 45 ? 'medium' : 'low';
-
-        resultsContent.innerHTML = `
-          <div style="text-align: center; margin-bottom: 16px;">
-            <span style="display: inline-block; background: var(--bg-soft-gold); color: var(--gold); padding: 4px 20px; border-radius: 40px; font-weight: 700; font-size: 0.75rem; letter-spacing: 1px;">✦ Your Impact Analysis</span>
+        <!-- Metrics Grid - Headings VISIBLE -->
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size:0.6rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px;">📊 Communication Metrics</span>
           </div>
-
-          <!-- ===== GAP ANALYSIS - UNLOCKED ===== -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-            <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--gold);">
-              <span style="font-size:0.55rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">🔍 What Got Lost</span>
-              <p style="font-weight:600; color:var(--brick-red); font-size:1rem; margin-top:2px;">${whatGotLost}</p>
-              <p style="font-size:0.75rem; color:var(--text-muted);">This is what's costing you executive presence</p>
-            </div>
-            <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--gold);">
-              <span style="font-size:0.55rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">🌀 The Unspoken Gap</span>
-              <p style="font-weight:600; color:var(--ink); font-size:1rem; margin-top:2px;">${unspokenGap}</p>
-              <p style="font-size:0.75rem; color:var(--text-muted);">The disconnect between intent and perception</p>
-            </div>
-          </div>
-
-          <!-- ===== DIAGNOSIS - UNLOCKED ===== -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-            <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
-              <i data-lucide="target" style="width:20px; height:20px; color:var(--gold); display:block; margin:0 auto 4px;"></i>
-              <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Impact Score</span>
-              <p style="font-weight:700; color:var(--ink); font-size:1.2rem;">${impactScore}<span style="font-weight:400; font-size:0.8rem; color:var(--text-muted);">/100</span></p>
-              <p style="font-size:0.65rem; color:var(--text-muted);">${impactScore < 50 ? 'Room for improvement' : 'Solid, but can be sharper'}</p>
-            </div>
-            <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
-              <i data-lucide="brain" style="width:20px; height:20px; color:var(--gold); display:block; margin:0 auto 4px;"></i>
-              <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Your Pattern</span>
-              <p style="font-weight:700; color:var(--ink); font-size:1rem;">${patternName}</p>
-              <p style="font-size:0.65rem; color:var(--text-muted);">${patternDesc}</p>
-            </div>
-            <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
-              <i data-lucide="clock" style="width:20px; height:20px; color:var(--gold); display:block; margin:0 auto 4px;"></i>
-              <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Time to Point</span>
-              <p style="font-weight:700; color:var(--brick-red); font-size:1.2rem;">${staticMirror.time_to_point}s</p>
-              <p style="font-size:0.65rem; color:var(--text-muted);">Target: Under 5 seconds</p>
-            </div>
-          </div>
-
-          <!-- ===== BEFORE/AFTER REWRITE - PARTIALLY UNLOCKED ===== -->
-          <div style="background: #ffffff; border-radius: 16px; padding: 18px 20px; border: 1px solid var(--border-light); margin-bottom: 16px;">
-            <span style="font-size:0.55rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">✍️ AI Articulator</span>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
-              <div style="background: #f7efec; padding: 12px 14px; border-radius: 12px; border: 1px solid #e0cfc8;">
-                <span style="font-size:0.5rem; font-weight:700; color:var(--brick-red); text-transform:uppercase; letter-spacing:1px;">What You Said</span>
-                <p style="font-size:0.85rem; color:var(--ink); margin-top:2px; line-height:1.5;">"${whatYouSaid.length > 100 ? whatYouSaid.slice(0, 100) + '...' : whatYouSaid}"</p>
-              </div>
-              <div style="background: #f0f2ea; padding: 12px 14px; border-radius: 12px; border: 1px solid #d3d9c5;">
-                <span style="font-size:0.5rem; font-weight:700; color:var(--sage); text-transform:uppercase; letter-spacing:1px;">✨ Executive Version</span>
-                <p style="font-size:0.85rem; color:var(--ink); margin-top:2px; line-height:1.5; font-weight:500;">"${executiveVersion}"</p>
-              </div>
-            </div>
-            <div style="text-align:center; margin-top:8px; font-size:0.7rem; color:var(--gold); font-weight:600;">
-              ⚡ ${Math.round(60 + Math.random() * 20)}% shorter · ${Math.round(1.5 + Math.random())}x more impactful
-            </div>
-          </div>
-
-          <!-- ===== BEHAVIORAL EVIDENCE - UNLOCKED ===== -->
-          <div style="background: #ffffff; border-radius: 16px; padding: 18px 20px; border: 1px solid var(--border-light); margin-bottom: 16px;">
-            <span style="font-size:0.55rem; font-weight:700; color:var(--charcoal-navy); text-transform:uppercase; letter-spacing:1px;">🔍 Behavioral Evidence</span>
-            <ul class="evidence-list">
-              ${staticPatterns.map(p => `<li>${p}</li>`).join('')}
-              <li>You used ${6 + Math.floor(Math.random() * 8)} filler words in 45 seconds</li>
-              <li>Your first 8 words were hedging language</li>
-            </ul>
-          </div>
-
-          <!-- ===== LOCKED CONTENT - BLURRED ===== -->
-          <div class="locked-content">
-            <div style="text-align:center; margin-bottom:8px;">
-              <span class="locked-badge">🔒 Premium Insights</span>
-            </div>
-
-            <!-- Metrics Grid - Blurred -->
-            <div class="premium-metrics-grid">
-              ${['Clarity','Precision','Structure','Impact','Influence'].map((label, i) => {
-                const val = [staticMetrics.clarity, staticMetrics.precision, staticMetrics.structure, staticMetrics.impact, staticMetrics.influence][i];
-                return `
-                  <div class="metric-item">
-                    <span class="metric-value">${val}</span>
-                    <span class="metric-label">${label}</span>
-                    <div class="metric-bar"><div class="fill ${getBarClass(val)}" style="width:${val}%;"></div></div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-
-            <!-- Insight Cards - Blurred -->
-            <div class="premium-insight-grid">
-              <div class="insight-card gap-card">
-                <span class="insight-label">💭 What You Meant</span>
-                <div class="insight-title">To sound confident and strategic</div>
-                <div class="insight-desc">Your internal intent is clear to you, but gets lost in delivery.</div>
-              </div>
-              <div class="insight-card gap-card">
-                <span class="insight-label">👂 What Landed</span>
-                <div class="insight-title">Uncertain and scattered</div>
-                <div class="insight-desc">How your message is perceived by stakeholders.</div>
-              </div>
-              <div class="insight-card pattern-card" style="grid-column: 1 / -1;">
-                <span class="insight-label">🧠 Patterns Detected</span>
-                <div class="pattern-tags">
-                  <span class="highlight">Hedging Language</span>
-                  <span class="highlight">Missing Structure</span>
-                  <span class="highlight">Weak Openings</span>
-                  <span class="highlight">Filler Words</span>
+          <div class="premium-metrics-grid" style="opacity: 0.3;">
+            ${['Clarity','Precision','Structure','Impact','Influence'].map((label, i) => {
+              const val = [staticMetrics.clarity, staticMetrics.precision, staticMetrics.structure, staticMetrics.impact, staticMetrics.influence][i];
+              return `
+                <div class="metric-item" style="background: #f8f5f0; border-color: #e0d8d0;">
+                  <span class="metric-value" style="color: #b0a8a0;">${val}</span>
+                  <span class="metric-label">${label}</span>
+                  <div class="metric-bar" style="background: #e0d8d0;"><div class="fill ${getBarClass(val)}" style="width:${val}%; opacity:0.3;"></div></div>
                 </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- Insight Cards - Headings VISIBLE -->
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size:0.6rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px;">🧠 Communication Insights</span>
+          </div>
+          <div class="premium-insight-grid" style="opacity: 0.3;">
+            <div class="insight-card gap-card" style="background: #f8f5f0; border-color: #e0d8d0;">
+              <span class="insight-label" style="color: #b0a8a0;">💭 What You Meant</span>
+              <div class="insight-title" style="color: #b0a8a0;">••••••••••</div>
+              <div class="insight-desc" style="color: #c0b8b0;">••••••••••••••••••••</div>
+            </div>
+            <div class="insight-card gap-card" style="background: #f8f5f0; border-color: #e0d8d0;">
+              <span class="insight-label" style="color: #b0a8a0;">👂 What Landed</span>
+              <div class="insight-title" style="color: #b0a8a0;">••••••••••</div>
+              <div class="insight-desc" style="color: #c0b8b0;">••••••••••••••••••••</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WOW Cards - Headings VISIBLE -->
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size:0.6rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px;">⚡ Premium Features</span>
+          </div>
+          <div class="wow-grid" style="opacity: 0.3;">
+            <div class="wow-card" style="background: #f8f5f0; border-color: #e0d8d0;">
+              <span class="wow-badge" style="color: #b0a8a0;">⚡ Instant Mirror</span>
+              <h4 class="wow-title" style="color: #b0a8a0;">The "First 10 Seconds" Audit</h4>
+              <div class="wow-content" style="color: #c0b8b0;">
+                <p>••••••••••••••••••••</p>
               </div>
             </div>
-
-            <!-- WOW Cards - Blurred -->
-            <div class="wow-grid">
-              <div class="wow-card">
-                <span class="wow-badge">⚡ Instant Mirror</span>
-                <h4 class="wow-title">The "First 10 Seconds" Audit</h4>
-                <div class="wow-content">
-                  <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">You spent <strong style="color:var(--brick-red);">${staticMirror.time_to_point} seconds</strong> getting to your main point.</p>
-                  <div class="wow-highlight">
-                    <div style="margin-bottom:4px;"><span class="label-bad">✕ Where you started:</span> <em>"${staticMirror.opened_with}"</em></div>
-                    <div><span class="label-good">✓ Where your actual point landed:</span> <em>"${staticMirror.actual_point}"</em></div>
-                  </div>
-                  <p style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">💡 ${staticMirror.insight}</p>
-                </div>
-              </div>
-
-              <div class="wow-card">
-                <span class="wow-badge">📊 Signal-to-Noise Ratio</span>
-                <h4 class="wow-title">Your SNR Metric</h4>
-                <div class="wow-content">
-                  <div class="snr-display">
-                    <div class="snr-circle">
-                      ${staticSnr.snr_percentage}%
-                      <span class="snr-label">SNR</span>
-                    </div>
-                    <div class="snr-details">
-                      <div class="snr-bar-track">
-                        <div class="snr-bar-fill" style="width:${staticSnr.snr_percentage}%;"></div>
-                      </div>
-                      <div class="snr-stats">
-                        <span><strong>${staticSnr.noise_percentage}%</strong> Noise</span>
-                        <span><strong>${staticSnr.signal_percentage}%</strong> Signal</span>
-                      </div>
-                      <p style="font-size:0.7rem; color:var(--text-muted); margin-top:4px;">${staticSnr.filler_content}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="wow-card" style="grid-column: 1 / -1;">
-                <span class="wow-badge">📈 Attention Waveform</span>
-                <h4 class="wow-title">Stakeholder Attention Map</h4>
-                <div class="wow-content">
-                  <div class="attention-waveform">
-                    <div class="wave-container">
-                      ${staticWaveData.map((val, i) => `
-                        <div class="wave-bar ${i < 6 ? 'high' : i < 9 ? 'medium' : 'dropoff'}" style="height:${Math.max(5, Math.min(95, val))}%;"></div>
-                      `).join('')}
-                    </div>
-                    <div class="wave-labels">
-                      <span>0:00</span>
-                      <span style="color:var(--brick-red); font-weight:600;">🔴 Attention Dropoff</span>
-                      <span>0:45</span>
-                    </div>
-                    <div class="wave-annotation">⚠️ You lost executive impact at second 14</div>
-                  </div>
-                </div>
+            <div class="wow-card" style="background: #f8f5f0; border-color: #e0d8d0;">
+              <span class="wow-badge" style="color: #b0a8a0;">📊 Signal-to-Noise</span>
+              <h4 class="wow-title" style="color: #b0a8a0;">Your SNR Metric</h4>
+              <div class="wow-content" style="color: #c0b8b0;">
+                <p>••••••••••••••••••••</p>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- ===== UNLOCK BANNER ===== -->
-          <div class="unlock-banner">
-            <i data-lucide="lock" style="width:14px; height:14px; display:inline-block; vertical-align:middle;"></i>
-            Unlocked for every input, as part of your Program.
+        <!-- Patterns - Headings VISIBLE -->
+        <div style="background: #f8f5f0; border-radius: 16px; padding: 18px 20px; border: 1px solid #e0d8d0; opacity: 0.3;">
+          <span style="font-size:0.55rem; font-weight:700; color:#b0a8a0; text-transform:uppercase; letter-spacing:1.5px;">🧠 Patterns Detected</span>
+          <div class="pattern-tags">
+            <span style="background: #e8e0d8; color: #b0a8a0;">••••••</span>
+            <span style="background: #e8e0d8; color: #b0a8a0;">••••••</span>
+            <span style="background: #e8e0d8; color: #b0a8a0;">••••••</span>
           </div>
+        </div>
+      </div>
+    </div>
 
-          <!-- ===== PAYWALL CTA ===== -->
-          <div class="paywall-cta">
-            <h4>You've seen the gap. Here's the path to close it.</h4>
-            <p>Get the full transformation with personalized feedback and practice sessions.</p>
-            <div class="features-list">
-              <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> 3-step exercise to fix your opening 10 seconds</span>
-              <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> Live audio-guided practice sessions</span>
-              <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> Personalized feedback on your exact scenario</span>
-            </div>
-            <a href="https://theunspoken.co.in/Pricing" class="btn-paid">Start Your Journey →</a>
-            <p style="font-size:0.7rem; color:var(--text-muted); margin-top:6px;">7-day free trial · Cancel anytime</p>
-          </div>
-        `;
+    <!-- ===== UNLOCK BANNER ===== -->
+    <div class="unlock-banner" style="background: linear-gradient(135deg, var(--bg-soft-gold), #fde68a); border-radius: 12px; padding: 12px 20px; text-align: center; margin: 12px 0 0; font-size: 0.8rem; font-weight: 600; color: var(--gold-darker); border: 1px solid var(--gold);">
+      <i data-lucide="lock" style="width:14px; height:14px; display:inline-block; vertical-align:middle;"></i>
+      Unlocked for every input, as part of your Program.
+    </div>
 
-        // Re-initialize icons
-        if (typeof lucide !== 'undefined') {
-          lucide.createIcons();
-        }
+    <!-- ===== PAYWALL CTA ===== -->
+    <div class="paywall-cta" style="background: #ffffff; border-radius: 20px; padding: 32px 36px; text-align: center; border: 1px solid var(--gold); box-shadow: 0 8px 30px rgba(184, 148, 60, 0.08); margin-top: 20px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));"></div>
+      <h4 style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.4rem; color: var(--ink); margin-bottom: 4px;">You've seen the gap. Here's the path to close it.</h4>
+      <p style="color: var(--text-soft); margin: 6px 0 14px;">Get the full transformation with personalized feedback and practice sessions.</p>
+      <div class="features-list" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-soft); margin-bottom: 14px;">
+        <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> 3-step exercise to fix your opening 10 seconds</span>
+        <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> Live audio-guided practice sessions</span>
+        <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> Personalized feedback on your exact scenario</span>
+      </div>
+      <a href="https://theunspoken.co.in/Pricing" class="btn-paid" style="display: inline-block; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #ffffff; font-weight: 600; font-size: 1.1rem; padding: 16px 44px; border-radius: 60px; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 6px 20px rgba(184, 148, 60, 0.3); letter-spacing: 0.3px;">Start Your Journey →</a>
+      <p style="font-size:0.7rem; color:var(--text-muted); margin-top:6px;">7-day free trial · Cancel anytime</p>
+    </div>
+  `;
 
-        // Animate bars
-        setTimeout(() => {
-          document.querySelectorAll('.metric-bar .fill').forEach(el => {
-            const w = el.style.width;
-            el.style.width = '0%';
-            setTimeout(() => { el.style.width = w; }, 50);
-          });
-          document.querySelectorAll('.snr-bar-fill').forEach(el => {
-            const w = el.style.width;
-            el.style.width = '0%';
-            setTimeout(() => { el.style.width = w; }, 50);
-          });
-        }, 100);
+  // Re-initialize icons
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 
-        textSubmitBtn.textContent = 'Analyze My Response →';
-        textSubmitBtn.disabled = false;
-        console.log('✅ Results rendered with minimal backend data + blurred previews');
-      }
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.metric-bar .fill').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0%';
+      setTimeout(() => { el.style.width = w; }, 50);
+    });
+    document.querySelectorAll('.snr-bar-fill').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0%';
+      setTimeout(() => { el.style.width = w; }, 50);
+    });
+  }, 100);
+
+  textSubmitBtn.textContent = 'Analyze My Response →';
+  textSubmitBtn.disabled = false;
+  console.log('✅ Results rendered with blurred premium content');
+}
+      
 
       // ============================================================
       // KNOW YOUR PATTERN BUTTON
