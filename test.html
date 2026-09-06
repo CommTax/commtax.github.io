@@ -3131,7 +3131,8 @@ function showErrorState(message) {
   textSubmitBtn.textContent = 'Analyze My Response →';
   textSubmitBtn.disabled = false;
 }
-      // ============================================================
+
+// ============================================================
 // RENDER RESULTS - With Premium Loading States & Blurred Content
 // ============================================================
 
@@ -3154,21 +3155,6 @@ function renderResults(data, userText) {
   const executiveVersion = data?.before_after_rewrite?.executive_version || 'This is your re-written, executive presence version.';
 
   // --- Static values for blurred/locked content ---
-  const staticMetrics = {
-    clarity: 62,
-    precision: 55,
-    structure: 48,
-    impact: impactScore,
-    influence: 51
-  };
-  
-  const staticSnr = {
-    snr_percentage: 38,
-    noise_percentage: 62,
-    signal_percentage: 38,
-    filler_content: 'Filler words and qualifiers are diluting your message.'
-  };
-  
   const staticMirror = {
     time_to_point: 18,
     opened_with: '"Well, I think, um, basically..."',
@@ -3176,7 +3162,6 @@ function renderResults(data, userText) {
     insight: 'You take too long to get to your point. Executives check out after 5 seconds.'
   };
   
-  const staticWaveData = [85, 90, 92, 88, 80, 72, 58, 45, 32, 22, 18, 14, 10, 8, 9, 10, 12, 14, 13, 10];
   const staticPatterns = ['Starting sentences with hedges', 'Over-explaining before making your point'];
 
   const getBarClass = (val) => val >= 70 ? 'high' : val >= 45 ? 'medium' : 'low';
@@ -3250,34 +3235,34 @@ function renderResults(data, userText) {
       </ul>
     </div>
 
-    <!-- ===== LOCKED CONTENT - BLURRED (Headings VISIBLE, Data HIDDEN) ===== -->
-    <div class="locked-container" style="position: relative; margin: 20px 0;">
+    <!-- ===== LOCKED CONTENT - HEADINGS VISIBLE, DATA HIDDEN ===== -->
+    <div style="position: relative; margin: 20px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light);">
       
       <!-- Blur Overlay -->
-      <div class="locked-blur-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; backdrop-filter: blur(8px); background: rgba(255,255,255,0.3); z-index: 10; border-radius: 16px; display: flex; align-items: center; justify-content: center;">
-        <div style="text-align: center; padding: 40px;">
-          <span style="display: inline-block; background: var(--gold); color: #ffffff; font-size: 0.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 8px 20px; border-radius: 40px; margin-bottom: 12px;">🔒 Premium Insights</span>
-          <p style="font-size: 1rem; font-weight: 600; color: var(--ink);">See your complete communication analysis</p>
-          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Upgrade to see your scores across all 5 dimensions</p>
+      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; backdrop-filter: blur(8px); background: rgba(255,255,255,0.25); z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 16px;">
+        <div style="text-align: center; padding: 30px;">
+          <span style="display: inline-block; background: var(--gold); color: #ffffff; font-size: 0.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 8px 20px; border-radius: 40px; margin-bottom: 10px;">🔒 Premium Insights</span>
+          <p style="font-size: 0.95rem; font-weight: 600; color: var(--ink);">See your complete communication analysis</p>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Upgrade to see your scores across all dimensions</p>
         </div>
       </div>
       
       <!-- Locked Content - HEADINGS VISIBLE, DATA HIDDEN/BLURRED -->
-      <div style="position: relative; z-index: 1; opacity: 0.4; pointer-events: none; user-select: none;">
+      <div style="padding: 20px; position: relative; z-index: 1; pointer-events: none; user-select: none;">
         
         <!-- Metrics Grid - Headings VISIBLE, Scores HIDDEN -->
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size:0.6rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px;">📊 Communication Metrics</span>
           </div>
-          <div class="premium-metrics-grid">
+          <div class="premium-metrics-grid" style="opacity: 0.3; filter: blur(4px);">
             ${['Clarity','Precision','Structure','Impact','Influence'].map((label) => {
               return `
                 <div class="metric-item" style="background: #f8f5f0; border-color: #e0d8d0;">
-                  <span class="metric-value" style="color: #b0a8a0; filter: blur(8px);">88</span>
+                  <span class="metric-value" style="color: #b0a8a0;">--</span>
                   <span class="metric-label">${label}</span>
                   <div class="metric-bar" style="background: #e0d8d0;">
-                    <div class="fill high" style="width: 70%; opacity: 0.15; filter: blur(4px);"></div>
+                    <div class="fill high" style="width: 50%; opacity: 0.15;"></div>
                   </div>
                 </div>
               `;
@@ -3290,23 +3275,23 @@ function renderResults(data, userText) {
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size:0.6rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px;">🧠 Communication Insights</span>
           </div>
-          <div class="premium-insight-grid">
+          <div class="premium-insight-grid" style="opacity: 0.3; filter: blur(4px);">
             <div class="insight-card gap-card" style="background: #f8f5f0; border-color: #e0d8d0;">
               <span class="insight-label" style="color: var(--gold);">💭 What You Meant</span>
-              <div class="insight-title" style="color: #b0a8a0; filter: blur(6px);">Your intended message here</div>
-              <div class="insight-desc" style="color: #c0b8b0; filter: blur(4px);">Your internal intent</div>
+              <div class="insight-title" style="color: #b0a8a0;">••••••••••</div>
+              <div class="insight-desc" style="color: #c0b8b0;">••••••••••••••••••••</div>
             </div>
             <div class="insight-card gap-card" style="background: #f8f5f0; border-color: #e0d8d0;">
               <span class="insight-label" style="color: var(--gold);">👂 What Landed</span>
-              <div class="insight-title" style="color: #b0a8a0; filter: blur(6px);">How it was perceived</div>
-              <div class="insight-desc" style="color: #c0b8b0; filter: blur(4px);">Audience reception</div>
+              <div class="insight-title" style="color: #b0a8a0;">••••••••••</div>
+              <div class="insight-desc" style="color: #c0b8b0;">••••••••••••••••••••</div>
             </div>
             <div class="insight-card pattern-card" style="grid-column: 1 / -1; background: #f8f5f0; border-color: #e0d8d0;">
               <span class="insight-label" style="color: var(--muted-plum);">🧠 Patterns Detected</span>
               <div class="pattern-tags">
-                <span style="background: #e8e0d8; color: #b0a8a0; filter: blur(4px);">••••••</span>
-                <span style="background: #e8e0d8; color: #b0a8a0; filter: blur(4px);">••••••</span>
-                <span style="background: #e8e0d8; color: #b0a8a0; filter: blur(4px);">••••••</span>
+                <span style="background: #e8e0d8; color: #b0a8a0;">••••••</span>
+                <span style="background: #e8e0d8; color: #b0a8a0;">••••••</span>
+                <span style="background: #e8e0d8; color: #b0a8a0;">••••••</span>
               </div>
             </div>
           </div>
@@ -3317,32 +3302,61 @@ function renderResults(data, userText) {
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size:0.6rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px;">⚡ Premium Features</span>
           </div>
-          <div class="wow-grid">
+          <div class="wow-grid" style="opacity: 0.3; filter: blur(4px);">
+            
+            <!-- Instant Mirror -->
             <div class="wow-card" style="background: #f8f5f0; border-color: #e0d8d0;">
               <span class="wow-badge" style="color: var(--gold);">⚡ Instant Mirror</span>
               <h4 class="wow-title" style="color: #b0a8a0;">The "First 10 Seconds" Audit</h4>
-              <div class="wow-content" style="color: #c0b8b0; filter: blur(5px);">
-                <p>Your opening analysis here</p>
-                <div style="height: 30px; background: #e8e0d8; border-radius: 8px; margin-top: 6px;"></div>
+              <div class="wow-content" style="color: #c0b8b0;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px;">
+                  <span style="font-size:0.7rem; color:#b0a8a0;">Time to point:</span>
+                  <span style="font-size:0.9rem; font-weight:600; color:#b0a8a0;">••s</span>
+                </div>
+                <div style="margin-top: 4px; font-size:0.7rem; color:#c0b8b0;">"••••••••••••••"</div>
               </div>
             </div>
+
+            <!-- Signal-to-Noise Ratio -->
             <div class="wow-card" style="background: #f8f5f0; border-color: #e0d8d0;">
               <span class="wow-badge" style="color: var(--gold);">📊 Signal-to-Noise</span>
               <h4 class="wow-title" style="color: #b0a8a0;">Your SNR Metric</h4>
-              <div class="wow-content" style="color: #c0b8b0; filter: blur(5px);">
-                <p>Your signal-to-noise ratio</p>
-                <div style="height: 30px; background: #e8e0d8; border-radius: 8px; margin-top: 6px;"></div>
+              <div class="wow-content" style="color: #c0b8b0;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-top: 4px;">
+                  <div style="width: 56px; height: 56px; border-radius: 50%; background: #e8e0d8; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #b0a8a0;">--%</div>
+                  <div style="flex:1;">
+                    <div style="height: 6px; background: #e0d8d0; border-radius: 4px; overflow: hidden;">
+                      <div style="height: 100%; width: 40%; background: #c0b8b0; border-radius: 4px;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #b0a8a0; margin-top: 2px;">
+                      <span>--% Noise</span>
+                      <span>--% Signal</span>
+                    </div>
+                  </div>
+                </div>
+                <p style="font-size:0.65rem; color:#c0b8b0; margin-top: 4px;">••••••••••••••••••••</p>
               </div>
             </div>
+
+            <!-- Attention Waveform -->
             <div class="wow-card" style="grid-column: 1 / -1; background: #f8f5f0; border-color: #e0d8d0;">
               <span class="wow-badge" style="color: var(--gold);">📈 Attention Waveform</span>
               <h4 class="wow-title" style="color: #b0a8a0;">Stakeholder Attention Map</h4>
-              <div class="wow-content" style="filter: blur(6px);">
-                <div style="height: 40px; background: #e8e0d8; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #b0a8a0; font-size: 0.7rem;">
-                  Attention waveform visualization
+              <div class="wow-content" style="color: #c0b8b0;">
+                <div style="height: 36px; background: #e8e0d8; border-radius: 8px; display: flex; align-items: flex-end; gap: 3px; padding: 4px; margin-top: 4px;">
+                  ${[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20].map((_, i) => `
+                    <div style="flex:1; height: ${20 + Math.random() * 60}%; background: #c0b8b0; border-radius: 2px; min-height: 8px;"></div>
+                  `).join('')}
                 </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.5rem; color: #b0a8a0; margin-top: 2px;">
+                  <span>0:00</span>
+                  <span style="color: #b0a8a0;">🔴 Attention Dropoff</span>
+                  <span>0:45</span>
+                </div>
+                <p style="font-size:0.65rem; color:#c0b8b0; margin-top: 2px;">⚠️ ••••••••••••••••••</p>
               </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -3392,7 +3406,12 @@ function renderResults(data, userText) {
   textSubmitBtn.disabled = false;
   console.log('✅ Results rendered with blurred premium content');
 }
+      
 
+
+
+
+      
       // ============================================================
       // KNOW YOUR PATTERN BUTTON
       // ============================================================
