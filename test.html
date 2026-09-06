@@ -2065,27 +2065,41 @@
           <div class="prompt-hint" id="promptHint">Speak naturally for up to 45 seconds, or type your response in 60 seconds.</div>
         </div>
 
-        <!-- ===== VOICE RECORDING CONTROLS ===== -->
-        <div class="recording-controls" id="voiceControls">
-          <button class="record-btn" id="recordBtn" aria-label="Start recording"></button>
-          <span class="recording-timer" id="timerDisplay">0:00</span>
-          <span class="recording-status" id="statusDisplay">
-            <span class="status-dot" id="statusDot"></span>
-            <span id="statusText">Ready to record</span>
-          </span>
-          <div class="recording-waveform" id="waveformContainer">
-            <div class="waveform-bar" data-level="0.2"></div>
-            <div class="waveform-bar" data-level="0.4"></div>
-            <div class="waveform-bar" data-level="0.6"></div>
-            <div class="waveform-bar" data-level="0.8"></div>
-            <div class="waveform-bar" data-level="1.0"></div>
-            <div class="waveform-bar" data-level="0.9"></div>
-            <div class="waveform-bar" data-level="0.7"></div>
-            <div class="waveform-bar" data-level="0.5"></div>
-            <div class="waveform-bar" data-level="0.3"></div>
-            <div class="waveform-bar" data-level="0.1"></div>
-          </div>
-        </div>
+<!-- ===== VOICE RECORDING CONTROLS ===== -->
+<div class="recording-controls" id="voiceControls">
+  <button class="record-btn" id="recordBtn" aria-label="Start recording"></button>
+  <span class="recording-timer" id="timerDisplay">0:00</span>
+  <span class="recording-status" id="statusDisplay">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">Ready to record (30s max)</span>
+  </span>
+  <div class="recording-waveform" id="waveformContainer">
+    <div class="waveform-bar" data-level="0.2"></div>
+    <div class="waveform-bar" data-level="0.4"></div>
+    <div class="waveform-bar" data-level="0.6"></div>
+    <div class="waveform-bar" data-level="0.8"></div>
+    <div class="waveform-bar" data-level="1.0"></div>
+    <div class="waveform-bar" data-level="0.9"></div>
+    <div class="waveform-bar" data-level="0.7"></div>
+    <div class="waveform-bar" data-level="0.5"></div>
+    <div class="waveform-bar" data-level="0.3"></div>
+    <div class="waveform-bar" data-level="0.1"></div>
+  </div>
+  <button class="btn-submit-voice" id="submitVoiceBtn" style="display:none; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #ffffff; font-weight: 600; font-size: 0.85rem; padding: 10px 24px; border-radius: 40px; border: none; cursor: pointer; transition: all 0.3s ease; font-family: inherit;">
+    ✅ Submit Response
+  </button>
+</div>
+
+<!-- Voice status display -->
+<div id="voiceStatus" style="display:none; margin-top: 8px; padding: 8px 16px; background: #f8f5f0; border-radius: 8px; border: 1px solid var(--border-light); text-align:center;">
+  <span style="font-size:0.8rem; color:var(--text-muted);">
+    <span id="wordCountDisplay">0</span> words · 
+    <span id="submitStatusText" style="font-weight:600;">Need 15+ words to submit</span>
+  </span>
+</div>
+
+<!-- Audio preview (for playback) -->
+<audio id="audioPreview" style="display:none;"></audio>
 
         <!-- ===== TEXT INPUT AREA ===== -->
         <div class="text-input-area" id="textInputArea">
@@ -2425,164 +2439,426 @@
         return activeBtn ? activeBtn.dataset.question : 'intro';
       }
 
-      // ============================================================
-      // RECORDING
-      // ============================================================
-      const recordBtn = document.getElementById('recordBtn');
-      const timerDisplay = document.getElementById('timerDisplay');
-      const statusText = document.getElementById('statusText');
-      const statusDot = document.getElementById('statusDot');
-      const resultsDisplay = document.getElementById('resultsDisplay');
-      const waveformBars = document.querySelectorAll('.waveform-bar');
+// ============================================================
+// RECORDING - Using MediaRecorder + Groq Whisper (FREE)
+// ============================================================
 
-      let isRecording = false;
-      let timerInterval = null;
-      let seconds = 0;
-      let recordedText = '';
-      const MAX_RECORDING_SECONDS = 45;
-      let recognition = null;
+const recordBtn = document.getElementById('recordBtn');
+const timerDisplay = document.getElementById('timerDisplay');
+const statusText = document.getElementById('statusText');
+const statusDot = document.getElementById('statusDot');
+const resultsDisplay = document.getElementById('resultsDisplay');
+const waveformBars = document.querySelectorAll('.waveform-bar');
+const submitVoiceBtn = document.getElementById('submitVoiceBtn');
+const voiceStatus = document.getElementById('voiceStatus');
+const wordCountDisplay = document.getElementById('wordCountDisplay');
+const submitStatusText = document.getElementById('submitStatusText');
+const audioPreview = document.getElementById('audioPreview');
 
-      function initSpeechRecognition() {
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-          statusText.textContent = '⚠️ Speech not supported';
-          return false;
-        }
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
+let isRecording = false;
+let timerInterval = null;
+let seconds = 0;
+let mediaRecorder = null;
+let audioChunks = [];
+let audioBlob = null;
+let isSubmitting = false;
 
-        recognition.onresult = function(event) {
-          let final = '';
-          let interim = '';
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            if (event.results[i].isFinal) {
-              final += event.results[i][0].transcript;
-            } else {
-              interim += event.results[i][0].transcript;
-            }
-          }
-          if (final) {
-            recordedText += final + ' ';
-            statusText.textContent = '🎙️ ' + recordedText.slice(0, 60) + '...';
-          }
-        };
+const MAX_RECORDING_SECONDS = 30;
+const MIN_WORDS_TO_SUBMIT = 15;
+const MIN_RECORDING_SECONDS = 10;
 
-        recognition.onerror = function(event) {
-          console.error('Speech error:', event.error);
-          if (event.error === 'not-allowed') {
-            statusText.textContent = '⚠️ Mic access denied';
-          }
-        };
-        return true;
+// ============================================================
+// START RECORDING - Using MediaRecorder API
+// ============================================================
+
+async function startRecording() {
+  try {
+    // Request microphone access
+    const stream = await navigator.mediaDevices.getUserMedia({ 
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      } 
+    });
+    
+    // Create MediaRecorder
+    mediaRecorder = new MediaRecorder(stream, {
+      mimeType: 'audio/webm;codecs=opus'
+    });
+    
+    audioChunks = [];
+    
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        audioChunks.push(event.data);
       }
-
-      function animateWaveform(active) {
-        waveformBars.forEach((bar) => {
-          if (active) {
-            const level = parseFloat(bar.dataset.level) || 0.3;
-            const randomBoost = 0.3 + Math.random() * 0.7;
-            const height = Math.min(100, level * 100 * randomBoost);
-            bar.style.height = height + '%';
-            bar.classList.add('is-active');
-          } else {
-            const level = parseFloat(bar.dataset.level) || 0.3;
-            bar.style.height = (level * 60) + '%';
-            bar.classList.remove('is-active');
-          }
-        });
+    };
+    
+    mediaRecorder.onstop = () => {
+      // Create audio blob
+      audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      
+      // Create audio URL for preview
+      const audioUrl = URL.createObjectURL(audioBlob);
+      audioPreview.src = audioUrl;
+      
+      // Show submit button
+      submitVoiceBtn.style.display = 'inline-block';
+      voiceStatus.style.display = 'block';
+      
+      // Update status
+      statusText.textContent = '📝 Audio recorded! Click submit to analyze.';
+      
+      // Count words (rough estimate based on duration)
+      const estimatedWords = Math.floor(seconds * 1.5);
+      updateWordCountStatus(estimatedWords);
+      
+      // Check eligibility
+      checkSubmitEligibility(estimatedWords);
+      
+      // Stop all tracks
+      stream.getTracks().forEach(track => track.stop());
+    };
+    
+    // Start recording
+    mediaRecorder.start(1000);
+    isRecording = true;
+    seconds = 0;
+    timerDisplay.style.color = '#1a1917';
+    updateTimer();
+    recordBtn.classList.add('is-recording');
+    statusDot.classList.add('is-live');
+    statusText.textContent = '🎙️ Recording... (max 30s)';
+    resultsDisplay.classList.remove('is-visible');
+    voiceStatus.style.display = 'none';
+    submitVoiceBtn.style.display = 'none';
+    audioPreview.style.display = 'none';
+    
+    // Animate waveform
+    const waveInterval = setInterval(() => {
+      if (isRecording) animateWaveform(true);
+    }, 150);
+    
+    // Timer
+    timerInterval = setInterval(() => {
+      seconds++;
+      updateTimer();
+      
+      // Auto-stop at max time
+      if (seconds >= MAX_RECORDING_SECONDS) {
+        stopRecording();
       }
-
-      function updateTimer() {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-        if (seconds >= MAX_RECORDING_SECONDS - 5) {
-          timerDisplay.style.color = '#a13d2f';
-          statusText.textContent = `⚠️ ${MAX_RECORDING_SECONDS - seconds}s remaining`;
-        }
-        if (seconds >= MAX_RECORDING_SECONDS) {
-          stopRecording();
-        }
+      
+      // Show hint after 10 seconds
+      if (seconds === 10) {
+        statusText.textContent = '💡 You can submit now (minimum 10 seconds)';
       }
+    }, 1000);
+    
+    recordBtn.dataset.waveInterval = waveInterval;
+    
+  } catch (error) {
+    console.error('❌ Microphone access error:', error);
+    statusText.textContent = '⚠️ Please allow microphone access and try again.';
+    if (error.name === 'NotAllowedError') {
+      alert('Please allow microphone access to use voice recording.');
+    } else {
+      alert('Could not access microphone. Please check your permissions.');
+    }
+  }
+}
 
-      function startRecording() {
-        if (!recognition) {
-          const supported = initSpeechRecognition();
-          if (!supported) return;
-        }
+// ============================================================
+// STOP RECORDING
+// ============================================================
 
-        isRecording = true;
-        seconds = 0;
-        recordedText = '';
-        timerDisplay.style.color = '#1a1917';
-        updateTimer();
-        recordBtn.classList.add('is-recording');
-        statusDot.classList.add('is-live');
-        statusText.textContent = '🎙️ Recording... (max 45s)';
-        resultsDisplay.classList.remove('is-visible');
+function stopRecording() {
+  if (!isRecording) return;
+  
+  isRecording = false;
+  recordBtn.classList.remove('is-recording');
+  statusDot.classList.remove('is-live');
+  statusText.textContent = '⏳ Processing audio...';
+  timerDisplay.style.color = '#1a1917';
+  
+  // Stop the recorder
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+  
+  // Clear intervals
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  const waveInterval = parseInt(recordBtn.dataset.waveInterval);
+  if (waveInterval) {
+    clearInterval(waveInterval);
+    recordBtn.dataset.waveInterval = '';
+  }
+  animateWaveform(false);
+}
 
-        try { 
-          recognition.start(); 
-        } catch (e) {
-          console.log('Recognition already started');
-        }
+// ============================================================
+// UPDATE WORD COUNT STATUS
+// ============================================================
 
-        const waveInterval = setInterval(() => {
-          if (isRecording) animateWaveform(true);
-        }, 150);
+function updateWordCountStatus(wordCount) {
+  wordCountDisplay.textContent = wordCount;
+  
+  if (wordCount >= MIN_WORDS_TO_SUBMIT && seconds >= MIN_RECORDING_SECONDS) {
+    submitStatusText.textContent = '✅ Ready to submit!';
+    submitStatusText.style.color = 'var(--sage)';
+    submitVoiceBtn.style.opacity = '1';
+    submitVoiceBtn.style.pointerEvents = 'auto';
+  } else {
+    if (seconds < MIN_RECORDING_SECONDS) {
+      submitStatusText.textContent = `⏳ Need ${MIN_RECORDING_SECONDS - seconds}s more recording`;
+    } else {
+      submitStatusText.textContent = `⏳ Need ${MIN_WORDS_TO_SUBMIT - wordCount} more words`;
+    }
+    submitStatusText.style.color = 'var(--brick-red)';
+    submitVoiceBtn.style.opacity = '0.5';
+    submitVoiceBtn.style.pointerEvents = 'none';
+  }
+}
 
-        timerInterval = setInterval(() => {
-          seconds++;
-          updateTimer();
-          if (seconds >= MAX_RECORDING_SECONDS) {
-            stopRecording();
-          }
-        }, 1000);
+// ============================================================
+// CHECK SUBMIT ELIGIBILITY
+// ============================================================
 
-        recordBtn.dataset.waveInterval = waveInterval;
-      }
+function checkSubmitEligibility(wordCount) {
+  const isEligible = wordCount >= MIN_WORDS_TO_SUBMIT && seconds >= MIN_RECORDING_SECONDS;
+  
+  submitVoiceBtn.style.display = 'inline-block';
+  if (isEligible) {
+    submitVoiceBtn.style.opacity = '1';
+    submitVoiceBtn.style.pointerEvents = 'auto';
+    submitStatusText.textContent = '✅ Ready to submit!';
+    submitStatusText.style.color = 'var(--sage)';
+  } else {
+    submitVoiceBtn.style.opacity = '0.5';
+    submitVoiceBtn.style.pointerEvents = 'none';
+  }
+}
 
-      function stopRecording() {
-        if (!isRecording) return;
-        isRecording = false;
-        recordBtn.classList.remove('is-recording');
-        statusDot.classList.remove('is-live');
-        statusText.textContent = 'Processing...';
-        timerDisplay.style.color = '#1a1917';
+// ============================================================
+// SUBMIT VOICE RECORDING - Uses Groq Whisper (FREE)
+// ============================================================
 
-        try { 
-          if (recognition) recognition.stop(); 
-        } catch (e) {}
-
-        if (timerInterval) {
-          clearInterval(timerInterval);
-          timerInterval = null;
-        }
-        const waveInterval = parseInt(recordBtn.dataset.waveInterval);
-        if (waveInterval) {
-          clearInterval(waveInterval);
-          recordBtn.dataset.waveInterval = '';
-        }
-        animateWaveform(false);
-
-        const finalText = recordedText.trim() || 'I am a professional with experience in my field. I am passionate about what I do and I am looking to grow and contribute more.';
-        console.log('📝 Recorded text:', finalText);
-        
-        setTimeout(() => {
-          statusText.textContent = 'Analysis complete ✓';
-          analyzeWithBackend(finalText, 'voice', getCurrentQuestionType());
-        }, 1200);
-      }
-
-      recordBtn.addEventListener('click', () => {
-        if (isRecording) {
-          stopRecording();
-        } else {
-          startRecording();
-        }
+async function submitVoiceRecording() {
+  if (isSubmitting) return;
+  
+  // Check if we have audio
+  if (!audioBlob) {
+    alert('Please record your response first.');
+    return;
+  }
+  
+  // Check duration
+  if (seconds < MIN_RECORDING_SECONDS) {
+    alert(`Please record at least ${MIN_RECORDING_SECONDS} seconds.`);
+    return;
+  }
+  
+  isSubmitting = true;
+  submitVoiceBtn.disabled = true;
+  submitVoiceBtn.textContent = '🔄 Transcribing...';
+  statusText.textContent = '📤 Sending audio for transcription...';
+  
+  try {
+    // Convert audio blob to base64
+    const reader = new FileReader();
+    reader.readAsDataURL(audioBlob);
+    
+    reader.onloadend = async function() {
+      const base64Audio = reader.result.split(',')[1];
+      
+      // Send to backend for transcription and analysis
+      const payload = {
+        audio_base64: base64Audio,
+        mode: 'voice',
+        question_type: getCurrentQuestionType(),
+        duration: seconds
+      };
+      
+      console.log('📤 Sending audio to backend:', {
+        duration: seconds,
+        audioSize: audioBlob.size,
+        questionType: payload.question_type
       });
+      
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/communication/analyze/voice`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Voice analysis response:', data);
+        
+        if (data.success === false) {
+          // Check if transcription failed but we have a fallback
+          if (data.fallback_to_text) {
+            statusText.textContent = '⚠️ Voice transcription unavailable. Using typed text mode.';
+            // Switch to text mode automatically
+            switchToTextMode();
+            return;
+          }
+          throw new Error(data.error || 'Analysis failed');
+        }
+        
+        // Success! We have transcribed text
+        if (data.transcribed_text) {
+          statusText.textContent = '✅ Audio transcribed and analyzed!';
+          submitVoiceBtn.textContent = '✅ Submitted!';
+          
+          // Store the transcribed text for analysis
+          const transcribedText = data.transcribed_text;
+          
+          // Show results with the transcribed text
+          setTimeout(() => {
+            analyzeWithBackend(transcribedText, 'voice', getCurrentQuestionType());
+          }, 500);
+        } else {
+          throw new Error('No transcribed text received');
+        }
+        
+      } catch (error) {
+        console.error('❌ Voice analysis error:', error);
+        statusText.textContent = '⚠️ ' + error.message;
+        submitVoiceBtn.textContent = '🔄 Try Again';
+        submitVoiceBtn.disabled = false;
+        isSubmitting = false;
+        
+        // Offer to switch to text mode
+        if (confirm('Voice transcription failed. Would you like to type your response instead?')) {
+          switchToTextMode();
+        }
+      }
+    };
+    
+  } catch (error) {
+    console.error('❌ Submit error:', error);
+    statusText.textContent = '❌ Failed to submit. Please try again.';
+    submitVoiceBtn.textContent = '🔄 Try Again';
+    submitVoiceBtn.disabled = false;
+    isSubmitting = false;
+  }
+}
+
+// ============================================================
+// SWITCH TO TEXT MODE
+// ============================================================
+
+function switchToTextMode() {
+  // Find and click the text mode button
+  const textModeBtn = document.querySelector('.mode-btn[data-mode="text"]');
+  if (textModeBtn) {
+    textModeBtn.click();
+  }
+  statusText.textContent = '📝 Switch to typing your response';
+}
+
+// ============================================================
+// GET CURRENT QUESTION TYPE
+// ============================================================
+
+function getCurrentQuestionType() {
+  const activeBtn = document.querySelector('.question-btn.active');
+  return activeBtn ? activeBtn.dataset.question : 'intro';
+}
+
+// ============================================================
+// UPDATE TIMER
+// ============================================================
+
+function updateTimer() {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+  
+  if (seconds >= MAX_RECORDING_SECONDS - 5) {
+    timerDisplay.style.color = '#a13d2f';
+    statusText.textContent = `⚠️ ${MAX_RECORDING_SECONDS - seconds}s remaining`;
+  }
+}
+
+// ============================================================
+// ANIMATE WAVEFORM
+// ============================================================
+
+function animateWaveform(active) {
+  waveformBars.forEach((bar) => {
+    if (active) {
+      const level = parseFloat(bar.dataset.level) || 0.3;
+      const randomBoost = 0.3 + Math.random() * 0.7;
+      const height = Math.min(100, level * 100 * randomBoost);
+      bar.style.height = height + '%';
+      bar.classList.add('is-active');
+    } else {
+      const level = parseFloat(bar.dataset.level) || 0.3;
+      bar.style.height = (level * 60) + '%';
+      bar.classList.remove('is-active');
+    }
+  });
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+
+recordBtn.addEventListener('click', () => {
+  if (isRecording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+});
+
+submitVoiceBtn.addEventListener('click', submitVoiceRecording);
+
+// ============================================================
+// KEEP BACKEND WARM
+// ============================================================
+
+function keepBackendWarm() {
+  console.log('🔥 Backend warm-up service started...');
+  
+  // Ping every 4 minutes (Render sleeps after 15 min)
+  setInterval(() => {
+    fetch('https://unspoken-backend-yvbi.onrender.com/api/health')
+      .then(response => {
+        if (response.ok) {
+          console.log('✅ Backend kept warm at', new Date().toLocaleTimeString());
+        }
+      })
+      .catch(() => {
+        // Silent fail
+      });
+  }, 4 * 60 * 1000);
+}
+
+// ============================================================
+// START WARM-UP ON PAGE LOAD
+// ============================================================
+
+// Add this to your DOMContentLoaded handler
+document.addEventListener('DOMContentLoaded', function() {
+  // ... your existing code ...
+  
+  // Start warm-up
+  keepBackendWarm();
+  
+  // ... rest of your code ...
+});
 
 
       // ============================================================
