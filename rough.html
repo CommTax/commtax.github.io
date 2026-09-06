@@ -296,6 +296,98 @@
       font-weight: 500;
     }
 
+    /* --- Role Selector (Custom Dropdown) --- */
+    .role-select-wrapper {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .role-select-wrapper label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .role-select-wrapper .switch-note {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .role-select {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      border-radius: 14px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--ink);
+      transition: border-color 0.2s ease;
+    }
+    .role-select:hover {
+      border-color: var(--gold);
+    }
+    .role-select .chevron {
+      margin-left: auto;
+      color: var(--gold);
+      transition: transform 0.2s ease;
+    }
+    .role-select.is-open .chevron {
+      transform: rotate(180deg);
+    }
+    .role-select .selected-icon {
+      margin-right: 4px;
+    }
+
+    .role-panel {
+      margin-top: 6px;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      position: absolute;
+      z-index: 10;
+      width: 100%;
+      min-width: 280px;
+      display: none;
+    }
+    .role-panel.is-open {
+      display: block;
+    }
+    .role-group-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 12px 4px;
+    }
+    .role-option {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .role-option:hover {
+      background: var(--bg-soft-gold);
+      color: var(--gold-darker);
+    }
+    .role-option.active {
+      background: var(--bg-soft-gold);
+      color: var(--gold-darker);
+      font-weight: 600;
+    }
+
     /* --- Toggle --- */
     .toggle-container {
       display: flex;
@@ -416,6 +508,51 @@
       background: linear-gradient(135deg, var(--gold-dark), var(--gold-darker));
     }
 
+    /* ===== FAQ SECTION ===== */
+    .faq-section {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 0 60px;
+    }
+    .faq-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 28px;
+      color: var(--ink);
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border-light);
+      padding: 16px 0;
+    }
+    .faq-item summary {
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+    .faq-item summary::after {
+      content: "+";
+      font-size: 1.4rem;
+      color: var(--gold);
+    }
+    .faq-item[open] summary::after {
+      content: "−";
+    }
+    .faq-item p {
+      margin-top: 10px;
+      color: var(--text-soft);
+      max-width: 700px;
+      font-size: 0.9rem;
+    }
+
     /* ===== FOOTER ===== */
     .footer {
       padding: 40px 0 28px;
@@ -472,6 +609,11 @@
       .card-membership .price { font-size: 2.2rem; }
       .card-standalone .price { font-size: 2rem; }
 
+      .role-panel {
+        min-width: 100%;
+        position: relative;
+      }
+
       .footer { flex-direction: column; }
     }
 
@@ -515,9 +657,30 @@
     <!-- ===== CARD 1: Single Sprint (Standalone) ===== -->
     <div class="card-standalone">
       <div class="plan-name">
-        Interview Voice Fix — <span class="cohort-name">Single Sprint</span>
+        <span id="standalonePlanName">Interview Voice Fix</span> — <span class="cohort-name" id="standaloneCohortName">Single Sprint</span>
       </div>
-      <div class="plan-sub">One cohort, yours forever</div>
+      <div class="plan-sub">One cohort, 4-week program</div>
+
+      <!-- ===== ROLE SELECTOR (Standalone) ===== -->
+      <div class="role-select-wrapper">
+        <label for="standaloneRoleSelect">I'm preparing for</label>
+        <div class="role-select" id="standaloneRoleSelect">
+          <span class="selected-icon">🎯</span>
+          <span id="standaloneRoleLabel">Job Interview — Software/Tech</span>
+          <i data-lucide="chevron-down" class="chevron" style="width:16px;height:16px;"></i>
+        </div>
+        <div class="role-panel" id="standaloneRolePanel">
+          <div class="role-group-label">Job Interview</div>
+          <div class="role-option active" data-value="tech" data-icon="🎯" data-label="Software/Tech role">Software/Tech role</div>
+          <div class="role-option" data-value="pm" data-icon="🎯" data-label="Product/Program Management">Product/Program Management</div>
+          <div class="role-option" data-value="sales" data-icon="🎯" data-label="Sales & Business Development">Sales & Business Development</div>
+          <div class="role-option" data-value="ops" data-icon="🎯" data-label="Operations & General Management">Operations & General Management</div>
+          <div class="role-option" data-value="campus" data-icon="🎯" data-label="Campus/Fresher (any field)">Campus/Fresher (any field)</div>
+          <div class="role-group-label">Other</div>
+          <div class="role-option" data-value="team" data-icon="👥" data-label="Team Communication">Team Communication</div>
+          <div class="role-option" data-value="leadership" data-icon="📈" data-label="Leadership Readiness">Leadership Readiness</div>
+        </div>
+      </div>
 
       <div class="price">₹1,499</div>
       <div class="price-sub">one-time</div>
@@ -525,13 +688,13 @@
       <div class="divider"></div>
 
       <ul class="feature-list">
-        <li><i data-lucide="check" style="width:16px; height:16px;"></i> One cohort sprint (e.g. Interview Voice Fix)</li>
-        <li><i data-lucide="check" style="width:16px; height:16px;"></i> Full practice structure for that cohort</li>
+        <li><i data-lucide="check" style="width:16px; height:16px;"></i> 4 weeks — daily practice, weekly check-in, final review</li>
+        <li><i data-lucide="clock" style="width:16px; height:16px;"></i> Program ends after 4 weeks</li>
         <li><i data-lucide="x" style="width:16px; height:16px; color:var(--text-muted);"></i> <span class="muted">No Day-Before Boost</span></li>
         <li><i data-lucide="x" style="width:16px; height:16px; color:var(--text-muted);"></i> <span class="muted">Switch cohorts? New purchase required</span></li>
       </ul>
 
-      <a href="#" class="btn-standalone">Start This Sprint →</a>
+      <a href="#" class="btn-standalone" id="standaloneCta">Start This Sprint →</a>
     </div>
 
     <!-- ===== CARD 2: Practice Pass (Membership) ===== -->
@@ -542,6 +705,28 @@
         The <span>Practice Pass</span>
       </div>
       <div class="plan-sub">Every cohort, ongoing — new ones added over time</div>
+
+      <!-- ===== ROLE SELECTOR (Membership - with switch note) ===== -->
+      <div class="role-select-wrapper">
+        <label for="membershipRoleSelect">Currently focused on</label>
+        <div class="role-select" id="membershipRoleSelect">
+          <span class="selected-icon">🎯</span>
+          <span id="membershipRoleLabel">Job Interview — Software/Tech</span>
+          <i data-lucide="chevron-down" class="chevron" style="width:16px;height:16px;"></i>
+        </div>
+        <div class="role-panel" id="membershipRolePanel">
+          <div class="role-group-label">Job Interview</div>
+          <div class="role-option active" data-value="tech" data-icon="🎯" data-label="Software/Tech role">Software/Tech role</div>
+          <div class="role-option" data-value="pm" data-icon="🎯" data-label="Product/Program Management">Product/Program Management</div>
+          <div class="role-option" data-value="sales" data-icon="🎯" data-label="Sales & Business Development">Sales & Business Development</div>
+          <div class="role-option" data-value="ops" data-icon="🎯" data-label="Operations & General Management">Operations & General Management</div>
+          <div class="role-option" data-value="campus" data-icon="🎯" data-label="Campus/Fresher (any field)">Campus/Fresher (any field)</div>
+          <div class="role-group-label">Other</div>
+          <div class="role-option" data-value="team" data-icon="👥" data-label="Team Communication">Team Communication</div>
+          <div class="role-option" data-value="leadership" data-icon="📈" data-label="Leadership Readiness">Leadership Readiness</div>
+        </div>
+        <div class="switch-note">switch anytime once you're in</div>
+      </div>
 
       <!-- Toggle: Monthly / Annual -->
       <div class="toggle-container" id="toggleContainer">
@@ -574,6 +759,27 @@
 
   </section>
 
+  <!-- ===== FAQ SECTION ===== -->
+  <section class="container faq-section" id="faq">
+    <h2>Frequently Asked Questions</h2>
+    <details class="faq-item">
+      <summary>What's the difference between the Single Sprint and The Practice Pass?</summary>
+      <p>The Single Sprint is a fixed 4-week program for one specific cohort (e.g., Interview Voice Fix). The Practice Pass gives you access to all cohorts, ongoing, with the ability to switch anytime.</p>
+    </details>
+    <details class="faq-item">
+      <summary>What happens after the 4-week Sprint ends?</summary>
+      <p>The program ends. You can rejoin the same Sprint, pick a new one, or move to The Practice Pass for ongoing access.</p>
+    </details>
+    <details class="faq-item">
+      <summary>What's the Day-Before Boost?</summary>
+      <p>It's a warm-up session available to Practice Pass members before any real interview or meeting — available whenever you need it.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Can I switch cohorts with The Practice Pass?</summary>
+      <p>Yes — switch anytime at no extra cost. You're not locked into one role or context.</p>
+    </details>
+  </section>
+
   <!-- ===== FOOTER ===== -->
   <div class="container">
     <footer class="footer">
@@ -604,6 +810,99 @@
       }
 
       // ============================================================
+      // ROLE SELECTOR - Standalone Card
+      // ============================================================
+      const standaloneSelect = document.getElementById('standaloneRoleSelect');
+      const standalonePanel = document.getElementById('standaloneRolePanel');
+      const standaloneLabel = document.getElementById('standaloneRoleLabel');
+      const standalonePlanName = document.getElementById('standalonePlanName');
+      const standaloneCta = document.getElementById('standaloneCta');
+
+      standaloneSelect.addEventListener('click', function(e) {
+        e.stopPropagation();
+        standalonePanel.classList.toggle('is-open');
+        this.classList.toggle('is-open');
+        // Close other panel
+        membershipPanel.classList.remove('is-open');
+        membershipSelect.classList.remove('is-open');
+      });
+
+      document.querySelectorAll('#standaloneRolePanel .role-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+          const label = this.dataset.label;
+          const icon = this.dataset.icon;
+          const value = this.dataset.value;
+          
+          // Update label with icon
+          standaloneLabel.textContent = label;
+          standaloneLabel.innerHTML = label;
+          
+          // Update plan name
+          const roleName = label.replace(' role', '').replace(' (any field)', '');
+          standalonePlanName.textContent = roleName + ' Interview Fix';
+          
+          // Update CTA button
+          standaloneCta.textContent = 'Start This Sprint →';
+          
+          // Update active state
+          document.querySelectorAll('#standaloneRolePanel .role-option').forEach(o => o.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Close panel
+          standalonePanel.classList.remove('is-open');
+          standaloneSelect.classList.remove('is-open');
+        });
+      });
+
+      // ============================================================
+      // ROLE SELECTOR - Membership Card
+      // ============================================================
+      const membershipSelect = document.getElementById('membershipRoleSelect');
+      const membershipPanel = document.getElementById('membershipRolePanel');
+      const membershipLabel = document.getElementById('membershipRoleLabel');
+
+      membershipSelect.addEventListener('click', function(e) {
+        e.stopPropagation();
+        membershipPanel.classList.toggle('is-open');
+        this.classList.toggle('is-open');
+        // Close other panel
+        standalonePanel.classList.remove('is-open');
+        standaloneSelect.classList.remove('is-open');
+      });
+
+      document.querySelectorAll('#membershipRolePanel .role-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+          const label = this.dataset.label;
+          const icon = this.dataset.icon;
+          
+          // Update label with icon
+          membershipLabel.textContent = label;
+          
+          // Update active state
+          document.querySelectorAll('#membershipRolePanel .role-option').forEach(o => o.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Close panel
+          membershipPanel.classList.remove('is-open');
+          membershipSelect.classList.remove('is-open');
+        });
+      });
+
+      // ============================================================
+      // CLOSE DROPDOWNS ON CLICK OUTSIDE
+      // ============================================================
+      document.addEventListener('click', function(e) {
+        if (!standaloneSelect.contains(e.target) && !standalonePanel.contains(e.target)) {
+          standalonePanel.classList.remove('is-open');
+          standaloneSelect.classList.remove('is-open');
+        }
+        if (!membershipSelect.contains(e.target) && !membershipPanel.contains(e.target)) {
+          membershipPanel.classList.remove('is-open');
+          membershipSelect.classList.remove('is-open');
+        }
+      });
+
+      // ============================================================
       // TOGGLE: Monthly / Annual
       // ============================================================
       const toggleBtns = document.querySelectorAll('.toggle-btn');
@@ -617,21 +916,16 @@
 
       toggleBtns.forEach(btn => {
         btn.addEventListener('click', function() {
-          // Update active state
           toggleBtns.forEach(b => b.classList.remove('active'));
           this.classList.add('active');
 
-          // Update price
           const period = this.dataset.period;
           priceAmount.textContent = pricing[period].amount;
           priceSub.textContent = pricing[period].sub;
         });
       });
 
-      // ============================================================
-      // FAQ ACCORDION (Simple)
-      // ============================================================
-      // Add FAQ section if needed
+      console.log('✅ Pricing page loaded');
     });
   </script>
 
