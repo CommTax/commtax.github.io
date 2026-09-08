@@ -732,7 +732,31 @@
     .results-display.is-visible {
       display: block;
     }
-
+/* ===== SUBMIT VOICE BUTTON ===== */
+.btn-submit-voice {
+  display: none;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 10px 24px;
+  border-radius: 40px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.btn-submit-voice:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(184, 148, 60, 0.4);
+}
+.btn-submit-voice:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+    
     /* ============================================================
        TRANSITION MARKER
        ============================================================ */
@@ -1959,27 +1983,42 @@
           <div class="prompt-hint" id="promptHint">Speak naturally for up to 30 seconds, or type your response in 60 seconds.</div>
         </div>
 
-        <!-- Voice Controls -->
-        <div class="recording-controls" id="voiceControls">
-          <button class="record-btn" id="recordBtn" aria-label="Start recording"></button>
-          <span class="recording-timer" id="timerDisplay">0:00</span>
-          <span class="recording-status" id="statusDisplay">
-            <span class="status-dot" id="statusDot"></span>
-            <span id="statusText">Ready to record (30s max)</span>
-          </span>
-          <div class="recording-waveform" id="waveformContainer">
-            <div class="waveform-bar" data-level="0.2"></div>
-            <div class="waveform-bar" data-level="0.4"></div>
-            <div class="waveform-bar" data-level="0.6"></div>
-            <div class="waveform-bar" data-level="0.8"></div>
-            <div class="waveform-bar" data-level="1.0"></div>
-            <div class="waveform-bar" data-level="0.9"></div>
-            <div class="waveform-bar" data-level="0.7"></div>
-            <div class="waveform-bar" data-level="0.5"></div>
-            <div class="waveform-bar" data-level="0.3"></div>
-            <div class="waveform-bar" data-level="0.1"></div>
-          </div>
-        </div>
+<!-- ===== VOICE RECORDING CONTROLS ===== -->
+<div class="recording-controls" id="voiceControls">
+  <button class="record-btn" id="recordBtn" aria-label="Start recording"></button>
+  <span class="recording-timer" id="timerDisplay">0:00</span>
+  <span class="recording-status" id="statusDisplay">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">Ready to record (30s max)</span>
+  </span>
+  <div class="recording-waveform" id="waveformContainer">
+    <div class="waveform-bar" data-level="0.2"></div>
+    <div class="waveform-bar" data-level="0.4"></div>
+    <div class="waveform-bar" data-level="0.6"></div>
+    <div class="waveform-bar" data-level="0.8"></div>
+    <div class="waveform-bar" data-level="1.0"></div>
+    <div class="waveform-bar" data-level="0.9"></div>
+    <div class="waveform-bar" data-level="0.7"></div>
+    <div class="waveform-bar" data-level="0.5"></div>
+    <div class="waveform-bar" data-level="0.3"></div>
+    <div class="waveform-bar" data-level="0.1"></div>
+  </div>
+  <!-- ===== SUBMIT VOICE BUTTON ===== -->
+  <button class="btn-submit-voice" id="submitVoiceBtn" style="display:none; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #ffffff; font-weight: 600; font-size: 0.85rem; padding: 10px 24px; border-radius: 40px; border: none; cursor: pointer; transition: all 0.3s ease; font-family: inherit;">
+    ✅ Submit Response
+  </button>
+</div>
+
+<!-- ===== VOICE STATUS DISPLAY ===== -->
+<div id="voiceStatus" style="display:none; margin-top: 8px; padding: 8px 16px; background: #f8f5f0; border-radius: 8px; border: 1px solid var(--border-light); text-align:center;">
+  <span style="font-size:0.8rem; color:var(--text-muted);">
+    <span id="wordCountDisplay">0</span> words · 
+    <span id="submitStatusText" style="font-weight:600;">Need 15+ words to submit</span>
+  </span>
+</div>
+
+<!-- ===== AUDIO PREVIEW (hidden) ===== -->
+<audio id="audioPreview" style="display:none;"></audio>
 
         <!-- Text Input -->
         <div class="text-input-area" id="textInputArea">
