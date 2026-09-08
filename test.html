@@ -3163,25 +3163,56 @@ function renderResults(data, userText) {
 }
 
 // ============================================================
-// ANALYZE WITH BACKEND (GLOBAL)
+// ANALYZE WITH BACKEND - ACTUAL BACKEND CALL
 // ============================================================
-function analyzeWithBackend(text, mode, questionType, fallbackData) {
-  const sampleData = fallbackData || {
-    metrics: { impact: 42 },
-    diagnosis: {
-      pattern_name: "The Minimalist",
-      pattern_description: "You keep things brief but may be leaving out critical context."
-    },
-    gap: {
-      what_got_lost: "The depth of your experience and expertise",
-      unspoken_gap: "Between your concise delivery and the full story behind it"
-    },
-    before_after_rewrite: {
-      executive_version: "I bring strategic clarity and results-driven leadership to intro challenges."
-    }
-  };
+async function analyzeWithBackend(text, mode, questionType) {
+  console.log('📤 Sending to backend:', { text: text.slice(0, 50) + '...', mode, questionType });
   
-  renderResults(sampleData, text);
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/communication/analyze/premium`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        text: text,
+        mode: mode,
+        question_type: questionType
+      })
+    });
+    
+    console.log('📥 Response status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log('✅ Backend response received:', data);
+    
+    // Pass the backend data directly to renderResults
+    renderResults(data, text);
+    
+  } catch (error) {
+    console.error('❌ Backend error:', error);
+    
+    // Only use fallback if backend fails
+    const fallbackData = {
+      metrics: { impact: 42 },
+      diagnosis: {
+        pattern_name: "Analysis Unavailable",
+        pattern_description: "We couldn't complete your analysis. Please try again."
+      },
+      gap: {
+        what_got_lost: "Unable to analyze your response",
+        unspoken_gap: "Please check your connection and try again"
+      },
+      before_after_rewrite: {
+        executive_version: "We're having trouble connecting to our AI. Please try again."
+      }
+    };
+    renderResults(fallbackData, text);
+  }
 }
 
 // ============================================================
@@ -3510,6 +3541,69 @@ document.addEventListener('DOMContentLoaded', function() {
       isSubmitting = false;
     });
   }
+  // ============================================================
+// SUBMIT VOICE RECORDING - FIXED
+// ============================================================
+async function submitVoiceRecording() {
+  if (isSubmitting) return;
+  if (!audioBlob) {
+    alert('Please record your response first.');
+    return;
+  }
+  if (seconds < MIN_RECORDING_SECONDS) {
+    alert(`Please record at least ${MIN_RECORDING_SECONDS} seconds.`);
+    return;
+  }
+  
+  isSubmitting = true;
+  if (submitVoiceBtn) {
+    submitVoiceBtn.disabled = true;
+    submitVoiceBtn.textContent = '🔄 Analyzing...';
+  }
+  statusText.textContent = '📤 Sending audio for analysis...';
+  
+  try {
+    // Create FormData to send audio
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'recording.webm');
+    formData.append('mode', 'voice');
+    formData.append('question_type', getCurrentQuestionType());
+    
+    const response = await fetch(`${BACKEND_URL}/api/communication/analyze/voice`, {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('✅ Voice analysis response:', data);
+    
+    if (data.transcribed_text) {
+      // Now analyze the transcribed text
+      analyzeWithBackend(data.transcribed_text, 'voice', getCurrentQuestionType());
+    } else {
+      throw new Error('No transcribed text received');
+    }
+    
+    if (submitVoiceBtn) {
+      submitVoiceBtn.textContent = '✅ Submitted!';
+      submitVoiceBtn.disabled = false;
+    }
+    isSubmitting = false;
+    
+  } catch (error) {
+    console.error('❌ Voice analysis error:', error);
+    statusText.textContent = '⚠️ ' + error.message;
+    if (submitVoiceBtn) {
+      submitVoiceBtn.textContent = '🔄 Try Again';
+      submitVoiceBtn.disabled = false;
+    }
+    isSubmitting = false;
+  }
+}
 
   // ============================================================
   // EVENT LISTENERS FOR RECORDING
