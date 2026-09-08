@@ -731,13 +731,30 @@
       transform: none !important;
     }
 
+    /* ===== RESULTS DISPLAY - FIXED ===== */
     .results-display {
       margin-top: 24px;
       display: none;
       animation: slideUp 0.5s ease;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      border: 2px solid var(--gold);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
     }
     .results-display.is-visible {
-      display: block;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    #resultsContent {
+      color: var(--ink);
+    }
+    #resultsContent * {
+      color: var(--ink);
     }
 
     /* ===== SUBMIT VOICE BUTTON ===== */
@@ -2549,7 +2566,7 @@
           <button class="text-submit-btn" id="textSubmitBtn">Analyze My Response →</button>
         </div>
 
-        <!-- Results -->
+        <!-- RESULTS DISPLAY - SINGLE CONTAINER (FIXED) -->
         <div class="results-display" id="resultsDisplay">
           <div id="resultsContent"></div>
         </div>
@@ -2706,12 +2723,6 @@
       </div>
     </div>
   </section>
-<!-- ============================================================
-   RESULTS DISPLAY - WITH BACKEND DATA + STATIC PREMIUM
-   ============================================================ -->
-<div class="results-display is-visible" id="resultsDisplay" style="margin-top:0; padding-top:0;">
-  <div id="resultsContent"></div>
-</div>
 
   <!-- ============================================================
      TRANSFORMATION - PREMIUM TIMELINE
@@ -3213,6 +3224,19 @@ function renderResults(data, userText) {
     lucide.createIcons();
   }
 
+  // Ensure results are visible
+  const resultsDisplay = document.getElementById('resultsDisplay');
+  if (resultsDisplay) {
+    resultsDisplay.classList.add('is-visible');
+    resultsDisplay.style.display = 'block';
+    resultsDisplay.style.visibility = 'visible';
+    resultsDisplay.style.opacity = '1';
+    // Scroll to results after a short delay
+    setTimeout(() => {
+      resultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+  }
+
   console.log('✅ Results rendered with backend data + static premium content');
 }
 
@@ -3694,9 +3718,5 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('✅ All features integrated with backend');
 });
 </script>
-    
-
-  
-  
 </body>
 </html>
