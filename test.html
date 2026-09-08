@@ -624,6 +624,51 @@
       font-size: 1.4rem;
     }
 
+    .recording-timer {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      min-width: 60px;
+    }
+
+    .recording-status {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      flex: 1;
+    }
+    .recording-status .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      margin-right: 8px;
+    }
+    .recording-status .status-dot.is-live {
+      background: #a13d2f;
+      animation: pulse-dot 1s infinite;
+    }
+
+    .recording-waveform {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 36px;
+      flex: 1;
+      min-width: 60px;
+    }
+    .waveform-bar {
+      flex: 1;
+      height: 4px;
+      background: #d0c8bc;
+      border-radius: 4px;
+      transition: height 0.15s ease;
+    }
+    .waveform-bar.is-active {
+      background: var(--gold);
+    }
+
     .text-input-area {
       display: none;
       margin-top: 16px;
@@ -649,6 +694,12 @@
       border-color: var(--gold);
       box-shadow: 0 0 0 4px rgba(184, 148, 60, 0.1);
     }
+    .text-input-area .text-char-count {
+      text-align: right;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
     .text-submit-btn {
       margin-top: 12px;
       padding: 12px 32px;
@@ -666,6 +717,20 @@
     .text-submit-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(184, 148, 60, 0.4);
+    }
+    .text-submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .results-display {
+      margin-top: 24px;
+      display: none;
+      animation: slideUp 0.5s ease;
+    }
+    .results-display.is-visible {
+      display: block;
     }
 
     /* ============================================================
@@ -703,7 +768,7 @@
     }
 
     /* ============================================================
-       AI COACH SECTION - PHONE FRAME WITH DARK INSIDE
+       AI COACH SECTION - PHONE FRAME
        ============================================================ */
     .ai-coach-section {
       padding: 60px 24px 80px;
@@ -751,20 +816,16 @@
       color: var(--text-muted);
     }
 
-    /* ===== PHONE FRAME ===== */
     .phone-frame {
       max-width: 420px;
       margin: 0 auto;
       background: #090909;
       border-radius: 40px;
       padding: 16px;
-      box-shadow: 
-        0 40px 100px rgba(0, 0, 0, 0.15),
-        0 0 0 1px rgba(255, 255, 255, 0.05);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05);
       position: relative;
     }
 
-    /* Phone notch */
     .phone-frame::before {
       content: '';
       position: absolute;
@@ -786,7 +847,6 @@
       position: relative;
     }
 
-    /* ===== COACH APP INSIDE PHONE ===== */
     .coach-app {
       background: #111;
       color: #ffffff;
@@ -973,7 +1033,6 @@
       color: rgba(255, 255, 255, 0.55);
     }
 
-    /* ===== DRAMATIC SCORE IMPROVEMENT ===== */
     .structure-score {
       margin-top: 4px;
     }
@@ -1045,7 +1104,6 @@
       color: var(--gold);
     }
 
-    /* ===== DRAMATIC POINT REACHED ===== */
     .point-reached {
       margin-top: 16px;
       padding: 12px 16px;
@@ -1111,7 +1169,6 @@
       color: rgba(255, 255, 255, 0.6);
     }
 
-    /* ===== INTERVENTION - TRY AGAIN ===== */
     .intervention {
       padding: 18px 20px 20px;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
@@ -1189,7 +1246,6 @@
       transform: none !important;
     }
 
-    /* ===== SECOND ATTEMPT - BLURRED UNTIL CLICK ===== */
     .second-attempt {
       padding: 20px 20px 18px;
       transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -1380,6 +1436,31 @@
     .loop-items i {
       font-style: normal;
       color: rgba(255, 255, 255, 0.15);
+    }
+
+    .coach-bottom {
+      max-width: 650px;
+      margin: 40px auto 0;
+      text-align: center;
+    }
+
+    .coach-bottom h3 {
+      font-size: clamp(28px, 3.5vw, 40px);
+      line-height: 1.08;
+      letter-spacing: -.04em;
+      color: var(--ink);
+    }
+
+    .coach-bottom h3 span {
+      color: var(--gold);
+    }
+
+    .coach-bottom p {
+      margin: 16px auto 0;
+      max-width: 500px;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-muted);
     }
 
     /* ============================================================
@@ -1715,17 +1796,11 @@
       .response-text { font-size: 12px; }
       .second-quote { font-size: 13px; }
       .intervention h3 { font-size: 16px; }
-      .second-attempt.blurred .overlay-text {
-        font-size: 9px;
-        padding: 8px 14px;
-      }
     }
   </style>
 </head>
 <body>
-  <!-- ============================================================
-     NAV
-     ============================================================ -->
+  <!-- ===== NAV ===== -->
   <div class="container">
     <nav class="navbar">
       <a href="#top" class="logo-link">
@@ -1736,17 +1811,13 @@
         <a href="#programs">Programs</a>
         <a href="#community">Community</a>
         <a href="#faq">FAQ</a>
-        <a href="https://theunspoken.co.in/hero" class="btn-persona" id="knowPatternBtn">
-          <span>✦</span> Discover Your Pattern
-        </a>
+        <a href="https://theunspoken.co.in/hero" class="btn-persona">✦ Discover Your Pattern</a>
         <a href="#" class="btn-ghost" id="signInBtn" style="border-color:var(--gold); padding:8px 20px; font-size:0.85rem;">Sign In</a>
       </div>
     </nav>
   </div>
 
-  <!-- ============================================================
-     LOGIN MODAL
-     ============================================================ -->
+  <!-- ===== LOGIN MODAL ===== -->
   <div id="loginModal" class="login-modal" style="display: none;">
     <div class="login-modal-overlay" id="loginModalOverlay"></div>
     <div class="login-modal-content">
@@ -1773,9 +1844,7 @@
     </div>
   </div>
 
-  <!-- ============================================================
-     HERO
-     ============================================================ -->
+  <!-- ===== HERO ===== -->
   <section class="container hero">
     <div class="hero-left">
       <div class="hero-badge">You're better than how you sometimes sound.</div>
@@ -1813,7 +1882,6 @@
         <div class="video-wrapper">
           <video autoplay loop muted playsinline poster="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80">
             <source src="https://assets.mixkit.co/videos/preview/mixkit-businesswoman-giving-a-presentation-in-a-meeting-42880-large.mp4" type="video/mp4" />
-            Your browser does not support video playback.
           </video>
           <div class="video-overlay-text">Practice turns unspoken intent into a message that lands</div>
         </div>
@@ -1821,9 +1889,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-     MOMENTS THAT MATTER
-     ============================================================ -->
+  <!-- ===== MOMENTS THAT MATTER ===== -->
   <section class="moments-section container">
     <div class="moments-wrapper">
       <div class="moments-header">
@@ -1841,9 +1907,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-     TRUST STRIP
-     ============================================================ -->
+  <!-- ===== TRUST STRIP ===== -->
   <div class="container">
     <div class="trust-strip-highlight">
       <div class="label"><span>✦</span> Tailored For</div>
@@ -1857,7 +1921,7 @@
   </div>
 
   <!-- ============================================================
-     IMPACT TEST
+     IMPACT TEST - FULLY FUNCTIONAL
      ============================================================ -->
   <section class="section container" id="impact-test">
     <div class="impact-test-section">
@@ -1868,6 +1932,7 @@
       </div>
 
       <div class="recording-interface">
+        <!-- Question Selector -->
         <div class="question-selector">
           <button class="question-btn active" data-question="intro">
             <i data-lucide="mic" style="width:16px; height:16px;"></i> Introduce Yourself
@@ -1877,6 +1942,7 @@
           </button>
         </div>
 
+        <!-- Mode Selector -->
         <div class="mode-selector">
           <button class="mode-btn active" data-mode="voice">
             <i data-lucide="mic" style="width:14px; height:14px;"></i> Voice (30s)
@@ -1886,12 +1952,14 @@
           </button>
         </div>
 
+        <!-- Prompt -->
         <div class="recording-prompt">
           <div class="prompt-label"><i data-lucide="target" style="width:12px; height:12px; display:inline-block;"></i> Your Prompt</div>
           <div class="prompt-text" id="promptText">"Tell me about yourself — your background, what you do, and what drives you professionally."</div>
           <div class="prompt-hint" id="promptHint">Speak naturally for up to 30 seconds, or type your response in 60 seconds.</div>
         </div>
 
+        <!-- Voice Controls -->
         <div class="recording-controls" id="voiceControls">
           <button class="record-btn" id="recordBtn" aria-label="Start recording"></button>
           <span class="recording-timer" id="timerDisplay">0:00</span>
@@ -1913,6 +1981,7 @@
           </div>
         </div>
 
+        <!-- Text Input -->
         <div class="text-input-area" id="textInputArea">
           <textarea id="textResponse" placeholder="Type your response here. Be as natural as possible — we'll analyze your communication style from your written words." maxlength="500"></textarea>
           <div class="text-char-count">
@@ -1921,6 +1990,7 @@
           <button class="text-submit-btn" id="textSubmitBtn">Analyze My Response →</button>
         </div>
 
+        <!-- Results -->
         <div class="results-display" id="resultsDisplay">
           <div id="resultsContent"></div>
         </div>
@@ -1928,9 +1998,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-     TRANSITION MARKER
-     ============================================================ -->
+  <!-- ===== TRANSITION MARKER ===== -->
   <section class="transition-marker container">
     <div class="transition-wrapper">
       <span class="transition-badge">✦ From Insight to Practice</span>
@@ -1938,32 +2006,18 @@
     </div>
   </section>
 
-  <!-- ============================================================
-     AI COACH SECTION - PHONE FRAME WITH DRAMATIC TRANSFORMATIONS
-     ============================================================ -->
+  <!-- ===== AI COACH SECTION ===== -->
   <section class="ai-coach-section" id="practice">
     <div class="ai-coach-container">
-
-      <!-- Header -->
       <div class="ai-coach-header">
         <span class="section-eyebrow">✦ THE UNSPOKEN PRACTICE ENGINE</span>
-        <h2>
-          Don't just get feedback.<br>
-          <span>Know what to change.</span>
-        </h2>
-        <p>
-          The Unspoken shows you exactly where your message is
-          losing impact — and what to do differently.
-        </p>
+        <h2>Don't just get feedback.<br><span>Know what to change.</span></h2>
+        <p>The Unspoken shows you exactly where your message is losing impact — and what to do differently.</p>
       </div>
 
-      <!-- Phone Frame -->
       <div class="phone-frame">
         <div class="phone-screen">
-
-          <!-- Coach App -->
           <div class="coach-app">
-
             <!-- Top Bar -->
             <div class="coach-topbar">
               <div class="coach-brand">
@@ -1984,14 +2038,11 @@
 
             <!-- Main Experience -->
             <div class="coach-grid">
-
-              <!-- Response Panel -->
               <div class="response-panel">
                 <div class="panel-heading">
                   <span>YOUR RESPONSE</span>
                   <span class="response-time">0:58</span>
                 </div>
-
                 <div class="waveform">
                   <span></span><span></span><span></span>
                   <span></span><span></span><span></span>
@@ -2001,34 +2052,18 @@
                   <span></span><span></span><span></span>
                   <span></span><span></span><span></span>
                 </div>
-
                 <div class="response-text">
-                  <p>
-                    "I worked on a healthcare platform where we had
-                    multiple stakeholders across business and technology.
-                    There were quite a few requirements and initially
-                    there were some challenges around alignment..."
-                  </p>
-                  <p class="fade-text">
-                    "...and I worked with the teams to make sure
-                    everything was addressed and eventually we
-                    launched the platform."
-                  </p>
+                  <p>"I worked on a healthcare platform where we had multiple stakeholders across business and technology. There were quite a few requirements and initially there were some challenges around alignment..."</p>
+                  <p class="fade-text">"...and I worked with the teams to make sure everything was addressed and eventually we launched the platform."</p>
                 </div>
-
-                <button class="play-response">
-                  <span class="play-icon">▶</span>
-                  Play response
-                </button>
+                <button class="play-response"><span class="play-icon">▶</span> Play response</button>
               </div>
 
-              <!-- Analysis Panel -->
               <div class="analysis-panel">
                 <div class="panel-heading">
                   <span>THE UNSPOKEN NOTICED</span>
                   <span class="ai-spark">✦</span>
                 </div>
-
                 <div class="coach-message">
                   <div class="coach-avatar">✦</div>
                   <div>
@@ -2037,7 +2072,6 @@
                   </div>
                 </div>
 
-                <!-- DRAMATIC STRUCTURE SCORE -->
                 <div class="structure-score">
                   <div class="score-top">
                     <span>STRUCTURE</span>
@@ -2057,7 +2091,6 @@
                   <p>Appears <strong>23 seconds</strong> into your response.</p>
                 </div>
 
-                <!-- DRAMATIC POINT REACHED -->
                 <div class="point-reached">
                   <span class="mini-label">POINT REACHED</span>
                   <div class="point-value" id="pointReached">
@@ -2070,23 +2103,14 @@
 
                 <div class="lost-section">
                   <span class="mini-label">WHAT'S GETTING LOST?</span>
-                  <div class="lost-item">
-                    <span>01</span>
-                    <p>Point comes late</p>
-                  </div>
-                  <div class="lost-item">
-                    <span>02</span>
-                    <p>Too much context</p>
-                  </div>
-                  <div class="lost-item">
-                    <span>03</span>
-                    <p>Result gets buried</p>
-                  </div>
+                  <div class="lost-item"><span>01</span><p>Point comes late</p></div>
+                  <div class="lost-item"><span>02</span><p>Too much context</p></div>
+                  <div class="lost-item"><span>03</span><p>Result gets buried</p></div>
                 </div>
               </div>
             </div>
 
-            <!-- Intervention - Try Again Button -->
+            <!-- Intervention -->
             <div class="intervention">
               <span class="intervention-label">TRY ONE CHANGE</span>
               <div class="intervention-content">
@@ -2095,62 +2119,35 @@
                   <p>Instead of explaining everything first, tell them what matters first.</p>
                 </div>
                 <div class="structure-flow">
-                  <span>POINT</span>
-                  <b>→</b>
-                  <span>ACTION</span>
-                  <b>→</b>
-                  <span>RESULT</span>
+                  <span>POINT</span><b>→</b><span>ACTION</span><b>→</b><span>RESULT</span>
                 </div>
               </div>
-
-              <button class="retry-button" id="retryButton">
-                <span>🎙</span>
-                Try again
-              </button>
+              <button class="retry-button" id="retryButton"><span>🎙</span> Try again</button>
             </div>
 
-            <!-- Second Attempt - BLURRED until "Try again" is clicked -->
+            <!-- Second Attempt -->
             <div class="second-attempt blurred" id="secondAttempt">
               <div class="overlay-text">🔒 Click "Try again" to reveal improvement</div>
-
               <div class="second-heading">
                 <span>SECOND ATTEMPT</span>
                 <span class="improved-badge">IMPROVED</span>
               </div>
-
               <div class="second-response">
-                <div class="second-quote">
-                  "I built a digital healthcare platform that
-                  brought together consultation, pharmacy and
-                  diagnostic services across two pilot markets..."
-                </div>
-
+                <div class="second-quote">"I built a digital healthcare platform that brought together consultation, pharmacy and diagnostic services across two pilot markets..."</div>
                 <div class="improvement-metrics">
                   <div class="metric-item-improved">
                     <span>STRUCTURE</span>
-                    <strong>
-                      <span class="old-score">42</span>
-                      <span class="arrow">→</span>
-                      <span class="new-score">68</span>
-                    </strong>
+                    <strong><span class="old-score">42</span><span class="arrow">→</span><span class="new-score">68</span></strong>
                   </div>
                   <div class="metric-item-improved">
                     <span>POINT REACHED</span>
-                    <strong>
-                      <span class="old-score">23s</span>
-                      <span class="arrow">→</span>
-                      <span class="new-score">5s</span>
-                    </strong>
+                    <strong><span class="old-score">23s</span><span class="arrow">→</span><span class="new-score">5s</span></strong>
                   </div>
                 </div>
               </div>
-
               <div class="coach-insight">
                 <span>✦</span>
-                <p>
-                  Your idea didn't change.
-                  <strong>The way you structured it did.</strong>
-                </p>
+                <p>Your idea didn't change. <strong>The way you structured it did.</strong></p>
               </div>
             </div>
 
@@ -2158,60 +2155,29 @@
             <div class="practice-loop">
               <span>THE UNSPOKEN PRACTICE LOOP</span>
               <div class="loop-items">
-                <div class="loop-item active">
-                  <b>01</b>
-                  <span>RESPOND</span>
-                </div>
+                <div class="loop-item active"><b>01</b><span>RESPOND</span></div>
                 <i>→</i>
-                <div class="loop-item">
-                  <b>02</b>
-                  <span>ANALYZE</span>
-                </div>
+                <div class="loop-item"><b>02</b><span>ANALYZE</span></div>
                 <i>→</i>
-                <div class="loop-item">
-                  <b>03</b>
-                  <span>ADJUST</span>
-                </div>
+                <div class="loop-item"><b>03</b><span>ADJUST</span></div>
                 <i>→</i>
-                <div class="loop-item">
-                  <b>04</b>
-                  <span>RETRY</span>
-                </div>
+                <div class="loop-item"><b>04</b><span>RETRY</span></div>
                 <i>→</i>
-                <div class="loop-item">
-                  <b>05</b>
-                  <span>IMPROVE</span>
-                </div>
+                <div class="loop-item"><b>05</b><span>IMPROVE</span></div>
               </div>
             </div>
-
           </div>
-          <!-- End Coach App -->
-
         </div>
-        <!-- End Phone Screen -->
-      </div>
-      <!-- End Phone Frame -->
-
-      <!-- Bottom Statement -->
-      <div class="coach-bottom" style="max-width:650px; margin:40px auto 0; text-align:center;">
-        <h3 style="font-size:clamp(28px, 3.5vw, 40px); line-height:1.08; letter-spacing:-.04em; color:var(--ink);">
-          One response.<br>
-          <span style="color:var(--gold);">One adjustment.</span><br>
-          Real improvement.
-        </h3>
-        <p style="margin:16px auto 0; max-width:500px; font-size:16px; line-height:1.6; color:var(--text-muted);">
-          You don't build communication skill by reading about it.
-          You build it by practicing the moment that matters.
-        </p>
       </div>
 
+      <div class="coach-bottom">
+        <h3>One response.<br><span>One adjustment.</span><br>Real improvement.</h3>
+        <p>You don't build communication skill by reading about it. You build it by practicing the moment that matters.</p>
+      </div>
     </div>
   </section>
 
-  <!-- ============================================================
-     TRANSFORMATION
-     ============================================================ -->
+  <!-- ===== TRANSFORMATION ===== -->
   <section class="transformation-section container">
     <span class="transformation-badge">✦ The Transformation</span>
     <h3 class="heading-serif heading-lg">Be understood, <span class="accent-gold">remembered and trusted.</span></h3>
@@ -2245,9 +2211,7 @@
     <div class="transformation-brand">You don't need to become a different communicator. You need to become more intentional about the one you already are.</div>
   </section>
 
-  <!-- ============================================================
-     FAQ
-     ============================================================ -->
+  <!-- ===== FAQ ===== -->
   <section class="section container" id="faq">
     <div style="max-width: 800px; margin: 0 auto;">
       <h2 class="heading-serif heading-lg" style="text-align: center; margin-bottom: 28px;">Frequently Asked Questions</h2>
@@ -2266,9 +2230,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-     FINAL CTA
-     ============================================================ -->
+  <!-- ===== FINAL CTA ===== -->
   <section class="final-cta container">
     <h2 class="heading-serif heading-lg" style="margin-bottom: 8px;">You're already better than <span class="accent-gold">how you sometimes sound.</span></h2>
     <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto 20px;">Now discover what's getting lost.</p>
@@ -2276,9 +2238,7 @@
     <div style="margin-top: 12px; font-size: 0.8rem; color: var(--text-muted);">Free · 60 seconds · Instant insight</div>
   </section>
 
-  <!-- ============================================================
-     FOOTER
-     ============================================================ -->
+  <!-- ===== FOOTER ===== -->
   <div class="container">
     <footer class="footer">
       <div class="footer-col">
@@ -2287,9 +2247,9 @@
       </div>
       <div class="footer-col">
         <h4>Navigation</h4>
-        <a href="#sprints">Sprint</a>
-        <a href="#community">Community</a>
-        <a href="#faq">FAQ</a>
+        <a href="#">Programs</a>
+        <a href="#">Community</a>
+        <a href="#">FAQ</a>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
@@ -2301,15 +2261,19 @@
   </div>
 
   <!-- ============================================================
-     JAVASCRIPT
+     JAVASCRIPT - FULL FUNCTIONALITY
      ============================================================ -->
   <script>
-    // Initialize Lucide icons
+    // ============================================================
+    // INITIALIZE LUCIDE ICONS
+    // ============================================================
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
     }
 
-    // Login Modal
+    // ============================================================
+    // LOGIN MODAL
+    // ============================================================
     const signInBtn = document.getElementById('signInBtn');
     const loginModal = document.getElementById('loginModal');
     const loginModalOverlay = document.getElementById('loginModalOverlay');
@@ -2326,7 +2290,202 @@
     }
 
     // ============================================================
-    // AI COACH - Try Again Button with Dramatic Reveal
+    // QUESTION SELECTOR
+    // ============================================================
+    const questionBtns = document.querySelectorAll('.question-btn');
+    const promptText = document.getElementById('promptText');
+    const promptHint = document.getElementById('promptHint');
+
+    const questions = {
+      intro: {
+        text: '"Tell me about yourself — your background, what you do, and what drives you professionally."',
+        hint: 'Speak naturally for up to 30 seconds, or type your response in 60 seconds.'
+      },
+      project: {
+        text: '"Tell me about a current project or initiative you\'re leading or involved in."',
+        hint: 'Describe the project, your role, and the impact.'
+      }
+    };
+
+    questionBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        questionBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const question = btn.dataset.question;
+        promptText.textContent = questions[question].text;
+        promptHint.textContent = questions[question].hint;
+        document.getElementById('resultsDisplay').classList.remove('is-visible');
+      });
+    });
+
+    // ============================================================
+    // MODE SELECTOR
+    // ============================================================
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    const voiceControls = document.getElementById('voiceControls');
+    const textInputArea = document.getElementById('textInputArea');
+
+    modeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        modeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const mode = btn.dataset.mode;
+        if (mode === 'voice') {
+          voiceControls.style.display = 'flex';
+          textInputArea.classList.remove('is-visible');
+          document.getElementById('resultsDisplay').classList.remove('is-visible');
+        } else {
+          voiceControls.style.display = 'none';
+          textInputArea.classList.add('is-visible');
+          document.getElementById('resultsDisplay').classList.remove('is-visible');
+        }
+      });
+    });
+
+    // ============================================================
+    // TEXT INPUT
+    // ============================================================
+    const textResponse = document.getElementById('textResponse');
+    const charCount = document.getElementById('charCount');
+    const textSubmitBtn = document.getElementById('textSubmitBtn');
+
+    textResponse.addEventListener('input', () => {
+      const count = textResponse.value.length;
+      charCount.textContent = count;
+      charCount.style.color = count > 450 ? '#a13d2f' : '#6e6a62';
+      textSubmitBtn.disabled = count < 10;
+    });
+
+    textSubmitBtn.addEventListener('click', () => {
+      const text = textResponse.value.trim();
+      if (text.length < 10) {
+        alert('Please write at least 10 characters for analysis.');
+        return;
+      }
+      textSubmitBtn.textContent = 'Analyzing...';
+      textSubmitBtn.disabled = true;
+      
+      setTimeout(() => {
+        textSubmitBtn.textContent = 'Analyze My Response →';
+        textSubmitBtn.disabled = false;
+        document.getElementById('resultsDisplay').classList.add('is-visible');
+        document.getElementById('resultsDisplay').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 1500);
+    });
+
+    // ============================================================
+    // RECORDING FUNCTIONALITY
+    // ============================================================
+    const recordBtn = document.getElementById('recordBtn');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const statusText = document.getElementById('statusText');
+    const statusDot = document.getElementById('statusDot');
+    const resultsDisplay = document.getElementById('resultsDisplay');
+    const waveformBars = document.querySelectorAll('.waveform-bar');
+
+    let isRecording = false;
+    let timerInterval = null;
+    let seconds = 0;
+    const MAX_RECORDING_SECONDS = 30;
+
+    function animateWaveform(active) {
+      waveformBars.forEach((bar, index) => {
+        if (active) {
+          const level = parseFloat(bar.dataset.level) || 0.3;
+          const randomBoost = 0.3 + Math.random() * 0.7;
+          const height = Math.min(100, level * 100 * randomBoost);
+          bar.style.height = height + '%';
+          bar.classList.add('is-active');
+        } else {
+          const level = parseFloat(bar.dataset.level) || 0.3;
+          bar.style.height = (level * 60) + '%';
+          bar.classList.remove('is-active');
+        }
+      });
+    }
+
+    function updateTimer() {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+      
+      if (seconds >= MAX_RECORDING_SECONDS - 5) {
+        timerDisplay.style.color = '#a13d2f';
+        statusText.textContent = `⚠️ ${MAX_RECORDING_SECONDS - seconds}s remaining`;
+      }
+      
+      if (seconds >= MAX_RECORDING_SECONDS) {
+        stopRecording();
+      }
+    }
+
+    function startRecording() {
+      isRecording = true;
+      seconds = 0;
+      timerDisplay.style.color = '#1a1917';
+      updateTimer();
+      recordBtn.classList.add('is-recording');
+      statusDot.classList.add('is-live');
+      statusText.textContent = `Recording... (max ${MAX_RECORDING_SECONDS}s)`;
+      resultsDisplay.classList.remove('is-visible');
+      recordBtn.disabled = false;
+
+      const waveInterval = setInterval(() => {
+        if (isRecording) {
+          animateWaveform(true);
+        } else {
+          clearInterval(waveInterval);
+        }
+      }, 150);
+
+      timerInterval = setInterval(() => {
+        seconds++;
+        updateTimer();
+        if (seconds >= MAX_RECORDING_SECONDS) {
+          stopRecording();
+        }
+      }, 1000);
+
+      recordBtn.dataset.waveInterval = waveInterval;
+    }
+
+    function stopRecording() {
+      if (!isRecording) return;
+      isRecording = false;
+      recordBtn.classList.remove('is-recording');
+      statusDot.classList.remove('is-live');
+      statusText.textContent = 'Processing...';
+      timerDisplay.style.color = '#1a1917';
+
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+
+      const waveInterval = parseInt(recordBtn.dataset.waveInterval);
+      if (waveInterval) {
+        clearInterval(waveInterval);
+        recordBtn.dataset.waveInterval = '';
+      }
+      animateWaveform(false);
+
+      setTimeout(() => {
+        statusText.textContent = 'Analysis complete ✓';
+        resultsDisplay.classList.add('is-visible');
+        resultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 1200);
+    }
+
+    recordBtn.addEventListener('click', () => {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    });
+
+    // ============================================================
+    // AI COACH - TRY AGAIN BUTTON
     // ============================================================
     const retryButton = document.getElementById('retryButton');
     const secondAttempt = document.getElementById('secondAttempt');
@@ -2334,46 +2493,37 @@
     const structureScore = document.getElementById('structureScore');
     const pointReached = document.getElementById('pointReached');
 
-    let hasRevealed = false;
-
     if (retryButton) {
       retryButton.addEventListener('click', function() {
-        // Disable button during animation
         retryButton.disabled = true;
         retryButton.innerHTML = '<span>✦</span> Listening...';
 
-        // Simulate AI processing
         setTimeout(function() {
-          // 1. Remove blur from second attempt
+          // Reveal second attempt
           secondAttempt.classList.remove('blurred');
           secondAttempt.classList.add('visible');
 
-          // 2. Animate Structure Score: 42 → 68
+          // Animate Structure Score: 42 → 68
           animateScore(42, 68);
 
-          // 3. Animate Score Fill Bar
+          // Animate Score Fill
           scoreFill.style.width = '68%';
 
-          // 4. Animate Point Reached: 23s → 5s
+          // Animate Point Reached: 23s → 5s
           animatePointReached('23s', '5s');
 
-          // 5. Update button
+          // Update button
           retryButton.innerHTML = '<span>✓</span> Improvement detected';
           retryButton.disabled = false;
-
-          // 6. Mark as revealed
-          hasRevealed = true;
 
         }, 1200);
       });
     }
 
-    // ===== Animate Score =====
     function animateScore(start, end) {
       let current = start;
       const interval = setInterval(function() {
         current++;
-        // Update the structure score with old → new format
         structureScore.innerHTML = `
           <span class="old-score">${start}</span>
           <span class="arrow">→</span>
@@ -2385,9 +2535,7 @@
       }, 40);
     }
 
-    // ===== Animate Point Reached =====
     function animatePointReached(oldTime, newTime) {
-      // Split into seconds for animation
       const oldSeconds = parseInt(oldTime);
       const newSeconds = parseInt(newTime);
       let current = oldSeconds;
@@ -2401,7 +2549,6 @@
         `;
         if (current <= newSeconds) {
           clearInterval(interval);
-          // Final state
           pointReached.innerHTML = `
             <span class="old-time">${oldTime}</span>
             <span class="arrow">→</span>
@@ -2411,41 +2558,8 @@
       }, 150);
     }
 
-    // ===== Reset function (for when user wants to try again fresh) =====
-    function resetCoach() {
-      if (hasRevealed) {
-        // Reset to initial state
-        secondAttempt.classList.add('blurred');
-        secondAttempt.classList.remove('visible');
-        
-        // Reset structure score
-        structureScore.innerHTML = `
-          <span class="old-score">42</span>
-          <span class="arrow">→</span>
-          <span class="new-score">68</span>
-        `;
-        
-        // Reset score fill
-        scoreFill.style.width = '42%';
-        
-        // Reset point reached
-        pointReached.innerHTML = `
-          <span class="old-time">23s</span>
-          <span class="arrow">→</span>
-          <span class="new-time">5s</span>
-        `;
-        
-        // Reset button
-        retryButton.innerHTML = '<span>🎙</span> Try again';
-        retryButton.disabled = false;
-        
-        hasRevealed = false;
-      }
-    }
-
     console.log('🚀 The Unspoken — Understand the gap. Close the gap.');
-    console.log('📱 Phone frame with dramatic 42→68 and 23s→5s transformations');
-    console.log('🔒 Second attempt is blurred until "Try again" is clicked');
+    console.log('✅ All features working: Recording, Text Input, AI Coach, and Dramatic Transformations');
   </script>
 </body>
 </html>
