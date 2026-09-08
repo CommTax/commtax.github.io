@@ -2260,1086 +2260,935 @@
     </footer>
   </div>
 
-  <!-- ============================================================
-     JAVASCRIPT - FULL FUNCTIONALITY
+<!-- ============================================================
+     JAVASCRIPT - CLEANED AND DEDUPLICATED
      ============================================================ -->
-  <script>
-    // ============================================================
-    // INITIALIZE LUCIDE ICONS
-    // ============================================================
-    if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
+<script>
+  // ============================================================
+  // INITIALIZE LUCIDE ICONS
+  // ============================================================
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+
+  // ============================================================
+  // BACKEND CONFIGURATION
+  // ============================================================
+  const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
+  console.log('🚀 Backend URL:', BACKEND_URL);
+
+  // ============================================================
+  // GET CURRENT QUESTION TYPE
+  // ============================================================
+  function getCurrentQuestionType() {
+    const activeBtn = document.querySelector('.question-btn.active');
+    return activeBtn ? activeBtn.dataset.question : 'intro';
+  }
+
+  // ============================================================
+  // LOGIN MODAL
+  // ============================================================
+  const signInBtn = document.getElementById('signInBtn');
+  const loginModal = document.getElementById('loginModal');
+  const loginModalOverlay = document.getElementById('loginModalOverlay');
+  const loginModalClose = document.getElementById('loginModalClose');
+
+  if (signInBtn && loginModal) {
+    signInBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginModal.style.display = 'flex';
+    });
+    const closeModal = () => { loginModal.style.display = 'none'; };
+    loginModalOverlay.addEventListener('click', closeModal);
+    loginModalClose.addEventListener('click', closeModal);
+  }
+
+  // ============================================================
+  // QUESTION SELECTOR
+  // ============================================================
+  const questionBtns = document.querySelectorAll('.question-btn');
+  const promptText = document.getElementById('promptText');
+  const promptHint = document.getElementById('promptHint');
+
+  const questions = {
+    intro: {
+      text: '"Tell me about yourself — your background, what you do, and what drives you professionally."',
+      hint: 'Speak naturally for up to 30 seconds, or type your response in 60 seconds.'
+    },
+    project: {
+      text: '"Tell me about a current project or initiative you\'re leading or involved in."',
+      hint: 'Describe the project, your role, and the impact.'
     }
+  };
 
-    // ============================================================
-    // LOGIN MODAL
-    // ============================================================
-    const signInBtn = document.getElementById('signInBtn');
-    const loginModal = document.getElementById('loginModal');
-    const loginModalOverlay = document.getElementById('loginModalOverlay');
-    const loginModalClose = document.getElementById('loginModalClose');
+  questionBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      questionBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const question = btn.dataset.question;
+      promptText.textContent = questions[question].text;
+      promptHint.textContent = questions[question].hint;
+      document.getElementById('resultsDisplay').classList.remove('is-visible');
+    });
+  });
 
-    if (signInBtn && loginModal) {
-      signInBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        loginModal.style.display = 'flex';
-      });
-      const closeModal = () => { loginModal.style.display = 'none'; };
-      loginModalOverlay.addEventListener('click', closeModal);
-      loginModalClose.addEventListener('click', closeModal);
-    }
+  // ============================================================
+  // MODE SELECTOR
+  // ============================================================
+  const modeBtns = document.querySelectorAll('.mode-btn');
+  const voiceControls = document.getElementById('voiceControls');
+  const textInputArea = document.getElementById('textInputArea');
 
-    // ============================================================
-    // QUESTION SELECTOR
-    // ============================================================
-    const questionBtns = document.querySelectorAll('.question-btn');
-    const promptText = document.getElementById('promptText');
-    const promptHint = document.getElementById('promptHint');
-
-    const questions = {
-      intro: {
-        text: '"Tell me about yourself — your background, what you do, and what drives you professionally."',
-        hint: 'Speak naturally for up to 30 seconds, or type your response in 60 seconds.'
-      },
-      project: {
-        text: '"Tell me about a current project or initiative you\'re leading or involved in."',
-        hint: 'Describe the project, your role, and the impact.'
-      }
-    };
-
-    questionBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        questionBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const question = btn.dataset.question;
-        promptText.textContent = questions[question].text;
-        promptHint.textContent = questions[question].hint;
+  modeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      modeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const mode = btn.dataset.mode;
+      if (mode === 'voice') {
+        voiceControls.style.display = 'flex';
+        textInputArea.classList.remove('is-visible');
         document.getElementById('resultsDisplay').classList.remove('is-visible');
-      });
-    });
-
-    // ============================================================
-    // MODE SELECTOR
-    // ============================================================
-    const modeBtns = document.querySelectorAll('.mode-btn');
-    const voiceControls = document.getElementById('voiceControls');
-    const textInputArea = document.getElementById('textInputArea');
-
-    modeBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        modeBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const mode = btn.dataset.mode;
-        if (mode === 'voice') {
-          voiceControls.style.display = 'flex';
-          textInputArea.classList.remove('is-visible');
-          document.getElementById('resultsDisplay').classList.remove('is-visible');
-        } else {
-          voiceControls.style.display = 'none';
-          textInputArea.classList.add('is-visible');
-          document.getElementById('resultsDisplay').classList.remove('is-visible');
-        }
-      });
-    });
-
-    // ============================================================
-    // TEXT INPUT
-    // ============================================================
-    const textResponse = document.getElementById('textResponse');
-    const charCount = document.getElementById('charCount');
-    const textSubmitBtn = document.getElementById('textSubmitBtn');
-
-    textResponse.addEventListener('input', () => {
-      const count = textResponse.value.length;
-      charCount.textContent = count;
-      charCount.style.color = count > 450 ? '#a13d2f' : '#6e6a62';
-      textSubmitBtn.disabled = count < 10;
-    });
-
-    textSubmitBtn.addEventListener('click', () => {
-      const text = textResponse.value.trim();
-      if (text.length < 10) {
-        alert('Please write at least 10 characters for analysis.');
-        return;
+      } else {
+        voiceControls.style.display = 'none';
+        textInputArea.classList.add('is-visible');
+        document.getElementById('resultsDisplay').classList.remove('is-visible');
       }
-      textSubmitBtn.textContent = 'Analyzing...';
-      textSubmitBtn.disabled = true;
-      
-      setTimeout(() => {
-        textSubmitBtn.textContent = 'Analyze My Response →';
-        textSubmitBtn.disabled = false;
-        document.getElementById('resultsDisplay').classList.add('is-visible');
-        document.getElementById('resultsDisplay').scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 1500);
     });
+  });
 
-    // ============================================================
-    // RECORDING FUNCTIONALITY
-    // ============================================================
-    const recordBtn = document.getElementById('recordBtn');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const statusText = document.getElementById('statusText');
-    const statusDot = document.getElementById('statusDot');
-    const resultsDisplay = document.getElementById('resultsDisplay');
-    const waveformBars = document.querySelectorAll('.waveform-bar');
+  // ============================================================
+  // TEXT INPUT - WITH BACKEND INTEGRATION
+  // ============================================================
+  const textResponse = document.getElementById('textResponse');
+  const charCount = document.getElementById('charCount');
+  const textSubmitBtn = document.getElementById('textSubmitBtn');
 
-    let isRecording = false;
-    let timerInterval = null;
-    let seconds = 0;
-    const MAX_RECORDING_SECONDS = 30;
+  textResponse.addEventListener('input', () => {
+    const count = textResponse.value.length;
+    charCount.textContent = count;
+    charCount.style.color = count > 450 ? '#a13d2f' : '#6e6a62';
+    textSubmitBtn.disabled = count < 10;
+  });
 
-    function animateWaveform(active) {
-      waveformBars.forEach((bar, index) => {
-        if (active) {
-          const level = parseFloat(bar.dataset.level) || 0.3;
-          const randomBoost = 0.3 + Math.random() * 0.7;
-          const height = Math.min(100, level * 100 * randomBoost);
-          bar.style.height = height + '%';
-          bar.classList.add('is-active');
-        } else {
-          const level = parseFloat(bar.dataset.level) || 0.3;
-          bar.style.height = (level * 60) + '%';
-          bar.classList.remove('is-active');
-        }
-      });
+  textSubmitBtn.addEventListener('click', () => {
+    const text = textResponse.value.trim();
+    if (text.length < 10) {
+      alert('Please write at least 10 characters for analysis.');
+      return;
     }
+    textSubmitBtn.textContent = 'Analyzing...';
+    textSubmitBtn.disabled = true;
+    analyzeWithBackend(text, 'text', getCurrentQuestionType());
+  });
 
-    function updateTimer() {
-      const mins = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-      
-      if (seconds >= MAX_RECORDING_SECONDS - 5) {
-        timerDisplay.style.color = '#a13d2f';
-        statusText.textContent = `⚠️ ${MAX_RECORDING_SECONDS - seconds}s remaining`;
+  // ============================================================
+  // RECORDING - WITH BACKEND INTEGRATION
+  // ============================================================
+  const recordBtn = document.getElementById('recordBtn');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const statusText = document.getElementById('statusText');
+  const statusDot = document.getElementById('statusDot');
+  const resultsDisplay = document.getElementById('resultsDisplay');
+  const waveformBars = document.querySelectorAll('.waveform-bar');
+
+  let isRecording = false;
+  let timerInterval = null;
+  let seconds = 0;
+  let mediaRecorder = null;
+  let audioChunks = [];
+  let audioBlob = null;
+  let isSubmitting = false;
+
+  const MAX_RECORDING_SECONDS = 30;
+  const MIN_WORDS_TO_SUBMIT = 15;
+  const MIN_RECORDING_SECONDS = 10;
+
+  // Get elements that might not exist yet
+  const submitVoiceBtn = document.getElementById('submitVoiceBtn');
+  const voiceStatus = document.getElementById('voiceStatus');
+  const wordCountDisplay = document.getElementById('wordCountDisplay');
+  const submitStatusText = document.getElementById('submitStatusText');
+
+  // ============================================================
+  // ANIMATE WAVEFORM
+  // ============================================================
+  function animateWaveform(active) {
+    waveformBars.forEach((bar) => {
+      if (active) {
+        const level = parseFloat(bar.dataset.level) || 0.3;
+        const randomBoost = 0.3 + Math.random() * 0.7;
+        const height = Math.min(100, level * 100 * randomBoost);
+        bar.style.height = height + '%';
+        bar.classList.add('is-active');
+      } else {
+        const level = parseFloat(bar.dataset.level) || 0.3;
+        bar.style.height = (level * 60) + '%';
+        bar.classList.remove('is-active');
       }
-      
-      if (seconds >= MAX_RECORDING_SECONDS) {
-        stopRecording();
-      }
+    });
+  }
+
+  // ============================================================
+  // UPDATE TIMER
+  // ============================================================
+  function updateTimer() {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    if (seconds >= MAX_RECORDING_SECONDS - 5) {
+      timerDisplay.style.color = '#a13d2f';
+      statusText.textContent = `⚠️ ${MAX_RECORDING_SECONDS - seconds}s remaining`;
     }
+  }
 
-    function startRecording() {
+  // ============================================================
+  // START RECORDING
+  // ============================================================
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        } 
+      });
+      
+      mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
+      
+      audioChunks = [];
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
+      };
+      
+      mediaRecorder.onstop = () => {
+        audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        if (submitVoiceBtn) {
+          submitVoiceBtn.style.display = 'inline-block';
+          submitVoiceBtn.style.opacity = '1';
+          submitVoiceBtn.style.pointerEvents = 'auto';
+        }
+        if (voiceStatus) {
+          voiceStatus.style.display = 'block';
+        }
+        statusText.textContent = '📝 Audio recorded! Click "Submit Response" to analyze.';
+        
+        const estimatedWords = Math.floor(seconds * 1.5);
+        if (wordCountDisplay) {
+          wordCountDisplay.textContent = estimatedWords;
+        }
+        stream.getTracks().forEach(track => track.stop());
+      };
+      
+      mediaRecorder.start(1000);
       isRecording = true;
       seconds = 0;
       timerDisplay.style.color = '#1a1917';
       updateTimer();
       recordBtn.classList.add('is-recording');
       statusDot.classList.add('is-live');
-      statusText.textContent = `Recording... (max ${MAX_RECORDING_SECONDS}s)`;
+      statusText.textContent = '🎙️ Recording... (max 30s)';
       resultsDisplay.classList.remove('is-visible');
-      recordBtn.disabled = false;
-
+      
+      if (voiceStatus) voiceStatus.style.display = 'none';
+      if (submitVoiceBtn) submitVoiceBtn.style.display = 'none';
+      
       const waveInterval = setInterval(() => {
-        if (isRecording) {
-          animateWaveform(true);
-        } else {
-          clearInterval(waveInterval);
-        }
+        if (isRecording) animateWaveform(true);
       }, 150);
-
+      
       timerInterval = setInterval(() => {
         seconds++;
         updateTimer();
         if (seconds >= MAX_RECORDING_SECONDS) {
           stopRecording();
         }
+        if (seconds === 10) {
+          statusText.textContent = '💡 You can submit now (minimum 10 seconds)';
+        }
       }, 1000);
-
+      
       recordBtn.dataset.waveInterval = waveInterval;
-    }
-
-    function stopRecording() {
-      if (!isRecording) return;
-      isRecording = false;
-      recordBtn.classList.remove('is-recording');
-      statusDot.classList.remove('is-live');
-      statusText.textContent = 'Processing...';
-      timerDisplay.style.color = '#1a1917';
-
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-
-      const waveInterval = parseInt(recordBtn.dataset.waveInterval);
-      if (waveInterval) {
-        clearInterval(waveInterval);
-        recordBtn.dataset.waveInterval = '';
-      }
-      animateWaveform(false);
-
-      setTimeout(() => {
-        statusText.textContent = 'Analysis complete ✓';
-        resultsDisplay.classList.add('is-visible');
-        resultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 1200);
-    }
-
-    recordBtn.addEventListener('click', () => {
-      if (isRecording) {
-        stopRecording();
+      
+    } catch (error) {
+      console.error('❌ Microphone access error:', error);
+      statusText.textContent = '⚠️ Please allow microphone access and try again.';
+      if (error.name === 'NotAllowedError') {
+        alert('Please allow microphone access to use voice recording.');
       } else {
-        startRecording();
+        alert('Could not access microphone. Please check your permissions.');
       }
-    });
-
-
-    // ============================================================
-// BACKEND CONFIGURATION
-// ============================================================
-const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
-console.log('🚀 Backend URL:', BACKEND_URL);
-
-// ============================================================
-// GET CURRENT QUESTION TYPE
-// ============================================================
-function getCurrentQuestionType() {
-  const activeBtn = document.querySelector('.question-btn.active');
-  return activeBtn ? activeBtn.dataset.question : 'intro';
-}
-
-// ============================================================
-// TEXT INPUT - WITH BACKEND INTEGRATION
-// ============================================================
-const textResponse = document.getElementById('textResponse');
-const charCount = document.getElementById('charCount');
-const textSubmitBtn = document.getElementById('textSubmitBtn');
-
-textResponse.addEventListener('input', () => {
-  const count = textResponse.value.length;
-  charCount.textContent = count;
-  charCount.style.color = count > 450 ? '#a13d2f' : '#6e6a62';
-  textSubmitBtn.disabled = count < 10;
-});
-
-textSubmitBtn.addEventListener('click', () => {
-  const text = textResponse.value.trim();
-  if (text.length < 10) {
-    alert('Please write at least 10 characters for analysis.');
-    return;
+    }
   }
-  textSubmitBtn.textContent = 'Analyzing...';
-  textSubmitBtn.disabled = true;
-  analyzeWithBackend(text, 'text', getCurrentQuestionType());
-});
 
-// ============================================================
-// RECORDING - WITH BACKEND INTEGRATION
-// ============================================================
-const recordBtn = document.getElementById('recordBtn');
-const timerDisplay = document.getElementById('timerDisplay');
-const statusText = document.getElementById('statusText');
-const statusDot = document.getElementById('statusDot');
-const resultsDisplay = document.getElementById('resultsDisplay');
-const waveformBars = document.querySelectorAll('.waveform-bar');
-
-let isRecording = false;
-let timerInterval = null;
-let seconds = 0;
-let mediaRecorder = null;
-let audioChunks = [];
-let audioBlob = null;
-let isSubmitting = false;
-
-const MAX_RECORDING_SECONDS = 30;
-const MIN_WORDS_TO_SUBMIT = 15;
-const MIN_RECORDING_SECONDS = 10;
-
-// ============================================================
-// START RECORDING - Using MediaRecorder API
-// ============================================================
-async function startRecording() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ 
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true
-      } 
-    });
-    
-    mediaRecorder = new MediaRecorder(stream, {
-      mimeType: 'audio/webm;codecs=opus'
-    });
-    
-    audioChunks = [];
-    
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        audioChunks.push(event.data);
-      }
-    };
-    
-    mediaRecorder.onstop = () => {
-      audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      // Show submit button for voice
-      const submitVoiceBtn = document.getElementById('submitVoiceBtn');
-      const voiceStatus = document.getElementById('voiceStatus');
-      const wordCountDisplay = document.getElementById('wordCountDisplay');
-      
-      if (submitVoiceBtn) {
-        submitVoiceBtn.style.display = 'inline-block';
-        submitVoiceBtn.style.opacity = '1';
-        submitVoiceBtn.style.pointerEvents = 'auto';
-      }
-      if (voiceStatus) {
-        voiceStatus.style.display = 'block';
-      }
-      statusText.textContent = '📝 Audio recorded! Click "Submit Response" to analyze.';
-      
-      const estimatedWords = Math.floor(seconds * 1.5);
-      if (wordCountDisplay) {
-        wordCountDisplay.textContent = estimatedWords;
-      }
-      stream.getTracks().forEach(track => track.stop());
-    };
-    
-    mediaRecorder.start(1000);
-    isRecording = true;
-    seconds = 0;
+  // ============================================================
+  // STOP RECORDING
+  // ============================================================
+  function stopRecording() {
+    if (!isRecording) return;
+    isRecording = false;
+    recordBtn.classList.remove('is-recording');
+    statusDot.classList.remove('is-live');
+    statusText.textContent = '⏳ Processing audio...';
     timerDisplay.style.color = '#1a1917';
-    updateTimer();
-    recordBtn.classList.add('is-recording');
-    statusDot.classList.add('is-live');
-    statusText.textContent = '🎙️ Recording... (max 30s)';
-    resultsDisplay.classList.remove('is-visible');
-    
-    // Hide voice status initially
-    const voiceStatus = document.getElementById('voiceStatus');
-    if (voiceStatus) voiceStatus.style.display = 'none';
-    
-    const submitVoiceBtn = document.getElementById('submitVoiceBtn');
-    if (submitVoiceBtn) submitVoiceBtn.style.display = 'none';
-    
-    const waveInterval = setInterval(() => {
-      if (isRecording) animateWaveform(true);
-    }, 150);
-    
-    timerInterval = setInterval(() => {
-      seconds++;
-      updateTimer();
-      if (seconds >= MAX_RECORDING_SECONDS) {
-        stopRecording();
-      }
-      if (seconds === 10) {
-        statusText.textContent = '💡 You can submit now (minimum 10 seconds)';
-      }
-    }, 1000);
-    
-    recordBtn.dataset.waveInterval = waveInterval;
-    
-  } catch (error) {
-    console.error('❌ Microphone access error:', error);
-    statusText.textContent = '⚠️ Please allow microphone access and try again.';
-    if (error.name === 'NotAllowedError') {
-      alert('Please allow microphone access to use voice recording.');
-    } else {
-      alert('Could not access microphone. Please check your permissions.');
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
     }
-  }
-}
-
-// ============================================================
-// STOP RECORDING
-// ============================================================
-function stopRecording() {
-  if (!isRecording) return;
-  isRecording = false;
-  recordBtn.classList.remove('is-recording');
-  statusDot.classList.remove('is-live');
-  statusText.textContent = '⏳ Processing audio...';
-  timerDisplay.style.color = '#1a1917';
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-    mediaRecorder.stop();
-  }
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
-  const waveInterval = parseInt(recordBtn.dataset.waveInterval);
-  if (waveInterval) {
-    clearInterval(waveInterval);
-    recordBtn.dataset.waveInterval = '';
-  }
-  animateWaveform(false);
-}
-
-// ============================================================
-// ANIMATE WAVEFORM
-// ============================================================
-function animateWaveform(active) {
-  waveformBars.forEach((bar) => {
-    if (active) {
-      const level = parseFloat(bar.dataset.level) || 0.3;
-      const randomBoost = 0.3 + Math.random() * 0.7;
-      const height = Math.min(100, level * 100 * randomBoost);
-      bar.style.height = height + '%';
-      bar.classList.add('is-active');
-    } else {
-      const level = parseFloat(bar.dataset.level) || 0.3;
-      bar.style.height = (level * 60) + '%';
-      bar.classList.remove('is-active');
-    }
-  });
-}
-
-// ============================================================
-// UPDATE TIMER
-// ============================================================
-function updateTimer() {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-  if (seconds >= MAX_RECORDING_SECONDS - 5) {
-    timerDisplay.style.color = '#a13d2f';
-    statusText.textContent = `⚠️ ${MAX_RECORDING_SECONDS - seconds}s remaining`;
-  }
-}
-
-// ============================================================
-// SUBMIT VOICE RECORDING - Backend Integration
-// ============================================================
-async function submitVoiceRecording() {
-  if (isSubmitting) return;
-  if (!audioBlob) {
-    alert('Please record your response first.');
-    return;
-  }
-  if (seconds < MIN_RECORDING_SECONDS) {
-    alert(`Please record at least ${MIN_RECORDING_SECONDS} seconds.`);
-    return;
-  }
-  
-  isSubmitting = true;
-  const submitVoiceBtn = document.getElementById('submitVoiceBtn');
-  if (submitVoiceBtn) {
-    submitVoiceBtn.disabled = true;
-    submitVoiceBtn.textContent = '🔄 Transcribing...';
-  }
-  statusText.textContent = '📤 Sending audio for transcription...';
-  
-  try {
-    const reader = new FileReader();
-    reader.readAsDataURL(audioBlob);
-    reader.onloadend = async function() {
-      const base64Audio = reader.result.split(',')[1];
-      const payload = {
-        audio_base64: base64Audio,
-        mode: 'voice',
-        question_type: getCurrentQuestionType(),
-        duration: seconds
-      };
-      console.log('📤 Sending audio to backend:', {
-        duration: seconds,
-        audioSize: audioBlob.size,
-        questionType: payload.question_type
-      });
-      
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/communication/analyze/voice`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || `HTTP ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('✅ Voice analysis response:', data);
-        
-        if (data.success === false) {
-          if (data.fallback_to_text) {
-            statusText.textContent = '⚠️ Voice transcription unavailable. Using typed text mode.';
-            switchToTextMode();
-            return;
-          }
-          throw new Error(data.error || 'Analysis failed');
-        }
-        
-        if (data.transcribed_text) {
-          statusText.textContent = '✅ Audio transcribed and analyzed!';
-          if (submitVoiceBtn) {
-            submitVoiceBtn.textContent = '✅ Submitted!';
-            submitVoiceBtn.disabled = false;
-          }
-          const transcribedText = data.transcribed_text;
-          setTimeout(() => {
-            analyzeWithBackend(transcribedText, 'voice', getCurrentQuestionType());
-          }, 500);
-        } else {
-          throw new Error('No transcribed text received');
-        }
-      } catch (error) {
-        console.error('❌ Voice analysis error:', error);
-        statusText.textContent = '⚠️ ' + error.message;
-        if (submitVoiceBtn) {
-          submitVoiceBtn.textContent = '🔄 Try Again';
-          submitVoiceBtn.disabled = false;
-        }
-        isSubmitting = false;
-        if (confirm('Voice transcription failed. Would you like to type your response instead?')) {
-          switchToTextMode();
-        }
-      }
-    };
-  } catch (error) {
-    console.error('❌ Submit error:', error);
-    statusText.textContent = '❌ Failed to submit. Please try again.';
-    const submitVoiceBtn = document.getElementById('submitVoiceBtn');
-    if (submitVoiceBtn) {
-      submitVoiceBtn.textContent = '🔄 Try Again';
-      submitVoiceBtn.disabled = false;
-    }
-    isSubmitting = false;
-  }
-}
-
-// ============================================================
-// SWITCH TO TEXT MODE
-// ============================================================
-function switchToTextMode() {
-  const textModeBtn = document.querySelector('.mode-btn[data-mode="text"]');
-  if (textModeBtn) {
-    textModeBtn.click();
-  }
-  statusText.textContent = '📝 Switch to typing your response';
-}
-
-// ============================================================
-// EVENT LISTENERS FOR RECORDING
-// ============================================================
-recordBtn.addEventListener('click', () => {
-  if (isRecording) {
-    stopRecording();
-  } else {
-    startRecording();
-  }
-});
-
-const submitVoiceBtn = document.getElementById('submitVoiceBtn');
-if (submitVoiceBtn) {
-  submitVoiceBtn.addEventListener('click', submitVoiceRecording);
-}
-
-// ============================================================
-// BACKEND ANALYSIS - MAIN FUNCTION
-// ============================================================
-function analyzeWithBackend(text, mode, questionType) {
-  const resultsContent = document.getElementById('resultsContent');
-  if (!resultsContent) {
-    console.error('❌ resultsContent element not found');
-    return;
-  }
-
-  // Show loading animation
-  const loadingSteps = [
-    { icon: '✦', message: 'Reviewing your response...', subMessage: 'Analyzing word choice and sentence structure' },
-    { icon: '◆', message: 'Mapping communication patterns...', subMessage: 'Identifying your unique speaking style' },
-    { icon: '◇', message: 'Building impact scores...', subMessage: 'Evaluating clarity, precision, and influence' },
-    { icon: '◈', message: 'Detecting behavioral signals...', subMessage: 'Uncovering hidden communication habits' },
-    { icon: '✦', message: 'Constructing your feedback...', subMessage: 'Creating personalized insights for you' },
-    { icon: '◆', message: 'Polishing your analysis...', subMessage: 'Almost ready to reveal your results' }
-  ];
-  
-  let currentStep = 0;
-  let stepInterval = null;
-  let timerInterval = null;
-  
-  resultsContent.innerHTML = `
-    <div style="text-align: center; padding: 50px 30px; background: #ffffff; border-radius: 24px; border: 1px solid var(--border-light); box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
-      <div style="position: relative; width: 80px; height: 80px; margin: 0 auto 24px;">
-        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 3px solid #f0ebe4; border-radius: 50%;"></div>
-        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 3px solid transparent; border-top-color: var(--gold); border-radius: 50%; animation: premium-spin 1.2s cubic-bezier(0.6, 0, 0.4, 1) infinite;"></div>
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.6rem; color: var(--gold);" id="stepIcon">✦</div>
-      </div>
-      <div id="loadingMessage" style="font-size: 1.25rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; transition: all 0.6s ease;">${loadingSteps[0].message}</div>
-      <div id="loadingSubMessage" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px;">${loadingSteps[0].subMessage}</div>
-      <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto;">
-        ${loadingSteps.map((step, index) => `
-          <div class="premium-dot" data-step="${index}" style="display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: ${index === 0 ? 1 : 0.3}; transition: all 0.6s ease;">
-            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${index === 0 ? 'var(--gold)' : '#d0c8bc'}; transition: all 0.6s ease; box-shadow: ${index === 0 ? '0 0 20px rgba(184, 148, 60, 0.3)' : 'none'};"></div>
-            <span style="font-size: 0.45rem; color: ${index === 0 ? 'var(--gold)' : '#8a8680'}; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600;">${(index + 1).toString().padStart(2, '0')}</span>
-          </div>
-        `).join('')}
-      </div>
-      <div style="max-width: 400px; margin: 0 auto 16px; height: 2px; background: #f0ebe4; border-radius: 2px; overflow: hidden;">
-        <div id="loadingProgress" style="height: 100%; width: 5%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; transition: width 0.8s ease;"></div>
-      </div>
-      <div style="font-size: 0.7rem; color: #8a8680; letter-spacing: 0.3px;">
-        <span id="loadingTimer">0</span>s · Premium analysis in progress
-      </div>
-    </div>
-    <style>
-      @keyframes premium-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-      .premium-dot.active { opacity: 1 !important; }
-      .premium-dot.active div:first-child { background: var(--gold) !important; box-shadow: 0 0 20px rgba(184, 148, 60, 0.3) !important; }
-      .premium-dot.active span { color: var(--gold) !important; }
-    </style>
-  `;
-  
-  const resultsDisplay = document.getElementById('resultsDisplay');
-  resultsDisplay.classList.add('is-visible');
-  resultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  
-  let startTime = Date.now();
-  timerInterval = setInterval(() => {
-    const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    const timerEl = document.getElementById('loadingTimer');
-    if (timerEl) timerEl.textContent = elapsed;
-  }, 1000);
-  
-  stepInterval = setInterval(() => {
-    currentStep++;
-    if (currentStep < loadingSteps.length) {
-      const msgEl = document.getElementById('loadingMessage');
-      const iconEl = document.getElementById('stepIcon');
-      const subMsgEl = document.getElementById('loadingSubMessage');
-      const progressEl = document.getElementById('loadingProgress');
-      if (msgEl) {
-        msgEl.style.opacity = '0';
-        setTimeout(() => {
-          msgEl.textContent = loadingSteps[currentStep].message;
-          msgEl.style.opacity = '1';
-        }, 300);
-      }
-      if (iconEl) {
-        iconEl.style.transform = 'scale(1.3)';
-        setTimeout(() => {
-          iconEl.textContent = loadingSteps[currentStep].icon;
-          iconEl.style.transform = 'scale(1)';
-        }, 200);
-      }
-      if (subMsgEl) {
-        subMsgEl.textContent = loadingSteps[currentStep].subMessage;
-      }
-      document.querySelectorAll('.premium-dot').forEach((dot, index) => {
-        if (index <= currentStep) {
-          dot.classList.add('active');
-        }
-      });
-      if (progressEl) {
-        const progress = ((currentStep + 1) / loadingSteps.length) * 100;
-        progressEl.style.width = Math.min(95, progress) + '%';
-      }
-    }
-  }, 2000);
-  
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => {
-    console.log('⏰ Request timed out after 90s');
-    controller.abort();
-  }, 90000);
-  
-  const payload = { text: text, mode: mode, question_type: questionType };
-  console.log('📤 Sending to backend:', payload);
-  
-  fetch(`${BACKEND_URL}/api/communication/analyze/premium`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-    signal: controller.signal
-  })
-  .then(response => {
-    clearTimeout(timeoutId);
-    console.log('📥 Response status:', response.status);
-    if (!response.ok) {
-      return response.json().then(err => {
-        throw new Error(err.detail || err.message || `HTTP ${response.status}`);
-      }).catch(() => {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      });
-    }
-    return response.json();
-  })
-  .then(data => {
-    clearTimeout(timeoutId);
-    console.log('✅ Backend response received:', data);
-    if (data.success === false) {
-      clearInterval(stepInterval);
+    if (timerInterval) {
       clearInterval(timerInterval);
-      showErrorState(data.error || 'Analysis failed. Please try again.');
+      timerInterval = null;
+    }
+    const waveInterval = parseInt(recordBtn.dataset.waveInterval);
+    if (waveInterval) {
+      clearInterval(waveInterval);
+      recordBtn.dataset.waveInterval = '';
+    }
+    animateWaveform(false);
+  }
+
+  // ============================================================
+  // SUBMIT VOICE RECORDING - Backend Integration
+  // ============================================================
+  async function submitVoiceRecording() {
+    if (isSubmitting) return;
+    if (!audioBlob) {
+      alert('Please record your response first.');
       return;
     }
-    const hasValidData = data && data.metrics && data.diagnosis && data.gap && data.before_after_rewrite;
-    if (hasValidData) {
-      const elapsed = (Date.now() - startTime) / 1000;
-      const remainingTime = Math.max(0, 10000 - elapsed * 1000);
-      console.log(`⏳ Loading animation: ${elapsed.toFixed(0)}s elapsed, waiting ${(remainingTime/1000).toFixed(0)}s more for visual completion`);
-      setTimeout(() => {
-        clearInterval(stepInterval);
-        clearInterval(timerInterval);
-        renderResults(data, text);
-      }, remainingTime + 500);
-    } else {
-      clearInterval(stepInterval);
-      clearInterval(timerInterval);
-      renderResultsWithFallback(data, text);
+    if (seconds < MIN_RECORDING_SECONDS) {
+      alert(`Please record at least ${MIN_RECORDING_SECONDS} seconds.`);
+      return;
     }
-  })
-  .catch(error => {
-    clearTimeout(timeoutId);
-    clearInterval(stepInterval);
-    clearInterval(timerInterval);
-    console.error('❌ Error:', error);
-    if (error.name === 'AbortError') {
-      showErrorState('⏰ Analysis is taking longer than expected. Please try again.');
+    
+    isSubmitting = true;
+    if (submitVoiceBtn) {
+      submitVoiceBtn.disabled = true;
+      submitVoiceBtn.textContent = '🔄 Transcribing...';
+    }
+    statusText.textContent = '📤 Sending audio for transcription...';
+    
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = async function() {
+        const base64Audio = reader.result.split(',')[1];
+        const payload = {
+          audio_base64: base64Audio,
+          mode: 'voice',
+          question_type: getCurrentQuestionType(),
+          duration: seconds
+        };
+        console.log('📤 Sending audio to backend:', {
+          duration: seconds,
+          audioSize: audioBlob.size,
+          questionType: payload.question_type
+        });
+        
+        try {
+          const response = await fetch(`${BACKEND_URL}/api/communication/analyze/voice`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP ${response.status}`);
+          }
+          
+          const data = await response.json();
+          console.log('✅ Voice analysis response:', data);
+          
+          if (data.success === false) {
+            if (data.fallback_to_text) {
+              statusText.textContent = '⚠️ Voice transcription unavailable. Using typed text mode.';
+              switchToTextMode();
+              return;
+            }
+            throw new Error(data.error || 'Analysis failed');
+          }
+          
+          if (data.transcribed_text) {
+            statusText.textContent = '✅ Audio transcribed and analyzed!';
+            if (submitVoiceBtn) {
+              submitVoiceBtn.textContent = '✅ Submitted!';
+              submitVoiceBtn.disabled = false;
+            }
+            const transcribedText = data.transcribed_text;
+            setTimeout(() => {
+              analyzeWithBackend(transcribedText, 'voice', getCurrentQuestionType());
+            }, 500);
+          } else {
+            throw new Error('No transcribed text received');
+          }
+        } catch (error) {
+          console.error('❌ Voice analysis error:', error);
+          statusText.textContent = '⚠️ ' + error.message;
+          if (submitVoiceBtn) {
+            submitVoiceBtn.textContent = '🔄 Try Again';
+            submitVoiceBtn.disabled = false;
+          }
+          isSubmitting = false;
+          if (confirm('Voice transcription failed. Would you like to type your response instead?')) {
+            switchToTextMode();
+          }
+        }
+      };
+    } catch (error) {
+      console.error('❌ Submit error:', error);
+      statusText.textContent = '❌ Failed to submit. Please try again.';
+      if (submitVoiceBtn) {
+        submitVoiceBtn.textContent = '🔄 Try Again';
+        submitVoiceBtn.disabled = false;
+      }
+      isSubmitting = false;
+    }
+  }
+
+  // ============================================================
+  // SWITCH TO TEXT MODE
+  // ============================================================
+  function switchToTextMode() {
+    const textModeBtn = document.querySelector('.mode-btn[data-mode="text"]');
+    if (textModeBtn) {
+      textModeBtn.click();
+    }
+    statusText.textContent = '📝 Switch to typing your response';
+  }
+
+  // ============================================================
+  // EVENT LISTENERS FOR RECORDING
+  // ============================================================
+  recordBtn.addEventListener('click', () => {
+    if (isRecording) {
+      stopRecording();
     } else {
-      showErrorState('⚠️ ' + (error.message || 'Something went wrong. Please try again.'));
+      startRecording();
     }
   });
-}
 
-// ============================================================
-// RENDER RESULTS - With Blurred Premium Content
-// ============================================================
-function renderResults(data, userText) {
-  console.log('📊 Rendering results with data');
-  const resultsContent = document.getElementById('resultsContent');
-  if (!resultsContent) {
-    console.error('❌ resultsContent element not found');
-    return;
+  if (submitVoiceBtn) {
+    submitVoiceBtn.addEventListener('click', submitVoiceRecording);
   }
-  
-  const impactScore = data?.metrics?.impact || 58;
-  const patternName = data?.diagnosis?.pattern_name || 'The Amplifier';
-  const patternDesc = data?.diagnosis?.pattern_description || 'You pre-justify under pressure, softening your authority before making your point.';
-  const whatGotLost = data?.gap?.what_got_lost || 'Your credibility and authority in the first 10 seconds';
-  const unspokenGap = data?.gap?.unspoken_gap || 'Between your intent to sound confident and how you actually land';
-  const whatYouSaid = userText || data?.before_after_rewrite?.what_you_said || 'Your response here...';
-  const executiveVersion = data?.before_after_rewrite?.executive_version || 'This is your re-written, executive presence version.';
-  const timeToPoint = data?.instant_mirror?.time_to_point || 18;
-  const patternsDetected = data?.patterns_detected || ['Starting sentences with hedges', 'Over-explaining before making your point'];
-  const whatYouMeant = data?.gap?.what_you_meant || 'You wanted to present yourself as a capable candidate';
-  const whatLanded = data?.gap?.what_landed || 'The interviewer likely heard uncertainty and lack of clarity';
-  const oneThingToChange = data?.one_thing_to_change?.title || 'Structure: Who you are → What you\'ve done → Why you\'re a fit';
-  const whyItMatters = data?.why_it_matters || 'This is your only chance to make a first impression';
-  
-  resultsContent.innerHTML = `
-    <div style="text-align: center; margin-bottom: 16px;">
-      <span style="display: inline-block; background: var(--bg-soft-gold); color: var(--gold); padding: 4px 20px; border-radius: 40px; font-weight: 700; font-size: 0.75rem; letter-spacing: 1px;">✦ Your Impact Analysis</span>
-    </div>
+
+  // ============================================================
+  // BACKEND ANALYSIS - MAIN FUNCTION
+  // ============================================================
+  function analyzeWithBackend(text, mode, questionType) {
+    const resultsContent = document.getElementById('resultsContent');
+    if (!resultsContent) {
+      console.error('❌ resultsContent element not found');
+      return;
+    }
+
+    // Show loading animation
+    const loadingSteps = [
+      { icon: '✦', message: 'Reviewing your response...', subMessage: 'Analyzing word choice and sentence structure' },
+      { icon: '◆', message: 'Mapping communication patterns...', subMessage: 'Identifying your unique speaking style' },
+      { icon: '◇', message: 'Building impact scores...', subMessage: 'Evaluating clarity, precision, and influence' },
+      { icon: '◈', message: 'Detecting behavioral signals...', subMessage: 'Uncovering hidden communication habits' },
+      { icon: '✦', message: 'Constructing your feedback...', subMessage: 'Creating personalized insights for you' },
+      { icon: '◆', message: 'Polishing your analysis...', subMessage: 'Almost ready to reveal your results' }
+    ];
     
-    <!-- ===== SCORECARD ===== -->
-    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 16px;">
-      ${['Clarity','Precision','Structure','Impact','Influence'].map((label, i) => {
-        const scores = [59, 74, 35, 47, 32];
-        const score = scores[i];
-        return `
-          <div style="background: #ffffff; border-radius: 12px; padding: 10px 6px; text-align: center; border: 1px solid var(--border-light);">
-            <span style="font-size: 1.2rem; font-weight: 700; color: var(--ink); display:block;">${score}</span>
-            <span style="font-size: 0.5rem; font-weight: 600; color: #8a8680; text-transform: uppercase; letter-spacing: 0.5px;">${label}</span>
-            <div style="width:100%; height:3px; background:var(--border-light); border-radius:3px; margin-top:4px; overflow:hidden;">
-              <div style="height:100%; width:${score}%; background: ${score > 60 ? 'var(--sage)' : score > 40 ? 'var(--amber-muted)' : 'var(--brick-red)'}; border-radius:3px;"></div>
+    let currentStep = 0;
+    let stepInterval = null;
+    let timerInterval = null;
+    
+    resultsContent.innerHTML = `
+      <div style="text-align: center; padding: 50px 30px; background: #ffffff; border-radius: 24px; border: 1px solid var(--border-light); box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
+        <div style="position: relative; width: 80px; height: 80px; margin: 0 auto 24px;">
+          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 3px solid #f0ebe4; border-radius: 50%;"></div>
+          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 3px solid transparent; border-top-color: var(--gold); border-radius: 50%; animation: premium-spin 1.2s cubic-bezier(0.6, 0, 0.4, 1) infinite;"></div>
+          <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.6rem; color: var(--gold);" id="stepIcon">✦</div>
+        </div>
+        <div id="loadingMessage" style="font-size: 1.25rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; transition: all 0.6s ease;">${loadingSteps[0].message}</div>
+        <div id="loadingSubMessage" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px;">${loadingSteps[0].subMessage}</div>
+        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto;">
+          ${loadingSteps.map((step, index) => `
+            <div class="premium-dot" data-step="${index}" style="display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: ${index === 0 ? 1 : 0.3}; transition: all 0.6s ease;">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: ${index === 0 ? 'var(--gold)' : '#d0c8bc'}; transition: all 0.6s ease; box-shadow: ${index === 0 ? '0 0 20px rgba(184, 148, 60, 0.3)' : 'none'};"></div>
+              <span style="font-size: 0.45rem; color: ${index === 0 ? 'var(--gold)' : '#8a8680'}; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600;">${(index + 1).toString().padStart(2, '0')}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div style="max-width: 400px; margin: 0 auto 16px; height: 2px; background: #f0ebe4; border-radius: 2px; overflow: hidden;">
+          <div id="loadingProgress" style="height: 100%; width: 5%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; transition: width 0.8s ease;"></div>
+        </div>
+        <div style="font-size: 0.7rem; color: #8a8680; letter-spacing: 0.3px;">
+          <span id="loadingTimer">0</span>s · Premium analysis in progress
+        </div>
+      </div>
+      <style>
+        @keyframes premium-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .premium-dot.active { opacity: 1 !important; }
+        .premium-dot.active div:first-child { background: var(--gold) !important; box-shadow: 0 0 20px rgba(184, 148, 60, 0.3) !important; }
+        .premium-dot.active span { color: var(--gold) !important; }
+      </style>
+    `;
+    
+    const resultsDisplay = document.getElementById('resultsDisplay');
+    resultsDisplay.classList.add('is-visible');
+    resultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    let startTime = Date.now();
+    timerInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const timerEl = document.getElementById('loadingTimer');
+      if (timerEl) timerEl.textContent = elapsed;
+    }, 1000);
+    
+    stepInterval = setInterval(() => {
+      currentStep++;
+      if (currentStep < loadingSteps.length) {
+        const msgEl = document.getElementById('loadingMessage');
+        const iconEl = document.getElementById('stepIcon');
+        const subMsgEl = document.getElementById('loadingSubMessage');
+        const progressEl = document.getElementById('loadingProgress');
+        if (msgEl) {
+          msgEl.style.opacity = '0';
+          setTimeout(() => {
+            msgEl.textContent = loadingSteps[currentStep].message;
+            msgEl.style.opacity = '1';
+          }, 300);
+        }
+        if (iconEl) {
+          iconEl.style.transform = 'scale(1.3)';
+          setTimeout(() => {
+            iconEl.textContent = loadingSteps[currentStep].icon;
+            iconEl.style.transform = 'scale(1)';
+          }, 200);
+        }
+        if (subMsgEl) {
+          subMsgEl.textContent = loadingSteps[currentStep].subMessage;
+        }
+        document.querySelectorAll('.premium-dot').forEach((dot, index) => {
+          if (index <= currentStep) {
+            dot.classList.add('active');
+          }
+        });
+        if (progressEl) {
+          const progress = ((currentStep + 1) / loadingSteps.length) * 100;
+          progressEl.style.width = Math.min(95, progress) + '%';
+        }
+      }
+    }, 2000);
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      console.log('⏰ Request timed out after 90s');
+      controller.abort();
+    }, 90000);
+    
+    const payload = { text: text, mode: mode, question_type: questionType };
+    console.log('📤 Sending to backend:', payload);
+    
+    fetch(`${BACKEND_URL}/api/communication/analyze/premium`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    })
+    .then(response => {
+      clearTimeout(timeoutId);
+      console.log('📥 Response status:', response.status);
+      if (!response.ok) {
+        return response.json().then(err => {
+          throw new Error(err.detail || err.message || `HTTP ${response.status}`);
+        }).catch(() => {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        });
+      }
+      return response.json();
+    })
+    .then(data => {
+      clearTimeout(timeoutId);
+      console.log('✅ Backend response received:', data);
+      if (data.success === false) {
+        clearInterval(stepInterval);
+        clearInterval(timerInterval);
+        showErrorState(data.error || 'Analysis failed. Please try again.');
+        return;
+      }
+      const hasValidData = data && data.metrics && data.diagnosis && data.gap && data.before_after_rewrite;
+      if (hasValidData) {
+        const elapsed = (Date.now() - startTime) / 1000;
+        const remainingTime = Math.max(0, 10000 - elapsed * 1000);
+        console.log(`⏳ Loading animation: ${elapsed.toFixed(0)}s elapsed, waiting ${(remainingTime/1000).toFixed(0)}s more for visual completion`);
+        setTimeout(() => {
+          clearInterval(stepInterval);
+          clearInterval(timerInterval);
+          renderResults(data, text);
+        }, remainingTime + 500);
+      } else {
+        clearInterval(stepInterval);
+        clearInterval(timerInterval);
+        renderResultsWithFallback(data, text);
+      }
+    })
+    .catch(error => {
+      clearTimeout(timeoutId);
+      clearInterval(stepInterval);
+      clearInterval(timerInterval);
+      console.error('❌ Error:', error);
+      if (error.name === 'AbortError') {
+        showErrorState('⏰ Analysis is taking longer than expected. Please try again.');
+      } else {
+        showErrorState('⚠️ ' + (error.message || 'Something went wrong. Please try again.'));
+      }
+    });
+  }
+
+  // ============================================================
+  // RENDER RESULTS - With Blurred Premium Content
+  // ============================================================
+  function renderResults(data, userText) {
+    console.log('📊 Rendering results with data');
+    const resultsContent = document.getElementById('resultsContent');
+    if (!resultsContent) {
+      console.error('❌ resultsContent element not found');
+      return;
+    }
+    
+    const impactScore = data?.metrics?.impact || 58;
+    const patternName = data?.diagnosis?.pattern_name || 'The Amplifier';
+    const patternDesc = data?.diagnosis?.pattern_description || 'You pre-justify under pressure, softening your authority before making your point.';
+    const whatGotLost = data?.gap?.what_got_lost || 'Your credibility and authority in the first 10 seconds';
+    const unspokenGap = data?.gap?.unspoken_gap || 'Between your intent to sound confident and how you actually land';
+    const whatYouSaid = userText || data?.before_after_rewrite?.what_you_said || 'Your response here...';
+    const executiveVersion = data?.before_after_rewrite?.executive_version || 'This is your re-written, executive presence version.';
+    const timeToPoint = data?.instant_mirror?.time_to_point || 18;
+    const patternsDetected = data?.patterns_detected || ['Starting sentences with hedges', 'Over-explaining before making your point'];
+    const whatYouMeant = data?.gap?.what_you_meant || 'You wanted to present yourself as a capable candidate';
+    const whatLanded = data?.gap?.what_landed || 'The interviewer likely heard uncertainty and lack of clarity';
+    const oneThingToChange = data?.one_thing_to_change?.title || 'Structure: Who you are → What you\'ve done → Why you\'re a fit';
+    const whyItMatters = data?.why_it_matters || 'This is your only chance to make a first impression';
+    
+    resultsContent.innerHTML = `
+      <div style="text-align: center; margin-bottom: 16px;">
+        <span style="display: inline-block; background: var(--bg-soft-gold); color: var(--gold); padding: 4px 20px; border-radius: 40px; font-weight: 700; font-size: 0.75rem; letter-spacing: 1px;">✦ Your Impact Analysis</span>
+      </div>
+      
+      <!-- SCORECARD -->
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 16px;">
+        ${['Clarity','Precision','Structure','Impact','Influence'].map((label, i) => {
+          const scores = [59, 74, 35, 47, 32];
+          const score = scores[i];
+          return `
+            <div style="background: #ffffff; border-radius: 12px; padding: 10px 6px; text-align: center; border: 1px solid var(--border-light);">
+              <span style="font-size: 1.2rem; font-weight: 700; color: var(--ink); display:block;">${score}</span>
+              <span style="font-size: 0.5rem; font-weight: 600; color: #8a8680; text-transform: uppercase; letter-spacing: 0.5px;">${label}</span>
+              <div style="width:100%; height:3px; background:var(--border-light); border-radius:3px; margin-top:4px; overflow:hidden;">
+                <div style="height:100%; width:${score}%; background: ${score > 60 ? 'var(--sage)' : score > 40 ? 'var(--amber-muted)' : 'var(--brick-red)'}; border-radius:3px;"></div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      
+      <!-- GAP ANALYSIS -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+        <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid #3b82f6;">
+          <span style="font-size:0.55rem; font-weight:700; color:#3b82f6; text-transform:uppercase; letter-spacing:1px;">💭 What You Meant</span>
+          <p style="font-weight:600; color:var(--ink); font-size:0.9rem; margin-top:2px;">${whatYouMeant}</p>
+        </div>
+        <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--text-muted);">
+          <span style="font-size:0.55rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">📝 What You Said</span>
+          <p style="font-weight:600; color:var(--ink); font-size:0.85rem; margin-top:2px; line-height:1.4;">"${whatYouSaid.length > 80 ? whatYouSaid.slice(0, 80) + '...' : whatYouSaid}"</p>
+        </div>
+        <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--brick-red);">
+          <span style="font-size:0.55rem; font-weight:700; color:var(--brick-red); text-transform:uppercase; letter-spacing:1px;">👂 What Landed</span>
+          <p style="font-weight:600; color:var(--brick-red); font-size:0.9rem; margin-top:2px;">${whatLanded}</p>
+        </div>
+        <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--gold);">
+          <span style="font-size:0.55rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">💔 What Got Lost</span>
+          <p style="font-weight:600; color:var(--ink); font-size:0.9rem; margin-top:2px;">${whatGotLost}</p>
+        </div>
+      </div>
+      
+      <!-- SUMMARY CARDS -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+        <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
+          <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Impact Score</span>
+          <p style="font-weight:700; color:var(--ink); font-size:1.2rem;">${impactScore}<span style="font-weight:400; font-size:0.8rem; color:var(--text-muted);">/100</span></p>
+          <p style="font-size:0.65rem; color:var(--text-muted);">${impactScore < 50 ? 'Room for improvement' : 'Solid, but can be sharper'}</p>
+        </div>
+        <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
+          <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Your Pattern</span>
+          <p style="font-weight:700; color:var(--ink); font-size:1rem;">${patternName}</p>
+          <p style="font-size:0.65rem; color:var(--text-muted);">${patternDesc}</p>
+        </div>
+        <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
+          <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Time to Point</span>
+          <p style="font-weight:700; color:var(--brick-red); font-size:1.2rem;">${timeToPoint}s</p>
+          <p style="font-size:0.65rem; color:var(--text-muted);">Target: Under 5 seconds</p>
+        </div>
+      </div>
+      
+      <!-- UNSPOKEN GAP -->
+      <div style="background: linear-gradient(135deg, var(--bg-soft-gold), #fde68a); border-radius: 14px; padding: 16px 20px; border: 2px solid var(--gold); margin-bottom: 16px; text-align: center;">
+        <span style="font-size:0.65rem; font-weight:700; color:var(--gold-darker); text-transform:uppercase; letter-spacing:1px;">🔍 The Unspoken Gap</span>
+        <p style="font-family: 'Playfair Display', serif; font-size:1.1rem; font-weight:600; color:var(--ink); margin: 4px 0;">"${unspokenGap}"</p>
+        <p style="font-size:0.8rem; color:var(--text-muted);">⚠️ ${whyItMatters}</p>
+      </div>
+      
+      <!-- ACTIONABLE INSIGHTS -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+        <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--gold);">
+          <span style="font-size:0.55rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">⭐ One Thing to Change</span>
+          <p style="font-weight:600; color:var(--ink); font-size:0.9rem; margin-top:2px;">${oneThingToChange}</p>
+        </div>
+        <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--charcoal-navy);">
+          <span style="font-size:0.55rem; font-weight:700; color:var(--charcoal-navy); text-transform:uppercase; letter-spacing:1px;">🔬 Behavioral Evidence</span>
+          <ul style="list-style:none; padding:0; margin:4px 0 0;">
+            ${patternsDetected.slice(0, 3).map(p => `<li style="font-size:0.8rem; color:var(--text-soft); padding:2px 0 2px 16px; position:relative; line-height:1.4;"><span style="position:absolute; left:0; color:var(--gold);">•</span> ${p}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+      
+      <!-- BLURRED PREMIUM CONTENT -->
+      <div style="position: relative; margin: 20px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: #ffffff;">
+        <div style="padding: 20px; position: relative; z-index: 1;">
+          <div style="margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size:0.6rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px;">📊 Communication Metrics</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px;">
+              ${['Clarity','Precision','Structure','Impact','Influence'].map((label) => {
+                return `
+                  <div style="background: #f8f5f0; border-radius: 10px; padding: 10px 6px; text-align: center; border: 1px solid #e0d8d0;">
+                    <span style="font-size:1.2rem; font-weight:700; color: #b0a8a0; filter: blur(6px); opacity: 0.4; display:block;">88</span>
+                    <span style="font-size:0.5rem; font-weight:600; color:#8a8680; text-transform:uppercase; letter-spacing:0.5px;">${label}</span>
+                    <div style="width:100%; height:3px; background:#e0d8d0; border-radius:3px; margin-top:4px; overflow:hidden;">
+                      <div style="height:100%; width:60%; background:#c0b8b0; border-radius:3px; filter:blur(3px); opacity:0.3;"></div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
             </div>
           </div>
-        `;
-      }).join('')}
-    </div>
-    
-    <!-- ===== GAP ANALYSIS ===== -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-      <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid #3b82f6;">
-        <span style="font-size:0.55rem; font-weight:700; color:#3b82f6; text-transform:uppercase; letter-spacing:1px;">💭 What You Meant</span>
-        <p style="font-weight:600; color:var(--ink); font-size:0.9rem; margin-top:2px;">${whatYouMeant}</p>
-      </div>
-      <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--text-muted);">
-        <span style="font-size:0.55rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">📝 What You Said</span>
-        <p style="font-weight:600; color:var(--ink); font-size:0.85rem; margin-top:2px; line-height:1.4;">"${whatYouSaid.length > 80 ? whatYouSaid.slice(0, 80) + '...' : whatYouSaid}"</p>
-      </div>
-      <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--brick-red);">
-        <span style="font-size:0.55rem; font-weight:700; color:var(--brick-red); text-transform:uppercase; letter-spacing:1px;">👂 What Landed</span>
-        <p style="font-weight:600; color:var(--brick-red); font-size:0.9rem; margin-top:2px;">${whatLanded}</p>
-      </div>
-      <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--gold);">
-        <span style="font-size:0.55rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">💔 What Got Lost</span>
-        <p style="font-weight:600; color:var(--ink); font-size:0.9rem; margin-top:2px;">${whatGotLost}</p>
-      </div>
-    </div>
-    
-    <!-- ===== SUMMARY CARDS ===== -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-      <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
-        <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Impact Score</span>
-        <p style="font-weight:700; color:var(--ink); font-size:1.2rem;">${impactScore}<span style="font-weight:400; font-size:0.8rem; color:var(--text-muted);">/100</span></p>
-        <p style="font-size:0.65rem; color:var(--text-muted);">${impactScore < 50 ? 'Room for improvement' : 'Solid, but can be sharper'}</p>
-      </div>
-      <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
-        <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Your Pattern</span>
-        <p style="font-weight:700; color:var(--ink); font-size:1rem;">${patternName}</p>
-        <p style="font-size:0.65rem; color:var(--text-muted);">${patternDesc}</p>
-      </div>
-      <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
-        <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Time to Point</span>
-        <p style="font-weight:700; color:var(--brick-red); font-size:1.2rem;">${timeToPoint}s</p>
-        <p style="font-size:0.65rem; color:var(--text-muted);">Target: Under 5 seconds</p>
-      </div>
-    </div>
-    
-    <!-- ===== UNSPOKEN GAP ===== -->
-    <div style="background: linear-gradient(135deg, var(--bg-soft-gold), #fde68a); border-radius: 14px; padding: 16px 20px; border: 2px solid var(--gold); margin-bottom: 16px; text-align: center;">
-      <span style="font-size:0.65rem; font-weight:700; color:var(--gold-darker); text-transform:uppercase; letter-spacing:1px;">🔍 The Unspoken Gap</span>
-      <p style="font-family: 'Playfair Display', serif; font-size:1.1rem; font-weight:600; color:var(--ink); margin: 4px 0;">"${unspokenGap}"</p>
-      <p style="font-size:0.8rem; color:var(--text-muted);">⚠️ ${whyItMatters}</p>
-    </div>
-    
-    <!-- ===== ACTIONABLE INSIGHTS ===== -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-      <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--gold);">
-        <span style="font-size:0.55rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">⭐ One Thing to Change</span>
-        <p style="font-weight:600; color:var(--ink); font-size:0.9rem; margin-top:2px;">${oneThingToChange}</p>
-      </div>
-      <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--charcoal-navy);">
-        <span style="font-size:0.55rem; font-weight:700; color:var(--charcoal-navy); text-transform:uppercase; letter-spacing:1px;">🔬 Behavioral Evidence</span>
-        <ul style="list-style:none; padding:0; margin:4px 0 0;">
-          ${patternsDetected.slice(0, 3).map(p => `<li style="font-size:0.8rem; color:var(--text-soft); padding:2px 0 2px 16px; position:relative; line-height:1.4;"><span style="position:absolute; left:0; color:var(--gold);">•</span> ${p}</li>`).join('')}
-        </ul>
-      </div>
-    </div>
-    
-    <!-- ===== BLURRED PREMIUM CONTENT ===== -->
-    <div style="position: relative; margin: 20px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: #ffffff;">
-      <div style="padding: 20px; position: relative; z-index: 1;">
-        <div style="margin-bottom: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-size:0.6rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px;">📊 Communication Metrics</span>
+          
+          <div style="margin-bottom: 12px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div style="background: #f8f5f0; border-radius: 12px; padding: 14px 16px; border: 1px solid #e0d8d0;">
+                <span style="font-size:0.5rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">💭 What You Meant</span>
+                <div style="font-size:0.85rem; color:#b0a8a0; filter: blur(5px); opacity: 0.4; margin-top:4px;">Your intended message</div>
+              </div>
+              <div style="background: #f8f5f0; border-radius: 12px; padding: 14px 16px; border: 1px solid #e0d8d0;">
+                <span style="font-size:0.5rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">👂 What Landed</span>
+                <div style="font-size:0.85rem; color:#b0a8a0; filter: blur(5px); opacity: 0.4; margin-top:4px;">How it was perceived</div>
+              </div>
+            </div>
           </div>
-          <div class="premium-metrics-grid" style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px;">
-            ${['Clarity','Precision','Structure','Impact','Influence'].map((label) => {
-              return `
-                <div style="background: #f8f5f0; border-radius: 10px; padding: 10px 6px; text-align: center; border: 1px solid #e0d8d0;">
-                  <span style="font-size:1.2rem; font-weight:700; color: #b0a8a0; filter: blur(6px); opacity: 0.4; display:block;">88</span>
-                  <span style="font-size:0.5rem; font-weight:600; color:#8a8680; text-transform:uppercase; letter-spacing:0.5px;">${label}</span>
-                  <div style="width:100%; height:3px; background:#e0d8d0; border-radius:3px; margin-top:4px; overflow:hidden;">
-                    <div style="height:100%; width:60%; background:#c0b8b0; border-radius:3px; filter:blur(3px); opacity:0.3;"></div>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
-        
-        <div style="margin-bottom: 12px;">
+          
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div style="background: #f8f5f0; border-radius: 12px; padding: 14px 16px; border: 1px solid #e0d8d0;">
-              <span style="font-size:0.5rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">💭 What You Meant</span>
-              <div style="font-size:0.85rem; color:#b0a8a0; filter: blur(5px); opacity: 0.4; margin-top:4px;">Your intended message</div>
+              <span style="font-size:0.5rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">⚡ Instant Mirror</span>
+              <div style="font-size:0.85rem; color:#b0a8a0; filter: blur(5px); opacity: 0.4; margin-top:4px;">The "First 10 Seconds" Audit</div>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:4px;">
+                <span style="font-size:0.7rem; color:#b0a8a0;">Time to point:</span>
+                <span style="font-size:0.9rem; font-weight:600; color:#b0a8a0; filter: blur(5px); opacity: 0.4;">18s</span>
+              </div>
             </div>
             <div style="background: #f8f5f0; border-radius: 12px; padding: 14px 16px; border: 1px solid #e0d8d0;">
-              <span style="font-size:0.5rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">👂 What Landed</span>
-              <div style="font-size:0.85rem; color:#b0a8a0; filter: blur(5px); opacity: 0.4; margin-top:4px;">How it was perceived</div>
-            </div>
-          </div>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div style="background: #f8f5f0; border-radius: 12px; padding: 14px 16px; border: 1px solid #e0d8d0;">
-            <span style="font-size:0.5rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">⚡ Instant Mirror</span>
-            <div style="font-size:0.85rem; color:#b0a8a0; filter: blur(5px); opacity: 0.4; margin-top:4px;">The "First 10 Seconds" Audit</div>
-            <div style="display:flex; align-items:center; gap:12px; margin-top:4px;">
-              <span style="font-size:0.7rem; color:#b0a8a0;">Time to point:</span>
-              <span style="font-size:0.9rem; font-weight:600; color:#b0a8a0; filter: blur(5px); opacity: 0.4;">18s</span>
-            </div>
-          </div>
-          <div style="background: #f8f5f0; border-radius: 12px; padding: 14px 16px; border: 1px solid #e0d8d0;">
-            <span style="font-size:0.5rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">📊 Signal-to-Noise</span>
-            <div style="display:flex; align-items:center; gap:12px; margin-top:4px;">
-              <div style="width:48px; height:48px; border-radius:50%; background:#e8e0d8; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; color:#b0a8a0; filter: blur(5px); opacity:0.4;">38%</div>
-              <div style="flex:1;">
-                <div style="height:4px; background:#e0d8d0; border-radius:4px; overflow:hidden;">
-                  <div style="height:100%; width:38%; background:#c0b8b0; border-radius:4px; filter:blur(3px); opacity:0.3;"></div>
+              <span style="font-size:0.5rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">📊 Signal-to-Noise</span>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:4px;">
+                <div style="width:48px; height:48px; border-radius:50%; background:#e8e0d8; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; color:#b0a8a0; filter: blur(5px); opacity:0.4;">38%</div>
+                <div style="flex:1;">
+                  <div style="height:4px; background:#e0d8d0; border-radius:4px; overflow:hidden;">
+                    <div style="height:100%; width:38%; background:#c0b8b0; border-radius:4px; filter:blur(3px); opacity:0.3;"></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      
-      <!-- Gradient Overlay -->
-      <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 180px; z-index: 2; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 24px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.92) 55%, #ffffff 100%); pointer-events: none;">
-        <div style="text-align: center; padding: 10px 20px;">
-          <span style="display: inline-block; background: var(--gold); color: #ffffff; font-size: 0.5rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 4px 14px; border-radius: 40px; margin-bottom: 2px;">🔒 Premium Insights</span>
-          <p style="font-size: 0.7rem; font-weight: 500; color: var(--ink); margin: 0;">Your blind spot is only the beginning</p>
-          <p style="font-size: 0.55rem; color: var(--text-muted); margin: 1px 0 0;">Build the clarity to think better, structure to communicate better, and the influence to be heard at your level</p>
+        
+        <!-- Gradient Overlay -->
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 180px; z-index: 2; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 24px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.92) 55%, #ffffff 100%); pointer-events: none;">
+          <div style="text-align: center; padding: 10px 20px;">
+            <span style="display: inline-block; background: var(--gold); color: #ffffff; font-size: 0.5rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 4px 14px; border-radius: 40px; margin-bottom: 2px;">🔒 Premium Insights</span>
+            <p style="font-size: 0.7rem; font-weight: 500; color: var(--ink); margin: 0;">Your blind spot is only the beginning</p>
+            <p style="font-size: 0.55rem; color: var(--text-muted); margin: 1px 0 0;">Build the clarity to think better, structure to communicate better, and the influence to be heard at your level</p>
+          </div>
         </div>
       </div>
-    </div>
-    
-    <!-- ===== UNLOCK BANNER ===== -->
-    <div class="unlock-banner" style="background: linear-gradient(135deg, var(--bg-soft-gold), #fde68a); border-radius: 12px; padding: 12px 20px; text-align: center; margin: 12px 0 0; font-size: 0.8rem; font-weight: 600; color: var(--gold-darker); border: 1px solid var(--gold);">
-      <i data-lucide="lock" style="width:14px; height:14px; display:inline-block; vertical-align:middle;"></i>
-      Unlocked for every input, as part of your Program.
-    </div>
-    
-    <!-- ===== PAYWALL CTA ===== -->
-    <div class="paywall-cta" style="background: #ffffff; border-radius: 20px; padding: 28px 32px; text-align: center; border: 1px solid var(--gold); box-shadow: 0 8px 30px rgba(184, 148, 60, 0.08); margin-top: 20px; position: relative; overflow: hidden;">
-      <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));"></div>
-      <h4 style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.3rem; color: var(--ink); margin-bottom: 4px;">You've seen the gap. Here's the path to close it.</h4>
-      <p style="color: var(--text-soft); margin: 6px 0 14px;">Get the full transformation with personalized feedback and practice sessions.</p>
-      <div class="features-list" style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-soft); margin-bottom: 14px;">
-        <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> 3-step exercise to fix your opening 10 seconds</span>
-        <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> Live audio-guided practice sessions</span>
-        <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> Personalized feedback on your exact scenario</span>
+      
+      <!-- UNLOCK BANNER -->
+      <div class="unlock-banner" style="background: linear-gradient(135deg, var(--bg-soft-gold), #fde68a); border-radius: 12px; padding: 12px 20px; text-align: center; margin: 12px 0 0; font-size: 0.8rem; font-weight: 600; color: var(--gold-darker); border: 1px solid var(--gold);">
+        <i data-lucide="lock" style="width:14px; height:14px; display:inline-block; vertical-align:middle;"></i>
+        Unlocked for every input, as part of your Program.
       </div>
-      <a href="https://theunspoken.co.in/Pricing" class="btn-paid" style="display: inline-block; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #ffffff; font-weight: 600; font-size: 1rem; padding: 14px 40px; border-radius: 60px; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 6px 20px rgba(184, 148, 60, 0.3); letter-spacing: 0.3px;">Start Your Journey →</a>
-      <p style="font-size:0.7rem; color:var(--text-muted); margin-top:6px;">7-day free trial · Cancel anytime</p>
-    </div>
-  `;
-  
-  if (typeof lucide !== 'undefined') {
-    lucide.createIcons();
+      
+      <!-- PAYWALL CTA -->
+      <div class="paywall-cta" style="background: #ffffff; border-radius: 20px; padding: 28px 32px; text-align: center; border: 1px solid var(--gold); box-shadow: 0 8px 30px rgba(184, 148, 60, 0.08); margin-top: 20px; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));"></div>
+        <h4 style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.3rem; color: var(--ink); margin-bottom: 4px;">You've seen the gap. Here's the path to close it.</h4>
+        <p style="color: var(--text-soft); margin: 6px 0 14px;">Get the full transformation with personalized feedback and practice sessions.</p>
+        <div class="features-list" style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-soft); margin-bottom: 14px;">
+          <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> 3-step exercise to fix your opening 10 seconds</span>
+          <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> Live audio-guided practice sessions</span>
+          <span><i data-lucide="check" style="width:14px; height:14px; color:var(--gold);"></i> Personalized feedback on your exact scenario</span>
+        </div>
+        <a href="https://theunspoken.co.in/Pricing" class="btn-paid" style="display: inline-block; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #ffffff; font-weight: 600; font-size: 1rem; padding: 14px 40px; border-radius: 60px; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 6px 20px rgba(184, 148, 60, 0.3); letter-spacing: 0.3px;">Start Your Journey →</a>
+        <p style="font-size:0.7rem; color:var(--text-muted); margin-top:6px;">7-day free trial · Cancel anytime</p>
+      </div>
+    `;
+    
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+    
+    textSubmitBtn.textContent = 'Analyze My Response →';
+    textSubmitBtn.disabled = false;
+    console.log('✅ Results rendered with premium content');
   }
-  
-  textSubmitBtn.textContent = 'Analyze My Response →';
-  textSubmitBtn.disabled = false;
-  console.log('✅ Results rendered with premium content');
-}
 
-// ============================================================
-// FALLBACK RENDER FUNCTION
-// ============================================================
-function renderResultsWithFallback(data, userText) {
-  console.log('📊 Rendering with fallback data');
-  const impactScore = data?.metrics?.impact || 58;
-  const patternName = data?.diagnosis?.pattern_name || 'The Amplifier';
-  const patternDesc = data?.diagnosis?.pattern_description || 'You pre-justify under pressure, softening your authority before making your point.';
-  const whatGotLost = data?.gap?.what_got_lost || 'Your credibility and authority in the first 10 seconds';
-  const unspokenGap = data?.gap?.unspoken_gap || 'Between your intent to sound confident and how you actually land';
-  const executiveVersion = data?.before_after_rewrite?.executive_version || 'Your message could be more concise and confident.';
-  const fallbackData = {
-    metrics: { impact: impactScore },
-    diagnosis: { pattern_name: patternName, pattern_description: patternDesc },
-    gap: { what_got_lost: whatGotLost, unspoken_gap: unspokenGap },
-    before_after_rewrite: { executive_version: executiveVersion }
-  };
-  renderResults(fallbackData, userText);
-}
+  // ============================================================
+  // FALLBACK RENDER FUNCTION
+  // ============================================================
+  function renderResultsWithFallback(data, userText) {
+    console.log('📊 Rendering with fallback data');
+    const impactScore = data?.metrics?.impact || 58;
+    const patternName = data?.diagnosis?.pattern_name || 'The Amplifier';
+    const patternDesc = data?.diagnosis?.pattern_description || 'You pre-justify under pressure, softening your authority before making your point.';
+    const whatGotLost = data?.gap?.what_got_lost || 'Your credibility and authority in the first 10 seconds';
+    const unspokenGap = data?.gap?.unspoken_gap || 'Between your intent to sound confident and how you actually land';
+    const executiveVersion = data?.before_after_rewrite?.executive_version || 'Your message could be more concise and confident.';
+    const fallbackData = {
+      metrics: { impact: impactScore },
+      diagnosis: { pattern_name: patternName, pattern_description: patternDesc },
+      gap: { what_got_lost: whatGotLost, unspoken_gap: unspokenGap },
+      before_after_rewrite: { executive_version: executiveVersion }
+    };
+    renderResults(fallbackData, userText);
+  }
 
-// ============================================================
-// SHOW ERROR STATE
-// ============================================================
-function showErrorState(message) {
-  const resultsContent = document.getElementById('resultsContent');
-  resultsContent.innerHTML = `
-    <div style="text-align: center; padding: 40px 20px; background: #ffffff; border-radius: 24px; border: 1px solid #fecaca;">
-      <div style="font-size: 2.5rem; margin-bottom: 12px;">⏳</div>
-      <h3 style="font-size: 1.1rem; color: var(--ink); margin-bottom: 6px;">${message}</h3>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">Try again or check your connection.</p>
-      <button onclick="location.reload()" style="background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #ffffff; font-weight: 600; font-size: 0.9rem; padding: 12px 32px; border-radius: 60px; border: none; cursor: pointer; font-family: inherit;">
-        🔄 Try Again
-      </button>
-    </div>
-  `;
-  textSubmitBtn.textContent = 'Analyze My Response →';
-  textSubmitBtn.disabled = false;
-}
+  // ============================================================
+  // SHOW ERROR STATE
+  // ============================================================
+  function showErrorState(message) {
+    const resultsContent = document.getElementById('resultsContent');
+    resultsContent.innerHTML = `
+      <div style="text-align: center; padding: 40px 20px; background: #ffffff; border-radius: 24px; border: 1px solid #fecaca;">
+        <div style="font-size: 2.5rem; margin-bottom: 12px;">⏳</div>
+        <h3 style="font-size: 1.1rem; color: var(--ink); margin-bottom: 6px;">${message}</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">Try again or check your connection.</p>
+        <button onclick="location.reload()" style="background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #ffffff; font-weight: 600; font-size: 0.9rem; padding: 12px 32px; border-radius: 60px; border: none; cursor: pointer; font-family: inherit;">
+          🔄 Try Again
+        </button>
+      </div>
+    `;
+    textSubmitBtn.textContent = 'Analyze My Response →';
+    textSubmitBtn.disabled = false;
+  }
 
-// ============================================================
-// KEEP BACKEND WARM
-// ============================================================
-function keepBackendWarm() {
-  console.log('🔥 Backend warm-up service started...');
-  setInterval(() => {
-    fetch(`${BACKEND_URL}/api/health`)
-      .then(response => {
-        if (response.ok) {
-          console.log('✅ Backend kept warm at', new Date().toLocaleTimeString());
-        }
-      })
-      .catch(() => {});
-  }, 4 * 60 * 1000);
-}
+  // ============================================================
+  // KEEP BACKEND WARM
+  // ============================================================
+  function keepBackendWarm() {
+    console.log('🔥 Backend warm-up service started...');
+    setInterval(() => {
+      fetch(`${BACKEND_URL}/api/health`)
+        .then(response => {
+          if (response.ok) {
+            console.log('✅ Backend kept warm at', new Date().toLocaleTimeString());
+          }
+        })
+        .catch(() => {});
+    }, 4 * 60 * 1000);
+  }
 
-keepBackendWarm();
+  keepBackendWarm();
 
-console.log('🚀 The Unspoken — Understand the gap. Close the gap.');
-console.log('🔗 Backend URL:', BACKEND_URL);
-console.log('✅ All features integrated with backend');
+  // ============================================================
+  // AI COACH - TRY AGAIN BUTTON
+  // ============================================================
+  const retryButton = document.getElementById('retryButton');
+  const secondAttempt = document.getElementById('secondAttempt');
+  const scoreFill = document.getElementById('scoreFill');
+  const structureScore = document.getElementById('structureScore');
+  const pointReached = document.getElementById('pointReached');
 
-setTimeout(() => {
-  textSubmitBtn.disabled = false;
-}, 500);
+  if (retryButton) {
+    retryButton.addEventListener('click', function() {
+      retryButton.disabled = true;
+      retryButton.innerHTML = '<span>✦</span> Listening...';
 
-    // ============================================================
-    // AI COACH - TRY AGAIN BUTTON
-    // ============================================================
-    const retryButton = document.getElementById('retryButton');
-    const secondAttempt = document.getElementById('secondAttempt');
-    const scoreFill = document.getElementById('scoreFill');
-    const structureScore = document.getElementById('structureScore');
-    const pointReached = document.getElementById('pointReached');
+      setTimeout(function() {
+        // Reveal second attempt
+        secondAttempt.classList.remove('blurred');
+        secondAttempt.classList.add('visible');
 
-    if (retryButton) {
-      retryButton.addEventListener('click', function() {
-        retryButton.disabled = true;
-        retryButton.innerHTML = '<span>✦</span> Listening...';
+        // Animate Structure Score: 42 → 68
+        animateScore(42, 68);
 
-        setTimeout(function() {
-          // Reveal second attempt
-          secondAttempt.classList.remove('blurred');
-          secondAttempt.classList.add('visible');
+        // Animate Score Fill
+        scoreFill.style.width = '68%';
 
-          // Animate Structure Score: 42 → 68
-          animateScore(42, 68);
+        // Animate Point Reached: 23s → 5s
+        animatePointReached('23s', '5s');
 
-          // Animate Score Fill
-          scoreFill.style.width = '68%';
+        // Update button
+        retryButton.innerHTML = '<span>✓</span> Improvement detected';
+        retryButton.disabled = false;
 
-          // Animate Point Reached: 23s → 5s
-          animatePointReached('23s', '5s');
+      }, 1200);
+    });
+  }
 
-          // Update button
-          retryButton.innerHTML = '<span>✓</span> Improvement detected';
-          retryButton.disabled = false;
+  function animateScore(start, end) {
+    let current = start;
+    const interval = setInterval(function() {
+      current++;
+      structureScore.innerHTML = `
+        <span class="old-score">${start}</span>
+        <span class="arrow">→</span>
+        <span class="new-score">${current}</span>
+      `;
+      if (current >= end) {
+        clearInterval(interval);
+      }
+    }, 40);
+  }
 
-        }, 1200);
-      });
-    }
+  function animatePointReached(oldTime, newTime) {
+    const oldSeconds = parseInt(oldTime);
+    const newSeconds = parseInt(newTime);
+    let current = oldSeconds;
 
-    function animateScore(start, end) {
-      let current = start;
-      const interval = setInterval(function() {
-        current++;
-        structureScore.innerHTML = `
-          <span class="old-score">${start}</span>
-          <span class="arrow">→</span>
-          <span class="new-score">${current}</span>
-        `;
-        if (current >= end) {
-          clearInterval(interval);
-        }
-      }, 40);
-    }
-
-    function animatePointReached(oldTime, newTime) {
-      const oldSeconds = parseInt(oldTime);
-      const newSeconds = parseInt(newTime);
-      let current = oldSeconds;
-
-      const interval = setInterval(function() {
-        current--;
+    const interval = setInterval(function() {
+      current--;
+      pointReached.innerHTML = `
+        <span class="old-time">${oldTime}</span>
+        <span class="arrow">→</span>
+        <span class="new-time">${current}s</span>
+      `;
+      if (current <= newSeconds) {
+        clearInterval(interval);
         pointReached.innerHTML = `
           <span class="old-time">${oldTime}</span>
           <span class="arrow">→</span>
-          <span class="new-time">${current}s</span>
+          <span class="new-time">${newTime}</span>
         `;
-        if (current <= newSeconds) {
-          clearInterval(interval);
-          pointReached.innerHTML = `
-            <span class="old-time">${oldTime}</span>
-            <span class="arrow">→</span>
-            <span class="new-time">${newTime}</span>
-          `;
-        }
-      }, 150);
-    }
+      }
+    }, 150);
+  }
 
-    console.log('🚀 The Unspoken — Understand the gap. Close the gap.');
-    console.log('✅ All features working: Recording, Text Input, AI Coach, and Dramatic Transformations');
-  </script>
-</body>
-</html>
+  console.log('🚀 The Unspoken — Understand the gap. Close the gap.');
+  console.log('🔗 Backend URL:', BACKEND_URL);
+  console.log('✅ All features integrated with backend');
+
+  setTimeout(() => {
+    if (textSubmitBtn) textSubmitBtn.disabled = false;
+  }, 500);
+</script>
+
+  
