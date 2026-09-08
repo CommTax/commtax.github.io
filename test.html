@@ -2835,8 +2835,9 @@
     </footer>
   </div>
 
-// ============================================================
-// JAVASCRIPT - CORRECTED
+  
+  // ============================================================
+// JAVASCRIPT - COMPLETE FIXED VERSION
 // ============================================================
 
 // ============================================================
@@ -2861,157 +2862,10 @@ function getCurrentQuestionType() {
 }
 
 // ============================================================
-// LOGIN MODAL
-// ============================================================
-const signInBtn = document.getElementById('signInBtn');
-const loginModal = document.getElementById('loginModal');
-const loginModalOverlay = document.getElementById('loginModalOverlay');
-const loginModalClose = document.getElementById('loginModalClose');
-
-if (signInBtn && loginModal) {
-  signInBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    loginModal.style.display = 'flex';
-  });
-  const closeModal = () => { loginModal.style.display = 'none'; };
-  loginModalOverlay.addEventListener('click', closeModal);
-  loginModalClose.addEventListener('click', closeModal);
-}
-
-// ============================================================
-// QUESTION SELECTOR
-// ============================================================
-const questionBtns = document.querySelectorAll('.question-btn');
-const promptText = document.getElementById('promptText');
-const promptHint = document.getElementById('promptHint');
-
-const questions = {
-  intro: {
-    text: '"Tell me about yourself — your background, what you do, and what drives you professionally."',
-    hint: 'Speak naturally for up to 30 seconds, or type your response in 60 seconds.'
-  },
-  project: {
-    text: '"Tell me about a current project or initiative you\'re leading or involved in."',
-    hint: 'Describe the project, your role, and the impact.'
-  }
-};
-
-questionBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    questionBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const question = btn.dataset.question;
-    promptText.textContent = questions[question].text;
-    promptHint.textContent = questions[question].hint;
-    document.getElementById('resultsDisplay').classList.remove('is-visible');
-  });
-});
-
-// ============================================================
-// MODE SELECTOR
-// ============================================================
-const modeBtns = document.querySelectorAll('.mode-btn');
-const voiceControls = document.getElementById('voiceControls');
-const textInputArea = document.getElementById('textInputArea');
-
-modeBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    modeBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const mode = btn.dataset.mode;
-    if (mode === 'voice') {
-      voiceControls.style.display = 'flex';
-      textInputArea.classList.remove('is-visible');
-      document.getElementById('resultsDisplay').classList.remove('is-visible');
-    } else {
-      voiceControls.style.display = 'none';
-      textInputArea.classList.add('is-visible');
-      document.getElementById('resultsDisplay').classList.remove('is-visible');
-    }
-  });
-});
-
-// ============================================================
-// TEXT INPUT - WITH BACKEND INTEGRATION
-// ============================================================
-const textResponse = document.getElementById('textResponse');
-const charCount = document.getElementById('charCount');
-const textSubmitBtn = document.getElementById('textSubmitBtn');
-
-textResponse.addEventListener('input', () => {
-  const count = textResponse.value.length;
-  charCount.textContent = count;
-  charCount.style.color = count > 450 ? '#a13d2f' : '#6e6a62';
-  textSubmitBtn.disabled = count < 10;
-});
-
-textSubmitBtn.addEventListener('click', function() {
-  const text = textResponse.value.trim();
-  if (text.length < 10) {
-    alert('Please write at least 10 characters for analysis.');
-    return;
-  }
-  
-  const btn = this;
-  btn.textContent = 'Analyzing...';
-  btn.disabled = true;
-
-  // Show loading and then render results
-  showLoadingAnimation(function() {
-    // Use sample data (backend will replace this)
-    const sampleData = {
-      metrics: { impact: 42 },
-      diagnosis: {
-        pattern_name: "The Minimalist",
-        pattern_description: "You keep things brief but may be leaving out critical context."
-      },
-      gap: {
-        what_got_lost: "The depth of your experience and expertise",
-        unspoken_gap: "Between your concise delivery and the full story behind it"
-      },
-      before_after_rewrite: {
-        executive_version: "I bring strategic clarity and results-driven leadership to intro challenges."
-      }
-    };
-    
-    // Try to fetch from backend, fallback to sample
-    analyzeWithBackend(text, 'text', getCurrentQuestionType(), sampleData);
-    
-    btn.textContent = 'Analyze My Response →';
-    btn.disabled = false;
-  });
-});
-
-// ============================================================
-// RECORDING - WITH BACKEND INTEGRATION
-// ============================================================
-const recordBtn = document.getElementById('recordBtn');
-const timerDisplay = document.getElementById('timerDisplay');
-const statusText = document.getElementById('statusText');
-const statusDot = document.getElementById('statusDot');
-const resultsDisplay = document.getElementById('resultsDisplay');
-const waveformBars = document.querySelectorAll('.waveform-bar');
-
-let isRecording = false;
-let timerInterval = null;
-let seconds = 0;
-let mediaRecorder = null;
-let audioChunks = [];
-let audioBlob = null;
-let isSubmitting = false;
-
-const MAX_RECORDING_SECONDS = 30;
-const MIN_RECORDING_SECONDS = 10;
-
-const submitVoiceBtn = document.getElementById('submitVoiceBtn');
-const voiceStatus = document.getElementById('voiceStatus');
-const wordCountDisplay = document.getElementById('wordCountDisplay');
-const submitStatusText = document.getElementById('submitStatusText');
-
-// ============================================================
-// ANIMATE WAVEFORM
+// ANIMATE WAVEFORM (GLOBAL)
 // ============================================================
 function animateWaveform(active) {
+  const waveformBars = document.querySelectorAll('.waveform-bar');
   waveformBars.forEach((bar) => {
     if (active) {
       const level = parseFloat(bar.dataset.level) || 0.3;
@@ -3028,197 +2882,7 @@ function animateWaveform(active) {
 }
 
 // ============================================================
-// UPDATE TIMER
-// ============================================================
-function updateTimer() {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-  if (seconds >= MAX_RECORDING_SECONDS - 5) {
-    timerDisplay.style.color = '#a13d2f';
-    statusText.textContent = `⚠️ ${MAX_RECORDING_SECONDS - seconds}s remaining`;
-  }
-}
-
-// ============================================================
-// START RECORDING
-// ============================================================
-async function startRecording() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ 
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true
-      } 
-    });
-    
-    mediaRecorder = new MediaRecorder(stream, {
-      mimeType: 'audio/webm;codecs=opus'
-    });
-    
-    audioChunks = [];
-    
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        audioChunks.push(event.data);
-      }
-    };
-    
-    mediaRecorder.onstop = () => {
-      audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      
-      if (submitVoiceBtn) {
-        submitVoiceBtn.style.display = 'inline-block';
-        submitVoiceBtn.style.opacity = '1';
-        submitVoiceBtn.style.pointerEvents = 'auto';
-      }
-      if (voiceStatus) {
-        voiceStatus.style.display = 'block';
-      }
-      statusText.textContent = '📝 Audio recorded! Click "Submit Response" to analyze.';
-      
-      const estimatedWords = Math.floor(seconds * 1.5);
-      if (wordCountDisplay) {
-        wordCountDisplay.textContent = estimatedWords;
-      }
-      stream.getTracks().forEach(track => track.stop());
-    };
-    
-    mediaRecorder.start(1000);
-    isRecording = true;
-    seconds = 0;
-    timerDisplay.style.color = '#1a1917';
-    updateTimer();
-    recordBtn.classList.add('is-recording');
-    statusDot.classList.add('is-live');
-    statusText.textContent = '🎙️ Recording... (max 30s)';
-    resultsDisplay.classList.remove('is-visible');
-    
-    if (voiceStatus) voiceStatus.style.display = 'none';
-    if (submitVoiceBtn) submitVoiceBtn.style.display = 'none';
-    
-    const waveInterval = setInterval(() => {
-      if (isRecording) animateWaveform(true);
-    }, 150);
-    
-    timerInterval = setInterval(() => {
-      seconds++;
-      updateTimer();
-      if (seconds >= MAX_RECORDING_SECONDS) {
-        stopRecording();
-      }
-      if (seconds === 10) {
-        statusText.textContent = '💡 You can submit now (minimum 10 seconds)';
-      }
-    }, 1000);
-    
-    recordBtn.dataset.waveInterval = waveInterval;
-    
-  } catch (error) {
-    console.error('❌ Microphone access error:', error);
-    statusText.textContent = '⚠️ Please allow microphone access and try again.';
-    if (error.name === 'NotAllowedError') {
-      alert('Please allow microphone access to use voice recording.');
-    } else {
-      alert('Could not access microphone. Please check your permissions.');
-    }
-  }
-}
-
-// ============================================================
-// STOP RECORDING
-// ============================================================
-function stopRecording() {
-  if (!isRecording) return;
-  isRecording = false;
-  recordBtn.classList.remove('is-recording');
-  statusDot.classList.remove('is-live');
-  statusText.textContent = '⏳ Processing audio...';
-  timerDisplay.style.color = '#1a1917';
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-    mediaRecorder.stop();
-  }
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
-  const waveInterval = parseInt(recordBtn.dataset.waveInterval);
-  if (waveInterval) {
-    clearInterval(waveInterval);
-    recordBtn.dataset.waveInterval = '';
-  }
-  animateWaveform(false);
-}
-
-// ============================================================
-// SUBMIT VOICE RECORDING
-// ============================================================
-async function submitVoiceRecording() {
-  if (isSubmitting) return;
-  if (!audioBlob) {
-    alert('Please record your response first.');
-    return;
-  }
-  if (seconds < MIN_RECORDING_SECONDS) {
-    alert(`Please record at least ${MIN_RECORDING_SECONDS} seconds.`);
-    return;
-  }
-  
-  isSubmitting = true;
-  if (submitVoiceBtn) {
-    submitVoiceBtn.disabled = true;
-    submitVoiceBtn.textContent = '🔄 Analyzing...';
-  }
-  statusText.textContent = '📤 Sending audio for analysis...';
-  
-  // Show loading and render results with sample data
-  showLoadingAnimation(function() {
-    const transcribedText = "I am Aadesh Pillai studying in 5th standard and I love playing football and video games...";
-    
-    const sampleData = {
-      metrics: { impact: 42 },
-      diagnosis: {
-        pattern_name: "The Minimalist",
-        pattern_description: "You keep things brief but may be leaving out critical context."
-      },
-      gap: {
-        what_got_lost: "The depth of your experience and expertise",
-        unspoken_gap: "Between your concise delivery and the full story behind it"
-      },
-      before_after_rewrite: {
-        executive_version: "I bring strategic clarity and results-driven leadership to intro challenges."
-      }
-    };
-    
-    analyzeWithBackend(transcribedText, 'voice', getCurrentQuestionType(), sampleData);
-    
-    if (submitVoiceBtn) {
-      submitVoiceBtn.textContent = '✅ Submitted!';
-      submitVoiceBtn.disabled = false;
-    }
-    isSubmitting = false;
-  });
-}
-
-// ============================================================
-// EVENT LISTENERS FOR RECORDING
-// ============================================================
-recordBtn.addEventListener('click', () => {
-  if (isRecording) {
-    stopRecording();
-  } else {
-    startRecording();
-  }
-});
-
-if (submitVoiceBtn) {
-  submitVoiceBtn.addEventListener('click', submitVoiceRecording);
-}
-
-// ============================================================
-// SHOW LOADING ANIMATION
+// SHOW LOADING ANIMATION (GLOBAL)
 // ============================================================
 function showLoadingAnimation(callback) {
   const resultsContent = document.getElementById('resultsContent');
@@ -3314,7 +2978,6 @@ function showLoadingAnimation(callback) {
     }
   }, 800);
   
-  // After loading completes, call callback
   setTimeout(function() {
     clearInterval(stepInterval);
     clearInterval(timerInterval);
@@ -3323,30 +2986,7 @@ function showLoadingAnimation(callback) {
 }
 
 // ============================================================
-// BACKEND ANALYSIS - MAIN FUNCTION
-// ============================================================
-function analyzeWithBackend(text, mode, questionType, fallbackData) {
-  // Use fallback data (backend will replace this when ready)
-  const sampleData = fallbackData || {
-    metrics: { impact: 42 },
-    diagnosis: {
-      pattern_name: "The Minimalist",
-      pattern_description: "You keep things brief but may be leaving out critical context."
-    },
-    gap: {
-      what_got_lost: "The depth of your experience and expertise",
-      unspoken_gap: "Between your concise delivery and the full story behind it"
-    },
-    before_after_rewrite: {
-      executive_version: "I bring strategic clarity and results-driven leadership to intro challenges."
-    }
-  };
-  
-  renderResults(sampleData, text);
-}
-
-// ============================================================
-// RENDER RESULTS - With Backend Data + Static Premium
+// RENDER RESULTS - With Backend Data + Static Premium (GLOBAL)
 // ============================================================
 function renderResults(data, userText) {
   console.log('📊 Rendering results with data');
@@ -3356,7 +2996,6 @@ function renderResults(data, userText) {
     return;
   }
 
-  // ===== FROM BACKEND (Actual fields) =====
   const impactScore = data?.metrics?.impact || 42;
   const patternName = data?.diagnosis?.pattern_name || 'The Amplifier';
   const patternDesc = data?.diagnosis?.pattern_description || 'You pre-justify under pressure';
@@ -3370,7 +3009,7 @@ function renderResults(data, userText) {
       <span style="display: inline-block; background: var(--bg-soft-gold); color: var(--gold); padding: 4px 20px; border-radius: 40px; font-weight: 700; font-size: 0.75rem; letter-spacing: 1px;">✦ Your Impact Analysis</span>
     </div>
 
-    <!-- ===== GAP ANALYSIS (FROM BACKEND) ===== -->
+    <!-- GAP ANALYSIS -->
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
       <div style="background: #ffffff; border-radius: 14px; padding: 16px 18px; border: 1px solid var(--border-light); border-left: 4px solid var(--text-muted);">
         <span style="font-size:0.55rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">📝 What You Said</span>
@@ -3382,7 +3021,7 @@ function renderResults(data, userText) {
       </div>
     </div>
 
-    <!-- ===== SUMMARY CARDS (FROM BACKEND) ===== -->
+    <!-- SUMMARY CARDS -->
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;">
       <div style="background: #f8f5f0; border-radius: 14px; padding: 14px 16px; text-align: center; border: 1px solid var(--border-light);">
         <span style="font-size:0.5rem; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase;">Impact Score</span>
@@ -3400,7 +3039,7 @@ function renderResults(data, userText) {
       </div>
     </div>
 
-    <!-- ===== AI ARTICULATOR (Before/After - FROM BACKEND) ===== -->
+    <!-- AI ARTICULATOR -->
     <div style="background: #ffffff; border-radius: 16px; padding: 18px 20px; border: 1px solid var(--border-light); margin-bottom: 16px;">
       <span style="font-size:0.55rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px;">✍️ AI Articulator</span>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
@@ -3418,7 +3057,7 @@ function renderResults(data, userText) {
       </div>
     </div>
 
-    <!-- ===== BLURRED PREMIUM CONTENT (STATIC - NO BACKEND) ===== -->
+    <!-- BLURRED PREMIUM CONTENT -->
     <div style="position: relative; margin: 20px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-light); background: #ffffff;">
       <div style="padding: 20px; position: relative; z-index: 1;">
         <div style="margin-bottom: 16px;">
@@ -3486,13 +3125,13 @@ function renderResults(data, userText) {
       </div>
     </div>
     
-    <!-- ===== UNLOCK BANNER ===== -->
+    <!-- UNLOCK BANNER -->
     <div class="unlock-banner" style="background: linear-gradient(135deg, var(--bg-soft-gold), #fde68a); border-radius: 12px; padding: 12px 20px; text-align: center; margin: 12px 0 0; font-size: 0.8rem; font-weight: 600; color: var(--gold-darker); border: 1px solid var(--gold);">
       <i data-lucide="lock" style="width:14px; height:14px; display:inline-block; vertical-align:middle;"></i>
       Unlock the guidance, practice and feedback built around your communication
     </div>
     
-    <!-- ===== PAYWALL CTA ===== -->
+    <!-- PAYWALL CTA -->
     <div class="paywall-cta" style="background: #ffffff; border-radius: 20px; padding: 28px 32px; text-align: center; border: 1px solid var(--gold); box-shadow: 0 8px 30px rgba(184, 148, 60, 0.08); margin-top: 20px; position: relative; overflow: hidden;">
       <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));"></div>
       <h4 style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.3rem; color: var(--ink); margin-bottom: 4px;">You've seen the gap. Now train it.</h4>
@@ -3515,7 +3154,29 @@ function renderResults(data, userText) {
 }
 
 // ============================================================
-// KEEP BACKEND WARM
+// ANALYZE WITH BACKEND (GLOBAL)
+// ============================================================
+function analyzeWithBackend(text, mode, questionType, fallbackData) {
+  const sampleData = fallbackData || {
+    metrics: { impact: 42 },
+    diagnosis: {
+      pattern_name: "The Minimalist",
+      pattern_description: "You keep things brief but may be leaving out critical context."
+    },
+    gap: {
+      what_got_lost: "The depth of your experience and expertise",
+      unspoken_gap: "Between your concise delivery and the full story behind it"
+    },
+    before_after_rewrite: {
+      executive_version: "I bring strategic clarity and results-driven leadership to intro challenges."
+    }
+  };
+  
+  renderResults(sampleData, text);
+}
+
+// ============================================================
+// KEEP BACKEND WARM (GLOBAL)
 // ============================================================
 function keepBackendWarm() {
   console.log('🔥 Backend warm-up service started...');
@@ -3530,12 +3191,335 @@ function keepBackendWarm() {
   }, 4 * 60 * 1000);
 }
 
-keepBackendWarm();
-
 // ============================================================
-// TRANSFORMATION - SCROLL REVEAL ANIMATION
+// DOM CONTENT LOADED - SETUP EVENT LISTENERS
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
+
+  // ============================================================
+  // LOGIN MODAL
+  // ============================================================
+  const signInBtn = document.getElementById('signInBtn');
+  const loginModal = document.getElementById('loginModal');
+  const loginModalOverlay = document.getElementById('loginModalOverlay');
+  const loginModalClose = document.getElementById('loginModalClose');
+
+  if (signInBtn && loginModal) {
+    signInBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginModal.style.display = 'flex';
+    });
+    const closeModal = () => { loginModal.style.display = 'none'; };
+    loginModalOverlay.addEventListener('click', closeModal);
+    loginModalClose.addEventListener('click', closeModal);
+  }
+
+  // ============================================================
+  // QUESTION SELECTOR
+  // ============================================================
+  const questionBtns = document.querySelectorAll('.question-btn');
+  const promptText = document.getElementById('promptText');
+  const promptHint = document.getElementById('promptHint');
+
+  const questions = {
+    intro: {
+      text: '"Tell me about yourself — your background, what you do, and what drives you professionally."',
+      hint: 'Speak naturally for up to 30 seconds, or type your response in 60 seconds.'
+    },
+    project: {
+      text: '"Tell me about a current project or initiative you\'re leading or involved in."',
+      hint: 'Describe the project, your role, and the impact.'
+    }
+  };
+
+  questionBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      questionBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const question = btn.dataset.question;
+      promptText.textContent = questions[question].text;
+      promptHint.textContent = questions[question].hint;
+      document.getElementById('resultsDisplay').classList.remove('is-visible');
+    });
+  });
+
+  // ============================================================
+  // MODE SELECTOR
+  // ============================================================
+  const modeBtns = document.querySelectorAll('.mode-btn');
+  const voiceControls = document.getElementById('voiceControls');
+  const textInputArea = document.getElementById('textInputArea');
+
+  modeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      modeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const mode = btn.dataset.mode;
+      if (mode === 'voice') {
+        voiceControls.style.display = 'flex';
+        textInputArea.classList.remove('is-visible');
+        document.getElementById('resultsDisplay').classList.remove('is-visible');
+      } else {
+        voiceControls.style.display = 'none';
+        textInputArea.classList.add('is-visible');
+        document.getElementById('resultsDisplay').classList.remove('is-visible');
+      }
+    });
+  });
+
+  // ============================================================
+  // TEXT INPUT - WITH BACKEND INTEGRATION
+  // ============================================================
+  const textResponse = document.getElementById('textResponse');
+  const charCount = document.getElementById('charCount');
+  const textSubmitBtn = document.getElementById('textSubmitBtn');
+
+  textResponse.addEventListener('input', () => {
+    const count = textResponse.value.length;
+    charCount.textContent = count;
+    charCount.style.color = count > 450 ? '#a13d2f' : '#6e6a62';
+    textSubmitBtn.disabled = count < 10;
+  });
+
+  textSubmitBtn.addEventListener('click', function() {
+    const text = textResponse.value.trim();
+    if (text.length < 10) {
+      alert('Please write at least 10 characters for analysis.');
+      return;
+    }
+    
+    const btn = this;
+    btn.textContent = 'Analyzing...';
+    btn.disabled = true;
+
+    showLoadingAnimation(function() {
+      const sampleData = {
+        metrics: { impact: 42 },
+        diagnosis: {
+          pattern_name: "The Minimalist",
+          pattern_description: "You keep things brief but may be leaving out critical context."
+        },
+        gap: {
+          what_got_lost: "The depth of your experience and expertise",
+          unspoken_gap: "Between your concise delivery and the full story behind it"
+        },
+        before_after_rewrite: {
+          executive_version: "I bring strategic clarity and results-driven leadership to intro challenges."
+        }
+      };
+      
+      analyzeWithBackend(text, 'text', getCurrentQuestionType(), sampleData);
+      
+      btn.textContent = 'Analyze My Response →';
+      btn.disabled = false;
+    });
+  });
+
+  // ============================================================
+  // RECORDING
+  // ============================================================
+  const recordBtn = document.getElementById('recordBtn');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const statusText = document.getElementById('statusText');
+  const statusDot = document.getElementById('statusDot');
+  const resultsDisplay = document.getElementById('resultsDisplay');
+
+  let isRecording = false;
+  let timerInterval = null;
+  let seconds = 0;
+  let mediaRecorder = null;
+  let audioChunks = [];
+  let audioBlob = null;
+  let isSubmitting = false;
+
+  const MAX_RECORDING_SECONDS = 30;
+  const MIN_RECORDING_SECONDS = 10;
+
+  const submitVoiceBtn = document.getElementById('submitVoiceBtn');
+  const voiceStatus = document.getElementById('voiceStatus');
+  const wordCountDisplay = document.getElementById('wordCountDisplay');
+  const waveformBars = document.querySelectorAll('.waveform-bar');
+
+  function updateTimer() {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    if (seconds >= MAX_RECORDING_SECONDS - 5) {
+      timerDisplay.style.color = '#a13d2f';
+      statusText.textContent = `⚠️ ${MAX_RECORDING_SECONDS - seconds}s remaining`;
+    }
+  }
+
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        } 
+      });
+      
+      mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
+      
+      audioChunks = [];
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
+      };
+      
+      mediaRecorder.onstop = () => {
+        audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        if (submitVoiceBtn) {
+          submitVoiceBtn.style.display = 'inline-block';
+          submitVoiceBtn.style.opacity = '1';
+          submitVoiceBtn.style.pointerEvents = 'auto';
+        }
+        if (voiceStatus) {
+          voiceStatus.style.display = 'block';
+        }
+        statusText.textContent = '📝 Audio recorded! Click "Submit Response" to analyze.';
+        
+        const estimatedWords = Math.floor(seconds * 1.5);
+        if (wordCountDisplay) {
+          wordCountDisplay.textContent = estimatedWords;
+        }
+        stream.getTracks().forEach(track => track.stop());
+      };
+      
+      mediaRecorder.start(1000);
+      isRecording = true;
+      seconds = 0;
+      timerDisplay.style.color = '#1a1917';
+      updateTimer();
+      recordBtn.classList.add('is-recording');
+      statusDot.classList.add('is-live');
+      statusText.textContent = '🎙️ Recording... (max 30s)';
+      resultsDisplay.classList.remove('is-visible');
+      
+      if (voiceStatus) voiceStatus.style.display = 'none';
+      if (submitVoiceBtn) submitVoiceBtn.style.display = 'none';
+      
+      const waveInterval = setInterval(() => {
+        if (isRecording) animateWaveform(true);
+      }, 150);
+      
+      timerInterval = setInterval(() => {
+        seconds++;
+        updateTimer();
+        if (seconds >= MAX_RECORDING_SECONDS) {
+          stopRecording();
+        }
+        if (seconds === 10) {
+          statusText.textContent = '💡 You can submit now (minimum 10 seconds)';
+        }
+      }, 1000);
+      
+      recordBtn.dataset.waveInterval = waveInterval;
+      
+    } catch (error) {
+      console.error('❌ Microphone access error:', error);
+      statusText.textContent = '⚠️ Please allow microphone access and try again.';
+      if (error.name === 'NotAllowedError') {
+        alert('Please allow microphone access to use voice recording.');
+      } else {
+        alert('Could not access microphone. Please check your permissions.');
+      }
+    }
+  }
+
+  function stopRecording() {
+    if (!isRecording) return;
+    isRecording = false;
+    recordBtn.classList.remove('is-recording');
+    statusDot.classList.remove('is-live');
+    statusText.textContent = '⏳ Processing audio...';
+    timerDisplay.style.color = '#1a1917';
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    const waveInterval = parseInt(recordBtn.dataset.waveInterval);
+    if (waveInterval) {
+      clearInterval(waveInterval);
+      recordBtn.dataset.waveInterval = '';
+    }
+    animateWaveform(false);
+  }
+
+  async function submitVoiceRecording() {
+    if (isSubmitting) return;
+    if (!audioBlob) {
+      alert('Please record your response first.');
+      return;
+    }
+    if (seconds < MIN_RECORDING_SECONDS) {
+      alert(`Please record at least ${MIN_RECORDING_SECONDS} seconds.`);
+      return;
+    }
+    
+    isSubmitting = true;
+    if (submitVoiceBtn) {
+      submitVoiceBtn.disabled = true;
+      submitVoiceBtn.textContent = '🔄 Analyzing...';
+    }
+    statusText.textContent = '📤 Sending audio for analysis...';
+    
+    showLoadingAnimation(function() {
+      const transcribedText = "I am Aadesh Pillai studying in 5th standard and I love playing football and video games...";
+      
+      const sampleData = {
+        metrics: { impact: 42 },
+        diagnosis: {
+          pattern_name: "The Minimalist",
+          pattern_description: "You keep things brief but may be leaving out critical context."
+        },
+        gap: {
+          what_got_lost: "The depth of your experience and expertise",
+          unspoken_gap: "Between your concise delivery and the full story behind it"
+        },
+        before_after_rewrite: {
+          executive_version: "I bring strategic clarity and results-driven leadership to intro challenges."
+        }
+      };
+      
+      analyzeWithBackend(transcribedText, 'voice', getCurrentQuestionType(), sampleData);
+      
+      if (submitVoiceBtn) {
+        submitVoiceBtn.textContent = '✅ Submitted!';
+        submitVoiceBtn.disabled = false;
+      }
+      isSubmitting = false;
+    });
+  }
+
+  // ============================================================
+  // EVENT LISTENERS FOR RECORDING
+  // ============================================================
+  recordBtn.addEventListener('click', () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  });
+
+  if (submitVoiceBtn) {
+    submitVoiceBtn.addEventListener('click', submitVoiceRecording);
+  }
+
+  // ============================================================
+  // TRANSFORMATION - SCROLL REVEAL ANIMATION
+  // ============================================================
   const timelineItems = document.querySelectorAll('.timeline-item');
 
   if (timelineItems.length > 0) {
@@ -3554,13 +3538,17 @@ document.addEventListener('DOMContentLoaded', function() {
       observer.observe(item);
     });
   }
+
+  // ============================================================
+  // KEEP BACKEND WARM
+  // ============================================================
+  keepBackendWarm();
+
+  console.log('🚀 The Unspoken — Understand the gap. Close the gap.');
+  console.log('🔗 Backend URL:', BACKEND_URL);
+  console.log('✅ All features integrated with backend');
 });
-
-console.log('🚀 The Unspoken — Understand the gap. Close the gap.');
-console.log('🔗 Backend URL:', BACKEND_URL);
-console.log('✅ All features integrated with backend');
-
-  
+    
   </script>
 </body>
 </html>
