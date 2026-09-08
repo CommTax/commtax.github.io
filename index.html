@@ -3495,7 +3495,34 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     animateWaveform(false);
   }
-
+async function analyzeVoice(audioBlob, questionType) {
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'recording.webm');
+    formData.append('question_type', questionType || 'intro');
+    formData.append('mode', 'voice');
+    formData.append('duration', Math.round(audioBlob.duration || 45));
+    
+    try {
+        const response = await fetch(
+            'https://unspoken-backend-yvbi.onrender.com/api/communication/analyze/voice',
+            {
+                method: 'POST',
+                body: formData  // ← NO Content-Type header
+            }
+        );
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Voice analysis failed:', error);
+        throw error;
+    }
+}
+  
   async function submitVoiceRecording() {
     if (isSubmitting) return;
     if (!audioBlob) {
