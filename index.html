@@ -3495,6 +3495,191 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     animateWaveform(false);
   }
+
+  // ============================================================
+// 1. DEFINE THE analyzeVoice FUNCTION (GLOBAL)
+// ============================================================
+
+async function analyzeVoice(audioBlob, questionType) {
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'recording.webm');
+    formData.append('question_type', questionType || 'intro');
+    formData.append('mode', 'voice');
+    formData.append('duration', Math.round(audioBlob.duration || 45));
+    
+    try {
+        const response = await fetch(
+            'https://unspoken-backend-yvbi.onrender.com/api/communication/analyze/voice',
+            {
+                method: 'POST',
+                body: formData
+            }
+        );
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Voice analysis failed:', error);
+        throw error;
+    }
+}
+
+// ============================================================
+// 2. DEFINE THE SUBMIT FUNCTION (GLOBAL)
+// ============================================================
+
+async function submitVoiceRecording() {
+    try {
+        console.log('🔵 Submit button clicked');
+        
+        // Get the audio blob (adjust based on your recording logic)
+        const audioBlob = recordedAudioBlob; // Make sure this variable exists
+        const questionType = document.getElementById('questionType')?.value || 'intro';
+        
+        if (!audioBlob) {
+            alert('Please record your voice first.');
+            return;
+        }
+        
+        console.log('🟡 Calling analyzeVoice...');
+        const result = await analyzeVoice(audioBlob, questionType);
+        console.log('🟢 analyzeVoice returned:', result);
+        
+        // Debug: Log all fields
+        console.log('✅ Full response:', JSON.stringify(result, null, 2));
+        console.log('📊 Metrics:', result.metrics);
+        console.log('📋 Diagnosis:', result.diagnosis);
+        console.log('🔍 Gap:', result.gap);
+        console.log('✏️ Rewrite:', result.before_after_rewrite);
+        console.log('Has metrics?', !!result.metrics);
+        console.log('Has diagnosis?', !!result.diagnosis);
+        console.log('Has gap?', !!result.gap);
+        console.log('Has rewrite?', !!result.before_after_rewrite);
+        
+        console.log('🟣 Calling renderResults...');
+        renderResults(result);
+        console.log('✅ renderResults completed');
+        
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('Failed to analyze voice: ' + error.message);
+    }
+}
+
+// ============================================================
+// 3. DEFINE THE RENDER FUNCTION (GLOBAL)
+// ============================================================
+
+function renderResults(data) {
+    console.log('🎯 Rendering results:', data);
+    
+    // Get the container
+    const container = document.getElementById('results-container');
+    if (!container) {
+        console.error('❌ Results container not found!');
+        return;
+    }
+    
+    // Check if data exists
+    if (!data || !data.success) {
+        container.innerHTML = `<p class="error">No results available. Please try again.</p>`;
+        return;
+    }
+    
+    // Extract data with fallbacks
+    const transcript = data.transcribed_text || 'N/A';
+    const impact = data.metrics?.impact || 'N/A';
+    const patternName = data.diagnosis?.pattern_name || 'Not available';
+    const patternDesc = data.diagnosis?.pattern_description || 'No description available';
+    const whatGotLost = data.gap?.what_got_lost || 'Not identified';
+    const unspokenGap = data.gap?.unspoken_gap || 'Not identified';
+    const executiveVersion = data.before_after_rewrite?.executive_version || 'Not available';
+    
+    // Build HTML
+    container.innerHTML = `
+        <div class="results-card">
+            <h2>🎤 Voice Analysis Results</h2>
+            
+            <div class="section">
+                <h3>📝 Transcribed Text</h3>
+                <p class="transcript">${transcript}</p>
+            </div>
+            
+            <div class="section">
+                <h3>📊 Impact Score</h3>
+                <div class="impact-score">
+                    <span class="score">${impact}</span>
+                    <span class="label">/ 100</span>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3>🧠 Communication Pattern</h3>
+                <div class="pattern">
+                    <h4>${patternName}</h4>
+                    <p>${patternDesc}</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3>🔍 Gap Analysis</h3>
+                <div class="gap">
+                    <p><strong>What Got Lost:</strong> ${whatGotLost}</p>
+                    <p><strong>Unspoken Gap:</strong> ${unspokenGap}</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3>✏️ Executive Version</h3>
+                <div class="rewrite">
+                    <p>${executiveVersion}</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    console.log('✅ Results rendered successfully');
+}
+
+// ============================================================
+// 4. TEST THE FUNCTIONS IN CONSOLE
+// ============================================================
+
+console.log('✅ All functions are defined globally!');
+console.log('📋 Available functions:');
+console.log('  - analyzeVoice()');
+console.log('  - submitVoiceRecording()');
+console.log('  - renderResults()');
+
+// Test with sample data (optional)
+function testRenderWithSampleData() {
+    const sampleData = {
+        success: true,
+        transcribed_text: "I am a Senior Program Manager with 12 years experience launching products across teams.",
+        metrics: { impact: 85 },
+        diagnosis: { 
+            pattern_name: "The Translator",
+            pattern_description: "You bridge technical and business language effectively"
+        },
+        gap: {
+            what_got_lost: "Personal passion and enthusiasm",
+            unspoken_gap: "Not enough emphasis on leadership impact"
+        },
+        before_after_rewrite: {
+            executive_version: "Senior Program Manager with 12 years of experience delivering complex technology initiatives"
+        }
+    };
+    
+    renderResults(sampleData);
+}
+
+// Call this in console to test: testRenderWithSampleData()
+
+  
 async function analyzeVoice(audioBlob, questionType) {
     const formData = new FormData();
     formData.append('audio', audioBlob, 'recording.webm');
