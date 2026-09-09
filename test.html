@@ -3574,9 +3574,9 @@ function renderResults(data, userText) {
   const indexLabel = stage.querySelector('.index-label');
   const dotEls = stage.querySelectorAll('.dots span');
 
-  const BEFORE_MS = 2200;
-  const TRANSITION_MS = 900;
-  const AFTER_MS = 2500;
+  const BEFORE_MS = 3600;
+  const TRANSITION_MS = 1200;
+  const AFTER_MS = 3600;
   const TOTAL_MS = BEFORE_MS + TRANSITION_MS + AFTER_MS;
 
   /* ---------- Scene 1: RAMBLING → CONCISE (waveform) ---------- */
@@ -4639,6 +4639,97 @@ document.addEventListener('DOMContentLoaded', function() {
   // Start the animation
   playSegment(0);
 })();
+
+    // ============================================================
+// WAVEFORM ANIMATION - HERO (WITH EXTENDED TIMING)
+// ============================================================
+(function() {
+  const stage = document.querySelector('.waveform-stage');
+  if (!stage) {
+    console.warn('Waveform stage not found');
+    return;
+  }
+
+  const container = document.getElementById('waveformBars');
+  const caption = document.getElementById('waveformCaption');
+  if (!container || !caption) return;
+
+  const barCount = 48;
+  const bars = [];
+
+  // Create bars
+  for (let i = 0; i < barCount; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    container.appendChild(bar);
+    bars.push(bar);
+  }
+
+  // "before" = jagged, uneven (rambling)
+  function jaggedHeight(i, t) {
+    const n = Math.sin(i * 12.9898 + t * 0.002) * 43758.5453;
+    const rand = n - Math.floor(n);
+    return 10 + rand * 90;
+  }
+
+  // "after" = smooth, rhythmic (concise)
+  function rhythmicHeight(i, t) {
+    const wave = Math.sin(i * 0.35 + t * 0.003) * 0.5 + 0.5;
+    const pulse = Math.sin(t * 0.004) * 0.15 + 0.85;
+    return 25 + wave * 55 * pulse;
+  }
+
+  let phase = 'before';
+  let phaseStart = performance.now();
+  
+  // ============================================================
+  // TIMING - Each phase is extended by 1 second (1000ms)
+  // ============================================================
+  const BEFORE_MS = 3600;      // Was 2600, now 3.6 seconds
+  const TRANSITION_MS = 1200;  // 1.2 seconds (unchanged)
+  const AFTER_HOLD_MS = 3600;  // Was 2600, now 3.6 seconds
+  // Total cycle: 3.6 + 1.2 + 3.6 = 8.4 seconds
+
+  function setCaption(label, afterState) {
+    caption.innerHTML = `<span class="state">${label}</span>`;
+    caption.classList.toggle('after', afterState);
+  }
+
+  function frame(t) {
+    const elapsed = t - phaseStart;
+
+    if (phase === 'before') {
+      if (elapsed > BEFORE_MS) { phase = 'transition'; phaseStart = t; }
+    } else if (phase === 'transition') {
+      if (elapsed > TRANSITION_MS) { phase = 'after'; phaseStart = t; setCaption('concise', true); }
+    } else if (phase === 'after') {
+      if (elapsed > AFTER_HOLD_MS) { phase = 'before'; phaseStart = t; setCaption('rambling', false); }
+    }
+
+    bars.forEach((bar, i) => {
+      let h;
+      if (phase === 'before') {
+        h = jaggedHeight(i, t);
+        bar.style.background = '#4a4a52';
+      } else if (phase === 'transition') {
+        const progress = elapsed / TRANSITION_MS;
+        const before = jaggedHeight(i, t);
+        const after = rhythmicHeight(i, t);
+        h = before + (after - before) * progress;
+        bar.style.background = progress > 0.5 ? '#c94f3d' : '#4a4a52';
+      } else {
+        h = rhythmicHeight(i, t);
+        bar.style.background = '#e8e4dc';
+      }
+      bar.style.height = h + '%';
+    });
+
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+})();
+
     
 </script>
 </body>
