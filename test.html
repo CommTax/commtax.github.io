@@ -731,14 +731,31 @@
       transform: none !important;
     }
 
-    .results-display {
-      margin-top: 24px;
-      display: none;
-      animation: slideUp 0.5s ease;
-    }
-    .results-display.is-visible {
-      display: block;
-    }
+/* ===== RESULTS DISPLAY - FIXED ===== */
+.results-display {
+  margin-top: 24px;
+  display: none;
+  animation: slideUp 0.5s ease;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 2px solid var(--gold);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.results-display.is-visible {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+#resultsContent {
+  color: var(--ink);
+}
+#resultsContent * {
+  color: var(--ink);
+}
 
     /* ===== SUBMIT VOICE BUTTON ===== */
     .btn-submit-voice {
@@ -2549,7 +2566,7 @@
           <button class="text-submit-btn" id="textSubmitBtn">Analyze My Response →</button>
         </div>
 
-        <!-- Results -->
+        <!-- RESULTS DISPLAY - SINGLE CONTAINER (FIXED) -->
         <div class="results-display" id="resultsDisplay">
           <div id="resultsContent"></div>
         </div>
@@ -2706,12 +2723,6 @@
       </div>
     </div>
   </section>
-<!-- ============================================================
-   RESULTS DISPLAY - WITH BACKEND DATA + STATIC PREMIUM
-   ============================================================ -->
-<div class="results-display is-visible" id="resultsDisplay" style="margin-top:0; padding-top:0;">
-  <div id="resultsContent"></div>
-</div>
 
   <!-- ============================================================
      TRANSFORMATION - PREMIUM TIMELINE
@@ -2844,7 +2855,7 @@
     </footer>
   </div>
 
-  <script>
+  <script>  
   // ============================================================
 // JAVASCRIPT - COMPLETE FIXED VERSION
 // ============================================================
@@ -2995,7 +3006,61 @@ function showLoadingAnimation(callback) {
 }
 
 // ============================================================
-// RENDER RESULTS - With Backend Data + Static Premium (GLOBAL)
+// ANALYZE WITH BACKEND - ACTUAL BACKEND CALL
+// ============================================================
+async function analyzeWithBackend(text, mode, questionType) {
+  console.log('📤 Sending to backend:', { text: text.slice(0, 50) + '...', mode, questionType });
+  
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/communication/analyze/premium`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        text: text,
+        mode: mode,
+        question_type: questionType
+      })
+    });
+    
+    console.log('📥 Response status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log('✅ Backend response received:', data);
+    
+    // Pass the backend data directly to renderResults
+    renderResults(data, text);
+    
+  } catch (error) {
+    console.error('❌ Backend error:', error);
+    
+    // Only use fallback if backend fails
+    const fallbackData = {
+      success: true,
+      metrics: { impact: 42 },
+      diagnosis: {
+        pattern_name: "Analysis Unavailable",
+        pattern_description: "We couldn't complete your analysis. Please try again."
+      },
+      gap: {
+        what_got_lost: "Unable to analyze your response",
+        unspoken_gap: "Please check your connection and try again"
+      },
+      before_after_rewrite: {
+        executive_version: "We're having trouble connecting to our AI. Please try again."
+      }
+    };
+    renderResults(fallbackData, text);
+  }
+}
+
+// ============================================================
+// RENDER RESULTS - With Backend Data + Static Premium
 // ============================================================
 function renderResults(data, userText) {
   console.log('📊 Rendering results with data');
@@ -3159,64 +3224,319 @@ function renderResults(data, userText) {
     lucide.createIcons();
   }
 
+  // Ensure results are visible
+  const resultsDisplay = document.getElementById('resultsDisplay');
+  if (resultsDisplay) {
+    resultsDisplay.classList.add('is-visible');
+    resultsDisplay.style.display = 'block';
+    resultsDisplay.style.visibility = 'visible';
+    resultsDisplay.style.opacity = '1';
+    // Scroll to results after a short delay
+    setTimeout(() => {
+      resultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+  }
+
   console.log('✅ Results rendered with backend data + static premium content');
 }
 
 // ============================================================
-// ANALYZE WITH BACKEND - ACTUAL BACKEND CALL
+// VOICE ANALYSIS FUNCTIONS - CLEAN VERSION
 // ============================================================
-async function analyzeWithBackend(text, mode, questionType) {
-  console.log('📤 Sending to backend:', { text: text.slice(0, 50) + '...', mode, questionType });
-  
+
+// Global variables for recording
+let mediaRecorder = null;
+let audioChunks = [];
+let audioBlob = null;
+let isRecording = false;
+let isSubmitting = false;
+let seconds = 0;
+let timerInterval = null;
+let recordBtn = null;
+let timerDisplay = null;
+let statusText = null;
+let statusDot = null;
+let submitVoiceBtn = null;
+let voiceStatus = null;
+let wordCountDisplay = null;
+const MAX_RECORDING_SECONDS = 30;
+const MIN_RECORDING_SECONDS = 10;
+
+// ============================================================
+// START RECORDING
+// ============================================================
+async function startRecording() {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/communication/analyze/premium`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        text: text,
-        mode: mode,
-        question_type: questionType
-      })
+    const stream = await navigator.mediaDevices.getUserMedia({ 
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      } 
     });
     
-    console.log('📥 Response status:', response.status);
+    mediaRecorder = new MediaRecorder(stream, {
+      mimeType: 'audio/webm;codecs=opus'
+    });
     
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
+    audioChunks = [];
     
-    const data = await response.json();
-    console.log('✅ Backend response received:', data);
-    
-    // Pass the backend data directly to renderResults
-    renderResults(data, text);
-    
-  } catch (error) {
-    console.error('❌ Backend error:', error);
-    
-    // Only use fallback if backend fails
-    const fallbackData = {
-      metrics: { impact: 42 },
-      diagnosis: {
-        pattern_name: "Analysis Unavailable",
-        pattern_description: "We couldn't complete your analysis. Please try again."
-      },
-      gap: {
-        what_got_lost: "Unable to analyze your response",
-        unspoken_gap: "Please check your connection and try again"
-      },
-      before_after_rewrite: {
-        executive_version: "We're having trouble connecting to our AI. Please try again."
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        audioChunks.push(event.data);
       }
     };
-    renderResults(fallbackData, text);
+    
+    mediaRecorder.onstop = () => {
+      audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      const audioUrl = URL.createObjectURL(audioBlob);
+      
+      if (submitVoiceBtn) {
+        submitVoiceBtn.style.display = 'inline-block';
+        submitVoiceBtn.style.opacity = '1';
+        submitVoiceBtn.style.pointerEvents = 'auto';
+        submitVoiceBtn.disabled = false;
+      }
+      if (voiceStatus) {
+        voiceStatus.style.display = 'block';
+      }
+      if (statusText) {
+        statusText.textContent = '📝 Audio recorded! Click "Submit Response" to analyze.';
+      }
+      
+      const estimatedWords = Math.floor(seconds * 1.5);
+      if (wordCountDisplay) {
+        wordCountDisplay.textContent = estimatedWords;
+      }
+      stream.getTracks().forEach(track => track.stop());
+    };
+    
+    mediaRecorder.start(1000);
+    isRecording = true;
+    seconds = 0;
+    if (timerDisplay) {
+      timerDisplay.style.color = '#1a1917';
+      updateTimer();
+    }
+    if (recordBtn) {
+      recordBtn.classList.add('is-recording');
+    }
+    if (statusDot) {
+      statusDot.classList.add('is-live');
+    }
+    if (statusText) {
+      statusText.textContent = '🎙️ Recording... (max 30s)';
+    }
+    
+    const resultsDisplay = document.getElementById('resultsDisplay');
+    if (resultsDisplay) {
+      resultsDisplay.classList.remove('is-visible');
+    }
+    
+    if (voiceStatus) voiceStatus.style.display = 'none';
+    if (submitVoiceBtn) submitVoiceBtn.style.display = 'none';
+    
+    const waveInterval = setInterval(() => {
+      if (isRecording) animateWaveform(true);
+    }, 150);
+    
+    timerInterval = setInterval(() => {
+      seconds++;
+      updateTimer();
+      if (seconds >= MAX_RECORDING_SECONDS) {
+        stopRecording();
+      }
+      if (seconds === 10 && statusText) {
+        statusText.textContent = '💡 You can submit now (minimum 10 seconds)';
+      }
+    }, 1000);
+    
+    if (recordBtn) {
+      recordBtn.dataset.waveInterval = waveInterval;
+    }
+    
+  } catch (error) {
+    console.error('❌ Microphone access error:', error);
+    if (statusText) {
+      statusText.textContent = '⚠️ Please allow microphone access and try again.';
+    }
+    if (error.name === 'NotAllowedError') {
+      alert('Please allow microphone access to use voice recording.');
+    } else {
+      alert('Could not access microphone. Please check your permissions.');
+    }
   }
 }
 
 // ============================================================
-// KEEP BACKEND WARM (GLOBAL)
+// STOP RECORDING
+// ============================================================
+function stopRecording() {
+  if (!isRecording) return;
+  isRecording = false;
+  if (recordBtn) {
+    recordBtn.classList.remove('is-recording');
+  }
+  if (statusDot) {
+    statusDot.classList.remove('is-live');
+  }
+  if (statusText) {
+    statusText.textContent = '⏳ Processing audio...';
+  }
+  if (timerDisplay) {
+    timerDisplay.style.color = '#1a1917';
+  }
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  if (recordBtn) {
+    const waveInterval = parseInt(recordBtn.dataset.waveInterval);
+    if (waveInterval) {
+      clearInterval(waveInterval);
+      recordBtn.dataset.waveInterval = '';
+    }
+  }
+  animateWaveform(false);
+}
+
+// ============================================================
+// UPDATE TIMER
+// ============================================================
+function updateTimer() {
+  if (!timerDisplay) return;
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+  if (seconds >= MAX_RECORDING_SECONDS - 5) {
+    timerDisplay.style.color = '#a13d2f';
+    if (statusText) {
+      statusText.textContent = `⚠️ ${MAX_RECORDING_SECONDS - seconds}s remaining`;
+    }
+  }
+}
+
+// ============================================================
+// ANALYZE VOICE - Calls Backend
+// ============================================================
+async function analyzeVoice(audioBlob, questionType) {
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'recording.webm');
+    formData.append('question_type', questionType || 'intro');
+    formData.append('mode', 'voice');
+    formData.append('duration', Math.round(seconds || 30));
+    
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/communication/analyze/voice`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('✅ Voice analysis result:', result);
+        return result;
+    } catch (error) {
+        console.error('❌ Voice analysis failed:', error);
+        throw error;
+    }
+}
+
+// ============================================================
+// SUBMIT VOICE RECORDING - FIXED
+// ============================================================
+async function submitVoiceRecording() {
+    if (isSubmitting) return;
+    
+    // Use audioBlob (from recording) instead of recordedAudioBlob
+    if (!audioBlob) {
+        alert('Please record your response first.');
+        return;
+    }
+    if (seconds < MIN_RECORDING_SECONDS) {
+        alert(`Please record at least ${MIN_RECORDING_SECONDS} seconds.`);
+        return;
+    }
+    
+    isSubmitting = true;
+    if (submitVoiceBtn) {
+        submitVoiceBtn.disabled = true;
+        submitVoiceBtn.textContent = '🔄 Analyzing...';
+    }
+    if (statusText) {
+        statusText.textContent = '📤 Sending audio for analysis...';
+    }
+    
+    try {
+        // Create FormData to send audio
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'recording.webm');
+        formData.append('mode', 'voice');
+        formData.append('question_type', getCurrentQuestionType());
+        
+        console.log('📤 Sending audio to backend...', {
+            size: audioBlob.size,
+            type: audioBlob.type,
+            question: getCurrentQuestionType()
+        });
+        
+        const response = await fetch(`${BACKEND_URL}/api/communication/analyze/voice`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Voice analysis response:', data);
+        
+        // The backend returns the transcribed text and analysis
+        if (data.transcribed_text) {
+            // Store the data globally for debugging
+            window.lastVoiceResult = data;
+            
+            // Render results directly
+            renderResults(data, data.transcribed_text);
+            
+            if (submitVoiceBtn) {
+                submitVoiceBtn.textContent = '✅ Done!';
+                submitVoiceBtn.disabled = false;
+            }
+            if (statusText) {
+                statusText.textContent = '✅ Analysis complete!';
+            }
+        } else {
+            throw new Error('No transcribed text received');
+        }
+        
+        isSubmitting = false;
+        
+    } catch (error) {
+        console.error('❌ Voice analysis error:', error);
+        if (statusText) {
+            statusText.textContent = '⚠️ ' + error.message;
+        }
+        if (submitVoiceBtn) {
+            submitVoiceBtn.textContent = '🔄 Try Again';
+            submitVoiceBtn.disabled = false;
+        }
+        isSubmitting = false;
+        alert('Analysis failed: ' + error.message);
+    }
+}
+
+// ============================================================
+// KEEP BACKEND WARM
 // ============================================================
 function keepBackendWarm() {
   console.log('🔥 Backend warm-up service started...');
@@ -3235,6 +3555,15 @@ function keepBackendWarm() {
 // DOM CONTENT LOADED - SETUP EVENT LISTENERS
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
+
+  // Initialize DOM references
+  recordBtn = document.getElementById('recordBtn');
+  timerDisplay = document.getElementById('timerDisplay');
+  statusText = document.getElementById('statusText');
+  statusDot = document.getElementById('statusDot');
+  submitVoiceBtn = document.getElementById('submitVoiceBtn');
+  voiceStatus = document.getElementById('voiceStatus');
+  wordCountDisplay = document.getElementById('wordCountDisplay');
 
   // ============================================================
   // LOGIN MODAL
@@ -3333,22 +3662,7 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.disabled = true;
 
     showLoadingAnimation(function() {
-      const sampleData = {
-        metrics: { impact: 42 },
-        diagnosis: {
-          pattern_name: "The Minimalist",
-          pattern_description: "You keep things brief but may be leaving out critical context."
-        },
-        gap: {
-          what_got_lost: "The depth of your experience and expertise",
-          unspoken_gap: "Between your concise delivery and the full story behind it"
-        },
-        before_after_rewrite: {
-          executive_version: "I bring strategic clarity and results-driven leadership to intro challenges."
-        }
-      };
-      
-      analyzeWithBackend(text, 'text', getCurrentQuestionType(), sampleData);
+      analyzeWithBackend(text, 'text', getCurrentQuestionType());
       
       btn.textContent = 'Analyze My Response →';
       btn.disabled = false;
@@ -3356,265 +3670,17 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // ============================================================
-  // RECORDING
+  // RECORDING EVENT LISTENERS
   // ============================================================
-  const recordBtn = document.getElementById('recordBtn');
-  const timerDisplay = document.getElementById('timerDisplay');
-  const statusText = document.getElementById('statusText');
-  const statusDot = document.getElementById('statusDot');
-  const resultsDisplay = document.getElementById('resultsDisplay');
-
-  let isRecording = false;
-  let timerInterval = null;
-  let seconds = 0;
-  let mediaRecorder = null;
-  let audioChunks = [];
-  let audioBlob = null;
-  let isSubmitting = false;
-
-  const MAX_RECORDING_SECONDS = 30;
-  const MIN_RECORDING_SECONDS = 10;
-
-  const submitVoiceBtn = document.getElementById('submitVoiceBtn');
-  const voiceStatus = document.getElementById('voiceStatus');
-  const wordCountDisplay = document.getElementById('wordCountDisplay');
-  const waveformBars = document.querySelectorAll('.waveform-bar');
-
-  function updateTimer() {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    timerDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-    if (seconds >= MAX_RECORDING_SECONDS - 5) {
-      timerDisplay.style.color = '#a13d2f';
-      statusText.textContent = `⚠️ ${MAX_RECORDING_SECONDS - seconds}s remaining`;
-    }
-  }
-
-  async function startRecording() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        } 
-      });
-      
-      mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
-      });
-      
-      audioChunks = [];
-      
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunks.push(event.data);
-        }
-      };
-      
-      mediaRecorder.onstop = () => {
-        audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        
-        if (submitVoiceBtn) {
-          submitVoiceBtn.style.display = 'inline-block';
-          submitVoiceBtn.style.opacity = '1';
-          submitVoiceBtn.style.pointerEvents = 'auto';
-        }
-        if (voiceStatus) {
-          voiceStatus.style.display = 'block';
-        }
-        statusText.textContent = '📝 Audio recorded! Click "Submit Response" to analyze.';
-        
-        const estimatedWords = Math.floor(seconds * 1.5);
-        if (wordCountDisplay) {
-          wordCountDisplay.textContent = estimatedWords;
-        }
-        stream.getTracks().forEach(track => track.stop());
-      };
-      
-      mediaRecorder.start(1000);
-      isRecording = true;
-      seconds = 0;
-      timerDisplay.style.color = '#1a1917';
-      updateTimer();
-      recordBtn.classList.add('is-recording');
-      statusDot.classList.add('is-live');
-      statusText.textContent = '🎙️ Recording... (max 30s)';
-      resultsDisplay.classList.remove('is-visible');
-      
-      if (voiceStatus) voiceStatus.style.display = 'none';
-      if (submitVoiceBtn) submitVoiceBtn.style.display = 'none';
-      
-      const waveInterval = setInterval(() => {
-        if (isRecording) animateWaveform(true);
-      }, 150);
-      
-      timerInterval = setInterval(() => {
-        seconds++;
-        updateTimer();
-        if (seconds >= MAX_RECORDING_SECONDS) {
-          stopRecording();
-        }
-        if (seconds === 10) {
-          statusText.textContent = '💡 You can submit now (minimum 10 seconds)';
-        }
-      }, 1000);
-      
-      recordBtn.dataset.waveInterval = waveInterval;
-      
-    } catch (error) {
-      console.error('❌ Microphone access error:', error);
-      statusText.textContent = '⚠️ Please allow microphone access and try again.';
-      if (error.name === 'NotAllowedError') {
-        alert('Please allow microphone access to use voice recording.');
+  if (recordBtn) {
+    recordBtn.addEventListener('click', () => {
+      if (isRecording) {
+        stopRecording();
       } else {
-        alert('Could not access microphone. Please check your permissions.');
+        startRecording();
       }
-    }
-  }
-
-  function stopRecording() {
-    if (!isRecording) return;
-    isRecording = false;
-    recordBtn.classList.remove('is-recording');
-    statusDot.classList.remove('is-live');
-    statusText.textContent = '⏳ Processing audio...';
-    timerDisplay.style.color = '#1a1917';
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-      mediaRecorder.stop();
-    }
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-    const waveInterval = parseInt(recordBtn.dataset.waveInterval);
-    if (waveInterval) {
-      clearInterval(waveInterval);
-      recordBtn.dataset.waveInterval = '';
-    }
-    animateWaveform(false);
-  }
-
-  async function submitVoiceRecording() {
-    if (isSubmitting) return;
-    if (!audioBlob) {
-      alert('Please record your response first.');
-      return;
-    }
-    if (seconds < MIN_RECORDING_SECONDS) {
-      alert(`Please record at least ${MIN_RECORDING_SECONDS} seconds.`);
-      return;
-    }
-    
-    isSubmitting = true;
-    if (submitVoiceBtn) {
-      submitVoiceBtn.disabled = true;
-      submitVoiceBtn.textContent = '🔄 Analyzing...';
-    }
-    statusText.textContent = '📤 Sending audio for analysis...';
-    
-    showLoadingAnimation(function() {
-      const transcribedText = "I am Aadesh Pillai studying in 5th standard and I love playing football and video games...";
-      
-      const sampleData = {
-        metrics: { impact: 42 },
-        diagnosis: {
-          pattern_name: "The Minimalist",
-          pattern_description: "You keep things brief but may be leaving out critical context."
-        },
-        gap: {
-          what_got_lost: "The depth of your experience and expertise",
-          unspoken_gap: "Between your concise delivery and the full story behind it"
-        },
-        before_after_rewrite: {
-          executive_version: "I bring strategic clarity and results-driven leadership to intro challenges."
-        }
-      };
-      
-      analyzeWithBackend(transcribedText, 'voice', getCurrentQuestionType(), sampleData);
-      
-      if (submitVoiceBtn) {
-        submitVoiceBtn.textContent = '✅ Submitted!';
-        submitVoiceBtn.disabled = false;
-      }
-      isSubmitting = false;
     });
   }
-  // ============================================================
-// SUBMIT VOICE RECORDING - FIXED
-// ============================================================
-async function submitVoiceRecording() {
-  if (isSubmitting) return;
-  if (!audioBlob) {
-    alert('Please record your response first.');
-    return;
-  }
-  if (seconds < MIN_RECORDING_SECONDS) {
-    alert(`Please record at least ${MIN_RECORDING_SECONDS} seconds.`);
-    return;
-  }
-  
-  isSubmitting = true;
-  if (submitVoiceBtn) {
-    submitVoiceBtn.disabled = true;
-    submitVoiceBtn.textContent = '🔄 Analyzing...';
-  }
-  statusText.textContent = '📤 Sending audio for analysis...';
-  
-  try {
-    // Create FormData to send audio
-    const formData = new FormData();
-    formData.append('audio', audioBlob, 'recording.webm');
-    formData.append('mode', 'voice');
-    formData.append('question_type', getCurrentQuestionType());
-    
-    const response = await fetch(`${BACKEND_URL}/api/communication/analyze/voice`, {
-      method: 'POST',
-      body: formData
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    
-    const data = await response.json();
-    console.log('✅ Voice analysis response:', data);
-    
-    if (data.transcribed_text) {
-      // Now analyze the transcribed text
-      analyzeWithBackend(data.transcribed_text, 'voice', getCurrentQuestionType());
-    } else {
-      throw new Error('No transcribed text received');
-    }
-    
-    if (submitVoiceBtn) {
-      submitVoiceBtn.textContent = '✅ Submitted!';
-      submitVoiceBtn.disabled = false;
-    }
-    isSubmitting = false;
-    
-  } catch (error) {
-    console.error('❌ Voice analysis error:', error);
-    statusText.textContent = '⚠️ ' + error.message;
-    if (submitVoiceBtn) {
-      submitVoiceBtn.textContent = '🔄 Try Again';
-      submitVoiceBtn.disabled = false;
-    }
-    isSubmitting = false;
-  }
-}
-
-  // ============================================================
-  // EVENT LISTENERS FOR RECORDING
-  // ============================================================
-  recordBtn.addEventListener('click', () => {
-    if (isRecording) {
-      stopRecording();
-    } else {
-      startRecording();
-    }
-  });
 
   if (submitVoiceBtn) {
     submitVoiceBtn.addEventListener('click', submitVoiceRecording);
@@ -3651,7 +3717,47 @@ async function submitVoiceRecording() {
   console.log('🔗 Backend URL:', BACKEND_URL);
   console.log('✅ All features integrated with backend');
 });
+
+// ============================================================
+// FIX: TRY AGAIN BUTTON FUNCTIONALITY
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const retryButton = document.getElementById('retryButton');
+    const secondAttempt = document.getElementById('secondAttempt');
     
-  </script>
+    if (retryButton && secondAttempt) {
+        retryButton.addEventListener('click', function() {
+            console.log('🔄 Try Again button clicked');
+            
+            // Remove the blurred class to reveal content
+            secondAttempt.classList.remove('blurred');
+            secondAttempt.classList.add('visible');
+            
+            // Change button text
+            retryButton.textContent = '✅ Improvement revealed!';
+            retryButton.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+            retryButton.disabled = true;
+            
+            // Scroll to the second attempt
+            setTimeout(() => {
+                secondAttempt.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+            
+            // Animate the improvement metrics
+            const metrics = secondAttempt.querySelectorAll('.metric-item-improved');
+            metrics.forEach((metric, index) => {
+                setTimeout(() => {
+                    metric.style.opacity = '1';
+                    metric.style.transform = 'translateX(0)';
+                }, 500 + (index * 200));
+            });
+            
+            console.log('✅ Second attempt revealed!');
+        });
+    }
+});
+    
+</script>
 </body>
 </html>
