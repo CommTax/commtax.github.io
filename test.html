@@ -22,8 +22,18 @@
       --bg-warm: #f4f0ea;
       --brick-red: #a13d2f;
       --sage: #6b7a5e;
-      --phone-dark: #0e0e10;
-      --phone-card: #faf8f5;
+
+      /* Phone palette — light */
+      --phone-bg: #fefcf8;
+      --phone-card: #ffffff;
+      --phone-border: #ede8e0;
+      --phone-text: #1a1917;
+      --phone-muted: #8a8680;
+      --phone-accent: #b8943c;
+      --phone-accent-soft: #fef3c7;
+      --phone-tag-pink: #f4b8c4;
+      --phone-tag-orange: #f4a261;
+      --phone-tag-green: #8fb996;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -301,44 +311,111 @@
     }
 
     /* ============================================================
-       PHONE FRAME — NEW CARD-BASED DESIGN
+       PHONE MOCKUP — REALISTIC WITH STATUS BAR + LIGHT SCREEN
        ============================================================ */
-    .phone-frame {
-      max-width: 420px;
+    .phone-wrap {
+      position: relative;
+      max-width: 380px;
       margin: 0 auto;
-      background: #0a0a0c;
-      border-radius: 44px;
-      padding: 12px;
-      box-shadow:
-        0 40px 100px rgba(0, 0, 0, 0.25),
-        0 0 0 1px rgba(255, 255, 255, 0.06),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      position: relative;
-    }
-    .phone-frame::before {
-      content: '';
-      position: absolute;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 22px;
-      background: #000;
-      border-radius: 0 0 14px 14px;
-      z-index: 10;
-    }
-    .phone-screen {
-      background: #0e0e10;
-      border-radius: 34px;
-      overflow: hidden;
-      position: relative;
-      min-height: 700px;
-      padding: 52px 0 0;
+      padding: 40px 30px;
     }
 
-    /* Phone header row */
+    /* Floating side tags (like the PatterAI image) */
+    .side-tag {
+      position: absolute;
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.01em;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      z-index: 5;
+      white-space: nowrap;
+    }
+    .side-tag.top-left {
+      top: 20px;
+      left: -10px;
+      background: var(--phone-tag-pink);
+      transform: rotate(-8deg);
+    }
+    .side-tag.mid-left {
+      top: 46%;
+      left: -30px;
+      background: var(--phone-tag-orange);
+      transform: rotate(-6deg);
+    }
+    .side-tag.mid-right {
+      top: 62%;
+      right: -40px;
+      background: var(--phone-tag-green);
+      transform: rotate(6deg);
+    }
+
+    /* The actual phone frame — light bezel */
+    .phone-frame {
+      position: relative;
+      background: #f2ede6;
+      border-radius: 48px;
+      padding: 12px;
+      box-shadow:
+        0 40px 80px rgba(0, 0, 0, 0.18),
+        0 0 0 1px rgba(0, 0, 0, 0.05),
+        inset 0 0 0 2px #e8e2d8;
+      z-index: 3;
+    }
+
+    /* Notch / Dynamic Island */
+    .phone-notch {
+      position: absolute;
+      top: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 22px;
+      background: #1a1917;
+      border-radius: 100px;
+      z-index: 10;
+    }
+
+    /* Screen — LIGHT bg */
+    .phone-screen {
+      background: var(--phone-bg);
+      border-radius: 38px;
+      overflow: hidden;
+      position: relative;
+      min-height: 680px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 24px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--phone-text);
+      letter-spacing: 0.02em;
+    }
+    .status-bar .time { font-size: 12px; font-weight: 800; }
+    .status-icons {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      font-size: 11px;
+    }
+    .status-icons svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* Inside phone: header */
     .phone-header {
-      padding: 0 18px 14px;
+      padding: 4px 20px 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -346,43 +423,43 @@
     .phone-logo {
       font-family: 'Playfair Display', serif;
       font-weight: 700;
-      font-size: 17px;
-      color: #fff;
+      font-size: 18px;
+      color: var(--phone-text);
       letter-spacing: -0.02em;
     }
-    .phone-logo span { color: var(--gold); }
+    .phone-logo span { color: var(--phone-accent); }
     .phone-close {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: rgba(255, 255, 255, 0.04);
-      color: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--phone-border);
+      background: #fff;
+      color: var(--phone-muted);
       cursor: pointer;
-      font-size: 16px;
+      font-size: 15px;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: all 0.2s;
       font-family: inherit;
     }
-    .phone-close:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+    .phone-close:hover { background: #f4f0ea; color: var(--phone-text); }
 
-    /* Tabs — pill row */
+    /* Tabs — pill row (PatterAI style) */
     .phone-tabs {
       display: flex;
       gap: 6px;
-      padding: 0 18px 14px;
+      padding: 0 20px 14px;
       overflow-x: auto;
       scrollbar-width: none;
     }
     .phone-tabs::-webkit-scrollbar { display: none; }
     .phone-tab {
-      padding: 8px 16px;
+      padding: 9px 16px;
       border-radius: 100px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.03);
-      color: rgba(255, 255, 255, 0.45);
+      border: 1px solid var(--phone-border);
+      background: #fff;
+      color: var(--phone-muted);
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.01em;
@@ -391,67 +468,79 @@
       white-space: nowrap;
       font-family: inherit;
       flex-shrink: 0;
+      opacity: 0.55;
     }
     .phone-tabs.activated .phone-tab {
       cursor: pointer;
-      color: rgba(255, 255, 255, 0.75);
+      opacity: 1;
     }
     .phone-tabs.activated .phone-tab:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: #f4f0ea;
     }
     .phone-tab.active {
-      background: var(--gold);
-      border-color: var(--gold);
-      color: #000;
+      background: var(--phone-text);
+      border-color: var(--phone-text);
+      color: #fff;
     }
+
+    /* Content area — scrollable */
+    .phone-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 20px;
+      scrollbar-width: none;
+    }
+    .phone-content::-webkit-scrollbar { display: none; }
 
     /* Card base */
     .phone-card {
-      background: #faf8f5;
-      border-radius: 16px;
+      background: var(--phone-card);
+      border-radius: 18px;
       padding: 16px;
-      margin: 0 18px 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      margin: 0 20px 10px;
+      border: 1px solid var(--phone-border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
-    /* Speak Naturally heading (dark, above card) */
-    .phone-dark-heading {
-      padding: 0 20px 12px;
+    /* Dark heading above card */
+    .phone-heading {
+      padding: 4px 22px 12px;
     }
-    .phone-dark-heading h4 {
+    .phone-heading h4 {
       font-family: 'Playfair Display', serif;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
-      color: #fff;
+      color: var(--phone-text);
       margin: 0 0 6px;
       letter-spacing: -0.02em;
     }
-    .phone-dark-heading p {
+    .phone-heading p {
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.55);
+      color: var(--phone-muted);
       line-height: 1.5;
       margin: 0;
     }
 
-    /* Scenario / mode pills on light card */
+    /* Card label */
     .card-label {
       font-size: 9px;
       letter-spacing: 0.14em;
       font-weight: 700;
-      color: var(--gold);
+      color: var(--phone-accent);
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       display: block;
     }
+
+    /* Pills */
     .scenario-pills { display: flex; gap: 8px; }
     .scenario-pill {
       flex: 1;
-      padding: 10px 12px;
+      padding: 11px 12px;
       border-radius: 100px;
-      border: 1.5px solid #e0d8d0;
+      border: 1.5px solid var(--phone-border);
       background: #fff;
-      color: var(--text-muted);
+      color: var(--phone-muted);
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
@@ -460,20 +549,20 @@
       font-family: inherit;
     }
     .scenario-pill.active {
-      background: var(--ink);
-      border-color: var(--ink);
+      background: var(--phone-text);
+      border-color: var(--phone-text);
       color: #fff;
     }
 
-    /* Recording card */
+    /* Recording controls */
     .recording-controls-phone {
       display: flex;
       align-items: center;
       gap: 12px;
-      background: #fff;
+      background: #f9f6f1;
       border-radius: 100px;
       padding: 6px 14px 6px 6px;
-      border: 1.5px solid #e0d8d0;
+      border: 1.5px solid var(--phone-border);
     }
     .record-btn {
       width: 46px;
@@ -481,7 +570,7 @@
       border-radius: 50%;
       border: none;
       background: #a13d2f;
-      color: white;
+      color: #fff;
       cursor: pointer;
       transition: all 0.3s ease;
       display: flex;
@@ -496,13 +585,13 @@
     .recording-timer {
       font-size: 13px;
       font-weight: 700;
-      color: var(--ink);
+      color: var(--phone-text);
       font-variant-numeric: tabular-nums;
       min-width: 44px;
     }
     .recording-status-phone {
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--phone-muted);
       flex: 1;
       min-width: 60px;
       font-weight: 500;
@@ -534,11 +623,11 @@
       border-radius: 3px;
       transition: height 0.15s ease;
     }
-    .waveform-bar.is-active { background: var(--gold); }
+    .waveform-bar.is-active { background: var(--phone-accent); }
 
     .btn-submit-voice {
       display: none;
-      background: var(--ink);
+      background: var(--phone-text);
       color: #fff;
       font-weight: 700;
       font-size: 11px;
@@ -550,42 +639,38 @@
       font-family: inherit;
       white-space: nowrap;
     }
-    .btn-submit-voice:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); }
+    .btn-submit-voice:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); }
     .btn-submit-voice:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Text input card */
     .phone-text-area { display: none; }
     .phone-text-area.is-visible { display: block; }
     .phone-text-area textarea {
       width: 100%;
       min-height: 90px;
       padding: 12px 14px;
-      border: 1.5px solid #e0d8d0;
+      border: 1.5px solid var(--phone-border);
       border-radius: 12px;
       font-family: 'Inter', sans-serif;
       font-size: 12px;
       resize: vertical;
       transition: border-color 0.3s ease;
-      background: #fff;
-      color: var(--ink);
+      background: #f9f6f1;
+      color: var(--phone-text);
     }
     .phone-text-area textarea::placeholder { color: #b0a8a0; }
-    .phone-text-area textarea:focus {
-      outline: none;
-      border-color: var(--gold);
-    }
+    .phone-text-area textarea:focus { outline: none; border-color: var(--phone-accent); background: #fff; }
     .phone-text-area .text-char-count {
       text-align: right;
       font-size: 10px;
-      color: var(--text-muted);
+      color: var(--phone-muted);
       margin-top: 6px;
     }
     .text-submit-btn {
       margin-top: 10px;
-      padding: 10px 20px;
+      padding: 12px 20px;
       border-radius: 100px;
       border: none;
-      background: var(--ink);
+      background: var(--phone-text);
       color: #fff;
       font-weight: 700;
       font-size: 11px;
@@ -594,17 +679,16 @@
       font-family: inherit;
       width: 100%;
     }
-    .text-submit-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); }
+    .text-submit-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); }
     .text-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Did you know card */
+    /* Did you know card — gold */
     .did-you-know-card {
       background: linear-gradient(135deg, #fef3c7, #fde68a);
       border: 1px solid rgba(184, 148, 60, 0.3);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 14px 16px;
-      margin: 0 18px 20px;
-      box-shadow: 0 2px 8px rgba(184, 148, 60, 0.1);
+      margin: 0 20px 16px;
     }
     .did-you-know-card .dyk-label {
       font-size: 10px;
@@ -635,73 +719,60 @@
     .did-you-know-card .flow b { color: rgba(0, 0, 0, 0.25); font-weight: 400; }
 
     /* ============================================================
-       RESULTS VIEW CARDS
+       RESULTS VIEW
        ============================================================ */
     .attempt-label {
       font-size: 10px;
       letter-spacing: 0.14em;
       font-weight: 700;
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--phone-muted);
       text-transform: uppercase;
       text-align: center;
       margin: 0 0 12px;
     }
 
     /* Score card */
-    .score-card {
-      text-align: center;
-      padding: 22px 18px 24px;
-    }
+    .score-card { text-align: center; padding: 22px 18px 24px; }
     .score-value {
       font-family: 'Playfair Display', serif;
       font-size: 56px;
       font-weight: 700;
       letter-spacing: -0.04em;
-      color: var(--ink);
+      color: var(--phone-text);
       line-height: 1;
     }
-    .score-denom {
-      font-size: 18px;
-      color: var(--text-muted);
-      font-weight: 500;
-      margin-left: 4px;
-    }
+    .score-denom { font-size: 18px; color: var(--phone-muted); font-weight: 500; margin-left: 4px; }
     .score-label {
       font-size: 10px;
-      color: var(--text-muted);
+      color: var(--phone-muted);
       letter-spacing: 0.16em;
       text-transform: uppercase;
       font-weight: 700;
       margin-top: 8px;
     }
 
-    /* Result card generic */
-    .result-card {
-      padding: 16px;
-    }
+    /* Result card */
+    .result-card { padding: 16px; }
     .result-card .card-heading {
       display: flex;
       align-items: center;
       gap: 8px;
       margin-bottom: 12px;
     }
-    .result-card .card-heading .icon {
-      font-size: 14px;
-    }
+    .result-card .card-heading .icon { font-size: 14px; }
     .result-card .card-heading .title {
       font-family: 'Playfair Display', serif;
       font-size: 14px;
       font-weight: 700;
-      color: var(--ink);
+      color: var(--phone-text);
       letter-spacing: -0.01em;
     }
 
-    /* Pattern card */
     .pattern-name {
       font-family: 'Playfair Display', serif;
       font-size: 17px;
       font-weight: 700;
-      color: var(--gold-darker);
+      color: var(--phone-accent);
       margin: 0 0 4px;
     }
     .pattern-desc {
@@ -711,12 +782,7 @@
       margin: 0;
     }
 
-    /* Lists inside cards */
-    .result-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
+    .result-list { list-style: none; padding: 0; margin: 0; }
     .result-list li {
       display: flex;
       gap: 10px;
@@ -725,36 +791,24 @@
       line-height: 1.55;
       margin-bottom: 8px;
       padding-bottom: 8px;
-      border-bottom: 1px dashed #e0d8d0;
+      border-bottom: 1px dashed var(--phone-border);
     }
     .result-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-    .result-list li::before {
-      content: "—";
-      color: var(--gold);
-      flex-shrink: 0;
-      font-weight: 700;
-    }
-    .wins-list li::before {
-      content: "→";
-      color: var(--gold);
-      font-weight: 700;
-    }
+    .result-list li::before { content: "—"; color: var(--phone-accent); flex-shrink: 0; font-weight: 700; }
+    .wins-list li::before { content: "→"; color: var(--phone-accent); font-weight: 700; }
 
     /* Fillers tab */
-    .fillers-summary-card {
-      text-align: center;
-      padding: 20px 16px;
-    }
+    .fillers-summary-card { text-align: center; padding: 20px 16px; }
     .fillers-summary-card .big-num {
       font-family: 'Playfair Display', serif;
       font-size: 44px;
       font-weight: 700;
-      color: var(--ink);
+      color: var(--phone-text);
       line-height: 1;
     }
     .fillers-summary-card .sub {
       font-size: 10px;
-      color: var(--text-muted);
+      color: var(--phone-muted);
       margin-top: 6px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -765,24 +819,19 @@
       justify-content: space-between;
       align-items: center;
       padding: 10px 12px;
-      background: #f4f0ea;
+      background: #f9f6f1;
       border-radius: 10px;
       margin-bottom: 6px;
       font-size: 12px;
-      color: var(--text-soft);
     }
     .filler-item:last-child { margin-bottom: 0; }
-    .filler-item .filler-word {
-      font-weight: 600;
-      color: var(--ink);
-      font-style: italic;
-    }
+    .filler-item .filler-word { font-weight: 600; color: var(--phone-text); font-style: italic; }
     .filler-item .filler-count {
       font-size: 11px;
       color: var(--gold-darker);
       font-weight: 700;
       padding: 3px 10px;
-      background: rgba(184, 148, 60, 0.15);
+      background: var(--phone-accent-soft);
       border-radius: 100px;
     }
 
@@ -792,26 +841,18 @@
       justify-content: space-between;
       align-items: center;
       padding: 12px 14px;
-      background: #f4f0ea;
+      background: #f9f6f1;
       border-radius: 10px;
       margin-bottom: 8px;
     }
     .clarity-stat:last-child { margin-bottom: 0; }
-    .clarity-stat .stat-label {
-      font-size: 12px;
-      color: var(--text-soft);
-      font-weight: 500;
-    }
-    .clarity-stat .stat-value {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--ink);
-    }
+    .clarity-stat .stat-label { font-size: 12px; color: var(--text-soft); font-weight: 500; }
+    .clarity-stat .stat-value { font-size: 13px; font-weight: 700; color: var(--phone-text); }
 
-    /* Word suggestion tab */
+    /* Word suggestion */
     .ws-original {
       padding: 14px;
-      background: #f4f0ea;
+      background: #f9f6f1;
       border-radius: 12px;
       border-left: 3px solid var(--brick-red);
       font-size: 12px;
@@ -831,9 +872,9 @@
       font-weight: 600;
     }
 
-    /* Bottom action card */
+    /* Bottom action */
     .phone-bottom-action {
-      padding: 4px 18px 20px;
+      padding: 8px 20px 16px;
       margin-top: 4px;
     }
     .phone-action-btn {
@@ -841,7 +882,7 @@
       padding: 16px 20px;
       border-radius: 100px;
       border: none;
-      background: var(--gold);
+      background: var(--phone-accent);
       color: #000;
       font-weight: 700;
       font-size: 14px;
@@ -855,16 +896,14 @@
     }
 
     /* Attempt 2 hints */
-    .attempt-2-hints {
-      padding: 0 18px 12px;
-    }
+    .attempt-2-hints { padding: 0 20px 12px; }
     .prev-response-hint {
       padding: 12px 14px;
-      background: rgba(255, 255, 255, 0.04);
+      background: #f9f6f1;
       border-radius: 12px;
-      border: 1px dashed rgba(255, 255, 255, 0.12);
+      border: 1px dashed var(--phone-border);
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--phone-muted);
       font-style: italic;
       margin-bottom: 10px;
       line-height: 1.5;
@@ -892,11 +931,8 @@
       line-height: 1.5;
     }
 
-    /* Comparison view */
-    .comparison-scores-card {
-      text-align: center;
-      padding: 24px 18px;
-    }
+    /* Comparison */
+    .comparison-scores-card { text-align: center; padding: 24px 18px; }
     .comparison-scores {
       display: flex;
       justify-content: center;
@@ -910,22 +946,18 @@
       line-height: 1;
     }
     .comp-score.old .value { color: #b0a8a0; }
-    .comp-score.new .value { color: var(--gold-darker); }
+    .comp-score.new .value { color: var(--phone-accent); }
     .comp-score .label {
       font-size: 9px;
-      color: var(--text-muted);
+      color: var(--phone-muted);
       letter-spacing: 0.14em;
       text-transform: uppercase;
       margin-top: 6px;
       font-weight: 700;
     }
-    .comp-arrow {
-      font-size: 22px;
-      color: var(--gold);
-      opacity: 0.7;
-    }
+    .comp-arrow { font-size: 22px; color: var(--phone-accent); opacity: 0.7; }
     .comp-insight {
-      margin: 12px 18px 0;
+      margin: 12px 20px 0;
       padding: 14px;
       background: linear-gradient(135deg, #fef3c7, #fde68a);
       border-radius: 14px;
@@ -1019,11 +1051,7 @@
       font-size: 0.85rem;
       color: var(--text-soft);
     }
-    .modal-features div::before {
-      content: "✓";
-      color: var(--gold);
-      font-weight: 700;
-    }
+    .modal-features div::before { content: "✓"; color: var(--gold); font-weight: 700; }
     .login-modal .modal-content { padding: 40px 36px; text-align: left; }
     .login-modal h2 {
       font-family: 'Playfair Display', serif;
@@ -1110,9 +1138,7 @@
       width: 12px; height: 12px; border-radius: 50%; background: var(--gold);
       border: 2px solid var(--bg-cream); box-shadow: 0 0 0 3px var(--gold);
     }
-    .timeline-content {
-      display: flex; align-items: center; gap: 12px; padding: 12px 0; flex: 1;
-    }
+    .timeline-content { display: flex; align-items: center; gap: 12px; padding: 12px 0; flex: 1; }
     .timeline-icon { font-size: 0.8rem; color: var(--gold); opacity: 0.5; }
     .timeline-item.visible .timeline-icon { opacity: 1; }
     .timeline-title {
@@ -1176,17 +1202,16 @@
       .logo-text { font-size: 1.2rem; }
       .nav-links { gap: 12px; flex-wrap: wrap; }
       .nav-links a { font-size: 0.8rem; }
-      .phone-frame { max-width: 100%; border-radius: 32px; padding: 10px; }
-      .phone-screen { border-radius: 24px; min-height: 600px; padding-top: 46px; }
+      .phone-wrap { padding: 30px 10px; }
+      .side-tag.top-left { left: 0; }
+      .side-tag.mid-left { left: -10px; }
+      .side-tag.mid-right { right: -10px; }
+      .phone-frame { padding: 10px; border-radius: 40px; }
+      .phone-screen { border-radius: 32px; min-height: 600px; }
       .score-value { font-size: 48px; }
-      .phone-card { margin: 0 14px 10px; padding: 14px; }
-      .phone-tabs { padding: 0 14px 12px; }
-      .phone-header { padding: 0 14px 12px; }
-      .phone-dark-heading { padding: 0 16px 12px; }
-      .did-you-know-card { margin: 0 14px 16px; }
-      .attempt-2-hints { padding: 0 14px 12px; }
-      .phone-bottom-action { padding: 4px 14px 16px; }
-      .comp-insight { margin: 12px 14px 0; }
+    }
+    @media (max-width: 480px) {
+      .side-tag { font-size: 10px; padding: 5px 10px; }
     }
   </style>
 </head>
@@ -1313,269 +1338,254 @@
     <p>Speak naturally. Get real feedback. Then practice it once more.</p>
   </div>
 
-  <div class="phone-frame">
-    <div class="phone-screen">
+  <div class="phone-wrap">
 
-      <!-- Phone header -->
-      <div class="phone-header">
-        <div class="phone-logo">The <span>Unspoken</span></div>
-        <button class="phone-close" id="phoneCloseBtn">×</button>
-      </div>
+    <!-- Floating side tags -->
+    <div class="side-tag top-left">Vocal coach</div>
+    <div class="side-tag mid-left">Articulation</div>
+    <div class="side-tag mid-right">Small Talk</div>
 
-      <!-- Tabs -->
-      <div class="phone-tabs" id="phoneTabs">
-        <button class="phone-tab active" data-tab="overview">Overview</button>
-        <button class="phone-tab" data-tab="fillers">Fillers</button>
-        <button class="phone-tab" data-tab="clarity">Clarity</button>
-        <button class="phone-tab" data-tab="word-suggestion">Word Suggestion</button>
-      </div>
+    <!-- Phone frame -->
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
 
-      <!-- ============== INPUT VIEW ============== -->
-      <div id="inputView">
-
-        <div class="phone-dark-heading">
-          <h4>Speak Naturally</h4>
-          <p id="promptText">"Tell me about yourself — your background, what you do, and what drives you professionally."</p>
-        </div>
-
-        <!-- Scenario card -->
-        <div class="phone-card">
-          <span class="card-label">Scenario</span>
-          <div class="scenario-pills">
-            <button class="scenario-pill active" data-question="intro">Introduce Yourself</button>
-            <button class="scenario-pill" data-question="project">Current Project</button>
+        <!-- Status bar -->
+        <div class="status-bar">
+          <span class="time">9:41</span>
+          <div class="status-icons">
+            <svg viewBox="0 0 20 14"><path d="M1 10h3v3H1zM6 7h3v6H6zM11 4h3v9h-3zM16 1h3v12h-3z"/></svg>
+            <svg viewBox="0 0 20 14"><path d="M10 3.5C6.9 3.5 4 4.7 1.9 6.7l1.4 1.4c1.8-1.7 4.2-2.7 6.7-2.7s4.9 1 6.7 2.7l1.4-1.4C16 4.7 13.1 3.5 10 3.5zM10 7.2c-1.8 0-3.5.7-4.7 1.9l1.4 1.4c.9-.9 2.1-1.4 3.3-1.4s2.4.5 3.3 1.4l1.4-1.4C13.5 7.9 11.8 7.2 10 7.2zM10 10.9c-.8 0-1.5.3-2 .8l2 2 2-2c-.5-.5-1.2-.8-2-.8z"/></svg>
+            <svg viewBox="0 0 26 14"><rect x="1" y="2" width="20" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="3" y="4" width="16" height="6" rx="1"/><rect x="22" y="5" width="2" height="4" rx="0.5"/></svg>
           </div>
         </div>
 
-        <!-- Mode + Recording card -->
-        <div class="phone-card">
-          <span class="card-label">Format</span>
-          <div class="scenario-pills" style="margin-bottom: 12px;">
-            <button class="mode-pill scenario-pill active" data-mode="voice">🎤 Voice</button>
-            <button class="mode-pill scenario-pill" data-mode="text">✏️ Type</button>
-          </div>
+        <!-- Phone header -->
+        <div class="phone-header">
+          <div class="phone-logo">The <span>Unspoken</span></div>
+          <button class="phone-close" id="phoneCloseBtn">×</button>
+        </div>
 
-          <!-- Voice -->
-          <div id="voiceControls">
-            <div class="recording-controls-phone">
-              <button class="record-btn" id="recordBtn" aria-label="Start recording"></button>
-              <span class="recording-timer" id="timerDisplay">0:00</span>
-              <span class="recording-status-phone" id="statusDisplay">
-                <span class="status-dot" id="statusDot"></span>
-                <span id="statusText">Ready</span>
-              </span>
-              <div class="recording-waveform-phone" id="waveformContainer">
-                <div class="waveform-bar" data-level="0.2"></div>
-                <div class="waveform-bar" data-level="0.4"></div>
-                <div class="waveform-bar" data-level="0.6"></div>
-                <div class="waveform-bar" data-level="0.8"></div>
-                <div class="waveform-bar" data-level="1.0"></div>
-                <div class="waveform-bar" data-level="0.9"></div>
-                <div class="waveform-bar" data-level="0.7"></div>
+        <!-- Tabs -->
+        <div class="phone-tabs" id="phoneTabs">
+          <button class="phone-tab active" data-tab="overview">Overview</button>
+          <button class="phone-tab" data-tab="fillers">Fillers</button>
+          <button class="phone-tab" data-tab="clarity">Clarity</button>
+          <button class="phone-tab" data-tab="word-suggestion">Word Suggestion</button>
+        </div>
+
+        <!-- Scrollable content -->
+        <div class="phone-content">
+
+          <!-- ============== INPUT VIEW ============== -->
+          <div id="inputView">
+            <div class="phone-heading">
+              <h4>Speak Naturally</h4>
+              <p id="promptText">"Tell me about yourself — your background, what you do, and what drives you professionally."</p>
+            </div>
+
+            <div class="phone-card">
+              <span class="card-label">Scenario</span>
+              <div class="scenario-pills">
+                <button class="scenario-pill active" data-question="intro">Introduce Yourself</button>
+                <button class="scenario-pill" data-question="project">Current Project</button>
               </div>
-              <button class="btn-submit-voice" id="submitVoiceBtn">Submit</button>
             </div>
-          </div>
 
-          <!-- Text -->
-          <div class="phone-text-area" id="textInputArea">
-            <textarea id="textResponse" placeholder="Type your response here..." maxlength="500"></textarea>
-            <div class="text-char-count"><span id="charCount">0</span> / 500</div>
-            <button class="text-submit-btn" id="textSubmitBtn">Analyze My Response →</button>
-          </div>
-        </div>
-
-        <!-- Did You Know card -->
-        <div class="did-you-know-card" id="didYouKnow">
-          <span class="dyk-label">💡 Did you know?</span>
-          <p id="dykText">Structure is the invisible backbone of every memorable message. Without it, even great ideas get lost.</p>
-          <div class="flow">
-            <span>POINT</span><b>→</b><span>ACTION</span><b>→</b><span>RESULT</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ============== RESULTS VIEW ============== -->
-      <div id="resultsView" style="display:none;">
-        <div class="attempt-label" id="attemptLabel">Attempt 1 of 2</div>
-
-        <!-- OVERVIEW TAB -->
-        <div class="tab-content active" data-content="overview">
-          <!-- Score card -->
-          <div class="phone-card score-card">
-            <div>
-              <span class="score-value" id="scoreValue">6.2</span>
-              <span class="score-denom">/10</span>
-            </div>
-            <div class="score-label">Overall Score</div>
-          </div>
-
-          <!-- What I Noticed card -->
-          <div class="phone-card result-card">
-            <div class="card-heading">
-              <span class="icon">✦</span>
-              <span class="title">What I Noticed</span>
-            </div>
-            <h4 class="pattern-name" id="patternName">The Amplifier</h4>
-            <p class="pattern-desc" id="patternDesc">You pre-justify under pressure, softening your authority before making your point.</p>
-          </div>
-
-          <!-- What Got Lost card -->
-          <div class="phone-card result-card">
-            <div class="card-heading">
-              <span class="icon">💔</span>
-              <span class="title">What Got Lost</span>
-            </div>
-            <ul class="result-list" id="whatGotLostList">
-              <li>Your credibility and authority in the first 10 seconds</li>
-              <li>Between your intent to sound confident and how you actually land</li>
-            </ul>
-          </div>
-
-          <!-- Quick Wins card -->
-          <div class="phone-card result-card">
-            <div class="card-heading">
-              <span class="icon">🎯</span>
-              <span class="title">Quick Wins</span>
-            </div>
-            <ul class="result-list wins-list" id="quickWinsList">
-              <li>Lead with the point</li>
-              <li>Front-load your result</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- FILLERS TAB -->
-        <div class="tab-content" data-content="fillers">
-          <div class="phone-card fillers-summary-card">
-            <div class="big-num" id="fillerTotal">5</div>
-            <div class="sub">Filler words detected</div>
-          </div>
-          <div class="phone-card" id="fillersList"></div>
-        </div>
-
-        <!-- CLARITY TAB -->
-        <div class="tab-content" data-content="clarity">
-          <div class="phone-card">
-            <div class="clarity-stat">
-              <span class="stat-label">Words spoken</span>
-              <span class="stat-value" id="statWords">87</span>
-            </div>
-            <div class="clarity-stat">
-              <span class="stat-label">Speaking pace</span>
-              <span class="stat-value" id="statWPM">186 wpm</span>
-            </div>
-            <div class="clarity-stat">
-              <span class="stat-label">Avg sentence length</span>
-              <span class="stat-value" id="statAvgSentence">11 words</span>
-            </div>
-            <div class="clarity-stat">
-              <span class="stat-label">Longest sentence</span>
-              <span class="stat-value" id="statLongest">24 words</span>
-            </div>
-            <div class="clarity-stat">
-              <span class="stat-label">Long pauses</span>
-              <span class="stat-value" id="statPauses">2</span>
-            </div>
-            <div class="clarity-stat">
-              <span class="stat-label">Point reached</span>
-              <span class="stat-value" id="statPointReached">18s</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- WORD SUGGESTION TAB -->
-        <div class="tab-content" data-content="word-suggestion">
-          <div class="phone-card">
-            <span class="card-label">What You Said</span>
-            <div class="ws-original" id="wsOriginal">"I am a Senior Program Manager with 12 years experience..."</div>
-            <span class="card-label">✦ Executive Version</span>
-            <div class="ws-improved" id="wsImproved">"I bring strategic clarity and results-driven leadership to every challenge."</div>
-          </div>
-        </div>
-
-        <!-- Bottom action -->
-        <div class="phone-bottom-action">
-          <button class="phone-action-btn" id="phoneActionBtn">🎙 Try Again</button>
-        </div>
-      </div>
-
-      <!-- ============== ATTEMPT 2 VIEW ============== -->
-      <div id="attempt2View" style="display:none;">
-        <div class="attempt-2-hints">
-          <div class="prev-response-hint" id="prevResponseHint">
-            Your previous response: "I am a Senior Program Manager..."
-          </div>
-          <div class="apply-change-hint">
-            <span class="label">Apply this change</span>
-            <p id="applyChangeText">Lead with the point. Then action. Then result.</p>
-          </div>
-        </div>
-
-        <!-- Format card again -->
-        <div class="phone-card">
-          <span class="card-label">Format</span>
-          <div class="scenario-pills" style="margin-bottom: 12px;">
-            <button class="mode-pill scenario-pill active" data-mode="voice" id="modePillVoice2">🎤 Voice</button>
-            <button class="mode-pill scenario-pill" data-mode="text" id="modePillText2">✏️ Type</button>
-          </div>
-
-          <div id="voiceControls2">
-            <div class="recording-controls-phone">
-              <button class="record-btn" id="recordBtn2"></button>
-              <span class="recording-timer" id="timerDisplay2">0:00</span>
-              <span class="recording-status-phone" id="statusDisplay2">
-                <span class="status-dot" id="statusDot2"></span>
-                <span id="statusText2">Ready</span>
-              </span>
-              <div class="recording-waveform-phone" id="waveformContainer2">
-                <div class="waveform-bar" data-level="0.2"></div>
-                <div class="waveform-bar" data-level="0.4"></div>
-                <div class="waveform-bar" data-level="0.6"></div>
-                <div class="waveform-bar" data-level="0.8"></div>
-                <div class="waveform-bar" data-level="1.0"></div>
-                <div class="waveform-bar" data-level="0.9"></div>
-                <div class="waveform-bar" data-level="0.7"></div>
+            <div class="phone-card">
+              <span class="card-label">Format</span>
+              <div class="scenario-pills" style="margin-bottom: 12px;">
+                <button class="mode-pill scenario-pill active" data-mode="voice">🎤 Voice</button>
+                <button class="mode-pill scenario-pill" data-mode="text">✏️ Type</button>
               </div>
-              <button class="btn-submit-voice" id="submitVoiceBtn2">Submit</button>
+
+              <div id="voiceControls">
+                <div class="recording-controls-phone">
+                  <button class="record-btn" id="recordBtn"></button>
+                  <span class="recording-timer" id="timerDisplay">0:00</span>
+                  <span class="recording-status-phone" id="statusDisplay">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">Ready</span>
+                  </span>
+                  <div class="recording-waveform-phone" id="waveformContainer">
+                    <div class="waveform-bar" data-level="0.2"></div>
+                    <div class="waveform-bar" data-level="0.4"></div>
+                    <div class="waveform-bar" data-level="0.6"></div>
+                    <div class="waveform-bar" data-level="0.8"></div>
+                    <div class="waveform-bar" data-level="1.0"></div>
+                    <div class="waveform-bar" data-level="0.9"></div>
+                    <div class="waveform-bar" data-level="0.7"></div>
+                  </div>
+                  <button class="btn-submit-voice" id="submitVoiceBtn">Submit</button>
+                </div>
+              </div>
+
+              <div class="phone-text-area" id="textInputArea">
+                <textarea id="textResponse" placeholder="Type your response here..." maxlength="500"></textarea>
+                <div class="text-char-count"><span id="charCount">0</span> / 500</div>
+                <button class="text-submit-btn" id="textSubmitBtn">Analyze My Response →</button>
+              </div>
+            </div>
+
+            <div class="did-you-know-card" id="didYouKnow">
+              <span class="dyk-label">💡 Did you know?</span>
+              <p id="dykText">Structure is the invisible backbone of every memorable message. Without it, even great ideas get lost.</p>
+              <div class="flow">
+                <span>POINT</span><b>→</b><span>ACTION</span><b>→</b><span>RESULT</span>
+              </div>
             </div>
           </div>
 
-          <div class="phone-text-area" id="textInputArea2">
-            <textarea id="textResponse2" placeholder="Type your improved response..." maxlength="500"></textarea>
-            <div class="text-char-count"><span id="charCount2">0</span> / 500</div>
-            <button class="text-submit-btn" id="textSubmitBtn2">Analyze My Response →</button>
+          <!-- ============== RESULTS VIEW ============== -->
+          <div id="resultsView" style="display:none;">
+            <div class="attempt-label" id="attemptLabel">Attempt 1 of 2</div>
+
+            <div class="tab-content active" data-content="overview">
+              <div class="phone-card score-card">
+                <div>
+                  <span class="score-value" id="scoreValue">6.2</span>
+                  <span class="score-denom">/10</span>
+                </div>
+                <div class="score-label">Overall Score</div>
+              </div>
+
+              <div class="phone-card result-card">
+                <div class="card-heading">
+                  <span class="icon">✦</span>
+                  <span class="title">What I Noticed</span>
+                </div>
+                <h4 class="pattern-name" id="patternName">The Amplifier</h4>
+                <p class="pattern-desc" id="patternDesc">You pre-justify under pressure, softening your authority before making your point.</p>
+              </div>
+
+              <div class="phone-card result-card">
+                <div class="card-heading">
+                  <span class="icon">💔</span>
+                  <span class="title">What Got Lost</span>
+                </div>
+                <ul class="result-list" id="whatGotLostList">
+                  <li>Your credibility and authority in the first 10 seconds</li>
+                  <li>Between your intent to sound confident and how you actually land</li>
+                </ul>
+              </div>
+
+              <div class="phone-card result-card">
+                <div class="card-heading">
+                  <span class="icon">🎯</span>
+                  <span class="title">Quick Wins</span>
+                </div>
+                <ul class="result-list wins-list" id="quickWinsList">
+                  <li>Lead with the point</li>
+                  <li>Front-load your result</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="tab-content" data-content="fillers">
+              <div class="phone-card fillers-summary-card">
+                <div class="big-num" id="fillerTotal">5</div>
+                <div class="sub">Filler words detected</div>
+              </div>
+              <div class="phone-card" id="fillersList"></div>
+            </div>
+
+            <div class="tab-content" data-content="clarity">
+              <div class="phone-card">
+                <div class="clarity-stat"><span class="stat-label">Words spoken</span><span class="stat-value" id="statWords">87</span></div>
+                <div class="clarity-stat"><span class="stat-label">Speaking pace</span><span class="stat-value" id="statWPM">186 wpm</span></div>
+                <div class="clarity-stat"><span class="stat-label">Avg sentence length</span><span class="stat-value" id="statAvgSentence">11 words</span></div>
+                <div class="clarity-stat"><span class="stat-label">Longest sentence</span><span class="stat-value" id="statLongest">24 words</span></div>
+                <div class="clarity-stat"><span class="stat-label">Long pauses</span><span class="stat-value" id="statPauses">2</span></div>
+                <div class="clarity-stat"><span class="stat-label">Point reached</span><span class="stat-value" id="statPointReached">18s</span></div>
+              </div>
+            </div>
+
+            <div class="tab-content" data-content="word-suggestion">
+              <div class="phone-card">
+                <span class="card-label">What You Said</span>
+                <div class="ws-original" id="wsOriginal">"I am a Senior Program Manager with 12 years experience..."</div>
+                <span class="card-label">✦ Executive Version</span>
+                <div class="ws-improved" id="wsImproved">"I bring strategic clarity and results-driven leadership to every challenge."</div>
+              </div>
+            </div>
+
+            <div class="phone-bottom-action">
+              <button class="phone-action-btn" id="phoneActionBtn">🎙 Try Again</button>
+            </div>
           </div>
+
+          <!-- ============== ATTEMPT 2 ============== -->
+          <div id="attempt2View" style="display:none;">
+            <div class="attempt-2-hints">
+              <div class="prev-response-hint" id="prevResponseHint">Your previous response: "I am a Senior Program Manager..."</div>
+              <div class="apply-change-hint">
+                <span class="label">Apply this change</span>
+                <p id="applyChangeText">Lead with the point. Then action. Then result.</p>
+              </div>
+            </div>
+
+            <div class="phone-card">
+              <span class="card-label">Format</span>
+              <div class="scenario-pills" style="margin-bottom: 12px;">
+                <button class="scenario-pill active" id="modePillVoice2">🎤 Voice</button>
+                <button class="scenario-pill" id="modePillText2">✏️ Type</button>
+              </div>
+
+              <div id="voiceControls2">
+                <div class="recording-controls-phone">
+                  <button class="record-btn" id="recordBtn2"></button>
+                  <span class="recording-timer" id="timerDisplay2">0:00</span>
+                  <span class="recording-status-phone" id="statusDisplay2">
+                    <span class="status-dot" id="statusDot2"></span>
+                    <span id="statusText2">Ready</span>
+                  </span>
+                  <div class="recording-waveform-phone" id="waveformContainer2">
+                    <div class="waveform-bar" data-level="0.2"></div>
+                    <div class="waveform-bar" data-level="0.4"></div>
+                    <div class="waveform-bar" data-level="0.6"></div>
+                    <div class="waveform-bar" data-level="0.8"></div>
+                    <div class="waveform-bar" data-level="1.0"></div>
+                    <div class="waveform-bar" data-level="0.9"></div>
+                    <div class="waveform-bar" data-level="0.7"></div>
+                  </div>
+                  <button class="btn-submit-voice" id="submitVoiceBtn2">Submit</button>
+                </div>
+              </div>
+
+              <div class="phone-text-area" id="textInputArea2">
+                <textarea id="textResponse2" placeholder="Type your improved response..." maxlength="500"></textarea>
+                <div class="text-char-count"><span id="charCount2">0</span> / 500</div>
+                <button class="text-submit-btn" id="textSubmitBtn2">Analyze My Response →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============== COMPARISON ============== -->
+          <div id="comparisonView" style="display:none;">
+            <div class="attempt-label">Your Progress</div>
+            <div class="phone-card comparison-scores-card">
+              <div class="comparison-scores">
+                <div class="comp-score old">
+                  <div class="value" id="compOldScore">6.2</div>
+                  <div class="label">Attempt 1</div>
+                </div>
+                <div class="comp-arrow">→</div>
+                <div class="comp-score new">
+                  <div class="value" id="compNewScore">8.1</div>
+                  <div class="label">Attempt 2</div>
+                </div>
+              </div>
+            </div>
+            <div class="comp-insight">
+              You restructured your answer. <strong>The way you said it changed.</strong>
+            </div>
+            <div class="phone-bottom-action">
+              <button class="phone-action-btn" id="unlockBtn">🔒 Unlock More Attempts</button>
+            </div>
+          </div>
+
         </div>
       </div>
-
-      <!-- ============== COMPARISON VIEW ============== -->
-      <div id="comparisonView" style="display:none;">
-        <div class="attempt-label">Your Progress</div>
-
-        <div class="phone-card comparison-scores-card">
-          <div class="comparison-scores">
-            <div class="comp-score old">
-              <div class="value" id="compOldScore">6.2</div>
-              <div class="label">Attempt 1</div>
-            </div>
-            <div class="comp-arrow">→</div>
-            <div class="comp-score new">
-              <div class="value" id="compNewScore">8.1</div>
-              <div class="label">Attempt 2</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="comp-insight">
-          You restructured your answer. <strong>The way you said it changed.</strong>
-        </div>
-
-        <div class="phone-bottom-action">
-          <button class="phone-action-btn" id="unlockBtn">🔒 Unlock More Attempts</button>
-        </div>
-      </div>
-
     </div>
   </div>
 </section>
@@ -1686,7 +1696,7 @@ document.getElementById('phoneCloseBtn').addEventListener('click', () => {
 });
 
 // ============================================================
-// HERO TRANSFORMATIONS ANIMATION
+// HERO ANIMATION
 // ============================================================
 (function() {
   const stage = document.querySelector('.transformations-stage');
@@ -1727,17 +1737,12 @@ document.getElementById('phoneCloseBtn').addEventListener('click', () => {
     })(start);
     return () => cancelAnimationFrame(raf);
   }
-
   function sceneScattered(container) {
     const fragments = [
-      { text: 'so basically...', keep: false },
-      { text: 'context first...', keep: false },
-      { text: 'we launched the platform', tag: 'POINT', keep: true },
-      { text: 'and then...', keep: false },
-      { text: 'led the rollout', tag: 'ACTION', keep: true },
-      { text: 'there were challenges', keep: false },
-      { text: 'adoption up 3x', tag: 'RESULT', keep: true },
-      { text: 'the thing is...', keep: false },
+      { text: 'so basically...', keep: false },{ text: 'context first...', keep: false },
+      { text: 'we launched the platform', tag: 'POINT', keep: true },{ text: 'and then...', keep: false },
+      { text: 'led the rollout', tag: 'ACTION', keep: true },{ text: 'there were challenges', keep: false },
+      { text: 'adoption up 3x', tag: 'RESULT', keep: true },{ text: 'the thing is...', keep: false },
     ];
     const scatteredPos = [{x:18,y:22},{x:78,y:18},{x:30,y:48},{x:68,y:55},{x:15,y:75},{x:85,y:78},{x:50,y:30},{x:55,y:68}];
     const structuredPos = { POINT:{x:50,y:32}, ACTION:{x:50,y:50}, RESULT:{x:50,y:68} };
@@ -1775,13 +1780,10 @@ document.getElementById('phoneCloseBtn').addEventListener('click', () => {
     }, BEFORE_MS);
     return () => clearTimeout(t1);
   }
-
   function scenePrecision(container) {
     const ghosts = [
-      { text: 'kind of a big thing', x: 32, y: 38 },
-      { text: 'sort of impactful', x: 62, y: 32 },
-      { text: 'like, a whole project', x: 40, y: 62 },
-      { text: 'the thing we did', x: 66, y: 60 },
+      { text: 'kind of a big thing', x: 32, y: 38 },{ text: 'sort of impactful', x: 62, y: 32 },
+      { text: 'like, a whole project', x: 40, y: 62 },{ text: 'the thing we did', x: 66, y: 60 },
     ];
     const els = ghosts.map(g => {
       const el = document.createElement('div');
@@ -1797,7 +1799,6 @@ document.getElementById('phoneCloseBtn').addEventListener('click', () => {
     }, BEFORE_MS);
     return () => clearTimeout(t1);
   }
-
   function sceneImpact(container) {
     const stamp = document.createElement('div');
     stamp.className = 'stamp'; stamp.textContent = 'Adoption up 3x.';
@@ -1807,11 +1808,9 @@ document.getElementById('phoneCloseBtn').addEventListener('click', () => {
     const t1 = setTimeout(() => { stamp.classList.add('show'); ring.classList.add('pulse'); }, BEFORE_MS);
     return () => clearTimeout(t1);
   }
-
   function sceneInfluence(container) {
     const center = document.createElement('div');
-    center.className = 'center-dot';
-    container.appendChild(center);
+    center.className = 'center-dot'; container.appendChild(center);
     const positions = [{x:50,y:20},{x:80,y:50},{x:50,y:80},{x:20,y:50}];
     const sats = positions.map(p => {
       const el = document.createElement('div');
@@ -1831,7 +1830,6 @@ document.getElementById('phoneCloseBtn').addEventListener('click', () => {
     }, BEFORE_MS);
     return () => clearTimeout(t1);
   }
-
   const segments = [
     { label: 'RAMBLING → CONCISE', before: 'rambling', after: 'concise', run: sceneWaveform },
     { label: 'SCATTERED → STRUCTURE', before: 'scattered', after: 'structured', run: sceneScattered },
@@ -1876,9 +1874,7 @@ document.querySelectorAll('.phone-tab').forEach(tab => {
 document.querySelectorAll('.scenario-pill').forEach(pill => {
   if (pill.classList.contains('mode-pill')) return;
   pill.addEventListener('click', () => {
-    document.querySelectorAll('.scenario-pill').forEach(p => {
-      if (!p.classList.contains('mode-pill')) p.classList.remove('active');
-    });
+    document.querySelectorAll('.scenario-pill').forEach(p => { if (!p.classList.contains('mode-pill')) p.classList.remove('active'); });
     pill.classList.add('active');
     state.currentQuestionType = pill.dataset.question;
     const prompts = {
@@ -1896,13 +1892,8 @@ document.querySelectorAll('.mode-pill').forEach(pill => {
     state.currentMode = pill.dataset.mode;
     const voiceC = document.getElementById('voiceControls');
     const textA = document.getElementById('textInputArea');
-    if (state.currentMode === 'voice') {
-      voiceC.style.display = 'block';
-      textA.classList.remove('is-visible');
-    } else {
-      voiceC.style.display = 'none';
-      textA.classList.add('is-visible');
-    }
+    if (state.currentMode === 'voice') { voiceC.style.display = 'block'; textA.classList.remove('is-visible'); }
+    else { voiceC.style.display = 'none'; textA.classList.add('is-visible'); }
   });
 });
 
@@ -1926,10 +1917,7 @@ function createRecorder(cfg) {
     const m = Math.floor(s.seconds / 60);
     const sec = s.seconds % 60;
     s.els.timer.textContent = `${m}:${sec.toString().padStart(2, '0')}`;
-    if (s.seconds >= 25) {
-      s.els.timer.style.color = '#a13d2f';
-      s.els.statusText.textContent = `⚠️ ${30 - s.seconds}s left`;
-    }
+    if (s.seconds >= 25) { s.els.timer.style.color = '#a13d2f'; s.els.statusText.textContent = `⚠️ ${30 - s.seconds}s left`; }
   }
   function animateBars(active) {
     s.els.waveform.forEach(bar => {
@@ -1960,7 +1948,7 @@ function createRecorder(cfg) {
       s.mediaRecorder.start(1000);
       s.isRecording = true;
       s.seconds = 0;
-      s.els.timer.style.color = 'var(--ink)';
+      s.els.timer.style.color = 'var(--phone-text)';
       updateTimer();
       s.els.recordBtn.classList.add('is-recording');
       s.els.statusDot.classList.add('is-live');
@@ -1968,15 +1956,8 @@ function createRecorder(cfg) {
       s.els.submitBtn.style.display = 'none';
       const waveInt = setInterval(() => { if (s.isRecording) animateBars(true); }, 150);
       s.els.recordBtn.dataset.waveInterval = waveInt;
-      s.timerInterval = setInterval(() => {
-        s.seconds++;
-        updateTimer();
-        if (s.seconds >= 30) stop();
-      }, 1000);
-    } catch (err) {
-      console.error('Mic error:', err);
-      alert('Please allow microphone access.');
-    }
+      s.timerInterval = setInterval(() => { s.seconds++; updateTimer(); if (s.seconds >= 30) stop(); }, 1000);
+    } catch (err) { console.error('Mic error:', err); alert('Please allow microphone access.'); }
   }
   function stop() {
     if (!s.isRecording) return;
@@ -2025,10 +2006,7 @@ function computeSignals(transcript, durationSec) {
   FILLER_WORDS.forEach(fw => {
     const regex = new RegExp(`\\b${fw.replace(/ /g, '\\s+')}\\b`, 'gi');
     const matches = transcript.match(regex);
-    if (matches) {
-      fillerCounts[fw] = matches.length;
-      fillerTotal += matches.length;
-    }
+    if (matches) { fillerCounts[fw] = matches.length; fillerTotal += matches.length; }
   });
 
   let pointReached = Math.round(duration * 0.6);
@@ -2083,7 +2061,6 @@ async function analyzeText(text, questionType) {
 // ============================================================
 function renderResults(data, userText, durationSec) {
   const signals = computeSignals(userText, durationSec);
-
   const impactScore = data?.metrics?.impact || 55;
   const score10 = scoreToTen(impactScore);
   document.getElementById('scoreValue').textContent = score10.toFixed(1);
@@ -2106,16 +2083,12 @@ function renderResults(data, userText, durationSec) {
   const fillersList = document.getElementById('fillersList');
   const fillerKeys = Object.keys(signals.fillerCounts);
   if (fillerKeys.length === 0) {
-    fillersList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12px;">No filler words detected. Nice.</div>';
+    fillersList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--phone-muted); font-size:12px;">No filler words detected. Nice.</div>';
   } else {
     fillersList.innerHTML = fillerKeys
       .sort((a,b) => signals.fillerCounts[b] - signals.fillerCounts[a])
-      .map(fw => `
-        <div class="filler-item">
-          <span class="filler-word">"${fw}"</span>
-          <span class="filler-count">${signals.fillerCounts[fw]}×</span>
-        </div>
-      `).join('');
+      .map(fw => `<div class="filler-item"><span class="filler-word">"${fw}"</span><span class="filler-count">${signals.fillerCounts[fw]}×</span></div>`)
+      .join('');
   }
 
   document.getElementById('statWords').textContent = signals.wordCount;
@@ -2172,7 +2145,7 @@ function enterAttempt2() {
   document.getElementById('prevResponseHint').textContent = `Your previous response: "${firstLine}..."`;
   document.getElementById('applyChangeText').textContent = 'Lead with the point. Then action. Then result.';
 
-  document.querySelector('.phone-frame').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  document.querySelector('.phone-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function showComparison() {
@@ -2269,7 +2242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.textContent = 'Submit'; btn.disabled = false;
   });
 
-  // Attempt 2 — mode pill switching
+  // Attempt 2 — mode pills
   document.getElementById('modePillVoice2').addEventListener('click', () => {
     document.getElementById('modePillVoice2').classList.add('active');
     document.getElementById('modePillText2').classList.remove('active');
@@ -2296,7 +2269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(`${BACKEND_URL}/api/health`).then(r => { if (r.ok) console.log('✅ Backend warm at', new Date().toLocaleTimeString()); }).catch(() => {});
   }, 4 * 60 * 1000);
 
-  console.log('🚀 The Unspoken — card-based design ready.');
+  console.log('🚀 The Unspoken — realistic phone mockup ready.');
 });
 </script>
 </body>
