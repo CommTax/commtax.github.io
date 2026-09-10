@@ -125,458 +125,492 @@
     .nav-links a { text-decoration: none; color: #3d3a34; font-weight: 500; font-size: 0.95rem; transition: color 0.2s; }
     .nav-links a:hover { color: var(--gold); }
 
-    /* HERO */
-    .hero { display: flex; align-items: center; gap: 50px; padding: 30px 0 50px; }
-    .hero-left { flex: 1 1 45%; min-width: 0; }
-    .hero-right { flex: 1 1 55%; min-width: 0; display: flex; align-items: center; }
-    .hero-badge {
-      color: var(--gold-darker);
-      font-size: 0.95rem;
-      font-weight: 600;
-      font-style: italic;
+    /* ============================================================
+       HERO
+       ============================================================ */
+    .hero {
+      display: flex;
+      align-items: center;
+      gap: 64px;
+      padding: 48px 0 72px;
+    }
+    .hero-left {
+      flex: 1 1 48%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-right {
+      flex: 1 1 52%;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Headline */
+    .hero-headline {
       font-family: 'Playfair Display', serif;
+      font-size: clamp(1.85rem, 3vw, 2.6rem);
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin: 0 0 22px;
+    }
+
+    /* Rotating problem words */
+    .hero-problems {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      margin-bottom: 22px;
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .problem-word {
+      color: #b0a8a0;
+      transition: color 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .problem-word.active {
+      color: var(--gold-darker);
+    }
+    .problem-word.active::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 2px;
+      animation: problemUnderline 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes problemUnderline {
+      from { transform: scaleX(0); transform-origin: left; }
+      to { transform: scaleX(1); transform-origin: left; }
+    }
+
+    /* Subhead */
+    .hero-subhead {
+      font-size: 1.02rem;
+      line-height: 1.5;
+      color: var(--text-soft);
+      margin: 0 0 28px;
+      font-weight: 500;
+    }
+
+    /* Badges */
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .hero-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      transition: all 0.25s ease;
+    }
+    .hero-badge:hover {
+      border-color: var(--gold);
+      transform: translateY(-1px);
+    }
+    .hero-badge .badge-icon {
+      font-size: 0.85rem;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .hero-badge .badge-text {
+      font-size: 0.7rem;
+      line-height: 1.3;
+      color: var(--text-soft);
+      font-weight: 500;
+    }
+
+    /* Actions */
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
       margin-bottom: 12px;
     }
-    .hero .rotating-container { height: 100px; overflow: hidden; position: relative; }
-    .hero .rotating-pair {
-      position: absolute; width: 100%; left: 0; top: 0;
-      opacity: 0; transform: translateY(30px); animation: fadeSlide 12s infinite;
+
+    /* Micro */
+    .hero-micro {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
     }
-    .hero .rotating-pair .pain-label {
-      font-size: 0.75rem; font-weight: 700; color: var(--gold);
-      letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2px;
+
+    /* ============================================================
+       TRANSFORMATIONS STAGE — Premium rebuild
+       ============================================================ */
+    .transformations-stage {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      aspect-ratio: 16 / 10;
+      border-radius: 16px;
+      background: radial-gradient(circle at 70% 25%, #16161a 0%, #0b0b0d 70%);
+      overflow: hidden;
+      margin: 8px 0 12px;
+      border: 1px solid rgba(184, 148, 60, 0.15);
+      box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.12),
+        0 8px 20px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      isolation: isolate;
     }
-    .hero .rotating-pair .inner-voice {
-      font-size: 1.5rem; line-height: 1.2;
+
+    .transformations-stage::before {
+      content: '';
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(
+        circle at 50% 50%,
+        rgba(184, 148, 60, 0.06) 0%,
+        rgba(184, 148, 60, 0.02) 35%,
+        transparent 65%
+      );
+      animation: stageBreathe 7s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes stageBreathe {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.08); }
+    }
+
+    .transformations-stage::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 24px 24px;
+      background-position: 0 0;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: radial-gradient(circle at 50% 45%, black 30%, transparent 75%);
+      -webkit-mask-image: radial-gradient(circle at 50% 45%, black 30%, transparent 75%);
+    }
+
+    .transformations-stage .scene {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+
+    /* Top label */
+    .transformations-stage .stage-label {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #6a6a72;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+    .transformations-stage .stage-label .arrow {
+      color: #3a3a42;
+      font-weight: 400;
+      display: inline-block;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.8s ease;
+    }
+    .transformations-stage .stage-label .after-part {
+      color: #3a3a42;
+      transition: color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .transformations-stage .stage-label.after {
+      color: #8a8a92;
+    }
+    .transformations-stage .stage-label.after .arrow {
+      color: #c94f3d;
+      transform: translateX(4px);
+    }
+    .transformations-stage .stage-label.after .after-part {
+      color: #c94f3d;
+    }
+
+    /* Bottom tagline */
+    .transformations-stage .stage-tagline {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: #6a6a72;
+      z-index: 4;
+      font-weight: 500;
       font-family: 'Playfair Display', serif;
-      font-weight: 400; font-style: italic;
+      font-style: italic;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
     }
-    .hero .rotating-pair:nth-child(1) { animation-delay: 0s; }
-    .hero .rotating-pair:nth-child(2) { animation-delay: 3s; }
-    .hero .rotating-pair:nth-child(3) { animation-delay: 6s; }
-    .hero .rotating-pair:nth-child(4) { animation-delay: 9s; }
-    @keyframes fadeSlide {
-      0% { opacity: 0; transform: translateY(30px); }
-      6% { opacity: 1; transform: translateY(0); }
-      22% { opacity: 1; transform: translateY(0); }
-      28% { opacity: 0; transform: translateY(-30px); }
-      100% { opacity: 0; }
+    .transformations-stage .stage-tagline.show {
+      opacity: 1;
     }
-    .hero .tagline { font-size: 1.1rem; font-weight: 600; color: var(--gold); margin-bottom: 10px; margin-top: 2px; }
-    .hero p { font-size: 1rem; color: var(--text-soft); max-width: 420px; margin-bottom: 14px; }
-    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
-    .hero-micro { font-size: 0.8rem; color: var(--text-muted); margin-top: 10px; }
 
-/* ============================================================
-   TRANSFORMATIONS STAGE — Premium rebuild
-   ============================================================ */
-.transformations-stage {
-  position: relative;
-  width: 100%;
-  max-width: 560px;
-  aspect-ratio: 16 / 10;
-  border-radius: 16px;
-  background: radial-gradient(circle at 70% 25%, #16161a 0%, #0b0b0d 70%);
-  overflow: hidden;
-  margin: 8px 0 12px;
-  border: 1px solid rgba(184, 148, 60, 0.15);
-  box-shadow:
-    0 30px 60px rgba(0, 0, 0, 0.12),
-    0 8px 20px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  isolation: isolate;
-}
+    /* ============================================================
+       SCENE 1 — SPEECH BUBBLES (RAMBLING → CONCISE)
+       ============================================================ */
+    .transformations-stage .bubble {
+      position: absolute;
+      padding: 8px 14px;
+      border-radius: 18px;
+      background: #1a1a1e;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: #9a9aa2;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+      max-width: 70%;
+      opacity: 0;
+      filter: blur(6px);
+      transform: translateY(8px) scale(0.94);
+      transition:
+        opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .transformations-stage .bubble.show {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0) scale(1);
+    }
+    .transformations-stage .bubble.fade {
+      opacity: 0;
+      filter: blur(10px);
+      transform: translateY(-6px) scale(0.9);
+    }
+    .transformations-stage .bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      width: 10px;
+      height: 10px;
+      background: #1a1a1e;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      transform: rotate(45deg);
+      border-bottom-right-radius: 2px;
+    }
+    .transformations-stage .bubble.tail-left::after { left: 16px; }
+    .transformations-stage .bubble.tail-right::after { right: 16px; }
 
-/* Ambient breathing glow behind everything */
-.transformations-stage::before {
-  content: '';
-  position: absolute;
-  inset: -40%;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(184, 148, 60, 0.06) 0%,
-    rgba(184, 148, 60, 0.02) 35%,
-    transparent 65%
-  );
-  animation: stageBreathe 7s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-@keyframes stageBreathe {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.08); }
-}
+    /* Landed line */
+    .transformations-stage .landed-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.92);
+      opacity: 0;
+      filter: blur(10px);
+      font-family: 'Playfair Display', serif;
+      font-size: 19px;
+      font-weight: 600;
+      color: #e8e4dc;
+      text-align: center;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+      max-width: 80%;
+      z-index: 5;
+      transition:
+        opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1),
+        text-shadow 1.2s ease 0.4s;
+    }
+    .transformations-stage .landed-line.show {
+      opacity: 1;
+      filter: blur(0);
+      transform: translate(-50%, -50%) scale(1);
+      text-shadow: 0 0 24px rgba(184, 148, 60, 0.35), 0 0 48px rgba(184, 148, 60, 0.15);
+    }
 
-/* Very subtle dot grid for depth */
-.transformations-stage::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 24px 24px;
-  background-position: 0 0;
-  pointer-events: none;
-  z-index: 0;
-  mask-image: radial-gradient(circle at 50% 45%, black 30%, transparent 75%);
-  -webkit-mask-image: radial-gradient(circle at 50% 45%, black 30%, transparent 75%);
-}
+    /* Landed glow */
+    .transformations-stage .landed-glow {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.4);
+      width: 240px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(
+        ellipse,
+        rgba(184, 148, 60, 0.25) 0%,
+        rgba(184, 148, 60, 0.08) 40%,
+        transparent 70%
+      );
+      opacity: 0;
+      filter: blur(20px);
+      z-index: 3;
+      pointer-events: none;
+      transition:
+        opacity 1s ease 0.3s,
+        transform 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+    }
+    .transformations-stage .landed-glow.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.4);
+    }
 
-.transformations-stage .scene {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-}
+    /* ============================================================
+       SCENE 2 — NODES (SCATTERED → STRUCTURED)
+       ============================================================ */
+    .transformations-stage .node {
+      position: absolute;
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(26, 26, 30, 0.7);
+      color: #9a9aa2;
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+      transform: translate(-50%, -50%) scale(0.94);
+      opacity: 0;
+      filter: blur(6px);
+      transition:
+        left 1.1s cubic-bezier(0.34, 1.56, 0.64, 1),
+        top 1.1s cubic-bezier(0.34, 1.56, 0.64, 1),
+        border-color 0.9s ease,
+        color 0.9s ease,
+        background 0.9s ease,
+        opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.9s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    .transformations-stage .node.show {
+      opacity: 1;
+      filter: blur(0);
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .transformations-stage .node.core {
+      border-color: rgba(232, 228, 220, 0.6);
+      color: #e8e4dc;
+      background: #1a1a1e;
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.3),
+        0 0 24px rgba(184, 148, 60, 0.15);
+    }
+    .transformations-stage .node.fade {
+      opacity: 0;
+      filter: blur(8px);
+      transform: translate(-50%, -50%) scale(0.94);
+    }
+    .transformations-stage .tag {
+      font-size: 8px;
+      color: #c94f3d;
+      margin-right: 5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
 
-/* Top label — RAMBLING → CONCISE */
-.transformations-stage .stage-label {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #6a6a72;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  white-space: nowrap;
-}
-.transformations-stage .stage-label .arrow {
-  color: #3a3a42;
-  transition: color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  font-weight: 400;
-  display: inline-block;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.8s ease;
-}
-.transformations-stage .stage-label .after-part {
-  color: #3a3a42;
-  transition: color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.transformations-stage .stage-label.after {
-  color: #8a8a92;
-}
-.transformations-stage .stage-label.after .arrow {
-  color: #c94f3d;
-  transform: translateX(4px);
-}
-.transformations-stage .stage-label.after .after-part {
-  color: #c94f3d;
-}
+    .transformations-stage svg.lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .transformations-stage svg.lines path {
+      fill: none;
+      stroke: rgba(184, 148, 60, 0.4);
+      stroke-width: 1.5;
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      transition: stroke-dashoffset 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .transformations-stage svg.lines path.show {
+      stroke-dashoffset: 0;
+    }
 
-/* Bottom tagline */
-.transformations-stage .stage-tagline {
-  position: absolute;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 11px;
-  color: #6a6a72;
-  z-index: 4;
-  font-weight: 500;
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
-}
-.transformations-stage .stage-tagline.show {
-  opacity: 1;
-}
+    /* ============================================================
+       SCENE 3 — BLUR WORDS (UNCLEAR → CLEAR)
+       ============================================================ */
+    .transformations-stage .blur-word {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      color: #6a6a72;
+      white-space: nowrap;
+      filter: blur(6px);
+      opacity: 0.55;
+      transition:
+        filter 1s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+        color 1s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .transformations-stage .blur-word.gone {
+      opacity: 0;
+      filter: blur(12px);
+      transform: translate(-50%, -50%) scale(0.92);
+    }
 
-/* ============================================================
-   SCENE 1 — SPEECH BUBBLES (RAMBLING → CONCISE)
-   ============================================================ */
-.transformations-stage .bubble {
-  position: absolute;
-  padding: 8px 14px;
-  border-radius: 18px;
-  background: #1a1a1e;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  color: #9a9aa2;
-  font-size: 12px;
-  font-weight: 500;
-  font-family: 'Inter', sans-serif;
-  white-space: nowrap;
-  max-width: 70%;
-  opacity: 0;
-  filter: blur(6px);
-  transform: translateY(8px) scale(0.94);
-  transition:
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-}
-.transformations-stage .bubble.show {
-  opacity: 1;
-  filter: blur(0);
-  transform: translateY(0) scale(1);
-}
-.transformations-stage .bubble.fade {
-  opacity: 0;
-  filter: blur(10px);
-  transform: translateY(-6px) scale(0.9);
-}
+    /* ============================================================
+       SCENE 4 — GENERIC WALL (FORGETTABLE → MEMORABLE)
+       ============================================================ */
+    .transformations-stage .generic-line {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      font-size: 12px;
+      color: #5a5a62;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      filter: blur(4px);
+      transition:
+        opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        color 0.6s ease;
+    }
+    .transformations-stage .generic-line.show {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateX(-50%) translateY(0);
+    }
+    .transformations-stage .generic-line.gone {
+      opacity: 0;
+      filter: blur(10px);
+      transform: translateX(-50%) translateY(-10px) scale(0.96);
+    }
 
-/* iMessage-style tails */
-.transformations-stage .bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -6px;
-  width: 10px;
-  height: 10px;
-  background: #1a1a1e;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  transform: rotate(45deg);
-  border-bottom-right-radius: 2px;
-}
-.transformations-stage .bubble.tail-left::after { left: 16px; }
-.transformations-stage .bubble.tail-right::after { right: 16px; }
-
-/* The landed / kept line — center stage, gold, glowing */
-.transformations-stage .landed-line {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(0.92);
-  opacity: 0;
-  filter: blur(10px);
-  font-family: 'Playfair Display', serif;
-  font-size: 19px;
-  font-weight: 600;
-  color: #e8e4dc;
-  text-align: center;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-  max-width: 80%;
-  z-index: 5;
-  transition:
-    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1),
-    text-shadow 1.2s ease 0.4s;
-}
-.transformations-stage .landed-line.show {
-  opacity: 1;
-  filter: blur(0);
-  transform: translate(-50%, -50%) scale(1);
-  text-shadow: 0 0 24px rgba(184, 148, 60, 0.35), 0 0 48px rgba(184, 148, 60, 0.15);
-}
-
-/* Soft gold glow that appears behind the landed line */
-.transformations-stage .landed-glow {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(0.4);
-  width: 240px;
-  height: 80px;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse,
-    rgba(184, 148, 60, 0.25) 0%,
-    rgba(184, 148, 60, 0.08) 40%,
-    transparent 70%
-  );
-  opacity: 0;
-  filter: blur(20px);
-  z-index: 3;
-  pointer-events: none;
-  transition:
-    opacity 1s ease 0.3s,
-    transform 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
-}
-.transformations-stage .landed-glow.show {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1.4);
-}
-
-/* ============================================================
-   SCENE 2 — NODES (SCATTERED → STRUCTURED)
-   ============================================================ */
-.transformations-stage .node {
-  position: absolute;
-  padding: 6px 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(26, 26, 30, 0.7);
-  color: #9a9aa2;
-  font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-  transform: translate(-50%, -50%) scale(0.94);
-  opacity: 0;
-  filter: blur(6px);
-  transition:
-    left 1.1s cubic-bezier(0.34, 1.56, 0.64, 1),
-    top 1.1s cubic-bezier(0.34, 1.56, 0.64, 1),
-    border-color 0.9s ease,
-    color 0.9s ease,
-    background 0.9s ease,
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.9s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-.transformations-stage .node.show {
-  opacity: 1;
-  filter: blur(0);
-  transform: translate(-50%, -50%) scale(1);
-}
-.transformations-stage .node.core {
-  border-color: rgba(232, 228, 220, 0.6);
-  color: #e8e4dc;
-  background: #1a1a1e;
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    0 0 24px rgba(184, 148, 60, 0.15);
-}
-.transformations-stage .node.fade {
-  opacity: 0;
-  filter: blur(8px);
-  transform: translate(-50%, -50%) scale(0.94);
-}
-.transformations-stage .tag {
-  font-size: 8px;
-  color: #c94f3d;
-  margin-right: 5px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
-
-.transformations-stage svg.lines {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-.transformations-stage svg.lines path {
-  fill: none;
-  stroke: rgba(184, 148, 60, 0.4);
-  stroke-width: 1.5;
-  stroke-dasharray: 200;
-  stroke-dashoffset: 200;
-  transition: stroke-dashoffset 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.transformations-stage svg.lines path.show {
-  stroke-dashoffset: 0;
-}
-
-/* ============================================================
-   SCENE 3 — GENERIC WALL (FORGETTABLE → MEMORABLE)
-   ============================================================ */
-.transformations-stage .generic-line {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%) translateY(6px);
-  font-size: 12px;
-  color: #5a5a62;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  white-space: nowrap;
-  opacity: 0;
-  filter: blur(4px);
-  transition:
-    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    color 0.6s ease;
-}
-.transformations-stage .generic-line.show {
-  opacity: 1;
-  filter: blur(0);
-  transform: translateX(-50%) translateY(0);
-}
-.transformations-stage .generic-line.gone {
-  opacity: 0;
-  filter: blur(10px);
-  transform: translateX(-50%) translateY(-10px) scale(0.96);
-}
-
-/* ============================================================
-   SCENE 4 — IMPACT NETWORK (UNIMPACTFUL → IMPACTFUL)
-   ============================================================ */
-.transformations-stage .impact-center {
-  position: absolute;
-  left: 50%;
-  top: 55%;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #3a3a42;
-  transform: translate(-50%, -50%) scale(0.8);
-  transition:
-    background 1s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 1s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 3;
-}
-.transformations-stage .impact-center.lit {
-  background: #faf8f5;
-  transform: translate(-50%, -50%) scale(1.15);
-  box-shadow:
-    0 0 30px rgba(250, 248, 245, 0.5),
-    0 0 60px rgba(184, 148, 60, 0.3);
-}
-
-.transformations-stage .impact-satellite {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #4a4a52;
-  transform: translate(-50%, -50%) scale(0.6);
-  transition:
-    background 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 1s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 2;
-}
-.transformations-stage .impact-satellite.lit {
-  background: #c94f3d;
-  transform: translate(-50%, -50%) scale(1.2);
-  box-shadow:
-    0 0 16px rgba(201, 79, 61, 0.6),
-    0 0 32px rgba(201, 79, 61, 0.3);
-}
-
-.transformations-stage .impact-ring {
-  position: absolute;
-  left: 50%;
-  top: 55%;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 1px solid rgba(201, 79, 61, 0.6);
-  transform: translate(-50%, -50%) scale(0.5);
-  opacity: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-.transformations-stage .impact-ring.pulse {
-  animation: ringPulse 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-.transformations-stage .impact-ring.pulse-2 {
-  animation: ringPulse 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
-}
-.transformations-stage .impact-ring.pulse-3 {
-  animation: ringPulse 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
-}
-@keyframes ringPulse {
-  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.9; }
-  100% { transform: translate(-50%, -50%) scale(16); opacity: 0; }
-}
-    /* MERGED SECTION */
+    /* ============================================================
+       MERGED SECTION
+       ============================================================ */
     .merged-section { padding: 40px 0 20px; }
     .merged-header { max-width: 700px; margin: 0 auto 24px; text-align: center; }
     .merged-header .eyebrow {
@@ -586,10 +620,10 @@
       padding: 4px 18px; border-radius: 40px;
       border: 1px solid rgba(184, 148, 60, 0.15); margin-bottom: 8px;
     }
-    .merged-header h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700; line-height: 1.1; margin: 0 0 8px; }
+    .merged-header h3 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700; line-height: 1.1; margin: 0 0 8px; }
     .merged-header p { font-size: clamp(0.9rem, 1.2vw, 1.05rem); color: var(--text-soft); max-width: 600px; margin: 0 auto; }
 
-    /* PHONE MOCKUP — unchanged */
+    /* PHONE MOCKUP */
     .phone-wrap { position: relative; max-width: 380px; margin: 0 auto; padding: 40px 30px; }
     .side-tag {
       position: absolute; padding: 6px 14px; border-radius: 100px;
@@ -1069,33 +1103,46 @@
   </div>
 </div>
 
-  <!-- HERO -->
+<!-- HERO -->
 <section class="container hero">
   <div class="hero-left">
-    <div class="hero-badge">You're better than how you sometimes sound.</div>
-    <p>Practice the conversations that matter</p>
-    <div class="rotating-container">
-      <div class="rotating-pair">
-        <div class="pain-label">INTERVIEW</div>
-             </div>
-      <div class="rotating-pair">
-        <div class="pain-label">PRESENTATION</div>
-           </div>
-      <div class="rotating-pair">
-        <div class="pain-label">MEETING</div>
-           </div>
-            <div class="rotating-pair">
-        <div class="pain-label">CHARISMA</div>
-           </div>
-      <div class="rotating-pair">
-        <div class="pain-label">LEADERSHIP</div>
-           </div>
+    <h1 class="hero-headline">
+      Understand the unspoken gap. Then close it.
+    </h1>
+
+    <div class="hero-problems" id="heroProblems">
+      <span class="problem-word" data-index="0">Rambling.</span>
+      <span class="problem-word" data-index="1">Scattered.</span>
+      <span class="problem-word" data-index="2">Unclear.</span>
+      <span class="problem-word" data-index="3">Forgettable.</span>
     </div>
+
+    <p class="hero-subhead">
+      Get better daily. Build the muscle.
+    </p>
+
+    <div class="hero-badges">
+      <div class="hero-badge">
+        <span class="badge-icon">✦</span>
+        <span class="badge-text">Built on real<br>feedback patterns</span>
+      </div>
+      <div class="hero-badge">
+        <span class="badge-icon">◇</span>
+        <span class="badge-text">Used by professionals<br>preparing for interviews</span>
+      </div>
+      <div class="hero-badge">
+        <span class="badge-icon">◆</span>
+        <span class="badge-text">Free to try,<br>no signup</span>
+      </div>
+    </div>
+
     <div class="hero-actions">
-      <a href="#impact-test" class="btn-free">Discover Your Pattern →</a>
+      <a href="#impact-test" class="btn-free">Start Practicing →</a>
     </div>
-    <div class="hero-micro">Free · 30 seconds · Instant feedback</div>
+
+    <div class="hero-micro">Free · 30 seconds · Instant insight</div>
   </div>
+
   <div class="hero-right">
     <div class="transformations-stage">
       <div class="stage-label" id="stageLabel">
@@ -1109,7 +1156,7 @@
   </div>
 </section>
 
-<!-- MERGED PHONE SECTION (unchanged) -->
+<!-- MERGED PHONE SECTION -->
 <section class="merged-section container" id="impact-test">
   <div class="merged-header">
     <span class="eyebrow">✦ DISCOVER + TRAIN</span>
@@ -1376,6 +1423,7 @@
     </div>
   </footer>
 </div>
+
 <script>
 // ============================================================
 // CONFIG & STATE
@@ -1393,7 +1441,7 @@ const state = {
 };
 
 // ============================================================
-// HERO ANIMATION — Premium rebuild with speech bubbles
+// HERO ANIMATION — 4 scenes + word highlight sync
 // ============================================================
 (function() {
   const stage = document.querySelector('.transformations-stage');
@@ -1404,21 +1452,18 @@ const state = {
   const labelBefore = document.getElementById('labelBefore');
   const labelAfter = document.getElementById('labelAfter');
   const stageTagline = document.getElementById('stageTagline');
+  const problemWords = document.querySelectorAll('#heroProblems .problem-word');
 
   if (!sceneEl || !stageLabel) return;
 
-  // Timing (per scene)
-  const PROBLEM_MS = 2200;      // noise accumulates
-  const TRANSFORM_MS = 900;     // noise → signal
-  const RESOLVED_MS = 2600;     // signal lives and glows
-  const HOLD_MS = 300;          // brief pause before next scene
+  const PROBLEM_MS = 2200;
+  const TRANSFORM_MS = 900;
+  const RESOLVED_MS = 2600;
+  const HOLD_MS = 300;
   const TOTAL_MS = PROBLEM_MS + TRANSFORM_MS + RESOLVED_MS + HOLD_MS;
 
-  // ============================================================
-  // SCENE 1 — RAMBLING → CONCISE (speech bubbles)
-  // ============================================================
+  // ─── SCENE 1 — RAMBLING → CONCISE ───
   function sceneBubbles(container) {
-    // Bubbles are scattered, centered, readable
     const bubbles = [
       { text: 'so basically...',               x: 25, y: 30, tail: 'left' },
       { text: 'I mean...',                     x: 70, y: 22, tail: 'right' },
@@ -1435,44 +1480,31 @@ const state = {
       el.style.top = b.y + '%';
       el.style.transform = 'translate(-50%, -50%)';
       container.appendChild(el);
-      // Stagger reveal
       setTimeout(() => el.classList.add('show'), i * 260);
       return el;
     });
 
-    // Glow behind landed line
     const glow = document.createElement('div');
     glow.className = 'landed-glow';
     container.appendChild(glow);
 
-    // Landed line
     const landed = document.createElement('div');
     landed.className = 'landed-line';
     landed.textContent = 'We launched the platform in 9 months.';
     container.appendChild(landed);
 
-    // Transform: fade bubbles, land the line
     const t1 = setTimeout(() => {
-      els.forEach((el, i) => {
-        setTimeout(() => el.classList.add('fade'), i * 60);
-      });
+      els.forEach((el, i) => setTimeout(() => el.classList.add('fade'), i * 60));
       setTimeout(() => {
         glow.classList.add('show');
         landed.classList.add('show');
       }, 500);
     }, PROBLEM_MS);
 
-    return () => {
-      els.forEach(el => el.remove());
-      glow.remove();
-      landed.remove();
-      clearTimeout(t1);
-    };
+    return () => { els.forEach(el => el.remove()); glow.remove(); landed.remove(); clearTimeout(t1); };
   }
 
-  // ============================================================
-  // SCENE 2 — SCATTERED → STRUCTURED
-  // ============================================================
+  // ─── SCENE 2 — SCATTERED → STRUCTURED ───
   function sceneScattered(container) {
     const fragments = [
       { text: 'so basically...',           keep: false },
@@ -1484,7 +1516,6 @@ const state = {
       { text: 'Adoption up 3×',            tag: 'RESULT', keep: true },
       { text: 'the thing is...',           keep: false },
     ];
-
     const scatteredPos = [
       {x:22,y:26},{x:78,y:22},{x:38,y:48},{x:68,y:56},
       {x:20,y:74},{x:80,y:76},{x:52,y:36},{x:56,y:66},
@@ -1499,16 +1530,13 @@ const state = {
     svg.setAttribute('class', 'lines');
     const p1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     const p2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    svg.appendChild(p1);
-    svg.appendChild(p2);
+    svg.appendChild(p1); svg.appendChild(p2);
     container.appendChild(svg);
 
     const els = fragments.map((f, i) => {
       const el = document.createElement('div');
       el.className = 'node';
-      el.innerHTML = f.tag
-        ? `<span class="tag">${f.tag}</span>${f.text}`
-        : f.text;
+      el.innerHTML = f.tag ? `<span class="tag">${f.tag}</span>${f.text}` : f.text;
       el.style.left = scatteredPos[i].x + '%';
       el.style.top = scatteredPos[i].y + '%';
       el.style.transform = 'translate(-50%, -50%)';
@@ -1517,7 +1545,6 @@ const state = {
       return el;
     });
 
-    // Transform
     const t1 = setTimeout(() => {
       fragments.forEach((f, i) => {
         const el = els[i];
@@ -1526,17 +1553,11 @@ const state = {
           el.style.left = pos.x + '%';
           el.style.top = pos.y + '%';
           el.classList.add('core');
-        } else {
-          el.classList.add('fade');
-        }
+        } else el.classList.add('fade');
       });
-
       setTimeout(() => {
         const rect = stage.getBoundingClientRect();
-        const pt = (p) => ({
-          x: (p.x / 100) * rect.width,
-          y: (p.y / 100) * rect.height,
-        });
+        const pt = (p) => ({ x: (p.x / 100) * rect.width, y: (p.y / 100) * rect.height });
         const a = pt(structuredPos.POINT);
         const b = pt(structuredPos.ACTION);
         const c = pt(structuredPos.RESULT);
@@ -1547,16 +1568,49 @@ const state = {
       }, 900);
     }, PROBLEM_MS);
 
-    return () => {
-      els.forEach(el => el.remove());
-      svg.remove();
-      clearTimeout(t1);
-    };
+    return () => { els.forEach(el => el.remove()); svg.remove(); clearTimeout(t1); };
   }
 
-  // ============================================================
-  // SCENE 3 — FORGETTABLE → MEMORABLE
-  // ============================================================
+  // ─── SCENE 3 — UNCLEAR → CLEAR ───
+  function sceneUnclear(container) {
+    const vague = [
+      { text: 'kind of a big thing',   x: 30, y: 35 },
+      { text: 'sort of impactful',     x: 68, y: 30 },
+      { text: 'like, a whole project', x: 40, y: 62 },
+      { text: 'the thing we did',      x: 66, y: 62 },
+    ];
+
+    const els = vague.map((v) => {
+      const el = document.createElement('div');
+      el.className = 'blur-word';
+      el.textContent = v.text;
+      el.style.left = v.x + '%';
+      el.style.top = v.y + '%';
+      container.appendChild(el);
+      return el;
+    });
+
+    const glow = document.createElement('div');
+    glow.className = 'landed-glow';
+    container.appendChild(glow);
+
+    const clear = document.createElement('div');
+    clear.className = 'landed-line';
+    clear.textContent = 'Cut deployment time by 40%.';
+    container.appendChild(clear);
+
+    const t1 = setTimeout(() => {
+      els.forEach((el, i) => setTimeout(() => el.classList.add('gone'), i * 80));
+      setTimeout(() => {
+        glow.classList.add('show');
+        clear.classList.add('show');
+      }, 700);
+    }, PROBLEM_MS);
+
+    return () => { els.forEach(el => el.remove()); glow.remove(); clear.remove(); clearTimeout(t1); };
+  }
+
+  // ─── SCENE 4 — FORGETTABLE → MEMORABLE ───
   function sceneForgettable(container) {
     const generic = [
       'I managed the project.',
@@ -1570,14 +1624,12 @@ const state = {
       const el = document.createElement('div');
       el.className = 'generic-line';
       el.textContent = text;
-      // Stack them across upper half so they read as a wall
       el.style.top = (22 + i * 12) + '%';
       container.appendChild(el);
       setTimeout(() => el.classList.add('show'), i * 130);
       return el;
     });
 
-    // Landed line + glow
     const glow = document.createElement('div');
     glow.className = 'landed-glow';
     container.appendChild(glow);
@@ -1588,141 +1640,32 @@ const state = {
     container.appendChild(memorable);
 
     const t1 = setTimeout(() => {
-      // Collapse wall upward/outward
-      els.forEach((el, i) => {
-        setTimeout(() => el.classList.add('gone'), i * 70);
-      });
+      els.forEach((el, i) => setTimeout(() => el.classList.add('gone'), i * 70));
       setTimeout(() => {
         glow.classList.add('show');
         memorable.classList.add('show');
       }, 650);
     }, PROBLEM_MS);
 
-    return () => {
-      els.forEach(el => el.remove());
-      glow.remove();
-      memorable.remove();
-      clearTimeout(t1);
-    };
+    return () => { els.forEach(el => el.remove()); glow.remove(); memorable.remove(); clearTimeout(t1); };
   }
 
-  // ============================================================
-  // SCENE 4 — UNIMPACTFUL → IMPACTFUL
-  // ============================================================
-  function sceneImpact(container) {
-    // Center node
-    const center = document.createElement('div');
-    center.className = 'impact-center';
-    container.appendChild(center);
-
-    // Satellites (arranged around the center)
-    const positions = [
-      { x: 28, y: 38 },
-      { x: 72, y: 38 },
-      { x: 28, y: 72 },
-      { x: 72, y: 72 },
-      { x: 50, y: 26 },
-      { x: 50, y: 84 },
-    ];
-    const sats = positions.map(p => {
-      const el = document.createElement('div');
-      el.className = 'impact-satellite';
-      el.style.left = p.x + '%';
-      el.style.top = p.y + '%';
-      container.appendChild(el);
-      return { el, pos: p };
-    });
-
-    // Rings
-    const ring1 = document.createElement('div');
-    ring1.className = 'impact-ring';
-    container.appendChild(ring1);
-    const ring2 = document.createElement('div');
-    ring2.className = 'impact-ring';
-    container.appendChild(ring2);
-    const ring3 = document.createElement('div');
-    ring3.className = 'impact-ring';
-    container.appendChild(ring3);
-
-        // -------- STAGE 1: three flat statements --------
-    const flatStatements = [
-      'I worked on a healthcare platform.',
-      'I managed the Operations team.',
-      'I worked with Technology teams.',
-    ];
-
-        const flatEls = flatStatements.map((text, i) => {
-      const el = document.createElement('div');
-      el.className = 'generic-line';
-      el.textContent = text;
-      // Stack them in upper-middle of stage
-      el.style.top = (26 + i * 12) + '%';
-      container.appendChild(el);
-      setTimeout(() => el.classList.add('show'), i * 240);
-      return el;
-    });
-
-// -------- STAGE 2: the combined impactful line --------
-    // Placed off-screen initially, will fade in after flat statements collapse
-    const glow = document.createElement('div');
-    glow.className = 'landed-glow';
-    container.appendChild(glow);
-
-    const impactful = document.createElement('div');
-    impactful.className = 'landed-line';
-    impactful.style.top = '48%';
-    impactful.textContent =
-      '"I brought business, technology, and operations together to launch the platform."';
-    container.appendChild(impactful);
-
- // ---- Transformation ----
-    const t1 = setTimeout(() => {
-      // 1. Collapse the flat statements
-      flatEls.forEach((el, i) => {
-        setTimeout(() => el.classList.add('gone'), i * 90);
-      });
-
-      // 2. Reveal the impactful sentence + glow
-      setTimeout(() => {
-        glow.classList.add('show');
-        impactful.classList.add('show');
-      }, 700);
-
-            // 3. Light up the network
-      setTimeout(() => {
-        center.classList.add('lit');
-        sats.forEach(({ el }) => el.classList.add('lit'));
-        ring1.classList.add('pulse');
-        ring2.classList.add('pulse-2');
-        ring3.classList.add('pulse-3');
-      }, 1400);
-    }, PROBLEM_MS);
-
-    return () => {
-      flatEls.forEach(el => el.remove());
-      center.remove();
-      sats.forEach(s => s.el.remove());
-      ring1.remove();
-      ring2.remove();
-      ring3.remove();
-      glow.remove();
-      impactful.remove();
-      clearTimeout(t1);
-    };
-  }
-  
-  // ============================================================
-  // MASTER SEQUENCER
-  // ============================================================
+  // ─── MASTER SEQUENCER + HIGHLIGHT SYNC ───
   const segments = [
-    { before: 'RAMBLING',      after: 'CONCISE',     tagline: 'Get to the point.',                    run: sceneBubbles },
-    { before: 'SCATTERED',     after: 'STRUCTURED',  tagline: 'Give your thinking a shape.',          run: sceneScattered },
-    { before: 'FORGETTABLE',   after: 'MEMORABLE',   tagline: 'Give people something to remember.',   run: sceneForgettable },
-    { before: 'UNIMPACTFUL',   after: 'IMPACTFUL',   tagline: "Don't just say it. Make it land.",     run: sceneImpact },
+    { before: 'RAMBLING',    after: 'CONCISE',    tagline: 'Get to the point.',                  run: sceneBubbles },
+    { before: 'SCATTERED',   after: 'STRUCTURED', tagline: 'Give your thinking a shape.',        run: sceneScattered },
+    { before: 'UNCLEAR',     after: 'CLEAR',      tagline: 'Say it precisely.',                  run: sceneUnclear },
+    { before: 'FORGETTABLE', after: 'MEMORABLE',  tagline: 'Give people something to remember.', run: sceneForgettable },
   ];
 
   let stopCurrent = null;
   let loopTimeout = null;
+
+  function highlightWord(index) {
+    problemWords.forEach((el, i) => {
+      el.classList.toggle('active', i === index);
+    });
+  }
 
   function playSegment(i) {
     sceneEl.innerHTML = '';
@@ -1735,26 +1678,19 @@ const state = {
     stageTagline.classList.remove('show');
     stageTagline.textContent = seg.tagline;
 
+    highlightWord(i);
+
     stopCurrent = seg.run(sceneEl);
 
-    // Flip label to "after" when transformation begins
-    setTimeout(() => {
-      stageLabel.classList.add('after');
-    }, PROBLEM_MS);
+    setTimeout(() => stageLabel.classList.add('after'), PROBLEM_MS);
+    setTimeout(() => stageTagline.classList.add('show'), PROBLEM_MS + TRANSFORM_MS + 200);
 
-    // Reveal tagline after transformation completes
-    setTimeout(() => {
-      stageTagline.classList.add('show');
-    }, PROBLEM_MS + TRANSFORM_MS + 200);
-
-    // Schedule next segment
     loopTimeout = setTimeout(() => {
       if (stopCurrent) stopCurrent();
       playSegment((i + 1) % segments.length);
     }, TOTAL_MS);
   }
 
-  // Cleanup on unload
   window.addEventListener('beforeunload', () => {
     if (loopTimeout) clearTimeout(loopTimeout);
     if (stopCurrent) stopCurrent();
@@ -1762,7 +1698,7 @@ const state = {
 
   playSegment(0);
 })();
-  
+
 // ============================================================
 // MODAL CONTROLS
 // ============================================================
@@ -2112,7 +2048,6 @@ function showResultsView() {
 
   document.getElementById('attemptLabel').textContent = `Attempt ${state.currentAttempt} of 2`;
 
-  // Reset to overview tab
   document.querySelectorAll('.phone-tab').forEach(t => t.classList.remove('active'));
   document.querySelector('.phone-tab[data-tab="overview"]').classList.add('active');
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -2253,7 +2188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(`${BACKEND_URL}/api/health`).then(r => { if (r.ok) console.log('✅ Backend warm at', new Date().toLocaleTimeString()); }).catch(() => {});
   }, 4 * 60 * 1000);
 
-  console.log('🚀 The Unspoken — hero rebuilt + syntax fixed.');
+  console.log('🚀 The Unspoken — hero rebuilt + sync wired.');
 });
 </script>
 </body>
