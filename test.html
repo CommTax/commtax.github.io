@@ -1601,7 +1601,7 @@ const state = {
       el.className = 'generic-line';
       el.textContent = text;
       // Stack them across upper half so they read as a wall
-      el.style.top = (28 + i * 30) + 'px';
+      el.style.top = (22 + i * 12) + '%';
       container.appendChild(el);
       setTimeout(() => el.classList.add('show'), i * 130);
       return el;
@@ -1618,7 +1618,7 @@ const state = {
     container.appendChild(memorable);
 
     const t1 = setTimeout(() => {
-      // Collapse wall inward
+      // Collapse wall upward/outward
       els.forEach((el, i) => {
         setTimeout(() => el.classList.add('gone'), i * 70);
       });
@@ -1674,45 +1674,73 @@ const state = {
     ring3.className = 'impact-ring';
     container.appendChild(ring3);
 
-    // Message (starts as flat statement, becomes impactful)
-    const msg = document.createElement('div');
-    msg.className = 'landed-line';
-    msg.style.top = '30%';
-    msg.textContent = '"I worked on a healthcare platform."';
-    container.appendChild(msg);
-    setTimeout(() => msg.classList.add('show'), 300);
+        // -------- STAGE 1: three flat statements --------
+    const flatStatements = [
+      'I worked on a healthcare platform.',
+      'I managed the Operations team.',
+      'I worked with Technology teams.',
+    ];
 
-    // Transform: message becomes richer, network lights up
+        const flatEls = flatStatements.map((text, i) => {
+      const el = document.createElement('div');
+      el.className = 'generic-line';
+      el.textContent = text;
+      // Stack them in upper-middle of stage
+      el.style.top = (26 + i * 12) + '%';
+      container.appendChild(el);
+      setTimeout(() => el.classList.add('show'), i * 240);
+      return el;
+    });
+
+// -------- STAGE 2: the combined impactful line --------
+    // Placed off-screen initially, will fade in after flat statements collapse
+    const glow = document.createElement('div');
+    glow.className = 'landed-glow';
+    container.appendChild(glow);
+
+    const impactful = document.createElement('div');
+    impactful.className = 'landed-line';
+    impactful.style.top = '48%';
+    impactful.textContent =
+      '"I brought business, technology, and operations together to launch the platform."';
+    container.appendChild(impactful);
+
+ // ---- Transformation ----
     const t1 = setTimeout(() => {
-      // Move message to top with a soft re-entry
-      msg.classList.remove('show');
-      setTimeout(() => {
-        msg.style.top = '22%';
-        msg.textContent = '"I brought business, technology, and operations together to launch the platform."';
-        msg.classList.add('show');
-      }, 350);
+      // 1. Collapse the flat statements
+      flatEls.forEach((el, i) => {
+        setTimeout(() => el.classList.add('gone'), i * 90);
+      });
 
-      // Light up center + satellites
+      // 2. Reveal the impactful sentence + glow
+      setTimeout(() => {
+        glow.classList.add('show');
+        impactful.classList.add('show');
+      }, 700);
+
+            // 3. Light up the network
       setTimeout(() => {
         center.classList.add('lit');
         sats.forEach(({ el }) => el.classList.add('lit'));
         ring1.classList.add('pulse');
         ring2.classList.add('pulse-2');
         ring3.classList.add('pulse-3');
-      }, 700);
+      }, 1400);
     }, PROBLEM_MS);
 
     return () => {
+      flatEls.forEach(el => el.remove());
       center.remove();
       sats.forEach(s => s.el.remove());
       ring1.remove();
       ring2.remove();
       ring3.remove();
-      msg.remove();
+      glow.remove();
+      impactful.remove();
       clearTimeout(t1);
     };
   }
-
+  
   // ============================================================
   // MASTER SEQUENCER
   // ============================================================
