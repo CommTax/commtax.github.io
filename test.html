@@ -2045,9 +2045,22 @@ function showResultsView() {
   document.getElementById('resultsView').style.display = 'block';
   document.getElementById('attempt2View').style.display = 'none';
   document.getElementById('comparisonView').style.display = 'none';
-  document.getElementById('phoneTabs').classList.add('activated');
+
+  const tabsEl = document.getElementById('phoneTabs');
+  const wasActivated = tabsEl.classList.contains('activated');
+  tabsEl.classList.add('activated');
+
+  // Flash animation only on first activation
+  if (!wasActivated) {
+    tabsEl.classList.add('just-activated');
+    setTimeout(() => {
+      tabsEl.classList.remove('just-activated');
+    }, 2000);
+  }
 
   document.getElementById('attemptLabel').textContent = `Attempt ${state.currentAttempt} of 2`;
+  // ...
+}
 
   // Reset to overview tab on each new result
   document.querySelectorAll('.phone-tab').forEach(t => t.classList.remove('active'));
