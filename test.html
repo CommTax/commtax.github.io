@@ -649,7 +649,10 @@
     }
     .phone-screen {
       background: var(--phone-bg); border-radius: 38px; overflow: hidden;
-      position: relative; min-height: 680px; display: flex; flex-direction: column;
+      position: relative; min-height: 0; display: flex; flex-direction: column;
+    }
+    .phone-screen.results-visible {
+      min-height: 680px;
     }
     .status-bar {
       display: flex; justify-content: space-between; align-items: center;
@@ -1726,6 +1729,7 @@ document.getElementById('phoneCloseBtn').addEventListener('click', () => {
   document.getElementById('attempt2View').style.display = 'none';
   document.getElementById('comparisonView').style.display = 'none';
   document.getElementById('phoneTabs').classList.remove('activated');
+  document.querySelector('.phone-screen').classList.remove('results-visible');
   state.currentAttempt = 1;
 });
 
@@ -2045,6 +2049,7 @@ function showResultsView() {
   document.getElementById('resultsView').style.display = 'block';
   document.getElementById('attempt2View').style.display = 'none';
   document.getElementById('comparisonView').style.display = 'none';
+  document.querySelector('.phone-screen').classList.add('results-visible'); 
 
   const tabsEl = document.getElementById('phoneTabs');
   const wasActivated = tabsEl.classList.contains('activated');
@@ -2077,6 +2082,7 @@ function enterAttempt2() {
   document.getElementById('phoneTabs').classList.remove('activated');
   document.getElementById('resultsView').style.display = 'none';
   document.getElementById('attempt2View').style.display = 'block';
+  document.querySelector('.phone-screen').classList.remove('results-visible');
 
   const firstLine = (state.attempt1Data?.transcript || '').split(/[.!?\n]/)[0].trim();
   document.getElementById('prevResponseHint').textContent = `Your previous response: "${firstLine}..."`;
