@@ -76,7 +76,7 @@
 
     /* LEFT NAVIGATION SIDEBAR */
     .sidebar {
-      width: 320px;
+      width: 330px;
       background-color: var(--panel-bg);
       border-right: 1px solid var(--border-color);
       padding: 20px;
@@ -114,6 +114,7 @@
       border: 1px solid var(--border-color);
       border-radius: 10px;
       padding: 14px;
+      position: relative;
     }
 
     .sidebar-title {
@@ -123,6 +124,18 @@
       color: var(--text-muted);
       margin-bottom: 10px;
       font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .recalibrate-badge {
+      font-size: 9px;
+      background-color: rgba(16, 185, 129, 0.2);
+      color: var(--success);
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: none;
     }
 
     .field-group { margin-bottom: 10px; }
@@ -210,6 +223,49 @@
       padding: 20px;
     }
 
+    /* SUBSTANCE VS FLUFF BAR WITH MARKERS AND GHOST LINE */
+    .snr-container {
+      margin-top: 8px;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px;
+      position: relative;
+    }
+
+    .snr-bar-wrapper {
+      height: 14px;
+      width: 100%;
+      background-color: var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 8px;
+      display: flex;
+      position: relative;
+    }
+
+    .snr-signal { height: 100%; background-color: var(--success); width: 78%; transition: width 0.3s; }
+    .snr-noise { height: 100%; background-color: var(--danger); width: 22%; transition: width 0.3s; }
+
+    .ghost-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: #FFF;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+      z-index: 5;
+    }
+
+    .snr-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      padding: 0 2px;
+    }
+
     /* PRACTICE STUDIO COMPONENTS */
     .mode-bar {
       display: flex;
@@ -278,28 +334,6 @@
 
     canvas { width: 100%; height: 100%; }
 
-    /* SIGNAL TO NOISE GRAPH METER */
-    .snr-container {
-      margin-top: 16px;
-      background-color: var(--bg-dark);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 14px;
-    }
-
-    .snr-bar-wrapper {
-      height: 12px;
-      width: 100%;
-      background-color: var(--border-color);
-      border-radius: 6px;
-      overflow: hidden;
-      margin-top: 8px;
-      display: flex;
-    }
-
-    .snr-signal { height: 100%; background-color: var(--success); width: 78%; }
-    .snr-noise { height: 100%; background-color: var(--danger); width: 22%; }
-
     .btn {
       padding: 10px 20px;
       font-size: 13px;
@@ -328,11 +362,7 @@
       line-height: 1.5;
     }
 
-    .action-bar {
-      display: flex;
-      gap: 12px;
-      margin-top: 16px;
-    }
+    .action-bar { display: flex; gap: 12px; margin-top: 16px; }
   </style>
 </head>
 <body>
@@ -389,11 +419,14 @@
 
       <!-- CATEGORY, ROLE & SCENARIO SELECTION -->
       <div class="sidebar-section">
-        <div class="sidebar-title">Target Setup</div>
+        <div class="sidebar-title">
+          <span>Target Setup</span>
+          <span class="recalibrate-badge" id="recalibrateBadge">✓ Recalibrated</span>
+        </div>
         
         <div class="field-group">
           <label>Category Goal</label>
-          <select id="categorySelect">
+          <select id="categorySelect" onchange="triggerRecalibration()">
             <option>Interview Preparation</option>
             <option>Promotion Pitch</option>
             <option>Executive Meetings</option>
@@ -405,7 +438,7 @@
 
         <div class="field-group">
           <label>Target Role</label>
-          <select id="roleSelect">
+          <select id="roleSelect" onchange="triggerRecalibration()">
             <option>Manager / Lead</option>
             <option>Developer / Engineer</option>
             <option>Director / VP</option>
@@ -416,12 +449,13 @@
 
         <div class="field-group">
           <label>Practice Prompt</label>
-          <select id="questionDropdown"></select>
+          <select id="questionDropdown" onchange="triggerRecalibration()"></select>
         </div>
 
         <div class="field-group">
           <label>Build or Customize Scenario</label>
-          <textarea id="customQuestion" rows="2" placeholder="Custom context..."></textarea>
+          <!-- ACTION-INSPIRING PLACEHOLDER MICRO-COPY -->
+          <textarea id="customQuestion" rows="3" placeholder="e.g. I'm presenting Q3 results to a skeptical manager who questioned our methodology last quarter..."></textarea>
         </div>
       </div>
 
@@ -450,31 +484,51 @@
             <div class="metric-sub" id="dashPacingSub">🟢 Ideal Executive Speed</div>
           </div>
 
+          <!-- HERO METRIC: 65% REDUCTION AS PRIMARY -->
           <div class="metric-box">
-            <div class="metric-label">Word Fillers Count</div>
-            <div class="metric-value" id="dashFillers">3 / session</div>
-            <div class="metric-sub" id="dashFillersSub">⚡ 65% Reduction vs Last Week</div>
+            <div class="metric-label">Word Fillers Reduction</div>
+            <div class="metric-value" id="dashFillers" style="color: var(--success);">65% Reduction</div>
+            <div class="metric-sub" id="dashFillersSub" style="color: var(--text-muted);">Down to 3 fillers per session</div>
           </div>
 
+          <!-- MILESTONE PROGRESS INDICATOR -->
           <div class="metric-box">
             <div class="metric-label">Questions Practiced</div>
             <div class="metric-value" id="dashQuestions">18 Drills</div>
-            <div class="metric-sub" id="dashQuestionsSub">🔥 5-Day Consecutive Streak</div>
+            <div class="metric-sub" id="dashQuestionsSub" style="color: var(--accent-cyan); font-weight: 600;">🎯 22 more drills to reach "Pro" level</div>
           </div>
 
-          <!-- SNR WAVEFORM GRAPHICAL BOX -->
+          <!-- SUBSTANCE VS FLUFF BAR (SNR) WITH TOOLTIP & GHOST LINE -->
           <div class="dash-wide-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span style="font-weight: 700; font-size: 14px;">Signal-to-Noise Ratio (SNR) Trend</span>
-              <span style="color: var(--success); font-weight: 700; font-size: 13px;" id="dashSnrText">78% High-Signal Speech</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; font-size: 14px;" title="Substance = Key points &amp; core logic. Fluff = Fillers, hesitations, and side tangents.">
+                Clarity &amp; Focus (Substance vs. Fluff) ℹ️
+              </span>
+              <span style="font-weight: 700; font-size: 13px;" id="dashSnrText">
+                Last week: <span style="color: var(--text-muted);">71%</span> ➔ This week: <span style="color: var(--success);">78%</span>
+              </span>
             </div>
-            <div class="snr-bar-wrapper" style="height: 18px;">
-              <div class="snr-signal" id="dashSnrBar" style="width: 78%;"></div>
-              <div class="snr-noise" id="dashNoiseBar" style="width: 22%;"></div>
+
+            <div class="snr-container">
+              <div class="snr-bar-wrapper">
+                <div class="snr-signal" id="dashSnrBar" style="width: 78%;"></div>
+                <div class="snr-noise" id="dashNoiseBar" style="width: 22%;"></div>
+                <!-- GHOST LINE FOR PREVIOUS WEEK -->
+                <div class="ghost-line" id="ghostLine" style="left: 71%;" title="Previous Week Score: 71%"></div>
+              </div>
+              <div class="snr-ticks">
+                <span>0%</span>
+                <span>25%</span>
+                <span>50%</span>
+                <span>75%</span>
+                <span>100%</span>
+              </div>
             </div>
-            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px;">
-              <span>🟢 Substance &amp; Impact Logic</span>
-              <span>🔴 Fillers &amp; Redundant Tangents</span>
+
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 8px;">
+              <span>🟢 Substance: Key Points &amp; Core Logic (78%)</span>
+              <span>⚪ Ghost Line: Previous Week (71%)</span>
+              <span>🔴 Fluff: Fillers &amp; Tangents (22%)</span>
             </div>
           </div>
 
@@ -536,12 +590,15 @@
             
             <div class="snr-container">
               <div style="display: flex; justify-content: space-between; font-size: 12px;">
-                <span style="font-weight: 700;">Speech Signal-to-Noise Ratio</span>
-                <span style="color: var(--success); font-weight: 700;">82% Clear Signal</span>
+                <span style="font-weight: 700;">Clarity &amp; Focus Score</span>
+                <span style="color: var(--success); font-weight: 700;">82% Substance</span>
               </div>
               <div class="snr-bar-wrapper">
                 <div class="snr-signal" style="width: 82%;"></div>
                 <div class="snr-noise" style="width: 18%;"></div>
+              </div>
+              <div class="snr-ticks">
+                <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
               </div>
             </div>
 
@@ -551,7 +608,7 @@
               <p id="betterResponseText">"In Q2, we resolved a critical system outage by migrating our core database clusters within 2 hours, restoring uptime to 99.9% while preventing revenue loss."</p>
             </div>
 
-            <!-- ACTION BUTTONS: SHARE / RE-RECORD -->
+            <!-- ACTION BUTTONS -->
             <div class="action-bar">
               <button class="btn btn-primary" onclick="alert('Recording saved to My Recordings!')">💾 Save Recording</button>
               <button class="btn btn-outline" onclick="shareResponse()">📤 Share with Mentor / Peers</button>
@@ -591,9 +648,9 @@
   <script>
     // TIMELINE DATA FOR DASHBOARD
     const timelineData = {
-      '1w': { pacing: '142 WPM', fillers: '3 / session', questions: '18 Drills', snr: 78, identified: ['Initial pause latency before answering.', 'Over-explaining context before the result.'], improved: ['Cut Time to Point from 18s to 5s.', 'Eliminated filler pauses ("um", "like").'] },
-      '2w': { pacing: '150 WPM', fillers: '5 / session', questions: '32 Drills', snr: 71, identified: ['Occasional speed-up under pressure.', 'Word repetition during complex technical answers.'], improved: ['Structure clarity improved to STAR format.', 'Increased total practice duration.'] },
-      '1m': { pacing: '162 WPM', fillers: '9 / session', questions: '54 Drills', snr: 62, identified: ['Frequent filler words during transitions.', 'Long setup times on situational prompts.'], improved: ['Consistent daily practice habit established.', 'Confidence and voice modulation.'] }
+      '1w': { pacing: '142 WPM', fillers: '65% Reduction', fillersSub: 'Down to 3 fillers per session', questions: '18 Drills', milestone: '🎯 22 more drills to reach "Pro" level', currentSnr: 78, ghostSnr: 71, identified: ['Initial pause latency before answering.', 'Over-explaining context before the result.'], improved: ['Cut Time to Point from 18s to 5s.', 'Eliminated filler pauses ("um", "like").'] },
+      '2w': { pacing: '150 WPM', fillers: '48% Reduction', fillersSub: 'Down to 5 fillers per session', questions: '32 Drills', milestone: '🎯 8 more drills to reach "Pro" level', currentSnr: 74, ghostSnr: 65, identified: ['Occasional speed-up under pressure.', 'Word repetition during complex technical answers.'], improved: ['Structure clarity improved to STAR format.', 'Increased total practice duration.'] },
+      '1m': { pacing: '162 WPM', fillers: '20% Reduction', fillersSub: 'Down to 9 fillers per session', questions: '54 Drills', milestone: '🏆 "Pro" Level Reached (50+ Drills)!', currentSnr: 68, ghostSnr: 58, identified: ['Frequent filler words during transitions.', 'Long setup times on situational prompts.'], improved: ['Consistent daily practice habit established.', 'Confidence and voice modulation.'] }
     };
 
     const questionDatabase = {
@@ -620,6 +677,14 @@
     const canvas = document.getElementById('waveformCanvas');
     const ctx = canvas.getContext('2d');
 
+    // INSTANT RECALIBRATION FEEDBACK FOR TARGET SETUP
+    function triggerRecalibration() {
+      const badge = document.getElementById('recalibrateBadge');
+      badge.style.display = 'inline-block';
+      setTimeout(() => { badge.style.display = 'none'; }, 2000);
+      updatePrompt();
+    }
+
     // SWITCH VIEWS
     function switchView(viewKey) {
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -645,10 +710,15 @@
       const data = timelineData[key];
       document.getElementById('dashPacing').textContent = data.pacing;
       document.getElementById('dashFillers').textContent = data.fillers;
+      document.getElementById('dashFillersSub').textContent = data.fillersSub;
       document.getElementById('dashQuestions').textContent = data.questions;
-      document.getElementById('dashSnrText').textContent = `${data.snr}% High-Signal Speech`;
-      document.getElementById('dashSnrBar').style.width = `${data.snr}%`;
-      document.getElementById('dashNoiseBar').style.width = `${100 - data.snr}%`;
+      document.getElementById('dashQuestionsSub').textContent = data.milestone;
+
+      // UPDATE CLARITY & FOCUS BAR WITH GHOST LINE AND LABELS
+      document.getElementById('dashSnrText').innerHTML = `Last period: <span style="color: var(--text-muted);">${data.ghostSnr}%</span> ➔ Current: <span style="color: var(--success);">${data.currentSnr}%</span>`;
+      document.getElementById('dashSnrBar').style.width = `${data.currentSnr}%`;
+      document.getElementById('dashNoiseBar').style.width = `${100 - data.currentSnr}%`;
+      document.getElementById('ghostLine').style.left = `${data.ghostSnr}%`;
 
       document.getElementById('dashIdentified').innerHTML = data.identified.map(i => `<li>${i}</li>`).join('');
       document.getElementById('dashImproved').innerHTML = data.improved.map(i => `<li>${i}</li>`).join('');
