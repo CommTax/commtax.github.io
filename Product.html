@@ -45,6 +45,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      overflow-y: auto;
     }
 
     .onboarding-overlay.hidden { display: none; }
@@ -262,6 +263,16 @@
       border-color: var(--accent-cyan);
     }
 
+    .nav-item .nav-badge {
+      margin-left: auto;
+      background: var(--accent-gold);
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+
     .sidebar-section {
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -294,139 +305,51 @@
       font-size: 12px;
     }
 
-    /* ============ TODAY'S PRACTICE PANEL ============ */
-    .today-panel {
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(139, 92, 246, 0.08));
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 14px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .today-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .today-header .today-title {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent-cyan);
-      margin-bottom: 4px;
-    }
-
-    .today-header h2 { font-size: 18px; }
-
-    .today-header .today-meta {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .today-streak {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--accent-gold);
-    }
-
-    .today-question-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .today-q-card {
-      background: var(--panel-bg);
+    .user-profile-card {
+      margin-top: auto;
+      background-color: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 10px;
-      padding: 14px 16px;
+      padding: 12px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      transition: border-color 0.2s, transform 0.2s;
+      flex-direction: column;
+      gap: 4px;
     }
 
-    .today-q-card:hover {
-      border-color: var(--accent-cyan);
-      transform: translateY(-1px);
-    }
-
-    .today-q-card.repeat {
-      border-left: 4px solid var(--accent-gold);
-    }
-
-    .today-q-card.completed {
-      opacity: 0.55;
-      border-color: var(--success);
-    }
-
-    .today-q-info { flex: 1; min-width: 200px; }
-
-    .today-q-tag {
+    .plan-badge {
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--accent-purple);
-      margin-bottom: 4px;
+      color: var(--accent-gold);
+      background-color: rgba(245, 158, 11, 0.15);
+      padding: 3px 8px;
+      border-radius: 4px;
+      width: fit-content;
     }
 
-    .today-q-text {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-main);
-      line-height: 1.4;
-    }
-
-    .today-q-meta {
-      font-size: 11px;
-      color: var(--text-muted);
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin-top: 4px;
     }
 
-    .today-q-btn {
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      background: var(--primary);
-      color: #FFF;
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .today-q-btn.done {
-      background: transparent;
-      border: 1px solid var(--success);
-      color: var(--success);
-      cursor: default;
-    }
-
-    .today-footer {
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563EB, #8B5CF6);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding-top: 6px;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
     }
 
-    .today-footer .est-time {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .today-actions { display: flex; gap: 8px; }
+    .user-details { display: flex; flex-direction: column; overflow: hidden; }
+    .user-name { font-size: 13px; font-weight: 700; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+    .user-role-sub { font-size: 10px; color: var(--text-muted); }
 
     /* ============ MAIN CONTENT ============ */
     .main-content {
@@ -440,6 +363,238 @@
 
     .view-panel { display: none; flex-direction: column; gap: 20px; }
     .view-panel.active-view { display: flex; }
+
+    /* ============ TODAY VIEW ============ */
+    .today-header-bar {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(139, 92, 246, 0.10));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .today-header-bar .th-left h2 {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .today-header-bar .th-left .th-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .today-header-bar .th-right {
+      text-align: right;
+    }
+
+    .today-header-bar .th-right .day-counter {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+    }
+
+    .today-header-bar .th-right .streak {
+      font-size: 12px;
+      color: var(--accent-gold);
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .day-progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--border-color);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .day-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+      transition: width 0.4s;
+    }
+
+    .question-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .question-card.completed {
+      border-color: var(--success);
+      background: linear-gradient(135deg, var(--panel-bg), rgba(16, 185, 129, 0.06));
+    }
+
+    .qc-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .qc-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      margin-bottom: 6px;
+    }
+
+    .qc-text {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    .qc-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .qc-difficulty {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .qc-difficulty.easy { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .qc-difficulty.medium { background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); }
+    .qc-difficulty.hard { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+    .rep-tracker {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .rep-tracker .rt-left .rt-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .rep-tracker .rt-left .rt-count {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .rep-tracker .rt-left .rt-count .rt-cap {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .rep-tracker .rt-left .rt-best {
+      font-size: 11px;
+      color: var(--success);
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .rep-tracker .rt-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .rep-btn {
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--primary);
+      color: #FFF;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rep-btn:hover { background: var(--primary-hover); }
+    .rep-btn:disabled {
+      background: var(--border-color);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    .rep-btn.done {
+      background: transparent;
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    .reps-log {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .rep-log-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      padding: 6px 10px;
+      background: var(--bg-dark);
+      border-radius: 6px;
+      color: var(--text-muted);
+    }
+
+    .rep-log-item .rl-score { color: var(--success); font-weight: 700; }
+
+    .today-summary {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+
+    .today-summary h3 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .ts-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .ts-row:last-child { border-bottom: none; }
+    .ts-row .ts-val { font-weight: 700; color: var(--text-main); }
 
     /* ============ DASHBOARD ============ */
     .timeline-bar {
@@ -579,7 +734,6 @@
       margin-top: 4px;
     }
 
-    /* ============ TREND CHART ============ */
     .trend-chart-container {
       background: var(--bg-dark);
       border: 1px solid var(--border-color);
@@ -610,7 +764,7 @@
       display: inline-block;
     }
 
-    /* ============ ACTIVITY SUB-TABS ============ */
+    /* ============ ACTIVITIES (LIBRARY) ============ */
     .activity-sub-tabs {
       display: flex;
       gap: 8px;
@@ -842,6 +996,8 @@
       }
       .sidebar.open { transform: translateX(0); }
       .onboarding-card { padding: 24px; }
+      .today-header-bar { flex-direction: column; align-items: flex-start; }
+      .today-header-bar .th-right { text-align: left; }
     }
   </style>
 </head>
@@ -939,7 +1095,7 @@
     <div class="brand">
       <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
       🚀 Unspoken Studio
-      <span class="track-badge" id="headerTrackBadge">Campus to Corporate</span>
+      <span class="track-badge" id="headerTrackBadge">Interview Sprint · Day 1 of 28</span>
     </div>
     <div class="global-stats">
       <div class="stat-pill">
@@ -967,11 +1123,15 @@
     <!-- SIDEBAR -->
     <aside class="sidebar" id="appSidebar">
       <div class="nav-group">
-        <div class="nav-item active" id="navActivities" onclick="switchView('activities')">
-          <span>🎯</span> Today & Activities
+        <div class="nav-item active" id="navToday" onclick="switchView('today')">
+          <span>🏠</span> Today
+          <span class="nav-badge" id="todayNavBadge">2</span>
+        </div>
+        <div class="nav-item" id="navActivities" onclick="switchView('activities')">
+          <span>🎯</span> Activities
         </div>
         <div class="nav-item" id="navDash" onclick="switchView('dash')">
-          <span>📊</span> Progress Dashboard
+          <span>📊</span> Progress
         </div>
         <div class="nav-item" id="navRecordings" onclick="switchView('recordings')">
           <span>🎙️</span> My Recordings
@@ -980,7 +1140,7 @@
           <span>🏆</span> Achievements
         </div>
         <div class="nav-item" id="navPillars" onclick="switchView('pillars')">
-          <span>🏛️</span> Pillars of Communication
+          <span>🏛️</span> Pillars
         </div>
         <div class="nav-item" id="navLearning" onclick="switchView('learning')">
           <span>📚</span> My Learning
@@ -995,19 +1155,14 @@
         <div class="field-group">
           <label>Category Goal</label>
           <select id="categorySelect" onchange="onTargetChange()">
+            <option>Interview Sprint</option>
             <option>Campus to Corporate</option>
             <option>First Interview Prep</option>
-            <option>Interview Preparation</option>
             <option>Frontline Communication</option>
             <option>Stakeholder Management</option>
             <option>Persuasion &amp; Pitching</option>
-            <option>Promotion Pitch</option>
-            <option>Executive Meetings</option>
             <option>Emerging Leader</option>
             <option>Executive Presence</option>
-            <option>Practice &amp; Drills</option>
-            <option>Build Muscle (Hard Drills)</option>
-            <option>Good Orator Masterclass</option>
           </select>
         </div>
 
@@ -1025,20 +1180,10 @@
             <option>Director / VP</option>
           </select>
         </div>
-
-        <div class="field-group">
-          <label>Daily Practice Time</label>
-          <select id="timeSelect" onchange="onTargetChange()">
-            <option value="5">5 min (1 question)</option>
-            <option value="10" selected>10 min (2 questions)</option>
-            <option value="20">20 min (3–4 questions)</option>
-            <option value="30">30+ min (full mock)</option>
-          </select>
-        </div>
       </div>
 
       <div class="user-profile-card">
-        <div class="plan-badge">Executive Pro Pass</div>
+        <div class="plan-badge" id="planBadge">Sprint Pass</div>
         <div class="user-info">
           <div class="user-avatar">SA</div>
           <div class="user-details">
@@ -1052,34 +1197,126 @@
     <!-- MAIN CONTENT -->
     <main class="main-content">
 
-      <!-- ============ VIEW 1: ACTIVITIES ============ -->
-      <section class="view-panel active-view" id="activitiesView">
+      <!-- ============ VIEW 1: TODAY (DEFAULT) ============ -->
+      <section class="view-panel active-view" id="todayView">
 
-        <!-- TODAY'S PRACTICE PANEL -->
-        <div class="today-panel">
-          <div class="today-header">
-            <div>
-              <div class="today-title">Today's Practice</div>
-              <h2 id="todayTrackTitle">Campus to Corporate</h2>
-              <div class="today-meta" id="todayFocus">Focus: Structure &amp; Conciseness · 10 min</div>
+        <!-- TODAY HEADER BAR -->
+        <div class="today-header-bar">
+          <div class="th-left">
+            <h2 id="todayTrackTitle">Interview Sprint</h2>
+            <div class="th-sub" id="todayFocus">Focus: Interview Fundamentals · 2 questions today</div>
+            <div class="day-progress-bar">
+              <div class="day-progress-fill" id="dayProgressFill" style="width: 3.5%;"></div>
             </div>
-            <div class="today-streak" id="todayStreak">🔥 Day 5 streak</div>
           </div>
-
-          <div class="today-question-list" id="todayQuestionList">
-            <!-- Populated by JS -->
-          </div>
-
-          <div class="today-footer">
-            <div class="est-time" id="todayEstTime">Estimated time: ~6 min</div>
-            <div class="today-actions">
-              <button class="btn btn-outline" onclick="skipToday()">Skip Today</button>
-              <button class="btn btn-primary" onclick="startToday()">Start All →</button>
-            </div>
+          <div class="th-right">
+            <div class="day-counter" id="dayCounter">Day 1 of 28</div>
+            <div class="streak" id="todayStreak">🔥 5-day streak</div>
           </div>
         </div>
 
-        <!-- ACTIVITY SUB-TABS -->
+        <!-- QUESTION 1 -->
+        <div class="question-card" id="questionCard1">
+          <div class="qc-top">
+            <div>
+              <div class="qc-label">Q1 of 2 today</div>
+              <div class="qc-text" id="q1Text">"Tell me about yourself."</div>
+              <div class="qc-meta" id="q1Meta">Focus: Structure &amp; Conciseness · Target: 60 seconds</div>
+            </div>
+            <div class="qc-difficulty easy" id="q1Diff">⭐ Easy</div>
+          </div>
+
+          <div class="rep-tracker">
+            <div class="rt-left">
+              <div class="rt-label">Reps today</div>
+              <div class="rt-count" id="q1RepCount">0 <span class="rt-cap">/ 10</span></div>
+              <div class="rt-best" id="q1BestSnr">Best SNR: —</div>
+            </div>
+            <div class="rt-right">
+              <button class="rep-btn" id="q1RepBtn" onclick="startQuestionRep(0)">🎤 Start Rep 1</button>
+            </div>
+          </div>
+
+          <div class="reps-log" id="q1RepsLog">
+            <!-- Rep logs go here -->
+          </div>
+        </div>
+
+        <!-- QUESTION 2 -->
+        <div class="question-card" id="questionCard2">
+          <div class="qc-top">
+            <div>
+              <div class="qc-label">Q2 of 2 today</div>
+              <div class="qc-text" id="q2Text">"Walk me through your resume."</div>
+              <div class="qc-meta" id="q2Meta">Focus: Narrative &amp; Relevance · Target: 90 seconds</div>
+            </div>
+            <div class="qc-difficulty medium" id="q2Diff">⭐⭐ Medium</div>
+          </div>
+
+          <div class="rep-tracker">
+            <div class="rt-left">
+              <div class="rt-label">Reps today</div>
+              <div class="rt-count" id="q2RepCount">0 <span class="rt-cap">/ 10</span></div>
+              <div class="rt-best" id="q2BestSnr">Best SNR: —</div>
+            </div>
+            <div class="rt-right">
+              <button class="rep-btn" id="q2RepBtn" onclick="startQuestionRep(1)">🎤 Start Rep 1</button>
+            </div>
+          </div>
+
+          <div class="reps-log" id="q2RepsLog">
+            <!-- Rep logs go here -->
+          </div>
+        </div>
+
+        <!-- TODAY'S SUMMARY -->
+        <div class="today-summary">
+          <h3>Today's Progress</h3>
+          <div class="ts-row">
+            <span>Total reps today</span>
+            <span class="ts-val" id="tsTotalReps">0 / 20</span>
+          </div>
+          <div class="ts-row">
+            <span>Time spent</span>
+            <span class="ts-val" id="tsTimeSpent">0 min</span>
+          </div>
+          <div class="ts-row">
+            <span>Best SNR today</span>
+            <span class="ts-val" id="tsBestSnr">—</span>
+          </div>
+          <div class="ts-row">
+            <span>Streak</span>
+            <span class="ts-val" id="tsStreak">🔥 5 days</span>
+          </div>
+        </div>
+
+        <!-- THIS WEEK'S HISTORY -->
+        <div class="today-summary">
+          <h3>This Week</h3>
+          <div class="ts-row">
+            <span>Mon · Q1 + Q2</span>
+            <span class="ts-val">18 reps · Avg 82%</span>
+          </div>
+          <div class="ts-row">
+            <span>Tue · Q3 + Q4</span>
+            <span class="ts-val">20 reps · Avg 85%</span>
+          </div>
+          <div class="ts-row">
+            <span>Wed · Q5 + Q6</span>
+            <span class="ts-val">12 reps · Avg 79%</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ============ VIEW 2: ACTIVITIES (LIBRARY) ============ -->
+      <section class="view-panel" id="activitiesView">
+
+        <div>
+          <h2 style="font-size: 18px; margin-bottom: 4px;">Activities</h2>
+          <p style="font-size: 12px; color: var(--text-muted);">Extra practice beyond today's 2 questions.</p>
+        </div>
+
         <div class="activity-sub-tabs">
           <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">Voice Reps</button>
           <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">Scenario Library</button>
@@ -1297,14 +1534,14 @@
 
         <!-- LOCKED TRACKS (UPSELL) -->
         <div class="locked-tracks">
-          <h3>🔒 Unlock More Tracks</h3>
-          <p>You're on <strong id="lockedCurrentTrack">Campus to Corporate</strong>. Upgrade to the Practice Pass to unlock all tracks.</p>
+          <h3>🔒 Unlock More Sprints</h3>
+          <p>You're on <strong id="lockedCurrentTrack">Interview Sprint</strong>. Upgrade to the Practice Pass to unlock all 6 Sprints and unlimited practice.</p>
           <div class="locked-tracks-grid">
-            <div class="locked-track-item">🔒 Interview Sprint</div>
-            <div class="locked-track-item">🔒 Meeting Sprint</div>
-            <div class="locked-track-item">🔒 Storytelling Sprint</div>
-            <div class="locked-track-item">🔒 Charismatic Leader</div>
             <div class="locked-track-item">🔒 Group Discussion</div>
+            <div class="locked-track-item">🔒 Present to Group</div>
+            <div class="locked-track-item">🔒 Meeting Sprint</div>
+            <div class="locked-track-item">🔒 Storytelling</div>
+            <div class="locked-track-item">🔒 Charismatic Leader</div>
             <div class="locked-track-item">🔒 Frontline Communication</div>
           </div>
           <button class="btn btn-primary" onclick="alert('Practice Pass checkout — coming next!')">Unlock Practice Pass →</button>
@@ -1350,7 +1587,7 @@
 
       </section>
 
-      <!-- ============ VIEW 2: DASHBOARD ============ -->
+      <!-- ============ VIEW 3: DASHBOARD ============ -->
       <section class="view-panel" id="dashView">
         <div class="timeline-bar">
           <span style="font-weight: 700; font-size: 14px;">EXECUTIVE METRICS &amp; DIAGNOSTICS</span>
@@ -1408,28 +1645,23 @@
         <!-- 30-DAY TREND -->
         <div class="dash-wide-box">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-            <span style="font-weight: 700; font-size: 14px;">30-Day Progress Trend</span>
+            <span style="font-weight: 700; font-size: 14px;">28-Day Sprint Progress</span>
             <span style="font-size: 12px; color: var(--text-muted);">Clarity vs Time-to-Point</span>
           </div>
 
           <div class="trend-chart-container">
             <svg viewBox="0 0 600 140" preserveAspectRatio="none">
-              <!-- Grid lines -->
               <line x1="0" y1="35" x2="600" y2="35" stroke="#374151" stroke-width="0.5" stroke-dasharray="3 3" />
               <line x1="0" y1="70" x2="600" y2="70" stroke="#374151" stroke-width="0.5" stroke-dasharray="3 3" />
               <line x1="0" y1="105" x2="600" y2="105" stroke="#374151" stroke-width="0.5" stroke-dasharray="3 3" />
 
-              <!-- Clarity line (rising) -->
               <polyline fill="none" stroke="#10B981" stroke-width="2.5"
                 points="0,110 60,102 120,95 180,88 240,78 300,68 360,58 420,48 480,42 540,35 600,30" />
 
-              <!-- Time-to-Point line (falling = good) -->
               <polyline fill="none" stroke="#38BDF8" stroke-width="2.5"
                 points="0,30 60,35 120,42 180,52 240,62 300,72 360,82 420,90 480,98 540,104 600,110" />
 
-              <!-- Dots for clarity -->
               <circle cx="600" cy="30" r="4" fill="#10B981" />
-              <!-- Dots for TTP -->
               <circle cx="600" cy="110" r="4" fill="#38BDF8" />
             </svg>
 
@@ -1466,14 +1698,14 @@
         </div>
       </section>
 
-      <!-- ============ VIEW 3: RECORDINGS ============ -->
+      <!-- ============ VIEW 4: RECORDINGS ============ -->
       <section class="view-panel" id="recordingsView">
         <h2 style="font-size: 18px;">🎙️ My Saved Practice Sessions</h2>
 
         <div class="recording-item">
           <div class="rec-info">
-            <div class="rec-title">Walk me through your background in 60 seconds.</div>
-            <div class="rec-meta">Today · Campus to Corporate · 58 sec</div>
+            <div class="rec-title">Tell me about yourself.</div>
+            <div class="rec-meta">Today · Interview Sprint · Day 1 · Rep 3 · 58 sec</div>
           </div>
           <div class="rec-score">86%</div>
           <button class="btn btn-outline" onclick="alert('Replay + feedback — coming soon.')">View</button>
@@ -1481,24 +1713,24 @@
 
         <div class="recording-item">
           <div class="rec-info">
-            <div class="rec-title">Tell me about a time you asked for help.</div>
-            <div class="rec-meta">Yesterday · Campus to Corporate · 1 min 42 sec</div>
+            <div class="rec-title">Tell me about yourself.</div>
+            <div class="rec-meta">Today · Interview Sprint · Day 1 · Rep 2 · 62 sec</div>
           </div>
-          <div class="rec-score">72%</div>
+          <div class="rec-score">79%</div>
           <button class="btn btn-outline" onclick="alert('Replay + feedback — coming soon.')">View</button>
         </div>
 
         <div class="recording-item">
           <div class="rec-info">
-            <div class="rec-title">Introduce yourself to a senior colleague.</div>
-            <div class="rec-meta">2 days ago · Repeat Rep · 45 sec</div>
+            <div class="rec-title">Tell me about yourself.</div>
+            <div class="rec-meta">Today · Interview Sprint · Day 1 · Rep 1 · 74 sec</div>
           </div>
           <div class="rec-score">68%</div>
           <button class="btn btn-outline" onclick="alert('Replay + feedback — coming soon.')">View</button>
         </div>
       </section>
 
-      <!-- ============ VIEW 4: BADGES ============ -->
+      <!-- ============ VIEW 5: BADGES ============ -->
       <section class="view-panel" id="badgesView">
         <h2 style="font-size: 18px;">🏆 Achievements</h2>
         <p style="font-size: 13px; color: var(--text-muted);">You've unlocked 6 of 12 badges. Keep going!</p>
@@ -1568,7 +1800,7 @@
         </div>
       </section>
 
-      <!-- ============ VIEW 5: PILLARS ============ -->
+      <!-- ============ VIEW 6: PILLARS ============ -->
       <section class="view-panel" id="pillarsView">
         <h2 style="font-size: 18px;">🏛️ Pillars of Executive Communication</h2>
         <div class="studio-card">
@@ -1576,7 +1808,7 @@
         </div>
       </section>
 
-      <!-- ============ VIEW 6: LEARNING ============ -->
+      <!-- ============ VIEW 7: LEARNING ============ -->
       <section class="view-panel" id="learningView">
         <h2 style="font-size: 18px;">📚 My Learning Modules</h2>
         <div class="studio-card">
@@ -1598,63 +1830,57 @@
       time: 10,
       track: null,
       trackName: null,
+      product: 'sprint',           // 'sprint' or 'pass'
+      currentDay: 1,                // Day 1 to 28
+      sprintDuration: 28,
       onboarded: false
     };
 
-    // Track mapping: stage + goal + archetype → track name
-    function deriveTrack(profile) {
-      const { stage, goal, archetype } = profile;
+    // Sprint rules
+    const SPRINT_RULES = {
+      questionsPerDay: 2,
+      repsPerQuestionPerDay: 10,
+      totalRepsPerDay: 20
+    };
 
-      if (stage === 'student' || stage === 'fresher') {
-        if (goal === 'campus') return { id: 'campus', name: 'Campus to Corporate' };
-        if (goal === 'interview') return { id: 'first-interview', name: 'First Interview Prep' };
-      }
-      if (goal === 'interview') return { id: 'interview', name: 'Interview Sprint' };
-      if (goal === 'onjob') {
-        if (archetype === 'operator') return { id: 'frontline', name: 'Frontline Communication' };
-        if (archetype === 'builder') return { id: 'junior-builder', name: 'Junior Contributor' };
-        if (archetype === 'organizer') return { id: 'stakeholder', name: 'Stakeholder Management' };
-        if (archetype === 'analyst') return { id: 'data-story', name: 'Data Storytelling' };
-        if (archetype === 'persuader') return { id: 'persuasion', name: 'Persuasion & Pitching' };
-        return { id: 'onjob-general', name: 'On-Job Communication' };
-      }
-      if (goal === 'leadership') {
-        if (stage === 'senior') return { id: 'exec-presence', name: 'Executive Presence' };
-        return { id: 'emerging-leader', name: 'Emerging Leader' };
-      }
-      return { id: 'daily-gym', name: 'Daily Communication Gym' };
-    }
+    const PASS_RULES = {
+      questionsPerDay: null,
+      repsPerQuestionPerDay: null,
+      totalRepsPerDay: null
+    };
 
-    // Question bank — in production this comes from DB
-    const questionBank = [
-      { id: 'q1', text: 'Walk me through your background in 60 seconds.', tag: 'Easy · 90 sec', competency: 'Structure' },
-      { id: 'q2', text: 'Tell me about a time you asked for help.', tag: 'Medium · 2 min', competency: 'Humility' },
-      { id: 'q3', text: 'Introduce yourself to a senior colleague.', tag: 'Repeat · 45 sec', competency: 'Conciseness', repeat: true },
-      { id: 'q4', text: 'Describe a time you disagreed with a teammate.', tag: 'Medium · 2 min', competency: 'Conflict' },
-      { id: 'q5', text: 'What is your biggest weakness?', tag: 'Easy · 90 sec', competency: 'Self-awareness' },
-      { id: 'q6', text: 'Tell me about a time you failed and what you learned.', tag: 'Medium · 2 min', competency: 'Resilience' },
-      { id: 'q7', text: 'Why should we hire you?', tag: 'Easy · 60 sec', competency: 'Persuasion' },
-      { id: 'q8', text: 'Where do you see yourself in 5 years?', tag: 'Easy · 90 sec', competency: 'Vision' },
-      { id: 'q9', text: 'Explain a project you led from start to finish.', tag: 'Hard · 3 min', competency: 'Narrative' },
-      { id: 'q10', text: 'How do you handle pressure?', tag: 'Medium · 2 min', competency: 'Composure' }
+    // Today's questions (would come from DB in production)
+    let todayQuestions = [
+      {
+        id: 'q1',
+        text: 'Tell me about yourself.',
+        focus: 'Structure & Conciseness',
+        target: '60 seconds',
+        difficulty: 'easy',
+        reps: [],       // { number, snr, time, timestamp }
+        bestSnr: null
+      },
+      {
+        id: 'q2',
+        text: 'Walk me through your resume.',
+        focus: 'Narrative & Relevance',
+        target: '90 seconds',
+        difficulty: 'medium',
+        reps: [],
+        bestSnr: null
+      }
     ];
 
-    // Daily list state
-    let todayList = [];
-
     /* ============================================================
-       ONBOARDING LOGIC
+       ONBOARDING
        ============================================================ */
     let currentStep = 1;
     const totalSteps = 5;
 
     function selectOption(btn, field, value) {
-      // Clear sibling selection
       btn.parentElement.querySelectorAll('.onboarding-option').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
       userProfile[field] = value;
-
-      // Enable Next
       document.getElementById('onbNextBtn').disabled = false;
     }
 
@@ -1689,7 +1915,16 @@
 
       const nextBtn = document.getElementById('onbNextBtn');
       nextBtn.textContent = currentStep === totalSteps ? 'Finish →' : 'Next →';
-      nextBtn.disabled = !userProfile[Object.keys(userProfile)[currentStep - 1]] && currentStep < 5;
+
+      // Enable/disable based on whether this step has a selection
+      const stepHasValue = [
+        !!userProfile.stage,
+        !!userProfile.goal,
+        !!userProfile.archetype,
+        !!userProfile.time,
+        true // resume step is optional
+      ][currentStep - 1];
+      nextBtn.disabled = !stepHasValue;
     }
 
     function completeOnboarding() {
@@ -1698,29 +1933,49 @@
       userProfile.trackName = track.name;
       userProfile.onboarded = true;
 
-      // Hide overlay
       document.getElementById('onboardingOverlay').classList.add('hidden');
 
-      // Update UI
-      document.getElementById('headerTrackBadge').textContent = track.name;
+      // Update header + today panel
+      updateHeaderBadge();
       document.getElementById('todayTrackTitle').textContent = track.name;
       document.getElementById('lockedCurrentTrack').textContent = track.name;
+      document.getElementById('todayFocus').textContent = `Focus: ${getFocusForTrack(track.id)} · 2 questions today`;
 
-      // Sync sidebar selects
+      // Sync sidebar
       syncSidebarFromProfile();
 
-      // Generate today's list
-      generateTodayList();
+      // Render today
+      renderToday();
+      renderNavBadge();
+    }
 
-      // Update focus line
-      document.getElementById('todayFocus').textContent = `Focus: ${getFocusForTrack(track.id)} · ${userProfile.time} min`;
+    function deriveTrack(profile) {
+      const { stage, goal, archetype } = profile;
+      if (stage === 'student' || stage === 'fresher') {
+        if (goal === 'campus') return { id: 'campus', name: 'Campus to Corporate' };
+        if (goal === 'interview') return { id: 'first-interview', name: 'First Interview Prep' };
+      }
+      if (goal === 'interview') return { id: 'interview', name: 'Interview Sprint' };
+      if (goal === 'onjob') {
+        if (archetype === 'operator') return { id: 'frontline', name: 'Frontline Communication' };
+        if (archetype === 'builder') return { id: 'junior-builder', name: 'Junior Contributor' };
+        if (archetype === 'organizer') return { id: 'stakeholder', name: 'Stakeholder Management' };
+        if (archetype === 'analyst') return { id: 'data-story', name: 'Data Storytelling' };
+        if (archetype === 'persuader') return { id: 'persuasion', name: 'Persuasion & Pitching' };
+        return { id: 'onjob-general', name: 'On-Job Communication' };
+      }
+      if (goal === 'leadership') {
+        if (stage === 'senior') return { id: 'exec-presence', name: 'Executive Presence' };
+        return { id: 'emerging-leader', name: 'Emerging Leader' };
+      }
+      return { id: 'daily-gym', name: 'Daily Communication Gym' };
     }
 
     function getFocusForTrack(trackId) {
       const map = {
         'campus': 'Structure & Conciseness',
         'first-interview': 'Interview Fundamentals',
-        'interview': 'STAR Method & Impact',
+        'interview': 'Interview Fundamentals',
         'frontline': 'Empathy & De-escalation',
         'junior-builder': 'Technical Simplicity',
         'stakeholder': 'Prioritization & Influence',
@@ -1737,7 +1992,7 @@
       const catMap = {
         'campus': 'Campus to Corporate',
         'first-interview': 'First Interview Prep',
-        'interview': 'Interview Preparation',
+        'interview': 'Interview Sprint',
         'frontline': 'Frontline Communication',
         'stakeholder': 'Stakeholder Management',
         'persuasion': 'Persuasion & Pitching',
@@ -1759,127 +2014,124 @@
       };
       const roleSelect = document.getElementById('roleSelect');
       if (roleMap[userProfile.archetype]) roleSelect.value = roleMap[userProfile.archetype];
+    }
 
-      document.getElementById('timeSelect').value = userProfile.time;
+    function updateHeaderBadge() {
+      document.getElementById('headerTrackBadge').textContent =
+        `${userProfile.trackName} · Day ${userProfile.currentDay} of ${userProfile.sprintDuration}`;
     }
 
     /* ============================================================
-       TODAY'S PRACTICE ENGINE
+       TODAY PAGE RENDER
        ============================================================ */
-    function generateTodayList() {
-      const qPerDay = Math.max(1, Math.floor(userProfile.time / 5)); // 5min=1, 10min=2, 20min=4, 30min=6
-      const count = Math.min(qPerDay, 4);
-
-      // In production: call backend /api/today
-      // For now: pick first N from bank + 1 repeat
-      todayList = questionBank.slice(0, count).map(q => ({ ...q, completed: false }));
-      // Add a repeat
-      todayList.push({ ...questionBank[2], repeat: true, completed: false });
-
-      renderTodayList();
+    function renderToday() {
+      renderQuestionCard(0);
+      renderQuestionCard(1);
+      updateTodaySummary();
+      updateDayProgress();
+      updateHeaderBadge();
+      renderNavBadge();
     }
 
-    function renderTodayList() {
-      const container = document.getElementById('todayQuestionList');
-      container.innerHTML = '';
+    function renderQuestionCard(idx) {
+      const q = todayQuestions[idx];
+      const cardId = idx === 0 ? 'questionCard1' : 'questionCard2';
+      const textId = idx === 0 ? 'q1Text' : 'q2Text';
+      const metaId = idx === 0 ? 'q1Meta' : 'q2Meta';
+      const repCountId = idx === 0 ? 'q1RepCount' : 'q2RepCount';
+      const bestSnrId = idx === 0 ? 'q1BestSnr' : 'q2BestSnr';
+      const repBtnId = idx === 0 ? 'q1RepBtn' : 'q2RepBtn';
+      const logId = idx === 0 ? 'q1RepsLog' : 'q2RepsLog';
 
-      todayList.forEach((q, idx) => {
-        const card = document.createElement('div');
-        card.className = 'today-q-card' + (q.repeat ? ' repeat' : '') + (q.completed ? ' completed' : '');
-        card.innerHTML = `
-          <div class="today-q-info">
-            <div class="today-q-tag">${q.repeat ? '🔁 Repeat' : 'Q' + (idx + 1)} · ${q.tag}</div>
-            <div class="today-q-text">"${q.text}"</div>
-            <div class="today-q-meta">Focus: ${q.competency}</div>
-          </div>
-          <button class="today-q-btn ${q.completed ? 'done' : ''}" ${q.completed ? 'disabled' : ''}>
-            ${q.completed ? '✓ Done' : 'Start →'}
-          </button>
+      document.getElementById(textId).textContent = `"${q.text}"`;
+      document.getElementById(metaId).textContent = `Focus: ${q.focus} · Target: ${q.target}`;
+
+      const cap = userProfile.product === 'sprint' ? SPRINT_RULES.repsPerQuestionPerDay : null;
+      document.getElementById(repCountId).innerHTML =
+        `${q.reps.length} ${cap ? `<span class="rt-cap">/ ${cap}</span>` : '<span class="rt-cap">/ ∞</span>'}`;
+
+      document.getElementById(bestSnrId).textContent = q.bestSnr !== null
+        ? `Best SNR: ${q.bestSnr}%`
+        : 'Best SNR: —';
+
+      const btn = document.getElementById(repBtnId);
+      const atCap = cap !== null && q.reps.length >= cap;
+      if (atCap) {
+        btn.textContent = '✓ Cap reached';
+        btn.disabled = true;
+        btn.classList.add('done');
+        document.getElementById(cardId).classList.add('completed');
+      } else {
+        btn.textContent = `🎤 Start Rep ${q.reps.length + 1}`;
+        btn.disabled = false;
+        btn.classList.remove('done');
+        document.getElementById(cardId).classList.remove('completed');
+      }
+
+      // Reps log
+      const log = document.getElementById(logId);
+      log.innerHTML = '';
+      q.reps.forEach(r => {
+        const item = document.createElement('div');
+        item.className = 'rep-log-item';
+        item.innerHTML = `
+          <span>Rep ${r.number} · ${r.time}s</span>
+          <span class="rl-score">${r.snr}%</span>
         `;
-        card.querySelector('button').addEventListener('click', () => {
-          if (q.completed) return;
-          startQuestion(q, idx);
-        });
-        container.appendChild(card);
+        log.appendChild(item);
       });
-
-      // Update est time
-      const estSec = todayList.length * 90;
-      const estMin = Math.max(1, Math.round(estSec / 60));
-      document.getElementById('todayEstTime').textContent = `Estimated time: ~${estMin} min · ${todayList.length} questions`;
     }
 
-    function startQuestion(q, idx) {
-      const durationMap = { 'Easy · 90 sec': 90, 'Medium · 2 min': 120, 'Hard · 3 min': 180, 'Repeat · 45 sec': 45 };
-      const duration = durationMap[q.tag] || 60;
-      launchStudio(q.text, duration);
-      // Mark completed after user stops (simplified)
-      setTimeout(() => {
-        todayList[idx].completed = true;
-        renderTodayList();
-      }, 2000);
+    function updateTodaySummary() {
+      const totalReps = todayQuestions.reduce((sum, q) => sum + q.reps.length, 0);
+      const cap = userProfile.product === 'sprint' ? SPRINT_RULES.totalRepsPerDay : null;
+      document.getElementById('tsTotalReps').textContent =
+        `${totalReps} ${cap ? '/ ' + cap : '/ ∞'}`;
+
+      const totalTime = todayQuestions.reduce((sum, q) =>
+        sum + q.reps.reduce((s, r) => s + r.time, 0), 0);
+      document.getElementById('tsTimeSpent').textContent = `${Math.round(totalTime / 60)} min`;
+
+      const allSnrs = todayQuestions.flatMap(q => q.reps.map(r => r.snr));
+      document.getElementById('tsBestSnr').textContent =
+        allSnrs.length > 0 ? `${Math.max(...allSnrs)}%` : '—';
+
+      document.getElementById('tsStreak').textContent = '🔥 5 days';
     }
 
-    function skipToday() {
-      alert('Today skipped. Your streak will reset — come back tomorrow!');
+    function updateDayProgress() {
+      const pct = (userProfile.currentDay / userProfile.sprintDuration) * 100;
+      document.getElementById('dayProgressFill').style.width = `${pct}%`;
+      document.getElementById('dayCounter').textContent =
+        `Day ${userProfile.currentDay} of ${userProfile.sprintDuration}`;
     }
 
-    function startToday() {
-      if (todayList.length === 0) return;
-      const firstIncomplete = todayList.findIndex(q => !q.completed);
-      if (firstIncomplete === -1) {
-        alert('You already completed today\'s practice! 🎉');
+    function renderNavBadge() {
+      const remaining = todayQuestions.filter(q => {
+        const cap = userProfile.product === 'sprint' ? SPRINT_RULES.repsPerQuestionPerDay : Infinity;
+        return q.reps.length < cap;
+      }).length;
+      const badge = document.getElementById('todayNavBadge');
+      badge.textContent = remaining;
+      badge.style.display = remaining > 0 ? 'inline-block' : 'none';
+    }
+
+    /* ============================================================
+       START REP (Question-level)
+       ============================================================ */
+    function startQuestionRep(idx) {
+      const q = todayQuestions[idx];
+      const cap = userProfile.product === 'sprint' ? SPRINT_RULES.repsPerQuestionPerDay : null;
+
+      if (cap !== null && q.reps.length >= cap) {
+        alert(`You've hit today's cap of ${cap} reps for this question. Move to the next question or come back tomorrow.`);
         return;
       }
-      startQuestion(todayList[firstIncomplete], firstIncomplete);
-    }
 
-    function onTargetChange() {
-      userProfile.time = parseInt(document.getElementById('timeSelect').value);
-      // Regenerate today's list when time changes
-      generateTodayList();
-    }
-
-    /* ============================================================
-       NAVIGATION
-       ============================================================ */
-    function toggleSidebar() {
-      document.getElementById('appSidebar').classList.toggle('open');
-    }
-
-    function switchView(viewKey) {
-      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-view'));
-
-      const navMap = {
-        activities: 'navActivities',
-        dash: 'navDash',
-        recordings: 'navRecordings',
-        badges: 'navBadges',
-        pillars: 'navPillars',
-        learning: 'navLearning'
-      };
-      const viewMap = {
-        activities: 'activitiesView',
-        dash: 'dashView',
-        recordings: 'recordingsView',
-        badges: 'badgesView',
-        pillars: 'pillarsView',
-        learning: 'learningView'
-      };
-
-      if (navMap[viewKey]) document.getElementById(navMap[viewKey]).classList.add('active');
-      if (viewMap[viewKey]) document.getElementById(viewMap[viewKey]).classList.add('active-view');
-
-      if (window.innerWidth <= 900) toggleSidebar();
-    }
-
-    function switchActivitySub(subKey, btn) {
-      document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      document.querySelectorAll('.sub-activity-panel').forEach(p => p.style.display = 'none');
-      document.getElementById(`sub-${subKey}`).style.display = 'block';
+      // Launch studio with the question
+      const durationMap = { easy: 60, medium: 90, hard: 120 };
+      const duration = durationMap[q.difficulty] || 60;
+      launchStudio(q.text, duration, idx);
     }
 
     /* ============================================================
@@ -1890,6 +2142,7 @@
     let secondsElapsed = 0;
     let maxDuration = 45;
     let audioContext, analyser, dataArray, mediaRecorder, animationFrameId;
+    let activeQuestionIdx = null;
 
     const recordBtn = document.getElementById('recordBtn');
     const timerDisplay = document.getElementById('timerDisplay');
@@ -1897,14 +2150,14 @@
     const canvas = document.getElementById('waveformCanvas');
     const ctx = canvas.getContext('2d');
 
-    function launchStudio(promptText, durationSec) {
+    function launchStudio(promptText, durationSec, questionIdx = null) {
       maxDuration = durationSec;
+      activeQuestionIdx = questionIdx;
       document.getElementById('activePromptDisplay').textContent = promptText;
       document.getElementById('activeStudioContainer').style.display = 'block';
       timerDisplay.textContent = `00:${String(durationSec).padStart(2, '0')}`;
       outputSection.style.display = 'none';
 
-      // Reset record button
       recordBtn.textContent = `🎤 Start ${durationSec}s Rep`;
       recordBtn.className = 'btn btn-primary';
       isRecording = false;
@@ -1951,19 +2204,35 @@
       recordBtn.textContent = '🔄 Re-record Answer';
       recordBtn.className = 'btn btn-primary';
 
-      // Simulate AI feedback (random score for demo)
+      // Simulate AI feedback
       const score = 70 + Math.floor(Math.random() * 25);
       document.getElementById('studioSnrText').textContent = `${score}% High-Signal Speech`;
       document.getElementById('studioSnrBar').style.width = `${score}%`;
       document.getElementById('studioSnrNoise').style.width = `${100 - score}%`;
 
       outputSection.style.display = 'block';
+
+      // If this rep belongs to a question card, log it
+      if (activeQuestionIdx !== null) {
+        const q = todayQuestions[activeQuestionIdx];
+        const timeSpent = maxDuration - Math.max(0, secondsElapsed);
+        q.reps.push({
+          number: q.reps.length + 1,
+          snr: score,
+          time: Math.max(1, timeSpent),
+          timestamp: Date.now()
+        });
+        if (q.bestSnr === null || score > q.bestSnr) q.bestSnr = score;
+
+        renderQuestionCard(activeQuestionIdx);
+        updateTodaySummary();
+        renderNavBadge();
+      }
     }
 
     function startTimer() {
       secondsElapsed = maxDuration;
       updateTimerDisplay();
-
       timerInterval = setInterval(() => {
         secondsElapsed--;
         updateTimerDisplay();
@@ -2003,7 +2272,51 @@
     window.addEventListener('resize', resizeCanvas);
 
     /* ============================================================
-       INTERVIEW SIMULATOR (5-question state machine)
+       NAVIGATION
+       ============================================================ */
+    function toggleSidebar() {
+      document.getElementById('appSidebar').classList.toggle('open');
+    }
+
+    function switchView(viewKey) {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-view'));
+
+      const navMap = {
+        today: 'navToday',
+        activities: 'navActivities',
+        dash: 'navDash',
+        recordings: 'navRecordings',
+        badges: 'navBadges',
+        pillars: 'navPillars',
+        learning: 'navLearning'
+      };
+      const viewMap = {
+        today: 'todayView',
+        activities: 'activitiesView',
+        dash: 'dashView',
+        recordings: 'recordingsView',
+        badges: 'badgesView',
+        pillars: 'pillarsView',
+        learning: 'learningView'
+      };
+
+      if (navMap[viewKey]) document.getElementById(navMap[viewKey]).classList.add('active');
+      if (viewMap[viewKey]) document.getElementById(viewMap[viewKey]).classList.add('active-view');
+
+      if (window.innerWidth <= 900) toggleSidebar();
+    }
+
+    function switchActivitySub(subKey, btn) {
+      document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.sub-activity-panel').forEach(p => p.style.display = 'none');
+      document.getElementById(`sub-${subKey}`).style.display = 'block';
+    }
+
+    /* ============================================================
+       INTERVIEW SIMULATOR
        ============================================================ */
     const simulatorQuestions = [
       'Tell me about yourself.',
@@ -2034,9 +2347,8 @@
       qText.textContent = `"${simulatorQuestions[simulatorIndex]}"`;
 
       btn.textContent = `Record Answer ${simulatorIndex + 1} →`;
-      launchStudio(simulatorQuestions[simulatorIndex], 60);
+      launchStudio(simulatorQuestions[simulatorIndex], 60, null);
 
-      // Advance after recording starts (simplified)
       setTimeout(() => {
         simulatorIndex++;
         if (simulatorIndex < simulatorQuestions.length) {
@@ -2048,12 +2360,15 @@
     }
 
     /* ============================================================
-       TIMELINE TABS
+       UTILS
        ============================================================ */
     function setTimeline(key, btn) {
       document.querySelectorAll('.time-tab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      // In production: fetch data for the selected range
+    }
+
+    function onTargetChange() {
+      // In production: refetch today's questions based on new filters
     }
 
     /* ============================================================
@@ -2061,8 +2376,8 @@
        ============================================================ */
     window.addEventListener('load', () => {
       resizeCanvas();
-      // Onboarding overlay is visible by default
-      // In production: check if user has completed onboarding
+      // Onboarding visible by default
+      // In production: check payment + onboarding status
     });
   </script>
 </body>
