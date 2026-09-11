@@ -3,379 +3,599 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Speech Studio — Executive Practice</title>
+  <title>Speech Studio — Executive Dashboard</title>
   <style>
-    /* Global Resets & Theme Variables */
     :root {
-      --bg-color: #0F172A;
-      --card-bg: #1E293B;
-      --card-border: #334155;
+      --bg-dark: #0B0F19;
+      --panel-bg: #111827;
+      --card-bg: #1F2937;
+      --border-color: #374151;
       --primary: #2563EB;
       --primary-hover: #1D4ED8;
-      --danger: #DC2626;
-      --danger-hover: #B91C1C;
       --accent-cyan: #38BDF8;
-      --text-main: #F8FAFC;
-      --text-muted: #94A3B8;
-      --success-green: #22C55E;
-      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --accent-gold: #F59E0B;
+      --danger: #EF4444;
+      --success: #10B981;
+      --text-main: #F9FAFB;
+      --text-muted: #9CA3AF;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--bg-color);
+      background-color: var(--bg-dark);
       color: var(--text-main);
-      font-family: var(--font-family);
-      line-height: 1.5;
+      font-family: var(--font);
       display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 24px 16px;
-    }
-
-    .app-container {
-      width: 100%;
-      max-width: 760px;
-      background-color: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
-    }
-
-    /* Header & Badge */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--card-border);
-    }
-
-    .badge {
-      background-color: #0F172A;
-      color: var(--accent-cyan);
-      border: 1px solid var(--card-border);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-    }
-
-    .timer {
-      font-family: "Courier New", Courier, monospace;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    /* Prompt Box */
-    .prompt-box {
-      background-color: #0F172A;
-      border-left: 4px solid var(--accent-cyan);
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 24px;
-    }
-
-    .prompt-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-      font-weight: 700;
-    }
-
-    .prompt-text {
-      font-size: 18px;
-      font-weight: 500;
-      color: var(--text-main);
-    }
-
-    /* Waveform Canvas Area */
-    .canvas-container {
-      width: 100%;
-      height: 90px;
-      background-color: #0F172A;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      margin-bottom: 24px;
+      height: 100vh;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    canvas {
+    /* APP LAYOUT */
+    .app-layout {
+      display: flex;
       width: 100%;
       height: 100%;
     }
 
-    /* Controls */
-    .controls {
+    /* LEFT SIDEBAR */
+    .sidebar {
+      width: 300px;
+      background-color: var(--panel-bg);
+      border-right: 1px solid var(--border-color);
+      padding: 24px;
       display: flex;
-      justify-content: center;
-      gap: 16px;
+      flex-direction: column;
+      gap: 24px;
+      overflow-y: auto;
     }
 
-    .btn {
-      padding: 14px 28px;
-      font-size: 16px;
-      font-weight: 600;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-      display: inline-flex;
+    .brand {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .btn-primary {
+    .sidebar-section {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .sidebar-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .field-group {
+      margin-bottom: 12px;
+    }
+    .field-group:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .plan-badge {
+      display: inline-block;
+      background-color: rgba(37, 99, 235, 0.2);
+      color: var(--accent-cyan);
+      border: 1px solid var(--primary);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* MAIN CONTENT AREA */
+    .main-content {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* TOP STATS BAR */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-info .val {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .stat-info .lbl {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .stat-icon { font-size: 24px; }
+
+    /* ACTION TABS / HUBS */
+    .mode-tabs {
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
       background-color: var(--primary);
-      color: #FFFFFF;
+      color: #FFF;
     }
 
-    .btn-primary:hover {
-      background-color: var(--primary-hover);
+    /* VIEW PANELS */
+    .view-panel { display: none; }
+    .view-panel.active { display: block; }
+
+    .studio-card {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
     }
 
-    .btn-danger {
-      background-color: var(--danger);
-      color: #FFFFFF;
+    .prompt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
     }
 
-    .btn-danger:hover {
-      background-color: var(--danger-hover);
+    .canvas-box {
+      width: 100%;
+      height: 80px;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin: 16px 0;
+      overflow: hidden;
     }
 
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    canvas { width: 100%; height: 100%; }
 
-    /* Analysis View (Hidden initially) */
-    .analysis-panel {
+    .btn {
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .btn-primary { background-color: var(--primary); color: #FFF; }
+    .btn-primary:hover { background-color: var(--primary-hover); }
+    .btn-danger { background-color: var(--danger); color: #FFF; }
+
+    /* OUTPUT & FEEDBACK */
+    .output-section {
+      margin-top: 24px;
       display: none;
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 1px solid var(--card-border);
     }
 
-    .metrics-grid {
+    .score-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
 
-    .metric-card {
-      background-color: #0F172A;
-      border: 1px solid var(--card-border);
-      padding: 16px;
+    .rescript-card {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--success);
       border-radius: 8px;
+      padding: 16px;
+    }
+
+    /* GAMIFICATION: ACHIEVEMENTS */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .achievement-card {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0.5;
+    }
+
+    .achievement-card.unlocked {
+      opacity: 1;
+      border-color: var(--accent-gold);
+    }
+
+    /* WHATSAPP & NOTIFICATIONS SIMULATOR */
+    .sim-box {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
       text-align: center;
     }
 
-    .metric-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--accent-cyan);
-    }
-
-    .metric-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-
-    .rescript-box {
-      background-color: #0F172A;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 20px;
-    }
-
-    .rescript-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--success-green);
-      margin-bottom: 8px;
+    .toggle-switch {
       display: flex;
       align-items: center;
-      gap: 6px;
-    }
-
-    .rescript-body {
-      font-size: 15px;
-      color: var(--text-main);
-      line-height: 1.6;
-    }
-
-    @media (max-width: 600px) {
-      .app-container {
-        padding: 20px;
-      }
-      .metrics-grid {
-        grid-template-columns: 1fr;
-      }
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-color);
     }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <!-- Studio Header -->
-    <header class="header">
-      <span class="badge" id="frameworkBadge">Framework: STAR</span>
-      <div class="timer" id="timerDisplay">00:00</div>
-    </header>
+  <div class="app-layout">
+    <!-- LEFT SIDEBAR: Context & Profile -->
+    <aside class="sidebar">
+      <div class="brand">🎯 Speech Studio</div>
 
-    <!-- Question Prompt -->
-    <section class="prompt-box">
-      <div class="prompt-label">Current Prompt</div>
-      <div class="prompt-text" id="promptText">
-        "Describe a time you had to handle a critical project trade-off under a tight deadline."
-      </div>
-    </section>
-
-    <!-- Real-time Visualizer Canvas -->
-    <div class="canvas-container">
-      <canvas id="waveformCanvas"></canvas>
-    </div>
-
-    <!-- Interactive Control Action -->
-    <div class="controls">
-      <button class="btn btn-primary" id="recordBtn">
-        🎤 Start Recording
-      </button>
-    </div>
-
-    <!-- Post-Recording AI Feedback Panel -->
-    <section class="analysis-panel" id="analysisPanel">
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-value" id="scoreValue">78/100</div>
-          <div class="metric-label">Waffle Score</div>
+      <!-- User Selection Settings -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">Target Context</div>
+        <div class="field-group">
+          <label>Target Role</label>
+          <select id="roleSelect">
+            <option value="Product Manager">Product Manager</option>
+            <option value="Senior Engineer">Senior Software Engineer</option>
+            <option value="Management Consultant">Management Consultant</option>
+            <option value="Executive Leader">Executive / VP Leader</option>
+          </select>
         </div>
-        <div class="metric-card">
-          <div class="metric-value" id="wpmValue">152</div>
-          <div class="metric-label">Words / Min</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-value" id="fillerValue">3</div>
-          <div class="metric-label">Fillers Detected</div>
+        <div class="field-group">
+          <label>Primary Focus</label>
+          <select id="focusSelect">
+            <option value="Interview Preparation">Interview Preparation</option>
+            <option value="Executive Pitching">Executive Pitching</option>
+            <option value="General Conciseness">General Conciseness</option>
+          </select>
         </div>
       </div>
 
-      <div class="rescript-box">
-        <div class="rescript-title">
-          ⚡ AI Executive Re-Script (STAR Optimized)
-        </div>
-        <div class="rescript-body" id="rescriptBody">
-          "In Q3, our launch deadline shifted up by two weeks (Situation). I prioritized core payment flows over secondary UI animations to preserve launch security (Action). As a result, we deployed on time with zero checkout latency and zero critical bugs (Result)."
+      <!-- Plan Info -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">Current Membership</div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 600; font-size: 14px;">Pro Sprint Tier</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Renews in 18 days</div>
+          </div>
+          <span class="plan-badge">ACTIVE</span>
         </div>
       </div>
-    </section>
+
+      <!-- Dynamic Question Selector -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">Practice Scenario</div>
+        <div class="field-group">
+          <label>Select Preset Prompt</label>
+          <select id="questionDropdown"></select>
+        </div>
+        <div class="field-group">
+          <label>Or Type Custom Situation</label>
+          <textarea id="customQuestion" rows="3" placeholder="Paste a question or describe a situation..."></textarea>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN DISPLAY DASHBOARD -->
+    <main class="main-content">
+      
+      <!-- STATS & MOTIVATION BAR -->
+      <section class="stats-bar">
+        <div class="stat-card">
+          <div class="stat-info">
+            <div class="val" id="streakVal">🔥 5 Days</div>
+            <div class="lbl">Daily Practice Streak</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info">
+            <div class="val" id="startScoreVal">42/100</div>
+            <div class="lbl">Baseline Score</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info">
+            <div class="val" id="currentScoreVal">78/100</div>
+            <div class="lbl">Latest Score</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info">
+            <div class="val" id="drillsCountVal">14</div>
+            <div class="lbl">Completed Drills</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- NAVIGATION HUBS -->
+      <nav class="mode-tabs">
+        <button class="tab-btn active" onclick="switchTab('audioTab')">🎤 Practice by Audio</button>
+        <button class="tab-btn" onclick="switchTab('whatsappTab')">💬 WhatsApp Practice</button>
+        <button class="tab-btn" onclick="switchTab('notifTab')">🔔 Daily Notifications</button>
+        <button class="tab-btn" onclick="switchTab('achieveTab')">🏆 Achievements</button>
+      </nav>
+
+      <!-- TAB 1: AUDIO PRACTICE STUDIO -->
+      <section id="audioTab" class="view-panel active">
+        <div class="studio-card">
+          <div class="prompt-header">
+            <div>
+              <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 600;">ACTIVE QUESTION</div>
+              <h2 id="activePromptDisplay" style="font-size: 18px; margin-top: 4px;">Loading prompt...</h2>
+            </div>
+            <div id="timerDisplay" style="font-family: monospace; font-size: 20px; font-weight: 700;">00:00</div>
+          </div>
+
+          <div class="canvas-box">
+            <canvas id="waveformCanvas"></canvas>
+          </div>
+
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <button class="btn btn-primary" id="recordBtn">🎤 Start Recording</button>
+          </div>
+
+          <!-- EVALUATION OUTPUT SECTION -->
+          <div class="output-section" id="outputSection">
+            <hr style="border-color: var(--border-color); margin: 20px 0;" />
+            <h3 style="margin-bottom: 12px; font-size: 16px;">AI Performance Diagnostics</h3>
+            
+            <div class="score-row">
+              <div class="stat-card">
+                <div class="stat-info">
+                  <div class="val" style="color: var(--accent-cyan);" id="waffleScoreOut">78/100</div>
+                  <div class="lbl">Conciseness Score</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-info">
+                  <div class="val" id="wpmOut">155</div>
+                  <div class="lbl">Words / Minute</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-info">
+                  <div class="val" style="color: var(--danger);" id="fillerOut">3</div>
+                  <div class="lbl">Fillers Detected</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rescript-card">
+              <div style="color: var(--success); font-weight: 700; margin-bottom: 6px;">⚡ AI Executive Re-Script</div>
+              <p id="rescriptOut" style="font-size: 14px; line-height: 1.6;"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: WHATSAPP INTEGRATION -->
+      <section id="whatsappTab" class="view-panel">
+        <div class="sim-box">
+          <h2>💬 Practice on WhatsApp</h2>
+          <p style="color: var(--text-muted); margin: 12px 0 24px 0;">Receive daily voice prompts directly on WhatsApp. Reply with a audio message to get instant conciseness reports.</p>
+          <input type="text" placeholder="+1 (555) 000-0000" style="max-width: 300px; text-align: center; margin-bottom: 16px;" />
+          <br />
+          <button class="btn btn-primary" onclick="alert('WhatsApp integration enabled! Check your phone.')">Connect WhatsApp Bot</button>
+        </div>
+      </section>
+
+      <!-- TAB 3: DAILY NOTIFICATIONS -->
+      <section id="notifTab" class="view-panel">
+        <div class="studio-card">
+          <h2 style="margin-bottom: 16px;">🔔 Notification Settings</h2>
+          <div class="toggle-switch">
+            <div>
+              <div style="font-weight: 600;">Morning Quick Drill (9:00 AM)</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Receive a 60-second warm-up scenario daily.</div>
+            </div>
+            <input type="checkbox" checked style="width: 20px;" />
+          </div>
+          <div class="toggle-switch">
+            <div>
+              <div style="font-weight: 600;">Streak Saver Reminders</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Alert me at 8:00 PM if I haven't completed my daily exercise.</div>
+            </div>
+            <input type="checkbox" checked style="width: 20px;" />
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: GAMIFICATION & ACHIEVEMENTS -->
+      <section id="achieveTab" class="view-panel">
+        <h2 style="margin-bottom: 16px;">🏆 Your Milestones</h2>
+        <div class="achievements-grid">
+          <div class="achievement-card unlocked">
+            <div style="font-size: 28px;">🚀</div>
+            <div>
+              <div style="font-weight: 600; font-size: 14px;">First Step</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Completed initial baseline diagnostic.</div>
+            </div>
+          </div>
+          <div class="achievement-card unlocked">
+            <div style="font-size: 28px;">🔥</div>
+            <div>
+              <div style="font-weight: 600; font-size: 14px;">5-Day Streak</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Practiced 5 consecutive days.</div>
+            </div>
+          </div>
+          <div class="achievement-card">
+            <div style="font-size: 28px;">⚡</div>
+            <div>
+              <div style="font-weight: 600; font-size: 14px;">Conciseness Master</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Score over 85 on three drills.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
   </div>
 
   <script>
-    // State Variables
+    // PRESET QUESTIONS DATABASE
+    const questionDatabase = {
+      "Product Manager": [
+        "Describe a time you had to handle a critical project trade-off under a tight deadline.",
+        "How do you prioritize competing feature requests from enterprise clients?",
+        "Tell me about a product launch that failed and what you learned."
+      ],
+      "Senior Engineer": [
+        "Explain a complex technical architecture decision you made recently.",
+        "How do you resolve technical debt vs feature delivery conflicts?",
+        "Tell me about a major production incident you managed."
+      ],
+      "Management Consultant": [
+        "How do you structure an executive deck for a client undergoing digital shift?",
+        "Describe a situation where a client disagreed with your team's analysis."
+      ],
+      "Executive Leader": [
+        "Give a 60-second strategic update on Q3 operational performance.",
+        "How do you communicate organizational restructuring to your staff?"
+      ]
+    };
+
+    // STATE MANAGEMENT
     let isRecording = false;
     let timerInterval = null;
     let secondsElapsed = 0;
-    
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let audioContext = null;
-    let analyser = null;
-    let dataArray = null;
-    let source = null;
-    let animationFrameId = null;
+    let audioContext, analyser, dataArray, mediaRecorder, animationFrameId;
 
-    // DOM Elements
+    // DOM ELEMENTS
+    const roleSelect = document.getElementById('roleSelect');
+    const questionDropdown = document.getElementById('questionDropdown');
+    const customQuestion = document.getElementById('customQuestion');
+    const activePromptDisplay = document.getElementById('activePromptDisplay');
     const recordBtn = document.getElementById('recordBtn');
     const timerDisplay = document.getElementById('timerDisplay');
+    const outputSection = document.getElementById('outputSection');
     const canvas = document.getElementById('waveformCanvas');
-    const canvasCtx = canvas.getContext('2d');
-    const analysisPanel = document.getElementById('analysisPanel');
+    const ctx = canvas.getContext('2d');
 
-    // Canvas Size Setup
-    function resizeCanvas() {
-      canvas.width = canvas.parentElement.clientWidth;
-      canvas.height = canvas.parentElement.clientHeight;
+    // INITIALIZATION
+    function updateQuestions() {
+      const selectedRole = roleSelect.value;
+      const questions = questionDatabase[selectedRole] || [];
+      questionDropdown.innerHTML = '';
+      questions.forEach(q => {
+        const opt = document.createElement('option');
+        opt.value = q;
+        opt.textContent = q;
+        questionDropdown.appendChild(opt);
+      });
+      updateActivePrompt();
     }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
 
-    // Toggle Recording
+    function updateActivePrompt() {
+      if (customQuestion.value.trim() !== "") {
+        activePromptDisplay.textContent = `"${customQuestion.value.trim()}"`;
+      } else {
+        activePromptDisplay.textContent = `"${questionDropdown.value}"`;
+      }
+    }
+
+    roleSelect.addEventListener('change', updateQuestions);
+    questionDropdown.addEventListener('change', () => {
+      customQuestion.value = "";
+      updateActivePrompt();
+    });
+    customQuestion.addEventListener('input', updateActivePrompt);
+    updateQuestions();
+
+    // TAB SWITCHER
+    function switchTab(tabId) {
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // RECORDING & AUDIO LOGIC
     recordBtn.addEventListener('click', async () => {
       if (!isRecording) {
-        await startRecording();
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
+
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 256;
+          const source = audioContext.createMediaStreamSource(stream);
+          source.connect(analyser);
+
+          dataArray = new Uint8Array(analyser.frequencyBinCount);
+          isRecording = true;
+          recordBtn.textContent = '⏹ Stop & Evaluate';
+          recordBtn.className = 'btn btn-danger';
+          outputSection.style.display = 'none';
+
+          startTimer();
+          drawWaveform();
+        } catch (e) {
+          alert("Microphone permission required.");
+        }
       } else {
-        stopRecording();
-      }
-    });
-
-    // Start Audio Stream & Visualizer
-    async function startRecording() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        
-        // Media Recorder Init
-        mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-        audioChunks = [];
-        
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) audioChunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = handleRecordingStop;
-        mediaRecorder.start();
-
-        // Audio Context & Analyser Node Setup
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioContext.createAnalyser();
-        analyser.fftSize = 256;
-        
-        source = audioContext.createMediaStreamSource(stream);
-        source.connect(analyser);
-
-        const bufferLength = analyser.frequencyBinCount;
-        dataArray = new Uint8Array(bufferLength);
-
-        // UI Updates
-        isRecording = true;
-        recordBtn.textContent = '⏹ Stop & Evaluate';
-        recordBtn.className = 'btn btn-danger';
-        analysisPanel.style.display = 'none';
-
-        startTimer();
-        drawWaveform();
-
-      } catch (err) {
-        alert('Microphone access is required to use the speech simulator.');
-        console.error('Error accessing microphone:', err);
-      }
-    }
-
-    // Stop Audio Stream & Process Output
-    function stopRecording() {
-      if (mediaRecorder && isRecording) {
         mediaRecorder.stop();
-        mediaRecorder.stream.getTracks().forEach(track => track.stop());
-        
+        mediaRecorder.stream.getTracks().forEach(t => t.stop());
         if (audioContext) audioContext.close();
         cancelAnimationFrame(animationFrameId);
         clearInterval(timerInterval);
@@ -383,34 +603,28 @@
         isRecording = false;
         recordBtn.textContent = '🔄 Re-record Answer';
         recordBtn.className = 'btn btn-primary';
-      }
-    }
 
-    // Render Waveform Canvas Animation
+        // Simulate AI response output
+        renderOutput();
+      }
+    });
+
     function drawWaveform() {
       if (!isRecording) return;
-
       animationFrameId = requestAnimationFrame(drawWaveform);
       analyser.getByteFrequencyData(dataArray);
-
-      canvasCtx.fillStyle = '#0F172A';
-      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
+      ctx.fillStyle = '#0B0F19';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       const barWidth = (canvas.width / dataArray.length) * 2.5;
-      let barHeight;
       let x = 0;
-
       for (let i = 0; i < dataArray.length; i++) {
-        barHeight = dataArray[i] / 3.5;
-
-        canvasCtx.fillStyle = '#38BDF8';
-        canvasCtx.fillRect(x, canvas.height / 2 - barHeight / 2, barWidth, barHeight);
-
+        const barHeight = dataArray[i] / 4;
+        ctx.fillStyle = '#38BDF8';
+        ctx.fillRect(x, canvas.height / 2 - barHeight / 2, barWidth, barHeight);
         x += barWidth + 2;
       }
     }
 
-    // Timer Logic
     function startTimer() {
       secondsElapsed = 0;
       timerDisplay.textContent = '00:00';
@@ -422,18 +636,19 @@
       }, 1000);
     }
 
-    // Post-Recording Handler
-    function handleRecordingStop() {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      
-      // Clear Canvas
-      canvasCtx.fillStyle = '#0F172A';
-      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Show Simulated AI Analysis Panel (Replace with API fetch call in production)
-      analysisPanel.style.display = 'block';
-      analysisPanel.scrollIntoView({ behavior: 'smooth' });
+    function renderOutput() {
+      outputSection.style.display = 'block';
+      document.getElementById('rescriptOut').textContent = 
+        `"During my recent project, I prioritized critical feature deliverables (Situation/Task) by focusing resources on high-impact items (Action). This reduced latency by 30% and hit our hard deadline on schedule (Result)."`;
     }
+
+    // Responsive Canvas Resizing
+    function resizeCanvas() {
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
   </script>
 </body>
 </html>
