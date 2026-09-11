@@ -1,0 +1,184 @@
+import React, { useState, useEffect, useRef } from 'react';
+
+export default function SpeechStudio({ scenarioPrompt, framework = "STAR", onAnalysisComplete }) {
+  const [isRecording, setIsRecording] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const timerIntervalRef = useRef(null);
+
+  // Initialize Microphone & Recording Stream
+  const startRecording = async () => {
+    audioChunksRef.current = [];
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorderRef.current.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        setAudioBlob(audioBlob);
+        handleAnalyze(audioBlob);
+      };
+
+      mediaRecorderRef.current.start(250); // Slice data every 250ms
+      setIsRecording(true);
+      
+      // Start Session Timer
+      setTimer(0);
+      timerIntervalRef.current = setInterval(() => {
+        setTimer((prev) => prev + 1);
+      }, 1000);
+
+    } catch (err) {
+      console.error("Microphone access denied or unsupported:", err);
+      alert("Microphone access is required to run the speech studio.");
+    }
+  };
+
+  // Stop Recording
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      // Stop media tracks to release microphone
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      clearInterval(timerIntervalRef.current);
+      setIsRecording(false);
+    }
+  };
+
+  // Submit Audio Payload for AI Evaluation
+  const handleAnalyze = async (blob) => {
+    setIsAnalyzing(true);
+    const formData = new FormData();
+    formData.append("file", blob, "recording.webm");
+    formData.append("framework", framework);
+    formData.append("prompt", scenarioPrompt);
+
+    try {
+      const response = await fetch("/api/v1/analyze-speech", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      setIsAnalyzing(false);
+      if (onAnalysisComplete) onAnalysisComplete(result);
+    } catch (error) {
+      console.error("Failed to analyze speech:", error);
+      setIsAnalyzing(false);
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div style={styles.container}>
+      <header style={styles.header}>
+        <span style={styles.badge}>Framework: {framework}</span>
+        <div style={styles.timerDisplay}>{formatTime(timer)}</div>
+      </header>
+
+      <main style={styles.promptCard}>
+        <h3 style={styles.questionLabel}>Question Prompt</h3>
+        <p style={styles.questionText}>"{scenarioPrompt}"</p>
+      </main>
+
+      <div style={styles.controlsArea}>
+        {!isRecording ? (
+          <button 
+            onClick={startRecording} 
+            disabled={isAnalyzing}
+            style={{ ...styles.actionBtn, backgroundColor: '#2563EB' }}
+          >
+            {isAnalyzing ? "Processing AI Analysis..." : "🎤 Start Recording"}
+          </button>
+        ) : (
+          <button 
+            onClick={stopRecording} 
+            style={{ ...styles.actionBtn, backgroundColor: '#DC2626' }}
+          >
+            ⏹ Stop & Evaluate Answer
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const styles = {
+  container: {
+    maxWidth: '680px',
+    margin: '0 auto',
+    padding: '24px',
+    borderRadius: '12px',
+    backgroundColor: '#0F172A',
+    color: '#F8FAFC',
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+  },
+  badge: {
+    backgroundColor: '#1E293B',
+    padding: '6px 12px',
+    borderRadius: '6px',
+    fontSize: '14px',
+    color: '#94A3B8',
+  },
+  timerDisplay: {
+    fontSize: '20px',
+    fontWeight: 'bold',
+    fontFamily: 'monospace',
+    color: '#38BDF8',
+  },
+  promptCard: {
+    backgroundColor: '#1E293B',
+    padding: '20px',
+    borderRadius: '8px',
+    marginBottom: '24px',
+    borderLeft: '4px solid #38BDF8',
+  },
+  questionLabel: {
+    margin: '0 0 8px 0',
+    fontSize: '12px',
+    textTransform: 'uppercase',
+    color: '#94A3B8',
+    letterSpacing: '0.05em',
+  },
+  questionText: {
+    margin: 0,
+    fontSize: '18px',
+    lineHeight: '1.5',
+    color: '#F1F5F9',
+  },
+  controlsArea: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  actionBtn: {
+    padding: '14px 28px',
+    fontSize: '16px',
+    fontWeight: '600',
+    color: '#FFFFFF',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    transition: 'opacity 0.2s ease',
+  }
+};
