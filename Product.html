@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Speech Studio — Executive Dashboard</title>
+  <title>Speech Studio — Conciseness Dashboard</title>
   <style>
     :root {
       --bg-dark: #0B0F19;
@@ -14,6 +14,7 @@
       --primary-hover: #1D4ED8;
       --accent-cyan: #38BDF8;
       --accent-gold: #F59E0B;
+      --accent-purple: #8B5CF6;
       --danger: #EF4444;
       --success: #10B981;
       --text-main: #F9FAFB;
@@ -32,33 +33,21 @@
       overflow: hidden;
     }
 
-    /* APP LAYOUT */
-    .app-layout {
-      display: flex;
-      width: 100%;
-      height: 100%;
-    }
+    .app-layout { display: flex; width: 100%; height: 100%; }
 
-    /* LEFT SIDEBAR */
+    /* SIDEBAR */
     .sidebar {
-      width: 300px;
+      width: 310px;
       background-color: var(--panel-bg);
       border-right: 1px solid var(--border-color);
       padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 20px;
       overflow-y: auto;
     }
 
-    .brand {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .brand { font-size: 20px; font-weight: 700; color: var(--text-main); }
 
     .sidebar-section {
       background-color: var(--card-bg);
@@ -72,23 +61,16 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--text-muted);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       font-weight: 700;
     }
 
-    .field-group {
-      margin-bottom: 12px;
-    }
+    .field-group { margin-bottom: 12px; }
     .field-group:last-child { margin-bottom: 0; }
 
-    label {
-      display: block;
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
+    label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
 
-    select, input, textarea {
+    select, textarea {
       width: 100%;
       background-color: var(--bg-dark);
       border: 1px solid var(--border-color);
@@ -99,84 +81,109 @@
       font-size: 13px;
     }
 
-    .plan-badge {
-      display: inline-block;
-      background-color: rgba(37, 99, 235, 0.2);
-      color: var(--accent-cyan);
-      border: 1px solid var(--primary);
-      padding: 4px 8px;
-      border-radius: 6px;
+    /* SCREENSHOT-INSPIRED SKILL CHIPS */
+    .skill-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .chip {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      padding: 8px 10px;
+      border-radius: 8px;
       font-size: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .chip.active {
+      border-color: var(--accent-purple);
+      background-color: rgba(139, 92, 246, 0.15);
+      color: #FFF;
       font-weight: 600;
     }
 
-    /* MAIN CONTENT AREA */
+    /* MAIN CONTENT */
     .main-content {
       flex: 1;
-      padding: 32px;
+      padding: 28px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 20px;
     }
 
-    /* TOP STATS BAR */
-    .stats-bar {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-
-    .stat-card {
+    /* MODE TOGGLE BAR */
+    .mode-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       background-color: var(--panel-bg);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 16px;
+      padding: 12px 20px;
+    }
+
+    .mode-selector {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .stat-info .val {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-    .stat-info .lbl {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-    .stat-icon { font-size: 24px; }
-
-    /* ACTION TABS / HUBS */
-    .mode-tabs {
-      display: flex;
-      gap: 12px;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 12px;
-    }
-
-    .tab-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 8px 16px;
+      background-color: var(--bg-dark);
+      padding: 4px;
       border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
+      border: 1px solid var(--border-color);
     }
 
-    .tab-btn.active {
+    .mode-btn {
+      padding: 6px 16px;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .mode-btn.active {
       background-color: var(--primary);
       color: #FFF;
     }
+    .mode-btn.pressure.active {
+      background-color: var(--danger);
+      color: #FFF;
+    }
 
-    /* VIEW PANELS */
-    .view-panel { display: none; }
-    .view-panel.active { display: block; }
+    /* HERO METRIC CARD (NEW HIERARCHY) */
+    .hero-card {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(17, 24, 39, 1) 100%);
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
+    .hero-metric {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    /* COMPARISON TABLE */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    .comp-table th, .comp-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: left;
+    }
+    .comp-table th { color: var(--text-muted); font-weight: 600; }
+
+    /* STUDIO PANEL */
     .studio-card {
       background-color: var(--panel-bg);
       border: 1px solid var(--border-color);
@@ -191,9 +198,19 @@
       margin-bottom: 16px;
     }
 
+    .timer-display {
+      font-family: monospace;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+    .timer-display.pressure-active { color: var(--danger); animation: pulse 1s infinite; }
+
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
     .canvas-box {
       width: 100%;
-      height: 80px;
+      height: 70px;
       background-color: var(--bg-dark);
       border: 1px solid var(--border-color);
       border-radius: 8px;
@@ -202,6 +219,28 @@
     }
 
     canvas { width: 100%; height: 100%; }
+
+    /* SIGNAL TO NOISE GRAPHICAL METER */
+    .snr-container {
+      margin-top: 16px;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+
+    .snr-bar-wrapper {
+      height: 12px;
+      width: 100%;
+      background-color: var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 8px;
+      display: flex;
+    }
+
+    .snr-signal { height: 100%; background-color: var(--success); width: 75%; }
+    .snr-noise { height: 100%; background-color: var(--danger); width: 25%; }
 
     .btn {
       padding: 12px 24px;
@@ -213,275 +252,152 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: background 0.2s;
     }
     .btn-primary { background-color: var(--primary); color: #FFF; }
-    .btn-primary:hover { background-color: var(--primary-hover); }
     .btn-danger { background-color: var(--danger); color: #FFF; }
 
-    /* OUTPUT & FEEDBACK */
-    .output-section {
-      margin-top: 24px;
-      display: none;
-    }
-
-    .score-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .rescript-card {
-      background-color: var(--bg-dark);
-      border: 1px solid var(--success);
-      border-radius: 8px;
-      padding: 16px;
-    }
-
-    /* GAMIFICATION: ACHIEVEMENTS */
-    .achievements-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-    }
-
-    .achievement-card {
-      background-color: var(--bg-dark);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      opacity: 0.5;
-    }
-
-    .achievement-card.unlocked {
-      opacity: 1;
-      border-color: var(--accent-gold);
-    }
-
-    /* WHATSAPP & NOTIFICATIONS SIMULATOR */
-    .sim-box {
-      background-color: var(--bg-dark);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .toggle-switch {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-color);
-    }
+    .output-section { margin-top: 20px; display: none; }
   </style>
 </head>
 <body>
 
   <div class="app-layout">
-    <!-- LEFT SIDEBAR: Context & Profile -->
+    <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="brand">🎯 Speech Studio</div>
 
-      <!-- User Selection Settings -->
+      <!-- FOCUS SKILLS CHIPS (FROM SCREENSHOT) -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">Focus Skill</div>
+        <div class="skill-chips">
+          <div class="chip active" onclick="selectSkill(this)">Articulation</div>
+          <div class="chip" onclick="selectSkill(this)">Public Speaking</div>
+          <div class="chip" onclick="selectSkill(this)">Cognitive Skills</div>
+          <div class="chip" onclick="selectSkill(this)">Small Talk</div>
+        </div>
+      </div>
+
+      <!-- TARGET CONTEXT -->
       <div class="sidebar-section">
         <div class="sidebar-title">Target Context</div>
         <div class="field-group">
           <label>Target Role</label>
           <select id="roleSelect">
-            <option value="Product Manager">Product Manager</option>
-            <option value="Senior Engineer">Senior Software Engineer</option>
-            <option value="Management Consultant">Management Consultant</option>
-            <option value="Executive Leader">Executive / VP Leader</option>
+            <option>Product Manager</option>
+            <option>Senior Engineer</option>
+            <option>Management Consultant</option>
+            <option>Executive Leader</option>
           </select>
         </div>
         <div class="field-group">
-          <label>Primary Focus</label>
-          <select id="focusSelect">
-            <option value="Interview Preparation">Interview Preparation</option>
-            <option value="Executive Pitching">Executive Pitching</option>
-            <option value="General Conciseness">General Conciseness</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Plan Info -->
-      <div class="sidebar-section">
-        <div class="sidebar-title">Current Membership</div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <div style="font-weight: 600; font-size: 14px;">Pro Sprint Tier</div>
-            <div style="font-size: 12px; color: var(--text-muted);">Renews in 18 days</div>
-          </div>
-          <span class="plan-badge">ACTIVE</span>
-        </div>
-      </div>
-
-      <!-- Dynamic Question Selector -->
-      <div class="sidebar-section">
-        <div class="sidebar-title">Practice Scenario</div>
-        <div class="field-group">
-          <label>Select Preset Prompt</label>
+          <label>Scenario Prompt</label>
           <select id="questionDropdown"></select>
         </div>
         <div class="field-group">
-          <label>Or Type Custom Situation</label>
-          <textarea id="customQuestion" rows="3" placeholder="Paste a question or describe a situation..."></textarea>
+          <label>Custom Situation</label>
+          <textarea id="customQuestion" rows="2" placeholder="Paste custom prompt..."></textarea>
         </div>
       </div>
     </aside>
 
-    <!-- MAIN DISPLAY DASHBOARD -->
+    <!-- MAIN CONTENT -->
     <main class="main-content">
-      
-      <!-- STATS & MOTIVATION BAR -->
-      <section class="stats-bar">
-        <div class="stat-card">
-          <div class="stat-info">
-            <div class="val" id="streakVal">🔥 5 Days</div>
-            <div class="lbl">Daily Practice Streak</div>
+
+      <!-- MODE TOGGLE BAR -->
+      <div class="mode-bar">
+        <div>
+          <span style="font-weight: 700; font-size: 14px;">PRACTICE MODE:</span>
+          <span id="modeDesc" style="color: var(--text-muted); font-size: 13px; margin-left: 8px;">Normal Mode (Standard pacing)</span>
+        </div>
+        <div class="mode-selector">
+          <button class="mode-btn active" id="normalBtn" onclick="setMode('normal')">Normal</button>
+          <button class="mode-btn pressure" id="pressureBtn" onclick="setMode('pressure')">⚡ Pressure Mode (&lt;30s)</button>
+        </div>
+      </div>
+
+      <!-- HERO EFFICIENCY CARD (TIME TO POINT) -->
+      <section class="hero-card">
+        <div>
+          <div style="font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Primary Metric</div>
+          <div style="font-size: 18px; font-weight: 700; margin-top: 2px;">You're getting to the point faster</div>
+          <div class="hero-metric">
+            <span>18 sec</span>
+            <span style="color: var(--text-muted); font-size: 18px;">➔</span>
+            <span>5 sec</span>
           </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-info">
-            <div class="val" id="startScoreVal">42/100</div>
-            <div class="lbl">Baseline Score</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-info">
-            <div class="val" id="currentScoreVal">78/100</div>
-            <div class="lbl">Latest Score</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-info">
-            <div class="val" id="drillsCountVal">14</div>
-            <div class="lbl">Completed Drills</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- NAVIGATION HUBS -->
-      <nav class="mode-tabs">
-        <button class="tab-btn active" onclick="switchTab('audioTab')">🎤 Practice by Audio</button>
-        <button class="tab-btn" onclick="switchTab('whatsappTab')">💬 WhatsApp Practice</button>
-        <button class="tab-btn" onclick="switchTab('notifTab')">🔔 Daily Notifications</button>
-        <button class="tab-btn" onclick="switchTab('achieveTab')">🏆 Achievements</button>
-      </nav>
-
-      <!-- TAB 1: AUDIO PRACTICE STUDIO -->
-      <section id="audioTab" class="view-panel active">
-        <div class="studio-card">
-          <div class="prompt-header">
-            <div>
-              <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 600;">ACTIVE QUESTION</div>
-              <h2 id="activePromptDisplay" style="font-size: 18px; margin-top: 4px;">Loading prompt...</h2>
-            </div>
-            <div id="timerDisplay" style="font-family: monospace; font-size: 20px; font-weight: 700;">00:00</div>
-          </div>
-
-          <div class="canvas-box">
-            <canvas id="waveformCanvas"></canvas>
-          </div>
-
-          <div style="display: flex; gap: 12px; align-items: center;">
-            <button class="btn btn-primary" id="recordBtn">🎤 Start Recording</button>
-          </div>
-
-          <!-- EVALUATION OUTPUT SECTION -->
-          <div class="output-section" id="outputSection">
-            <hr style="border-color: var(--border-color); margin: 20px 0;" />
-            <h3 style="margin-bottom: 12px; font-size: 16px;">AI Performance Diagnostics</h3>
-            
-            <div class="score-row">
-              <div class="stat-card">
-                <div class="stat-info">
-                  <div class="val" style="color: var(--accent-cyan);" id="waffleScoreOut">78/100</div>
-                  <div class="lbl">Conciseness Score</div>
-                </div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-info">
-                  <div class="val" id="wpmOut">155</div>
-                  <div class="lbl">Words / Minute</div>
-                </div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-info">
-                  <div class="val" style="color: var(--danger);" id="fillerOut">3</div>
-                  <div class="lbl">Fillers Detected</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="rescript-card">
-              <div style="color: var(--success); font-weight: 700; margin-bottom: 6px;">⚡ AI Executive Re-Script</div>
-              <p id="rescriptOut" style="font-size: 14px; line-height: 1.6;"></p>
-            </div>
-          </div>
+        <div style="font-size: 12px; color: var(--accent-cyan); background-color: rgba(56, 189, 248, 0.1); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--accent-cyan);">
+          ⚡ 72% Faster Core Point Delivery
         </div>
       </section>
 
-      <!-- TAB 2: WHATSAPP INTEGRATION -->
-      <section id="whatsappTab" class="view-panel">
-        <div class="sim-box">
-          <h2>💬 Practice on WhatsApp</h2>
-          <p style="color: var(--text-muted); margin: 12px 0 24px 0;">Receive daily voice prompts directly on WhatsApp. Reply with a audio message to get instant conciseness reports.</p>
-          <input type="text" placeholder="+1 (555) 000-0000" style="max-width: 300px; text-align: center; margin-bottom: 16px;" />
-          <br />
-          <button class="btn btn-primary" onclick="alert('WhatsApp integration enabled! Check your phone.')">Connect WhatsApp Bot</button>
+      <!-- STUDIO PRACTICE CARD -->
+      <section class="studio-card">
+        <div class="prompt-header">
+          <div>
+            <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">ACTIVE PROMPT</div>
+            <h2 id="activePromptDisplay" style="font-size: 16px; margin-top: 4px;">Loading prompt...</h2>
+          </div>
+          <div class="timer-display" id="timerDisplay">00:00</div>
         </div>
-      </section>
 
-      <!-- TAB 3: DAILY NOTIFICATIONS -->
-      <section id="notifTab" class="view-panel">
-        <div class="studio-card">
-          <h2 style="margin-bottom: 16px;">🔔 Notification Settings</h2>
-          <div class="toggle-switch">
-            <div>
-              <div style="font-weight: 600;">Morning Quick Drill (9:00 AM)</div>
-              <div style="font-size: 12px; color: var(--text-muted);">Receive a 60-second warm-up scenario daily.</div>
-            </div>
-            <input type="checkbox" checked style="width: 20px;" />
-          </div>
-          <div class="toggle-switch">
-            <div>
-              <div style="font-weight: 600;">Streak Saver Reminders</div>
-              <div style="font-size: 12px; color: var(--text-muted);">Alert me at 8:00 PM if I haven't completed my daily exercise.</div>
-            </div>
-            <input type="checkbox" checked style="width: 20px;" />
-          </div>
+        <div class="canvas-box">
+          <canvas id="waveformCanvas"></canvas>
         </div>
-      </section>
 
-      <!-- TAB 4: GAMIFICATION & ACHIEVEMENTS -->
-      <section id="achieveTab" class="view-panel">
-        <h2 style="margin-bottom: 16px;">🏆 Your Milestones</h2>
-        <div class="achievements-grid">
-          <div class="achievement-card unlocked">
-            <div style="font-size: 28px;">🚀</div>
-            <div>
-              <div style="font-weight: 600; font-size: 14px;">First Step</div>
-              <div style="font-size: 12px; color: var(--text-muted);">Completed initial baseline diagnostic.</div>
+        <button class="btn btn-primary" id="recordBtn">🎤 Start Recording</button>
+
+        <!-- OUTPUT SECTION WITH SECONDARY METRICS & SNR METER -->
+        <div class="output-section" id="outputSection">
+          <hr style="border-color: var(--border-color); margin: 20px 0;" />
+
+          <!-- SECONDARY METRICS COMPARISON TABLE -->
+          <h3 style="font-size: 14px; margin-bottom: 8px;">Secondary Metrics Breakdown</h3>
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Before</th>
+                <th>After</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Time to Point</strong></td>
+                <td style="color: var(--danger);">18s</td>
+                <td style="color: var(--success); font-weight: 700;">5s</td>
+              </tr>
+              <tr>
+                <td><strong>Word Count</strong></td>
+                <td>126 words</td>
+                <td style="color: var(--success);">78 words</td>
+              </tr>
+              <tr>
+                <td><strong>Repeated Ideas</strong></td>
+                <td style="color: var(--danger);">4 repeated</td>
+                <td style="color: var(--success);">1 clear concept</td>
+              </tr>
+              <tr>
+                <td><strong>Structure Clarity</strong></td>
+                <td style="color: var(--danger);">Weak structure</td>
+                <td style="color: var(--success); font-weight: 700;">Clear structure (STAR)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- SIGNAL TO NOISE RATIO (SNR) VISUAL METER -->
+          <div class="snr-container">
+            <div style="display: flex; justify-content: space-between; font-size: 12px;">
+              <span style="font-weight: 700;">Signal-to-Noise Ratio (SNR)</span>
+              <span style="color: var(--success); font-weight: 700;">75% High Signal</span>
             </div>
-          </div>
-          <div class="achievement-card unlocked">
-            <div style="font-size: 28px;">🔥</div>
-            <div>
-              <div style="font-weight: 600; font-size: 14px;">5-Day Streak</div>
-              <div style="font-size: 12px; color: var(--text-muted);">Practiced 5 consecutive days.</div>
+            <div class="snr-bar-wrapper">
+              <div class="snr-signal" title="Substance / Core Points (75%)"></div>
+              <div class="snr-noise" title="Fluff / Fillers / Tangents (25%)"></div>
             </div>
-          </div>
-          <div class="achievement-card">
-            <div style="font-size: 28px;">⚡</div>
-            <div>
-              <div style="font-weight: 600; font-size: 14px;">Conciseness Master</div>
-              <div style="font-size: 12px; color: var(--text-muted);">Score over 85 on three drills.</div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+              <span>🟢 Signal: Core Logic &amp; Impact (75%)</span>
+              <span>🔴 Noise: Fillers &amp; Redundancy (25%)</span>
             </div>
           </div>
         </div>
@@ -491,35 +407,19 @@
   </div>
 
   <script>
-    // PRESET QUESTIONS DATABASE
     const questionDatabase = {
-      "Product Manager": [
-        "Describe a time you had to handle a critical project trade-off under a tight deadline.",
-        "How do you prioritize competing feature requests from enterprise clients?",
-        "Tell me about a product launch that failed and what you learned."
-      ],
-      "Senior Engineer": [
-        "Explain a complex technical architecture decision you made recently.",
-        "How do you resolve technical debt vs feature delivery conflicts?",
-        "Tell me about a major production incident you managed."
-      ],
-      "Management Consultant": [
-        "How do you structure an executive deck for a client undergoing digital shift?",
-        "Describe a situation where a client disagreed with your team's analysis."
-      ],
-      "Executive Leader": [
-        "Give a 60-second strategic update on Q3 operational performance.",
-        "How do you communicate organizational restructuring to your staff?"
-      ]
+      "Product Manager": ["Describe a time you handled a trade-off under deadline.", "How do you handle feature requests?"],
+      "Senior Engineer": ["Explain a complex technical architecture decision.", "Tell me about a incident you resolved."],
+      "Management Consultant": ["How do you structure an executive presentation?", "Describe client disagreement."],
+      "Executive Leader": ["Give a 30-second strategic update on Q3 performance.", "Explain restructuring to staff."]
     };
 
-    // STATE MANAGEMENT
+    let mode = 'normal';
     let isRecording = false;
     let timerInterval = null;
     let secondsElapsed = 0;
     let audioContext, analyser, dataArray, mediaRecorder, animationFrameId;
 
-    // DOM ELEMENTS
     const roleSelect = document.getElementById('roleSelect');
     const questionDropdown = document.getElementById('questionDropdown');
     const customQuestion = document.getElementById('customQuestion');
@@ -530,45 +430,40 @@
     const canvas = document.getElementById('waveformCanvas');
     const ctx = canvas.getContext('2d');
 
-    // INITIALIZATION
-    function updateQuestions() {
-      const selectedRole = roleSelect.value;
-      const questions = questionDatabase[selectedRole] || [];
-      questionDropdown.innerHTML = '';
-      questions.forEach(q => {
-        const opt = document.createElement('option');
-        opt.value = q;
-        opt.textContent = q;
-        questionDropdown.appendChild(opt);
-      });
-      updateActivePrompt();
+    function selectSkill(chip) {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
     }
 
-    function updateActivePrompt() {
-      if (customQuestion.value.trim() !== "") {
-        activePromptDisplay.textContent = `"${customQuestion.value.trim()}"`;
-      } else {
-        activePromptDisplay.textContent = `"${questionDropdown.value}"`;
-      }
+    function setMode(selectedMode) {
+      mode = selectedMode;
+      document.getElementById('normalBtn').classList.toggle('active', mode === 'normal');
+      document.getElementById('pressureBtn').classList.toggle('active', mode === 'pressure');
+      document.getElementById('modeDesc').textContent = mode === 'pressure' ? 'Pressure Mode (Strict < 30s Cap)' : 'Normal Mode (Standard pacing)';
+      timerDisplay.classList.toggle('pressure-active', mode === 'pressure');
+      timerDisplay.textContent = mode === 'pressure' ? '00:30' : '00:00';
+    }
+
+    function updateQuestions() {
+      const qList = questionDatabase[roleSelect.value] || [];
+      questionDropdown.innerHTML = '';
+      qList.forEach(q => {
+        const opt = document.createElement('option');
+        opt.value = q; opt.textContent = q;
+        questionDropdown.appendChild(opt);
+      });
+      updatePrompt();
+    }
+
+    function updatePrompt() {
+      activePromptDisplay.textContent = customQuestion.value.trim() ? `"${customQuestion.value.trim()}"` : `"${questionDropdown.value}"`;
     }
 
     roleSelect.addEventListener('change', updateQuestions);
-    questionDropdown.addEventListener('change', () => {
-      customQuestion.value = "";
-      updateActivePrompt();
-    });
-    customQuestion.addEventListener('input', updateActivePrompt);
+    questionDropdown.addEventListener('change', () => { customQuestion.value = ''; updatePrompt(); });
+    customQuestion.addEventListener('input', updatePrompt);
     updateQuestions();
 
-    // TAB SWITCHER
-    function switchTab(tabId) {
-      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      event.target.classList.add('active');
-    }
-
-    // RECORDING & AUDIO LOGIC
     recordBtn.addEventListener('click', async () => {
       if (!isRecording) {
         try {
@@ -591,23 +486,48 @@
           startTimer();
           drawWaveform();
         } catch (e) {
-          alert("Microphone permission required.");
+          alert('Microphone access required.');
         }
       } else {
-        mediaRecorder.stop();
-        mediaRecorder.stream.getTracks().forEach(t => t.stop());
-        if (audioContext) audioContext.close();
-        cancelAnimationFrame(animationFrameId);
-        clearInterval(timerInterval);
-
-        isRecording = false;
-        recordBtn.textContent = '🔄 Re-record Answer';
-        recordBtn.className = 'btn btn-primary';
-
-        // Simulate AI response output
-        renderOutput();
+        stopRecording();
       }
     });
+
+    function stopRecording() {
+      if (mediaRecorder) mediaRecorder.stop();
+      if (audioContext) audioContext.close();
+      cancelAnimationFrame(animationFrameId);
+      clearInterval(timerInterval);
+
+      isRecording = false;
+      recordBtn.textContent = '🔄 Re-record Answer';
+      recordBtn.className = 'btn btn-primary';
+      outputSection.style.display = 'block';
+    }
+
+    function startTimer() {
+      secondsElapsed = mode === 'pressure' ? 30 : 0;
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        if (mode === 'pressure') {
+          secondsElapsed--;
+          if (secondsElapsed <= 0) {
+            stopRecording();
+            alert("Time's up! Pressure Mode cut-off reached.");
+          }
+        } else {
+          secondsElapsed++;
+        }
+        updateTimerDisplay();
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = String(Math.floor(Math.abs(secondsElapsed) / 60)).padStart(2, '0');
+      const secs = String(Math.abs(secondsElapsed) % 60).padStart(2, '0');
+      timerDisplay.textContent = `${mins}:${secs}`;
+    }
 
     function drawWaveform() {
       if (!isRecording) return;
@@ -619,30 +539,12 @@
       let x = 0;
       for (let i = 0; i < dataArray.length; i++) {
         const barHeight = dataArray[i] / 4;
-        ctx.fillStyle = '#38BDF8';
+        ctx.fillStyle = mode === 'pressure' ? '#EF4444' : '#38BDF8';
         ctx.fillRect(x, canvas.height / 2 - barHeight / 2, barWidth, barHeight);
         x += barWidth + 2;
       }
     }
 
-    function startTimer() {
-      secondsElapsed = 0;
-      timerDisplay.textContent = '00:00';
-      timerInterval = setInterval(() => {
-        secondsElapsed++;
-        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
-        const secs = String(secondsElapsed % 60).padStart(2, '0');
-        timerDisplay.textContent = `${mins}:${secs}`;
-      }, 1000);
-    }
-
-    function renderOutput() {
-      outputSection.style.display = 'block';
-      document.getElementById('rescriptOut').textContent = 
-        `"During my recent project, I prioritized critical feature deliverables (Situation/Task) by focusing resources on high-impact items (Action). This reduced latency by 30% and hit our hard deadline on schedule (Result)."`;
-    }
-
-    // Responsive Canvas Resizing
     function resizeCanvas() {
       canvas.width = canvas.parentElement.clientWidth;
       canvas.height = canvas.parentElement.clientHeight;
