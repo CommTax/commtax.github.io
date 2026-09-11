@@ -141,9 +141,6 @@
       color: var(--text-muted);
       margin-bottom: 8px;
       font-weight: 700;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
     }
 
     .field-group { margin-bottom: 8px; }
@@ -162,7 +159,7 @@
       font-size: 12px;
     }
 
-    /* USER PROFILE BOTTOM LEFT CONTAINER */
+    /* USER PROFILE BOTTOM LEFT */
     .user-profile-card {
       margin-top: auto;
       background-color: var(--card-bg);
@@ -222,7 +219,7 @@
     .view-panel { display: none; flex-direction: column; gap: 20px; }
     .view-panel.active-view { display: flex; }
 
-    /* DASHBOARD TIMELINE & METRICS */
+    /* DASHBOARD LAYOUT & METRICS */
     .timeline-bar {
       display: flex;
       justify-content: space-between;
@@ -256,7 +253,7 @@
 
     .dash-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 16px;
     }
 
@@ -264,22 +261,65 @@
       background-color: var(--panel-bg);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 18px;
+      padding: 16px;
     }
 
     .metric-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-    .metric-value { font-size: 26px; font-weight: 800; margin-top: 6px; color: var(--text-main); }
-    .metric-sub { font-size: 11px; color: var(--success); margin-top: 4px; }
+    .metric-value { font-size: 22px; font-weight: 800; margin-top: 6px; color: var(--text-main); }
+    .metric-sub { font-size: 11px; color: var(--success); margin-top: 4px; font-weight: 600; }
 
     .dash-wide-box {
-      grid-column: span 3;
+      grid-column: span 4;
       background-color: var(--panel-bg);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 20px;
     }
 
-    /* SUBSTANCE VS FLUFF BAR */
+    /* FEEDBACK PANELS: GOING WELL & TO IMPROVE */
+    .feedback-grid {
+      grid-column: span 4;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .feedback-box {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .feedback-box.well { border-left: 4px solid var(--success); }
+    .feedback-box.improve { border-left: 4px solid var(--accent-gold); }
+
+    .feedback-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feedback-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+    .feedback-list li {
+      font-size: 12px;
+      color: var(--text-main);
+      line-height: 1.5;
+      position: relative;
+      padding-left: 16px;
+    }
+
+    .feedback-list li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--text-muted);
+    }
+
     .snr-container {
       margin-top: 8px;
       background-color: var(--bg-dark);
@@ -299,8 +339,8 @@
       position: relative;
     }
 
-    .snr-signal { height: 100%; background-color: var(--success); width: 78%; transition: width 0.3s; }
-    .snr-noise { height: 100%; background-color: var(--danger); width: 22%; transition: width 0.3s; }
+    .snr-signal { height: 100%; background-color: var(--success); transition: width 0.3s; }
+    .snr-noise { height: 100%; background-color: var(--danger); transition: width 0.3s; }
 
     .ghost-line {
       position: absolute;
@@ -318,7 +358,7 @@
       margin-top: 4px;
     }
 
-    /* ACTIVITIES TABS & GRID */
+    /* ACTIVITIES SUB-NAVIGATION (WITHOUT NUMBERS) */
     .activity-sub-tabs {
       display: flex;
       gap: 8px;
@@ -364,7 +404,6 @@
     }
 
     .activity-card:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
-
     .activity-card-title { font-size: 15px; font-weight: 700; color: var(--text-main); }
     .activity-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
     .activity-card-tag { font-size: 10px; font-weight: 700; color: var(--accent-purple); text-transform: uppercase; }
@@ -432,8 +471,7 @@
     /* RESPONSIVE MOBILE BREAKPOINTS */
     @media (max-width: 900px) {
       .dash-grid { grid-template-columns: 1fr; }
-      .dash-wide-box { grid-column: span 1; }
-      .dash-wide-box[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+      .dash-wide-box, .feedback-grid { grid-column: span 1; grid-template-columns: 1fr; }
       .menu-toggle { display: block; }
       
       .sidebar {
@@ -480,7 +518,6 @@
     <!-- NAVIGATION & CONTEXT SIDEBAR -->
     <aside class="sidebar" id="appSidebar">
 
-      <!-- MAIN NAVIGATION -->
       <div class="nav-group">
         <div class="nav-item active" id="navActivities" onclick="switchView('activities')">
           <span>🎯</span> Activities
@@ -501,7 +538,6 @@
 
       <hr style="border-color: var(--border-color);" />
 
-      <!-- TARGET SETUP -->
       <div class="sidebar-section">
         <div class="sidebar-title">Target Setup</div>
         
@@ -529,7 +565,7 @@
         </div>
       </div>
 
-      <!-- USER PROFILE & PAID PLAN AT BOTTOM LEFT -->
+      <!-- USER PROFILE & PLAN AT BOTTOM LEFT -->
       <div class="user-profile-card">
         <div class="plan-badge">Executive Pro Pass</div>
         <div class="user-info">
@@ -546,29 +582,27 @@
     <!-- CENTER CONTENT VIEWPORT -->
     <main class="main-content">
 
-      <!-- VIEW 1: ACTIVITIES MODULE (CORE HUB) -->
+      <!-- VIEW 1: ACTIVITIES MODULE -->
       <section class="view-panel active-view" id="activitiesView">
         
-        <!-- ACTIVITIES SUB-NAVIGATION -->
+        <!-- ACTIVITIES SUB-NAVIGATION (NUMBERS REMOVED) -->
         <div class="activity-sub-tabs">
-          <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">1. Voice Reps</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">2. Scenario Library</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('drills', this)">3. Drills</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('daily-challenge', this)">4. Daily Challenge</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('reflection', this)">5. Reflection Journal</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('bites', this)">6. Learning Bites</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)">7. Interview Simulator</button>
+          <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">Voice Reps</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">Scenario Library</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('drills', this)">Communication Drills</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('daily-challenge', this)">Daily Challenge</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('reflection', this)">Reflection Journal</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('bites', this)">Learning Bites</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)">Interview Simulator</button>
         </div>
 
-        <!-- SUB-ACTIVITY CONTENT CONTAINERS -->
-        
-        <!-- 1. VOICE REPS -->
+        <!-- VOICE REPS -->
         <div id="sub-voice-reps" class="sub-activity-panel">
           <div class="sub-activity-card-grid">
             <div class="activity-card">
               <div>
                 <div class="activity-card-tag">45 Seconds · Core Habit</div>
-                <div class="activity-card-title">→ Quick Rep</div>
+                <div class="activity-card-title">Quick Rep</div>
                 <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant TSCU feedback.</div>
               </div>
               <button class="btn btn-primary" onclick="launchStudio('Quick Rep (45s)', 45)">Start Quick Rep</button>
@@ -577,7 +611,7 @@
             <div class="activity-card">
               <div>
                 <div class="activity-card-tag">90 Seconds · Pressure</div>
-                <div class="activity-card-title">→ Challenge Rep</div>
+                <div class="activity-card-title">Challenge Rep</div>
                 <div class="activity-card-desc">Harder workplace scenario under timed executive pressure.</div>
               </div>
               <button class="btn btn-primary" onclick="launchStudio('Challenge Rep (90s)', 90)">Start Challenge</button>
@@ -586,7 +620,7 @@
             <div class="activity-card">
               <div>
                 <div class="activity-card-tag">Instinct Test · No Prep</div>
-                <div class="activity-card-title">→ Blind Rep</div>
+                <div class="activity-card-title">Blind Rep</div>
                 <div class="activity-card-desc">Random scenario revealed immediately as recording begins.</div>
               </div>
               <button class="btn btn-primary" onclick="launchStudio('Blind Rep (Unseen Scenario)', 45)">Start Blind Rep</button>
@@ -595,7 +629,7 @@
             <div class="activity-card">
               <div>
                 <div class="activity-card-tag">Targeted Improvement</div>
-                <div class="activity-card-title">→ Repeat Rep</div>
+                <div class="activity-card-title">Repeat Rep</div>
                 <div class="activity-card-desc">Redo your lowest SNR rep from last week to measure growth.</div>
               </div>
               <button class="btn btn-primary" onclick="launchStudio('Repeat Rep (Lowest SNR Redo)', 45)">Repeat Rep</button>
@@ -603,7 +637,7 @@
           </div>
         </div>
 
-        <!-- 2. SCENARIO LIBRARY -->
+        <!-- SCENARIO LIBRARY -->
         <div id="sub-scenarios" class="sub-activity-panel" style="display: none;">
           <div class="sub-activity-card-grid">
             <div class="activity-card">
@@ -644,7 +678,7 @@
           </div>
         </div>
 
-        <!-- 3. DRILLS -->
+        <!-- COMMUNICATION DRILLS -->
         <div id="sub-drills" class="sub-activity-panel" style="display: none;">
           <div class="sub-activity-card-grid">
             <div class="activity-card">
@@ -685,7 +719,7 @@
           </div>
         </div>
 
-        <!-- 4. DAILY CHALLENGE -->
+        <!-- DAILY CHALLENGE -->
         <div id="sub-daily-challenge" class="sub-activity-panel" style="display: none;">
           <div class="dash-wide-box">
             <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">COMMUNITY EXPERIENCE</div>
@@ -697,7 +731,7 @@
           </div>
         </div>
 
-        <!-- 5. REFLECTION JOURNAL -->
+        <!-- REFLECTION JOURNAL -->
         <div id="sub-reflection" class="sub-activity-panel" style="display: none;">
           <div class="studio-card">
             <h3 style="font-size: 16px; margin-bottom: 12px;">Metacognition &amp; Self-Awareness Reflection</h3>
@@ -713,7 +747,7 @@
           </div>
         </div>
 
-        <!-- 6. LEARNING BITES -->
+        <!-- LEARNING BITES -->
         <div id="sub-bites" class="sub-activity-panel" style="display: none;">
           <div class="sub-activity-card-grid">
             <div class="activity-card">
@@ -735,7 +769,7 @@
           </div>
         </div>
 
-        <!-- 7. INTERVIEW SIMULATOR -->
+        <!-- INTERVIEW SIMULATOR -->
         <div id="sub-simulator" class="sub-activity-panel" style="display: none;">
           <div class="dash-wide-box" style="border-color: var(--accent-purple);">
             <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
@@ -747,7 +781,7 @@
           </div>
         </div>
 
-        <!-- EMBEDDED PRACTICE STUDIO CANVAS (TRIGGERED BY ACTIVITIES) -->
+        <!-- PRACTICE STUDIO CANVAS -->
         <div class="studio-card" id="activeStudioContainer" style="display: none; margin-top: 20px;">
           <div class="prompt-header">
             <div>
@@ -787,10 +821,10 @@
 
       </section>
 
-      <!-- VIEW 2: DASHBOARD -->
+      <!-- VIEW 2: DASHBOARD (EXPANDED WITH DIAGNOSTICS & DETAILED METRICS) -->
       <section class="view-panel" id="dashView">
         <div class="timeline-bar">
-          <span style="font-weight: 700; font-size: 14px;">ANALYTICS &amp; PROGRESS TIMELINE</span>
+          <span style="font-weight: 700; font-size: 14px;">EXECUTIVE METRICS &amp; DIAGNOSTICS</span>
           <div class="timeline-tabs">
             <button class="time-tab active" onclick="setTimeline('1w', this)">Last 1 Week</button>
             <button class="time-tab" onclick="setTimeline('2w', this)">Last 2 Weeks</button>
@@ -798,41 +832,75 @@
           </div>
         </div>
 
+        <!-- METRICS GRID INCLUDING TIME TO POINT & CLARITY/STRUCTURE/IMPACT -->
         <div class="dash-grid">
           <div class="metric-box">
-            <div class="metric-label">Average Pacing</div>
-            <div class="metric-value" id="dashPacing">142 WPM</div>
-            <div class="metric-sub">🟢 Ideal Executive Speed</div>
+            <div class="metric-label">Time-to-Point</div>
+            <div class="metric-value" style="color: var(--accent-cyan);">8 Seconds</div>
+            <div class="metric-sub">⚡ Improved from 18s baseline</div>
           </div>
 
           <div class="metric-box">
-            <div class="metric-label">Word Fillers Reduction</div>
-            <div class="metric-value" id="dashFillers" style="color: var(--success);">65% Reduction</div>
-            <div class="metric-sub" style="color: var(--text-muted);">Down to 3 fillers per session</div>
+            <div class="metric-label">Clarity Score</div>
+            <div class="metric-value">86 / 100</div>
+            <div class="metric-sub">🟢 +12% this week</div>
           </div>
 
           <div class="metric-box">
-            <div class="metric-label">Questions Practiced</div>
-            <div class="metric-value" id="dashQuestions">18 Drills</div>
-            <div class="metric-sub" style="color: var(--accent-cyan); font-weight: 600;">🎯 22 more to reach "Pro" level</div>
+            <div class="metric-label">Structure (BLUF/PSO)</div>
+            <div class="metric-value">82 / 100</div>
+            <div class="metric-sub">🟢 Strong top-line framing</div>
           </div>
 
-          <div class="dash-wide-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span style="font-weight: 700; font-size: 14px;">Clarity &amp; Focus (Substance vs. Fluff)</span>
-              <span style="font-weight: 700; font-size: 13px;">Last week: 71% ➔ Current: <span style="color: var(--success);">78%</span></span>
-            </div>
+          <div class="metric-box">
+            <div class="metric-label">Impact &amp; Gravitas</div>
+            <div class="metric-value">79 / 100</div>
+            <div class="metric-sub" style="color: var(--accent-gold);">⚡ Reduce hedging words</div>
+          </div>
+        </div>
 
-            <div class="snr-container">
-              <div class="snr-bar-wrapper">
-                <div class="snr-signal" id="dashSnrBar" style="width: 78%;"></div>
-                <div class="snr-noise" id="dashNoiseBar" style="width: 22%;"></div>
-                <div class="ghost-line" style="left: 71%;"></div>
-              </div>
-              <div class="snr-ticks">
-                <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
-              </div>
+        <!-- SIGNAL VS NOISE RATIO -->
+        <div class="dash-wide-box">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-weight: 700; font-size: 14px;">Clarity &amp; Focus (Substance vs. Fluff Ratio)</span>
+            <span style="font-weight: 700; font-size: 13px;">Baseline: 62% ➔ Target: 85% ➔ Current: <span style="color: var(--success);">78%</span></span>
+          </div>
+
+          <div class="snr-container">
+            <div class="snr-bar-wrapper">
+              <div class="snr-signal" id="dashSnrBar" style="width: 78%;"></div>
+              <div class="snr-noise" id="dashNoiseBar" style="width: 22%;"></div>
+              <div class="ghost-line" style="left: 62%;"></div>
             </div>
+            <div class="snr-ticks">
+              <span>0% (Fluff)</span><span>25%</span><span>50%</span><span>75% (Target)</span><span>100% (Pure Signal)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESTORED DIAGNOSTICS: WHAT WAS GOING WELL & WHAT TO IMPROVE -->
+        <div class="feedback-grid">
+          <div class="feedback-box well">
+            <div class="feedback-title" style="color: var(--success);">
+              <span>✅</span> What Was Going Well
+            </div>
+            <ul class="feedback-list">
+              <li><strong>Faster Point Delivery:</strong> You reached your core thesis in 8 seconds (down from 18 seconds previously).</li>
+              <li><strong>Stronger Opening Sentences:</strong> Direct use of BLUF (Bottom Line Up Front) in 80% of reps.</li>
+              <li><strong>Pacing Stability:</strong> Maintained an executive cadence averaging 142 WPM without rushing under pressure.</li>
+              <li><strong>Reduced Word Fillers:</strong> Decreased "um/ah" dependencies by 65% across recent exercises.</li>
+            </ul>
+          </div>
+
+          <div class="feedback-box improve">
+            <div class="feedback-title" style="color: var(--accent-gold);">
+              <span>🎯</span> What to Improve
+            </div>
+            <ul class="feedback-list">
+              <li><strong>Eliminate Hedging Language:</strong> Replace phrases like "I feel like" or "We might want to" with direct recommendations.</li>
+              <li><strong>Deliberate Pauses:</strong> Incorporate 2-second pauses after key conclusions to let points land with impact.</li>
+              <li><strong>Quantify Results:</strong> Conclude responses with concrete metrics or projected business outcomes.</li>
+            </ul>
           </div>
         </div>
       </section>
