@@ -34,6 +34,156 @@
       overflow: hidden;
     }
 
+    /* ============ MODALS (shared) ============ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(6px);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.hidden { display: none; }
+
+    .modal-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 28px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-card h3 {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .modal-card .modal-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-cancel {
+      padding: 10px 18px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-save {
+      padding: 10px 18px;
+      border-radius: 8px;
+      background: var(--primary);
+      border: none;
+      color: #FFF;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .alt-question-option {
+      padding: 14px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .alt-question-option:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.06);
+    }
+
+    .alt-question-option.selected {
+      border-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    .alt-question-option .aq-text {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-main);
+    }
+
+    .alt-question-option .aq-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .alt-question-option .aq-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--accent-purple);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .custom-textarea {
+      width: 100%;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 14px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .custom-textarea:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+
+    .warning-box {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--accent-gold);
+      margin-top: 12px;
+      line-height: 1.5;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
     /* ============ ONBOARDING OVERLAY ============ */
     .onboarding-overlay {
       position: fixed;
@@ -419,6 +569,22 @@
       transition: width 0.4s;
     }
 
+    .change-counter-banner {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 12px;
+      color: var(--accent-cyan);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .change-counter-banner strong { font-weight: 800; }
+
     .question-card {
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
@@ -427,6 +593,13 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      position: relative;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .question-card.locked {
+      border-color: var(--border-color);
+      background: linear-gradient(135deg, var(--panel-bg), rgba(56, 189, 248, 0.03));
     }
 
     .question-card.completed {
@@ -442,6 +615,8 @@
       flex-wrap: wrap;
     }
 
+    .qc-left { flex: 1; min-width: 240px; }
+
     .qc-label {
       font-size: 11px;
       font-weight: 800;
@@ -449,6 +624,35 @@
       text-transform: uppercase;
       color: var(--accent-cyan);
       margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .qc-custom-tag {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(245, 158, 11, 0.18);
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .qc-locked-tag {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(156, 163, 175, 0.18);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .qc-text {
@@ -464,6 +668,13 @@
       margin-top: 6px;
     }
 
+    .qc-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
     .qc-difficulty {
       font-size: 11px;
       font-weight: 700;
@@ -475,6 +686,44 @@
     .qc-difficulty.easy { background: rgba(16, 185, 129, 0.15); color: var(--success); }
     .qc-difficulty.medium { background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); }
     .qc-difficulty.hard { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+    .qc-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .qc-action-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+
+    .qc-action-btn:hover:not(:disabled) {
+      border-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.08);
+      color: var(--accent-cyan);
+    }
+
+    .qc-action-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .qc-action-btn.primary-action {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
 
     .rep-tracker {
       background: var(--bg-dark);
@@ -764,7 +1013,7 @@
       display: inline-block;
     }
 
-    /* ============ ACTIVITIES (LIBRARY) ============ */
+    /* ============ ACTIVITIES ============ */
     .activity-sub-tabs {
       display: flex;
       gap: 8px;
@@ -919,7 +1168,7 @@
       opacity: 0.75;
     }
 
-    /* ============ RECORDINGS LIST ============ */
+    /* ============ RECORDINGS ============ */
     .recording-item {
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
@@ -998,6 +1247,9 @@
       .onboarding-card { padding: 24px; }
       .today-header-bar { flex-direction: column; align-items: flex-start; }
       .today-header-bar .th-right { text-align: left; }
+      .qc-top { flex-direction: column; align-items: flex-start; }
+      .qc-right { align-items: flex-start; width: 100%; }
+      .qc-actions { justify-content: flex-start; }
     }
   </style>
 </head>
@@ -1020,7 +1272,6 @@
         <div class="progress-dot" data-dot="5"></div>
       </div>
 
-      <!-- STEP 1: STAGE -->
       <div class="onboarding-step active" data-step="1">
         <h3>Where are you in your career right now?</h3>
         <div class="onboarding-options">
@@ -1032,7 +1283,6 @@
         </div>
       </div>
 
-      <!-- STEP 2: GOAL -->
       <div class="onboarding-step" data-step="2">
         <h3>What do you want to achieve first?</h3>
         <div class="onboarding-options">
@@ -1044,7 +1294,6 @@
         </div>
       </div>
 
-      <!-- STEP 3: ROLE -->
       <div class="onboarding-step" data-step="3">
         <h3>Which role is closest to yours?</h3>
         <div class="onboarding-options">
@@ -1059,7 +1308,6 @@
         </div>
       </div>
 
-      <!-- STEP 4: TIME -->
       <div class="onboarding-step" data-step="4">
         <h3>How much time can you practice daily?</h3>
         <div class="onboarding-options">
@@ -1070,7 +1318,6 @@
         </div>
       </div>
 
-      <!-- STEP 5: RESUME -->
       <div class="onboarding-step" data-step="5">
         <h3>Optional: Make questions more relevant</h3>
         <div class="field-group">
@@ -1086,6 +1333,38 @@
       <div class="onboarding-nav">
         <button class="btn-back" id="onbBackBtn" onclick="onbBack()" style="visibility: hidden;">← Back</button>
         <button class="btn-next" id="onbNextBtn" onclick="onbNext()" disabled>Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CHANGE QUESTION MODAL ============ -->
+  <div class="modal-overlay hidden" id="changeModal">
+    <div class="modal-card">
+      <h3 id="changeModalTitle">Change Question</h3>
+      <p class="modal-sub" id="changeModalSub">Pick an alternate question for today. This won't change tomorrow's practice.</p>
+      <div id="changeModalOptions">
+        <!-- Populated by JS -->
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeChangeModal()">Cancel</button>
+        <button class="btn-save" id="changeModalSaveBtn" onclick="confirmChange()" disabled>Confirm Change</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CUSTOMIZE QUESTION MODAL ============ -->
+  <div class="modal-overlay hidden" id="customizeModal">
+    <div class="modal-card">
+      <h3>✍️ Customize Your Question</h3>
+      <p class="modal-sub">Write your own question to match your specific requirement. <strong>This can only be done once.</strong> Once you save, it becomes permanent for today.</p>
+      <textarea class="custom-textarea" id="customQuestionInput" placeholder="e.g. Tell me about a time you had to convince a senior stakeholder to change direction..."></textarea>
+      <div class="warning-box">
+        <span>⚠️</span>
+        <span><strong>This is final.</strong> Once you save this custom question, you cannot edit or change it for today.</span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeCustomizeModal()">Cancel</button>
+        <button class="btn-save" id="customizeSaveBtn" onclick="confirmCustomize()" disabled>Save &amp; Finalize</button>
       </div>
     </div>
   </div>
@@ -1117,10 +1396,8 @@
     </div>
   </header>
 
-  <!-- ============ MAIN APP LAYOUT ============ -->
   <div class="app-layout">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar" id="appSidebar">
       <div class="nav-group">
         <div class="nav-item active" id="navToday" onclick="switchView('today')">
@@ -1194,13 +1471,11 @@
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="main-content">
 
-      <!-- ============ VIEW 1: TODAY (DEFAULT) ============ -->
+      <!-- ============ VIEW 1: TODAY ============ -->
       <section class="view-panel active-view" id="todayView">
 
-        <!-- TODAY HEADER BAR -->
         <div class="today-header-bar">
           <div class="th-left">
             <h2 id="todayTrackTitle">Interview Sprint</h2>
@@ -1215,15 +1490,31 @@
           </div>
         </div>
 
+        <!-- CHANGE COUNTER BANNER -->
+        <div class="change-counter-banner" id="changeCounterBanner">
+          <span>🔄 You can change up to <strong>3 questions</strong> today before starting. Custom questions can only be created once.</span>
+          <span id="changeCounterText">Changes used: <strong>0 / 3</strong></span>
+        </div>
+
         <!-- QUESTION 1 -->
         <div class="question-card" id="questionCard1">
           <div class="qc-top">
-            <div>
-              <div class="qc-label">Q1 of 2 today</div>
+            <div class="qc-left">
+              <div class="qc-label">
+                <span id="q1Label">Q1 of 2 today</span>
+                <span class="qc-custom-tag" id="q1CustomTag" style="display: none;">✍️ Custom</span>
+                <span class="qc-locked-tag" id="q1LockedTag" style="display: none;">🔒 Locked</span>
+              </div>
               <div class="qc-text" id="q1Text">"Tell me about yourself."</div>
               <div class="qc-meta" id="q1Meta">Focus: Structure &amp; Conciseness · Target: 60 seconds</div>
             </div>
-            <div class="qc-difficulty easy" id="q1Diff">⭐ Easy</div>
+            <div class="qc-right">
+              <div class="qc-difficulty easy" id="q1Diff">⭐ Easy</div>
+              <div class="qc-actions" id="q1Actions">
+                <button class="qc-action-btn" id="q1ChangeBtn" onclick="openChangeModal(0)">🔄 Change</button>
+                <button class="qc-action-btn primary-action" id="q1CustomizeBtn" onclick="openCustomizeModal(0)">✍️ Customize</button>
+              </div>
+            </div>
           </div>
 
           <div class="rep-tracker">
@@ -1237,20 +1528,28 @@
             </div>
           </div>
 
-          <div class="reps-log" id="q1RepsLog">
-            <!-- Rep logs go here -->
-          </div>
+          <div class="reps-log" id="q1RepsLog"></div>
         </div>
 
         <!-- QUESTION 2 -->
         <div class="question-card" id="questionCard2">
           <div class="qc-top">
-            <div>
-              <div class="qc-label">Q2 of 2 today</div>
+            <div class="qc-left">
+              <div class="qc-label">
+                <span id="q2Label">Q2 of 2 today</span>
+                <span class="qc-custom-tag" id="q2CustomTag" style="display: none;">✍️ Custom</span>
+                <span class="qc-locked-tag" id="q2LockedTag" style="display: none;">🔒 Locked</span>
+              </div>
               <div class="qc-text" id="q2Text">"Walk me through your resume."</div>
               <div class="qc-meta" id="q2Meta">Focus: Narrative &amp; Relevance · Target: 90 seconds</div>
             </div>
-            <div class="qc-difficulty medium" id="q2Diff">⭐⭐ Medium</div>
+            <div class="qc-right">
+              <div class="qc-difficulty medium" id="q2Diff">⭐⭐ Medium</div>
+              <div class="qc-actions" id="q2Actions">
+                <button class="qc-action-btn" id="q2ChangeBtn" onclick="openChangeModal(1)">🔄 Change</button>
+                <button class="qc-action-btn primary-action" id="q2CustomizeBtn" onclick="openCustomizeModal(1)">✍️ Customize</button>
+              </div>
+            </div>
           </div>
 
           <div class="rep-tracker">
@@ -1264,12 +1563,10 @@
             </div>
           </div>
 
-          <div class="reps-log" id="q2RepsLog">
-            <!-- Rep logs go here -->
-          </div>
+          <div class="reps-log" id="q2RepsLog"></div>
         </div>
 
-        <!-- TODAY'S SUMMARY -->
+        <!-- TODAY SUMMARY -->
         <div class="today-summary">
           <h3>Today's Progress</h3>
           <div class="ts-row">
@@ -1285,12 +1582,16 @@
             <span class="ts-val" id="tsBestSnr">—</span>
           </div>
           <div class="ts-row">
+            <span>Changes used today</span>
+            <span class="ts-val" id="tsChangesUsed">0 / 3</span>
+          </div>
+          <div class="ts-row">
             <span>Streak</span>
             <span class="ts-val" id="tsStreak">🔥 5 days</span>
           </div>
         </div>
 
-        <!-- THIS WEEK'S HISTORY -->
+        <!-- WEEK HISTORY -->
         <div class="today-summary">
           <h3>This Week</h3>
           <div class="ts-row">
@@ -1309,7 +1610,7 @@
 
       </section>
 
-      <!-- ============ VIEW 2: ACTIVITIES (LIBRARY) ============ -->
+      <!-- ============ VIEW 2: ACTIVITIES ============ -->
       <section class="view-panel" id="activitiesView">
 
         <div>
@@ -1327,7 +1628,6 @@
           <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)">Interview Simulator</button>
         </div>
 
-        <!-- VOICE REPS -->
         <div id="sub-voice-reps" class="sub-activity-panel">
           <div class="sub-activity-card-grid">
             <div class="activity-card">
@@ -1368,7 +1668,6 @@
           </div>
         </div>
 
-        <!-- SCENARIO LIBRARY -->
         <div id="sub-scenarios" class="sub-activity-panel" style="display: none;">
           <div class="sub-activity-card-grid">
             <div class="activity-card">
@@ -1409,7 +1708,6 @@
           </div>
         </div>
 
-        <!-- COMMUNICATION DRILLS -->
         <div id="sub-drills" class="sub-activity-panel" style="display: none;">
           <div class="sub-activity-card-grid">
             <div class="activity-card">
@@ -1450,7 +1748,6 @@
           </div>
         </div>
 
-        <!-- DAILY CHALLENGE -->
         <div id="sub-daily-challenge" class="sub-activity-panel" style="display: none;">
           <div class="dash-wide-box">
             <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">COMMUNITY EXPERIENCE</div>
@@ -1462,7 +1759,6 @@
           </div>
         </div>
 
-        <!-- REFLECTION JOURNAL -->
         <div id="sub-reflection" class="sub-activity-panel" style="display: none;">
           <div class="studio-card">
             <h3 style="font-size: 16px; margin-bottom: 12px;">Metacognition &amp; Self-Awareness Reflection</h3>
@@ -1478,7 +1774,6 @@
           </div>
         </div>
 
-        <!-- LEARNING BITES -->
         <div id="sub-bites" class="sub-activity-panel" style="display: none;">
           <div class="sub-activity-card-grid">
             <div class="activity-card">
@@ -1516,7 +1811,6 @@
           </div>
         </div>
 
-        <!-- INTERVIEW SIMULATOR -->
         <div id="sub-simulator" class="sub-activity-panel" style="display: none;">
           <div class="dash-wide-box" style="border-color: var(--accent-purple);">
             <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
@@ -1532,7 +1826,6 @@
           </div>
         </div>
 
-        <!-- LOCKED TRACKS (UPSELL) -->
         <div class="locked-tracks">
           <h3>🔒 Unlock More Sprints</h3>
           <p>You're on <strong id="lockedCurrentTrack">Interview Sprint</strong>. Upgrade to the Practice Pass to unlock all 6 Sprints and unlimited practice.</p>
@@ -1547,7 +1840,6 @@
           <button class="btn btn-primary" onclick="alert('Practice Pass checkout — coming next!')">Unlock Practice Pass →</button>
         </div>
 
-        <!-- STUDIO CANVAS -->
         <div class="studio-card" id="activeStudioContainer" style="display: none; margin-top: 20px;">
           <div class="prompt-header">
             <div>
@@ -1642,7 +1934,6 @@
           </div>
         </div>
 
-        <!-- 30-DAY TREND -->
         <div class="dash-wide-box">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
             <span style="font-weight: 700; font-size: 14px;">28-Day Sprint Progress</span>
@@ -1766,7 +2057,6 @@
             <div class="badge-name">Filler Killer</div>
             <div class="badge-desc">Zero filler words in a 45s rep.</div>
           </div>
-
           <div class="badge-item locked">
             <div class="badge-icon">🔒</div>
             <div class="badge-name">14-Day Streak</div>
@@ -1830,26 +2120,20 @@
       time: 10,
       track: null,
       trackName: null,
-      product: 'sprint',           // 'sprint' or 'pass'
-      currentDay: 1,                // Day 1 to 28
+      product: 'sprint',
+      currentDay: 1,
       sprintDuration: 28,
       onboarded: false
     };
 
-    // Sprint rules
     const SPRINT_RULES = {
       questionsPerDay: 2,
       repsPerQuestionPerDay: 10,
-      totalRepsPerDay: 20
+      totalRepsPerDay: 20,
+      maxChangesPerDay: 3
     };
 
-    const PASS_RULES = {
-      questionsPerDay: null,
-      repsPerQuestionPerDay: null,
-      totalRepsPerDay: null
-    };
-
-    // Today's questions (would come from DB in production)
+    // Daily question state
     let todayQuestions = [
       {
         id: 'q1',
@@ -1857,8 +2141,17 @@
         focus: 'Structure & Conciseness',
         target: '60 seconds',
         difficulty: 'easy',
-        reps: [],       // { number, snr, time, timestamp }
-        bestSnr: null
+        reps: [],
+        bestSnr: null,
+        isCustom: false,
+        isLocked: false,     // true once first rep starts
+        originalText: 'Tell me about yourself.',
+        // Alternate questions user can swap to
+        alternates: [
+          { text: 'Walk me through your career journey so far.', focus: 'Narrative', target: '90 seconds', difficulty: 'easy' },
+          { text: 'Pitch yourself in 60 seconds to a hiring manager.', focus: 'Persuasion', target: '60 seconds', difficulty: 'easy' },
+          { text: 'What makes you uniquely qualified for this role?', focus: 'Positioning', target: '60 seconds', difficulty: 'easy' }
+        ]
       },
       {
         id: 'q2',
@@ -1867,9 +2160,19 @@
         target: '90 seconds',
         difficulty: 'medium',
         reps: [],
-        bestSnr: null
+        bestSnr: null,
+        isCustom: false,
+        isLocked: false,
+        originalText: 'Walk me through your resume.',
+        alternates: [
+          { text: 'Describe a project you led from start to finish.', focus: 'Narrative', target: '2 minutes', difficulty: 'medium' },
+          { text: 'Why are you interested in this role?', focus: 'Motivation', target: '90 seconds', difficulty: 'easy' },
+          { text: 'Tell me about your biggest professional achievement.', focus: 'Impact', target: '90 seconds', difficulty: 'medium' }
+        ]
       }
     ];
+
+    let dailyChangeCount = 0;
 
     /* ============================================================
        ONBOARDING
@@ -1916,13 +2219,12 @@
       const nextBtn = document.getElementById('onbNextBtn');
       nextBtn.textContent = currentStep === totalSteps ? 'Finish →' : 'Next →';
 
-      // Enable/disable based on whether this step has a selection
       const stepHasValue = [
         !!userProfile.stage,
         !!userProfile.goal,
         !!userProfile.archetype,
         !!userProfile.time,
-        true // resume step is optional
+        true
       ][currentStep - 1];
       nextBtn.disabled = !stepHasValue;
     }
@@ -1934,17 +2236,11 @@
       userProfile.onboarded = true;
 
       document.getElementById('onboardingOverlay').classList.add('hidden');
-
-      // Update header + today panel
       updateHeaderBadge();
       document.getElementById('todayTrackTitle').textContent = track.name;
       document.getElementById('lockedCurrentTrack').textContent = track.name;
       document.getElementById('todayFocus').textContent = `Focus: ${getFocusForTrack(track.id)} · 2 questions today`;
-
-      // Sync sidebar
       syncSidebarFromProfile();
-
-      // Render today
       renderToday();
       renderNavBadge();
     }
@@ -2029,47 +2325,87 @@
       renderQuestionCard(1);
       updateTodaySummary();
       updateDayProgress();
+      updateChangeCounter();
       updateHeaderBadge();
       renderNavBadge();
     }
 
     function renderQuestionCard(idx) {
       const q = todayQuestions[idx];
-      const cardId = idx === 0 ? 'questionCard1' : 'questionCard2';
-      const textId = idx === 0 ? 'q1Text' : 'q2Text';
-      const metaId = idx === 0 ? 'q1Meta' : 'q2Meta';
-      const repCountId = idx === 0 ? 'q1RepCount' : 'q2RepCount';
-      const bestSnrId = idx === 0 ? 'q1BestSnr' : 'q2BestSnr';
-      const repBtnId = idx === 0 ? 'q1RepBtn' : 'q2RepBtn';
-      const logId = idx === 0 ? 'q1RepsLog' : 'q2RepsLog';
+      const sfx = idx === 0 ? '1' : '2';
 
-      document.getElementById(textId).textContent = `"${q.text}"`;
-      document.getElementById(metaId).textContent = `Focus: ${q.focus} · Target: ${q.target}`;
+      document.getElementById(`q${sfx}Text`).textContent = `"${q.text}"`;
+      document.getElementById(`q${sfx}Meta`).textContent = `Focus: ${q.focus} · Target: ${q.target}`;
 
+      // Difficulty
+      const diffEl = document.getElementById(`q${sfx}Diff`);
+      diffEl.className = `qc-difficulty ${q.difficulty}`;
+      diffEl.textContent = q.difficulty === 'easy' ? '⭐ Easy' : q.difficulty === 'medium' ? '⭐⭐ Medium' : '⭐⭐⭐ Hard';
+
+      // Custom / Locked tags
+      document.getElementById(`q${sfx}CustomTag`).style.display = q.isCustom ? 'inline-block' : 'none';
+      document.getElementById(`q${sfx}LockedTag`).style.display = q.isLocked ? 'inline-block' : 'none';
+
+      // Reps counter
       const cap = userProfile.product === 'sprint' ? SPRINT_RULES.repsPerQuestionPerDay : null;
-      document.getElementById(repCountId).innerHTML =
+      document.getElementById(`q${sfx}RepCount`).innerHTML =
         `${q.reps.length} ${cap ? `<span class="rt-cap">/ ${cap}</span>` : '<span class="rt-cap">/ ∞</span>'}`;
 
-      document.getElementById(bestSnrId).textContent = q.bestSnr !== null
+      document.getElementById(`q${sfx}BestSnr`).textContent = q.bestSnr !== null
         ? `Best SNR: ${q.bestSnr}%`
         : 'Best SNR: —';
 
-      const btn = document.getElementById(repBtnId);
+      // Rep button
+      const btn = document.getElementById(`q${sfx}RepBtn`);
       const atCap = cap !== null && q.reps.length >= cap;
       if (atCap) {
         btn.textContent = '✓ Cap reached';
         btn.disabled = true;
         btn.classList.add('done');
-        document.getElementById(cardId).classList.add('completed');
+        document.getElementById(`questionCard${sfx}`).classList.add('completed');
       } else {
         btn.textContent = `🎤 Start Rep ${q.reps.length + 1}`;
         btn.disabled = false;
         btn.classList.remove('done');
-        document.getElementById(cardId).classList.remove('completed');
+        document.getElementById(`questionCard${sfx}`).classList.remove('completed');
+      }
+
+      // Actions (Change/Customize)
+      const actionsEl = document.getElementById(`q${sfx}Actions`);
+      const changeBtn = document.getElementById(`q${sfx}ChangeBtn`);
+      const customizeBtn = document.getElementById(`q${sfx}CustomizeBtn`);
+
+      // Lock actions once any rep has started OR question is custom (permanent) OR question is locked
+      if (q.isLocked || q.reps.length > 0) {
+        actionsEl.style.display = 'none';
+        document.getElementById(`questionCard${sfx}`).classList.add('locked');
+      } else {
+        actionsEl.style.display = 'flex';
+        document.getElementById(`questionCard${sfx}`).classList.remove('locked');
+
+        // Change button state
+        if (dailyChangeCount >= SPRINT_RULES.maxChangesPerDay) {
+          changeBtn.disabled = true;
+          changeBtn.title = 'You have used all 3 changes for today.';
+        } else {
+          changeBtn.disabled = false;
+          changeBtn.title = `Change this question (${SPRINT_RULES.maxChangesPerDay - dailyChangeCount} left)`;
+        }
+
+        // Customize button — locked permanently once customized
+        if (q.isCustom) {
+          customizeBtn.disabled = true;
+          customizeBtn.textContent = '✍️ Finalized';
+          customizeBtn.title = 'You already customized this question. It cannot be changed again.';
+        } else {
+          customizeBtn.disabled = false;
+          customizeBtn.textContent = '✍️ Customize';
+          customizeBtn.title = 'Write your own question. This is final and cannot be changed once saved.';
+        }
       }
 
       // Reps log
-      const log = document.getElementById(logId);
+      const log = document.getElementById(`q${sfx}RepsLog`);
       log.innerHTML = '';
       q.reps.forEach(r => {
         const item = document.createElement('div');
@@ -2096,7 +2432,20 @@
       document.getElementById('tsBestSnr').textContent =
         allSnrs.length > 0 ? `${Math.max(...allSnrs)}%` : '—';
 
+      document.getElementById('tsChangesUsed').textContent =
+        `${dailyChangeCount} / ${SPRINT_RULES.maxChangesPerDay}`;
+
       document.getElementById('tsStreak').textContent = '🔥 5 days';
+    }
+
+    function updateChangeCounter() {
+      const text = document.getElementById('changeCounterText');
+      const remaining = SPRINT_RULES.maxChangesPerDay - dailyChangeCount;
+      if (remaining > 0) {
+        text.innerHTML = `Changes used: <strong>${dailyChangeCount} / ${SPRINT_RULES.maxChangesPerDay}</strong>`;
+      } else {
+        text.innerHTML = `<strong style="color: var(--accent-gold);">No more changes available today</strong>`;
+      }
     }
 
     function updateDayProgress() {
@@ -2117,18 +2466,156 @@
     }
 
     /* ============================================================
-       START REP (Question-level)
+       CHANGE QUESTION MODAL
+       ============================================================ */
+    let changeModalIdx = null;
+    let selectedAlternate = null;
+
+    function openChangeModal(idx) {
+      const q = todayQuestions[idx];
+      if (q.isLocked || q.reps.length > 0) {
+        alert('This question is locked because you already started a rep.');
+        return;
+      }
+      if (dailyChangeCount >= SPRINT_RULES.maxChangesPerDay) {
+        alert(`You've used all ${SPRINT_RULES.maxChangesPerDay} question changes for today.`);
+        return;
+      }
+      if (q.isCustom) {
+        alert('This is a custom question. It is final and cannot be changed.');
+        return;
+      }
+
+      changeModalIdx = idx;
+      selectedAlternate = null;
+      document.getElementById('changeModalTitle').textContent = `Change Question ${idx + 1}`;
+      document.getElementById('changeModalSub').textContent =
+        `Pick an alternate question. You have ${SPRINT_RULES.maxChangesPerDay - dailyChangeCount} change(s) left today.`;
+
+      const optionsContainer = document.getElementById('changeModalOptions');
+      optionsContainer.innerHTML = '';
+
+      q.alternates.forEach((alt, i) => {
+        const opt = document.createElement('div');
+        opt.className = 'alt-question-option';
+        opt.innerHTML = `
+          <div class="aq-text">"${alt.text}"</div>
+          <div class="aq-meta">
+            <span>Focus: ${alt.focus}</span>
+            <span>·</span>
+            <span>${alt.target}</span>
+            <span class="aq-tag">${alt.difficulty}</span>
+          </div>
+        `;
+        opt.addEventListener('click', () => {
+          optionsContainer.querySelectorAll('.alt-question-option').forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          selectedAlternate = alt;
+          document.getElementById('changeModalSaveBtn').disabled = false;
+        });
+        optionsContainer.appendChild(opt);
+      });
+
+      document.getElementById('changeModalSaveBtn').disabled = true;
+      document.getElementById('changeModal').classList.remove('hidden');
+    }
+
+    function closeChangeModal() {
+      document.getElementById('changeModal').classList.add('hidden');
+      changeModalIdx = null;
+      selectedAlternate = null;
+    }
+
+    function confirmChange() {
+      if (changeModalIdx === null || !selectedAlternate) return;
+
+      const q = todayQuestions[changeModalIdx];
+      // If the current question was already a swap (not custom), keep originalText as backup
+      q.text = selectedAlternate.text;
+      q.focus = selectedAlternate.focus;
+      q.target = selectedAlternate.target;
+      q.difficulty = selectedAlternate.difficulty;
+      q.isCustom = false;
+
+      dailyChangeCount++;
+      renderQuestionCard(changeModalIdx);
+      updateTodaySummary();
+      updateChangeCounter();
+      closeChangeModal();
+    }
+
+    /* ============================================================
+       CUSTOMIZE QUESTION MODAL
+       ============================================================ */
+    let customizeModalIdx = null;
+
+    function openCustomizeModal(idx) {
+      const q = todayQuestions[idx];
+      if (q.isLocked || q.reps.length > 0) {
+        alert('This question is locked because you already started a rep.');
+        return;
+      }
+      if (q.isCustom) {
+        alert('You already customized this question. It cannot be changed again.');
+        return;
+      }
+
+      customizeModalIdx = idx;
+      document.getElementById('customQuestionInput').value = q.text;
+      document.getElementById('customizeSaveBtn').disabled = true;
+      document.getElementById('customizeModal').classList.remove('hidden');
+
+      setTimeout(() => document.getElementById('customQuestionInput').focus(), 100);
+    }
+
+    function closeCustomizeModal() {
+      document.getElementById('customizeModal').classList.add('hidden');
+      customizeModalIdx = null;
+    }
+
+    function confirmCustomize() {
+      if (customizeModalIdx === null) return;
+      const text = document.getElementById('customQuestionInput').value.trim();
+      if (!text) return;
+
+      const q = todayQuestions[customizeModalIdx];
+      q.text = text;
+      q.focus = 'Custom Focus';
+      q.target = 'Your call';
+      q.difficulty = 'medium';
+      q.isCustom = true;
+      q.isLocked = true;     // Custom = permanent lock; no further edits
+
+      renderQuestionCard(customizeModalIdx);
+      updateTodaySummary();
+      closeCustomizeModal();
+    }
+
+    // Enable save button only when text is non-empty and different
+    document.getElementById('customQuestionInput').addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      const original = customizeModalIdx !== null ? todayQuestions[customizeModalIdx].text : '';
+      document.getElementById('customizeSaveBtn').disabled = !val || val === original;
+    });
+
+    /* ============================================================
+       START REP
        ============================================================ */
     function startQuestionRep(idx) {
       const q = todayQuestions[idx];
       const cap = userProfile.product === 'sprint' ? SPRINT_RULES.repsPerQuestionPerDay : null;
 
       if (cap !== null && q.reps.length >= cap) {
-        alert(`You've hit today's cap of ${cap} reps for this question. Move to the next question or come back tomorrow.`);
+        alert(`You've hit today's cap of ${cap} reps for this question.`);
         return;
       }
 
-      // Launch studio with the question
+      // Lock the question once first rep starts
+      if (q.reps.length === 0) {
+        q.isLocked = true;
+        renderQuestionCard(idx);
+      }
+
       const durationMap = { easy: 60, medium: 90, hard: 120 };
       const duration = durationMap[q.difficulty] || 60;
       launchStudio(q.text, duration, idx);
@@ -2204,7 +2691,6 @@
       recordBtn.textContent = '🔄 Re-record Answer';
       recordBtn.className = 'btn btn-primary';
 
-      // Simulate AI feedback
       const score = 70 + Math.floor(Math.random() * 25);
       document.getElementById('studioSnrText').textContent = `${score}% High-Signal Speech`;
       document.getElementById('studioSnrBar').style.width = `${score}%`;
@@ -2212,7 +2698,6 @@
 
       outputSection.style.display = 'block';
 
-      // If this rep belongs to a question card, log it
       if (activeQuestionIdx !== null) {
         const q = todayQuestions[activeQuestionIdx];
         const timeSpent = maxDuration - Math.max(0, secondsElapsed);
@@ -2368,7 +2853,7 @@
     }
 
     function onTargetChange() {
-      // In production: refetch today's questions based on new filters
+      // In production: refetch today's questions
     }
 
     /* ============================================================
@@ -2376,8 +2861,14 @@
        ============================================================ */
     window.addEventListener('load', () => {
       resizeCanvas();
-      // Onboarding visible by default
-      // In production: check payment + onboarding status
+    });
+
+    // Close modals on overlay click
+    document.getElementById('changeModal').addEventListener('click', (e) => {
+      if (e.target.id === 'changeModal') closeChangeModal();
+    });
+    document.getElementById('customizeModal').addEventListener('click', (e) => {
+      if (e.target.id === 'customizeModal') closeCustomizeModal();
     });
   </script>
 </body>
