@@ -1,184 +1,439 @@
-import React, { useState, useEffect, useRef } from 'react';
-
-export default function SpeechStudio({ scenarioPrompt, framework = "STAR", onAnalysisComplete }) {
-  const [isRecording, setIsRecording] = useState(false);
-  const [timer, setTimer] = useState(0);
-  const [audioBlob, setAudioBlob] = useState(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  
-  const mediaRecorderRef = useRef(null);
-  const audioChunksRef = useRef([]);
-  const timerIntervalRef = useRef(null);
-
-  // Initialize Microphone & Recording Stream
-  const startRecording = async () => {
-    audioChunksRef.current = [];
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-      
-      mediaRecorderRef.current.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
-      };
-
-      mediaRecorderRef.current.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        setAudioBlob(audioBlob);
-        handleAnalyze(audioBlob);
-      };
-
-      mediaRecorderRef.current.start(250); // Slice data every 250ms
-      setIsRecording(true);
-      
-      // Start Session Timer
-      setTimer(0);
-      timerIntervalRef.current = setInterval(() => {
-        setTimer((prev) => prev + 1);
-      }, 1000);
-
-    } catch (err) {
-      console.error("Microphone access denied or unsupported:", err);
-      alert("Microphone access is required to run the speech studio.");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speech Studio — Executive Practice</title>
+  <style>
+    /* Global Resets & Theme Variables */
+    :root {
+      --bg-color: #0F172A;
+      --card-bg: #1E293B;
+      --card-border: #334155;
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --danger: #DC2626;
+      --danger-hover: #B91C1C;
+      --accent-cyan: #38BDF8;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --success-green: #22C55E;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-  };
 
-  // Stop Recording
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      // Stop media tracks to release microphone
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
-      clearInterval(timerIntervalRef.current);
-      setIsRecording(false);
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-  };
 
-  // Submit Audio Payload for AI Evaluation
-  const handleAnalyze = async (blob) => {
-    setIsAnalyzing(true);
-    const formData = new FormData();
-    formData.append("file", blob, "recording.webm");
-    formData.append("framework", framework);
-    formData.append("prompt", scenarioPrompt);
-
-    try {
-      const response = await fetch("/api/v1/analyze-speech", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.json();
-      setIsAnalyzing(false);
-      if (onAnalysisComplete) onAnalysisComplete(result);
-    } catch (error) {
-      console.error("Failed to analyze speech:", error);
-      setIsAnalyzing(false);
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 24px 16px;
     }
-  };
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
+    .app-container {
+      width: 100%;
+      max-width: 760px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+    }
 
-  return (
-    <div style={styles.container}>
-      <header style={styles.header}>
-        <span style={styles.badge}>Framework: {framework}</span>
-        <div style={styles.timerDisplay}>{formatTime(timer)}</div>
-      </header>
+    /* Header & Badge */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+    }
 
-      <main style={styles.promptCard}>
-        <h3 style={styles.questionLabel}>Question Prompt</h3>
-        <p style={styles.questionText}>"{scenarioPrompt}"</p>
-      </main>
+    .badge {
+      background-color: #0F172A;
+      color: var(--accent-cyan);
+      border: 1px solid var(--card-border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
 
-      <div style={styles.controlsArea}>
-        {!isRecording ? (
-          <button 
-            onClick={startRecording} 
-            disabled={isAnalyzing}
-            style={{ ...styles.actionBtn, backgroundColor: '#2563EB' }}
-          >
-            {isAnalyzing ? "Processing AI Analysis..." : "🎤 Start Recording"}
-          </button>
-        ) : (
-          <button 
-            onClick={stopRecording} 
-            style={{ ...styles.actionBtn, backgroundColor: '#DC2626' }}
-          >
-            ⏹ Stop & Evaluate Answer
-          </button>
-        )}
+    .timer {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Prompt Box */
+    .prompt-box {
+      background-color: #0F172A;
+      border-left: 4px solid var(--accent-cyan);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .prompt-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .prompt-text {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    /* Waveform Canvas Area */
+    .canvas-container {
+      width: 100%;
+      height: 90px;
+      background-color: #0F172A;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #FFFFFF;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: #FFFFFF;
+    }
+
+    .btn-danger:hover {
+      background-color: var(--danger-hover);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Analysis View (Hidden initially) */
+    .analysis-panel {
+      display: none;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background-color: #0F172A;
+      border: 1px solid var(--card-border);
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .rescript-box {
+      background-color: #0F172A;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .rescript-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--success-green);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rescript-body {
+      font-size: 15px;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      .app-container {
+        padding: 20px;
+      }
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Studio Header -->
+    <header class="header">
+      <span class="badge" id="frameworkBadge">Framework: STAR</span>
+      <div class="timer" id="timerDisplay">00:00</div>
+    </header>
+
+    <!-- Question Prompt -->
+    <section class="prompt-box">
+      <div class="prompt-label">Current Prompt</div>
+      <div class="prompt-text" id="promptText">
+        "Describe a time you had to handle a critical project trade-off under a tight deadline."
       </div>
-    </div>
-  );
-}
+    </section>
 
-const styles = {
-  container: {
-    maxWidth: '680px',
-    margin: '0 auto',
-    padding: '24px',
-    borderRadius: '12px',
-    backgroundColor: '#0F172A',
-    color: '#F8FAFC',
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '20px',
-  },
-  badge: {
-    backgroundColor: '#1E293B',
-    padding: '6px 12px',
-    borderRadius: '6px',
-    fontSize: '14px',
-    color: '#94A3B8',
-  },
-  timerDisplay: {
-    fontSize: '20px',
-    fontWeight: 'bold',
-    fontFamily: 'monospace',
-    color: '#38BDF8',
-  },
-  promptCard: {
-    backgroundColor: '#1E293B',
-    padding: '20px',
-    borderRadius: '8px',
-    marginBottom: '24px',
-    borderLeft: '4px solid #38BDF8',
-  },
-  questionLabel: {
-    margin: '0 0 8px 0',
-    fontSize: '12px',
-    textTransform: 'uppercase',
-    color: '#94A3B8',
-    letterSpacing: '0.05em',
-  },
-  questionText: {
-    margin: 0,
-    fontSize: '18px',
-    lineHeight: '1.5',
-    color: '#F1F5F9',
-  },
-  controlsArea: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  actionBtn: {
-    padding: '14px 28px',
-    fontSize: '16px',
-    fontWeight: '600',
-    color: '#FFFFFF',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    transition: 'opacity 0.2s ease',
-  }
-};
+    <!-- Real-time Visualizer Canvas -->
+    <div class="canvas-container">
+      <canvas id="waveformCanvas"></canvas>
+    </div>
+
+    <!-- Interactive Control Action -->
+    <div class="controls">
+      <button class="btn btn-primary" id="recordBtn">
+        🎤 Start Recording
+      </button>
+    </div>
+
+    <!-- Post-Recording AI Feedback Panel -->
+    <section class="analysis-panel" id="analysisPanel">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value" id="scoreValue">78/100</div>
+          <div class="metric-label">Waffle Score</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="wpmValue">152</div>
+          <div class="metric-label">Words / Min</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="fillerValue">3</div>
+          <div class="metric-label">Fillers Detected</div>
+        </div>
+      </div>
+
+      <div class="rescript-box">
+        <div class="rescript-title">
+          ⚡ AI Executive Re-Script (STAR Optimized)
+        </div>
+        <div class="rescript-body" id="rescriptBody">
+          "In Q3, our launch deadline shifted up by two weeks (Situation). I prioritized core payment flows over secondary UI animations to preserve launch security (Action). As a result, we deployed on time with zero checkout latency and zero critical bugs (Result)."
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // State Variables
+    let isRecording = false;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let audioContext = null;
+    let analyser = null;
+    let dataArray = null;
+    let source = null;
+    let animationFrameId = null;
+
+    // DOM Elements
+    const recordBtn = document.getElementById('recordBtn');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const canvas = document.getElementById('waveformCanvas');
+    const canvasCtx = canvas.getContext('2d');
+    const analysisPanel = document.getElementById('analysisPanel');
+
+    // Canvas Size Setup
+    function resizeCanvas() {
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Toggle Recording
+    recordBtn.addEventListener('click', async () => {
+      if (!isRecording) {
+        await startRecording();
+      } else {
+        stopRecording();
+      }
+    });
+
+    // Start Audio Stream & Visualizer
+    async function startRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        // Media Recorder Init
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+        audioChunks = [];
+        
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = handleRecordingStop;
+        mediaRecorder.start();
+
+        // Audio Context & Analyser Node Setup
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        
+        source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+
+        const bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+
+        // UI Updates
+        isRecording = true;
+        recordBtn.textContent = '⏹ Stop & Evaluate';
+        recordBtn.className = 'btn btn-danger';
+        analysisPanel.style.display = 'none';
+
+        startTimer();
+        drawWaveform();
+
+      } catch (err) {
+        alert('Microphone access is required to use the speech simulator.');
+        console.error('Error accessing microphone:', err);
+      }
+    }
+
+    // Stop Audio Stream & Process Output
+    function stopRecording() {
+      if (mediaRecorder && isRecording) {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        
+        if (audioContext) audioContext.close();
+        cancelAnimationFrame(animationFrameId);
+        clearInterval(timerInterval);
+
+        isRecording = false;
+        recordBtn.textContent = '🔄 Re-record Answer';
+        recordBtn.className = 'btn btn-primary';
+      }
+    }
+
+    // Render Waveform Canvas Animation
+    function drawWaveform() {
+      if (!isRecording) return;
+
+      animationFrameId = requestAnimationFrame(drawWaveform);
+      analyser.getByteFrequencyData(dataArray);
+
+      canvasCtx.fillStyle = '#0F172A';
+      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = (canvas.width / dataArray.length) * 2.5;
+      let barHeight;
+      let x = 0;
+
+      for (let i = 0; i < dataArray.length; i++) {
+        barHeight = dataArray[i] / 3.5;
+
+        canvasCtx.fillStyle = '#38BDF8';
+        canvasCtx.fillRect(x, canvas.height / 2 - barHeight / 2, barWidth, barHeight);
+
+        x += barWidth + 2;
+      }
+    }
+
+    // Timer Logic
+    function startTimer() {
+      secondsElapsed = 0;
+      timerDisplay.textContent = '00:00';
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+        const secs = String(secondsElapsed % 60).padStart(2, '0');
+        timerDisplay.textContent = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    // Post-Recording Handler
+    function handleRecordingStop() {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      
+      // Clear Canvas
+      canvasCtx.fillStyle = '#0F172A';
+      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Show Simulated AI Analysis Panel (Replace with API fetch call in production)
+      analysisPanel.style.display = 'block';
+      analysisPanel.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
