@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Unspoken Studio — Executive Communication Platform</title>
+  <title>Unspoken Studio</title>
   <style>
     :root {
       --bg-dark: #0B0F19;
@@ -46,6 +46,8 @@
       flex-wrap: wrap;
       font-size: 12px;
     }
+
+    .preview-banner.hidden { display: none; }
 
     .preview-banner .pb-left {
       display: flex;
@@ -109,20 +111,8 @@
       cursor: pointer;
     }
 
-    .lock-overlay .lock-cta-outline {
-      margin-top: 8px;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      background: transparent;
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-      cursor: pointer;
-    }
-
     .lockable { position: relative; overflow: hidden; }
-    .preview-hidden { display: none !important; }
+    .hidden { display: none !important; }
 
     /* ============ ACTIVITY CARD LOCK ============ */
     .activity-card.locked-preview { position: relative; overflow: hidden; }
@@ -172,13 +162,7 @@
     }
 
     .modal-card h3 { font-size: 18px; margin-bottom: 6px; }
-
-    .modal-card .modal-sub {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 18px;
-      line-height: 1.5;
-    }
+    .modal-card .modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
 
     .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
 
@@ -206,24 +190,7 @@
 
     .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .alt-question-option {
-      padding: 14px 16px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      cursor: pointer;
-      margin-bottom: 10px;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .alt-question-option:hover { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.06); }
-    .alt-question-option.selected { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.12); }
-
-    .alt-question-option .aq-text { font-size: 13px; font-weight: 600; line-height: 1.4; color: var(--text-main); }
-    .alt-question-option .aq-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap; }
-    .alt-question-option .aq-tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); text-transform: uppercase; letter-spacing: 0.05em; }
-
-    /* ============ ONBOARDING / GATE ============ */
+    /* ============ GATE #2 OVERLAY ============ */
     .onboarding-overlay {
       position: fixed;
       inset: 0;
@@ -250,16 +217,7 @@
     }
 
     .onboarding-header { text-align: center; margin-bottom: 24px; }
-
-    .onboarding-header .logo {
-      font-size: 24px;
-      font-weight: 800;
-      background: linear-gradient(135deg, #38BDF8, #8B5CF6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-    }
-
+    .onboarding-header .logo { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
     .onboarding-header h2 { font-size: 20px; margin-bottom: 6px; }
     .onboarding-header p { font-size: 13px; color: var(--text-muted); }
 
@@ -535,22 +493,6 @@
       transition: width 0.4s;
     }
 
-    .change-counter-banner {
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 10px;
-      padding: 10px 16px;
-      font-size: 12px;
-      color: var(--accent-cyan);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .change-counter-banner strong { font-weight: 800; }
-
     .question-card {
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
@@ -581,9 +523,6 @@
       gap: 8px;
       flex-wrap: wrap;
     }
-
-    .qc-custom-tag { font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 4px; background: rgba(245, 158, 11, 0.18); color: var(--accent-gold); text-transform: uppercase; letter-spacing: 0.06em; }
-    .qc-locked-tag { font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 4px; background: rgba(156, 163, 175, 0.18); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 4px; }
 
     .qc-text { font-size: 17px; font-weight: 700; color: var(--text-main); line-height: 1.4; }
     .qc-meta { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
@@ -648,7 +587,7 @@
       gap: 8px;
     }
 
-    .rep-btn:hover { background: var(--primary-hover); }
+    .rep-btn:hover:not(:disabled) { background: var(--primary-hover); }
     .rep-btn:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; }
     .rep-btn.done { background: transparent; border: 1px solid var(--success); color: var(--success); }
 
@@ -839,7 +778,7 @@
       position: relative;
     }
 
-    .activity-card:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
+    .activity-card:hover:not(.locked-preview) { border-color: var(--accent-cyan); transform: translateY(-2px); }
     .activity-card-title { font-size: 15px; font-weight: 700; color: var(--text-main); }
     .activity-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
     .activity-card-tag { font-size: 10px; font-weight: 700; color: var(--accent-purple); text-transform: uppercase; }
@@ -984,7 +923,7 @@
 <body>
 
   <!-- ============ PREVIEW BANNER ============ -->
-  <div class="preview-banner preview-hidden" id="previewBanner">
+  <div class="preview-banner hidden" id="previewBanner">
     <div class="pb-left" id="previewBannerText">
       👋 Hi <strong id="previewName">there</strong> — here's your free drill.
     </div>
@@ -994,43 +933,7 @@
     </div>
   </div>
 
-  <!-- ============ GATE #1 OVERLAY (Name + Email + Stage) ============ -->
-  <div class="onboarding-overlay hidden" id="gate1Overlay">
-    <div class="onboarding-card">
-      <div class="onboarding-header">
-        <div class="logo">🚀 Unspoken Studio</div>
-        <h2>Get your free speech analysis</h2>
-        <p>Just name and email — no password needed.</p>
-      </div>
-
-      <div class="field-group">
-        <label>Name</label>
-        <input type="text" id="gate1Name" placeholder="e.g. Arun Chockalingam" />
-      </div>
-
-      <div class="field-group" style="margin-top: 12px;">
-        <label>Email</label>
-        <input type="email" id="gate1Email" placeholder="e.g. arun@example.com" />
-      </div>
-
-      <div class="field-group" style="margin-top: 18px;">
-        <label>Where are you in your career?</label>
-        <div class="onboarding-options" id="gate1StageOptions" style="margin-top: 8px;">
-          <button class="onboarding-option" onclick="selectStage(this, 'student')"><span class="emoji">🎓</span> Student / Final Year</button>
-          <button class="onboarding-option" onclick="selectStage(this, 'fresher')"><span class="emoji">🌱</span> Fresher (0–1 year)</button>
-          <button class="onboarding-option" onclick="selectStage(this, 'early')"><span class="emoji">⚡</span> Early Career (1–5 years)</button>
-          <button class="onboarding-option" onclick="selectStage(this, 'mid')"><span class="emoji">📈</span> Mid Career (5–15 years)</button>
-          <button class="onboarding-option" onclick="selectStage(this, 'senior')"><span class="emoji">👑</span> Senior / Lead (15+ years)</button>
-        </div>
-      </div>
-
-      <button class="btn btn-primary" id="gate1Submit" onclick="submitGateOne()" disabled style="margin-top: 20px; width: 100%; justify-content: center;">
-        Show My Analysis →
-      </button>
-    </div>
-  </div>
-
-  <!-- ============ GATE #2 OVERLAY (Function) ============ -->
+  <!-- ============ GATE #2 OVERLAY (function) ============ -->
   <div class="onboarding-overlay hidden" id="gate2Overlay">
     <div class="onboarding-card">
       <div class="onboarding-header">
@@ -1038,7 +941,6 @@
         <h2>One more thing — unlock your peer benchmark</h2>
         <p>Tell us which function best describes your work.</p>
       </div>
-
       <div class="onboarding-options" id="gate2FunctionOptions">
         <button class="onboarding-option" onclick="selectFunction(this, 'engineering')"><span class="emoji">🛠️</span> Engineering / Data</button>
         <button class="onboarding-option" onclick="selectFunction(this, 'bpo')"><span class="emoji">🎧</span> BPO / Customer Support</button>
@@ -1050,63 +952,16 @@
         <button class="onboarding-option" onclick="selectFunction(this, 'hr')"><span class="emoji">🤝</span> HR / People</button>
         <button class="onboarding-option" onclick="selectFunction(this, 'other')"><span class="emoji">💼</span> Other</button>
       </div>
-
-      <button class="btn btn-primary" id="gate2Submit" onclick="submitGateTwo()" disabled style="margin-top: 20px; width: 100%; justify-content: center;">
-        Show My Peer Benchmark →
-      </button>
+      <button class="btn btn-primary" id="gate2Submit" onclick="submitGateTwo()" disabled style="margin-top: 20px; width: 100%; justify-content: center;">Show My Peer Benchmark →</button>
     </div>
   </div>
 
-  <!-- ============ MODALS ============ -->
-  <div class="modal-overlay hidden" id="changeModal">
-    <div class="modal-card">
-      <h3 id="changeModalTitle">Change Question</h3>
-      <p class="modal-sub" id="changeModalSub">Pick an alternate question.</p>
-      <div id="changeModalOptions"></div>
-      <div class="modal-actions">
-        <button class="btn-cancel" onclick="closeChangeModal()">Cancel</button>
-        <button class="btn-save" id="changeModalSaveBtn" onclick="confirmChange()" disabled>Confirm Change</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay hidden" id="customizeModal">
-    <div class="modal-card">
-      <h3>✍️ Customize Your Question</h3>
-      <p class="modal-sub">Write your own question. <strong>This can only be done once.</strong></p>
-      <textarea class="custom-textarea" id="customQuestionInput" style="width: 100%; background: var(--bg-dark); border: 1px solid var(--border-color); color: var(--text-main); padding: 14px; border-radius: 10px; font-family: inherit; font-size: 14px; resize: vertical; min-height: 110px;" placeholder="e.g. Tell me about a time you had to convince a senior stakeholder..."></textarea>
-      <div class="warning-box" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--accent-gold); margin-top: 12px;">
-        ⚠️ <strong>This is final.</strong> Once saved, you cannot edit or change it for today.
-      </div>
-      <div class="modal-actions">
-        <button class="btn-cancel" onclick="closeCustomizeModal()">Cancel</button>
-        <button class="btn-save" id="customizeSaveBtn" onclick="confirmCustomize()" disabled>Save &amp; Finalize</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- ============ TRIAL LOG MODAL ============ -->
   <div class="modal-overlay hidden" id="trialLogModal">
     <div class="modal-card">
       <h3>📜 Your Trial Log — Q1</h3>
-      <p class="modal-sub">Both free trials for your first drill.</p>
-      <div class="alt-question-option">
-        <div class="aq-text">Trial 1 · 58s</div>
-        <div class="aq-meta">
-          <span>Clarity: 58%</span><span>·</span>
-          <span>Structure: 51%</span><span>·</span>
-          <span>Impact: 44%</span><span>·</span>
-          <span>Fillers: 9%</span>
-        </div>
-      </div>
-      <div class="alt-question-option">
-        <div class="aq-text">Trial 2 · 54s (after rewrite)</div>
-        <div class="aq-meta">
-          <span style="color: var(--success);">Clarity: 62% (+4)</span><span>·</span>
-          <span style="color: var(--success);">Structure: 55% (+4)</span><span>·</span>
-          <span style="color: var(--success);">Impact: 48% (+4)</span><span>·</span>
-          <span style="color: var(--success);">Fillers: 7% (-2)</span>
-        </div>
-      </div>
+      <p class="modal-sub">All trials for this question.</p>
+      <div id="trialLogContent"></div>
       <div class="modal-actions">
         <button class="btn-cancel" onclick="document.getElementById('trialLogModal').classList.add('hidden')">Close</button>
         <button class="btn-save" onclick="goToPaywall('sprint')">Unlock more trials with Sprint</button>
@@ -1119,7 +974,7 @@
     <div class="brand">
       <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
       🚀 Unspoken Studio
-      <span class="track-badge" id="headerTrackBadge">Free Preview</span>
+      <span class="track-badge" id="headerTrackBadge">—</span>
     </div>
     <div class="global-stats">
       <div class="stat-pill">
@@ -1127,7 +982,7 @@
         <strong id="headerMemberSince">Just now</strong>
       </div>
       <div class="stat-pill streak">
-        <span>Daily Streak:</span>
+        <span>Streak:</span>
         <strong id="headerStreak">—</strong>
       </div>
       <div class="stat-pill">
@@ -1145,27 +1000,13 @@
 
     <aside class="sidebar" id="appSidebar">
       <div class="nav-group">
-        <div class="nav-item active" id="navToday" onclick="switchView('today')">
-          <span>🏠</span> Today
-        </div>
-        <div class="nav-item" id="navActivities" onclick="switchView('activities')">
-          <span>🎯</span> Activities
-        </div>
-        <div class="nav-item" id="navDash" onclick="switchView('dash')">
-          <span>📊</span> Progress
-        </div>
-        <div class="nav-item" id="navRecordings" onclick="switchView('recordings')">
-          <span>🎙️</span> My Recordings
-        </div>
-        <div class="nav-item" id="navBadges" onclick="switchView('badges')">
-          <span>🏆</span> Achievements
-        </div>
-        <div class="nav-item" id="navPillars" onclick="switchView('pillars')">
-          <span>🏛️</span> Pillars
-        </div>
-        <div class="nav-item" id="navLearning" onclick="switchView('learning')">
-          <span>📚</span> My Learning
-        </div>
+        <div class="nav-item active" id="navToday" onclick="switchView('today')"><span>🏠</span> Today</div>
+        <div class="nav-item" id="navActivities" onclick="switchView('activities')"><span>🎯</span> Activities</div>
+        <div class="nav-item" id="navDash" onclick="switchView('dash')"><span>📊</span> Progress</div>
+        <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><span>🎙️</span> My Recordings</div>
+        <div class="nav-item" id="navBadges" onclick="switchView('badges')"><span>🏆</span> Achievements</div>
+        <div class="nav-item" id="navPillars" onclick="switchView('pillars')"><span>🏛️</span> Pillars</div>
+        <div class="nav-item" id="navLearning" onclick="switchView('learning')"><span>📚</span> My Learning</div>
       </div>
 
       <hr style="border-color: var(--border-color);" />
@@ -1174,15 +1015,11 @@
         <div class="sidebar-title">Your Profile</div>
         <div class="field-group">
           <label>Career Stage</label>
-          <select id="profileStage" disabled style="opacity: 0.7;">
-            <option>—</option>
-          </select>
+          <select id="profileStage" disabled style="opacity: 0.7;"><option>—</option></select>
         </div>
         <div class="field-group">
           <label>Function</label>
-          <select id="profileFunction" disabled style="opacity: 0.7;">
-            <option>—</option>
-          </select>
+          <select id="profileFunction" disabled style="opacity: 0.7;"><option>—</option></select>
         </div>
       </div>
 
@@ -1191,7 +1028,7 @@
         <div class="user-info">
           <div class="user-avatar" id="userAvatarEl">A</div>
           <div class="user-details">
-            <div class="user-name" id="userNameEl">Arun</div>
+            <div class="user-name" id="userNameEl">—</div>
             <div class="user-role-sub" id="userRoleEl">Getting started</div>
           </div>
         </div>
@@ -1200,39 +1037,34 @@
 
     <main class="main-content">
 
-      <!-- ============ VIEW 1: TODAY ============ -->
+      <!-- ============ TODAY ============ -->
       <section class="view-panel active-view" id="todayView">
-
         <div class="today-header-bar">
           <div class="th-left">
             <h2 id="todayTrackTitle">Your Free Drill</h2>
-            <div class="th-sub" id="todayFocus">Complete 2 drills to unlock your peer benchmark · 2 questions · 2 trials each</div>
+            <div class="th-sub" id="todayFocus">Complete 2 drills to unlock your peer benchmark</div>
             <div class="day-progress-bar">
               <div class="day-progress-fill" id="dayProgressFill" style="width: 0%;"></div>
             </div>
           </div>
           <div class="th-right">
             <div class="day-counter" id="dayCounter">0 / 2 drills</div>
-            <div class="streak" id="todayStreak">Free Preview</div>
+            <div class="streak" id="todayStreak">—</div>
           </div>
         </div>
 
-        <!-- QUESTION 1 -->
+        <!-- Q1 -->
         <div class="question-card" id="questionCard1">
           <div class="qc-top">
             <div class="qc-left">
-              <div class="qc-label">
-                <span id="q1Label">Q1 of 2 · Your first free drill</span>
-                <span class="qc-custom-tag" id="q1CustomTag" style="display: none;">✍️ Custom</span>
-              </div>
-              <div class="qc-text" id="q1Text">"Tell me about a time you turned around a failing project."</div>
-              <div class="qc-meta" id="q1Meta">Focus: Structure &amp; Impact · Target: 60 seconds</div>
+              <div class="qc-label"><span id="q1Label">Q1 of 2 · Your first free drill</span></div>
+              <div class="qc-text" id="q1Text">—</div>
+              <div class="qc-meta" id="q1Meta">—</div>
             </div>
             <div class="qc-right">
               <div class="qc-difficulty easy" id="q1Diff">⭐ Easy</div>
             </div>
           </div>
-
           <div class="rep-tracker">
             <div class="rt-left">
               <div class="rt-label">Trials</div>
@@ -1240,33 +1072,28 @@
               <div class="rt-best" id="q1BestSnr">Best score: —</div>
             </div>
             <div class="rt-right">
-              <button class="rep-btn" id="q1RepBtn" onclick="startQuestionRep(0)">🎤 Start Trial 1</button>
+              <button class="rep-btn" id="q1RepBtn">🎤 Start Trial 1</button>
             </div>
           </div>
-
           <div class="reps-log" id="q1RepsLog"></div>
-
-          <div id="q1PostActions" style="display: none; gap: 8px; flex-wrap: wrap;">
+          <div id="q1PostActions" class="hidden" style="gap: 8px; flex-wrap: wrap;">
             <button class="qc-action-btn primary-action" onclick="showSeniorRewrite()">✨ See Senior Rewrite</button>
-            <button class="qc-action-btn" onclick="document.getElementById('trialLogModal').classList.remove('hidden')">📜 View Trial Log</button>
+            <button class="qc-action-btn" onclick="showTrialLog()">📜 View Trial Log</button>
           </div>
         </div>
 
-        <!-- QUESTION 2 -->
+        <!-- Q2 -->
         <div class="question-card locked" id="questionCard2">
           <div class="qc-top">
             <div class="qc-left">
-              <div class="qc-label">
-                <span id="q2Label">Q2 of 2 · Locked</span>
-              </div>
-              <div class="qc-text" id="q2Text">"Walk me through your resume."</div>
+              <div class="qc-label"><span id="q2Label">Q2 of 2 · Locked</span></div>
+              <div class="qc-text" id="q2Text">—</div>
               <div class="qc-meta" id="q2Meta">Complete Q1 to unlock</div>
             </div>
             <div class="qc-right">
               <div class="qc-difficulty medium" id="q2Diff">⭐⭐ Medium</div>
             </div>
           </div>
-
           <div class="rep-tracker">
             <div class="rt-left">
               <div class="rt-label">Trials</div>
@@ -1277,17 +1104,16 @@
               <button class="rep-btn" id="q2RepBtn" disabled>🔒 Complete Q1 first</button>
             </div>
           </div>
-
           <div class="reps-log" id="q2RepsLog"></div>
         </div>
 
-        <!-- CHANGE / CUSTOMIZE — locked for free users -->
+        <!-- Change / Customize card — free mode only -->
         <div class="question-card" id="freeChangeCustomizeCard">
           <div class="qc-top">
             <div class="qc-left">
               <div class="qc-label"><span>Want to change the question?</span></div>
               <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
-                Question switching and customization are Sprint and Pass features.
+                Question switching and customization unlock with a Sprint.
               </div>
             </div>
           </div>
@@ -1297,7 +1123,7 @@
           </div>
         </div>
 
-        <!-- TODAY'S PROGRESS -->
+        <!-- Today's Progress -->
         <div class="today-summary lockable" id="todaySummaryBox">
           <h3>Today's Progress</h3>
           <div class="ts-row"><span>Total trials today</span><span class="ts-val" id="tsTotalReps">0 / 4</span></div>
@@ -1305,16 +1131,14 @@
           <div class="ts-row"><span>Best score</span><span class="ts-val" id="tsBestSnr">—</span></div>
           <div class="ts-row"><span>Drills unlocked</span><span class="ts-val" id="tsDrills">0 / 2</span></div>
         </div>
-
       </section>
 
-      <!-- ============ VIEW 2: ACTIVITIES ============ -->
+      <!-- ============ ACTIVITIES ============ -->
       <section class="view-panel" id="activitiesView">
         <div>
           <h2 style="font-size: 18px; margin-bottom: 4px;">Activities</h2>
-          <p style="font-size: 12px; color: var(--text-muted);">Extra practice beyond today's free drills. All modules unlock with your Sprint.</p>
+          <p style="font-size: 12px; color: var(--text-muted);">Extra practice beyond today's drills.</p>
         </div>
-
         <div class="activity-sub-tabs">
           <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">Voice Reps</button>
           <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">Scenario Library</button>
@@ -1325,126 +1149,108 @@
 
         <div id="sub-voice-reps" class="sub-activity-panel">
           <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview">
+            <div class="activity-card" data-activity="quickrep">
               <div class="ac-body">
                 <div class="activity-card-tag">45 Seconds · Core Habit</div>
                 <div class="activity-card-title">Quick Rep</div>
-                <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div>
+                <div class="activity-card-desc">Standard 45s timer. Instant feedback.</div>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Quick Rep (45s)', 45)">Start Quick Rep</button>
             </div>
-            <div class="activity-card locked-preview">
+            <div class="activity-card" data-activity="challengerep">
               <div class="ac-body">
                 <div class="activity-card-tag">90 Seconds · Pressure</div>
                 <div class="activity-card-title">Challenge Rep</div>
                 <div class="activity-card-desc">Harder workplace scenario under timed pressure.</div>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Challenge Rep (90s)', 90)">Start Challenge</button>
             </div>
-            <div class="activity-card locked-preview">
+            <div class="activity-card" data-activity="blindrep">
               <div class="ac-body">
                 <div class="activity-card-tag">Instinct Test · No Prep</div>
                 <div class="activity-card-title">Blind Rep</div>
-                <div class="activity-card-desc">Random scenario revealed immediately as recording begins.</div>
+                <div class="activity-card-desc">Random scenario revealed as recording begins.</div>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('pass')">🔒 Unlock with Practice Pass — ₹1,299/mo</button>
+              <button class="ac-lock-cta hidden" onclick="goToPaywall('pass')">🔒 Unlock with Practice Pass — ₹1,299/mo</button>
+              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Blind Rep', 45)">Start Blind Rep</button>
             </div>
           </div>
         </div>
 
-        <div id="sub-scenarios" class="sub-activity-panel" style="display: none;">
+        <div id="sub-scenarios" class="sub-activity-panel hidden">
           <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview">
+            <div class="activity-card" data-activity="interview">
               <div class="ac-body">
                 <div class="activity-card-tag">Skill Builder</div>
                 <div class="activity-card-title">Interview Questions</div>
-                <div class="activity-card-desc">Tell me about yourself · Salary negotiation · Why this role</div>
+                <div class="activity-card-desc">Tell me about yourself · Salary negotiation</div>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Tell me about yourself.', 60)">Start</button>
             </div>
-            <div class="activity-card locked-preview">
+            <div class="activity-card" data-activity="updates">
               <div class="ac-body">
                 <div class="activity-card-tag">Workplace Moments</div>
-                <div class="activity-card-title">Project &amp; Team Updates</div>
-                <div class="activity-card-desc">Project update · Handling pushback · Delivering bad news</div>
+                <div class="activity-card-title">Project Updates</div>
+                <div class="activity-card-desc">Handling pushback · Delivering bad news</div>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">Leadership</div>
-                <div class="activity-card-title">Leadership Situations</div>
-                <div class="activity-card-desc">Team conflict · Motivating underperformers</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('pass')">🔒 Unlock with Practice Pass — ₹1,299/mo</button>
+              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Deliver a project delay update.', 45)">Start</button>
             </div>
           </div>
         </div>
 
-        <div id="sub-drills" class="sub-activity-panel" style="display: none;">
+        <div id="sub-drills" class="sub-activity-panel hidden">
           <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview">
+            <div class="activity-card" data-activity="headline">
               <div class="ac-body">
                 <div class="activity-card-tag">Precision Drill</div>
                 <div class="activity-card-title">Headline Drill</div>
-                <div class="activity-card-desc">State your main point in one clear sentence.</div>
+                <div class="activity-card-desc">State your main point in one sentence.</div>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Headline Drill', 15)">Start</button>
             </div>
-            <div class="activity-card locked-preview">
+            <div class="activity-card" data-activity="filler">
               <div class="ac-body">
                 <div class="activity-card-tag">Precision Drill</div>
                 <div class="activity-card-title">Filler Elimination</div>
-                <div class="activity-card-desc">Speak for 30 seconds with zero filler words.</div>
+                <div class="activity-card-desc">Zero filler words for 30 seconds.</div>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">Precision Drill</div>
-                <div class="activity-card-title">Time-to-Point</div>
-                <div class="activity-card-desc">Deliver your key recommendation in under 5 seconds.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Filler Elimination', 30)">Start</button>
             </div>
           </div>
         </div>
 
-        <div id="sub-bites" class="sub-activity-panel" style="display: none;">
+        <div id="sub-bites" class="sub-activity-panel hidden">
           <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview">
+            <div class="activity-card" data-activity="pyramid">
               <div class="ac-body">
                 <div class="activity-card-tag">3-Min Concept</div>
                 <div class="activity-card-title">Pyramid Principle</div>
-                <div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div>
+                <div class="activity-card-desc">Lead with the conclusion, then support.</div>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">BLUF Method</div>
-                <div class="activity-card-desc">Bottom Line Up Front — concise executive communication.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+              <button class="ac-start-btn btn btn-primary hidden" onclick="alert('Module loaded.')">Read</button>
             </div>
           </div>
         </div>
 
-        <div id="sub-simulator" class="sub-activity-panel" style="display: none;">
+        <div id="sub-simulator" class="sub-activity-panel hidden">
           <div class="dash-wide-box" style="border-color: var(--accent-purple);">
             <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
-            <h2 style="font-size: 18px;">Full 5-Question End-to-End Mock Interview</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">
-              Simulate a 15-minute high-stakes executive panel interview with dynamic follow-ups.
-            </p>
-            <button class="btn btn-primary" onclick="goToPaywall('pass')">🔒 Unlock with Practice Pass →</button>
+            <h2 style="font-size: 18px;">Full 5-Question Mock Interview</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">Dynamic follow-ups and comprehensive debrief.</p>
+            <button class="btn btn-primary" id="simulatorBtn" onclick="goToPaywall('pass')">🔒 Unlock with Practice Pass →</button>
           </div>
         </div>
 
         <div class="locked-tracks">
           <h3>🔒 Unlock More Sprints</h3>
-          <p>You're previewing the platform. Upgrade to the Practice Pass to unlock all Sprints and unlimited practice.</p>
+          <p>You're previewing the platform. Upgrade to unlock all Sprints and unlimited practice.</p>
           <div class="locked-tracks-grid">
             <div class="locked-track-item">🔒 Group Discussion</div>
             <div class="locked-track-item">🔒 Present to Group</div>
@@ -1455,46 +1261,45 @@
           </div>
           <button class="btn btn-primary" onclick="goToPaywall('pass')">Unlock Practice Pass →</button>
         </div>
-
-        <!-- STUDIO -->
-        <div class="studio-card" id="activeStudioContainer" style="display: none; margin-top: 20px;">
-          <div class="prompt-header">
-            <div>
-              <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">ACTIVE RECORDING CANVAS</div>
-              <h2 id="activePromptDisplay" style="font-size: 16px; margin-top: 4px;">Scenario...</h2>
-            </div>
-            <div class="timer-display" id="timerDisplay">01:00</div>
-          </div>
-          <div class="canvas-box">
-            <canvas id="waveformCanvas"></canvas>
-          </div>
-          <button class="btn btn-primary" id="recordBtn">🎤 Start Recording</button>
-          <div class="output-section" id="outputSection" style="display: none; margin-top: 20px;">
-            <hr style="border-color: var(--border-color); margin: 16px 0;" />
-            <h3 style="font-size: 14px; margin-bottom: 8px;">Instant Speech Analytics</h3>
-            <div class="snr-container">
-              <div style="display: flex; justify-content: space-between; font-size: 12px;">
-                <span style="font-weight: 700;">Clarity &amp; Focus Score</span>
-                <span style="color: var(--success); font-weight: 700;" id="studioSnrText">—</span>
-              </div>
-              <div class="snr-bar-wrapper">
-                <div class="snr-signal" id="studioSnrBar" style="width: 0%;"></div>
-                <div class="snr-noise" id="studioSnrNoise" style="width: 0%;"></div>
-              </div>
-            </div>
-            <div class="better-response-box">
-              <div style="color: var(--accent-purple); font-weight: 700; margin-bottom: 4px;">✨ Senior Rewrite (STAR):</div>
-              <p id="studioModelAnswer">—</p>
-            </div>
-          </div>
-        </div>
-
       </section>
 
-      <!-- ============ VIEW 3: PROGRESS ============ -->
+      <!-- ============ STUDIO (shared) ============ -->
+      <section class="studio-card hidden" id="activeStudioContainer" style="margin-top: 20px;">
+        <div class="prompt-header">
+          <div>
+            <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">ACTIVE RECORDING</div>
+            <h2 id="activePromptDisplay" style="font-size: 16px; margin-top: 4px;">—</h2>
+          </div>
+          <div class="timer-display" id="timerDisplay">01:00</div>
+        </div>
+        <div class="canvas-box">
+          <canvas id="waveformCanvas"></canvas>
+        </div>
+        <button class="btn btn-primary" id="recordBtn">🎤 Start Recording</button>
+        <div class="output-section hidden" id="outputSection" style="margin-top: 20px;">
+          <hr style="border-color: var(--border-color); margin: 16px 0;" />
+          <h3 style="font-size: 14px; margin-bottom: 8px;">Instant Analysis</h3>
+          <div class="snr-container">
+            <div style="display: flex; justify-content: space-between; font-size: 12px;">
+              <span style="font-weight: 700;">Clarity Score</span>
+              <span style="color: var(--success); font-weight: 700;" id="studioSnrText">—</span>
+            </div>
+            <div class="snr-bar-wrapper">
+              <div class="snr-signal" id="studioSnrBar" style="width: 0%;"></div>
+              <div class="snr-noise" id="studioSnrNoise" style="width: 0%;"></div>
+            </div>
+          </div>
+          <div class="better-response-box">
+            <div style="color: var(--accent-purple); font-weight: 700; margin-bottom: 4px;">✨ Senior Rewrite:</div>
+            <p id="studioModelAnswer">—</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PROGRESS ============ -->
       <section class="view-panel" id="dashView">
         <div class="timeline-bar">
-          <span style="font-weight: 700; font-size: 14px;">EXECUTIVE METRICS &amp; DIAGNOSTICS</span>
+          <span style="font-weight: 700; font-size: 14px;">EXECUTIVE METRICS</span>
           <div class="timeline-tabs">
             <button class="time-tab active" onclick="setTimeline('1w', this)">Last 1 Week</button>
             <button class="time-tab" onclick="setTimeline('2w', this)">Last 2 Weeks</button>
@@ -1503,38 +1308,38 @@
         </div>
 
         <div class="dash-grid">
-          <div class="metric-box lockable" id="metricBoxTTP">
+          <div class="metric-box lockable">
             <div class="metric-label">Time-to-Point</div>
             <div class="metric-value" id="metricTTP">—</div>
             <div class="metric-sub" id="metricTTPSub">—</div>
-            <div class="lock-overlay preview-hidden" id="dashLock1">
+            <div class="lock-overlay" id="dashLock1">
               <div class="lock-icon">🔒</div>
               <div class="lock-desc">Unlocks after your first response.</div>
             </div>
           </div>
-          <div class="metric-box lockable" id="metricBoxClarity">
+          <div class="metric-box lockable">
             <div class="metric-label">Clarity Score</div>
             <div class="metric-value" id="metricClarity">—</div>
             <div class="metric-sub" id="metricClaritySub">—</div>
-            <div class="lock-overlay preview-hidden" id="dashLock2">
+            <div class="lock-overlay" id="dashLock2">
               <div class="lock-icon">🔒</div>
               <div class="lock-desc">Unlocks after your first response.</div>
             </div>
           </div>
-          <div class="metric-box lockable" id="metricBoxStructure">
-            <div class="metric-label">Structure (BLUF/PSO)</div>
+          <div class="metric-box lockable">
+            <div class="metric-label">Structure</div>
             <div class="metric-value" id="metricStructure">—</div>
             <div class="metric-sub" id="metricStructureSub">—</div>
-            <div class="lock-overlay preview-hidden" id="dashLock3">
+            <div class="lock-overlay" id="dashLock3">
               <div class="lock-icon">🔒</div>
               <div class="lock-desc">Unlocks after your first response.</div>
             </div>
           </div>
-          <div class="metric-box lockable" id="metricBoxImpact">
+          <div class="metric-box lockable">
             <div class="metric-label">Impact &amp; Gravitas</div>
             <div class="metric-value" id="metricImpact">—</div>
             <div class="metric-sub" id="metricImpactSub">—</div>
-            <div class="lock-overlay preview-hidden" id="dashLock4">
+            <div class="lock-overlay" id="dashLock4">
               <div class="lock-icon">🔒</div>
               <div class="lock-desc">Unlocks after your first response.</div>
             </div>
@@ -1543,7 +1348,7 @@
 
         <div class="dash-wide-box lockable">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 700; font-size: 14px;">Clarity &amp; Focus (Substance vs. Fluff Ratio)</span>
+            <span style="font-weight: 700; font-size: 14px;">Clarity &amp; Focus</span>
             <span style="font-weight: 700; font-size: 13px;">Target: 85% · Current: <span style="color: var(--success);" id="dashSnrValue">—</span></span>
           </div>
           <div class="snr-container">
@@ -1560,26 +1365,25 @@
 
         <div class="dash-wide-box lockable">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-            <span style="font-weight: 700; font-size: 14px;">28-Day Sprint Progress</span>
-            <span style="font-size: 12px; color: var(--text-muted);">Clarity vs Time-to-Point</span>
+            <span style="font-weight: 700; font-size: 14px;">28-Day Progress</span>
           </div>
           <div class="trend-chart-container">
-            <svg viewBox="0 0 600 140" preserveAspectRatio="none">
+            <svg viewBox="0 0 600 140" preserveAspectRatio="none" id="trendChart">
               <line x1="0" y1="35" x2="600" y2="35" stroke="#374151" stroke-width="0.5" stroke-dasharray="3 3" />
               <line x1="0" y1="70" x2="600" y2="70" stroke="#374151" stroke-width="0.5" stroke-dasharray="3 3" />
               <line x1="0" y1="105" x2="600" y2="105" stroke="#374151" stroke-width="0.5" stroke-dasharray="3 3" />
-              <polyline fill="none" stroke="#10B981" stroke-width="2.5" points="0,110 60,102 120,95 180,88 240,78 300,68 360,58 420,48 480,42 540,35 600,30" opacity="0.2"/>
-              <polyline fill="none" stroke="#38BDF8" stroke-width="2.5" points="0,30 60,35 120,42 180,52 240,62 300,72 360,82 420,90 480,98 540,104 600,110" opacity="0.2"/>
+              <polyline id="clarityLine" fill="none" stroke="#10B981" stroke-width="2.5" points="" />
+              <polyline id="ttpLine" fill="none" stroke="#38BDF8" stroke-width="2.5" points="" />
             </svg>
             <div class="trend-legend">
               <span><span class="legend-dot" style="background:#10B981;"></span> Clarity Score</span>
               <span><span class="legend-dot" style="background:#38BDF8;"></span> Time-to-Point</span>
             </div>
           </div>
-          <div class="lock-overlay preview-hidden" id="dashLockTrend">
+          <div class="lock-overlay" id="dashLockTrend">
             <div class="lock-icon">📈</div>
             <div class="lock-title">Add 2 more reps to see your trend line</div>
-            <div class="lock-desc">We'll plot your clarity, structure, and impact over time as you practice.</div>
+            <div class="lock-desc">We'll plot your clarity and time-to-point over time as you practice.</div>
             <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint →</button>
           </div>
         </div>
@@ -1587,56 +1391,53 @@
         <div class="feedback-grid">
           <div class="feedback-box well lockable">
             <div class="feedback-title" style="color: var(--success);"><span>✅</span> What Was Going Well</div>
-            <ul class="feedback-list" id="dashWellList">
-              <li>Complete your first rep to see strengths.</li>
-            </ul>
-            <div class="lock-overlay preview-hidden" id="dashLockWell">
+            <ul class="feedback-list" id="dashWellList"><li>Complete your first rep to see strengths.</li></ul>
+            <div class="lock-overlay" id="dashLockWell">
               <div class="lock-icon">🔒</div>
               <div class="lock-title">Unlocks after your first response</div>
-              <div class="lock-desc">Your strengths report builds from the moment you complete your first rep.</div>
+              <div class="lock-desc">Your strengths report builds from your first rep.</div>
               <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint →</button>
             </div>
           </div>
           <div class="feedback-box improve lockable">
             <div class="feedback-title" style="color: var(--accent-gold);"><span>🎯</span> What to Improve</div>
-            <ul class="feedback-list" id="dashImproveList">
-              <li>Complete your first rep to see opportunities.</li>
-            </ul>
-            <div class="lock-overlay preview-hidden" id="dashLockImprove">
+            <ul class="feedback-list" id="dashImproveList"><li>Complete your first rep to see opportunities.</li></ul>
+            <div class="lock-overlay" id="dashLockImprove">
               <div class="lock-icon">🔒</div>
               <div class="lock-title">Unlocks after your first response</div>
-              <div class="lock-desc">Your improvement report builds from the moment you complete your first rep.</div>
+              <div class="lock-desc">Your improvement report builds from your first rep.</div>
               <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint →</button>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ============ VIEW 4: RECORDINGS ============ -->
+      <!-- ============ RECORDINGS ============ -->
       <section class="view-panel" id="recordingsView">
         <h2 style="font-size: 18px;">🎙️ My Saved Practice Sessions</h2>
-        <div id="recordingsList"></div>
+        <div id="recordingsList">
+          <p style="color: var(--text-muted); font-size: 13px;">Complete a drill to see it here.</p>
+        </div>
       </section>
 
-      <!-- ============ VIEW 5: BADGES ============ -->
+      <!-- ============ BADGES ============ -->
       <section class="view-panel" id="badgesView">
         <h2 style="font-size: 18px;">🏆 Achievements</h2>
         <p style="font-size: 13px; color: var(--text-muted);">Unlock badges as you practice.</p>
         <div class="badges-grid">
-          <div class="badge-item" id="badgeFirstRep">
-            <div class="badge-icon">🎯</div>
+          <div class="badge-item locked" id="badgeFirstRep">
+            <div class="badge-icon">🔒</div>
             <div class="badge-name">First Rep</div>
-            <div class="badge-desc">Locked until you complete your first rep.</div>
+            <div class="badge-desc">Complete your first voice rep.</div>
           </div>
           <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">5-Day Streak</div><div class="badge-desc">Practice 5 days in a row.</div></div>
           <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Speed Demon</div><div class="badge-desc">Time-to-Point under 10 seconds.</div></div>
-          <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Structure Master</div><div class="badge-desc">Used BLUF in 10 consecutive reps.</div></div>
-          <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Filler Killer</div><div class="badge-desc">Zero filler words in a 45s rep.</div></div>
+          <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Filler Killer</div><div class="badge-desc">Zero filler words in a rep.</div></div>
           <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Orator</div><div class="badge-desc">Score above 90% on any rep.</div></div>
         </div>
       </section>
 
-      <!-- ============ VIEW 6: PILLARS ============ -->
+      <!-- ============ PILLARS ============ -->
       <section class="view-panel" id="pillarsView">
         <h2 style="font-size: 18px;">🏛️ Pillars of Executive Communication</h2>
         <div class="studio-card">
@@ -1644,12 +1445,12 @@
         </div>
       </section>
 
-      <!-- ============ VIEW 7: LEARNING ============ -->
+      <!-- ============ LEARNING ============ -->
       <section class="view-panel" id="learningView">
         <h2 style="font-size: 18px;">📚 My Learning Modules</h2>
         <div class="studio-card lockable">
-          <p style="color: var(--text-muted); font-size: 13px;">Curated micro-lessons and frameworks tailored to your target role.</p>
-          <div class="lock-overlay preview-hidden" id="learningLock">
+          <p style="color: var(--text-muted); font-size: 13px;">Curated micro-lessons tailored to your target role.</p>
+          <div class="lock-overlay" id="learningLock">
             <div class="lock-icon">🔒</div>
             <div class="lock-title">Unlocks after your first response</div>
             <div class="lock-desc">Learning modules activate once you start your Sprint practice.</div>
@@ -1663,25 +1464,102 @@
 
   <script>
     /* ============================================================
-       STATE
+       READ INCOMING USER OBJECT
        ============================================================ */
-    const PREVIEW_MODE = true;
+    // In production, this comes from:
+    //   Entry A (free flow):  /app?data=<base64-json> or localStorage
+    //   Entry B (paid login): /app after auth → same payload
+    // For now, fallback to a demo payload if none found.
 
-    const userState = {
-      name: '',
-      email: '',
-      stage: null,
-      function: null,
-      q1Done: false,
-      q2Done: false,
-      q1Trials: [],
-      q2Trials: [],
-      firstMetrics: null,   // metrics from Q1 trial 1
-      seniorRewrite: null,
-      peerBenchmark: null
+    function readIncomingUser() {
+      // 1. Try localStorage (set by login page)
+      const stored = localStorage.getItem('unspoken_user');
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) {}
+      }
+      // 2. Try URL param
+      const params = new URLSearchParams(window.location.search);
+      const data = params.get('data');
+      if (data) {
+        try { return JSON.parse(atob(data)); } catch (e) {}
+      }
+      // 3. Demo fallback
+      return {
+        user_id: 'demo-user',
+        name: 'Arun Chockalingam',
+        email: 'arun@example.com',
+        phone: '+919999999999',
+        stage: 'early',
+        function: null,
+        plan: 'free',
+        track_id: null,
+        current_day: 1,
+        total_days: 28,
+        free_q1_trials: 0,
+        free_q2_trials: 0,
+        questions_per_day: 2,
+        trials_per_question: 2
+      };
+    }
+
+    const USER = readIncomingUser();
+
+    /* ============================================================
+       RULES PER PLAN
+       ============================================================ */
+    const RULES = {
+      free: {
+        questionsPerDay: 2,
+        trialsPerQuestion: 2,
+        canChangeQuestion: false,
+        canCustomizeQuestion: false,
+        canAccessTrend: false,
+        canAccessActivities: false,
+        canAccessSimulator: false,
+        showPreviewBanner: true,
+        showNavBadge: false,
+        pulseProgressNav: true,
+        planLabel: 'Free Preview',
+        badgeText: 'Free Preview',
+        headerText: 'Free Preview'
+      },
+      sprint: {
+        questionsPerDay: 2,
+        trialsPerQuestion: 10,
+        canChangeQuestion: true,
+        canCustomizeQuestion: true,
+        canAccessTrend: true,
+        canAccessActivities: true,
+        canAccessSimulator: true,
+        showPreviewBanner: false,
+        showNavBadge: true,
+        pulseProgressNav: false,
+        planLabel: 'Sprint Pass',
+        badgeText: null,        // will use track_id
+        headerText: null
+      },
+      pass: {
+        questionsPerDay: 10,
+        trialsPerQuestion: 10,
+        canChangeQuestion: true,
+        canCustomizeQuestion: true,
+        canAccessTrend: true,
+        canAccessActivities: true,
+        canAccessSimulator: true,
+        showPreviewBanner: false,
+        showNavBadge: true,
+        pulseProgressNav: false,
+        planLabel: 'Practice Pass',
+        badgeText: null,
+        headerText: null
+      }
     };
 
-    // Sample data — in production, comes from the API
+    const CURRENT_RULES = RULES[USER.plan] || RULES.free;
+
+    /* ============================================================
+       SAMPLE CONTENT (replace with API in production)
+       ============================================================ */
     const SAMPLE_Q1 = {
       prompt: 'Tell me about a time you turned around a failing project.',
       focus: 'Structure & Impact',
@@ -1689,6 +1567,7 @@
       difficulty: 'easy',
       durationSeconds: 60
     };
+
     const SAMPLE_Q2 = {
       prompt: 'Walk me through your resume.',
       focus: 'Narrative & Relevance',
@@ -1697,8 +1576,7 @@
       durationSeconds: 90
     };
 
-    // Simulated analysis after Q1
-    const SAMPLE_METRICS_Q1 = {
+    const SAMPLE_METRICS = {
       wpm: 128, wordCount: 142, fillerRatio: 7, durationSeconds: 58,
       clarity: 62, structure: 55, impact: 48, timeToPoint: 12,
       strengths: [
@@ -1714,83 +1592,158 @@
       seniorRewrite: 'I inherited a project that was 6 weeks behind with 50% attrition. I restructured the team into 3 pods, cut two low-priority features, and shipped the core MVP in 4 weeks. Delivered ₹1.2 Cr in revenue within 2 quarters.'
     };
 
-    let currentRecording = null;
+    /* ============================================================
+       STATE
+       ============================================================ */
+    const state = {
+      q1Trials: [],
+      q2Trials: [],
+      q1Metrics: null,
+      function: USER.function || null,
+      activeRecording: null,   // 'q1' | 'q2' | null
+      isRecording: false,
+      timer: null,
+      secondsLeft: 0,
+      maxDuration: 60
+    };
 
     /* ============================================================
-       GATE #1 — Name + Email + Stage
+       APPLY VIEW (plan-based)
        ============================================================ */
-    let gate1Data = { name: '', email: '', stage: null };
+    function applyView() {
+      // Header badge
+      const badge = document.getElementById('headerTrackBadge');
+      if (USER.plan === 'sprint' && USER.track_id) {
+        badge.textContent = `${formatTrack(USER.track_id)} · Day ${USER.current_day} of ${USER.total_days}`;
+      } else if (USER.plan === 'pass') {
+        badge.textContent = `Practice Pass · Day ${USER.current_day}`;
+      } else {
+        badge.textContent = 'Free Preview';
+      }
 
-    document.getElementById('gate1Name').addEventListener('input', e => {
-      gate1Data.name = e.target.value.trim();
-      checkGate1Ready();
-    });
-    document.getElementById('gate1Email').addEventListener('input', e => {
-      gate1Data.email = e.target.value.trim();
-      checkGate1Ready();
-    });
+      // Plan badge
+      document.getElementById('planBadge').textContent = CURRENT_RULES.planLabel;
+      if (USER.plan === 'free') {
+        document.getElementById('planBadge').classList.add('preview');
+      } else {
+        document.getElementById('planBadge').classList.remove('preview');
+      }
 
-    function selectStage(btn, stage) {
-      document.querySelectorAll('#gate1StageOptions .onboarding-option').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      gate1Data.stage = stage;
-      checkGate1Ready();
+      // User identity
+      document.getElementById('userNameEl').textContent = USER.name || '—';
+      document.getElementById('userAvatarEl').textContent = (USER.name || 'A').charAt(0).toUpperCase();
+      document.getElementById('userRoleEl').textContent = formatStage(USER.stage) || '—';
+
+      // Profile dropdowns
+      if (USER.stage) {
+        document.getElementById('profileStage').innerHTML = `<option selected>${formatStage(USER.stage)}</option>`;
+      }
+      if (USER.function) {
+        document.getElementById('profileFunction').innerHTML = `<option selected>${formatFunction(USER.function)}</option>`;
+      }
+
+      // Preview banner
+      const banner = document.getElementById('previewBanner');
+      if (CURRENT_RULES.showPreviewBanner) {
+        banner.classList.remove('hidden');
+        document.getElementById('previewName').textContent = USER.name;
+        updateBannerText();
+      } else {
+        banner.classList.add('hidden');
+      }
+
+      // Nav badge on Today
+      const navBadge = document.getElementById('todayNavBadge');
+      if (CURRENT_RULES.showNavBadge) {
+        navBadge.textContent = CURRENT_RULES.questionsPerDay;
+        navBadge.style.display = 'inline-block';
+      } else {
+        navBadge.style.display = 'none';
+      }
+
+      // Update caps in trial labels
+      document.getElementById('q1RepCount').innerHTML =
+        `0 <span class="rt-cap">/ ${CURRENT_RULES.trialsPerQuestion}</span>`;
+      document.getElementById('q2RepCount').innerHTML =
+        `0 <span class="rt-cap">/ ${CURRENT_RULES.trialsPerQuestion}</span>`;
+
+      // Free-only: locked Change/Customize card
+      const changeCard = document.getElementById('freeChangeCustomizeCard');
+      if (!CURRENT_RULES.canChangeQuestion) {
+        changeCard.classList.remove('hidden');
+      } else {
+        changeCard.classList.add('hidden');
+      }
+
+      // Activities: lock or unlock
+      document.querySelectorAll('.activity-card').forEach(card => {
+        const lockBtn = card.querySelector('.ac-lock-cta');
+        const startBtn = card.querySelector('.ac-start-btn');
+        if (!CURRENT_RULES.canAccessActivities) {
+          card.classList.add('locked-preview');
+          if (lockBtn) lockBtn.classList.remove('hidden');
+          if (startBtn) startBtn.classList.add('hidden');
+        } else {
+          card.classList.remove('locked-preview');
+          if (lockBtn) lockBtn.classList.add('hidden');
+          if (startBtn) startBtn.classList.remove('hidden');
+        }
+      });
+
+      // Simulator
+      const simBtn = document.getElementById('simulatorBtn');
+      if (CURRENT_RULES.canAccessSimulator) {
+        simBtn.textContent = 'Launch Interview Simulator →';
+        simBtn.onclick = () => alert('Simulator loaded.');
+      } else {
+        simBtn.textContent = '🔒 Unlock with Practice Pass →';
+        simBtn.onclick = () => goToPaywall('pass');
+      }
+
+      // Trend chart lock
+      if (CURRENT_RULES.canAccessTrend) {
+        document.getElementById('dashLockTrend').classList.add('hidden');
+      } else {
+        document.getElementById('dashLockTrend').classList.remove('hidden');
+      }
+
+      // Q2 — locked until Q1 done
+      if (USER.free_q1_trials > 0 || USER.plan !== 'free') {
+        unlockQ2IfReady();
+      }
+
+      // Progress metric locks — start locked if free & no trial yet
+      if (USER.plan === 'free' && USER.free_q1_trials === 0) {
+        ['dashLock1','dashLock2','dashLock3','dashLock4','dashLockWell','dashLockImprove'].forEach(id => {
+          document.getElementById(id).classList.remove('hidden');
+        });
+      } else if (USER.plan !== 'free') {
+        // Paid users: show demo data
+        populateProgress(SAMPLE_METRICS, true);
+      }
+
+      // Q1 label / trial count from existing state
+      if (USER.free_q1_trials > 0) {
+        state.q1Trials = Array(USER.free_q1_trials).fill({ clarity: 62, structure: 55, impact: 48 });
+        state.q1Metrics = SAMPLE_METRICS;
+        updateQ1Card();
+        populateProgress(SAMPLE_METRICS, false);
+      }
     }
 
-    function checkGate1Ready() {
-      const ready = gate1Data.name && gate1Data.email && gate1Data.stage;
-      document.getElementById('gate1Submit').disabled = !ready;
-    }
-
-    function submitGateOne() {
-      // Save to userState
-      userState.name = gate1Data.name;
-      userState.email = gate1Data.email;
-      userState.stage = gate1Data.stage;
-
-      // Update UI
-      document.getElementById('previewName').textContent = userState.name;
-      document.getElementById('userNameEl').textContent = userState.name;
-      document.getElementById('userAvatarEl').textContent = userState.name.charAt(0).toUpperCase();
-      document.getElementById('userRoleEl').textContent = formatStage(userState.stage);
-      document.getElementById('profileStage').innerHTML = `<option selected>${formatStage(userState.stage)}</option>`;
-
-      // Close gate
-      document.getElementById('gate1Overlay').classList.add('hidden');
-
-      // Move to Next — start Q1 recording flow
-      launchQ1Recording();
+    function formatTrack(id) {
+      const m = {
+        interview: 'Interview Sprint', group_discussion: 'Group Discussion',
+        sales: 'Sales Sprint', pitch: 'Pitch Sprint',
+        presentation: 'Presentation Sprint', public_speaking: 'Public Speaking',
+        storytelling: 'Storytelling Sprint', frontline: 'Frontline Communication'
+      };
+      return m[id] || id;
     }
 
     function formatStage(s) {
       const m = { student:'Student / Final Year', fresher:'Fresher (0–1 yr)', early:'Early Career (1–5 yrs)', mid:'Mid Career (5–15 yrs)', senior:'Senior / Lead (15+ yrs)' };
       return m[s] || s;
-    }
-
-    /* ============================================================
-       GATE #2 — Function
-       ============================================================ */
-    let gate2Data = { function: null };
-
-    function selectFunction(btn, fn) {
-      document.querySelectorAll('#gate2FunctionOptions .onboarding-option').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      gate2Data.function = fn;
-      document.getElementById('gate2Submit').disabled = false;
-    }
-
-    function submitGateTwo() {
-      userState.function = gate2Data.function;
-      document.getElementById('profileFunction').innerHTML = `<option selected>${formatFunction(userState.function)}</option>`;
-      document.getElementById('gate2Overlay').classList.add('hidden');
-
-      // Unlock peer benchmark
-      showPeerBenchmark();
-
-      // Now show the paywall — user has done 2 drills, gave function
-      setTimeout(() => {
-        goToPaywall('sprint');
-      }, 800);
     }
 
     function formatFunction(f) {
@@ -1799,39 +1752,155 @@
     }
 
     /* ============================================================
-       Q1 RECORDING FLOW
+       BANNER TEXT (state-aware)
        ============================================================ */
-    function launchQ1Recording() {
-      const card = document.getElementById('questionCard1');
-      document.getElementById('q1Label').textContent = 'Q1 of 2 · Your first free drill';
-      document.getElementById('q1Text').textContent = `"${SAMPLE_Q1.prompt}"`;
-      document.getElementById('q1Meta').textContent = `Focus: ${SAMPLE_Q1.focus} · Target: ${SAMPLE_Q1.target}`;
-      document.getElementById('q1RepBtn').textContent = '🎤 Start Trial 1';
-      document.getElementById('q1RepBtn').disabled = false;
-
-      // Show the studio
-      document.getElementById('activeStudioContainer').style.display = 'block';
-      document.getElementById('activePromptDisplay').textContent = SAMPLE_Q1.prompt;
-      document.getElementById('timerDisplay').textContent = '01:00';
-      document.getElementById('recordBtn').textContent = '🎤 Start Recording';
-      document.getElementById('recordBtn').className = 'btn btn-primary';
-      document.getElementById('outputSection').style.display = 'none';
-
-      setTimeout(() => {
-        document.getElementById('activeStudioContainer').scrollIntoView({ behavior: 'smooth' });
-      }, 200);
+    function updateBannerText() {
+      const el = document.getElementById('previewBannerText');
+      const name = USER.name || 'there';
+      if (state.q1Trials.length === 0) {
+        el.innerHTML = `👋 Hi <strong>${name}</strong> — here's your free drill.`;
+      } else if (state.q2Trials.length === 0) {
+        el.innerHTML = `✅ Nice work, <strong>${name}</strong>. You have 1 more free drill.`;
+      } else {
+        el.innerHTML = `🎯 Two drills done, <strong>${name}</strong>. Unlock a Sprint to keep practicing.`;
+      }
     }
 
-    // Wire the record button
+    /* ============================================================
+       Q1 / Q2 CARDS
+       ============================================================ */
+    function initCards() {
+      document.getElementById('q1Text').textContent = `"${SAMPLE_Q1.prompt}"`;
+      document.getElementById('q1Meta').textContent = `Focus: ${SAMPLE_Q1.focus} · Target: ${SAMPLE_Q1.target}`;
+      document.getElementById('q2Text').textContent = `"${SAMPLE_Q2.prompt}"`;
+      document.getElementById('q2Meta').textContent = `Complete Q1 to unlock`;
+
+      document.getElementById('q1RepBtn').onclick = () => startRep('q1');
+      document.getElementById('q2RepBtn').onclick = () => startRep('q2');
+    }
+
+    function updateQ1Card() {
+      const cap = CURRENT_RULES.trialsPerQuestion;
+      const n = state.q1Trials.length;
+      document.getElementById('q1RepCount').innerHTML = `${n} <span class="rt-cap">/ ${cap}</span>`;
+      const best = state.q1Trials.length ? Math.max(...state.q1Trials.map(t => t.clarity)) : null;
+      document.getElementById('q1BestSnr').textContent = best ? `Best clarity: ${best}%` : 'Best score: —';
+      const btn = document.getElementById('q1RepBtn');
+      if (n >= cap) {
+        btn.textContent = '✓ Cap reached';
+        btn.disabled = true;
+        btn.classList.add('done');
+      } else {
+        btn.textContent = `🎤 Start Trial ${n + 1}`;
+        btn.disabled = false;
+        btn.classList.remove('done');
+      }
+      if (n >= 1) {
+        document.getElementById('q1Label').textContent = n >= cap ? 'Q1 · Completed' : 'Q1 · In progress';
+        document.getElementById('q1PostActions').classList.remove('hidden');
+      }
+      document.getElementById('q1RepsLog').innerHTML = state.q1Trials.map((t, i) => `
+        <div class="rep-log-item">
+          <span>Trial ${i + 1}</span>
+          <span class="rl-score">Clarity ${t.clarity}% · Structure ${t.structure}% · Impact ${t.impact}%</span>
+        </div>
+      `).join('');
+
+      // Auto unlock Q2 once Q1 has at least 1 trial
+      if (n >= 1) unlockQ2IfReady();
+    }
+
+    function updateQ2Card() {
+      const cap = CURRENT_RULES.trialsPerQuestion;
+      const n = state.q2Trials.length;
+      document.getElementById('q2RepCount').innerHTML = `${n} <span class="rt-cap">/ ${cap}</span>`;
+      const best = state.q2Trials.length ? Math.max(...state.q2Trials.map(t => t.clarity)) : null;
+      document.getElementById('q2BestSnr').textContent = best ? `Best clarity: ${best}%` : 'Best score: —';
+      const btn = document.getElementById('q2RepBtn');
+      if (n >= cap) {
+        btn.textContent = '✓ Cap reached';
+        btn.disabled = true;
+        btn.classList.add('done');
+      } else {
+        btn.textContent = `🎤 Start Trial ${n + 1}`;
+        btn.disabled = false;
+        btn.classList.remove('done');
+      }
+      document.getElementById('q2RepsLog').innerHTML = state.q2Trials.map((t, i) => `
+        <div class="rep-log-item">
+          <span>Trial ${i + 1}</span>
+          <span class="rl-score">Clarity ${t.clarity}% · Structure ${t.structure}% · Impact ${t.impact}%</span>
+        </div>
+      `).join('');
+    }
+
+    function unlockQ2IfReady() {
+      const card = document.getElementById('questionCard2');
+      card.classList.remove('locked');
+      document.getElementById('q2Label').textContent = 'Q2 of 2 · Unlocked';
+      document.getElementById('q2Meta').textContent = `Focus: ${SAMPLE_Q2.focus} · Target: ${SAMPLE_Q2.target}`;
+      const btn = document.getElementById('q2RepBtn');
+      btn.disabled = false;
+      btn.textContent = `🎤 Start Trial ${state.q2Trials.length + 1}`;
+    }
+
+    /* ============================================================
+       START A REP
+       ============================================================ */
+    function startRep(which) {
+      // Free cap enforcement
+      if (USER.plan === 'free') {
+        if (which === 'q1' && state.q1Trials.length >= CURRENT_RULES.trialsPerQuestion) {
+          goToPaywall('sprint'); return;
+        }
+        if (which === 'q2' && state.q2Trials.length >= CURRENT_RULES.trialsPerQuestion) {
+          goToPaywall('sprint'); return;
+        }
+      }
+      // Sprint cap
+      if (USER.plan === 'sprint' && which === 'q1' && state.q1Trials.length >= CURRENT_RULES.trialsPerQuestion) {
+        alert('Daily cap reached. Come back tomorrow.'); return;
+      }
+
+      state.activeRecording = which;
+      const durationMap = { q1: 60, q2: 90 };
+      state.maxDuration = durationMap[which] || 60;
+
+      const prompt = which === 'q1' ? SAMPLE_Q1.prompt : SAMPLE_Q2.prompt;
+      const studio = document.getElementById('activeStudioContainer');
+      studio.classList.remove('hidden');
+      document.getElementById('activePromptDisplay').textContent = prompt;
+      document.getElementById('timerDisplay').textContent = formatTimer(state.maxDuration);
+      document.getElementById('recordBtn').textContent = '🎤 Start Recording';
+      document.getElementById('recordBtn').className = 'btn btn-primary';
+      document.getElementById('recordBtn').disabled = false;
+      document.getElementById('outputSection').classList.add('hidden');
+
+      requestAnimationFrame(() => {
+        studio.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    function formatTimer(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    /* ============================================================
+       RECORDING
+       ============================================================ */
     const recordBtn = document.getElementById('recordBtn');
-    let isRecording = false;
-    let timerInterval = null;
-    let secondsElapsed = 0;
-    let maxDuration = 60;
     let audioContext, analyser, dataArray, mediaRecorder, animationFrameId;
+    const canvas = document.getElementById('waveformCanvas');
+    const ctx = canvas.getContext('2d');
 
     recordBtn.addEventListener('click', async () => {
-      if (!isRecording) {
+      if (!state.activeRecording) {
+        alert('Start a trial from one of the question cards first.');
+        return;
+      }
+      if (!state.isRecording) {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           mediaRecorder = new MediaRecorder(stream);
@@ -1840,14 +1909,14 @@
           audioContext = new (window.AudioContext || window.webkitAudioContext)();
           analyser = audioContext.createAnalyser();
           analyser.fftSize = 256;
-          const source = audioContext.createMediaStreamSource(stream);
-          source.connect(analyser);
+          const src = audioContext.createMediaStreamSource(stream);
+          src.connect(analyser);
           dataArray = new Uint8Array(analyser.frequencyBinCount);
 
-          isRecording = true;
+          state.isRecording = true;
           recordBtn.textContent = '⏹ Stop & Analyze';
           recordBtn.className = 'btn btn-danger';
-          document.getElementById('outputSection').style.display = 'none';
+          document.getElementById('outputSection').classList.add('hidden');
 
           startTimer();
           drawWaveform();
@@ -1859,68 +1928,68 @@
       }
     });
 
-    function stopRecording() {
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-      if (audioContext) audioContext.close();
-      cancelAnimationFrame(animationFrameId);
-      clearInterval(timerInterval);
-
-      isRecording = false;
-      recordBtn.textContent = '🔄 Re-record';
-      recordBtn.className = 'btn btn-primary';
-
-      // Simulate AI feedback (replace with API)
-      const m = SAMPLE_METRICS_Q1;
-      document.getElementById('studioSnrText').textContent = `${m.clarity}% Clarity`;
-      document.getElementById('studioSnrBar').style.width = `${m.clarity}%`;
-      document.getElementById('studioSnrNoise').style.width = `${100 - m.clarity}%`;
-      document.getElementById('studioModelAnswer').textContent = m.seniorRewrite;
-      document.getElementById('outputSection').style.display = 'block';
-
-      // Update user state
-      userState.firstMetrics = m;
-      userState.q1Trials.push({ number: userState.q1Trials.length + 1, clarity: m.clarity, structure: m.structure, impact: m.impact });
-      userState.q1Done = true;
-
-      // Update Q1 card
-      updateQ1Card();
-
-      // Unlock Q2
-      unlockQ2();
-
-      // Populate Progress
-      populateProgressAfterFirstRep(m);
-
-      // Update banner
-      updateBanner();
-
-      // Update Today's progress
-      updateTodayProgress();
-    }
-
     function startTimer() {
-      secondsElapsed = maxDuration;
-      updateTimerDisplay();
-      timerInterval = setInterval(() => {
-        secondsElapsed--;
-        updateTimerDisplay();
-        if (secondsElapsed <= 0) {
+      state.secondsLeft = state.maxDuration;
+      document.getElementById('timerDisplay').textContent = formatTimer(state.secondsLeft);
+      state.timer = setInterval(() => {
+        state.secondsLeft--;
+        document.getElementById('timerDisplay').textContent = formatTimer(Math.max(0, state.secondsLeft));
+        if (state.secondsLeft <= 0) {
           stopRecording();
         }
       }, 1000);
     }
 
-    function updateTimerDisplay() {
-      const mins = String(Math.floor(Math.abs(secondsElapsed) / 60)).padStart(2, '0');
-      const secs = String(Math.abs(secondsElapsed) % 60).padStart(2, '0');
-      document.getElementById('timerDisplay').textContent = `${mins}:${secs}`;
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      if (audioContext) audioContext.close();
+      cancelAnimationFrame(animationFrameId);
+      clearInterval(state.timer);
+
+      state.isRecording = false;
+      recordBtn.textContent = '🔄 Re-record';
+      recordBtn.className = 'btn btn-primary';
+
+      // Simulated analysis — replace with real API call
+      const m = SAMPLE_METRICS;
+      document.getElementById('studioSnrText').textContent = `${m.clarity}% Clarity`;
+      document.getElementById('studioSnrBar').style.width = `${m.clarity}%`;
+      document.getElementById('studioSnrNoise').style.width = `${100 - m.clarity}%`;
+      document.getElementById('studioModelAnswer').textContent = m.seniorRewrite;
+      document.getElementById('outputSection').classList.remove('hidden');
+
+      const trialData = {
+        number: null,
+        clarity: m.clarity,
+        structure: m.structure,
+        impact: m.impact,
+        timeToPoint: m.timeToPoint
+      };
+
+      if (state.activeRecording === 'q1') {
+        state.q1Trials.push({ ...trialData, number: state.q1Trials.length + 1 });
+        state.q1Metrics = m;
+        updateQ1Card();
+        populateProgress(m, false);
+      } else if (state.activeRecording === 'q2') {
+        state.q2Trials.push({ ...trialData, number: state.q2Trials.length + 1 });
+        updateQ2Card();
+
+        // Gate #2 appears once Q2 has at least 1 trial in free mode
+        if (USER.plan === 'free' && !state.function && state.q2Trials.length === 1) {
+          setTimeout(() => {
+            document.getElementById('gate2Overlay').classList.remove('hidden');
+          }, 600);
+        }
+      }
+
+      updateTodayProgress();
+      updateBannerText();
+      addRecordingEntry(state.activeRecording, m);
     }
 
-    const canvas = document.getElementById('waveformCanvas');
-    const ctx = canvas.getContext('2d');
-
     function drawWaveform() {
-      if (!isRecording) return;
+      if (!state.isRecording) return;
       animationFrameId = requestAnimationFrame(drawWaveform);
       analyser.getByteFrequencyData(dataArray);
       ctx.fillStyle = '#0B0F19';
@@ -1942,185 +2011,150 @@
     window.addEventListener('resize', resizeCanvas);
 
     /* ============================================================
-       Q1 CARD UPDATE
+       PROGRESS POPULATE
        ============================================================ */
-    function updateQ1Card() {
-      document.getElementById('q1RepCount').innerHTML = `${userState.q1Trials.length} <span class="rt-cap">/ 2 trials used</span>`;
-      document.getElementById('q1BestSnr').textContent = `Clarity: ${userState.firstMetrics.clarity}% · Structure: ${userState.firstMetrics.structure}% · Impact: ${userState.firstMetrics.impact}%`;
-      document.getElementById('q1RepBtn').textContent = userState.q1Trials.length >= 2 ? '✓ Both trials used' : `🎤 Start Trial ${userState.q1Trials.length + 1}`;
-      document.getElementById('q1RepBtn').disabled = userState.q1Trials.length >= 2;
-      if (userState.q1Trials.length >= 2) {
-        document.getElementById('q1RepBtn').classList.add('done');
-      }
-      document.getElementById('q1Label').textContent = userState.q1Trials.length >= 2 ? 'Q1 of 2 · Completed' : 'Q1 of 2 · In progress';
-
-      if (userState.q1Trials.length >= 1) {
-        document.getElementById('q1PostActions').style.display = 'flex';
-      }
-
-      // Reps log
-      const log = document.getElementById('q1RepsLog');
-      log.innerHTML = userState.q1Trials.map((t, i) => `
-        <div class="rep-log-item">
-          <span>Trial ${t.number}</span>
-          <span class="rl-score">Clarity ${t.clarity}% · Structure ${t.structure}% · Impact ${t.impact}%</span>
-        </div>
-      `).join('');
-    }
-
-    /* ============================================================
-       UNLOCK Q2
-       ============================================================ */
-    function unlockQ2() {
-      const card = document.getElementById('questionCard2');
-      card.classList.remove('locked');
-      document.getElementById('q2Label').textContent = 'Q2 of 2 · Unlocked';
-      document.getElementById('q2Meta').textContent = `Focus: ${SAMPLE_Q2.focus} · Target: ${SAMPLE_Q2.target}`;
-      const btn = document.getElementById('q2RepBtn');
-      btn.disabled = false;
-      btn.textContent = '🎤 Start Trial 1';
-      btn.onclick = () => startQ2Recording();
-    }
-
-    function startQ2Recording() {
-      document.getElementById('activeStudioContainer').style.display = 'block';
-      document.getElementById('activePromptDisplay').textContent = SAMPLE_Q2.prompt;
-      document.getElementById('timerDisplay').textContent = '01:30';
-      document.getElementById('recordBtn').textContent = '🎤 Start Recording';
-      document.getElementById('recordBtn').className = 'btn btn-primary';
-      document.getElementById('outputSection').style.display = 'none';
-      maxDuration = 90;
-      currentRecording = 'q2';
-      document.getElementById('activeStudioContainer').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    /* ============================================================
-       START Q1 / Q2 FROM CARD
-       ============================================================ */
-    function startQuestionRep(idx) {
-      if (idx === 0) {
-        if (userState.q1Trials.length >= 2) { goToPaywall('sprint'); return; }
-        currentRecording = 'q1';
-        launchQ1Recording();
-      } else if (idx === 1) {
-        if (userState.q1Trials.length >= 2) { goToPaywall('sprint'); return; }
-        startQ2Recording();
-      }
-    }
-
-    /* ============================================================
-       POPULATE PROGRESS
-       ============================================================ */
-    function populateProgressAfterFirstRep(m) {
-      // 4 metric boxes
+    function populateProgress(m, silent) {
       document.getElementById('metricTTP').textContent = `${m.timeToPoint}s`;
-      document.getElementById('metricTTPSub').textContent = 'Baseline set — practice more to lower this';
+      document.getElementById('metricTTPSub').textContent = silent ? 'Baseline set' : 'Keep practicing to lower this';
       document.getElementById('metricClarity').textContent = `${m.clarity} / 100`;
-      document.getElementById('metricClaritySub').textContent = '🟡 Just getting started';
+      document.getElementById('metricClaritySub').textContent = m.clarity >= 80 ? '🟢 Strong' : '🟡 Getting started';
       document.getElementById('metricStructure').textContent = `${m.structure} / 100`;
-      document.getElementById('metricStructureSub').textContent = '🟡 Practice structuring with BLUF';
+      document.getElementById('metricStructureSub').textContent = 'Practice BLUF framing';
       document.getElementById('metricImpact').textContent = `${m.impact} / 100`;
-      document.getElementById('metricImpactSub').textContent = '🔴 Biggest opportunity — quantify outcomes';
+      document.getElementById('metricImpactSub').textContent = '🔴 Quantify outcomes';
 
-      // Unlock the metric overlays
-      ['dashLock1','dashLock2','dashLock3','dashLock4'].forEach(id => {
-        document.getElementById(id).classList.add('preview-hidden');
+      ['dashLock1','dashLock2','dashLock3','dashLock4','dashLockWell','dashLockImprove'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
       });
 
-      // SNR bar
       document.getElementById('dashSnrValue').textContent = `${m.clarity}%`;
       document.getElementById('dashSnrSignal').style.width = `${m.clarity}%`;
       document.getElementById('dashSnrNoise').style.width = `${100 - m.clarity}%`;
 
-      // Strengths + improvements
       document.getElementById('dashWellList').innerHTML = m.strengths.map(s => `<li>${s}</li>`).join('');
       document.getElementById('dashImproveList').innerHTML = m.improvements.map(s => `<li>${s}</li>`).join('');
-      document.getElementById('dashLockWell').classList.add('preview-hidden');
-      document.getElementById('dashLockImprove').classList.add('preview-hidden');
 
-      // Trend lock keeps its "Add 2 more reps" message
-      document.getElementById('dashLockTrend').innerHTML = `
-        <div class="lock-icon">📈</div>
-        <div class="lock-title">Add 2 more reps to see your trend line</div>
-        <div class="lock-desc">We'll plot your clarity, structure, and impact over time as you practice.</div>
-        <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint →</button>
-      `;
-      document.getElementById('dashLockTrend').classList.remove('preview-hidden');
+      // Trend lock — stays locked until 3 reps
+      const totalTrials = state.q1Trials.length + state.q2Trials.length;
+      if (totalTrials >= 3 || CURRENT_RULES.canAccessTrend) {
+        document.getElementById('dashLockTrend').classList.add('hidden');
+        renderTrendLine();
+      } else {
+        document.getElementById('dashLockTrend').classList.remove('hidden');
+      }
 
-      // Progress nav pulses
+      // Nav pulse
       document.getElementById('navDash').classList.add('has-data');
 
       // Badge
-      document.getElementById('badgeFirstRep').classList.remove('locked');
-      document.getElementById('badgeFirstRep').querySelector('.badge-desc').textContent = 'You completed your first voice rep.';
+      const badge = document.getElementById('badgeFirstRep');
+      badge.classList.remove('locked');
+      badge.querySelector('.badge-icon').textContent = '🎯';
+      badge.querySelector('.badge-desc').textContent = 'You completed your first voice rep.';
       document.getElementById('headerAchievements').textContent = '🏆 1 Badge';
       document.getElementById('headerCompleted').textContent = '1 Task';
     }
 
-    /* ============================================================
-       PEER BENCHMARK
-       ============================================================ */
-    function showPeerBenchmark() {
-      // Add benchmark card after Q2
-      const q2 = document.getElementById('questionCard2');
-      const benchmark = document.createElement('div');
-      benchmark.className = 'question-card';
-      benchmark.id = 'peerBenchmarkCard';
-      benchmark.innerHTML = `
-        <div class="qc-label">📊 How you compare to Top 25% in ${formatFunction(userState.function)}</div>
-        <div style="margin-top: 14px;">
-          <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-            <span>Clarity</span>
-            <span>You <strong>62%</strong> · Top 25%: <strong>84%</strong></span>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-            <span>Structure</span>
-            <span>You <strong>55%</strong> · Top 25%: <strong>81%</strong></span>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0;">
-            <span>Impact</span>
-            <span>You <strong>48%</strong> · Top 25%: <strong>79%</strong></span>
-          </div>
-        </div>
-        <div class="qc-meta" style="margin-top: 12px; color: var(--accent-gold);">
-          💡 You're 31 points behind on Impact. This is your biggest opportunity.
-        </div>
-      `;
-      q2.parentNode.insertBefore(benchmark, q2.nextSibling);
-    }
-
-    /* ============================================================
-       BANNER
-       ============================================================ */
-    function updateBanner() {
-      const text = document.getElementById('previewBannerText');
-      const name = userState.name || 'there';
-
-      if (!userState.q1Done) {
-        text.innerHTML = `👋 Hi <strong>${name}</strong> — here's your free drill.`;
-      } else if (!userState.q2Done) {
-        text.innerHTML = `✅ Nice work, <strong>${name}</strong>. You have 1 more free drill.`;
-      } else {
-        text.innerHTML = `🎯 Two drills done, <strong>${name}</strong>. Unlock a Sprint to keep practicing.`;
-      }
+    function renderTrendLine() {
+      // Build simple 1–2 point line
+      const points = [];
+      const ttpPoints = [];
+      state.q1Trials.concat(state.q2Trials).forEach((t, i) => {
+        const x = (i / Math.max(1, state.q1Trials.length + state.q2Trials.length - 1)) * 600;
+        const yClarity = 140 - (t.clarity / 100) * 130;
+        const yTTP = 140 - ((30 - Math.min(30, t.timeToPoint)) / 30) * 130;
+        points.push(`${x},${yClarity}`);
+        ttpPoints.push(`${x},${yTTP}`);
+      });
+      document.getElementById('clarityLine').setAttribute('points', points.join(' '));
+      document.getElementById('ttpLine').setAttribute('points', ttpPoints.join(' '));
     }
 
     /* ============================================================
        TODAY PROGRESS
        ============================================================ */
     function updateTodayProgress() {
-      const totalTrials = userState.q1Trials.length + userState.q2Trials.length;
-      document.getElementById('tsTotalReps').textContent = `${totalTrials} / 4`;
-      document.getElementById('tsTimeSpent').textContent = `${Math.round(totalTrials * 1)} min`;
-      const all = [...userState.q1Trials, ...userState.q2Trials];
+      const totalTrials = state.q1Trials.length + state.q2Trials.length;
+      const cap = CURRENT_RULES.trialsPerQuestion * CURRENT_RULES.questionsPerDay;
+      document.getElementById('tsTotalReps').textContent = `${totalTrials} / ${cap}`;
+      document.getElementById('tsTimeSpent').textContent = `${totalTrials} min`;
+      const all = [...state.q1Trials, ...state.q2Trials];
       document.getElementById('tsBestSnr').textContent = all.length ? `${Math.max(...all.map(t => t.clarity))}%` : '—';
-      document.getElementById('tsDrills').textContent = `${(userState.q1Done ? 1 : 0) + (userState.q2Done ? 1 : 0)} / 2`;
-      document.getElementById('dayProgressFill').style.width = `${((userState.q1Done ? 1 : 0) + (userState.q2Done ? 1 : 0)) / 2 * 100}%`;
-      document.getElementById('dayCounter').textContent = `${(userState.q1Done ? 1 : 0) + (userState.q2Done ? 1 : 0)} / 2 drills`;
+      const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
+      document.getElementById('tsDrills').textContent = `${drills} / ${CURRENT_RULES.questionsPerDay}`;
+      document.getElementById('dayProgressFill').style.width = `${(drills / CURRENT_RULES.questionsPerDay) * 100}%`;
+      document.getElementById('dayCounter').textContent = `${drills} / ${CURRENT_RULES.questionsPerDay} drills`;
     }
 
     /* ============================================================
-       PAYWALL
+       RECORDINGS LIST
+       ============================================================ */
+    function addRecordingEntry(which, m) {
+      const list = document.getElementById('recordingsList');
+      if (list.querySelector('p')) list.innerHTML = '';
+      const prompt = which === 'q1' ? SAMPLE_Q1.prompt : SAMPLE_Q2.prompt;
+      const item = document.createElement('div');
+      item.className = 'recording-item';
+      item.innerHTML = `
+        <div class="rec-info">
+          <div class="rec-title">${prompt}</div>
+          <div class="rec-meta">Today · ${which.toUpperCase()} · ${m.durationSeconds}s</div>
+        </div>
+        <div class="rec-score">${m.clarity}%</div>
+        <button class="btn btn-outline" onclick="alert('Replay coming soon.')">View</button>
+      `;
+      list.insertBefore(item, list.firstChild);
+    }
+
+    /* ============================================================
+       GATE #2
+       ============================================================ */
+    let gate2Selected = null;
+
+    function selectFunction(btn, fn) {
+      document.querySelectorAll('#gate2FunctionOptions .onboarding-option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      gate2Selected = fn;
+      document.getElementById('gate2Submit').disabled = false;
+    }
+
+    function submitGateTwo() {
+      if (!gate2Selected) return;
+      state.function = gate2Selected;
+      document.getElementById('profileFunction').innerHTML = `<option selected>${formatFunction(state.function)}</option>`;
+      document.getElementById('gate2Overlay').classList.add('hidden');
+      showPeerBenchmark();
+      setTimeout(() => goToPaywall('sprint'), 800);
+    }
+
+    function showPeerBenchmark() {
+      const q2 = document.getElementById('questionCard2');
+      if (document.getElementById('peerBenchmarkCard')) return;
+      const card = document.createElement('div');
+      card.className = 'question-card';
+      card.id = 'peerBenchmarkCard';
+      card.innerHTML = `
+        <div class="qc-label">📊 How you compare to Top 25% in ${formatFunction(state.function)}</div>
+        <div style="margin-top: 14px;">
+          <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+            <span>Clarity</span><span>You <strong>62%</strong> · Top 25%: <strong>84%</strong></span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+            <span>Structure</span><span>You <strong>55%</strong> · Top 25%: <strong>81%</strong></span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0;">
+            <span>Impact</span><span>You <strong>48%</strong> · Top 25%: <strong>79%</strong></span>
+          </div>
+        </div>
+        <div class="qc-meta" style="margin-top: 12px; color: var(--accent-gold);">
+          💡 You're 31 points behind on Impact. This is your biggest opportunity.
+        </div>
+      `;
+      q2.parentNode.insertBefore(card, q2.nextSibling);
+    }
+
+    /* ============================================================
+       PAYWALL / MISC
        ============================================================ */
     function goToPaywall(type) {
       alert(type === 'sprint'
@@ -2129,7 +2163,22 @@
     }
 
     function showSeniorRewrite() {
-      alert(`✨ SENIOR REWRITE (STAR):\n\n"${SAMPLE_METRICS_Q1.seniorRewrite}"`);
+      alert(`✨ SENIOR REWRITE (STAR):\n\n"${SAMPLE_METRICS.seniorRewrite}"`);
+    }
+
+    function showTrialLog() {
+      const content = document.getElementById('trialLogContent');
+      content.innerHTML = state.q1Trials.map((t, i) => `
+        <div class="alt-question-option">
+          <div class="aq-text">Trial ${i + 1}</div>
+          <div class="aq-meta">
+            <span>Clarity: ${t.clarity}%</span><span>·</span>
+            <span>Structure: ${t.structure}%</span><span>·</span>
+            <span>Impact: ${t.impact}%</span>
+          </div>
+        </div>
+      `).join('') || '<p style="color: var(--text-muted); font-size: 13px;">No trials yet.</p>';
+      document.getElementById('trialLogModal').classList.remove('hidden');
     }
 
     /* ============================================================
@@ -2143,23 +2192,22 @@
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-view'));
 
-      const navMap = { today:'navToday', activities:'navActivities', dash:'navDash', recordings:'navRecordings', badges:'navBadges', pillars:'navPillars', learning:'navLearning' };
+      const navMap = { today:'navToday', activities:'navActivities', dash:'navDash', recordings:'navRecordings', badges:'navBadges', pillars:'navPillars', learning:'learningView' };
       const viewMap = { today:'todayView', activities:'activitiesView', dash:'dashView', recordings:'recordingsView', badges:'badgesView', pillars:'pillarsView', learning:'learningView' };
 
       if (navMap[viewKey]) document.getElementById(navMap[viewKey]).classList.add('active');
       if (viewMap[viewKey]) document.getElementById(viewMap[viewKey]).classList.add('active-view');
 
-      if (viewKey === 'dash') {
-        document.getElementById('navDash').classList.remove('has-data');
-      }
+      if (viewKey === 'dash') document.getElementById('navDash').classList.remove('has-data');
       if (window.innerWidth <= 900) toggleSidebar();
     }
 
     function switchActivitySub(subKey, btn) {
       document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      document.querySelectorAll('.sub-activity-panel').forEach(p => p.style.display = 'none');
-      document.getElementById(`sub-${subKey}`).style.display = 'block';
+      document.querySelectorAll('.sub-activity-panel').forEach(p => p.classList.add('hidden'));
+      const target = document.getElementById(`sub-${subKey}`);
+      if (target) target.classList.remove('hidden');
     }
 
     function setTimeline(key, btn) {
@@ -2167,16 +2215,27 @@
       btn.classList.add('active');
     }
 
+    function launchStudio(prompt, duration) {
+      state.activeRecording = 'activity';
+      state.maxDuration = duration;
+      const studio = document.getElementById('activeStudioContainer');
+      studio.classList.remove('hidden');
+      document.getElementById('activePromptDisplay').textContent = prompt;
+      document.getElementById('timerDisplay').textContent = formatTimer(duration);
+      document.getElementById('recordBtn').textContent = '🎤 Start Recording';
+      document.getElementById('recordBtn').className = 'btn btn-primary';
+      document.getElementById('recordBtn').disabled = false;
+      document.getElementById('outputSection').classList.add('hidden');
+      requestAnimationFrame(() => studio.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    }
+
     /* ============================================================
        INIT
        ============================================================ */
     window.addEventListener('load', () => {
       resizeCanvas();
-      // Show Gate #1 immediately to collect identity + stage
-      document.getElementById('gate1Overlay').classList.remove('hidden');
-      document.getElementById('previewBanner').classList.remove('preview-hidden');
-      document.getElementById('previewName').textContent = 'there';
-      updateBanner();
+      initCards();
+      applyView();
     });
   </script>
 </body>
