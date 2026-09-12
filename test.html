@@ -1219,7 +1219,7 @@
 // CONFIG & STATE
 // ============================================================
 const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
-const PRODUCT_URL = '/app';   // change to your actual product page URL
+const PRODUCT_URL = 'https://theunspoken.co.in/Product';   // change to your actual product page URL
 
 if (typeof lucide !== 'undefined') lucide.createIcons();
 
@@ -1857,11 +1857,13 @@ function checkGateReady() {
 // SUBMIT GATE + REDIRECT TO PRODUCT
 // ============================================================
 function submitGateAndRedirect() {
-  if (!state.gate.name || !state.gate.email || !state.gate.stage) return;
+  if (!state.gate.name || !state.gate.email || !state.gate.stage) {
+    alert('Please fill all fields.');
+    return;
+  }
 
   const q = QUESTION_MAP[state.currentQuestionType] || QUESTION_MAP.intro;
 
-  // Build the user object for the product page
   const userPayload = {
     user_id: 'u_' + Date.now(),
     name: state.gate.name,
@@ -1895,7 +1897,7 @@ function submitGateAndRedirect() {
         ],
         improvements: [
           'Reduce filler words (' + (state.attempt1Data?.signals?.fillerPercent || 7) + '% — target < 3%)',
-          'Quantify your outcome (add a % or ₹ figure)',
+          'Quantify your outcome (add a % or figure)',
           'Add a 2-second pause after your conclusion'
         ],
         seniorRewrite: state.attempt1Data?.result?.before_after_rewrite?.executive_version ||
@@ -1905,14 +1907,42 @@ function submitGateAndRedirect() {
     }
   };
 
-  // Persist to localStorage so the product page can read it
-  localStorage.setItem('unspoken_user', JSON.stringify(userPayload));
+  // 1) Save to localStorage (most reliable)
+  try {
+    localStorage.setItem('unspoken_user', JSON.stringify(userPayload));
+    console.log('✅ Saved to localStorage:', userPayload);
+  } catch (e) {
+    console.error('localStorage failed:', e);
+  }
 
-  // Also pass via URL as a fallback (base64-encoded JSON)
-  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(userPayload))));
+  // 2) Also try sessionStorage as backup
+  try {
+    sessionStorage.setItem('unspoken_user', JSON.stringify(userPayload));
+  } catch (e) {}
 
-  // Redirect to product page
-  window.location.href = `${PRODUCT_URL}?data=${encoded}`;
+  // 3) Safely encode for URL — handles emojis and unicode
+  let encoded = '';
+  try {
+    encoded = btoa(unescape(encodeURIComponent(JSON.stringify(userPayload))));
+  } catch (e) {
+    console.warn('URL encoding failed, using localStorage only');
+  }
+
+  // 4) Determine target URL
+  // IMPORTANT: Update PRODUCT_URL to your actual product page.
+  // Examples:
+  //   '/app'                → same domain subfolder
+  //   '/app.html'           → same folder file
+  //   'https://app.yourdomain.com' → subdomain
+  //   '../product/index.html' → relative path
+  const targetUrl = encoded
+    ? `${PRODUCT_URL}?data=${encoded}`
+    : PRODUCT_URL;
+
+  console.log('🔀 Redirecting to:', targetUrl);
+
+  // 5) Redirect — use location.assign for reliability
+  window.location.assign(targetUrl);
 }
 
 // ============================================================
