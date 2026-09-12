@@ -34,7 +34,7 @@
       overflow: hidden;
     }
 
-    /* ============ PREVIEW BANNER ============ */
+    /* ============ TRIAL BANNER ============ */
     .preview-banner {
       background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(139, 92, 246, 0.12));
       border-bottom: 1px solid rgba(56, 189, 248, 0.4);
@@ -49,15 +49,8 @@
 
     .preview-banner.hidden { display: none; }
 
-    .preview-banner .pb-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--text-main);
-    }
-
+    .preview-banner .pb-left { display: flex; align-items: center; gap: 10px; color: var(--text-main); }
     .preview-banner .pb-left strong { color: var(--accent-cyan); }
-
     .preview-banner .pb-right { display: flex; gap: 8px; flex-wrap: wrap; }
 
     .preview-banner .pb-btn {
@@ -91,13 +84,7 @@
 
     .lock-overlay .lock-icon { font-size: 36px; line-height: 1; margin-bottom: 4px; }
     .lock-overlay .lock-title { font-size: 15px; font-weight: 700; color: var(--text-main); }
-
-    .lock-overlay .lock-desc {
-      font-size: 12px;
-      color: var(--text-muted);
-      max-width: 380px;
-      line-height: 1.5;
-    }
+    .lock-overlay .lock-desc { font-size: 12px; color: var(--text-muted); max-width: 380px; line-height: 1.5; }
 
     .lock-overlay .lock-cta {
       margin-top: 8px;
@@ -189,6 +176,22 @@
     }
 
     .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .alt-question-option {
+      padding: 14px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .alt-question-option:hover { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.06); }
+    .alt-question-option.selected { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.12); }
+
+    .alt-question-option .aq-text { font-size: 13px; font-weight: 600; line-height: 1.4; color: var(--text-main); }
+    .alt-question-option .aq-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap; }
 
     /* ============ GATE #2 OVERLAY ============ */
     .onboarding-overlay {
@@ -422,7 +425,7 @@
       width: fit-content;
     }
 
-    .plan-badge.preview {
+    .plan-badge.trial {
       color: var(--accent-cyan);
       background-color: rgba(56, 189, 248, 0.15);
     }
@@ -533,8 +536,6 @@
     .qc-difficulty.easy { background: rgba(16, 185, 129, 0.15); color: var(--success); }
     .qc-difficulty.medium { background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); }
     .qc-difficulty.hard { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-
-    .qc-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 
     .qc-action-btn {
       padding: 6px 12px;
@@ -746,6 +747,37 @@
 
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
+    /* ============ TRY AGAIN BUTTON ============ */
+    .try-again-bar {
+      margin-top: 12px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(139, 92, 246, 0.08));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .try-again-bar .ta-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+    .try-again-bar .ta-text strong { color: var(--text-main); }
+
+    .try-again-bar .ta-btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--primary);
+      color: #FFF;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     /* ============ ACTIVITIES ============ */
     .activity-sub-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
 
@@ -875,7 +907,6 @@
       gap: 12px;
       flex-wrap: wrap;
       margin-bottom: 10px;
-      position: relative;
     }
 
     .recording-item .rec-info { flex: 1; min-width: 200px; }
@@ -916,16 +947,15 @@
       .today-header-bar .th-right { text-align: left; }
       .qc-top { flex-direction: column; align-items: flex-start; }
       .qc-right { align-items: flex-start; width: 100%; }
-      .qc-actions { justify-content: flex-start; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ============ PREVIEW BANNER ============ -->
+  <!-- ============ TRIAL BANNER ============ -->
   <div class="preview-banner hidden" id="previewBanner">
     <div class="pb-left" id="previewBannerText">
-      👋 Hi <strong id="previewName">there</strong> — here's your free drill.
+      👋 Hi <strong id="previewName">there</strong> — here's your trial.
     </div>
     <div class="pb-right">
       <button class="pb-btn primary" onclick="goToPaywall('sprint')">Enroll in a Sprint</button>
@@ -977,40 +1007,25 @@
       <span class="track-badge" id="headerTrackBadge">—</span>
     </div>
     <div class="global-stats">
-      <div class="stat-pill">
-        <span>Member Since:</span>
-        <strong id="headerMemberSince">Just now</strong>
-      </div>
-      <div class="stat-pill streak">
-        <span>Streak:</span>
-        <strong id="headerStreak">—</strong>
-      </div>
-      <div class="stat-pill">
-        <span>Completed:</span>
-        <strong id="headerCompleted">0 Tasks</strong>
-      </div>
-      <div class="stat-pill achievements">
-        <span>Achievements:</span>
-        <strong id="headerAchievements">🏆 0 Badges</strong>
-      </div>
+      <div class="stat-pill"><span>Member Since:</span><strong id="headerMemberSince">Just now</strong></div>
+      <div class="stat-pill streak"><span>Streak:</span><strong id="headerStreak">—</strong></div>
+      <div class="stat-pill"><span>Completed:</span><strong id="headerCompleted">1 Task</strong></div>
+      <div class="stat-pill achievements"><span>Achievements:</span><strong id="headerAchievements">🏆 1 Badge</strong></div>
     </div>
   </header>
 
   <div class="app-layout">
-
     <aside class="sidebar" id="appSidebar">
       <div class="nav-group">
-        <div class="nav-item active" id="navToday" onclick="switchView('today')"><span>🏠</span> Today</div>
+        <div class="nav-item" id="navToday" onclick="switchView('today')"><span>🏠</span> Today</div>
         <div class="nav-item" id="navActivities" onclick="switchView('activities')"><span>🎯</span> Activities</div>
-        <div class="nav-item" id="navDash" onclick="switchView('dash')"><span>📊</span> Progress</div>
+        <div class="nav-item active" id="navDash" onclick="switchView('dash')"><span>📊</span> Progress</div>
         <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><span>🎙️</span> My Recordings</div>
         <div class="nav-item" id="navBadges" onclick="switchView('badges')"><span>🏆</span> Achievements</div>
         <div class="nav-item" id="navPillars" onclick="switchView('pillars')"><span>🏛️</span> Pillars</div>
         <div class="nav-item" id="navLearning" onclick="switchView('learning')"><span>📚</span> My Learning</div>
       </div>
-
       <hr style="border-color: var(--border-color);" />
-
       <div class="sidebar-section">
         <div class="sidebar-title">Your Profile</div>
         <div class="field-group">
@@ -1022,9 +1037,8 @@
           <select id="profileFunction" disabled style="opacity: 0.7;"><option>—</option></select>
         </div>
       </div>
-
       <div class="user-profile-card">
-        <div class="plan-badge preview" id="planBadge">Free Preview</div>
+        <div class="plan-badge trial" id="planBadge">Trial</div>
         <div class="user-info">
           <div class="user-avatar" id="userAvatarEl">A</div>
           <div class="user-details">
@@ -1038,18 +1052,16 @@
     <main class="main-content">
 
       <!-- ============ TODAY ============ -->
-      <section class="view-panel active-view" id="todayView">
+      <section class="view-panel" id="todayView">
         <div class="today-header-bar">
           <div class="th-left">
-            <h2 id="todayTrackTitle">Your Free Drill</h2>
-            <div class="th-sub" id="todayFocus">Complete 2 drills to unlock your peer benchmark</div>
-            <div class="day-progress-bar">
-              <div class="day-progress-fill" id="dayProgressFill" style="width: 0%;"></div>
-            </div>
+            <h2 id="todayTrackTitle">Your Trial</h2>
+            <div class="th-sub" id="todayFocus">2 questions · 2 trials each</div>
+            <div class="day-progress-bar"><div class="day-progress-fill" id="dayProgressFill" style="width: 25%;"></div></div>
           </div>
           <div class="th-right">
-            <div class="day-counter" id="dayCounter">0 / 2 drills</div>
-            <div class="streak" id="todayStreak">—</div>
+            <div class="day-counter" id="dayCounter">1 / 2 drills</div>
+            <div class="streak" id="todayStreak">Trial</div>
           </div>
         </div>
 
@@ -1057,26 +1069,24 @@
         <div class="question-card" id="questionCard1">
           <div class="qc-top">
             <div class="qc-left">
-              <div class="qc-label"><span id="q1Label">Q1 of 2 · Your first free drill</span></div>
+              <div class="qc-label"><span id="q1Label">Q1 of 2 · Trial 1 of 2 done</span></div>
               <div class="qc-text" id="q1Text">—</div>
               <div class="qc-meta" id="q1Meta">—</div>
             </div>
-            <div class="qc-right">
-              <div class="qc-difficulty easy" id="q1Diff">⭐ Easy</div>
-            </div>
+            <div class="qc-right"><div class="qc-difficulty easy" id="q1Diff">⭐ Easy</div></div>
           </div>
           <div class="rep-tracker">
             <div class="rt-left">
               <div class="rt-label">Trials</div>
-              <div class="rt-count" id="q1RepCount">0 <span class="rt-cap">/ 2</span></div>
-              <div class="rt-best" id="q1BestSnr">Best score: —</div>
+              <div class="rt-count" id="q1RepCount">1 <span class="rt-cap">/ 2</span></div>
+              <div class="rt-best" id="q1BestSnr">Best clarity: 62%</div>
             </div>
             <div class="rt-right">
-              <button class="rep-btn" id="q1RepBtn">🎤 Start Trial 1</button>
+              <button class="rep-btn" id="q1RepBtn" onclick="startRep('q1')">🎤 Start Trial 2</button>
             </div>
           </div>
           <div class="reps-log" id="q1RepsLog"></div>
-          <div id="q1PostActions" class="hidden" style="gap: 8px; flex-wrap: wrap;">
+          <div id="q1PostActions" class="hidden" style="display: none; gap: 8px; flex-wrap: wrap;">
             <button class="qc-action-btn primary-action" onclick="showSeniorRewrite()">✨ See Senior Rewrite</button>
             <button class="qc-action-btn" onclick="showTrialLog()">📜 View Trial Log</button>
           </div>
@@ -1090,9 +1100,7 @@
               <div class="qc-text" id="q2Text">—</div>
               <div class="qc-meta" id="q2Meta">Complete Q1 to unlock</div>
             </div>
-            <div class="qc-right">
-              <div class="qc-difficulty medium" id="q2Diff">⭐⭐ Medium</div>
-            </div>
+            <div class="qc-right"><div class="qc-difficulty medium" id="q2Diff">⭐⭐ Medium</div></div>
           </div>
           <div class="rep-tracker">
             <div class="rt-left">
@@ -1107,7 +1115,7 @@
           <div class="reps-log" id="q2RepsLog"></div>
         </div>
 
-        <!-- Change / Customize card — free mode only -->
+        <!-- Change / Customize card -->
         <div class="question-card" id="freeChangeCustomizeCard">
           <div class="qc-top">
             <div class="qc-left">
@@ -1126,10 +1134,10 @@
         <!-- Today's Progress -->
         <div class="today-summary lockable" id="todaySummaryBox">
           <h3>Today's Progress</h3>
-          <div class="ts-row"><span>Total trials today</span><span class="ts-val" id="tsTotalReps">0 / 4</span></div>
-          <div class="ts-row"><span>Time spent</span><span class="ts-val" id="tsTimeSpent">0 min</span></div>
-          <div class="ts-row"><span>Best score</span><span class="ts-val" id="tsBestSnr">—</span></div>
-          <div class="ts-row"><span>Drills unlocked</span><span class="ts-val" id="tsDrills">0 / 2</span></div>
+          <div class="ts-row"><span>Total trials today</span><span class="ts-val" id="tsTotalReps">1 / 4</span></div>
+          <div class="ts-row"><span>Time spent</span><span class="ts-val" id="tsTimeSpent">1 min</span></div>
+          <div class="ts-row"><span>Best clarity</span><span class="ts-val" id="tsBestSnr">62%</span></div>
+          <div class="ts-row"><span>Drills unlocked</span><span class="ts-val" id="tsDrills">1 / 2</span></div>
         </div>
       </section>
 
@@ -1137,26 +1145,29 @@
       <section class="view-panel" id="activitiesView">
         <div>
           <h2 style="font-size: 18px; margin-bottom: 4px;">Activities</h2>
-          <p style="font-size: 12px; color: var(--text-muted);">Extra practice beyond today's drills.</p>
+          <p style="font-size: 12px; color: var(--text-muted);">Extra practice beyond today's drills. All modules unlock with a Sprint or Pass.</p>
         </div>
+
         <div class="activity-sub-tabs">
           <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">Voice Reps</button>
           <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">Scenario Library</button>
           <button class="sub-tab-btn" onclick="switchActivitySub('drills', this)">Communication Drills</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('daily-challenge', this)">Daily Challenge</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('reflection', this)">Reflection Journal</button>
           <button class="sub-tab-btn" onclick="switchActivitySub('bites', this)">Learning Bites</button>
           <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)">Interview Simulator</button>
         </div>
 
+        <!-- VOICE REPS -->
         <div id="sub-voice-reps" class="sub-activity-panel">
           <div class="sub-activity-card-grid">
             <div class="activity-card" data-activity="quickrep">
               <div class="ac-body">
                 <div class="activity-card-tag">45 Seconds · Core Habit</div>
                 <div class="activity-card-title">Quick Rep</div>
-                <div class="activity-card-desc">Standard 45s timer. Instant feedback.</div>
+                <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div>
               </div>
-              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
-              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Quick Rep (45s)', 45)">Start Quick Rep</button>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
             <div class="activity-card" data-activity="challengerep">
               <div class="ac-body">
@@ -1164,8 +1175,7 @@
                 <div class="activity-card-title">Challenge Rep</div>
                 <div class="activity-card-desc">Harder workplace scenario under timed pressure.</div>
               </div>
-              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
-              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Challenge Rep (90s)', 90)">Start Challenge</button>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
             <div class="activity-card" data-activity="blindrep">
               <div class="ac-body">
@@ -1173,45 +1183,67 @@
                 <div class="activity-card-title">Blind Rep</div>
                 <div class="activity-card-desc">Random scenario revealed as recording begins.</div>
               </div>
-              <button class="ac-lock-cta hidden" onclick="goToPaywall('pass')">🔒 Unlock with Practice Pass — ₹1,299/mo</button>
-              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Blind Rep', 45)">Start Blind Rep</button>
+              <button class="ac-lock-cta" onclick="goToPaywall('pass')">🔒 Unlock with Practice Pass — ₹1,299/mo</button>
+            </div>
+            <div class="activity-card" data-activity="repeatrep">
+              <div class="ac-body">
+                <div class="activity-card-tag">Targeted Improvement</div>
+                <div class="activity-card-title">Repeat Rep</div>
+                <div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div>
+              </div>
+              <button class="ac-lock-cta" onclick="goToPaywall('pass')">🔒 Unlock with Practice Pass — ₹1,299/mo</button>
             </div>
           </div>
         </div>
 
+        <!-- SCENARIO LIBRARY -->
         <div id="sub-scenarios" class="sub-activity-panel hidden">
           <div class="sub-activity-card-grid">
             <div class="activity-card" data-activity="interview">
               <div class="ac-body">
                 <div class="activity-card-tag">Skill Builder</div>
                 <div class="activity-card-title">Interview Questions</div>
-                <div class="activity-card-desc">Tell me about yourself · Salary negotiation</div>
+                <div class="activity-card-desc">Tell me about yourself · Salary negotiation · Why this role</div>
               </div>
-              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
-              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Tell me about yourself.', 60)">Start</button>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
             <div class="activity-card" data-activity="updates">
               <div class="ac-body">
                 <div class="activity-card-tag">Workplace Moments</div>
-                <div class="activity-card-title">Project Updates</div>
-                <div class="activity-card-desc">Handling pushback · Delivering bad news</div>
+                <div class="activity-card-title">Project &amp; Team Updates</div>
+                <div class="activity-card-desc">Project update · Handling pushback · Delivering bad news</div>
               </div>
-              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
-              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Deliver a project delay update.', 45)">Start</button>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+            </div>
+            <div class="activity-card" data-activity="leadership">
+              <div class="ac-body">
+                <div class="activity-card-tag">Leadership</div>
+                <div class="activity-card-title">Leadership Situations</div>
+                <div class="activity-card-desc">Team conflict · Motivating underperformers</div>
+              </div>
+              <button class="ac-lock-cta" onclick="goToPaywall('pass')">🔒 Unlock with Practice Pass — ₹1,299/mo</button>
+            </div>
+            <div class="activity-card" data-activity="client">
+              <div class="ac-body">
+                <div class="activity-card-tag">Executive Presence</div>
+                <div class="activity-card-title">Client &amp; Stakeholder</div>
+                <div class="activity-card-desc">Pitching an idea · Handling objections</div>
+              </div>
+              <button class="ac-lock-cta" onclick="goToPaywall('pass')">🔒 Unlock with Practice Pass — ₹1,299/mo</button>
             </div>
           </div>
         </div>
 
+        <!-- DRILLS -->
         <div id="sub-drills" class="sub-activity-panel hidden">
           <div class="sub-activity-card-grid">
             <div class="activity-card" data-activity="headline">
               <div class="ac-body">
                 <div class="activity-card-tag">Precision Drill</div>
                 <div class="activity-card-title">Headline Drill</div>
-                <div class="activity-card-desc">State your main point in one sentence.</div>
+                <div class="activity-card-desc">State your main point in one clear sentence.</div>
               </div>
-              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
-              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Headline Drill', 15)">Start</button>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
             <div class="activity-card" data-activity="filler">
               <div class="ac-body">
@@ -1219,38 +1251,109 @@
                 <div class="activity-card-title">Filler Elimination</div>
                 <div class="activity-card-desc">Zero filler words for 30 seconds.</div>
               </div>
-              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
-              <button class="ac-start-btn btn btn-primary hidden" onclick="launchStudio('Filler Elimination', 30)">Start</button>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+            </div>
+            <div class="activity-card" data-activity="ttp">
+              <div class="ac-body">
+                <div class="activity-card-tag">Precision Drill</div>
+                <div class="activity-card-title">Time-to-Point</div>
+                <div class="activity-card-desc">Deliver your key recommendation in under 5 seconds.</div>
+              </div>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+            </div>
+            <div class="activity-card" data-activity="pso">
+              <div class="ac-body">
+                <div class="activity-card-tag">Precision Drill</div>
+                <div class="activity-card-title">Structure Drill (PSO)</div>
+                <div class="activity-card-desc">Problem → Solution → Outcome framework.</div>
+              </div>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
           </div>
         </div>
 
+        <!-- DAILY CHALLENGE -->
+        <div id="sub-daily-challenge" class="sub-activity-panel hidden">
+          <div class="dash-wide-box" style="position: relative;">
+            <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">COMMUNITY EXPERIENCE</div>
+            <h2 style="font-size: 18px; margin-top: 4px;">Today's Global Challenge: Handling Hostile Pushback</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">
+              Scenario: A senior VP cuts you off mid-presentation and says "This strategy won't scale." Respond concisely in 45 seconds.
+            </p>
+            <button class="ac-lock-cta" onclick="goToPaywall('sprint')" style="max-width: 320px;">🔒 Unlock with Sprint — ₹499</button>
+          </div>
+        </div>
+
+        <!-- REFLECTION -->
+        <div id="sub-reflection" class="sub-activity-panel hidden">
+          <div class="studio-card" style="position: relative;">
+            <h3 style="font-size: 16px; margin-bottom: 12px;">Metacognition &amp; Self-Awareness Reflection</h3>
+            <div class="field-group">
+              <label>What did I want to say vs what I actually said?</label>
+              <textarea rows="2" placeholder="Reflect on your intention vs execution..." disabled style="opacity: 0.5;"></textarea>
+            </div>
+            <div class="field-group" style="margin-top: 10px;">
+              <label>What would I change in the first 10 seconds?</label>
+              <textarea rows="2" placeholder="Re-frame your opening line..." disabled style="opacity: 0.5;"></textarea>
+            </div>
+            <div class="lock-overlay" style="position: static; background: transparent; backdrop-filter: none; padding: 16px 0 0 0; align-items: flex-start; text-align: left;">
+              <div class="lock-desc" style="max-width: none;">🔒 Unlocks with a Sprint — reflection journaling as you practice.</div>
+              <button class="lock-cta" onclick="goToPaywall('sprint')" style="margin-top: 10px;">Enroll in a Sprint →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEARNING BITES -->
         <div id="sub-bites" class="sub-activity-panel hidden">
           <div class="sub-activity-card-grid">
             <div class="activity-card" data-activity="pyramid">
               <div class="ac-body">
                 <div class="activity-card-tag">3-Min Concept</div>
                 <div class="activity-card-title">Pyramid Principle</div>
-                <div class="activity-card-desc">Lead with the conclusion, then support.</div>
+                <div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div>
               </div>
-              <button class="ac-lock-cta hidden" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
-              <button class="ac-start-btn btn btn-primary hidden" onclick="alert('Module loaded.')">Read</button>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+            </div>
+            <div class="activity-card" data-activity="bluf">
+              <div class="ac-body">
+                <div class="activity-card-tag">3-Min Concept</div>
+                <div class="activity-card-title">BLUF Method</div>
+                <div class="activity-card-desc">Bottom Line Up Front — concise executive communication.</div>
+              </div>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+            </div>
+            <div class="activity-card" data-activity="star">
+              <div class="ac-body">
+                <div class="activity-card-tag">3-Min Concept</div>
+                <div class="activity-card-title">The STAR Method</div>
+                <div class="activity-card-desc">Situation → Task → Action → Result. Interview gold standard.</div>
+              </div>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
+            </div>
+            <div class="activity-card" data-activity="pso-bite">
+              <div class="ac-body">
+                <div class="activity-card-tag">3-Min Concept</div>
+                <div class="activity-card-title">The PSO Framework</div>
+                <div class="activity-card-desc">Problem → Solution → Outcome. Perfect for updates.</div>
+              </div>
+              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
           </div>
         </div>
 
+        <!-- SIMULATOR -->
         <div id="sub-simulator" class="sub-activity-panel hidden">
-          <div class="dash-wide-box" style="border-color: var(--accent-purple);">
+          <div class="dash-wide-box" style="border-color: var(--accent-purple); position: relative;">
             <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
             <h2 style="font-size: 18px;">Full 5-Question Mock Interview</h2>
             <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">Dynamic follow-ups and comprehensive debrief.</p>
-            <button class="btn btn-primary" id="simulatorBtn" onclick="goToPaywall('pass')">🔒 Unlock with Practice Pass →</button>
+            <button class="ac-lock-cta" onclick="goToPaywall('pass')" style="max-width: 320px;">🔒 Unlock with Practice Pass — ₹1,299/mo</button>
           </div>
         </div>
 
         <div class="locked-tracks">
           <h3>🔒 Unlock More Sprints</h3>
-          <p>You're previewing the platform. Upgrade to unlock all Sprints and unlimited practice.</p>
+          <p>You're on the Trial. Upgrade to unlock all Sprints and unlimited practice.</p>
           <div class="locked-tracks-grid">
             <div class="locked-track-item">🔒 Group Discussion</div>
             <div class="locked-track-item">🔒 Present to Group</div>
@@ -1272,9 +1375,7 @@
           </div>
           <div class="timer-display" id="timerDisplay">01:00</div>
         </div>
-        <div class="canvas-box">
-          <canvas id="waveformCanvas"></canvas>
-        </div>
+        <div class="canvas-box"><canvas id="waveformCanvas"></canvas></div>
         <button class="btn btn-primary" id="recordBtn">🎤 Start Recording</button>
         <div class="output-section hidden" id="outputSection" style="margin-top: 20px;">
           <hr style="border-color: var(--border-color); margin: 16px 0;" />
@@ -1297,9 +1398,9 @@
       </section>
 
       <!-- ============ PROGRESS ============ -->
-      <section class="view-panel" id="dashView">
+      <section class="view-panel active-view" id="dashView">
         <div class="timeline-bar">
-          <span style="font-weight: 700; font-size: 14px;">EXECUTIVE METRICS</span>
+          <span style="font-weight: 700; font-size: 14px;">YOUR PROGRESS</span>
           <div class="timeline-tabs">
             <button class="time-tab active" onclick="setTimeline('1w', this)">Last 1 Week</button>
             <button class="time-tab" onclick="setTimeline('2w', this)">Last 2 Weeks</button>
@@ -1410,14 +1511,21 @@
             </div>
           </div>
         </div>
+
+        <!-- TRY AGAIN BAR -->
+        <div class="try-again-bar" id="tryAgainBar">
+          <div class="ta-text">
+            <strong>Want to improve your score?</strong><br />
+            You have <strong id="taRemaining">3</strong> free trials left in this Trial.
+          </div>
+          <button class="ta-btn" onclick="goToTodayTab()">🎤 Try Again →</button>
+        </div>
       </section>
 
       <!-- ============ RECORDINGS ============ -->
       <section class="view-panel" id="recordingsView">
         <h2 style="font-size: 18px;">🎙️ My Saved Practice Sessions</h2>
-        <div id="recordingsList">
-          <p style="color: var(--text-muted); font-size: 13px;">Complete a drill to see it here.</p>
-        </div>
+        <div id="recordingsList"></div>
       </section>
 
       <!-- ============ BADGES ============ -->
@@ -1425,10 +1533,10 @@
         <h2 style="font-size: 18px;">🏆 Achievements</h2>
         <p style="font-size: 13px; color: var(--text-muted);">Unlock badges as you practice.</p>
         <div class="badges-grid">
-          <div class="badge-item locked" id="badgeFirstRep">
-            <div class="badge-icon">🔒</div>
+          <div class="badge-item" id="badgeFirstRep">
+            <div class="badge-icon">🎯</div>
             <div class="badge-name">First Rep</div>
-            <div class="badge-desc">Complete your first voice rep.</div>
+            <div class="badge-desc">You completed your first voice rep.</div>
           </div>
           <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">5-Day Streak</div><div class="badge-desc">Practice 5 days in a row.</div></div>
           <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Speed Demon</div><div class="badge-desc">Time-to-Point under 10 seconds.</div></div>
@@ -1466,24 +1574,17 @@
     /* ============================================================
        READ INCOMING USER OBJECT
        ============================================================ */
-    // In production, this comes from:
-    //   Entry A (free flow):  /app?data=<base64-json> or localStorage
-    //   Entry B (paid login): /app after auth → same payload
-    // For now, fallback to a demo payload if none found.
-
     function readIncomingUser() {
-      // 1. Try localStorage (set by login page)
       const stored = localStorage.getItem('unspoken_user');
       if (stored) {
         try { return JSON.parse(stored); } catch (e) {}
       }
-      // 2. Try URL param
       const params = new URLSearchParams(window.location.search);
       const data = params.get('data');
       if (data) {
         try { return JSON.parse(atob(data)); } catch (e) {}
       }
-      // 3. Demo fallback
+      // Demo fallback — simulating a landing-page handoff
       return {
         user_id: 'demo-user',
         name: 'Arun Chockalingam',
@@ -1491,14 +1592,35 @@
         phone: '+919999999999',
         stage: 'early',
         function: null,
-        plan: 'free',
+        plan: 'trial',
         track_id: null,
         current_day: 1,
         total_days: 28,
-        free_q1_trials: 0,
-        free_q2_trials: 0,
         questions_per_day: 2,
-        trials_per_question: 2
+        trials_per_question: 2,
+        // The trial recorded on the landing page
+        landing_trial: {
+          q1_prompt: 'Tell me about a time you turned around a failing project.',
+          q1_focus: 'Structure & Impact',
+          q1_target: '60 seconds',
+          q1_difficulty: 'easy',
+          q1_duration: 58,
+          q1_metrics: {
+            wpm: 128, wordCount: 142, fillerRatio: 7,
+            clarity: 62, structure: 55, impact: 48, timeToPoint: 12,
+            strengths: [
+              'Clear opening — you led with the situation',
+              'Steady pacing at 128 WPM',
+              'No hedging language detected'
+            ],
+            improvements: [
+              'Reduce filler words (7% — target < 3%)',
+              'Quantify your outcome (add a % or ₹ figure)',
+              'Add a 2-second pause after your conclusion'
+            ],
+            seniorRewrite: 'I inherited a project that was 6 weeks behind with 50% attrition. I restructured the team into 3 pods, cut two low-priority features, and shipped the core MVP in 4 weeks. Delivered ₹1.2 Cr in revenue within 2 quarters.'
+          }
+        }
       };
     }
 
@@ -1508,7 +1630,7 @@
        RULES PER PLAN
        ============================================================ */
     const RULES = {
-      free: {
+      trial: {
         questionsPerDay: 2,
         trialsPerQuestion: 2,
         canChangeQuestion: false,
@@ -1518,10 +1640,8 @@
         canAccessSimulator: false,
         showPreviewBanner: true,
         showNavBadge: false,
-        pulseProgressNav: true,
-        planLabel: 'Free Preview',
-        badgeText: 'Free Preview',
-        headerText: 'Free Preview'
+        pulseProgressNav: false,
+        planLabel: 'Trial'
       },
       sprint: {
         questionsPerDay: 2,
@@ -1534,9 +1654,7 @@
         showPreviewBanner: false,
         showNavBadge: true,
         pulseProgressNav: false,
-        planLabel: 'Sprint Pass',
-        badgeText: null,        // will use track_id
-        headerText: null
+        planLabel: 'Sprint Pass'
       },
       pass: {
         questionsPerDay: 10,
@@ -1549,23 +1667,21 @@
         showPreviewBanner: false,
         showNavBadge: true,
         pulseProgressNav: false,
-        planLabel: 'Practice Pass',
-        badgeText: null,
-        headerText: null
+        planLabel: 'Practice Pass'
       }
     };
 
-    const CURRENT_RULES = RULES[USER.plan] || RULES.free;
+    const CURRENT_RULES = RULES[USER.plan] || RULES.trial;
 
     /* ============================================================
-       SAMPLE CONTENT (replace with API in production)
+       SAMPLE CONTENT
        ============================================================ */
     const SAMPLE_Q1 = {
-      prompt: 'Tell me about a time you turned around a failing project.',
-      focus: 'Structure & Impact',
-      target: '60 seconds',
-      difficulty: 'easy',
-      durationSeconds: 60
+      prompt: USER.landing_trial?.q1_prompt || 'Tell me about a time you turned around a failing project.',
+      focus: USER.landing_trial?.q1_focus || 'Structure & Impact',
+      target: USER.landing_trial?.q1_target || '60 seconds',
+      difficulty: USER.landing_trial?.q1_difficulty || 'easy',
+      durationSeconds: USER.landing_trial?.q1_duration || 60
     };
 
     const SAMPLE_Q2 = {
@@ -1576,31 +1692,29 @@
       durationSeconds: 90
     };
 
-    const SAMPLE_METRICS = {
-      wpm: 128, wordCount: 142, fillerRatio: 7, durationSeconds: 58,
+    const FIRST_METRICS = USER.landing_trial?.q1_metrics || {
+      wpm: 128, wordCount: 142, fillerRatio: 7,
       clarity: 62, structure: 55, impact: 48, timeToPoint: 12,
-      strengths: [
-        'Clear opening — you led with the situation',
-        'Steady pacing at 128 WPM',
-        'No hedging language detected'
-      ],
-      improvements: [
-        'Reduce filler words (7% — target < 3%)',
-        'Quantify your outcome (add a % or ₹ figure)',
-        'Add a 2-second pause after your conclusion'
-      ],
-      seniorRewrite: 'I inherited a project that was 6 weeks behind with 50% attrition. I restructured the team into 3 pods, cut two low-priority features, and shipped the core MVP in 4 weeks. Delivered ₹1.2 Cr in revenue within 2 quarters.'
+      strengths: ['Clear opening', 'Steady pacing', 'No hedging language'],
+      improvements: ['Reduce filler words', 'Quantify outcome', 'Add pause after conclusion'],
+      seniorRewrite: 'I inherited a project that was 6 weeks behind with 50% attrition...'
     };
 
     /* ============================================================
        STATE
        ============================================================ */
     const state = {
-      q1Trials: [],
+      q1Trials: [{
+        number: 1,
+        clarity: FIRST_METRICS.clarity,
+        structure: FIRST_METRICS.structure,
+        impact: FIRST_METRICS.impact,
+        timeToPoint: FIRST_METRICS.timeToPoint
+      }],
       q2Trials: [],
-      q1Metrics: null,
+      q1Metrics: FIRST_METRICS,
       function: USER.function || null,
-      activeRecording: null,   // 'q1' | 'q2' | null
+      activeRecording: null,
       isRecording: false,
       timer: null,
       secondsLeft: 0,
@@ -1608,33 +1722,29 @@
     };
 
     /* ============================================================
-       APPLY VIEW (plan-based)
+       APPLY VIEW
        ============================================================ */
     function applyView() {
-      // Header badge
       const badge = document.getElementById('headerTrackBadge');
       if (USER.plan === 'sprint' && USER.track_id) {
         badge.textContent = `${formatTrack(USER.track_id)} · Day ${USER.current_day} of ${USER.total_days}`;
       } else if (USER.plan === 'pass') {
         badge.textContent = `Practice Pass · Day ${USER.current_day}`;
       } else {
-        badge.textContent = 'Free Preview';
+        badge.textContent = 'Trial';
       }
 
-      // Plan badge
       document.getElementById('planBadge').textContent = CURRENT_RULES.planLabel;
-      if (USER.plan === 'free') {
-        document.getElementById('planBadge').classList.add('preview');
+      if (USER.plan === 'trial') {
+        document.getElementById('planBadge').classList.add('trial');
       } else {
-        document.getElementById('planBadge').classList.remove('preview');
+        document.getElementById('planBadge').classList.remove('trial');
       }
 
-      // User identity
       document.getElementById('userNameEl').textContent = USER.name || '—';
       document.getElementById('userAvatarEl').textContent = (USER.name || 'A').charAt(0).toUpperCase();
       document.getElementById('userRoleEl').textContent = formatStage(USER.stage) || '—';
 
-      // Profile dropdowns
       if (USER.stage) {
         document.getElementById('profileStage').innerHTML = `<option selected>${formatStage(USER.stage)}</option>`;
       }
@@ -1642,7 +1752,7 @@
         document.getElementById('profileFunction').innerHTML = `<option selected>${formatFunction(USER.function)}</option>`;
       }
 
-      // Preview banner
+      // Banner
       const banner = document.getElementById('previewBanner');
       if (CURRENT_RULES.showPreviewBanner) {
         banner.classList.remove('hidden');
@@ -1652,22 +1762,19 @@
         banner.classList.add('hidden');
       }
 
-      // Nav badge on Today
+      // Nav badge
       const navBadge = document.getElementById('todayNavBadge');
       if (CURRENT_RULES.showNavBadge) {
-        navBadge.textContent = CURRENT_RULES.questionsPerDay;
-        navBadge.style.display = 'inline-block';
-      } else {
-        navBadge.style.display = 'none';
+        if (!navBadge) {
+          const el = document.createElement('span');
+          el.className = 'nav-badge';
+          el.id = 'todayNavBadge';
+          el.textContent = CURRENT_RULES.questionsPerDay;
+          document.getElementById('navToday').appendChild(el);
+        }
       }
 
-      // Update caps in trial labels
-      document.getElementById('q1RepCount').innerHTML =
-        `0 <span class="rt-cap">/ ${CURRENT_RULES.trialsPerQuestion}</span>`;
-      document.getElementById('q2RepCount').innerHTML =
-        `0 <span class="rt-cap">/ ${CURRENT_RULES.trialsPerQuestion}</span>`;
-
-      // Free-only: locked Change/Customize card
+      // Change/Customize card — trial only
       const changeCard = document.getElementById('freeChangeCustomizeCard');
       if (!CURRENT_RULES.canChangeQuestion) {
         changeCard.classList.remove('hidden');
@@ -1675,106 +1782,70 @@
         changeCard.classList.add('hidden');
       }
 
-      // Activities: lock or unlock
+      // Activities lock states
       document.querySelectorAll('.activity-card').forEach(card => {
         const lockBtn = card.querySelector('.ac-lock-cta');
-        const startBtn = card.querySelector('.ac-start-btn');
         if (!CURRENT_RULES.canAccessActivities) {
           card.classList.add('locked-preview');
-          if (lockBtn) lockBtn.classList.remove('hidden');
-          if (startBtn) startBtn.classList.add('hidden');
+          if (lockBtn) lockBtn.style.display = 'flex';
         } else {
           card.classList.remove('locked-preview');
-          if (lockBtn) lockBtn.classList.add('hidden');
-          if (startBtn) startBtn.classList.remove('hidden');
+          if (lockBtn) lockBtn.style.display = 'none';
         }
       });
 
-      // Simulator
-      const simBtn = document.getElementById('simulatorBtn');
-      if (CURRENT_RULES.canAccessSimulator) {
-        simBtn.textContent = 'Launch Interview Simulator →';
-        simBtn.onclick = () => alert('Simulator loaded.');
-      } else {
-        simBtn.textContent = '🔒 Unlock with Practice Pass →';
-        simBtn.onclick = () => goToPaywall('pass');
-      }
-
-      // Trend chart lock
-      if (CURRENT_RULES.canAccessTrend) {
-        document.getElementById('dashLockTrend').classList.add('hidden');
-      } else {
+      // Trend lock
+      if (!CURRENT_RULES.canAccessTrend) {
         document.getElementById('dashLockTrend').classList.remove('hidden');
       }
 
-      // Q2 — locked until Q1 done
-      if (USER.free_q1_trials > 0 || USER.plan !== 'free') {
-        unlockQ2IfReady();
-      }
+      // Populate progress from landing trial
+      populateProgress(FIRST_METRICS, false);
 
-      // Progress metric locks — start locked if free & no trial yet
-      if (USER.plan === 'free' && USER.free_q1_trials === 0) {
-        ['dashLock1','dashLock2','dashLock3','dashLock4','dashLockWell','dashLockImprove'].forEach(id => {
-          document.getElementById(id).classList.remove('hidden');
-        });
-      } else if (USER.plan !== 'free') {
-        // Paid users: show demo data
-        populateProgress(SAMPLE_METRICS, true);
-      }
-
-      // Q1 label / trial count from existing state
-      if (USER.free_q1_trials > 0) {
-        state.q1Trials = Array(USER.free_q1_trials).fill({ clarity: 62, structure: 55, impact: 48 });
-        state.q1Metrics = SAMPLE_METRICS;
-        updateQ1Card();
-        populateProgress(SAMPLE_METRICS, false);
-      }
+      // Update Q1 card
+      updateQ1Card();
+      updateQ2Card();
+      updateTodayProgress();
     }
 
     function formatTrack(id) {
-      const m = {
-        interview: 'Interview Sprint', group_discussion: 'Group Discussion',
-        sales: 'Sales Sprint', pitch: 'Pitch Sprint',
-        presentation: 'Presentation Sprint', public_speaking: 'Public Speaking',
-        storytelling: 'Storytelling Sprint', frontline: 'Frontline Communication'
-      };
+      const m = { interview:'Interview Sprint', group_discussion:'Group Discussion', sales:'Sales Sprint', pitch:'Pitch Sprint', presentation:'Presentation Sprint', public_speaking:'Public Speaking', storytelling:'Storytelling Sprint', frontline:'Frontline Communication' };
       return m[id] || id;
     }
-
     function formatStage(s) {
       const m = { student:'Student / Final Year', fresher:'Fresher (0–1 yr)', early:'Early Career (1–5 yrs)', mid:'Mid Career (5–15 yrs)', senior:'Senior / Lead (15+ yrs)' };
       return m[s] || s;
     }
-
     function formatFunction(f) {
       const m = { engineering:'Engineering / Data', bpo:'BPO / Customer Support', manufacturing:'Manufacturing / Ops', sales:'Sales / Marketing / BD', finance:'Finance / Accounting', consulting:'Consulting / Strategy', design:'Design / Content / Product', hr:'HR / People', other:'Other' };
       return m[f] || f;
     }
 
     /* ============================================================
-       BANNER TEXT (state-aware)
+       BANNER TEXT
        ============================================================ */
     function updateBannerText() {
       const el = document.getElementById('previewBannerText');
       const name = USER.name || 'there';
-      if (state.q1Trials.length === 0) {
-        el.innerHTML = `👋 Hi <strong>${name}</strong> — here's your free drill.`;
-      } else if (state.q2Trials.length === 0) {
+      const q1Count = state.q1Trials.length;
+      const q2Count = state.q2Trials.length;
+      if (q1Count <= 1 && q2Count === 0) {
+        el.innerHTML = `👋 Hi <strong>${name}</strong> — Trial 1 recorded. Try again to improve.`;
+      } else if (q1Count >= 1 && q2Count === 0) {
         el.innerHTML = `✅ Nice work, <strong>${name}</strong>. You have 1 more free drill.`;
-      } else {
+      } else if (q2Count >= 1) {
         el.innerHTML = `🎯 Two drills done, <strong>${name}</strong>. Unlock a Sprint to keep practicing.`;
       }
     }
 
     /* ============================================================
-       Q1 / Q2 CARDS
+       CARD INIT
        ============================================================ */
     function initCards() {
       document.getElementById('q1Text').textContent = `"${SAMPLE_Q1.prompt}"`;
       document.getElementById('q1Meta').textContent = `Focus: ${SAMPLE_Q1.focus} · Target: ${SAMPLE_Q1.target}`;
       document.getElementById('q2Text').textContent = `"${SAMPLE_Q2.prompt}"`;
       document.getElementById('q2Meta').textContent = `Complete Q1 to unlock`;
-
       document.getElementById('q1RepBtn').onclick = () => startRep('q1');
       document.getElementById('q2RepBtn').onclick = () => startRep('q2');
     }
@@ -1785,6 +1856,7 @@
       document.getElementById('q1RepCount').innerHTML = `${n} <span class="rt-cap">/ ${cap}</span>`;
       const best = state.q1Trials.length ? Math.max(...state.q1Trials.map(t => t.clarity)) : null;
       document.getElementById('q1BestSnr').textContent = best ? `Best clarity: ${best}%` : 'Best score: —';
+
       const btn = document.getElementById('q1RepBtn');
       if (n >= cap) {
         btn.textContent = '✓ Cap reached';
@@ -1795,10 +1867,11 @@
         btn.disabled = false;
         btn.classList.remove('done');
       }
-      if (n >= 1) {
-        document.getElementById('q1Label').textContent = n >= cap ? 'Q1 · Completed' : 'Q1 · In progress';
-        document.getElementById('q1PostActions').classList.remove('hidden');
-      }
+      document.getElementById('q1Label').textContent =
+        n >= cap ? 'Q1 of 2 · Completed' :
+        n >= 1 ? `Q1 of 2 · Trial ${n} of ${cap} done` :
+        'Q1 of 2 · Your first drill';
+
       document.getElementById('q1RepsLog').innerHTML = state.q1Trials.map((t, i) => `
         <div class="rep-log-item">
           <span>Trial ${i + 1}</span>
@@ -1806,8 +1879,11 @@
         </div>
       `).join('');
 
-      // Auto unlock Q2 once Q1 has at least 1 trial
-      if (n >= 1) unlockQ2IfReady();
+      if (n >= 1) {
+        document.getElementById('q1PostActions').classList.remove('hidden');
+        document.getElementById('q1PostActions').style.display = 'flex';
+        unlockQ2IfReady();
+      }
     }
 
     function updateQ2Card() {
@@ -1821,7 +1897,7 @@
         btn.textContent = '✓ Cap reached';
         btn.disabled = true;
         btn.classList.add('done');
-      } else {
+      } else if (state.q1Trials.length >= 1) {
         btn.textContent = `🎤 Start Trial ${n + 1}`;
         btn.disabled = false;
         btn.classList.remove('done');
@@ -1835,21 +1911,22 @@
     }
 
     function unlockQ2IfReady() {
-      const card = document.getElementById('questionCard2');
-      card.classList.remove('locked');
-      document.getElementById('q2Label').textContent = 'Q2 of 2 · Unlocked';
-      document.getElementById('q2Meta').textContent = `Focus: ${SAMPLE_Q2.focus} · Target: ${SAMPLE_Q2.target}`;
-      const btn = document.getElementById('q2RepBtn');
-      btn.disabled = false;
-      btn.textContent = `🎤 Start Trial ${state.q2Trials.length + 1}`;
+      if (state.q1Trials.length >= 1) {
+        const card = document.getElementById('questionCard2');
+        card.classList.remove('locked');
+        document.getElementById('q2Label').textContent = 'Q2 of 2 · Unlocked';
+        document.getElementById('q2Meta').textContent = `Focus: ${SAMPLE_Q2.focus} · Target: ${SAMPLE_Q2.target}`;
+        const btn = document.getElementById('q2RepBtn');
+        btn.disabled = false;
+        btn.textContent = `🎤 Start Trial ${state.q2Trials.length + 1}`;
+      }
     }
 
     /* ============================================================
        START A REP
        ============================================================ */
     function startRep(which) {
-      // Free cap enforcement
-      if (USER.plan === 'free') {
+      if (USER.plan === 'trial') {
         if (which === 'q1' && state.q1Trials.length >= CURRENT_RULES.trialsPerQuestion) {
           goToPaywall('sprint'); return;
         }
@@ -1857,14 +1934,9 @@
           goToPaywall('sprint'); return;
         }
       }
-      // Sprint cap
-      if (USER.plan === 'sprint' && which === 'q1' && state.q1Trials.length >= CURRENT_RULES.trialsPerQuestion) {
-        alert('Daily cap reached. Come back tomorrow.'); return;
-      }
 
       state.activeRecording = which;
-      const durationMap = { q1: 60, q2: 90 };
-      state.maxDuration = durationMap[which] || 60;
+      state.maxDuration = which === 'q1' ? 60 : 90;
 
       const prompt = which === 'q1' ? SAMPLE_Q1.prompt : SAMPLE_Q2.prompt;
       const studio = document.getElementById('activeStudioContainer');
@@ -1876,9 +1948,7 @@
       document.getElementById('recordBtn').disabled = false;
       document.getElementById('outputSection').classList.add('hidden');
 
-      requestAnimationFrame(() => {
-        studio.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
+      requestAnimationFrame(() => studio.scrollIntoView({ behavior: 'smooth', block: 'start' }));
     }
 
     function formatTimer(sec) {
@@ -1934,9 +2004,7 @@
       state.timer = setInterval(() => {
         state.secondsLeft--;
         document.getElementById('timerDisplay').textContent = formatTimer(Math.max(0, state.secondsLeft));
-        if (state.secondsLeft <= 0) {
-          stopRecording();
-        }
+        if (state.secondsLeft <= 0) stopRecording();
       }, 1000);
     }
 
@@ -1950,8 +2018,7 @@
       recordBtn.textContent = '🔄 Re-record';
       recordBtn.className = 'btn btn-primary';
 
-      // Simulated analysis — replace with real API call
-      const m = SAMPLE_METRICS;
+      const m = FIRST_METRICS;
       document.getElementById('studioSnrText').textContent = `${m.clarity}% Clarity`;
       document.getElementById('studioSnrBar').style.width = `${m.clarity}%`;
       document.getElementById('studioSnrNoise').style.width = `${100 - m.clarity}%`;
@@ -1960,29 +2027,23 @@
 
       const trialData = {
         number: null,
-        clarity: m.clarity,
-        structure: m.structure,
-        impact: m.impact,
+        clarity: m.clarity, structure: m.structure, impact: m.impact,
         timeToPoint: m.timeToPoint
       };
 
       if (state.activeRecording === 'q1') {
         state.q1Trials.push({ ...trialData, number: state.q1Trials.length + 1 });
-        state.q1Metrics = m;
         updateQ1Card();
-        populateProgress(m, false);
       } else if (state.activeRecording === 'q2') {
         state.q2Trials.push({ ...trialData, number: state.q2Trials.length + 1 });
         updateQ2Card();
 
-        // Gate #2 appears once Q2 has at least 1 trial in free mode
-        if (USER.plan === 'free' && !state.function && state.q2Trials.length === 1) {
-          setTimeout(() => {
-            document.getElementById('gate2Overlay').classList.remove('hidden');
-          }, 600);
+        if (USER.plan === 'trial' && !state.function && state.q2Trials.length === 1) {
+          setTimeout(() => document.getElementById('gate2Overlay').classList.remove('hidden'), 600);
         }
       }
 
+      populateProgress(m, false);
       updateTodayProgress();
       updateBannerText();
       addRecordingEntry(state.activeRecording, m);
@@ -2015,7 +2076,7 @@
        ============================================================ */
     function populateProgress(m, silent) {
       document.getElementById('metricTTP').textContent = `${m.timeToPoint}s`;
-      document.getElementById('metricTTPSub').textContent = silent ? 'Baseline set' : 'Keep practicing to lower this';
+      document.getElementById('metricTTPSub').textContent = 'Practice more to lower this';
       document.getElementById('metricClarity').textContent = `${m.clarity} / 100`;
       document.getElementById('metricClaritySub').textContent = m.clarity >= 80 ? '🟢 Strong' : '🟡 Getting started';
       document.getElementById('metricStructure').textContent = `${m.structure} / 100`;
@@ -2034,7 +2095,7 @@
       document.getElementById('dashWellList').innerHTML = m.strengths.map(s => `<li>${s}</li>`).join('');
       document.getElementById('dashImproveList').innerHTML = m.improvements.map(s => `<li>${s}</li>`).join('');
 
-      // Trend lock — stays locked until 3 reps
+      // Trend lock stays for trial users until 3 reps
       const totalTrials = state.q1Trials.length + state.q2Trials.length;
       if (totalTrials >= 3 || CURRENT_RULES.canAccessTrend) {
         document.getElementById('dashLockTrend').classList.add('hidden');
@@ -2042,25 +2103,13 @@
       } else {
         document.getElementById('dashLockTrend').classList.remove('hidden');
       }
-
-      // Nav pulse
-      document.getElementById('navDash').classList.add('has-data');
-
-      // Badge
-      const badge = document.getElementById('badgeFirstRep');
-      badge.classList.remove('locked');
-      badge.querySelector('.badge-icon').textContent = '🎯';
-      badge.querySelector('.badge-desc').textContent = 'You completed your first voice rep.';
-      document.getElementById('headerAchievements').textContent = '🏆 1 Badge';
-      document.getElementById('headerCompleted').textContent = '1 Task';
     }
 
     function renderTrendLine() {
-      // Build simple 1–2 point line
-      const points = [];
-      const ttpPoints = [];
-      state.q1Trials.concat(state.q2Trials).forEach((t, i) => {
-        const x = (i / Math.max(1, state.q1Trials.length + state.q2Trials.length - 1)) * 600;
+      const all = state.q1Trials.concat(state.q2Trials);
+      const points = [], ttpPoints = [];
+      all.forEach((t, i) => {
+        const x = (i / Math.max(1, all.length - 1)) * 600;
         const yClarity = 140 - (t.clarity / 100) * 130;
         const yTTP = 140 - ((30 - Math.min(30, t.timeToPoint)) / 30) * 130;
         points.push(`${x},${yClarity}`);
@@ -2084,10 +2133,11 @@
       document.getElementById('tsDrills').textContent = `${drills} / ${CURRENT_RULES.questionsPerDay}`;
       document.getElementById('dayProgressFill').style.width = `${(drills / CURRENT_RULES.questionsPerDay) * 100}%`;
       document.getElementById('dayCounter').textContent = `${drills} / ${CURRENT_RULES.questionsPerDay} drills`;
+      document.getElementById('taRemaining').textContent = Math.max(0, cap - totalTrials);
     }
 
     /* ============================================================
-       RECORDINGS LIST
+       RECORDINGS
        ============================================================ */
     function addRecordingEntry(which, m) {
       const list = document.getElementById('recordingsList');
@@ -2098,7 +2148,7 @@
       item.innerHTML = `
         <div class="rec-info">
           <div class="rec-title">${prompt}</div>
-          <div class="rec-meta">Today · ${which.toUpperCase()} · ${m.durationSeconds}s</div>
+          <div class="rec-meta">Today · ${which.toUpperCase()} · ${m.durationSeconds || 58}s</div>
         </div>
         <div class="rec-score">${m.clarity}%</div>
         <button class="btn btn-outline" onclick="alert('Replay coming soon.')">View</button>
@@ -2110,14 +2160,12 @@
        GATE #2
        ============================================================ */
     let gate2Selected = null;
-
     function selectFunction(btn, fn) {
       document.querySelectorAll('#gate2FunctionOptions .onboarding-option').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
       gate2Selected = fn;
       document.getElementById('gate2Submit').disabled = false;
     }
-
     function submitGateTwo() {
       if (!gate2Selected) return;
       state.function = gate2Selected;
@@ -2126,7 +2174,6 @@
       showPeerBenchmark();
       setTimeout(() => goToPaywall('sprint'), 800);
     }
-
     function showPeerBenchmark() {
       const q2 = document.getElementById('questionCard2');
       if (document.getElementById('peerBenchmarkCard')) return;
@@ -2161,11 +2208,9 @@
         ? 'Enroll in a Sprint — ₹499\n\nRoute to paywall (coming next).'
         : 'Get Practice Pass — ₹1,299/mo\n\nRoute to paywall (coming next).');
     }
-
     function showSeniorRewrite() {
-      alert(`✨ SENIOR REWRITE (STAR):\n\n"${SAMPLE_METRICS.seniorRewrite}"`);
+      alert(`✨ SENIOR REWRITE (STAR):\n\n"${FIRST_METRICS.seniorRewrite}"`);
     }
-
     function showTrialLog() {
       const content = document.getElementById('trialLogContent');
       content.innerHTML = state.q1Trials.map((t, i) => `
@@ -2187,21 +2232,18 @@
     function toggleSidebar() {
       document.getElementById('appSidebar').classList.toggle('open');
     }
-
     function switchView(viewKey) {
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-view'));
 
-      const navMap = { today:'navToday', activities:'navActivities', dash:'navDash', recordings:'navRecordings', badges:'navBadges', pillars:'navPillars', learning:'learningView' };
+      const navMap = { today:'navToday', activities:'navActivities', dash:'navDash', recordings:'navRecordings', badges:'navBadges', pillars:'navPillars', learning:'navLearning' };
       const viewMap = { today:'todayView', activities:'activitiesView', dash:'dashView', recordings:'recordingsView', badges:'badgesView', pillars:'pillarsView', learning:'learningView' };
 
       if (navMap[viewKey]) document.getElementById(navMap[viewKey]).classList.add('active');
       if (viewMap[viewKey]) document.getElementById(viewMap[viewKey]).classList.add('active-view');
 
-      if (viewKey === 'dash') document.getElementById('navDash').classList.remove('has-data');
       if (window.innerWidth <= 900) toggleSidebar();
     }
-
     function switchActivitySub(subKey, btn) {
       document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -2209,12 +2251,10 @@
       const target = document.getElementById(`sub-${subKey}`);
       if (target) target.classList.remove('hidden');
     }
-
     function setTimeline(key, btn) {
       document.querySelectorAll('.time-tab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
     }
-
     function launchStudio(prompt, duration) {
       state.activeRecording = 'activity';
       state.maxDuration = duration;
@@ -2228,6 +2268,9 @@
       document.getElementById('outputSection').classList.add('hidden');
       requestAnimationFrame(() => studio.scrollIntoView({ behavior: 'smooth', block: 'start' }));
     }
+    function goToTodayTab() {
+      switchView('today');
+    }
 
     /* ============================================================
        INIT
@@ -2236,6 +2279,8 @@
       resizeCanvas();
       initCards();
       applyView();
+      // Landing page for trial users = Progress view
+      // (default active-view is already set on dashView in HTML)
     });
   </script>
 </body>
