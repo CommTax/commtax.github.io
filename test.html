@@ -504,36 +504,6 @@
     }
     .phone-close:hover { background: #f4f0ea; color: var(--phone-text); }
 
-    .phone-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 20px 14px; }
-    .phone-tab {
-      padding: 9px 14px; border-radius: 100px;
-      border: 1px solid var(--phone-border); background: #fff;
-      color: #b0a8a0; font-size: 11px; font-weight: 600;
-      letter-spacing: 0.01em; cursor: not-allowed;
-      transition: all 0.3s ease; white-space: nowrap;
-      font-family: inherit; flex-shrink: 0;
-      opacity: 0.5; position: relative;
-    }
-    .phone-tabs.activated .phone-tab {
-      cursor: pointer; opacity: 1; color: var(--phone-text);
-      border-color: #d4c9bc; box-shadow: 0 2px 6px rgba(184, 148, 60, 0.08);
-    }
-    .phone-tabs.activated .phone-tab:hover {
-      background: #f4f0ea; border-color: var(--phone-accent);
-      color: var(--phone-accent); transform: translateY(-1px);
-    }
-    .phone-tabs.activated .phone-tab.active {
-      background: var(--phone-text); border-color: var(--phone-text);
-      color: #fff; box-shadow: 0 4px 12px rgba(26, 25, 23, 0.2);
-    }
-    .phone-tabs.activated .phone-tab:not(.active)::after {
-      content: ""; position: absolute; bottom: -6px; left: 50%;
-      transform: translateX(-50%); width: 4px; height: 4px;
-      border-radius: 50%; background: var(--phone-accent);
-      opacity: 0.5; animation: pulse-dot 1.8s ease-in-out infinite;
-    }
-    .phone-tabs.activated .phone-tab.active::after { display: none; }
-
     .phone-content { flex: 1; overflow-y: auto; padding: 0 0 20px; scrollbar-width: none; }
     .phone-content::-webkit-scrollbar { display: none; }
     .phone-card {
@@ -654,9 +624,8 @@
     }
     .modal-content h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--ink); margin: 0 0 8px; }
     .modal-content > p { color: var(--text-soft); font-size: 0.95rem; margin: 0 0 20px; line-height: 1.5; }
-    .modal-features { display: flex; flex-direction: column; gap: 8px; text-align: left; margin: 0 auto 20px; max-width: 300px; }
-    .modal-features div { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-soft); }
-    .modal-features div::before { content: "✓"; color: var(--gold); font-weight: 700; }
+
+    /* LOGIN */
     .login-modal .modal-content { padding: 40px 36px; text-align: left; }
     .login-modal h2 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
     .login-subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; }
@@ -702,39 +671,6 @@
     }
     .gate-submit:disabled { opacity: 0.5; cursor: not-allowed; }
     .gate-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(184, 148, 60, 0.35); }
-
-    @keyframes tabActivate {
-      0% { background: #fff; box-shadow: 0 0 0 0 rgba(184, 148, 60, 0.4); }
-      50% { background: #fef3c7; box-shadow: 0 0 0 6px rgba(184, 148, 60, 0); }
-      100% { background: #fff; box-shadow: 0 0 0 0 rgba(184, 148, 60, 0); }
-    }
-    .phone-tabs.just-activated .phone-tab:not(.active) { animation: tabActivate 1.6s ease-out 1; }
-    .phone-tabs.just-activated .phone-tab:nth-child(2) { animation-delay: 0.1s; }
-    .phone-tabs.just-activated .phone-tab:nth-child(3) { animation-delay: 0.2s; }
-    .phone-tabs.just-activated .phone-tab:nth-child(4) { animation-delay: 0.3s; }
-
-    /* FAQ */
-    .faq-section { padding: 20px 0 30px; }
-    .faq-item { border-bottom: 1px solid var(--border-light); padding: 16px 0; }
-    .faq-item summary {
-      font-weight: 600; font-size: 1rem; cursor: pointer; list-style: none;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .faq-item summary::-webkit-details-marker { display: none; }
-    .faq-item summary::after { content: "+"; font-size: 1.4rem; color: var(--gold); }
-    .faq-item[open] summary::after { content: "−"; }
-    .faq-item p { margin-top: 10px; color: var(--text-soft); max-width: 700px; font-size: 0.9rem; }
-
-    /* Footer */
-    .footer {
-      padding: 20px 0 28px; border-top: 1px solid var(--border-light);
-      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 28px;
-    }
-    .footer-col h4 { font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; }
-    .footer-col a { display: block; color: var(--text-soft); text-decoration: none; padding: 4px 0; font-size: 0.85rem; }
-    .footer-col a:hover { color: var(--gold); }
-
-    .final-cta { padding: 30px 0 20px; text-align: center; }
 
     @keyframes pulse-dot {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -808,14 +744,14 @@
   </div>
 </div>
 
-<!-- GATE MODAL — opens right after analysis, before results are shown -->
+<!-- GATE MODAL — collects name, email, stage before redirect -->
 <div id="gateModal" class="modal gate-modal">
   <div class="modal-overlay" data-close="gateModal"></div>
   <div class="modal-content">
     <button class="modal-close" data-close="gateModal">&times;</button>
-    <span class="modal-badge">✦ Your Analysis Is Ready</span>
-    <h3>Where should we send your pattern report?</h3>
-    <p class="gate-sub">We've analyzed your response. Add your details to unlock your personalized dashboard and see what we found.</p>
+    <span class="modal-badge">✦ Almost there</span>
+    <h3>Where should we send your analysis?</h3>
+    <p class="gate-sub">We've captured your response. Add your details to unlock your personalized dashboard and see what we found.</p>
 
     <form class="gate-form" id="gateForm" onsubmit="return false;">
       <div>
@@ -849,12 +785,6 @@
     <span class="modal-badge">✦ You've used both attempts</span>
     <h3>Ready to go deeper?</h3>
     <p>You've seen your gap. Unlock the full engine to keep training and actually close it.</p>
-    <div class="modal-features">
-      <div>Unlimited practice attempts</div>
-      <div>Personalized coaching</div>
-      <div>Progress tracking over time</div>
-      <div>Advanced pattern diagnosis</div>
-    </div>
     <a href="https://theunspoken.co.in/Pricing" class="btn-paid" style="display:block; width:100%; box-sizing:border-box;">Start Practicing →</a>
     <p style="font-size:0.7rem; color:var(--text-muted); margin-top:10px;">4-day free trial · Cancel anytime</p>
   </div>
@@ -905,7 +835,7 @@
   <div class="merged-header">
     <span class="eyebrow">✦ DISCOVER + TRAIN</span>
     <h3>Understand the pattern. <span class="accent-gold">Then change it.</span></h3>
-    <p>Speak naturally → Add your details → See your full dashboard</p>
+    <p>Speak naturally → Get your analysis → See it inside your dashboard</p>
   </div>
 
   <div class="phone-wrap">
@@ -916,7 +846,6 @@
     <div class="phone-frame">
       <div class="phone-notch"></div>
       <div class="phone-screen">
-
         <div class="status-bar">
           <span class="time">9:41</span>
           <div class="status-icons">
@@ -931,73 +860,54 @@
           <button class="phone-close" id="phoneCloseBtn">×</button>
         </div>
 
-        <div class="phone-tabs" id="phoneTabs">
-          <button class="phone-tab active" data-tab="overview">Overview</button>
-          <button class="phone-tab" data-tab="fillers">Fillers</button>
-          <button class="phone-tab" data-tab="clarity">Clarity</button>
-          <button class="phone-tab" data-tab="word-suggestion">Word Suggestion</button>
-        </div>
-
         <div class="phone-content">
-          <div id="inputView">
-            <div class="phone-heading">
-              <h4>Speak Naturally</h4>
-              <p id="promptText">"Tell me about yourself — your background, what you do, and what drives you professionally."</p>
-            </div>
+          <div class="phone-heading">
+            <h4>Speak Naturally</h4>
+            <p id="promptText">"Tell me about yourself — your background, what you do, and what drives you professionally."</p>
+          </div>
 
-            <div class="phone-card">
-              <span class="card-label">Scenario</span>
-              <div class="scenario-pills">
-                <button class="scenario-pill active" data-question="intro">Introduce Yourself</button>
-                <button class="scenario-pill" data-question="project">Current Project</button>
-              </div>
-            </div>
-
-            <div class="phone-card">
-              <span class="card-label">Format</span>
-              <div class="scenario-pills" style="margin-bottom: 12px;">
-                <button class="mode-pill scenario-pill active" data-mode="voice">🎤 Voice</button>
-                <button class="mode-pill scenario-pill" data-mode="text">✏️ Type</button>
-              </div>
-
-              <div id="voiceControls">
-                <div class="recording-controls-phone">
-                  <button class="record-btn" id="recordBtn"></button>
-                  <span class="recording-timer" id="timerDisplay">0:00</span>
-                  <span class="recording-status-phone" id="statusDisplay">
-                    <span class="status-dot" id="statusDot"></span>
-                    <span id="statusText">Ready</span>
-                  </span>
-                  <div class="recording-waveform-phone" id="waveformContainer">
-                    <div class="waveform-bar" data-level="0.2"></div>
-                    <div class="waveform-bar" data-level="0.4"></div>
-                    <div class="waveform-bar" data-level="0.6"></div>
-                    <div class="waveform-bar" data-level="0.8"></div>
-                    <div class="waveform-bar" data-level="1.0"></div>
-                    <div class="waveform-bar" data-level="0.9"></div>
-                    <div class="waveform-bar" data-level="0.7"></div>
-                  </div>
-                  <button class="btn-submit-voice" id="submitVoiceBtn">Submit</button>
-                </div>
-              </div>
-
-              <div class="phone-text-area" id="textInputArea">
-                <textarea id="textResponse" placeholder="Type your response here..." maxlength="500"></textarea>
-                <div class="text-char-count"><span id="charCount">0</span> / 500</div>
-                <button class="text-submit-btn" id="textSubmitBtn">Analyze My Response →</button>
-              </div>
-            </div>
-
-            <!-- Did you know -->
-            <div class="did-you-know-card">
-              <span class="dyk-label">✦ Did you know</span>
-              <p>Professionals lose up to <strong>40% of their impact</strong> in the first 10 seconds of any answer — not from what they say, but how they structure it.</p>
-              <div class="flow">SPEAK <b>→</b> ANALYZE <b>→</b> SHOW RESULTS</div>
+          <div class="phone-card">
+            <span class="card-label">Scenario</span>
+            <div class="scenario-pills">
+              <button class="scenario-pill active" data-question="intro">Introduce Yourself</button>
+              <button class="scenario-pill" data-question="project">Current Project</button>
             </div>
           </div>
 
-          <!-- Results are no longer shown on this page. -->
-          <div id="resultsView" style="display:none;"></div>
+          <div class="phone-card">
+            <span class="card-label">Format</span>
+            <div class="scenario-pills" style="margin-bottom: 12px;">
+              <button class="mode-pill scenario-pill active" data-mode="voice">🎤 Voice</button>
+              <button class="mode-pill scenario-pill" data-mode="text">✏️ Type</button>
+            </div>
+
+            <div id="voiceControls">
+              <div class="recording-controls-phone">
+                <button class="record-btn" id="recordBtn"></button>
+                <span class="recording-timer" id="timerDisplay">0:00</span>
+                <span class="recording-status-phone" id="statusDisplay">
+                  <span class="status-dot" id="statusDot"></span>
+                  <span id="statusText">Ready</span>
+                </span>
+                <div class="recording-waveform-phone" id="waveformContainer">
+                  <div class="waveform-bar" data-level="0.2"></div>
+                  <div class="waveform-bar" data-level="0.4"></div>
+                  <div class="waveform-bar" data-level="0.6"></div>
+                  <div class="waveform-bar" data-level="0.8"></div>
+                  <div class="waveform-bar" data-level="1.0"></div>
+                  <div class="waveform-bar" data-level="0.9"></div>
+                  <div class="waveform-bar" data-level="0.7"></div>
+                </div>
+                <button class="btn-submit-voice" id="submitVoiceBtn">Submit</button>
+              </div>
+            </div>
+
+            <div class="phone-text-area" id="textInputArea">
+              <textarea id="textResponse" placeholder="Type your response here..." maxlength="500"></textarea>
+              <div class="text-char-count"><span id="charCount">0</span> / 500</div>
+              <button class="text-submit-btn" id="textSubmitBtn">Submit My Response →</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1005,52 +915,55 @@
 </section>
 
 <!-- FINAL CTA -->
-<section class="final-cta container">
+<section class="final-cta container" style="padding: 30px 0 20px; text-align: center;">
   <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto 20px;">Now discover what's getting lost.</p>
   <a href="#impact-test" class="btn-free" style="font-size: 1.1rem; padding: 16px 44px;">✦ Discover My Communication Pattern</a>
 </section>
 
 <!-- FOOTER -->
 <div class="container">
-  <footer class="footer">
-    <div class="footer-col">
+  <footer class="footer" style="padding: 20px 0 28px; border-top: 1px solid var(--border-light); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 28px;">
+    <div>
       <div class="logo-text" style="font-size: 1.3rem;">The <span>Unspoken</span></div>
       <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px;">Understand the gap. Close the gap.</p>
     </div>
-    <div class="footer-col">
-      <h4>Navigation</h4>
-      <a href="#">Programs</a>
-      <a href="#">Community</a>
-      <a href="#">FAQ</a>
+    <div>
+      <h4 style="font-weight: 600; margin-bottom: 10px; font-size: 0.95rem;">Navigation</h4>
+      <a href="#" style="display:block; color: var(--text-soft); text-decoration: none; padding: 4px 0; font-size: 0.85rem;">Programs</a>
+      <a href="#" style="display:block; color: var(--text-soft); text-decoration: none; padding: 4px 0; font-size: 0.85rem;">Community</a>
+      <a href="#" style="display:block; color: var(--text-soft); text-decoration: none; padding: 4px 0; font-size: 0.85rem;">FAQ</a>
     </div>
-    <div class="footer-col">
-      <h4>Legal</h4>
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
-      <a href="#">Contact Us</a>
+    <div>
+      <h4 style="font-weight: 600; margin-bottom: 10px; font-size: 0.95rem;">Legal</h4>
+      <a href="#" style="display:block; color: var(--text-soft); text-decoration: none; padding: 4px 0; font-size: 0.85rem;">Privacy Policy</a>
+      <a href="#" style="display:block; color: var(--text-soft); text-decoration: none; padding: 4px 0; font-size: 0.85rem;">Terms of Service</a>
+      <a href="#" style="display:block; color: var(--text-soft); text-decoration: none; padding: 4px 0; font-size: 0.85rem;">Contact Us</a>
     </div>
   </footer>
 </div>
 
 <script>
 // ============================================================
-// CONFIG & STATE
+// CONFIG
 // ============================================================
 const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
-const PRODUCT_URL = 'https://theunspoken.co.in/Product';   // your product page
+const PRODUCT_URL = 'https://theunspoken.co.in/Product';
 
 if (typeof lucide !== 'undefined') lucide.createIcons();
 
+// ============================================================
+// STATE
+// ============================================================
 const state = {
-  currentAttempt: 1,
-  attempt1Data: null,
   currentQuestionType: 'intro',
   currentMode: 'voice',
-  activeTab: 'overview',
+  rawBlob: null,
+  rawText: null,
+  rawDuration: 0,
   gate: { name: '', email: '', stage: null }
 };
 
-// Map question type → product page prompt
+// Map question type → backend prompt info
 const QUESTION_MAP = {
   intro: {
     prompt: 'Tell me about yourself.',
@@ -1297,26 +1210,11 @@ document.getElementById('signInBtn').addEventListener('click', e => {
   document.getElementById('loginModal').classList.add('is-visible');
 });
 document.getElementById('phoneCloseBtn').addEventListener('click', () => {
-  document.getElementById('inputView').style.display = 'block';
-  document.getElementById('resultsView').style.display = 'none';
-  document.getElementById('phoneTabs').classList.remove('activated');
-  state.currentAttempt = 1;
-});
-
-// ============================================================
-// TAB SWITCHING (kept for compatibility, but tabs stay inactive)
-// ============================================================
-document.querySelectorAll('.phone-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    if (!document.getElementById('phoneTabs').classList.contains('activated')) return;
-    document.querySelectorAll('.phone-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    const target = tab.dataset.tab;
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    const content = document.querySelector(`.tab-content[data-content="${target}"]`);
-    if (content) content.classList.add('active');
-    state.activeTab = target;
-  });
+  recorder1.reset();
+  state.rawBlob = null;
+  state.rawText = null;
+  document.getElementById('textResponse').value = '';
+  document.getElementById('charCount').textContent = '0';
 });
 
 // ============================================================
@@ -1447,6 +1345,7 @@ function createRecorder(cfg) {
       s.els.timer.textContent = '0:00';
       s.els.submitBtn.style.display = 'none';
       s.els.statusText.textContent = 'Ready';
+      s.els.timer.style.color = 'var(--phone-text)';
     },
   };
 }
@@ -1454,138 +1353,7 @@ function createRecorder(cfg) {
 let recorder1 = null;
 
 // ============================================================
-// LOCAL SIGNAL COMPUTATION (fallback)
-// ============================================================
-const FILLER_WORDS = ['um','uh','like','actually','basically','you know','so','well','just','really','kind of','sort of','i mean','right'];
-
-function computeSignalsLocal(transcript, durationSec, mode) {
-  const words = transcript.toLowerCase().split(/\s+/).filter(Boolean);
-  const wordCount = words.length;
-  const duration = Math.max(durationSec || 30, 1);
-  const wpm = Math.round((wordCount / duration) * 60);
-  const sentences = transcript.split(/[.!?]+/).map(s => s.trim()).filter(Boolean);
-  const sentenceLengths = sentences.map(s => s.split(/\s+/).length);
-  const avgSentence = sentenceLengths.length ? Math.round(sentenceLengths.reduce((a,b) => a+b, 0) / sentenceLengths.length) : 0;
-  const longest = sentenceLengths.length ? Math.max(...sentenceLengths) : 0;
-  const fillerCounts = {};
-  let fillerTotal = 0;
-  FILLER_WORDS.forEach(fw => {
-    const regex = new RegExp(`\\b${fw.replace(/ /g, '\\s+')}\\b`, 'gi');
-    const matches = transcript.match(regex);
-    if (matches) { fillerCounts[fw] = matches.length; fillerTotal += matches.length; }
-  });
-  let pointReached = Math.round(duration * 0.6);
-  const markerMatch = transcript.match(/\b(first|the point|what matters|the key|the main)\b/i);
-  if (markerMatch && markerMatch.index !== undefined) {
-    const prefixWords = transcript.slice(0, markerMatch.index).split(/\s+/).length;
-    pointReached = Math.max(3, Math.round((prefixWords / Math.max(wordCount, 1)) * duration));
-  }
-  const longPauses = mode === 'voice' ? Math.max(0, Math.round((duration - wordCount / 3) / 4)) : 0;
-  return {
-    wordCount, wpm, duration, avgSentence, longest,
-    sentenceCount: sentences.length,
-    fillerCounts, fillerTotal,
-    fillerPercent: wordCount ? Math.round((fillerTotal / wordCount) * 100) : 0,
-    pointReached, longPauses,
-  };
-}
-
-function scoreToTen(score) {
-  if (score === null || score === undefined) return 6.0;
-  return Math.max(1, Math.min(10, Math.round((score / 10) * 10) / 10));
-}
-
-// ============================================================
-// API
-// ============================================================
-async function analyzeVoice(blob, questionType) {
-  const fd = new FormData();
-  fd.append('audio', blob, 'recording.webm');
-  fd.append('question_type', questionType || 'intro');
-  fd.append('mode', 'voice');
-  fd.append('duration', 30);
-  const res = await fetch(`${BACKEND_URL}/api/communication/analyze/voice`, { method: 'POST', body: fd });
-  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error || `HTTP ${res.status}`); }
-  return await res.json();
-}
-
-async function analyzeText(text, questionType) {
-  const res = await fetch(`${BACKEND_URL}/api/communication/analyze/premium`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, mode: 'text', question_type: questionType }),
-  });
-  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error || `HTTP ${res.status}`); }
-  const data = await res.json();
-  return { transcribed_text: text, ...data };
-}
-
-// ============================================================
-// SAVE ANALYSIS (no rendering on landing page)
-// ============================================================
-function saveAnalysis(data, userText, durationSec) {
-  const mode = state.currentMode;
-
-  let signals;
-  if (data && data.signals) {
-    signals = {
-      wordCount: data.signals.word_count,
-      wpm: data.signals.words_per_minute,
-      duration: data.signals.duration_seconds,
-      avgSentence: data.signals.sentences?.average_length || 0,
-      longest: data.signals.sentences?.longest || 0,
-      sentenceCount: data.signals.sentences?.total || 0,
-      fillerCounts: data.signals.filler_words?.breakdown || {},
-      fillerTotal: data.signals.filler_words?.total || 0,
-      fillerPercent: data.signals.filler_words?.percentage || 0,
-      pointReached: data.signals.main_point_delay_seconds || 0,
-      longPauses: (data.signals.long_pauses || []).length,
-    };
-  } else {
-    const local = computeSignalsLocal(userText, durationSec, mode);
-    signals = {
-      wordCount: local.wordCount, wpm: local.wpm, duration: local.duration,
-      avgSentence: local.avgSentence, longest: local.longest,
-      sentenceCount: local.sentenceCount,
-      fillerCounts: local.fillerCounts, fillerTotal: local.fillerTotal,
-      fillerPercent: local.fillerPercent,
-      pointReached: local.pointReached, longPauses: local.longPauses,
-    };
-  }
-
-  const impactScore = data?.metrics?.impact || 55;
-  const score10 = scoreToTen(impactScore);
-
-  state.attempt1Data = {
-    transcript: userText,
-    result: data,
-    duration: durationSec,
-    score10,
-    signals,
-    pattern: {
-      name: data?.diagnosis?.pattern_name || 'The Communicator',
-      desc: data?.diagnosis?.pattern_description || 'You get your point across but could tighten the delivery.'
-    },
-    gap: {
-      got_lost: data?.gap?.what_got_lost || 'Your credibility and authority in the first 10 seconds',
-      unspoken: data?.gap?.unspoken_gap || 'Between your intent to sound confident and how you actually land'
-    },
-    wins: [
-      data?.coaching?.one_thing_to_change || 'Lead with the point',
-      signals.fillerTotal > 3 ? 'Cut filler words' : 'Front-load your result',
-      signals.avgSentence > 15 ? 'Shorten your sentences' : 'Add a clear structure marker'
-    ],
-    executiveVersion: data?.before_after_rewrite?.executive_version ||
-                      data?.coaching?.executive_version ||
-                      'Your executive version here.'
-  };
-
-  console.log('✅ Analysis saved. Opening gate.');
-  openGateModal();
-}
-
-// ============================================================
-// GATE MODAL
+// GATE MODAL LOGIC
 // ============================================================
 function openGateModal() {
   document.getElementById('gateModal').classList.add('is-visible');
@@ -1615,95 +1383,82 @@ function checkGateReady() {
 }
 
 // ============================================================
-// SUBMIT GATE + REDIRECT TO PRODUCT
+// SUBMIT GATE → UPLOAD TO BACKEND → REDIRECT
 // ============================================================
-function submitGateAndRedirect() {
+async function submitGateAndRedirect() {
   if (!state.gate.name || !state.gate.email || !state.gate.stage) {
     alert('Please fill all fields.');
     return;
   }
 
-  const q = QUESTION_MAP[state.currentQuestionType] || QUESTION_MAP.intro;
+  const btn = document.getElementById('gateSubmit');
+  btn.textContent = 'Uploading your response…';
+  btn.disabled = true;
 
-  const userPayload = {
-    user_id: 'u_' + Date.now(),
-    name: state.gate.name,
-    email: state.gate.email,
-    stage: state.gate.stage,
-    function: null,
-    plan: 'trial',
-    track_id: null,
-    current_day: 1,
-    total_days: 28,
-    questions_per_day: 2,
-    trials_per_question: 2,
-    landing_trial: {
-      q1_prompt: q.prompt,
-      q1_focus: q.focus,
-      q1_target: q.target,
-      q1_difficulty: q.difficulty,
-      q1_duration: state.attempt1Data?.duration || 58,
-      q1_metrics: {
-        wpm: state.attempt1Data?.signals?.wpm || 128,
-        wordCount: state.attempt1Data?.signals?.wordCount || 142,
-        fillerRatio: state.attempt1Data?.signals?.fillerPercent || 7,
-        fillerCounts: state.attempt1Data?.signals?.fillerCounts || {},
-        fillerTotal: state.attempt1Data?.signals?.fillerTotal || 0,
-        avgSentence: state.attempt1Data?.signals?.avgSentence || 0,
-        longest: state.attempt1Data?.signals?.longest || 0,
-        longPauses: state.attempt1Data?.signals?.longPauses || 0,
-        clarity: Math.round((state.attempt1Data?.score10 || 6.2) * 10),
-        structure: Math.round((state.attempt1Data?.score10 || 6.2) * 9),
-        impact: Math.round((state.attempt1Data?.score10 || 6.2) * 8),
-        timeToPoint: state.attempt1Data?.signals?.pointReached || 12,
-        overallScore: (state.attempt1Data?.score10 || 6.2).toFixed(1),
-        patternName: state.attempt1Data?.pattern?.name || 'The Communicator',
-        patternDesc: state.attempt1Data?.pattern?.desc || 'You get your point across but could tighten the delivery.',
-        gapGotLost: state.attempt1Data?.gap?.got_lost,
-        gapUnspoken: state.attempt1Data?.gap?.unspoken,
-        wins: state.attempt1Data?.wins || ['Lead with the point'],
-        strengths: [
-          'Clear opening — you led with the situation',
-          'Steady pacing at ' + (state.attempt1Data?.signals?.wpm || 128) + ' WPM',
-          state.attempt1Data?.signals?.fillerTotal === 0 ? 'No filler words detected' : 'Limited hedging language'
-        ],
-        improvements: [
-          'Reduce filler words (' + (state.attempt1Data?.signals?.fillerPercent || 7) + '% — target < 3%)',
-          'Quantify your outcome (add a % or figure)',
-          'Add a 2-second pause after your conclusion'
-        ],
-        transcript: state.attempt1Data?.transcript || '',
-        seniorRewrite: state.attempt1Data?.result?.before_after_rewrite?.executive_version ||
-                      state.attempt1Data?.result?.coaching?.executive_version ||
-                      'I inherited a project that was 6 weeks behind with 50% attrition. I restructured the team into 3 pods, cut two low-priority features, and shipped the core MVP in 4 weeks.',
-        executiveVersion: state.attempt1Data?.executiveVersion || 'Your executive version here.'
-      }
+  try {
+    // ─── STEP 1: Upload the audio or text to the backend ───
+    const formData = new FormData();
+    if (state.currentMode === 'voice' && state.rawBlob) {
+      formData.append('audio', state.rawBlob, 'recording.webm');
+    } else if (state.currentMode === 'text' && state.rawText) {
+      formData.append('text', state.rawText);
+    } else {
+      throw new Error('No audio or text to upload');
     }
-  };
+    formData.append('question_type', state.currentQuestionType);
+    formData.append('mode', state.currentMode);
+    formData.append('duration_seconds', state.rawDuration || 30);
 
-  try {
-    localStorage.setItem('unspoken_user', JSON.stringify(userPayload));
-    console.log('✅ Saved to localStorage:', userPayload);
-  } catch (e) {
-    console.error('localStorage failed:', e);
+    const uploadRes = await fetch(`${BACKEND_URL}/api/drills/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    if (!uploadRes.ok) {
+      const err = await uploadRes.json().catch(() => ({}));
+      throw new Error(err.error || 'Upload failed');
+    }
+    const { drill_id } = await uploadRes.json();
+    console.log('✅ Drill uploaded:', drill_id);
+
+    // ─── STEP 2: Capture the lead (name + email + stage) ───
+    btn.textContent = 'Preparing your results…';
+
+    const leadRes = await fetch(`${BACKEND_URL}/api/leads/capture`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        drill_id,
+        name: state.gate.name,
+        email: state.gate.email,
+        stage: state.gate.stage,
+        question_type: state.currentQuestionType,
+        mode: state.currentMode
+      })
+    });
+    if (!leadRes.ok) {
+      const err = await leadRes.json().catch(() => ({}));
+      throw new Error(err.error || 'Lead capture failed');
+    }
+    const { user_id, session_token } = await leadRes.json();
+    console.log('✅ Session created for user:', user_id);
+
+    // ─── STEP 3: Redirect with the session token in the URL ───
+    // The token is short-lived and one-time-use.
+    // The product page reads it from ?session= and calls /analyze.
+    const targetUrl = `${PRODUCT_URL}?session=${encodeURIComponent(session_token)}`;
+    console.log('🔀 Redirecting to product:', targetUrl);
+    window.location.assign(targetUrl);
+
+  } catch (err) {
+    console.error('❌ Flow failed:', err);
+    btn.textContent = 'Show My Results →';
+    btn.disabled = false;
+    alert(`Something went wrong: ${err.message}. Please try again.`);
   }
-
-  try { sessionStorage.setItem('unspoken_user', JSON.stringify(userPayload)); } catch (e) {}
-
-  let encoded = '';
-  try {
-    encoded = btoa(unescape(encodeURIComponent(JSON.stringify(userPayload))));
-  } catch (e) {
-    console.warn('URL encoding failed, using localStorage only');
-  }
-
-  const targetUrl = encoded ? `${PRODUCT_URL}?data=${encoded}` : PRODUCT_URL;
-  console.log('🔀 Redirecting to:', targetUrl);
-  window.location.assign(targetUrl);
 }
 
 // ============================================================
-// DOM READY
+// SUBMIT HANDLERS
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
   recorder1 = createRecorder({
@@ -1716,38 +1471,38 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('charCount').textContent = tr1.value.length;
     document.getElementById('textSubmitBtn').disabled = tr1.value.length < 10;
   });
-  document.getElementById('textSubmitBtn').addEventListener('click', async () => {
-    const text = tr1.value.trim();
-    if (text.length < 10) return alert('Please write at least 10 characters.');
-    const btn = document.getElementById('textSubmitBtn');
-    btn.textContent = 'Analyzing...'; btn.disabled = true;
-    try {
-      const data = await analyzeText(text, state.currentQuestionType);
-      const words = text.split(/\s+/).filter(Boolean).length;
-      const estDuration = Math.max(10, Math.round(words / 2.5));
-      saveAnalysis(data, text, estDuration);
-    } catch (err) { alert('Analysis failed: ' + err.message); }
-    btn.textContent = 'Analyze My Response →'; btn.disabled = false;
-  });
 
-  document.getElementById('submitVoiceBtn').addEventListener('click', async () => {
+  // Voice submit — save blob, open gate
+  document.getElementById('submitVoiceBtn').addEventListener('click', () => {
     const blob = recorder1.getBlob();
     if (!blob) return alert('Please record first.');
     if (recorder1.getSeconds() < 5) return alert('Please record at least 5 seconds.');
-    const btn = document.getElementById('submitVoiceBtn');
-    btn.textContent = 'Analyzing...'; btn.disabled = true;
-    try {
-      const data = await analyzeVoice(blob, state.currentQuestionType);
-      saveAnalysis(data, data.transcribed_text || '', recorder1.getSeconds());
-    } catch (err) { alert('Analysis failed: ' + err.message); }
-    btn.textContent = 'Submit'; btn.disabled = false;
+
+    state.rawBlob = blob;
+    state.rawText = null;
+    state.rawDuration = recorder1.getSeconds();
+    openGateModal();
   });
 
+  // Text submit — save text, open gate
+  document.getElementById('textSubmitBtn').addEventListener('click', () => {
+    const text = tr1.value.trim();
+    if (text.length < 10) return alert('Please write at least 10 characters.');
+
+    state.rawBlob = null;
+    state.rawText = text;
+    state.rawDuration = Math.max(10, Math.round(text.split(/\s+/).length / 2.5));
+    openGateModal();
+  });
+
+  // Health ping (optional — keeps backend warm)
   setInterval(() => {
-    fetch(`${BACKEND_URL}/api/health`).then(r => { if (r.ok) console.log('✅ Backend warm at', new Date().toLocaleTimeString()); }).catch(() => {});
+    fetch(`${BACKEND_URL}/api/health`).then(r => {
+      if (r.ok) console.log('✅ Backend warm at', new Date().toLocaleTimeString());
+    }).catch(() => {});
   }, 4 * 60 * 1000);
 
-  console.log('🚀 Landing page — gate opens first, results shown in product.');
+  console.log('🚀 Landing page loaded. Ready to capture.');
 });
 </script>
 </body>
