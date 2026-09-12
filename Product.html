@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Unspoken Studio</title>
+  <title>Unspoken Studio — Your Dashboard</title>
   <style>
     :root {
       --bg-dark: #0B0F19;
@@ -30,64 +30,78 @@
       font-family: var(--font);
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    /* ============ DEBUG BANNER (dev only) ============ */
-    .debug-banner {
-      background: #0f172a;
-      border-bottom: 1px solid #334155;
-      color: #cbd5e1;
-      padding: 8px 16px;
-      font-family: 'SF Mono', Monaco, monospace;
-      font-size: 11px;
+    .hidden { display: none !important; }
+
+    /* ============ BOOT / LOADING / ERROR ============ */
+    .boot-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-dark);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      z-index: 100;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      padding: 24px;
+      z-index: 9999;
     }
 
-    .debug-banner .db-left {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      align-items: center;
+    .boot-screen.hidden { display: none; }
+
+    .boot-spinner {
+      width: 52px;
+      height: 52px;
+      border: 3px solid rgba(56, 189, 248, 0.15);
+      border-top-color: var(--accent-cyan);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
     }
 
-    .debug-banner .db-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .debug-banner .db-label {
-      color: #64748b;
-    }
-
-    .debug-banner .db-value {
-      color: #38bdf8;
+    .boot-title {
+      font-size: 20px;
       font-weight: 700;
+      color: var(--text-main);
+      text-align: center;
     }
 
-    .debug-banner .db-value.warn { color: #f59e0b; }
-    .debug-banner .db-value.ok { color: #10b981; }
-    .debug-banner .db-value.err { color: #ef4444; }
+    .boot-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 420px;
+      line-height: 1.5;
+    }
 
-    .debug-banner .db-close {
-      background: transparent;
-      border: 1px solid #334155;
-      color: #cbd5e1;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 10px;
+    .boot-error-icon {
+      font-size: 52px;
+      line-height: 1;
+    }
+
+    .boot-btn {
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--primary);
+      color: #FFF;
+      border: none;
       cursor: pointer;
-      font-family: inherit;
+      transition: all 0.2s;
     }
 
-    .debug-banner .db-close:hover { background: #1e293b; }
+    .boot-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+    .boot-btn.secondary {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
 
     /* ============ PREVIEW BANNER ============ */
     .preview-banner {
@@ -154,8 +168,8 @@
     }
 
     .lockable { position: relative; overflow: hidden; }
-    .hidden { display: none !important; }
 
+    /* ============ ACTIVITY LOCK ============ */
     .activity-card.locked-preview { position: relative; overflow: hidden; }
     .activity-card.locked-preview .ac-body { filter: blur(0.5px); opacity: 0.5; }
 
@@ -176,131 +190,211 @@
       width: 100%;
     }
 
-    /* ============ MODALS ============ */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(11, 15, 25, 0.85);
-      backdrop-filter: blur(6px);
-      z-index: 500;
+    /* ============ YOUR ANALYSIS CARD ============ */
+    .your-analysis-card {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(139, 92, 246, 0.06));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 16px;
+      padding: 26px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .your-analysis-card::before {
+      content: '';
+      position: absolute;
+      top: -40%; right: -10%;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(184, 148, 60, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .ya-header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 20px;
-      overflow-y: auto;
+      gap: 12px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
     }
 
-    .modal-overlay.hidden { display: none; }
-
-    .modal-card {
-      background: var(--panel-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 28px;
-      width: 100%;
-      max-width: 520px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    .ya-badge {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 4px 12px;
+      border-radius: 20px;
     }
 
-    .modal-card h3 { font-size: 18px; margin-bottom: 6px; }
-    .modal-card .modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+    .ya-sub { font-size: 12px; color: var(--text-muted); }
 
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-
-    .btn-cancel {
-      padding: 10px 18px; border-radius: 8px; background: transparent;
-      border: 1px solid var(--border-color); color: var(--text-main);
-      font-size: 13px; font-weight: 600; cursor: pointer;
+    .ya-score-block {
+      text-align: center;
+      padding: 18px 0 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 22px;
     }
 
-    .btn-save {
-      padding: 10px 18px; border-radius: 8px; background: var(--primary);
-      border: none; color: #FFF; font-size: 13px; font-weight: 700; cursor: pointer;
+    .ya-score {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      color: var(--text-main);
     }
 
-    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .alt-question-option {
-      padding: 14px 16px; background: var(--card-bg);
-      border: 1px solid var(--border-color); border-radius: 10px;
-      cursor: pointer; margin-bottom: 10px;
-      transition: border-color 0.2s, background 0.2s;
+    .ya-score-value {
+      font-size: 64px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      background: linear-gradient(135deg, #38BDF8, #8B5CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .alt-question-option:hover { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.06); }
+    .ya-score-denom { font-size: 22px; font-weight: 600; color: var(--text-muted); }
 
-    .alt-question-option .aq-text { font-size: 13px; font-weight: 600; line-height: 1.4; color: var(--text-main); }
-    .alt-question-option .aq-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap; }
-
-    /* ============ GATE #2 OVERLAY ============ */
-    .onboarding-overlay {
-      position: fixed; inset: 0;
-      background: rgba(11, 15, 25, 0.98); backdrop-filter: blur(8px);
-      z-index: 1000; display: flex; align-items: center;
-      justify-content: center; padding: 20px; overflow-y: auto;
+    .ya-score-label {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-top: 8px;
     }
 
-    .onboarding-overlay.hidden { display: none; }
+    .ya-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-    .onboarding-card {
-      background: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 16px; padding: 32px; width: 100%; max-width: 560px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    .ya-box {
+      background: rgba(11, 15, 25, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 16px 18px;
     }
 
-    .onboarding-header { text-align: center; margin-bottom: 24px; }
-    .onboarding-header .logo { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
-    .onboarding-header h2 { font-size: 20px; margin-bottom: 6px; }
-    .onboarding-header p { font-size: 13px; color: var(--text-muted); }
-
-    .onboarding-options { display: flex; flex-direction: column; gap: 10px; }
-
-    .onboarding-option {
-      padding: 14px 18px; background: var(--card-bg);
-      border: 1px solid var(--border-color); border-radius: 10px;
-      cursor: pointer; font-size: 14px; font-weight: 600;
-      color: var(--text-main); transition: all 0.2s;
-      text-align: left; display: flex; align-items: center; gap: 10px;
+    .ya-box-label {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      margin-bottom: 10px;
     }
 
-    .onboarding-option:hover { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.08); }
-    .onboarding-option.selected { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.15); }
-    .onboarding-option .emoji { font-size: 18px; }
+    .ya-pattern-name {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--accent-gold);
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .ya-pattern-desc { font-size: 12px; line-height: 1.55; color: var(--text-muted); }
+
+    .ya-list { list-style: none; padding: 0; margin: 0; }
+    .ya-list li {
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text-main);
+      padding-left: 18px;
+      position: relative;
+      margin-bottom: 6px;
+    }
+    .ya-list li::before { content: '—'; position: absolute; left: 0; color: var(--accent-cyan); font-weight: 700; }
+    .ya-list.wins li::before { content: '→'; color: var(--success); }
+
+    .ya-executive {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-main);
+      font-weight: 600;
+      padding: 12px 14px;
+      background: linear-gradient(135deg, rgba(184, 148, 60, 0.15), rgba(184, 148, 60, 0.06));
+      border-left: 3px solid var(--accent-gold);
+      border-radius: 8px;
+      font-style: italic;
+    }
+
+    .ya-footer { margin-top: 20px; display: flex; justify-content: center; }
+
+    .ya-btn {
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--primary);
+      color: #FFF;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ya-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
     /* ============ TOP HEADER ============ */
     .top-header {
-      background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color);
-      padding: 12px 24px; display: flex; justify-content: space-between;
-      align-items: center; z-index: 10; flex-wrap: wrap; gap: 12px;
+      background-color: var(--panel-bg);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .brand {
-      font-size: 20px; font-weight: 800; letter-spacing: -0.02em;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
       background: linear-gradient(135deg, #38BDF8, #8B5CF6);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      display: flex; align-items: center; gap: 10px;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .track-badge {
-      font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.05em; color: var(--accent-cyan);
-      background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3);
-      padding: 4px 10px; border-radius: 20px; margin-left: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-left: 8px;
       -webkit-text-fill-color: var(--accent-cyan);
     }
 
     .menu-toggle {
-      display: none; background: none; border: 1px solid var(--border-color);
-      color: var(--text-main); padding: 6px 12px; border-radius: 6px;
-      font-size: 14px; cursor: pointer;
+      display: none;
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
     }
 
     .global-stats { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 
     .stat-pill {
-      background-color: var(--bg-dark); border: 1px solid var(--border-color);
-      padding: 6px 12px; border-radius: 20px; font-size: 11px;
-      display: flex; align-items: center; gap: 6px;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .stat-pill strong { color: var(--accent-cyan); font-weight: 700; }
@@ -308,50 +402,66 @@
     .stat-pill.achievements strong { color: var(--accent-purple); }
 
     /* ============ LAYOUT ============ */
-    .app-layout { display: flex; flex: 1; overflow: hidden; position: relative; }
+    .app-layout { display: flex; flex: 1; overflow: hidden; position: relative; min-height: 0; }
 
     .sidebar {
-      width: 320px; background-color: var(--panel-bg);
-      border-right: 1px solid var(--border-color); padding: 16px;
-      display: flex; flex-direction: column; gap: 14px;
-      overflow-y: auto; z-index: 20; transition: transform 0.3s ease;
+      width: 320px;
+      background-color: var(--panel-bg);
+      border-right: 1px solid var(--border-color);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+      z-index: 20;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
     }
 
     .nav-group { display: flex; flex-direction: column; gap: 4px; }
 
     .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border-radius: 8px; font-size: 13px;
-      font-weight: 600; color: var(--text-muted); cursor: pointer;
-      border: 1px solid transparent; transition: all 0.2s; position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+      position: relative;
     }
 
     .nav-item:hover { background-color: var(--card-bg); color: #FFF; }
     .nav-item.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
 
-    .nav-item.has-data::after {
-      content: ''; position: absolute;
-      top: 50%; right: 12px; width: 8px; height: 8px;
-      border-radius: 50%; background: var(--accent-cyan);
-      transform: translateY(-50%);
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-
     .nav-item .nav-badge {
-      margin-left: auto; background: var(--accent-gold); color: #000;
-      font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 10px;
+      margin-left: auto;
+      background: var(--accent-gold);
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 10px;
     }
 
     .sidebar-section {
-      background-color: var(--card-bg); border: 1px solid var(--border-color);
-      border-radius: 10px; padding: 12px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px;
     }
 
     .sidebar-title {
-      font-size: 11px; text-transform: uppercase;
-      letter-spacing: 0.05em; color: var(--text-muted);
-      margin-bottom: 8px; font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 700;
     }
 
     .field-group { margin-bottom: 8px; }
@@ -359,24 +469,38 @@
 
     label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
 
-    select, textarea, input[type="text"], input[type="email"] {
-      width: 100%; background-color: var(--bg-dark);
-      border: 1px solid var(--border-color); color: var(--text-main);
-      padding: 8px 10px; border-radius: 6px;
-      font-family: inherit; font-size: 12px;
+    select {
+      width: 100%;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 12px;
     }
 
     .user-profile-card {
-      margin-top: auto; background-color: var(--card-bg);
-      border: 1px solid var(--border-color); border-radius: 10px;
-      padding: 12px; display: flex; flex-direction: column; gap: 4px;
+      margin-top: auto;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .plan-badge {
-      font-size: 10px; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.05em; color: var(--accent-gold);
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-gold);
       background-color: rgba(245, 158, 11, 0.15);
-      padding: 3px 8px; border-radius: 4px; width: fit-content;
+      padding: 3px 8px;
+      border-radius: 4px;
+      width: fit-content;
     }
 
     .plan-badge.trial { color: var(--accent-cyan); background-color: rgba(56, 189, 248, 0.15); }
@@ -384,10 +508,15 @@
     .user-info { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
 
     .user-avatar {
-      width: 32px; height: 32px; border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       background: linear-gradient(135deg, #2563EB, #8B5CF6);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
     }
 
     .user-details { display: flex; flex-direction: column; overflow: hidden; }
@@ -396,8 +525,13 @@
 
     /* ============ MAIN ============ */
     .main-content {
-      flex: 1; padding: 24px; overflow-y: auto;
-      display: flex; flex-direction: column; gap: 20px;
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-width: 0;
     }
 
     .view-panel { display: none; flex-direction: column; gap: 20px; }
@@ -407,9 +541,13 @@
     .today-header-bar {
       background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(139, 92, 246, 0.10));
       border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 14px; padding: 20px 24px;
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 14px; position: relative;
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
     }
 
     .today-header-bar .th-left h2 { font-size: 20px; margin-bottom: 4px; }
@@ -419,8 +557,12 @@
     .today-header-bar .th-right .streak { font-size: 12px; color: var(--accent-gold); font-weight: 700; margin-top: 4px; }
 
     .day-progress-bar {
-      width: 100%; height: 6px; background: var(--border-color);
-      border-radius: 3px; overflow: hidden; margin-top: 10px;
+      width: 100%;
+      height: 6px;
+      background: var(--border-color);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 10px;
     }
 
     .day-progress-fill {
@@ -430,10 +572,14 @@
     }
 
     .question-card {
-      background: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 14px; padding: 22px;
-      display: flex; flex-direction: column; gap: 16px;
-      position: relative; transition: border-color 0.2s, background 0.2s;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
     }
 
     .question-card.locked { border-color: var(--border-color); background: linear-gradient(135deg, var(--panel-bg), rgba(56, 189, 248, 0.03)); }
@@ -443,10 +589,16 @@
     .qc-left { flex: 1; min-width: 240px; }
 
     .qc-label {
-      font-size: 11px; font-weight: 800; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--accent-cyan);
-      margin-bottom: 6px; display: flex; align-items: center;
-      gap: 8px; flex-wrap: wrap;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .qc-text { font-size: 17px; font-weight: 700; color: var(--text-main); line-height: 1.4; }
@@ -460,22 +612,33 @@
     .qc-difficulty.hard { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
     .qc-action-btn {
-      padding: 6px 12px; border-radius: 6px; font-size: 11px;
-      font-weight: 700; background: transparent;
-      border: 1px solid var(--border-color); color: var(--text-main);
-      cursor: pointer; display: inline-flex; align-items: center;
-      gap: 5px; transition: all 0.2s;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
     }
 
     .qc-action-btn:hover:not(:disabled) { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.08); color: var(--accent-cyan); }
-    .qc-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .qc-action-btn.primary-action { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 
     .rep-tracker {
-      background: var(--bg-dark); border: 1px solid var(--border-color);
-      border-radius: 10px; padding: 14px 16px;
-      display: flex; justify-content: space-between;
-      align-items: center; flex-wrap: wrap; gap: 12px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .rep-tracker .rt-left .rt-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px; }
@@ -485,10 +648,17 @@
     .rep-tracker .rt-right { display: flex; gap: 8px; align-items: center; }
 
     .rep-btn {
-      padding: 12px 22px; border-radius: 10px; font-size: 13px;
-      font-weight: 700; background: var(--primary); color: #FFF;
-      border: none; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--primary);
+      color: #FFF;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .rep-btn:hover:not(:disabled) { background: var(--primary-hover); }
@@ -498,27 +668,41 @@
     .reps-log { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
 
     .rep-log-item {
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 12px; padding: 6px 10px; background: var(--bg-dark);
-      border-radius: 6px; color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      padding: 6px 10px;
+      background: var(--bg-dark);
+      border-radius: 6px;
+      color: var(--text-muted);
     }
 
     .rep-log-item .rl-score { color: var(--success); font-weight: 700; }
 
     .today-summary {
-      background: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 18px 20px; position: relative;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px 20px;
+      position: relative;
     }
 
     .today-summary h3 {
-      font-size: 13px; text-transform: uppercase;
-      letter-spacing: 0.05em; color: var(--text-muted);
-      margin-bottom: 12px; font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 700;
     }
 
     .ts-row {
-      display: flex; justify-content: space-between; font-size: 13px;
-      padding: 6px 0; border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .ts-row:last-child { border-bottom: none; }
@@ -526,17 +710,28 @@
 
     /* ============ DASHBOARD ============ */
     .timeline-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      background-color: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 12px 20px; flex-wrap: wrap; gap: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 20px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .timeline-tabs { display: flex; gap: 8px; }
 
     .time-tab {
-      padding: 6px 14px; border-radius: 6px;
-      background-color: var(--bg-dark); border: 1px solid var(--border-color);
-      color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer;
+      padding: 6px 14px;
+      border-radius: 6px;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
     }
 
     .time-tab.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
@@ -544,8 +739,11 @@
     .dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 
     .metric-box {
-      background-color: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 16px; position: relative;
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
     }
 
     .metric-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
@@ -553,16 +751,22 @@
     .metric-sub { font-size: 11px; color: var(--success); margin-top: 4px; font-weight: 600; }
 
     .dash-wide-box {
-      grid-column: span 4; background-color: var(--panel-bg);
-      border: 1px solid var(--border-color); border-radius: 12px;
-      padding: 20px; position: relative;
+      grid-column: span 4;
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
     }
 
     .feedback-grid { grid-column: span 4; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
     .feedback-box {
-      background-color: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 18px; position: relative;
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px;
+      position: relative;
     }
 
     .feedback-box.well { border-left: 4px solid var(--success); }
@@ -573,8 +777,11 @@
     .feedback-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
 
     .feedback-list li {
-      font-size: 12px; color: var(--text-main); line-height: 1.5;
-      position: relative; padding-left: 16px;
+      font-size: 12px;
+      color: var(--text-main);
+      line-height: 1.5;
+      position: relative;
+      padding-left: 16px;
     }
 
     .feedback-list li::before { content: "•"; position: absolute; left: 0; color: var(--text-muted); }
@@ -582,17 +789,24 @@
     .snr-container { margin-top: 8px; background-color: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; }
 
     .snr-bar-wrapper {
-      height: 14px; width: 100%; background-color: var(--border-color);
-      border-radius: 6px; overflow: hidden; margin-top: 8px;
-      display: flex; position: relative;
+      height: 14px;
+      width: 100%;
+      background-color: var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 8px;
+      display: flex;
+      position: relative;
     }
 
     .snr-signal { height: 100%; background-color: var(--success); transition: width 0.3s; }
     .snr-noise { height: 100%; background-color: var(--danger); transition: width 0.3s; }
 
     .ghost-line {
-      position: absolute; top: 0; bottom: 0; width: 3px;
-      background-color: #FFF; box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+      position: absolute;
+      top: 0; bottom: 0; width: 3px;
+      background-color: #FFF;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
       z-index: 5;
     }
 
@@ -609,29 +823,45 @@
       margin-top: 12px;
       background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(139, 92, 246, 0.08));
       border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 12px; padding: 18px 22px;
-      display: flex; justify-content: space-between;
-      align-items: center; gap: 14px; flex-wrap: wrap;
+      border-radius: 12px;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     .try-again-bar .ta-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
     .try-again-bar .ta-text strong { color: var(--text-main); }
 
     .try-again-bar .ta-btn {
-      padding: 12px 24px; border-radius: 10px; font-size: 13px;
-      font-weight: 700; background: var(--primary); color: #FFF;
-      border: none; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--primary);
+      color: #FFF;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
     /* ============ ACTIVITIES ============ */
     .activity-sub-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
 
     .sub-tab-btn {
-      padding: 8px 14px; background-color: var(--panel-bg);
-      border: 1px solid var(--border-color); color: var(--text-muted);
-      border-radius: 8px; font-size: 12px; font-weight: 600;
-      white-space: nowrap; cursor: pointer;
+      padding: 8px 14px;
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
     }
 
     .sub-tab-btn.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
@@ -639,10 +869,16 @@
     .sub-activity-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 
     .activity-card {
-      background-color: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 18px;
-      display: flex; flex-direction: column; justify-content: space-between;
-      gap: 12px; transition: transform 0.2s, border-color 0.2s; position: relative;
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: transform 0.2s, border-color 0.2s;
+      position: relative;
     }
 
     .activity-card:hover:not(.locked-preview) { border-color: var(--accent-cyan); transform: translateY(-2px); }
@@ -650,82 +886,45 @@
     .activity-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
     .activity-card-tag { font-size: 10px; font-weight: 700; color: var(--accent-purple); text-transform: uppercase; }
 
-    /* ============ STUDIO ============ */
-    .studio-card {
-      background-color: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 24px; position: relative;
-    }
-
-    .prompt-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-    .timer-display { font-family: monospace; font-size: 24px; font-weight: 700; color: var(--accent-cyan); }
-
-    .canvas-box {
-      width: 100%; height: 70px; background-color: var(--bg-dark);
-      border: 1px solid var(--border-color); border-radius: 8px;
-      margin: 16px 0; overflow: hidden;
-    }
-
-    canvas { width: 100%; height: 100%; }
-
-    .btn {
-      padding: 10px 18px; font-size: 13px; font-weight: 600;
-      border: none; border-radius: 8px; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 8px;
-    }
-    .btn-primary { background-color: var(--primary); color: #FFF; }
-    .btn-primary:hover { background-color: var(--primary-hover); }
-    .btn-danger { background-color: var(--danger); color: #FFF; }
-    .btn-outline { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
-    .btn-outline:hover { background-color: var(--card-bg); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .better-response-box {
-      background-color: var(--bg-dark); border: 1px solid var(--accent-purple);
-      border-radius: 8px; padding: 16px; margin-top: 16px;
-      font-size: 13px; line-height: 1.5;
-    }
-
-    .locked-tracks {
-      background: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 20px;
-    }
-
-    .locked-tracks h3 { font-size: 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-    .locked-tracks p { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
-
-    .locked-tracks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px; }
-
-    .locked-track-item {
-      background: var(--card-bg); border: 1px solid var(--border-color);
-      border-radius: 8px; padding: 10px 12px; font-size: 12px;
-      font-weight: 600; color: var(--text-muted);
-      display: flex; align-items: center; gap: 8px; opacity: 0.75;
-    }
-
     /* ============ RECORDINGS ============ */
     .recording-item {
-      background: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 10px; padding: 14px 16px;
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 12px; flex-wrap: wrap; margin-bottom: 10px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
     }
 
     .recording-item .rec-info { flex: 1; min-width: 200px; }
     .recording-item .rec-title { font-size: 13px; font-weight: 700; }
     .recording-item .rec-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
     .recording-item .rec-score {
-      font-size: 14px; font-weight: 800; color: var(--success);
-      padding: 4px 10px; background: rgba(16, 185, 129, 0.12); border-radius: 6px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--success);
+      padding: 4px 10px;
+      background: rgba(16, 185, 129, 0.12);
+      border-radius: 6px;
     }
 
     /* ============ BADGES ============ */
     .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
 
     .badge-item {
-      background: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 12px; padding: 18px 14px; text-align: center;
-      display: flex; flex-direction: column; align-items: center;
-      gap: 8px; position: relative;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px 14px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
     }
 
     .badge-item.locked { opacity: 0.35; }
@@ -737,10 +936,10 @@
     @media (max-width: 900px) {
       .dash-grid { grid-template-columns: 1fr; }
       .dash-wide-box, .feedback-grid { grid-column: span 1; grid-template-columns: 1fr; }
+      .ya-grid { grid-template-columns: 1fr; }
       .menu-toggle { display: block; }
       .sidebar { position: absolute; top: 0; bottom: 0; left: 0; transform: translateX(-100%); box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
       .sidebar.open { transform: translateX(0); }
-      .onboarding-card { padding: 24px; }
       .today-header-bar { flex-direction: column; align-items: flex-start; }
       .today-header-bar .th-right { text-align: left; }
       .qc-top { flex-direction: column; align-items: flex-start; }
@@ -750,17 +949,11 @@
 </head>
 <body>
 
-  <!-- ============ DEBUG BANNER (dev only) ============ -->
-  <div class="debug-banner hidden" id="debugBanner">
-    <div class="db-left">
-      <span class="db-item"><span class="db-label">source:</span><span class="db-value" id="dbSource">—</span></span>
-      <span class="db-item"><span class="db-label">name:</span><span class="db-value" id="dbName">—</span></span>
-      <span class="db-item"><span class="db-label">stage:</span><span class="db-value" id="dbStage">—</span></span>
-      <span class="db-item"><span class="db-label">plan:</span><span class="db-value" id="dbPlan">—</span></span>
-      <span class="db-item"><span class="db-label">Q1:</span><span class="db-value" id="dbQ1">—</span></span>
-      <span class="db-item"><span class="db-label">trials:</span><span class="db-value" id="dbTrials">—</span></span>
-    </div>
-    <button class="db-close" onclick="document.getElementById('debugBanner').classList.add('hidden')">hide</button>
+  <!-- ============ BOOT SCREEN ============ -->
+  <div class="boot-screen" id="bootScreen">
+    <div class="boot-spinner" id="bootSpinner"></div>
+    <div class="boot-title" id="bootTitle">Analyzing your response…</div>
+    <div class="boot-sub" id="bootSub">Checking your pacing, fillers, structure, and impact. This usually takes 5–10 seconds.</div>
   </div>
 
   <!-- ============ PREVIEW BANNER ============ -->
@@ -774,39 +967,26 @@
     </div>
   </div>
 
-  <!-- ============ GATE #2 OVERLAY ============ -->
-  <div class="onboarding-overlay hidden" id="gate2Overlay">
-    <div class="onboarding-card">
-      <div class="onboarding-header">
-        <div class="logo">📊</div>
-        <h2>One more thing — unlock your peer benchmark</h2>
-        <p>Tell us which function best describes your work.</p>
+  <!-- ============ GATE #2 OVERLAY (function) ============ -->
+  <div class="onboarding-overlay hidden" id="gate2Overlay" style="position:fixed; inset:0; background:rgba(11,15,25,0.98); backdrop-filter:blur(8px); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px;">
+    <div class="onboarding-card" style="background:var(--panel-bg); border:1px solid var(--border-color); border-radius:16px; padding:32px; width:100%; max-width:560px;">
+      <div style="text-align:center; margin-bottom:24px;">
+        <div style="font-size:24px; margin-bottom:8px;">📊</div>
+        <h2 style="font-size:20px; margin-bottom:6px;">One more thing — unlock your peer benchmark</h2>
+        <p style="font-size:13px; color:var(--text-muted);">Tell us which function best describes your work.</p>
       </div>
-      <div class="onboarding-options" id="gate2FunctionOptions">
-        <button class="onboarding-option" onclick="selectFunction(this, 'engineering')"><span class="emoji">🛠️</span> Engineering / Data</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'bpo')"><span class="emoji">🎧</span> BPO / Customer Support</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'manufacturing')"><span class="emoji">🏭</span> Manufacturing / Operations</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'sales')"><span class="emoji">📣</span> Sales / Marketing / BD</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'finance')"><span class="emoji">💰</span> Finance / Accounting</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'consulting')"><span class="emoji">📊</span> Consulting / Strategy</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'design')"><span class="emoji">🎨</span> Design / Content / Product</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'hr')"><span class="emoji">🤝</span> HR / People</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'other')"><span class="emoji">💼</span> Other</button>
+      <div class="onboarding-options" id="gate2FunctionOptions" style="display:flex; flex-direction:column; gap:10px;">
+        <button class="onboarding-option" onclick="selectFunction(this, 'engineering')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;"><span>🛠️</span> Engineering / Data</button>
+        <button class="onboarding-option" onclick="selectFunction(this, 'bpo')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;"><span>🎧</span> BPO / Customer Support</button>
+        <button class="onboarding-option" onclick="selectFunction(this, 'manufacturing')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;"><span>🏭</span> Manufacturing / Operations</button>
+        <button class="onboarding-option" onclick="selectFunction(this, 'sales')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;"><span>📣</span> Sales / Marketing / BD</button>
+        <button class="onboarding-option" onclick="selectFunction(this, 'finance')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;"><span>💰</span> Finance / Accounting</button>
+        <button class="onboarding-option" onclick="selectFunction(this, 'consulting')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;"><span>📊</span> Consulting / Strategy</button>
+        <button class="onboarding-option" onclick="selectFunction(this, 'design')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;"><span>🎨</span> Design / Content / Product</button>
+        <button class="onboarding-option" onclick="selectFunction(this, 'hr')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;"><span>🤝</span> HR / People</button>
+        <button class="onboarding-option" onclick="selectFunction(this, 'other')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;"><span>💼</span> Other</button>
       </div>
-      <button class="btn btn-primary" id="gate2Submit" onclick="submitGateTwo()" disabled style="margin-top: 20px; width: 100%; justify-content: center;">Show My Peer Benchmark →</button>
-    </div>
-  </div>
-
-  <!-- ============ TRIAL LOG MODAL ============ -->
-  <div class="modal-overlay hidden" id="trialLogModal">
-    <div class="modal-card">
-      <h3>📜 Your Trial Log — Q1</h3>
-      <p class="modal-sub">All trials for this question.</p>
-      <div id="trialLogContent"></div>
-      <div class="modal-actions">
-        <button class="btn-cancel" onclick="document.getElementById('trialLogModal').classList.add('hidden')">Close</button>
-        <button class="btn-save" onclick="goToPaywall('sprint')">Unlock more trials with Sprint</button>
-      </div>
+      <button class="btn btn-primary" id="gate2Submit" onclick="submitGateTwo()" disabled style="margin-top:20px; width:100%; justify-content:center; padding:12px 20px; border-radius:8px; font-weight:700; background:var(--primary); color:#FFF; border:none; cursor:pointer;">Show My Peer Benchmark →</button>
     </div>
   </div>
 
@@ -897,10 +1077,6 @@
             </div>
           </div>
           <div class="reps-log" id="q1RepsLog"></div>
-          <div id="q1PostActions" class="hidden" style="gap: 8px; flex-wrap: wrap;">
-            <button class="qc-action-btn primary-action" onclick="showSeniorRewrite()">✨ See Senior Rewrite</button>
-            <button class="qc-action-btn" onclick="showTrialLog()">📜 View Trial Log</button>
-          </div>
         </div>
 
         <!-- Q2 -->
@@ -943,7 +1119,7 @@
         </div>
 
         <!-- Today's Progress -->
-        <div class="today-summary lockable" id="todaySummaryBox">
+        <div class="today-summary">
           <h3>Today's Progress</h3>
           <div class="ts-row"><span>Total trials today</span><span class="ts-val" id="tsTotalReps">1 / 4</span></div>
           <div class="ts-row"><span>Time spent</span><span class="ts-val" id="tsTimeSpent">1 min</span></div>
@@ -963,23 +1139,21 @@
           <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">Voice Reps</button>
           <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">Scenario Library</button>
           <button class="sub-tab-btn" onclick="switchActivitySub('drills', this)">Communication Drills</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('daily-challenge', this)">Daily Challenge</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('reflection', this)">Reflection Journal</button>
           <button class="sub-tab-btn" onclick="switchActivitySub('bites', this)">Learning Bites</button>
           <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)">Interview Simulator</button>
         </div>
 
         <div id="sub-voice-reps" class="sub-activity-panel">
           <div class="sub-activity-card-grid">
-            <div class="activity-card" data-activity="quickrep">
+            <div class="activity-card locked-preview">
               <div class="ac-body">
                 <div class="activity-card-tag">45 Seconds · Core Habit</div>
                 <div class="activity-card-title">Quick Rep</div>
-                <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div>
+                <div class="activity-card-desc">Your chosen scenario, standard 45s timer.</div>
               </div>
               <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
-            <div class="activity-card" data-activity="challengerep">
+            <div class="activity-card locked-preview">
               <div class="ac-body">
                 <div class="activity-card-tag">90 Seconds · Pressure</div>
                 <div class="activity-card-title">Challenge Rep</div>
@@ -987,9 +1161,9 @@
               </div>
               <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
-            <div class="activity-card" data-activity="blindrep">
+            <div class="activity-card locked-preview">
               <div class="ac-body">
-                <div class="activity-card-tag">Instinct Test · No Prep</div>
+                <div class="activity-card-tag">Instinct Test</div>
                 <div class="activity-card-title">Blind Rep</div>
                 <div class="activity-card-desc">Random scenario revealed as recording begins.</div>
               </div>
@@ -1000,19 +1174,19 @@
 
         <div id="sub-scenarios" class="sub-activity-panel hidden">
           <div class="sub-activity-card-grid">
-            <div class="activity-card" data-activity="interview">
+            <div class="activity-card locked-preview">
               <div class="ac-body">
                 <div class="activity-card-tag">Skill Builder</div>
                 <div class="activity-card-title">Interview Questions</div>
-                <div class="activity-card-desc">Tell me about yourself · Salary negotiation · Why this role</div>
+                <div class="activity-card-desc">Tell me about yourself · Salary negotiation</div>
               </div>
               <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
-            <div class="activity-card" data-activity="updates">
+            <div class="activity-card locked-preview">
               <div class="ac-body">
                 <div class="activity-card-tag">Workplace Moments</div>
                 <div class="activity-card-title">Project &amp; Team Updates</div>
-                <div class="activity-card-desc">Project update · Handling pushback · Delivering bad news</div>
+                <div class="activity-card-desc">Handling pushback · Delivering bad news</div>
               </div>
               <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
@@ -1021,7 +1195,7 @@
 
         <div id="sub-drills" class="sub-activity-panel hidden">
           <div class="sub-activity-card-grid">
-            <div class="activity-card" data-activity="headline">
+            <div class="activity-card locked-preview">
               <div class="ac-body">
                 <div class="activity-card-tag">Precision Drill</div>
                 <div class="activity-card-title">Headline Drill</div>
@@ -1029,7 +1203,7 @@
               </div>
               <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
-            <div class="activity-card" data-activity="filler">
+            <div class="activity-card locked-preview">
               <div class="ac-body">
                 <div class="activity-card-tag">Precision Drill</div>
                 <div class="activity-card-title">Filler Elimination</div>
@@ -1040,58 +1214,29 @@
           </div>
         </div>
 
-        <div id="sub-daily-challenge" class="sub-activity-panel hidden">
-          <div class="dash-wide-box" style="position: relative;">
-            <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">COMMUNITY EXPERIENCE</div>
-            <h2 style="font-size: 18px; margin-top: 4px;">Today's Global Challenge: Handling Hostile Pushback</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">
-              Scenario: A senior VP cuts you off mid-presentation and says "This strategy won't scale." Respond concisely in 45 seconds.
-            </p>
-            <button class="ac-lock-cta" onclick="goToPaywall('sprint')" style="max-width: 320px;">🔒 Unlock with Sprint — ₹499</button>
-          </div>
-        </div>
-
-        <div id="sub-reflection" class="sub-activity-panel hidden">
-          <div class="studio-card" style="position: relative;">
-            <h3 style="font-size: 16px; margin-bottom: 12px;">Metacognition &amp; Self-Awareness Reflection</h3>
-            <div class="field-group">
-              <label>What did I want to say vs what I actually said?</label>
-              <textarea rows="2" placeholder="Reflect on your intention vs execution..." disabled style="opacity: 0.5;"></textarea>
-            </div>
-            <div class="field-group" style="margin-top: 10px;">
-              <label>What would I change in the first 10 seconds?</label>
-              <textarea rows="2" placeholder="Re-frame your opening line..." disabled style="opacity: 0.5;"></textarea>
-            </div>
-            <div class="lock-overlay" style="position: static; background: transparent; backdrop-filter: none; padding: 16px 0 0 0; align-items: flex-start; text-align: left;">
-              <div class="lock-desc" style="max-width: none;">🔒 Unlocks with a Sprint — reflection journaling as you practice.</div>
-              <button class="lock-cta" onclick="goToPaywall('sprint')" style="margin-top: 10px;">Enroll in a Sprint →</button>
-            </div>
-          </div>
-        </div>
-
         <div id="sub-bites" class="sub-activity-panel hidden">
           <div class="sub-activity-card-grid">
-            <div class="activity-card" data-activity="pyramid">
+            <div class="activity-card locked-preview">
               <div class="ac-body">
                 <div class="activity-card-tag">3-Min Concept</div>
                 <div class="activity-card-title">Pyramid Principle</div>
-                <div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div>
+                <div class="activity-card-desc">Lead with the conclusion, then support.</div>
               </div>
               <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
-            <div class="activity-card" data-activity="bluf">
+            <div class="activity-card locked-preview">
               <div class="ac-body">
                 <div class="activity-card-tag">3-Min Concept</div>
                 <div class="activity-card-title">BLUF Method</div>
-                <div class="activity-card-desc">Bottom Line Up Front — concise executive communication.</div>
+                <div class="activity-card-desc">Bottom Line Up Front for executive comms.</div>
               </div>
               <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
-            <div class="activity-card" data-activity="star">
+            <div class="activity-card locked-preview">
               <div class="ac-body">
                 <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">The STAR Method</div>
-                <div class="activity-card-desc">Situation → Task → Action → Result. Interview gold standard.</div>
+                <div class="activity-card-title">STAR Method</div>
+                <div class="activity-card-desc">Situation → Task → Action → Result.</div>
               </div>
               <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlock with Sprint — ₹499</button>
             </div>
@@ -1099,62 +1244,58 @@
         </div>
 
         <div id="sub-simulator" class="sub-activity-panel hidden">
-          <div class="dash-wide-box" style="border-color: var(--accent-purple); position: relative;">
+          <div class="dash-wide-box" style="border-color: var(--accent-purple);">
             <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
             <h2 style="font-size: 18px;">Full 5-Question Mock Interview</h2>
             <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">Dynamic follow-ups and comprehensive debrief.</p>
             <button class="ac-lock-cta" onclick="goToPaywall('pass')" style="max-width: 320px;">🔒 Unlock with Practice Pass — ₹1,299/mo</button>
           </div>
         </div>
-
-        <div class="locked-tracks">
-          <h3>🔒 Unlock More Sprints</h3>
-          <p>You're on the Trial. Upgrade to unlock all Sprints and unlimited practice.</p>
-          <div class="locked-tracks-grid">
-            <div class="locked-track-item">🔒 Group Discussion</div>
-            <div class="locked-track-item">🔒 Present to Group</div>
-            <div class="locked-track-item">🔒 Meeting Sprint</div>
-            <div class="locked-track-item">🔒 Storytelling</div>
-            <div class="locked-track-item">🔒 Charismatic Leader</div>
-            <div class="locked-track-item">🔒 Frontline Communication</div>
-          </div>
-          <button class="btn btn-primary" onclick="goToPaywall('pass')">Unlock Practice Pass →</button>
-        </div>
       </section>
 
-      <!-- ============ STUDIO ============ -->
-      <section class="studio-card hidden" id="activeStudioContainer" style="margin-top: 20px;">
-        <div class="prompt-header">
-          <div>
-            <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">ACTIVE RECORDING</div>
-            <h2 id="activePromptDisplay" style="font-size: 16px; margin-top: 4px;">—</h2>
-          </div>
-          <div class="timer-display" id="timerDisplay">01:00</div>
-        </div>
-        <div class="canvas-box"><canvas id="waveformCanvas"></canvas></div>
-        <button class="btn btn-primary" id="recordBtn">🎤 Start Recording</button>
-        <div class="output-section hidden" id="outputSection" style="margin-top: 20px;">
-          <hr style="border-color: var(--border-color); margin: 16px 0;" />
-          <h3 style="font-size: 14px; margin-bottom: 8px;">Instant Analysis</h3>
-          <div class="snr-container">
-            <div style="display: flex; justify-content: space-between; font-size: 12px;">
-              <span style="font-weight: 700;">Clarity Score</span>
-              <span style="color: var(--success); font-weight: 700;" id="studioSnrText">—</span>
-            </div>
-            <div class="snr-bar-wrapper">
-              <div class="snr-signal" id="studioSnrBar" style="width: 0%;"></div>
-              <div class="snr-noise" id="studioSnrNoise" style="width: 0%;"></div>
-            </div>
-          </div>
-          <div class="better-response-box">
-            <div style="color: var(--accent-purple); font-weight: 700; margin-bottom: 4px;">✨ Senior Rewrite:</div>
-            <p id="studioModelAnswer">—</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ PROGRESS ============ -->
+      <!-- ============ PROGRESS / DASHBOARD ============ -->
       <section class="view-panel active-view" id="dashView">
+
+        <!-- YOUR ANALYSIS — populated from backend -->
+        <div class="your-analysis-card" id="yourAnalysisCard">
+          <div class="ya-header">
+            <span class="ya-badge">✦ YOUR ANALYSIS</span>
+            <span class="ya-sub">Here's what we found in your first response</span>
+          </div>
+
+          <div class="ya-score-block">
+            <div class="ya-score">
+              <span class="ya-score-value" id="yaScoreValue">—</span>
+              <span class="ya-score-denom">/10</span>
+            </div>
+            <div class="ya-score-label">Overall Score</div>
+          </div>
+
+          <div class="ya-grid">
+            <div class="ya-box">
+              <div class="ya-box-label">What I Noticed</div>
+              <div class="ya-pattern-name" id="yaPatternName">—</div>
+              <div class="ya-pattern-desc" id="yaPatternDesc">—</div>
+            </div>
+            <div class="ya-box">
+              <div class="ya-box-label">What Got Lost</div>
+              <ul class="ya-list" id="yaGotLostList"><li>—</li></ul>
+            </div>
+            <div class="ya-box">
+              <div class="ya-box-label">Quick Wins</div>
+              <ul class="ya-list wins" id="yaWinsList"><li>—</li></ul>
+            </div>
+            <div class="ya-box">
+              <div class="ya-box-label">Your Executive Version</div>
+              <div class="ya-executive" id="yaExecutiveVersion">—</div>
+            </div>
+          </div>
+
+          <div class="ya-footer">
+            <button class="ya-btn" onclick="switchView('today')">🎙 Try Again in Today →</button>
+          </div>
+        </div>
+
         <div class="timeline-bar">
           <span style="font-weight: 700; font-size: 14px;">YOUR PROGRESS</span>
           <div class="timeline-tabs">
@@ -1165,45 +1306,29 @@
         </div>
 
         <div class="dash-grid">
-          <div class="metric-box lockable">
+          <div class="metric-box">
             <div class="metric-label">Time-to-Point</div>
             <div class="metric-value" id="metricTTP">—</div>
             <div class="metric-sub" id="metricTTPSub">—</div>
-            <div class="lock-overlay" id="dashLock1">
-              <div class="lock-icon">🔒</div>
-              <div class="lock-desc">Unlocks after your first response.</div>
-            </div>
           </div>
-          <div class="metric-box lockable">
+          <div class="metric-box">
             <div class="metric-label">Clarity Score</div>
             <div class="metric-value" id="metricClarity">—</div>
             <div class="metric-sub" id="metricClaritySub">—</div>
-            <div class="lock-overlay" id="dashLock2">
-              <div class="lock-icon">🔒</div>
-              <div class="lock-desc">Unlocks after your first response.</div>
-            </div>
           </div>
-          <div class="metric-box lockable">
+          <div class="metric-box">
             <div class="metric-label">Structure</div>
             <div class="metric-value" id="metricStructure">—</div>
             <div class="metric-sub" id="metricStructureSub">—</div>
-            <div class="lock-overlay" id="dashLock3">
-              <div class="lock-icon">🔒</div>
-              <div class="lock-desc">Unlocks after your first response.</div>
-            </div>
           </div>
-          <div class="metric-box lockable">
+          <div class="metric-box">
             <div class="metric-label">Impact &amp; Gravitas</div>
             <div class="metric-value" id="metricImpact">—</div>
             <div class="metric-sub" id="metricImpactSub">—</div>
-            <div class="lock-overlay" id="dashLock4">
-              <div class="lock-icon">🔒</div>
-              <div class="lock-desc">Unlocks after your first response.</div>
-            </div>
           </div>
         </div>
 
-        <div class="dash-wide-box lockable">
+        <div class="dash-wide-box">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-weight: 700; font-size: 14px;">Clarity &amp; Focus</span>
             <span style="font-weight: 700; font-size: 13px;">Target: 85% · Current: <span style="color: var(--success);" id="dashSnrValue">—</span></span>
@@ -1220,68 +1345,32 @@
           </div>
         </div>
 
-        <div class="dash-wide-box lockable">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-            <span style="font-weight: 700; font-size: 14px;">28-Day Progress</span>
-          </div>
-          <div class="trend-chart-container">
-            <svg viewBox="0 0 600 140" preserveAspectRatio="none" id="trendChart">
-              <line x1="0" y1="35" x2="600" y2="35" stroke="#374151" stroke-width="0.5" stroke-dasharray="3 3" />
-              <line x1="0" y1="70" x2="600" y2="70" stroke="#374151" stroke-width="0.5" stroke-dasharray="3 3" />
-              <line x1="0" y1="105" x2="600" y2="105" stroke="#374151" stroke-width="0.5" stroke-dasharray="3 3" />
-              <polyline id="clarityLine" fill="none" stroke="#10B981" stroke-width="2.5" points="" />
-              <polyline id="ttpLine" fill="none" stroke="#38BDF8" stroke-width="2.5" points="" />
-            </svg>
-            <div class="trend-legend">
-              <span><span class="legend-dot" style="background:#10B981;"></span> Clarity Score</span>
-              <span><span class="legend-dot" style="background:#38BDF8;"></span> Time-to-Point</span>
-            </div>
-          </div>
-          <div class="lock-overlay" id="dashLockTrend">
-            <div class="lock-icon">📈</div>
-            <div class="lock-title">Add 2 more reps to see your trend line</div>
-            <div class="lock-desc">We'll plot your clarity and time-to-point over time as you practice.</div>
-            <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint →</button>
-          </div>
-        </div>
-
         <div class="feedback-grid">
-          <div class="feedback-box well lockable">
+          <div class="feedback-box well">
             <div class="feedback-title" style="color: var(--success);"><span>✅</span> What Was Going Well</div>
-            <ul class="feedback-list" id="dashWellList"><li>Complete your first rep to see strengths.</li></ul>
-            <div class="lock-overlay" id="dashLockWell">
-              <div class="lock-icon">🔒</div>
-              <div class="lock-title">Unlocks after your first response</div>
-              <div class="lock-desc">Your strengths report builds from your first rep.</div>
-              <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint →</button>
-            </div>
+            <ul class="feedback-list" id="dashWellList"><li>—</li></ul>
           </div>
-          <div class="feedback-box improve lockable">
+          <div class="feedback-box improve">
             <div class="feedback-title" style="color: var(--accent-gold);"><span>🎯</span> What to Improve</div>
-            <ul class="feedback-list" id="dashImproveList"><li>Complete your first rep to see opportunities.</li></ul>
-            <div class="lock-overlay" id="dashLockImprove">
-              <div class="lock-icon">🔒</div>
-              <div class="lock-title">Unlocks after your first response</div>
-              <div class="lock-desc">Your improvement report builds from your first rep.</div>
-              <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint →</button>
-            </div>
+            <ul class="feedback-list" id="dashImproveList"><li>—</li></ul>
           </div>
         </div>
 
-        <!-- TRY AGAIN BAR -->
         <div class="try-again-bar" id="tryAgainBar">
           <div class="ta-text">
             <strong>Want to improve your score?</strong><br />
             You have <strong id="taRemaining">3</strong> free trials left in this Trial.
           </div>
-          <button class="ta-btn" onclick="goToTodayTab()">🎤 Try Again →</button>
+          <button class="ta-btn" onclick="switchView('today')">🎙 Try Again →</button>
         </div>
       </section>
 
       <!-- ============ RECORDINGS ============ -->
       <section class="view-panel" id="recordingsView">
         <h2 style="font-size: 18px;">🎙️ My Saved Practice Sessions</h2>
-        <div id="recordingsList"><p style="color: var(--text-muted); font-size: 13px;">Complete a drill to see it here.</p></div>
+        <div id="recordingsList">
+          <p style="color: var(--text-muted); font-size: 13px;">Complete a drill to see it here.</p>
+        </div>
       </section>
 
       <!-- ============ BADGES ============ -->
@@ -1304,7 +1393,7 @@
       <!-- ============ PILLARS ============ -->
       <section class="view-panel" id="pillarsView">
         <h2 style="font-size: 18px;">🏛️ Pillars of Executive Communication</h2>
-        <div class="studio-card">
+        <div style="background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px;">
           <p style="color: var(--text-muted); font-size: 13px;">Master Structure (STAR), Conciseness (Time to Point), Tone, and Presence.</p>
         </div>
       </section>
@@ -1312,14 +1401,8 @@
       <!-- ============ LEARNING ============ -->
       <section class="view-panel" id="learningView">
         <h2 style="font-size: 18px;">📚 My Learning Modules</h2>
-        <div class="studio-card lockable">
+        <div style="background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px;">
           <p style="color: var(--text-muted); font-size: 13px;">Curated micro-lessons tailored to your target role.</p>
-          <div class="lock-overlay" id="learningLock">
-            <div class="lock-icon">🔒</div>
-            <div class="lock-title">Unlocks after your first response</div>
-            <div class="lock-desc">Learning modules activate once you start your Sprint practice.</div>
-            <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint →</button>
-          </div>
         </div>
       </section>
 
@@ -1327,59 +1410,164 @@
   </div>
 
   <script>
-    /* ============================================================
-       DEV MODE
-       ============================================================ */
-    // Auto-detect dev: show debug banner if URL has ?debug=1
-    // or if running on file:// or localhost
-    const DEV_MODE =
-      new URLSearchParams(window.location.search).get('debug') === '1' ||
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1' ||
-      window.location.protocol === 'file:';
+    // ============================================================
+    // CONFIG
+    // ============================================================
+    const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
+    const PLAN_LABEL = { trial: 'Trial', sprint: 'Sprint Pass', pass: 'Practice Pass' };
 
-    /* ============================================================
-       READ INCOMING USER — URL → localStorage → demo fallback
-       ============================================================ */
-    let userSource = 'demo';
+    // ============================================================
+    // RUNTIME STATE
+    // ============================================================
+    let USER = null;
+    let SESSION_TOKEN = null;
+    let ANALYSIS = null;
+    let state = {
+      q1Trials: [],
+      q2Trials: [],
+      function: null
+    };
 
-    function readIncomingUser() {
-      // 1) Try URL param (landing page handoff)
+    // ============================================================
+    // BOOT SEQUENCE
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      bootstrap();
+    });
+
+    async function bootstrap() {
+      const bootScreen = document.getElementById('bootScreen');
+      const bootTitle = document.getElementById('bootTitle');
+      const bootSub = document.getElementById('bootSub');
+      const bootSpinner = document.getElementById('bootSpinner');
+
+      // 1. Read session token from URL
       const params = new URLSearchParams(window.location.search);
-      const data = params.get('data');
-      if (data) {
-        try {
-          const decoded = JSON.parse(decodeURIComponent(escape(atob(data))));
-          try { localStorage.setItem('unspoken_user', JSON.stringify(decoded)); } catch (e) {}
-          userSource = 'url';
-          console.log('✅ Loaded user from URL param:', decoded);
-          return decoded;
-        } catch (e) {
-          console.warn('⚠️ URL param decode failed, falling back to localStorage:', e);
-        }
+      SESSION_TOKEN = params.get('session');
+
+      // Clean the URL immediately
+      if (SESSION_TOKEN) {
+        window.history.replaceState({}, '', window.location.pathname);
       }
 
-      // 2) Try localStorage
-      const stored = localStorage.getItem('unspoken_user');
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          userSource = 'localStorage';
-          console.log('✅ Loaded user from localStorage:', parsed);
-          return parsed;
-        } catch (e) {
-          console.warn('⚠️ localStorage parse failed:', e);
+      // 2. If no token — this is a return visit, check localStorage
+      if (!SESSION_TOKEN) {
+        const stored = localStorage.getItem('unspoken_user');
+        if (stored) {
+          try {
+            USER = JSON.parse(stored);
+            bootScreen.classList.add('hidden');
+            renderAll();
+            return;
+          } catch (e) {
+            console.warn('Failed to parse stored user:', e);
+          }
         }
+        // No token, no stored user → show "start fresh" state
+        showFreshState();
+        return;
       }
 
-      // 3) Demo fallback
-      userSource = 'demo';
-      console.warn('⚠️ No user data found. Using demo fallback.');
+      // 3. We have a token — call analyze
+      bootSpinner.classList.remove('hidden');
+      bootTitle.textContent = 'Analyzing your response…';
+      bootSub.textContent = 'Checking your pacing, fillers, structure, and impact. This usually takes 5–10 seconds.';
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/drills/analyze`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SESSION_TOKEN}`
+          }
+        });
+
+        // 4. Handle token errors
+        if (res.status === 401) {
+          showSessionExpired('This session has expired or has already been used.');
+          return;
+        }
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        ANALYSIS = data;
+        USER = buildUserFromAnalysis(data);
+
+        // 5. Persist user (no token — one-time use)
+        try {
+          localStorage.setItem('unspoken_user', JSON.stringify(USER));
+        } catch (e) {}
+
+        // 6. Render everything
+        bootScreen.classList.add('hidden');
+        renderAll();
+
+      } catch (err) {
+        console.error('Analysis failed:', err);
+        showErrorState(err.message || 'Something went wrong.');
+      }
+    }
+
+    // ============================================================
+    // BUILD USER FROM ANALYSIS
+    // ============================================================
+    function buildUserFromAnalysis(data) {
+      const signals = data.signals || {};
+      const metrics = data.metrics || {};
+      const diagnosis = data.diagnosis || {};
+      const gap = data.gap || {};
+      const coaching = data.coaching || {};
+      const rewrite = data.before_after_rewrite || {};
+
+      const score = Math.max(1, Math.min(10, Math.round(((metrics.impact || 55) / 10) * 10) / 10));
+
+      const q1Metrics = {
+        wpm: signals.words_per_minute || 128,
+        wordCount: signals.word_count || 0,
+        fillerRatio: signals.filler_words?.percentage || 0,
+        fillerCounts: signals.filler_words?.breakdown || {},
+        fillerTotal: signals.filler_words?.total || 0,
+        avgSentence: signals.sentences?.average_length || 0,
+        longest: signals.sentences?.longest || 0,
+        longPauses: (signals.long_pauses || []).length,
+        clarity: metrics.clarity || Math.round(score * 10),
+        structure: metrics.structure || Math.round(score * 9),
+        impact: metrics.impact || Math.round(score * 8),
+        timeToPoint: signals.main_point_delay_seconds || 0,
+        overallScore: score.toFixed(1),
+        patternName: diagnosis.pattern_name || 'The Communicator',
+        patternDesc: diagnosis.pattern_description || 'You get your point across but could tighten the delivery.',
+        gapGotLost: gap.what_got_lost || '',
+        gapUnspoken: gap.unspoken_gap || '',
+        wins: [
+          coaching.one_thing_to_change || 'Lead with the point',
+          (signals.filler_words?.total || 0) > 3 ? 'Cut filler words' : 'Front-load your result',
+          (signals.sentences?.average_length || 0) > 15 ? 'Shorten your sentences' : 'Add a clear structure marker'
+        ],
+        strengths: [
+          'Clear opening — you led with the situation',
+          'Steady pacing at ' + (signals.words_per_minute || 128) + ' WPM',
+          (signals.filler_words?.total || 0) === 0 ? 'No filler words detected' : 'Limited hedging language'
+        ],
+        improvements: [
+          'Reduce filler words (' + (signals.filler_words?.percentage || 0) + '% — target < 3%)',
+          'Quantify your outcome (add a % or figure)',
+          'Add a 2-second pause after your conclusion'
+        ],
+        transcript: data.transcribed_text || '',
+        seniorRewrite: rewrite.executive_version || coaching.executive_version || '',
+        executiveVersion: rewrite.executive_version || coaching.executive_version || ''
+      };
+
       return {
-        user_id: 'demo-user',
-        name: 'Guest',
-        email: '',
-        stage: 'early',
+        user_id: data.user_id || 'u_' + Date.now(),
+        drill_id: data.drill_id,
+        name: data.name || 'Guest',
+        email: data.email || '',
+        stage: data.stage || 'early',
         function: null,
         plan: 'trial',
         track_id: null,
@@ -1387,277 +1575,130 @@
         total_days: 28,
         questions_per_day: 2,
         trials_per_question: 2,
-        landing_trial: null
+        landing_trial: {
+          q1_prompt: data.question || 'Tell me about yourself.',
+          q1_focus: 'Structure & Conciseness',
+          q1_target: '60 seconds',
+          q1_difficulty: 'easy',
+          q1_duration: signals.duration_seconds || 30,
+          q1_metrics: q1Metrics
+        }
       };
     }
 
-    const USER = readIncomingUser();
+    // ============================================================
+    // RENDER EVERYTHING
+    // ============================================================
+    function renderAll() {
+      renderHeader();
+      renderYourAnalysis();
+      renderProgressMetrics();
+      renderStrengthsAndImprovements();
+      renderTodayCards();
+      renderTodayProgress();
+      renderBanner();
+      renderBadges();
+      renderProfile();
+    }
 
-    /* ============================================================
-       RULES
-       ============================================================ */
-    const RULES = {
-      trial: {
-        questionsPerDay: 2, trialsPerQuestion: 2,
-        canChangeQuestion: false, canCustomizeQuestion: false,
-        canAccessTrend: false, canAccessActivities: false, canAccessSimulator: false,
-        showPreviewBanner: true, showNavBadge: false, planLabel: 'Trial'
-      },
-      sprint: {
-        questionsPerDay: 2, trialsPerQuestion: 10,
-        canChangeQuestion: true, canCustomizeQuestion: true,
-        canAccessTrend: true, canAccessActivities: true, canAccessSimulator: true,
-        showPreviewBanner: false, showNavBadge: true, planLabel: 'Sprint Pass'
-      },
-      pass: {
-        questionsPerDay: 10, trialsPerQuestion: 10,
-        canChangeQuestion: true, canCustomizeQuestion: true,
-        canAccessTrend: true, canAccessActivities: true, canAccessSimulator: true,
-        showPreviewBanner: false, showNavBadge: true, planLabel: 'Practice Pass'
-      }
-    };
+    function renderHeader() {
+      document.getElementById('userNameEl').textContent = USER.name;
+      document.getElementById('userAvatarEl').textContent = USER.name.charAt(0).toUpperCase();
+      document.getElementById('userRoleEl').textContent = formatStage(USER.stage);
+      document.getElementById('planBadge').textContent = PLAN_LABEL[USER.plan] || 'Trial';
+      document.getElementById('headerTrackBadge').textContent = 'Trial';
+    }
 
-    const CURRENT_RULES = RULES[USER.plan] || RULES.trial;
-
-    /* ============================================================
-       SAMPLE CONTENT
-       ============================================================ */
-    const SAMPLE_Q1 = {
-      prompt: 'Tell me about yourself.',
-      focus: 'Structure & Conciseness',
-      target: '60 seconds',
-      difficulty: 'easy',
-      durationSeconds: 60
-    };
-
-    const SAMPLE_Q2 = {
-      prompt: 'Walk me through your resume.',
-      focus: 'Narrative & Relevance',
-      target: '90 seconds',
-      difficulty: 'medium',
-      durationSeconds: 90
-    };
-
-    const FALLBACK_METRICS = {
-      wpm: 128, wordCount: 142, fillerRatio: 7,
-      clarity: 62, structure: 55, impact: 48, timeToPoint: 12,
-      strengths: ['Clear opening', 'Steady pacing', 'No hedging language'],
-      improvements: ['Reduce filler words', 'Quantify outcome', 'Add pause after conclusion'],
-      seniorRewrite: 'I inherited a project that was 6 weeks behind with 50% attrition...'
-    };
-
-    const FIRST_METRICS = (USER.landing_trial && USER.landing_trial.q1_metrics)
-      ? USER.landing_trial.q1_metrics
-      : FALLBACK_METRICS;
-
-    /* ============================================================
-       STATE
-       ============================================================ */
-    const state = {
-      q1Trials: (USER.landing_trial ? [{
-        number: 1,
-        clarity: FIRST_METRICS.clarity,
-        structure: FIRST_METRICS.structure,
-        impact: FIRST_METRICS.impact,
-        timeToPoint: FIRST_METRICS.timeToPoint
-      }] : []),
-      q2Trials: [],
-      q1Metrics: USER.landing_trial ? FIRST_METRICS : null,
-      function: USER.function || null,
-      activeRecording: null,
-      isRecording: false,
-      timer: null,
-      secondsLeft: 0,
-      maxDuration: 60
-    };
-
-    /* ============================================================
-       APPLY VIEW
-       ============================================================ */
-    function applyView() {
-      // Header badge
-      const badge = document.getElementById('headerTrackBadge');
-      if (USER.plan === 'sprint' && USER.track_id) {
-        badge.textContent = `${formatTrack(USER.track_id)} · Day ${USER.current_day} of ${USER.total_days}`;
-      } else if (USER.plan === 'pass') {
-        badge.textContent = `Practice Pass · Day ${USER.current_day}`;
-      } else {
-        badge.textContent = 'Trial';
-      }
-
-      // Plan badge
-      document.getElementById('planBadge').textContent = CURRENT_RULES.planLabel;
-      if (USER.plan === 'trial') {
-        document.getElementById('planBadge').classList.add('trial');
-      } else {
-        document.getElementById('planBadge').classList.remove('trial');
-      }
-
-      // User identity
-      document.getElementById('userNameEl').textContent = USER.name || '—';
-      document.getElementById('userAvatarEl').textContent = (USER.name || 'A').charAt(0).toUpperCase();
-      document.getElementById('userRoleEl').textContent = formatStage(USER.stage) || '—';
-
-      // Profile dropdowns
+    function renderProfile() {
       if (USER.stage) {
         document.getElementById('profileStage').innerHTML = `<option selected>${formatStage(USER.stage)}</option>`;
       }
       if (USER.function) {
         document.getElementById('profileFunction').innerHTML = `<option selected>${formatFunction(USER.function)}</option>`;
       }
+    }
 
-      // Banner
-      const banner = document.getElementById('previewBanner');
-      if (CURRENT_RULES.showPreviewBanner) {
-        banner.classList.remove('hidden');
-        document.getElementById('previewName').textContent = USER.name || 'there';
-        updateBannerText();
-      } else {
-        banner.classList.add('hidden');
+    // ─── YOUR ANALYSIS CARD ───
+    function renderYourAnalysis() {
+      const card = document.getElementById('yourAnalysisCard');
+      const m = USER.landing_trial?.q1_metrics;
+      if (!m) {
+        card.classList.add('hidden');
+        return;
       }
 
-      // Nav badge
-      if (CURRENT_RULES.showNavBadge) {
-        const existing = document.getElementById('todayNavBadge');
-        if (!existing) {
-          const el = document.createElement('span');
-          el.className = 'nav-badge';
-          el.id = 'todayNavBadge';
-          el.textContent = CURRENT_RULES.questionsPerDay;
-          document.getElementById('navToday').appendChild(el);
-        }
-      }
+      document.getElementById('yaScoreValue').textContent = m.overallScore || '—';
+      document.getElementById('yaPatternName').textContent = m.patternName || '—';
+      document.getElementById('yaPatternDesc').textContent = m.patternDesc || '—';
 
-      // Change/Customize card
-      const changeCard = document.getElementById('freeChangeCustomizeCard');
-      if (!CURRENT_RULES.canChangeQuestion) {
-        changeCard.classList.remove('hidden');
-      } else {
-        changeCard.classList.add('hidden');
-      }
+      const gotLost = [
+        m.gapGotLost || 'Your credibility and authority in the first 10 seconds',
+        m.gapUnspoken || 'Between your intent to sound confident and how you actually land'
+      ];
+      document.getElementById('yaGotLostList').innerHTML = gotLost.map(x => `<li>${x}</li>`).join('');
 
-      // Activities lock states
-      document.querySelectorAll('.activity-card').forEach(card => {
-        const lockBtn = card.querySelector('.ac-lock-cta');
-        if (!CURRENT_RULES.canAccessActivities) {
-          card.classList.add('locked-preview');
-          if (lockBtn) lockBtn.style.display = 'flex';
-        } else {
-          card.classList.remove('locked-preview');
-          if (lockBtn) lockBtn.style.display = 'none';
-        }
-      });
+      const wins = m.wins && m.wins.length ? m.wins : ['Lead with the point'];
+      document.getElementById('yaWinsList').innerHTML = wins.map(x => `<li>${x}</li>`).join('');
 
-      // Trend lock
-      if (!CURRENT_RULES.canAccessTrend) {
-        document.getElementById('dashLockTrend').classList.remove('hidden');
-      }
+      document.getElementById('yaExecutiveVersion').textContent =
+        '"' + (m.executiveVersion || m.seniorRewrite || 'Your executive version here.') + '"';
+    }
 
-      // Populate progress if landing trial exists
-      if (USER.landing_trial && USER.landing_trial.q1_metrics) {
-        populateProgress(FIRST_METRICS, false);
-      } else {
-        // No landing trial — leave metrics locked
-        ['dashLock1','dashLock2','dashLock3','dashLock4','dashLockWell','dashLockImprove'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.classList.remove('hidden');
-        });
+    // ─── PROGRESS METRICS ───
+    function renderProgressMetrics() {
+      const m = USER.landing_trial?.q1_metrics;
+      if (!m) return;
+
+      document.getElementById('metricTTP').textContent = `${m.timeToPoint}s`;
+      document.getElementById('metricTTPSub').textContent = 'Keep practicing to lower this';
+      document.getElementById('metricClarity').textContent = `${m.clarity} / 100`;
+      document.getElementById('metricClaritySub').textContent = m.clarity >= 80 ? '🟢 Strong' : '🟡 Getting started';
+      document.getElementById('metricStructure').textContent = `${m.structure} / 100`;
+      document.getElementById('metricStructureSub').textContent = 'Practice BLUF framing';
+      document.getElementById('metricImpact').textContent = `${m.impact} / 100`;
+      document.getElementById('metricImpactSub').textContent = '🔴 Quantify outcomes';
+
+      document.getElementById('dashSnrValue').textContent = `${m.clarity}%`;
+      document.getElementById('dashSnrSignal').style.width = `${m.clarity}%`;
+      document.getElementById('dashSnrNoise').style.width = `${100 - m.clarity}%`;
+    }
+
+    function renderStrengthsAndImprovements() {
+      const m = USER.landing_trial?.q1_metrics;
+      if (!m) return;
+      document.getElementById('dashWellList').innerHTML = (m.strengths || []).map(s => `<li>${s}</li>`).join('');
+      document.getElementById('dashImproveList').innerHTML = (m.improvements || []).map(s => `<li>${s}</li>`).join('');
+    }
+
+    // ─── TODAY CARDS ───
+    function renderTodayCards() {
+      const m = USER.landing_trial?.q1_metrics;
+      const q1 = USER.landing_trial;
+
+      // Q1 text + meta
+      document.getElementById('q1Text').textContent = q1 ? `"${q1.q1_prompt}"` : '"Tell me about yourself."';
+      document.getElementById('q1Meta').textContent = q1 ? `Focus: ${q1.q1_focus} · Target: ${q1.q1_target}` : '';
+      document.getElementById('q1Label').textContent = m ? 'Q1 of 2 · Trial 1 of 2 done' : 'Q1 of 2 · Your first drill';
+
+      if (m) {
+        state.q1Trials = [{
+          number: 1,
+          clarity: m.clarity,
+          structure: m.structure,
+          impact: m.impact,
+          timeToPoint: m.timeToPoint
+        }];
       }
 
       updateQ1Card();
       updateQ2Card();
-      updateTodayProgress();
 
-      // Debug banner
-      updateDebugBanner();
-    }
-
-    function formatTrack(id) {
-      const m = { interview:'Interview Sprint', group_discussion:'Group Discussion', sales:'Sales Sprint', pitch:'Pitch Sprint', presentation:'Presentation Sprint', public_speaking:'Public Speaking', storytelling:'Storytelling Sprint', frontline:'Frontline Communication' };
-      return m[id] || id;
-    }
-    function formatStage(s) {
-      const m = { student:'Student / Final Year', fresher:'Fresher (0–1 yr)', early:'Early Career (1–5 yrs)', mid:'Mid Career (5–15 yrs)', senior:'Senior / Lead (15+ yrs)' };
-      return m[s] || s || '—';
-    }
-    function formatFunction(f) {
-      const m = { engineering:'Engineering / Data', bpo:'BPO / Customer Support', manufacturing:'Manufacturing / Ops', sales:'Sales / Marketing / BD', finance:'Finance / Accounting', consulting:'Consulting / Strategy', design:'Design / Content / Product', hr:'HR / People', other:'Other' };
-      return m[f] || f || '—';
-    }
-
-    /* ============================================================
-       DEBUG BANNER
-       ============================================================ */
-    function updateDebugBanner() {
-      if (!DEV_MODE) return;
-      const el = document.getElementById('debugBanner');
-      el.classList.remove('hidden');
-
-      const sourceEl = document.getElementById('dbSource');
-      sourceEl.textContent = userSource;
-      sourceEl.className = 'db-value ' + (
-        userSource === 'url' ? 'ok' :
-        userSource === 'localStorage' ? 'ok' :
-        'warn'
-      );
-
-      document.getElementById('dbName').textContent = USER.name || '—';
-      document.getElementById('dbStage').textContent = USER.stage || '—';
-      document.getElementById('dbPlan').textContent = USER.plan || '—';
-      document.getElementById('dbQ1').textContent = USER.landing_trial ? 'yes' : 'no';
-      document.getElementById('dbQ1').className = 'db-value ' + (USER.landing_trial ? 'ok' : 'warn');
-      document.getElementById('dbTrials').textContent = `${state.q1Trials.length}/${CURRENT_RULES.trialsPerQuestion} Q1 · ${state.q2Trials.length}/${CURRENT_RULES.trialsPerQuestion} Q2`;
-
-      // Auto-hide after 12 sec
-      setTimeout(() => el.classList.add('hidden'), 12000);
-    }
-
-    /* ============================================================
-       BANNER TEXT
-       ============================================================ */
-    function updateBannerText() {
-      const el = document.getElementById('previewBannerText');
-      const name = USER.name || 'there';
-      const q1Count = state.q1Trials.length;
-      const q2Count = state.q2Trials.length;
-      if (q1Count <= 1 && q2Count === 0) {
-        el.innerHTML = `👋 Hi <strong>${name}</strong> — Trial 1 recorded. Try again to improve.`;
-      } else if (q1Count >= 1 && q2Count === 0) {
-        el.innerHTML = `✅ Nice work, <strong>${name}</strong>. You have 1 more free drill.`;
-      } else if (q2Count >= 1) {
-        el.innerHTML = `🎯 Two drills done, <strong>${name}</strong>. Unlock a Sprint to keep practicing.`;
-      }
-    }
-
-    /* ============================================================
-       CARD INIT
-       ============================================================ */
-    function initCards() {
-      // Use landing trial question as Q1
-      if (USER.landing_trial) {
-        SAMPLE_Q1.prompt = USER.landing_trial.q1_prompt || SAMPLE_Q1.prompt;
-        SAMPLE_Q1.focus = USER.landing_trial.q1_focus || SAMPLE_Q1.focus;
-        SAMPLE_Q1.target = USER.landing_trial.q1_target || SAMPLE_Q1.target;
-        SAMPLE_Q1.difficulty = USER.landing_trial.q1_difficulty || SAMPLE_Q1.difficulty;
-        SAMPLE_Q1.durationSeconds = USER.landing_trial.q1_duration || 60;
-      }
-
-      document.getElementById('q1Text').textContent = `"${SAMPLE_Q1.prompt}"`;
-      document.getElementById('q1Meta').textContent = `Focus: ${SAMPLE_Q1.focus} · Target: ${SAMPLE_Q1.target}`;
-      document.getElementById('q2Text').textContent = `"${SAMPLE_Q2.prompt}"`;
-      document.getElementById('q2Meta').textContent = `Complete Q1 to unlock`;
-
-      document.getElementById('q1RepBtn').onclick = () => startRep('q1');
-      document.getElementById('q2RepBtn').onclick = () => startRep('q2');
-
-      // Difficulty
-      const q1Diff = document.getElementById('q1Diff');
-      q1Diff.className = `qc-difficulty ${SAMPLE_Q1.difficulty}`;
-      q1Diff.textContent = SAMPLE_Q1.difficulty === 'easy' ? '⭐ Easy' : SAMPLE_Q1.difficulty === 'medium' ? '⭐⭐ Medium' : '⭐⭐⭐ Hard';
+      // Q2 text
+      document.getElementById('q2Text').textContent = '"Walk me through your resume."';
     }
 
     function updateQ1Card() {
-      const cap = CURRENT_RULES.trialsPerQuestion;
+      const cap = 2;
       const n = state.q1Trials.length;
       document.getElementById('q1RepCount').innerHTML = `${n} <span class="rt-cap">/ ${cap}</span>`;
       const best = state.q1Trials.length ? Math.max(...state.q1Trials.map(t => t.clarity)) : null;
@@ -1673,10 +1714,6 @@
         btn.disabled = false;
         btn.classList.remove('done');
       }
-      document.getElementById('q1Label').textContent =
-        n >= cap ? 'Q1 of 2 · Completed' :
-        n >= 1 ? `Q1 of 2 · Trial ${n} of ${cap} done` :
-        'Q1 of 2 · Your first drill';
 
       document.getElementById('q1RepsLog').innerHTML = state.q1Trials.map((t, i) => `
         <div class="rep-log-item">
@@ -1685,428 +1722,226 @@
         </div>
       `).join('');
 
-      if (n >= 1) {
-        document.getElementById('q1PostActions').classList.remove('hidden');
-        document.getElementById('q1PostActions').style.display = 'flex';
-        unlockQ2IfReady();
-      }
+      // Unlock Q2 once Q1 has at least 1 trial
+      if (n >= 1) unlockQ2();
     }
 
     function updateQ2Card() {
-      const cap = CURRENT_RULES.trialsPerQuestion;
+      const cap = 2;
       const n = state.q2Trials.length;
       document.getElementById('q2RepCount').innerHTML = `${n} <span class="rt-cap">/ ${cap}</span>`;
       const best = state.q2Trials.length ? Math.max(...state.q2Trials.map(t => t.clarity)) : null;
       document.getElementById('q2BestSnr').textContent = best ? `Best clarity: ${best}%` : 'Best score: —';
+    }
+
+    function unlockQ2() {
+      const card = document.getElementById('questionCard2');
+      card.classList.remove('locked');
+      document.getElementById('q2Label').textContent = 'Q2 of 2 · Unlocked';
+      document.getElementById('q2Meta').textContent = 'Focus: Narrative & Relevance · Target: 90 seconds';
       const btn = document.getElementById('q2RepBtn');
-      if (n >= cap) {
-        btn.textContent = '✓ Cap reached';
-        btn.disabled = true;
-        btn.classList.add('done');
-      } else if (state.q1Trials.length >= 1) {
-        btn.textContent = `🎤 Start Trial ${n + 1}`;
-        btn.disabled = false;
-        btn.classList.remove('done');
-      }
-      document.getElementById('q2RepsLog').innerHTML = state.q2Trials.map((t, i) => `
-        <div class="rep-log-item">
-          <span>Trial ${i + 1}</span>
-          <span class="rl-score">Clarity ${t.clarity}% · Structure ${t.structure}% · Impact ${t.impact}%</span>
-        </div>
-      `).join('');
+      btn.disabled = false;
+      btn.textContent = '🎤 Start Trial 1';
+      btn.onclick = () => startRep('q2');
     }
 
-    function unlockQ2IfReady() {
-      if (state.q1Trials.length >= 1) {
-        const card = document.getElementById('questionCard2');
-        card.classList.remove('locked');
-        document.getElementById('q2Label').textContent = 'Q2 of 2 · Unlocked';
-        document.getElementById('q2Meta').textContent = `Focus: ${SAMPLE_Q2.focus} · Target: ${SAMPLE_Q2.target}`;
-        const btn = document.getElementById('q2RepBtn');
-        btn.disabled = false;
-        btn.textContent = `🎤 Start Trial ${state.q2Trials.length + 1}`;
-      }
-    }
-
-    /* ============================================================
-       START A REP
-       ============================================================ */
-    function startRep(which) {
-      if (USER.plan === 'trial') {
-        if (which === 'q1' && state.q1Trials.length >= CURRENT_RULES.trialsPerQuestion) {
-          goToPaywall('sprint'); return;
-        }
-        if (which === 'q2' && state.q2Trials.length >= CURRENT_RULES.trialsPerQuestion) {
-          goToPaywall('sprint'); return;
-        }
-      }
-
-      state.activeRecording = which;
-      state.maxDuration = which === 'q1' ? SAMPLE_Q1.durationSeconds : SAMPLE_Q2.durationSeconds;
-
-      const prompt = which === 'q1' ? SAMPLE_Q1.prompt : SAMPLE_Q2.prompt;
-      const studio = document.getElementById('activeStudioContainer');
-      studio.classList.remove('hidden');
-      document.getElementById('activePromptDisplay').textContent = prompt;
-      document.getElementById('timerDisplay').textContent = formatTimer(state.maxDuration);
-      document.getElementById('recordBtn').textContent = '🎤 Start Recording';
-      document.getElementById('recordBtn').className = 'btn btn-primary';
-      document.getElementById('recordBtn').disabled = false;
-      document.getElementById('outputSection').classList.add('hidden');
-
-      requestAnimationFrame(() => studio.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-    }
-
-    function formatTimer(sec) {
-      const m = String(Math.floor(sec / 60)).padStart(2, '0');
-      const s = String(sec % 60).padStart(2, '0');
-      return `${m}:${s}`;
-    }
-
-    /* ============================================================
-       RECORDING
-       ============================================================ */
-    const recordBtn = document.getElementById('recordBtn');
-    let audioContext, analyser, dataArray, mediaRecorder, animationFrameId;
-    const canvas = document.getElementById('waveformCanvas');
-    const ctx = canvas.getContext('2d');
-
-    recordBtn.addEventListener('click', async () => {
-      if (!state.activeRecording) {
-        alert('Start a trial from one of the question cards first.');
-        return;
-      }
-      if (!state.isRecording) {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.start();
-
-          audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          analyser = audioContext.createAnalyser();
-          analyser.fftSize = 256;
-          const src = audioContext.createMediaStreamSource(stream);
-          src.connect(analyser);
-          dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-          state.isRecording = true;
-          recordBtn.textContent = '⏹ Stop & Analyze';
-          recordBtn.className = 'btn btn-danger';
-          document.getElementById('outputSection').classList.add('hidden');
-
-          startTimer();
-          drawWaveform();
-        } catch (e) {
-          alert('Microphone access required to record.');
-        }
-      } else {
-        stopRecording();
-      }
-    });
-
-    function startTimer() {
-      state.secondsLeft = state.maxDuration;
-      document.getElementById('timerDisplay').textContent = formatTimer(state.secondsLeft);
-      state.timer = setInterval(() => {
-        state.secondsLeft--;
-        document.getElementById('timerDisplay').textContent = formatTimer(Math.max(0, state.secondsLeft));
-        if (state.secondsLeft <= 0) stopRecording();
-      }, 1000);
-    }
-
-    function stopRecording() {
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-      if (audioContext) audioContext.close();
-      cancelAnimationFrame(animationFrameId);
-      clearInterval(state.timer);
-
-      state.isRecording = false;
-      recordBtn.textContent = '🔄 Re-record';
-      recordBtn.className = 'btn btn-primary';
-
-      const m = FIRST_METRICS;
-      document.getElementById('studioSnrText').textContent = `${m.clarity}% Clarity`;
-      document.getElementById('studioSnrBar').style.width = `${m.clarity}%`;
-      document.getElementById('studioSnrNoise').style.width = `${100 - m.clarity}%`;
-      document.getElementById('studioModelAnswer').textContent = m.seniorRewrite;
-      document.getElementById('outputSection').classList.remove('hidden');
-
-      const trialData = {
-        number: null,
-        clarity: m.clarity, structure: m.structure, impact: m.impact,
-        timeToPoint: m.timeToPoint
-      };
-
-      if (state.activeRecording === 'q1') {
-        state.q1Trials.push({ ...trialData, number: state.q1Trials.length + 1 });
-        updateQ1Card();
-      } else if (state.activeRecording === 'q2') {
-        state.q2Trials.push({ ...trialData, number: state.q2Trials.length + 1 });
-        updateQ2Card();
-
-        if (USER.plan === 'trial' && !state.function && state.q2Trials.length === 1) {
-          setTimeout(() => document.getElementById('gate2Overlay').classList.remove('hidden'), 600);
-        }
-      }
-
-      populateProgress(m, false);
-      updateTodayProgress();
-      updateBannerText();
-      addRecordingEntry(state.activeRecording, m);
-      persistState();
-    }
-
-    function persistState() {
-      try {
-        const persisted = {
-          ...USER,
-          product_state: {
-            q1_trials: state.q1Trials.length,
-            q2_trials: state.q2Trials.length
-          }
-        };
-        localStorage.setItem('unspoken_user', JSON.stringify(persisted));
-      } catch (e) {
-        console.warn('Persistence failed:', e);
-      }
-    }
-
-    function drawWaveform() {
-      if (!state.isRecording) return;
-      animationFrameId = requestAnimationFrame(drawWaveform);
-      analyser.getByteFrequencyData(dataArray);
-      ctx.fillStyle = '#0B0F19';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      const barWidth = (canvas.width / dataArray.length) * 2.5;
-      let x = 0;
-      for (let i = 0; i < dataArray.length; i++) {
-        const barHeight = dataArray[i] / 4;
-        ctx.fillStyle = '#38BDF8';
-        ctx.fillRect(x, canvas.height / 2 - barHeight / 2, barWidth, barHeight);
-        x += barWidth + 2;
-      }
-    }
-
-    function resizeCanvas() {
-      canvas.width = canvas.parentElement.clientWidth;
-      canvas.height = canvas.parentElement.clientHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-
-    /* ============================================================
-       PROGRESS POPULATE
-       ============================================================ */
-    function populateProgress(m, silent) {
-      document.getElementById('metricTTP').textContent = `${m.timeToPoint}s`;
-      document.getElementById('metricTTPSub').textContent = 'Practice more to lower this';
-      document.getElementById('metricClarity').textContent = `${m.clarity} / 100`;
-      document.getElementById('metricClaritySub').textContent = m.clarity >= 80 ? '🟢 Strong' : '🟡 Getting started';
-      document.getElementById('metricStructure').textContent = `${m.structure} / 100`;
-      document.getElementById('metricStructureSub').textContent = 'Practice BLUF framing';
-      document.getElementById('metricImpact').textContent = `${m.impact} / 100`;
-      document.getElementById('metricImpactSub').textContent = '🔴 Quantify outcomes';
-
-      ['dashLock1','dashLock2','dashLock3','dashLock4','dashLockWell','dashLockImprove'].forEach(id => {
-        document.getElementById(id).classList.add('hidden');
-      });
-
-      document.getElementById('dashSnrValue').textContent = `${m.clarity}%`;
-      document.getElementById('dashSnrSignal').style.width = `${m.clarity}%`;
-      document.getElementById('dashSnrNoise').style.width = `${100 - m.clarity}%`;
-
-      document.getElementById('dashWellList').innerHTML = m.strengths.map(s => `<li>${s}</li>`).join('');
-      document.getElementById('dashImproveList').innerHTML = m.improvements.map(s => `<li>${s}</li>`).join('');
-
-      const totalTrials = state.q1Trials.length + state.q2Trials.length;
-      if (totalTrials >= 3 || CURRENT_RULES.canAccessTrend) {
-        document.getElementById('dashLockTrend').classList.add('hidden');
-        renderTrendLine();
-      } else {
-        document.getElementById('dashLockTrend').classList.remove('hidden');
-      }
-    }
-
-    function renderTrendLine() {
-      const all = state.q1Trials.concat(state.q2Trials);
-      const points = [], ttpPoints = [];
-      all.forEach((t, i) => {
-        const x = (i / Math.max(1, all.length - 1)) * 600;
-        const yClarity = 140 - (t.clarity / 100) * 130;
-        const yTTP = 140 - ((30 - Math.min(30, t.timeToPoint)) / 30) * 130;
-        points.push(`${x},${yClarity}`);
-        ttpPoints.push(`${x},${yTTP}`);
-      });
-      document.getElementById('clarityLine').setAttribute('points', points.join(' '));
-      document.getElementById('ttpLine').setAttribute('points', ttpPoints.join(' '));
-    }
-
-    /* ============================================================
-       TODAY PROGRESS
-       ============================================================ */
-    function updateTodayProgress() {
-      const totalTrials = state.q1Trials.length + state.q2Trials.length;
-      const cap = CURRENT_RULES.trialsPerQuestion * CURRENT_RULES.questionsPerDay;
-      document.getElementById('tsTotalReps').textContent = `${totalTrials} / ${cap}`;
-      document.getElementById('tsTimeSpent').textContent = `${totalTrials} min`;
+    function renderTodayProgress() {
+      const total = state.q1Trials.length + state.q2Trials.length;
+      document.getElementById('tsTotalReps').textContent = `${total} / 4`;
+      document.getElementById('tsTimeSpent').textContent = `${Math.max(1, total)} min`;
       const all = [...state.q1Trials, ...state.q2Trials];
       document.getElementById('tsBestSnr').textContent = all.length ? `${Math.max(...all.map(t => t.clarity))}%` : '—';
       const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
-      document.getElementById('tsDrills').textContent = `${drills} / ${CURRENT_RULES.questionsPerDay}`;
-      document.getElementById('dayProgressFill').style.width = `${(drills / CURRENT_RULES.questionsPerDay) * 100}%`;
-      document.getElementById('dayCounter').textContent = `${drills} / ${CURRENT_RULES.questionsPerDay} drills`;
+      document.getElementById('tsDrills').textContent = `${drills} / 2`;
+      document.getElementById('dayProgressFill').style.width = `${(drills / 2) * 100}%`;
+      document.getElementById('dayCounter').textContent = `${drills} / 2 drills`;
       const remain = document.getElementById('taRemaining');
-      if (remain) remain.textContent = Math.max(0, cap - totalTrials);
+      if (remain) remain.textContent = Math.max(0, 4 - total);
     }
 
-    /* ============================================================
-       RECORDINGS
-       ============================================================ */
-    function addRecordingEntry(which, m) {
-      const list = document.getElementById('recordingsList');
-      if (list.querySelector('p')) list.innerHTML = '';
-      const prompt = which === 'q1' ? SAMPLE_Q1.prompt : SAMPLE_Q2.prompt;
-      const item = document.createElement('div');
-      item.className = 'recording-item';
-      item.innerHTML = `
-        <div class="rec-info">
-          <div class="rec-title">${prompt}</div>
-          <div class="rec-meta">Today · ${which.toUpperCase()} · ${m.durationSeconds || 58}s</div>
-        </div>
-        <div class="rec-score">${m.clarity}%</div>
-        <button class="btn btn-outline" onclick="alert('Replay coming soon.')">View</button>
-      `;
-      list.insertBefore(item, list.firstChild);
+    function renderBanner() {
+      document.getElementById('previewBanner').classList.remove('hidden');
+      document.getElementById('previewName').textContent = USER.name;
+      document.getElementById('previewBannerText').innerHTML =
+        `👋 Hi <strong>${USER.name}</strong> — Trial 1 recorded. Try again to improve.`;
     }
 
-    /* ============================================================
-       GATE #2
-       ============================================================ */
+    function renderBadges() {
+      document.getElementById('headerCompleted').textContent = '1 Task';
+      document.getElementById('headerAchievements').textContent = '🏆 1 Badge';
+    }
+
+    // ============================================================
+    // REP RECORDING (client-side demo)
+    // ============================================================
+    function startRep(which) {
+      // For now, simulate a second trial with the same metrics as trial 1
+      // In production, this would open a recorder and POST to /api/drills/:id/retry
+      const m = USER.landing_trial?.q1_metrics;
+      if (!m) return;
+
+      const newTrial = {
+        number: (which === 'q1' ? state.q1Trials.length : state.q2Trials.length) + 1,
+        clarity: m.clarity + Math.floor(Math.random() * 5),
+        structure: m.structure + Math.floor(Math.random() * 5),
+        impact: m.impact + Math.floor(Math.random() * 5),
+        timeToPoint: Math.max(5, m.timeToPoint - 2)
+      };
+
+      if (which === 'q1') {
+        state.q1Trials.push(newTrial);
+        updateQ1Card();
+      } else {
+        state.q2Trials.push(newTrial);
+        updateQ2Card();
+        if (!state.function && state.q2Trials.length === 1) {
+          setTimeout(() => {
+            document.getElementById('gate2Overlay').style.display = 'flex';
+          }, 400);
+        }
+      }
+
+      renderTodayProgress();
+    }
+
+    // ============================================================
+    // GATE #2
+    // ============================================================
     let gate2Selected = null;
+
     function selectFunction(btn, fn) {
       document.querySelectorAll('#gate2FunctionOptions .onboarding-option').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
+      btn.style.borderColor = 'var(--accent-cyan)';
+      btn.style.background = 'rgba(56, 189, 248, 0.15)';
       gate2Selected = fn;
       document.getElementById('gate2Submit').disabled = false;
+      document.getElementById('gate2Submit').style.opacity = '1';
     }
+
     function submitGateTwo() {
       if (!gate2Selected) return;
       state.function = gate2Selected;
       document.getElementById('profileFunction').innerHTML = `<option selected>${formatFunction(state.function)}</option>`;
-      document.getElementById('gate2Overlay').classList.add('hidden');
+      document.getElementById('gate2Overlay').style.display = 'none';
       showPeerBenchmark();
-      setTimeout(() => goToPaywall('sprint'), 800);
     }
+
     function showPeerBenchmark() {
-      const q2 = document.getElementById('questionCard2');
-      if (document.getElementById('peerBenchmarkCard')) return;
-      const card = document.createElement('div');
-      card.className = 'question-card';
-      card.id = 'peerBenchmarkCard';
-      card.innerHTML = `
-        <div class="qc-label">📊 How you compare to Top 25% in ${formatFunction(state.function)}</div>
-        <div style="margin-top: 14px;">
-          <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-            <span>Clarity</span><span>You <strong>${FIRST_METRICS.clarity}%</strong> · Top 25%: <strong>84%</strong></span>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-            <span>Structure</span><span>You <strong>${FIRST_METRICS.structure}%</strong> · Top 25%: <strong>81%</strong></span>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 8px 0;">
-            <span>Impact</span><span>You <strong>${FIRST_METRICS.impact}%</strong> · Top 25%: <strong>79%</strong></span>
-          </div>
-        </div>
-        <div class="qc-meta" style="margin-top: 12px; color: var(--accent-gold);">
-          💡 You're ${Math.max(0, 79 - FIRST_METRICS.impact)} points behind on Impact. This is your biggest opportunity.
-        </div>
-      `;
-      q2.parentNode.insertBefore(card, q2.nextSibling);
+      // Could inject a benchmark card here — kept minimal for now
+      console.log('Peer benchmark unlocked for function:', state.function);
     }
 
-    /* ============================================================
-       PAYWALL / MISC
-       ============================================================ */
-    function goToPaywall(type) {
-      alert(type === 'sprint'
-        ? 'Enroll in a Sprint — ₹499\n\nRoute to paywall (coming next).'
-        : 'Get Practice Pass — ₹1,299/mo\n\nRoute to paywall (coming next).');
-    }
-    function showSeniorRewrite() {
-      alert(`✨ SENIOR REWRITE (STAR):\n\n"${FIRST_METRICS.seniorRewrite}"`);
-    }
-    function showTrialLog() {
-      const content = document.getElementById('trialLogContent');
-      content.innerHTML = state.q1Trials.map((t, i) => `
-        <div class="alt-question-option">
-          <div class="aq-text">Trial ${i + 1}</div>
-          <div class="aq-meta">
-            <span>Clarity: ${t.clarity}%</span><span>·</span>
-            <span>Structure: ${t.structure}%</span><span>·</span>
-            <span>Impact: ${t.impact}%</span>
-          </div>
-        </div>
-      `).join('') || '<p style="color: var(--text-muted); font-size: 13px;">No trials yet.</p>';
-      document.getElementById('trialLogModal').classList.remove('hidden');
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    function formatStage(s) {
+      const m = { student:'Student / Final Year', fresher:'Fresher (0–1 yr)', early:'Early Career (1–5 yrs)', mid:'Mid Career (5–15 yrs)', senior:'Senior / Lead (15+ yrs)' };
+      return m[s] || s || '—';
     }
 
-    /* ============================================================
-       NAVIGATION
-       ============================================================ */
+    function formatFunction(f) {
+      const m = { engineering:'Engineering / Data', bpo:'BPO / Customer Support', manufacturing:'Manufacturing / Ops', sales:'Sales / Marketing / BD', finance:'Finance / Accounting', consulting:'Consulting / Strategy', design:'Design / Content / Product', hr:'HR / People', other:'Other' };
+      return m[f] || f || '—';
+    }
+
+    // ============================================================
+    // NAV
+    // ============================================================
     function toggleSidebar() {
       document.getElementById('appSidebar').classList.toggle('open');
     }
-    function switchView(viewKey) {
+
+    function switchView(key) {
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-view'));
 
       const navMap = { today:'navToday', activities:'navActivities', dash:'navDash', recordings:'navRecordings', badges:'navBadges', pillars:'navPillars', learning:'navLearning' };
       const viewMap = { today:'todayView', activities:'activitiesView', dash:'dashView', recordings:'recordingsView', badges:'badgesView', pillars:'pillarsView', learning:'learningView' };
 
-      if (navMap[viewKey]) document.getElementById(navMap[viewKey]).classList.add('active');
-      if (viewMap[viewKey]) document.getElementById(viewMap[viewKey]).classList.add('active-view');
+      if (navMap[key]) document.getElementById(navMap[key]).classList.add('active');
+      if (viewMap[key]) document.getElementById(viewMap[key]).classList.add('active-view');
 
       if (window.innerWidth <= 900) toggleSidebar();
     }
-    function switchActivitySub(subKey, btn) {
+
+    function switchActivitySub(key, btn) {
       document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       document.querySelectorAll('.sub-activity-panel').forEach(p => p.classList.add('hidden'));
-      const target = document.getElementById(`sub-${subKey}`);
-      if (target) target.classList.remove('hidden');
+      document.getElementById(`sub-${key}`).classList.remove('hidden');
     }
+
     function setTimeline(key, btn) {
       document.querySelectorAll('.time-tab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
     }
-    function launchStudio(prompt, duration) {
-      state.activeRecording = 'activity';
-      state.maxDuration = duration;
-      const studio = document.getElementById('activeStudioContainer');
-      studio.classList.remove('hidden');
-      document.getElementById('activePromptDisplay').textContent = prompt;
-      document.getElementById('timerDisplay').textContent = formatTimer(duration);
-      document.getElementById('recordBtn').textContent = '🎤 Start Recording';
-      document.getElementById('recordBtn').className = 'btn btn-primary';
-      document.getElementById('recordBtn').disabled = false;
-      document.getElementById('outputSection').classList.add('hidden');
-      requestAnimationFrame(() => studio.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-    }
-    function goToTodayTab() {
-      switchView('today');
+
+    function goToPaywall(type) {
+      alert(type === 'sprint'
+        ? 'Enroll in a Sprint — ₹499\n\nPaywall coming soon.'
+        : 'Get Practice Pass — ₹1,299/mo\n\nPaywall coming soon.');
     }
 
-    /* ============================================================
-       INIT
-       ============================================================ */
-    window.addEventListener('load', () => {
-      resizeCanvas();
-      initCards();
-      applyView();
-    });
-
-    // Allow clearing cache via ?reset=1
-    if (new URLSearchParams(window.location.search).get('reset') === '1') {
-      try { localStorage.removeItem('unspoken_user'); console.log('🧹 Cleared localStorage'); } catch (e) {}
+    // ============================================================
+    // BOOT STATE HELPERS
+    // ============================================================
+    function showFreshState() {
+      const boot = document.getElementById('bootScreen');
+      boot.classList.remove('hidden');
+      document.getElementById('bootSpinner').classList.add('hidden');
+      document.getElementById('bootTitle').innerHTML = '👋 Welcome to The Unspoken';
+      document.getElementById('bootSub').innerHTML = 'Start a free drill on our landing page and your analysis will appear here.';
+      // Replace spinner area with a button
+      const btn = document.createElement('button');
+      btn.className = 'boot-btn';
+      btn.textContent = 'Start a Free Drill →';
+      btn.onclick = () => { window.location.href = 'https://theunspoken.co.in'; };
+      // Only append once
+      if (!boot.querySelector('.boot-btn')) boot.appendChild(btn);
     }
+
+    function showSessionExpired(msg) {
+      const boot = document.getElementById('bootScreen');
+      boot.classList.remove('hidden');
+      document.getElementById('bootSpinner').classList.add('hidden');
+      document.getElementById('bootTitle').innerHTML = '⏱ Session expired';
+      document.getElementById('bootSub').innerHTML = msg || 'This analysis session has already been used. Start a fresh drill on our landing page.';
+      if (!boot.querySelector('.boot-btn')) {
+        const btn = document.createElement('button');
+        btn.className = 'boot-btn';
+        btn.textContent = 'Start a New Drill →';
+        btn.onclick = () => { window.location.href = 'https://theunspoken.co.in'; };
+        boot.appendChild(btn);
+      }
+    }
+
+    function showErrorState(msg) {
+      const boot = document.getElementById('bootScreen');
+      boot.classList.remove('hidden');
+      document.getElementById('bootSpinner').classList.add('hidden');
+      document.getElementById('bootTitle').innerHTML = '⚠️ We couldn\'t analyze your response';
+      document.getElementById('bootSub').innerHTML = (msg || 'Something went wrong.') + '<br><br>Your response is safe. Try again below.';
+
+      // Remove old buttons
+      boot.querySelectorAll('.boot-btn').forEach(b => b.remove());
+
+      const retry = document.createElement('button');
+      retry.className = 'boot-btn';
+      retry.textContent = '🔄 Retry Analysis';
+      retry.onclick = () => { location.reload(); };
+
+      const fresh = document.createElement('button');
+      fresh.className = 'boot-btn secondary';
+      fresh.style.marginTop = '8px';
+      fresh.textContent = 'Start a New Drill';
+      fresh.onclick = () => { window.location.href = 'https://theunspoken.co.in'; };
+
+      boot.appendChild(retry);
+      boot.appendChild(fresh);
+    }
+
+    console.log('🚀 Product page loaded. Boot sequence ready.');
   </script>
 </body>
 </html>
