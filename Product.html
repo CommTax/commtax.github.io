@@ -1474,13 +1474,12 @@
       bootSub.textContent = 'Checking your pacing, fillers, structure, and impact. This usually takes 5–10 seconds.';
 
       try {
-        const res = await fetch(`${BACKEND_URL}/api/drills/analyze`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SESSION_TOKEN}`
-          }
-        });
+const res = await fetch(`${BACKEND_URL}/api/drills/analyze`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${SESSION_TOKEN}`
+  }
+});
 
         // 4. Handle token errors
         if (res.status === 401) {
@@ -1575,8 +1574,10 @@
         total_days: 28,
         questions_per_day: 2,
         trials_per_question: 2,
-        landing_trial: {
-          q1_prompt: data.question || 'Tell me about yourself.',
+landing_trial: {
+  q1_prompt: data.question_type === 'project'
+    ? 'Tell me about a current project or initiative you\'re leading.'
+    : 'Tell me about yourself.',
           q1_focus: 'Structure & Conciseness',
           q1_target: '60 seconds',
           q1_difficulty: 'easy',
