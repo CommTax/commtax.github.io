@@ -597,9 +597,12 @@
     .text-submit-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); }
     .text-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* === NEW PERSONALIZED JOURNEY SECTION === */
+    /* === NEW INTERACTIVE JOURNEY SECTION === */
     .journey-section {
       padding: 60px 0 40px;
+      background: #f4f0ea;
+      margin: 40px 0;
+      border-radius: 40px;
     }
     .journey-header {
       text-align: center;
@@ -634,142 +637,205 @@
       line-height: 1.6;
     }
 
-    .journey-grid {
+    .journey-interactive-container {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
-      max-width: 960px;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 40px;
+      max-width: 1000px;
       margin: 0 auto 48px;
+      align-items: start;
     }
-    .journey-card {
-      background: #fff;
-      border-radius: 24px;
-      padding: 36px 32px;
-      border: 1.5px solid var(--border-light);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
-      transition: all 0.35s ease;
+
+    /* Left Column: Plan Selector */
+    .plan-selector {
       display: flex;
       flex-direction: column;
+      gap: 16px;
+    }
+    .plan-option {
+      background: #fff;
+      border: 2px solid transparent;
+      border-radius: 20px;
+      padding: 28px 32px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
       position: relative;
       overflow: hidden;
     }
-    .journey-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08);
-      border-color: var(--gold-light);
+    .plan-option:hover {
+      border-color: rgba(184, 148, 60, 0.3);
+      transform: translateX(4px);
     }
-    .journey-card .card-badge {
+    .plan-option.active {
+      border-color: var(--gold);
+      background: #fff;
+      box-shadow: 0 12px 32px rgba(184, 148, 60, 0.12);
+    }
+    .plan-option.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--gold);
+    }
+    .plan-option h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 6px;
+      color: var(--ink);
+    }
+    .plan-option .plan-meta {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .plan-option .plan-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Right Column: Plan Detail Card */
+    .plan-detail-card {
+      background: #fff;
+      border-radius: 28px;
+      padding: 36px;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border-light);
+      transition: all 0.4s ease;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+    .plan-detail-card .detail-badge {
       display: inline-block;
       font-size: 0.6rem;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: var(--gold);
-      background: rgba(184, 148, 60, 0.08);
+      color: #fff;
+      background: var(--gold);
       padding: 6px 16px;
       border-radius: 40px;
       align-self: flex-start;
       margin-bottom: 16px;
     }
-    .journey-card h3 {
+    .plan-detail-card h3 {
       font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
       font-weight: 700;
-      margin: 0 0 10px;
+      margin: 0 0 8px;
       color: var(--ink);
     }
-    .journey-card .card-sub {
-      font-size: 0.9rem;
+    .plan-detail-card .detail-sub {
+      font-size: 0.95rem;
       color: var(--text-muted);
       margin-bottom: 24px;
       line-height: 1.5;
-      flex: 1;
     }
-    .journey-card .image-container {
+    .plan-detail-card .detail-image-wrapper {
       position: relative;
-      height: 200px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 100%;
+      height: 220px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      background: #f4f0ea;
     }
-    .journey-card .image-container img {
-      max-height: 100%;
-      max-width: 100%;
-      object-fit: contain;
-      border-radius: 16px;
+    .plan-detail-card .detail-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.4s ease, transform 0.6s ease;
     }
-    .floating-tag {
+    .plan-detail-card .detail-image-wrapper img.fade-out {
+      opacity: 0;
+      transform: scale(1.05);
+    }
+    .plan-detail-card .detail-image-wrapper .floating-tag {
       position: absolute;
-      background: #fff;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
       padding: 6px 14px;
       border-radius: 40px;
       font-size: 0.7rem;
       font-weight: 600;
-      color: var(--text-soft);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-      border: 1px solid var(--border-light);
+      color: var(--ink);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       white-space: nowrap;
       animation: floatTag 4s ease-in-out infinite;
       z-index: 2;
     }
-    .floating-tag.tag-1 { top: 10px; right: -10px; animation-delay: 0s; }
-    .floating-tag.tag-2 { bottom: 20px; left: -10px; animation-delay: 1s; }
-    .floating-tag.tag-3 { top: 50%; right: -20px; animation-delay: 2s; }
-    .floating-tag.tag-4 { bottom: 10px; right: 10px; animation-delay: 0.5s; }
-    .floating-tag.tag-5 { top: 20px; left: -15px; animation-delay: 1.5s; }
+    .floating-tag.tag-1 { top: 16px; right: 16px; animation-delay: 0s; }
+    .floating-tag.tag-2 { bottom: 16px; left: 16px; animation-delay: 1s; }
+    .floating-tag.tag-3 { top: 50%; right: 16px; animation-delay: 2s; }
+    .floating-tag.tag-4 { bottom: 16px; right: 16px; animation-delay: 0.5s; }
+    .floating-tag.tag-5 { top: 16px; left: 16px; animation-delay: 1.5s; }
 
     @keyframes floatTag {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-6px); }
     }
 
-    .journey-card .card-features {
+    .plan-detail-card .detail-features {
       list-style: none;
       padding: 0;
       margin: 0 0 24px;
+      flex: 1;
     }
-    .journey-card .card-features li {
-      font-size: 0.85rem;
+    .plan-detail-card .detail-features li {
+      font-size: 0.9rem;
       color: var(--text-soft);
-      padding: 6px 0;
+      padding: 8px 0;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
     }
-    .journey-card .card-features li::before {
+    .plan-detail-card .detail-features li:last-child {
+      border-bottom: none;
+    }
+    .plan-detail-card .detail-features li::before {
       content: '✦';
       color: var(--gold);
       font-size: 0.7rem;
+      flex-shrink: 0;
     }
-    .journey-card .card-cta {
+    .plan-detail-card .detail-cta {
       display: block;
       text-align: center;
-      padding: 14px 24px;
+      padding: 16px 24px;
       border-radius: 60px;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 1rem;
       text-decoration: none;
       transition: all 0.3s ease;
       cursor: pointer;
       border: none;
       font-family: inherit;
     }
-    .journey-card .card-cta.primary {
+    .plan-detail-card .detail-cta.primary {
       background: linear-gradient(135deg, #2c3440, #1e242d);
       color: #fff;
       box-shadow: 0 4px 16px rgba(44, 52, 64, 0.25);
     }
-    .journey-card .card-cta.primary:hover {
+    .plan-detail-card .detail-cta.primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(44, 52, 64, 0.35);
     }
-    .journey-card .card-cta.secondary {
+    .plan-detail-card .detail-cta.secondary {
       background: transparent;
       color: var(--ink);
       border: 1.5px solid #d0c8bc;
     }
-    .journey-card .card-cta.secondary:hover {
+    .plan-detail-card .detail-cta.secondary:hover {
       border-color: var(--gold);
       color: var(--gold);
     }
@@ -867,6 +933,20 @@
     @media (max-width: 1024px) {
       .hero { flex-direction: column; gap: 30px; padding: 20px 0 40px; }
       .hero-left, .hero-right { flex: 1 1 100%; width: 100%; max-width: 100%; }
+      .journey-interactive-container {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        max-width: 560px;
+      }
+      .plan-selector {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .plan-option {
+        flex: 1 1 45%;
+        padding: 20px 24px;
+      }
+      .plan-option h3 { font-size: 1.3rem; }
     }
     @media (max-width: 768px) {
       .container { padding: 0 16px; }
@@ -874,7 +954,21 @@
       .logo-text { font-size: 1.2rem; }
       .nav-links { gap: 12px; flex-wrap: wrap; }
       .nav-links a { font-size: 0.8rem; }
-      .phone-wrap { padding: 30px 10px; }
+      
+      /* Phone Mockup scaling to fit mobile */
+      .phone-wrap { 
+        padding: 20px 0; 
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .phone-frame {
+        transform: scale(0.85);
+        transform-origin: top center;
+        margin-bottom: -60px; /* Pull up the extra space created by scaling */
+      }
+      
       .side-tag.top-left { left: 0; }
       .side-tag.mid-left { left: -10px; }
       .side-tag.mid-right { right: -10px; }
@@ -882,43 +976,50 @@
       .phone-screen { border-radius: 32px; min-height: 600px; }
       .gate-stage-options { grid-template-columns: 1fr; }
       
-      .journey-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-        max-width: 480px;
+      .journey-section { padding: 40px 16px; margin: 20px 0; border-radius: 24px; }
+      .journey-header h2 { font-size: 1.8rem; }
+      
+      .plan-selector {
+        flex-direction: column;
       }
-      .journey-card {
-        padding: 28px 24px;
+      .plan-option {
+        padding: 20px;
       }
-      .journey-card h3 {
-        font-size: 1.4rem;
+      .plan-detail-card {
+        padding: 24px;
+        min-height: auto;
       }
-      .journey-card .image-container {
-        height: 160px;
+      .plan-detail-card .detail-image-wrapper {
+        height: 180px;
+      }
+      .plan-detail-card .detail-features li {
+        font-size: 0.85rem;
       }
       .floating-tag {
         font-size: 0.6rem;
         padding: 4px 10px;
       }
-      .floating-tag.tag-1 { right: 0; }
-      .floating-tag.tag-2 { left: 0; }
-      .floating-tag.tag-3 { right: -5px; }
-      .floating-tag.tag-5 { left: -5px; }
+      .floating-tag.tag-1 { right: 8px; }
+      .floating-tag.tag-2 { left: 8px; }
+      .floating-tag.tag-3 { right: 8px; }
+      .floating-tag.tag-4 { right: 8px; }
+      .floating-tag.tag-5 { left: 8px; }
     }
     @media (max-width: 480px) {
       .side-tag { font-size: 10px; padding: 5px 10px; }
-      .journey-card {
-        padding: 24px 18px;
+      .phone-frame {
+        transform: scale(0.75);
+        margin-bottom: -100px;
       }
-      .journey-card .image-container {
-        height: 140px;
+      .journey-section { padding: 30px 12px; }
+      .plan-detail-card {
+        padding: 20px;
       }
-      .floating-tag {
-        font-size: 0.55rem;
-        padding: 3px 8px;
+      .plan-detail-card .detail-image-wrapper {
+        height: 150px;
       }
-      .journey-header h2 {
-        font-size: 1.8rem;
+      .plan-detail-card .detail-features li {
+        font-size: 0.8rem;
       }
     }
   </style>
@@ -1137,64 +1238,57 @@
   </div>
 </section>
 
-<!-- NEW SECTION: WHERE TO START / CHOOSE YOUR PERSONALIZED JOURNEY -->
-<section class="container journey-section" id="journey">
-  <div class="journey-header">
-    <span class="eyebrow">WHERE TO START</span>
-    <h2>Choose your <span class="highlight">personalized</span> mental muscle builder</h2>
-    <p>Pick the path that matches your ambition. Both include the full engine, drills, and real feedback.</p>
-  </div>
-
-  <div class="journey-grid">
-    <!-- PLAN 1: SPRINT -->
-    <div class="journey-card">
-      <span class="card-badge">4 Weeks</span>
-      <h3>Sprint</h3>
-      <p class="card-sub">A focused 4-week intensive to break the pattern and build the muscle fast.</p>
-      
-      <div class="image-container">
-        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop&crop=face" alt="Sprint Plan" style="width:100%; height:100%; object-fit:cover;" />
-        <span class="floating-tag tag-1">⚡ Fast results</span>
-        <span class="floating-tag tag-2">🎯 Focused drills</span>
-        <span class="floating-tag tag-3">🔥 Intensity</span>
-      </div>
-
-      <ul class="card-features">
-        <li>Daily 15-min speaking drills</li>
-        <li>Weekly progress analysis</li>
-        <li>Personalized feedback loop</li>
-        <li>Access to all scenarios</li>
-      </ul>
-
-      <a href="https://theunspoken.co.in/Pricing?plan=sprint" class="card-cta primary">Choose Sprint →</a>
+<!-- NEW INTERACTIVE JOURNEY SECTION -->
+<section class="journey-section" id="journey">
+  <div class="container">
+    <div class="journey-header">
+      <span class="eyebrow">WHERE TO START</span>
+      <h2>Choose your <span class="highlight">personalized</span> mental muscle builder</h2>
+      <p>Select a plan to see how it works. Both include the full engine, drills, and real feedback.</p>
     </div>
 
-    <!-- PLAN 2: PRACTICE PASS -->
-    <div class="journey-card">
-      <span class="card-badge">Continuous</span>
-      <h3>Practice Pass</h3>
-      <p class="card-sub">Ongoing membership to continuously refine and master your communication.</p>
-      
-      <div class="image-container">
-        <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=400&fit=crop&crop=face" alt="Practice Pass" style="width:100%; height:100%; object-fit:cover;" />
-        <span class="floating-tag tag-4">🏆 Mastery</span>
-        <span class="floating-tag tag-5">📈 Consistency</span>
-        <span class="floating-tag tag-1">🌱 Growth</span>
+    <div class="journey-interactive-container">
+      <!-- Left Column: Plan Selector -->
+      <div class="plan-selector">
+        <div class="plan-option active" data-plan="sprint">
+          <div class="plan-meta">4 Weeks</div>
+          <h3>Sprint</h3>
+          <p class="plan-desc">A focused 4-week intensive to break the pattern and build the muscle fast.</p>
+        </div>
+        <div class="plan-option" data-plan="pass">
+          <div class="plan-meta">Continuous</div>
+          <h3>Practice Pass</h3>
+          <p class="plan-desc">Ongoing membership to continuously refine and master your communication.</p>
+        </div>
       </div>
 
-      <ul class="card-features">
-        <li>Unlimited drills & scenarios</li>
-        <li>Advanced communication analytics</li>
-        <li>Community & leaderboards</li>
-        <li>New content every month</li>
-      </ul>
+      <!-- Right Column: Dynamic Plan Detail -->
+      <div class="plan-detail-card" id="planDetailCard">
+        <span class="detail-badge" id="detailBadge">4 Weeks</span>
+        <h3 id="detailTitle">Sprint</h3>
+        <p class="detail-sub" id="detailSub">A focused 4-week intensive to break the pattern and build the muscle fast.</p>
+        
+        <div class="detail-image-wrapper">
+          <img id="detailImage" src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=800&auto=format&fit=crop" alt="Sprint Plan" />
+          <span class="floating-tag tag-1" id="tag1">⚡ Fast results</span>
+          <span class="floating-tag tag-2" id="tag2">🎯 Focused drills</span>
+          <span class="floating-tag tag-3" id="tag3">🔥 Intensity</span>
+        </div>
 
-      <a href="https://theunspoken.co.in/Pricing?plan=pass" class="card-cta secondary">Choose Practice Pass →</a>
+        <ul class="detail-features" id="detailFeatures">
+          <li>Daily 15-min speaking drills</li>
+          <li>Weekly progress analysis</li>
+          <li>Personalized feedback loop</li>
+          <li>Access to all scenarios</li>
+        </ul>
+
+        <a href="https://theunspoken.co.in/Pricing?plan=sprint" class="detail-cta primary" id="detailCta">Choose Sprint →</a>
+      </div>
     </div>
-  </div>
 
-  <div class="journey-footer-cta">
-    <a href="#impact-test" class="btn-free">Start Practicing →</a>
+    <div class="journey-footer-cta">
+      <a href="#impact-test" class="btn-free">Start Practicing →</a>
+    </div>
   </div>
 </section>
 
@@ -1262,6 +1356,103 @@ const QUESTION_MAP = {
     difficulty: 'medium'
   }
 };
+
+// ============================================================
+// INTERACTIVE JOURNEY SECTION LOGIC
+// ============================================================
+const PLANS = {
+  sprint: {
+    badge: '4 Weeks',
+    title: 'Sprint',
+    sub: 'A focused 4-week intensive to break the pattern and build the muscle fast.',
+    image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=800&auto=format&fit=crop',
+    tags: ['⚡ Fast results', '🎯 Focused drills', '🔥 Intensity'],
+    features: [
+      'Daily 15-min speaking drills',
+      'Weekly progress analysis',
+      'Personalized feedback loop',
+      'Access to all scenarios'
+    ],
+    ctaText: 'Choose Sprint →',
+    ctaLink: 'https://theunspoken.co.in/Pricing?plan=sprint',
+    ctaClass: 'primary'
+  },
+  pass: {
+    badge: 'Continuous',
+    title: 'Practice Pass',
+    sub: 'Ongoing membership to continuously refine and master your communication.',
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=800&auto=format&fit=crop',
+    tags: ['🏆 Mastery', '📈 Consistency', '🌱 Growth'],
+    features: [
+      'Unlimited drills & scenarios',
+      'Advanced communication analytics',
+      'Community & leaderboards',
+      'New content every month'
+    ],
+    ctaText: 'Choose Practice Pass →',
+    ctaLink: 'https://theunspoken.co.in/Pricing?plan=pass',
+    ctaClass: 'secondary'
+  }
+};
+
+function updatePlanDetail(planKey) {
+  const plan = PLANS[planKey];
+  if (!plan) return;
+
+  const detailCard = document.getElementById('planDetailCard');
+  const detailBadge = document.getElementById('detailBadge');
+  const detailTitle = document.getElementById('detailTitle');
+  const detailSub = document.getElementById('detailSub');
+  const detailImage = document.getElementById('detailImage');
+  const detailFeatures = document.getElementById('detailFeatures');
+  const detailCta = document.getElementById('detailCta');
+  const tag1 = document.getElementById('tag1');
+  const tag2 = document.getElementById('tag2');
+  const tag3 = document.getElementById('tag3');
+
+  // Fade out effect
+  detailCard.style.opacity = '0.5';
+  detailCard.style.transform = 'translateY(10px)';
+  detailImage.classList.add('fade-out');
+
+  setTimeout(() => {
+    // Update content
+    detailBadge.textContent = plan.badge;
+    detailTitle.textContent = plan.title;
+    detailSub.textContent = plan.sub;
+    detailImage.src = plan.image;
+    
+    // Update tags
+    tag1.textContent = plan.tags[0];
+    tag2.textContent = plan.tags[1];
+    tag3.textContent = plan.tags[2];
+
+    // Update features
+    detailFeatures.innerHTML = plan.features.map(f => `<li>${f}</li>`).join('');
+
+    // Update CTA
+    detailCta.textContent = plan.ctaText;
+    detailCta.href = plan.ctaLink;
+    detailCta.className = `detail-cta ${plan.ctaClass}`;
+
+    // Fade in effect
+    detailCard.style.opacity = '1';
+    detailCard.style.transform = 'translateY(0)';
+    detailImage.classList.remove('fade-out');
+  }, 300);
+}
+
+document.querySelectorAll('.plan-option').forEach(option => {
+  option.addEventListener('click', () => {
+    // Update active state
+    document.querySelectorAll('.plan-option').forEach(opt => opt.classList.remove('active'));
+    option.classList.add('active');
+    
+    // Update detail card
+    const planKey = option.dataset.plan;
+    updatePlanDetail(planKey);
+  });
+});
 
 // ============================================================
 // HERO ANIMATION
