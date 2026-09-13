@@ -702,7 +702,7 @@
       margin: 0;
     }
 
-    /* Right Column: Plan Detail Card */
+    /* Right Column: Plan Detail Card (Matching Reference Image) */
     .plan-detail-card {
       background: #fff;
       border-radius: 28px;
@@ -710,23 +710,12 @@
       box-shadow: 0 20px 48px rgba(0, 0, 0, 0.06);
       border: 1px solid var(--border-light);
       transition: all 0.4s ease;
-      min-height: 480px;
       display: flex;
       flex-direction: column;
+      position: relative;
+      overflow: hidden;
     }
-    .plan-detail-card .detail-badge {
-      display: inline-block;
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #fff;
-      background: var(--gold);
-      padding: 6px 16px;
-      border-radius: 40px;
-      align-self: flex-start;
-      margin-bottom: 16px;
-    }
+    
     .plan-detail-card h3 {
       font-family: 'Playfair Display', serif;
       font-size: 1.8rem;
@@ -740,26 +729,63 @@
       margin-bottom: 24px;
       line-height: 1.5;
     }
-    .plan-detail-card .detail-image-wrapper {
+
+    /* Image & Aura Wrapper */
+    .plan-image-aura-wrapper {
       position: relative;
       width: 100%;
-      height: 220px;
-      border-radius: 20px;
-      overflow: hidden;
+      height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-bottom: 24px;
-      background: #f4f0ea;
+      background: radial-gradient(circle at 50% 50%, rgba(184, 148, 60, 0.08) 0%, transparent 70%);
+      border-radius: 20px;
     }
-    .plan-detail-card .detail-image-wrapper img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    
+    /* The Aura Ring Effect */
+    .plan-image-aura-wrapper::before {
+      content: '';
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: 2px solid rgba(184, 148, 60, 0.2);
+      animation: auraPulse 4s ease-in-out infinite;
+      z-index: 1;
+    }
+    .plan-image-aura-wrapper::after {
+      content: '';
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 1px solid rgba(184, 148, 60, 0.15);
+      animation: auraPulse 4s ease-in-out infinite 0.5s;
+      z-index: 1;
+    }
+    @keyframes auraPulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .plan-image-aura-wrapper img {
+      position: relative;
+      z-index: 2;
+      width: 140px;
+      height: 140px;
+      object-fit: contain;
+      border-radius: 50%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
       transition: opacity 0.4s ease, transform 0.6s ease;
     }
-    .plan-detail-card .detail-image-wrapper img.fade-out {
+    .plan-image-aura-wrapper img.fade-out {
       opacity: 0;
-      transform: scale(1.05);
+      transform: scale(0.9);
     }
-    .plan-detail-card .detail-image-wrapper .floating-tag {
+
+    /* Floating Tags positioned around the image */
+    .plan-image-aura-wrapper .floating-tag {
       position: absolute;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(8px);
@@ -772,13 +798,19 @@
       border: 1px solid rgba(255, 255, 255, 0.6);
       white-space: nowrap;
       animation: floatTag 4s ease-in-out infinite;
-      z-index: 2;
+      z-index: 3;
     }
-    .floating-tag.tag-1 { top: 16px; right: 16px; animation-delay: 0s; }
-    .floating-tag.tag-2 { bottom: 16px; left: 16px; animation-delay: 1s; }
-    .floating-tag.tag-3 { top: 50%; right: 16px; animation-delay: 2s; }
-    .floating-tag.tag-4 { bottom: 16px; right: 16px; animation-delay: 0.5s; }
-    .floating-tag.tag-5 { top: 16px; left: 16px; animation-delay: 1.5s; }
+    
+    /* Specific positions for tags (Sprint vs Pass) */
+    .tag-sprint-1 { top: 10px; left: 10px; animation-delay: 0s; }
+    .tag-sprint-2 { top: 50%; right: -10px; animation-delay: 1s; transform: translateY(-50%); }
+    .tag-sprint-3 { bottom: 20px; left: 20px; animation-delay: 2s; }
+    .tag-sprint-4 { bottom: 10px; right: 20px; animation-delay: 0.5s; }
+    
+    .tag-pass-1 { top: 10px; right: 10px; animation-delay: 0s; }
+    .tag-pass-2 { top: 40%; left: -10px; animation-delay: 1s; transform: translateY(-50%); }
+    .tag-pass-3 { bottom: 20px; right: 20px; animation-delay: 2s; }
+    .tag-pass-4 { bottom: 10px; left: 20px; animation-delay: 0.5s; }
 
     @keyframes floatTag {
       0%, 100% { transform: translateY(0); }
@@ -790,23 +822,25 @@
       padding: 0;
       margin: 0 0 24px;
       flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     .plan-detail-card .detail-features li {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       color: var(--text-soft);
-      padding: 8px 0;
+      padding: 6px 12px;
+      background: #f8f6f2;
+      border-radius: 40px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-    }
-    .plan-detail-card .detail-features li:last-child {
-      border-bottom: none;
+      gap: 6px;
+      border: 1px solid var(--border-light);
     }
     .plan-detail-card .detail-features li::before {
       content: '✦';
       color: var(--gold);
-      font-size: 0.7rem;
+      font-size: 0.6rem;
       flex-shrink: 0;
     }
     .plan-detail-card .detail-cta {
@@ -821,6 +855,7 @@
       cursor: pointer;
       border: none;
       font-family: inherit;
+      width: 100%;
     }
     .plan-detail-card .detail-cta.primary {
       background: linear-gradient(135deg, #2c3440, #1e242d);
@@ -839,15 +874,6 @@
     .plan-detail-card .detail-cta.secondary:hover {
       border-color: var(--gold);
       color: var(--gold);
-    }
-
-    .journey-footer-cta {
-      text-align: center;
-      padding: 20px 0 10px;
-    }
-    .journey-footer-cta .btn-free {
-      font-size: 1.1rem;
-      padding: 16px 48px;
     }
 
     /* MODALS */
@@ -990,21 +1016,31 @@
         padding: 24px;
         min-height: auto;
       }
-      .plan-detail-card .detail-image-wrapper {
-        height: 180px;
+      .plan-image-aura-wrapper {
+        height: 200px;
       }
+      .plan-image-aura-wrapper img {
+        width: 110px;
+        height: 110px;
+      }
+      .plan-image-aura-wrapper::before { width: 140px; height: 140px; }
+      .plan-image-aura-wrapper::after { width: 100px; height: 100px; }
+      
       .plan-detail-card .detail-features li {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
       }
       .floating-tag {
         font-size: 0.6rem;
         padding: 4px 10px;
       }
-      .floating-tag.tag-1 { right: 8px; }
-      .floating-tag.tag-2 { left: 8px; }
-      .floating-tag.tag-3 { right: 8px; }
-      .floating-tag.tag-4 { right: 8px; }
-      .floating-tag.tag-5 { left: 8px; }
+      .tag-sprint-1 { top: 5px; left: 5px; }
+      .tag-sprint-2 { right: 5px; }
+      .tag-sprint-3 { bottom: 10px; left: 10px; }
+      .tag-sprint-4 { bottom: 5px; right: 10px; }
+      .tag-pass-1 { top: 5px; right: 5px; }
+      .tag-pass-2 { left: 5px; }
+      .tag-pass-3 { bottom: 10px; right: 10px; }
+      .tag-pass-4 { bottom: 5px; left: 10px; }
     }
     @media (max-width: 480px) {
       .side-tag { font-size: 10px; padding: 5px 10px; }
@@ -1016,11 +1052,17 @@
       .plan-detail-card {
         padding: 20px;
       }
-      .plan-detail-card .detail-image-wrapper {
-        height: 150px;
+      .plan-image-aura-wrapper {
+        height: 170px;
       }
+      .plan-image-aura-wrapper img {
+        width: 90px;
+        height: 90px;
+      }
+      .plan-image-aura-wrapper::before { width: 120px; height: 120px; }
+      .plan-image-aura-wrapper::after { width: 80px; height: 80px; }
       .plan-detail-card .detail-features li {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
       }
     }
   </style>
@@ -1263,40 +1305,33 @@
         </div>
       </div>
 
-      <!-- Right Column: Dynamic Plan Detail -->
+      <!-- Right Column: Dynamic Plan Detail (Matches Reference Image) -->
       <div class="plan-detail-card" id="planDetailCard">
-        <span class="detail-badge" id="detailBadge">4 Weeks</span>
-        <h3 id="detailTitle">Sprint</h3>
-        <p class="detail-sub" id="detailSub">A focused 4-week intensive to break the pattern and build the muscle fast.</p>
+        <h3 id="detailTitle">Communication Mastery</h3>
+        <p class="detail-sub" id="detailSub">Improve your speaking, body language, voice control, storytelling, first impressions, and social intelligence</p>
         
-        <div class="detail-image-wrapper">
-          <img id="detailImage" src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=800&auto=format&fit=crop" alt="Sprint Plan" />
-          <span class="floating-tag tag-1" id="tag1">⚡ Fast results</span>
-          <span class="floating-tag tag-2" id="tag2">🎯 Focused drills</span>
-          <span class="floating-tag tag-3" id="tag3">🔥 Intensity</span>
+        <div class="plan-image-aura-wrapper">
+          <img id="detailImage" src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=400&auto=format&fit=crop" alt="Communication Mastery" />
+          <!-- Floating Tags for Sprint -->
+          <span class="floating-tag tag-sprint-1" id="tag1">🎯 Specific Sprint</span>
+          <span class="floating-tag tag-sprint-2" id="tag2">📝 Daily Drills</span>
+          <span class="floating-tag tag-sprint-3" id="tag3">🔄 Personalized Loop</span>
+          <span class="floating-tag tag-sprint-4" id="tag4">📊 Daily Progress</span>
         </div>
 
         <ul class="detail-features" id="detailFeatures">
-          <li>Daily 15-min speaking drills</li>
-          <li>Weekly progress analysis</li>
-          <li>Personalized feedback loop</li>
-          <li>Access to all scenarios</li>
+          <li>Specific Sprint</li>
+          <li>Daily Drills</li>
+          <li>Personalized Loop</li>
+          <li>Daily Progress</li>
+          <li>SNR</li>
+          <li>Access</li>
         </ul>
 
-        <a href="https://theunspoken.co.in/Pricing?plan=sprint" class="detail-cta primary" id="detailCta">Choose Sprint →</a>
+        <a href="https://theunspoken.co.in/Pricing?plan=sprint" class="detail-cta primary" id="detailCta">Choose</a>
       </div>
     </div>
-
-    <div class="journey-footer-cta">
-      <a href="#impact-test" class="btn-free">Start Practicing →</a>
-    </div>
   </div>
-</section>
-
-<!-- FINAL CTA -->
-<section class="final-cta container" style="padding: 30px 0 20px; text-align: center;">
-  <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto 20px;">Now discover what's getting lost.</p>
-  <a href="#impact-test" class="btn-free" style="font-size: 1.1rem; padding: 16px 44px;">✦ Discover My Communication Pattern</a>
 </section>
 
 <!-- FOOTER -->
@@ -1363,34 +1398,22 @@ const QUESTION_MAP = {
 // ============================================================
 const PLANS = {
   sprint: {
-    badge: '4 Weeks',
-    title: 'Sprint',
-    sub: 'A focused 4-week intensive to break the pattern and build the muscle fast.',
-    image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=800&auto=format&fit=crop',
-    tags: ['⚡ Fast results', '🎯 Focused drills', '🔥 Intensity'],
-    features: [
-      'Daily 15-min speaking drills',
-      'Weekly progress analysis',
-      'Personalized feedback loop',
-      'Access to all scenarios'
-    ],
-    ctaText: 'Choose Sprint →',
+    title: 'Communication Mastery',
+    sub: 'Improve your speaking, body language, voice control, storytelling, first impressions, and social intelligence',
+    image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=400&auto=format&fit=crop',
+    tags: ['🎯 Specific Sprint', '📝 Daily Drills', '🔄 Personalized Loop', '📊 Daily Progress'],
+    features: ['Specific Sprint', 'Daily Drills', 'Personalized Loop', 'Daily Progress', 'SNR', 'Access'],
+    ctaText: 'Choose',
     ctaLink: 'https://theunspoken.co.in/Pricing?plan=sprint',
     ctaClass: 'primary'
   },
   pass: {
-    badge: 'Continuous',
-    title: 'Practice Pass',
-    sub: 'Ongoing membership to continuously refine and master your communication.',
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=800&auto=format&fit=crop',
-    tags: ['🏆 Mastery', '📈 Consistency', '🌱 Growth'],
-    features: [
-      'Unlimited drills & scenarios',
-      'Advanced communication analytics',
-      'Community & leaderboards',
-      'New content every month'
-    ],
-    ctaText: 'Choose Practice Pass →',
+    title: 'Continuous Practice',
+    sub: 'Master your communication with unlimited access, continuous feedback loops, and a growing library of scenarios.',
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=400&auto=format&fit=crop',
+    tags: ['🔄 Unlimited Switching', '♾️ Unlimited Practice', '📚 New Content', '📓 Journal'],
+    features: ['Unlimited Switching', 'Unlimited Practice Loop', 'New Content', 'Journal'],
+    ctaText: 'Choose',
     ctaLink: 'https://theunspoken.co.in/Pricing?plan=pass',
     ctaClass: 'secondary'
   }
@@ -1401,7 +1424,6 @@ function updatePlanDetail(planKey) {
   if (!plan) return;
 
   const detailCard = document.getElementById('planDetailCard');
-  const detailBadge = document.getElementById('detailBadge');
   const detailTitle = document.getElementById('detailTitle');
   const detailSub = document.getElementById('detailSub');
   const detailImage = document.getElementById('detailImage');
@@ -1410,6 +1432,7 @@ function updatePlanDetail(planKey) {
   const tag1 = document.getElementById('tag1');
   const tag2 = document.getElementById('tag2');
   const tag3 = document.getElementById('tag3');
+  const tag4 = document.getElementById('tag4');
 
   // Fade out effect
   detailCard.style.opacity = '0.5';
@@ -1418,7 +1441,6 @@ function updatePlanDetail(planKey) {
 
   setTimeout(() => {
     // Update content
-    detailBadge.textContent = plan.badge;
     detailTitle.textContent = plan.title;
     detailSub.textContent = plan.sub;
     detailImage.src = plan.image;
@@ -1427,6 +1449,7 @@ function updatePlanDetail(planKey) {
     tag1.textContent = plan.tags[0];
     tag2.textContent = plan.tags[1];
     tag3.textContent = plan.tags[2];
+    tag4.textContent = plan.tags[3];
 
     // Update features
     detailFeatures.innerHTML = plan.features.map(f => `<li>${f}</li>`).join('');
