@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <!-- Razorpay Checkout Script -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <style>
     /* ============================================================
        ROOT COLOR SYSTEM
@@ -1742,7 +1744,7 @@
             <option value="charisma">Charisma Sprint</option>
           </select>
         </div>
-        <button type="button" class="gate-submit" id="checkoutSubmit" onclick="submitCheckoutAndRedirect()">Complete Purchase & Start →</button>
+        <button type="button" class="gate-submit" id="checkoutSubmit" onclick="initiateRazorpayPayment()">Pay & Start →</button>
       </form>
     </div>
   </div>
@@ -1769,6 +1771,13 @@
     // ============================================================
     const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
     const PRODUCT_URL = 'https://theunspoken.co.in/Product';
+    const RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID'; // Replace with your actual Razorpay Key ID
+
+    // ============================================================
+    // GLOBAL STATE
+    // ============================================================
+    let selectedPlan = 'sprint'; // 'sprint' or 'pass'
+    let checkoutData = {}; // To store user details temporarily
 
     // ============================================================
     // DOM CONTENT LOADED
@@ -1904,8 +1913,6 @@
       // ============================================================
       // CHECKOUT MODAL LOGIC
       // ============================================================
-      let selectedPlan = 'sprint'; // 'sprint' or 'pass'
-
       // Sprint CTA
       document.getElementById('standaloneCta').addEventListener('click', function(e) {
         e.preventDefault();
@@ -1952,9 +1959,10 @@
     });
 
     // ============================================================
-    // SUBMIT CHECKOUT → UPLOAD TO BACKEND → REDIRECT
+    // RAZORPAY PAYMENT FLOW
     // ============================================================
-    async function submitCheckoutAndRedirect() {
+    async function initiateRazorpayPayment() {
+      // 1. Get user details from the modal
       const name = document.getElementById('checkoutName').value.trim();
       const email = document.getElementById('checkoutEmail').value.trim();
       const phone = document.getElementById('checkoutPhone').value.trim();
@@ -1965,44 +1973,108 @@
         return;
       }
 
+      // Store checkout data for the verification step
+      checkoutData = { name, email, phone, sprint, plan: selectedPlan };
+
       const btn = document.getElementById('checkoutSubmit');
-      btn.textContent = 'Processing your purchase…';
+      btn.textContent = 'Creating order…';
       btn.disabled = true;
 
       try {
-        // ─── STEP 1: Send purchase details to backend ───
-        const purchaseRes = await fetch(`${BACKEND_URL}/api/checkout`, {
+        // 2. Create a Razorpay Order on your backend
+        const orderRes = await fetch(`${BACKEND_URL}/api/checkout/create-order`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            plan: selectedPlan,
+            sprint: sprint,
             name: name,
             email: email,
-            phone: phone,
-            plan: selectedPlan, // 'sprint' or 'pass'
-            sprint: sprint
+            phone: phone
           })
         });
 
-        if (!purchaseRes.ok) {
-          const err = await purchaseRes.json().catch(() => ({}));
-          throw new Error(err.error || 'Purchase failed');
+        if (!orderRes.ok) {
+          const err = await orderRes.json().catch(() => ({}));
+          throw new Error(err.error || 'Failed to create order');
         }
 
-        const { user_id, session_token } = await purchaseRes.json();
-        console.log('✅ Purchase complete for user:', user_id);
+        const orderData = await orderRes.json();
+        console.log('✅ Razorpay Order created:', orderData.order_id);
 
-        // ─── STEP 2: Redirect with the session token in the URL ───
-        // The token is short-lived and one-time-use.
-        // The product page reads it from ?session= and calls /analyze.
-        const targetUrl = `${PRODUCT_URL}?session=${encodeURIComponent(session_token)}&plan=${selectedPlan}&sprint=${sprint}`;
-        console.log('🔀 Redirecting to product:', targetUrl);
-        window.location.assign(targetUrl);
+        // 3. Open Razorpay Checkout
+        const options = {
+          key: RAZORPAY_KEY_ID,
+          amount: orderData.amount, // Amount in paise
+          currency: orderData.currency || 'INR',
+          name: 'The Unspoken',
+          description: selectedPlan === 'sprint' ? 'Sprint Plan' : 'Practice Pass',
+          order_id: orderData.order_id,
+          prefill: {
+            name: name,
+            email: email,
+            contact: phone
+          },
+          theme: {
+            color: '#b8943c' // Gold color
+          },
+          handler: async function (response) {
+            // 4. On successful payment, verify with your backend
+            btn.textContent = 'Verifying payment…';
+            
+            try {
+              const verifyRes = await fetch(`${BACKEND_URL}/api/checkout/verify-payment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  plan: selectedPlan,
+                  sprint: sprint,
+                  name: name,
+                  email: email,
+                  phone: phone
+                })
+              });
+
+              if (!verifyRes.ok) {
+                const err = await verifyRes.json().catch(() => ({}));
+                throw new Error(err.error || 'Payment verification failed');
+              }
+
+              const verifyData = await verifyRes.json();
+              console.log('✅ Payment verified, session created:', verifyData.user_id);
+
+              // 5. Redirect to product page with session token
+              const targetUrl = `${PRODUCT_URL}?session=${encodeURIComponent(verifyData.session_token)}&plan=${selectedPlan}&sprint=${sprint}`;
+              console.log('🔀 Redirecting to product:', targetUrl);
+              window.location.assign(targetUrl);
+
+            } catch (err) {
+              console.error('❌ Verification failed:', err);
+              alert(`Payment verification failed: ${err.message}. Please contact support.`);
+              btn.textContent = 'Pay & Start →';
+              btn.disabled = false;
+            }
+          },
+          modal: {
+            ondismiss: function() {
+              // User closed the Razorpay modal without paying
+              btn.textContent = 'Pay & Start →';
+              btn.disabled = false;
+            }
+          }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
 
       } catch (err) {
-        console.error('❌ Purchase failed:', err);
-        btn.textContent = 'Complete Purchase & Start →';
-        btn.disabled = false;
+        console.error('❌ Order creation failed:', err);
         alert(`Something went wrong: ${err.message}. Please try again.`);
+        btn.textContent = 'Pay & Start →';
+        btn.disabled = false;
       }
     }
 
