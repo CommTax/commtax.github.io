@@ -484,7 +484,7 @@
     }
     .phone-screen {
       background: var(--phone-bg); border-radius: 38px; overflow: hidden;
-      position: relative; min-height: 680px; display: flex; flex-direction: column;
+      position: relative; display: flex; flex-direction: column;
     }
     .status-bar {
       display: flex; justify-content: space-between; align-items: center;
@@ -597,6 +597,254 @@
     .text-submit-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); }
     .text-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    /* === NEW INTERACTIVE JOURNEY SECTION === */
+    .journey-section {
+      padding: 60px 0 40px;
+      background: #f4f0ea;
+      margin: 40px 0;
+      border-radius: 40px;
+    }
+    .journey-header {
+      text-align: center;
+      margin-bottom: 48px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .journey-header .eyebrow {
+      display: inline-block; font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); background: rgba(184, 148, 60, 0.1);
+      padding: 6px 20px; border-radius: 40px;
+      border: 1px solid rgba(184, 148, 60, 0.15); margin-bottom: 12px;
+    }
+    .journey-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin: 0 0 16px;
+    }
+    .journey-header h2 .highlight {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .journey-interactive-container {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 40px;
+      max-width: 1000px;
+      margin: 0 auto 48px;
+      align-items: start;
+    }
+
+    /* Left Column: Plan Selector */
+    .plan-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .plan-option {
+      background: #fff;
+      border: 2px solid transparent;
+      border-radius: 20px;
+      padding: 28px 32px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      position: relative;
+      overflow: hidden;
+    }
+    .plan-option:hover {
+      border-color: rgba(184, 148, 60, 0.3);
+      transform: translateX(4px);
+    }
+    .plan-option.active {
+      border-color: var(--gold);
+      background: #fff;
+      box-shadow: 0 12px 32px rgba(184, 148, 60, 0.12);
+    }
+    .plan-option.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--gold);
+    }
+    .plan-option h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 6px;
+      color: var(--ink);
+    }
+    .plan-option .plan-meta {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .plan-option .plan-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Right Column: Plan Detail Card (Matching Reference Image) */
+    /* Removed the white container background to match the premium, unboxed look */
+    .plan-detail-card {
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
+      border: none;
+      transition: all 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    
+    .plan-detail-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0 0 8px;
+      color: var(--ink);
+    }
+    .plan-detail-card .detail-sub {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* Image & Aura Wrapper - Premium Borderless Look */
+    .plan-image-aura-wrapper {
+      position: relative;
+      width: 100%;
+      height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      background: transparent;
+    }
+    
+    /* The Aura Elliptical Rings */
+    .plan-image-aura-wrapper::before {
+      content: '';
+      position: absolute;
+      width: 260px;
+      height: 140px;
+      border-radius: 50%;
+      border: 2px solid rgba(184, 148, 60, 0.25);
+      transform: rotate(-15deg);
+      animation: auraPulse 6s ease-in-out infinite;
+      z-index: 1;
+    }
+    .plan-image-aura-wrapper::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 110px;
+      border-radius: 50%;
+      border: 1px solid rgba(184, 148, 60, 0.15);
+      transform: rotate(-15deg);
+      animation: auraPulse 6s ease-in-out infinite 1s;
+      z-index: 1;
+    }
+    @keyframes auraPulse {
+      0%, 100% { transform: rotate(-15deg) scale(1); opacity: 0.6; }
+      50% { transform: rotate(-15deg) scale(1.1); opacity: 1; }
+    }
+
+    .plan-image-aura-wrapper img {
+      position: relative;
+      z-index: 2;
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 50%;
+      transition: opacity 0.4s ease, transform 0.6s ease;
+      filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.15));
+    }
+    .plan-image-aura-wrapper img.fade-out {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+
+    /* Floating Tags positioned around the image */
+    .plan-image-aura-wrapper .floating-tag {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(8px);
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ink);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      white-space: nowrap;
+      animation: floatTag 5s ease-in-out infinite;
+      z-index: 3;
+    }
+    
+    /* Specific positions for tags (Sprint vs Pass) */
+    .tag-sprint-1 { top: 10px; left: 10px; animation-delay: 0s; }
+    .tag-sprint-2 { top: 30%; right: -10px; animation-delay: 1.5s; transform: translateY(-50%); }
+    .tag-sprint-3 { bottom: 20px; left: 20px; animation-delay: 2.5s; }
+    .tag-sprint-4 { bottom: 10px; right: 20px; animation-delay: 0.8s; }
+    
+    .tag-pass-1 { top: 10px; right: 10px; animation-delay: 0s; }
+    .tag-pass-2 { top: 40%; left: -10px; animation-delay: 1.2s; transform: translateY(-50%); }
+    .tag-pass-3 { bottom: 20px; right: 20px; animation-delay: 2.2s; }
+    .tag-pass-4 { bottom: 10px; left: 20px; animation-delay: 0.6s; }
+
+    @keyframes floatTag {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Detail CTA button */
+    .plan-detail-card .detail-cta {
+      display: block;
+      text-align: center;
+      padding: 18px 24px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      width: 100%;
+      margin-top: 12px;
+    }
+    .plan-detail-card .detail-cta.primary {
+      background: linear-gradient(135deg, #2c3440, #1e242d);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(44, 52, 64, 0.25);
+    }
+    .plan-detail-card .detail-cta.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(44, 52, 64, 0.35);
+    }
+    .plan-detail-card .detail-cta.secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid #d0c8bc;
+    }
+    .plan-detail-card .detail-cta.secondary:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
     /* MODALS */
     .modal { position: fixed; inset: 0; z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
     .modal.is-visible { display: flex; }
@@ -677,9 +925,24 @@
       50% { opacity: 0.3; transform: scale(0.8); }
     }
 
+    /* RESPONSIVE */
     @media (max-width: 1024px) {
       .hero { flex-direction: column; gap: 30px; padding: 20px 0 40px; }
       .hero-left, .hero-right { flex: 1 1 100%; width: 100%; max-width: 100%; }
+      .journey-interactive-container {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        max-width: 560px;
+      }
+      .plan-selector {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .plan-option {
+        flex: 1 1 45%;
+        padding: 20px 24px;
+      }
+      .plan-option h3 { font-size: 1.3rem; }
     }
     @media (max-width: 768px) {
       .container { padding: 0 16px; }
@@ -687,16 +950,82 @@
       .logo-text { font-size: 1.2rem; }
       .nav-links { gap: 12px; flex-wrap: wrap; }
       .nav-links a { font-size: 0.8rem; }
-      .phone-wrap { padding: 30px 10px; }
+      
+      /* Phone Mockup scaling to fit mobile */
+      .phone-wrap { 
+        padding: 20px 0; 
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .phone-frame {
+        transform: scale(0.85);
+        transform-origin: top center;
+        margin-bottom: -60px; /* Pull up the extra space created by scaling */
+      }
+      
       .side-tag.top-left { left: 0; }
       .side-tag.mid-left { left: -10px; }
       .side-tag.mid-right { right: -10px; }
       .phone-frame { padding: 10px; border-radius: 40px; }
-      .phone-screen { border-radius: 32px; min-height: 600px; }
+      .phone-screen { border-radius: 32px; }
       .gate-stage-options { grid-template-columns: 1fr; }
+      
+      .journey-section { padding: 40px 16px; margin: 20px 0; border-radius: 24px; }
+      .journey-header h2 { font-size: 1.8rem; }
+      
+      .plan-selector {
+        flex-direction: column;
+      }
+      .plan-option {
+        padding: 20px;
+      }
+      .plan-detail-card {
+        padding: 0;
+      }
+      .plan-image-aura-wrapper {
+        height: 260px;
+      }
+      .plan-image-aura-wrapper img {
+        width: 150px;
+        height: 150px;
+      }
+      .plan-image-aura-wrapper::before { width: 200px; height: 110px; }
+      .plan-image-aura-wrapper::after { width: 150px; height: 85px; }
+      
+      .floating-tag {
+        font-size: 0.65rem;
+        padding: 6px 12px;
+      }
+      .tag-sprint-1 { top: 5px; left: 5px; }
+      .tag-sprint-2 { right: 0px; }
+      .tag-sprint-3 { bottom: 10px; left: 10px; }
+      .tag-sprint-4 { bottom: 5px; right: 10px; }
+      .tag-pass-1 { top: 5px; right: 5px; }
+      .tag-pass-2 { left: 0px; }
+      .tag-pass-3 { bottom: 10px; right: 10px; }
+      .tag-pass-4 { bottom: 5px; left: 10px; }
     }
     @media (max-width: 480px) {
       .side-tag { font-size: 10px; padding: 5px 10px; }
+      .phone-frame {
+        transform: scale(0.75);
+        margin-bottom: -100px;
+      }
+      .journey-section { padding: 30px 12px; }
+      .plan-detail-card {
+        padding: 0;
+      }
+      .plan-image-aura-wrapper {
+        height: 220px;
+      }
+      .plan-image-aura-wrapper img {
+        width: 120px;
+        height: 120px;
+      }
+      .plan-image-aura-wrapper::before { width: 170px; height: 90px; }
+      .plan-image-aura-wrapper::after { width: 130px; height: 70px; }
     }
   </style>
 </head>
@@ -914,10 +1243,47 @@
   </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="final-cta container" style="padding: 30px 0 20px; text-align: center;">
-  <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto 20px;">Now discover what's getting lost.</p>
-  <a href="#impact-test" class="btn-free" style="font-size: 1.1rem; padding: 16px 44px;">✦ Discover My Communication Pattern</a>
+<!-- NEW INTERACTIVE JOURNEY SECTION -->
+<section class="journey-section" id="journey">
+  <div class="container">
+    <div class="journey-header">
+      <span class="eyebrow">WHERE TO START</span>
+      <h2>Choose your <span class="highlight">personalized</span> mental muscle builder</h2>
+    </div>
+
+    <div class="journey-interactive-container">
+      <!-- Left Column: Plan Selector -->
+      <div class="plan-selector">
+        <div class="plan-option active" data-plan="sprint">
+          <div class="plan-meta">4 Weeks</div>
+          <h3>Sprint</h3>
+          <p class="plan-desc">A focused 4-week intensive to break the pattern and build the muscle fast.</p>
+        </div>
+        <div class="plan-option" data-plan="pass">
+          <div class="plan-meta">Continuous</div>
+          <h3>Practice Pass</h3>
+          <p class="plan-desc">Ongoing membership to continuously refine and master your communication.</p>
+        </div>
+      </div>
+
+      <!-- Right Column: Dynamic Plan Detail (Matches Reference Image) -->
+      <div class="plan-detail-card" id="planDetailCard">
+        <h3 id="detailTitle">Sprint</h3>
+        <p class="detail-sub" id="detailSub">Improve your speaking, body language, voice control, storytelling, first impressions, and social intelligence</p>
+        
+        <div class="plan-image-aura-wrapper">
+          <img id="detailImage" src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=400&auto=format&fit=crop" alt="Communication Mastery" />
+          <!-- Floating Tags for Sprint -->
+          <span class="floating-tag tag-sprint-1" id="tag1">🗣️ Confidence</span>
+          <span class="floating-tag tag-sprint-2" id="tag2">✨ Stronger presence</span>
+          <span class="floating-tag tag-sprint-3" id="tag3">🤝 More connections</span>
+          <span class="floating-tag tag-sprint-4" id="tag4">📈 Advanced career</span>
+        </div>
+
+        <a href="https://theunspoken.co.in/Pricing?plan=sprint" class="detail-cta primary" id="detailCta">Choose</a>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- FOOTER -->
@@ -978,6 +1344,85 @@ const QUESTION_MAP = {
     difficulty: 'medium'
   }
 };
+
+// ============================================================
+// INTERACTIVE JOURNEY SECTION LOGIC
+// ============================================================
+const PLANS = {
+  sprint: {
+    title: 'Sprint',
+    sub: 'Improve your speaking, body language, voice control, storytelling, first impressions, and social intelligence',
+    image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=400&auto=format&fit=crop',
+    tags: ['🗣️ Confidence', '✨ Stronger presence', '🤝 More connections', '📈 Advanced career'],
+    ctaText: 'Choose',
+    ctaLink: 'https://theunspoken.co.in/Pricing?plan=sprint',
+    ctaClass: 'primary'
+  },
+  pass: {
+    title: 'Practice Pass',
+    sub: 'Master your communication with unlimited access, continuous feedback loops, and a growing library of scenarios.',
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=400&auto=format&fit=crop',
+    tags: ['🔄 Unlimited Switching', '♾️ Unlimited Practice', '📚 New Content', '📓 Journal'],
+    ctaText: 'Choose',
+    ctaLink: 'https://theunspoken.co.in/Pricing?plan=pass',
+    ctaClass: 'secondary'
+  }
+};
+
+function updatePlanDetail(planKey) {
+  const plan = PLANS[planKey];
+  if (!plan) return;
+
+  const detailCard = document.getElementById('planDetailCard');
+  const detailTitle = document.getElementById('detailTitle');
+  const detailSub = document.getElementById('detailSub');
+  const detailImage = document.getElementById('detailImage');
+  const detailCta = document.getElementById('detailCta');
+  const tag1 = document.getElementById('tag1');
+  const tag2 = document.getElementById('tag2');
+  const tag3 = document.getElementById('tag3');
+  const tag4 = document.getElementById('tag4');
+
+  // Fade out effect
+  detailCard.style.opacity = '0.5';
+  detailCard.style.transform = 'translateY(10px)';
+  detailImage.classList.add('fade-out');
+
+  setTimeout(() => {
+    // Update content
+    detailTitle.textContent = plan.title;
+    detailSub.textContent = plan.sub;
+    detailImage.src = plan.image;
+    
+    // Update tags
+    tag1.textContent = plan.tags[0];
+    tag2.textContent = plan.tags[1];
+    tag3.textContent = plan.tags[2];
+    tag4.textContent = plan.tags[3];
+
+    // Update CTA
+    detailCta.textContent = plan.ctaText;
+    detailCta.href = plan.ctaLink;
+    detailCta.className = `detail-cta ${plan.ctaClass}`;
+
+    // Fade in effect
+    detailCard.style.opacity = '1';
+    detailCard.style.transform = 'translateY(0)';
+    detailImage.classList.remove('fade-out');
+  }, 300);
+}
+
+document.querySelectorAll('.plan-option').forEach(option => {
+  option.addEventListener('click', () => {
+    // Update active state
+    document.querySelectorAll('.plan-option').forEach(opt => opt.classList.remove('active'));
+    option.classList.add('active');
+    
+    // Update detail card
+    const planKey = option.dataset.plan;
+    updatePlanDetail(planKey);
+  });
+});
 
 // ============================================================
 // HERO ANIMATION
