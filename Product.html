@@ -1068,25 +1068,35 @@
 
       const promo = document.getElementById('unlockMorePromo');
       if (promo) promo.remove();
+// Hide the standalone "Change Question" card
+const changeCard = document.getElementById('freeChangeCustomizeCard');
+if (changeCard) changeCard.style.display = 'none';
 
-      const changeCard = document.getElementById('freeChangeCustomizeCard');
-      if (changeCard) {
-        changeCard.innerHTML = `
-          <div class="qc-top">
-            <div class="qc-left">
-              <div class="qc-label"><span>Customize Your Practice</span></div>
-              <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
-                Swap questions, focus on a specific area, or browse the full ${formatSprint(USER.track_id)} bank.
-              </div>
-            </div>
-          </div>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="qc-action-btn primary-action" onclick="openQuestionPicker()">🎯 Change Question</button>
-            <button class="qc-action-btn primary-action" onclick="openQuestionPicker()">✨ Customize Question</button>
-            <button class="qc-action-btn primary-action" onclick="openQuestionBank()">📚 Browse Bank</button>
-          </div>
-        `;
-      }
+// Inject "Change Question" actions into Q1 card
+const q1Top = document.querySelector('#questionCard1 .qc-top');
+if (q1Top && !q1Top.querySelector('[data-q-actions]')) {
+  const q1Actions = document.createElement('div');
+  q1Actions.setAttribute('data-q-actions', '1');
+  q1Actions.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;';
+  q1Actions.innerHTML = `
+    <button class="qc-action-btn primary-action" onclick="openQuestionPickerFor('q1')">🎯 Change Question</button>
+    <button class="qc-action-btn" onclick="openQuestionBank()">📚 Browse Bank</button>
+  `;
+  q1Top.appendChild(q1Actions);
+}
+
+// Inject "Change Question" actions into Q2 card
+const q2Top = document.querySelector('#questionCard2 .qc-top');
+if (q2Top && !q2Top.querySelector('[data-q-actions]')) {
+  const q2Actions = document.createElement('div');
+  q2Actions.setAttribute('data-q-actions', '1');
+  q2Actions.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;';
+  q2Actions.innerHTML = `
+    <button class="qc-action-btn primary-action" onclick="openQuestionPickerFor('q2')">🎯 Change Question</button>
+    <button class="qc-action-btn" onclick="openQuestionBank()">📚 Browse Bank</button>
+  `;
+  q2Top.appendChild(q2Actions);
+}
 
       loadBackendQuestions(USER.current_day || 1);
 
@@ -1208,28 +1218,43 @@
       console.log('✅ Backend questions loaded for', sprint, 'day', day);
     }
 
-    // ============================================================
-    // QUESTIONS MODAL
-    // ============================================================
-    async function openQuestionPicker() {
-      const sprint = USER.track_id || 'interview';
-      const bank = await fetchQuestions(sprint, null);
+// ============================================================
+// QUESTIONS MODAL
+// ============================================================
+async function openQuestionPicker() {
+  return openQuestionPickerFor('q1');
+}
 
-      const html = `
-        <h2>Change Question</h2>
-        <p class="us-modal-sub">Pick a question from the ${formatSprint(sprint)} bank.</p>
-        <div>
-          ${bank.map((q) => `
-            <div class="bank-question" onclick="selectQuestion('${String(q.text).replace(/'/g, "\\'")}', '${String(q.focus).replace(/'/g, "\\'")}', ${q.target_seconds}, '${q.difficulty}')">
-              <div class="bq-text">"${q.text}"</div>
-              <div class="bq-meta">Day ${q.day_number} · ${q.focus} · ${q.target_seconds}s · ${q.difficulty}</div>
-            </div>
-          `).join('')}
+async function openQuestionPickerFor(target) {
+  const sprint = USER.track_id || 'interview';
+  const bank = await fetchQuestions(sprint, null);
+
+  const html = `
+    <h2>Change ${target === 'q1' ? 'Question 1' : 'Question 2'}</h2>
+    <p class="us-modal-sub">Pick a question from the ${formatSprint(sprint)} bank.</p>
+    <div>
+      ${bank.map((q) => `
+        <div class="bank-question" onclick="selectQuestion('${String(q.text).replace(/'/g, "\\'")}', '${String(q.focus).replace(/'/g, "\\'")}', ${q.target_seconds}, '${q.difficulty}', '${target}')">
+          <div class="bq-text">"${q.text}"</div>
+          <div class="bq-meta">Day ${q.day_number} · ${q.focus} · ${q.target_seconds}s · ${q.difficulty}</div>
         </div>
-      `;
-      document.getElementById('usModalContent').innerHTML = html;
-      document.getElementById('usModal').classList.add('is-visible');
-    }
+      `).join('')}
+    </div>
+  `;
+  document.getElementById('usModalContent').innerHTML = html;
+  document.getElementById('usModal').classList.add('is-visible');
+}
+
+function openQuestionBank() { openQuestionPickerFor('q1'); }
+
+function selectQuestion(text, focus, target, difficulty, questionTarget) {
+  const qNum = questionTarget === 'q2' ? 'q2' : 'q1';
+  document.getElementById(`${qNum}Text`).textContent = `"${text}"`;
+  document.getElementById(`${qNum}Meta`).textContent = `Focus: ${focus} · Target: ${target}s`;
+  document.getElementById(`${qNum}Diff`).textContent = `⭐ ${difficulty}`;
+  document.getElementById(`${qNum}Diff`).className = `qc-difficulty ${difficulty.toLowerCase()}`;
+  closeModal();
+}
 
     function openQuestionBank() { openQuestionPicker(); }
 
