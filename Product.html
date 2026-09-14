@@ -1207,6 +1207,7 @@
       SESSION_TOKEN = params.get('session');
       if (SESSION_TOKEN) window.history.replaceState({}, '', window.location.pathname);
 
+      // No token → try localStorage
       if (!SESSION_TOKEN) {
         const stored = localStorage.getItem('unspoken_user');
         if (stored) {
@@ -1221,6 +1222,33 @@
         return;
       }
 
+      // ─── STEP 1: Try paid session first ───
+      bootTitle.textContent = 'Loading your session…';
+      bootSub.textContent = 'Just a moment.';
+
+      try {
+        const paidRes = await fetch(`${BACKEND_URL}/api/checkout/verify-session`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
+        });
+
+        if (paidRes.ok) {
+          const paid = await paidRes.json();
+
+          if (paid.is_paid) {
+            // ✓ Paid user
+            USER = buildPaidUser(paid);
+            try { localStorage.setItem('unspoken_user', JSON.stringify(USER)); } catch (e) {}
+            bootScreen.classList.add('hidden');
+            renderAll();
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Paid session check failed, falling back to drill session:', e);
+      }
+
+      // ─── STEP 2: Fall back to drill session ───
       bootTitle.textContent = 'Analyzing your response…';
       bootSub.textContent = 'Checking your pacing, fillers, structure, and impact. This usually takes 5–10 seconds.';
 
@@ -1255,7 +1283,32 @@
     }
 
     // ============================================================
-    // BUILD USER
+    // BUILD PAID USER (from /api/checkout/verify-session)
+    // ============================================================
+    function buildPaidUser(paid) {
+      return {
+        user_id: paid.user_id,
+        drill_id: null,
+        name: paid.name || 'Member',
+        email: paid.email || '',
+        phone: paid.phone || '',
+        stage: null,
+        function: null,
+        plan: paid.plan || 'sprint',
+        track_id: paid.sprint || 'interview',
+        current_day: paid.current_day || 1,
+        total_days: paid.total_days || 28,
+        questions_per_day: 2,
+        trials_per_question: 2,
+        sprint_start_date: paid.sprint_start_date || null,
+        sprint_end_date: paid.sprint_end_date || null,
+        landing_trial: null,   // No trial data for paid users
+        is_paid: true
+      };
+    }
+
+    // ============================================================
+    // BUILD USER (from drill analysis — existing flow)
     // ============================================================
     function buildUserFromAnalysis(data) {
       const signals = data.signals || {};
@@ -1334,10 +1387,66 @@
     }
 
     // ============================================================
-    // RENDER ALL
+    // RENDER ALL — handles both trial AND paid users
     // ============================================================
     function renderAll() {
       renderHeader();
+      renderProfile();
+
+      // ─── PAID USER → unlock everything, hide trial UI ───
+      if (USER.is_paid || (USER.plan !== 'trial' && !USER.landing_trial)) {
+        // Hide trial banner
+        document.getElementById('previewBanner').classList.add('hidden');
+
+        // Set plan badges
+        const planLabel = USER.plan === 'pass' ? 'Practice Pass' : 'Sprint Pass';
+        document.getElementById('planBadge').textContent = planLabel;
+        document.getElementById('planBadge').classList.remove('trial');
+        document.getElementById('headerTrackBadge').textContent = planLabel;
+
+        // Update user role
+        document.getElementById('userRoleEl').textContent = USER.track_id
+          ? `Focus: ${formatSprint(USER.track_id)}`
+          : 'Active member';
+
+        // Unlock all sections — remove lock icons
+        document.querySelectorAll('.nav-lock').forEach(el => el.remove());
+
+        // Remove all lock overlays
+        document.querySelectorAll('.lock-overlay').forEach(el => el.remove());
+
+        // Remove all locked-preview styling
+        document.querySelectorAll('.locked-preview').forEach(el => {
+          el.classList.remove('locked-preview');
+        });
+
+        // Hide trial-specific card
+        const trialCard = document.getElementById('yourAnalysisCard');
+        if (trialCard) trialCard.classList.add('hidden');
+
+        // Show Today tab by default for paid users
+        switchView('today');
+
+        // Update header stats
+        document.getElementById('headerMemberSince').textContent = USER.sprint_start_date
+          ? new Date(USER.sprint_start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          : 'Just now';
+        document.getElementById('headerCompleted').textContent = '0 Tasks';
+        document.getElementById('headerAchievements').textContent = '🏆 0 Badges';
+
+        // Update today header
+        document.getElementById('todayTrackTitle').textContent = USER.track_id
+          ? `${formatSprint(USER.track_id)} Sprint`
+          : 'Your Sprint';
+        document.getElementById('todayFocus').textContent = `Day ${USER.current_day} of ${USER.total_days}`;
+        document.getElementById('dayCounter').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
+        document.getElementById('todayStreak').textContent = '0 day streak';
+
+        console.log('✅ Paid user loaded:', USER.plan, USER.track_id);
+        return;
+      }
+
+      // ─── TRIAL USER → existing flow ───
       renderYourAnalysis();
       renderProgressMetrics();
       renderStrengthsAndImprovements();
@@ -1345,15 +1454,14 @@
       renderTodayProgress();
       renderBanner();
       renderBadges();
-      renderProfile();
     }
 
     function renderHeader() {
       document.getElementById('userNameEl').textContent = USER.name;
       document.getElementById('userAvatarEl').textContent = USER.name.charAt(0).toUpperCase();
-      document.getElementById('userRoleEl').textContent = formatStage(USER.stage);
+      document.getElementById('userRoleEl').textContent = USER.stage ? formatStage(USER.stage) : 'Member';
       document.getElementById('planBadge').textContent = PLAN_LABEL[USER.plan] || 'Trial';
-      document.getElementById('headerTrackBadge').textContent = 'Trial';
+      document.getElementById('headerTrackBadge').textContent = USER.plan === 'trial' ? 'Trial' : (USER.plan === 'pass' ? 'Practice Pass' : 'Sprint Pass');
     }
 
     function renderProfile() {
@@ -1563,6 +1671,11 @@
     function formatFunction(f) {
       const m = { engineering:'Engineering / Data', bpo:'BPO / Customer Support', manufacturing:'Manufacturing / Ops', sales:'Sales / Marketing / BD', finance:'Finance / Accounting', consulting:'Consulting / Strategy', design:'Design / Content / Product', hr:'HR / People', other:'Other' };
       return m[f] || f || '—';
+    }
+
+    function formatSprint(s) {
+      const m = { interview:'Interview', gd:'Group Discussion', leadership:'Leadership Presence', storytelling:'Storytelling', charisma:'Charisma' };
+      return m[s] || s || '—';
     }
 
     // ============================================================
