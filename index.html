@@ -1111,31 +1111,59 @@
   </nav>
 </div>
 
-<!-- LOGIN MODAL -->
+<!-- LOGIN MODAL (OTP) -->
 <div id="loginModal" class="modal login-modal">
   <div class="modal-overlay" data-close="loginModal"></div>
-  <div class="modal-content">
+  <div class="modal-content" style="max-width: 440px; padding: 40px 36px; text-align: left;">
     <button class="modal-close" data-close="loginModal">&times;</button>
     <div class="logo-text" style="font-size: 1.2rem; margin-bottom: 20px;">The <span>Unspoken</span></div>
-    <h2>Welcome Back</h2>
-    <p class="login-subtitle">Continue your Unspoken journey.</p>
-    <form class="login-form" id="loginForm">
-      <div>
-        <label for="loginEmail">Email / User ID</label>
-        <input type="text" id="loginEmail" placeholder="Enter your email or User ID" required />
+
+    <!-- Step 1: Email -->
+    <div id="loginStepEmail">
+      <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--ink); margin-bottom: 4px;">Welcome back</h2>
+      <p class="login-subtitle" style="margin-bottom: 24px;">Enter your email and we'll send you a 6-digit code.</p>
+      <div class="login-form">
+        <div>
+          <label for="loginEmailOtp">Email</label>
+          <input type="email" id="loginEmailOtp" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+        <button type="button" class="login-submit" id="sendOtpBtn" onclick="requestLoginOtp()">Send Code →</button>
       </div>
-      <div>
-        <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" placeholder="Enter your password" required />
+      <p style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border-light); text-align:center; font-size:0.9rem; color:var(--text-muted);">
+        Don't have access yet? <a href="https://theunspoken.co.in/Pricing" style="color:var(--gold); text-decoration:none; font-weight:600;">Explore Plans →</a>
+      </p>
+    </div>
+
+    <!-- Step 2: OTP -->
+    <div id="loginStepOtp" style="display: none;">
+      <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--ink); margin-bottom: 4px;">Check your inbox</h2>
+      <p class="login-subtitle" style="margin-bottom: 24px;">
+        We sent a 6-digit code to <strong id="loginEmailDisplay" style="color: var(--ink);"></strong>
+      </p>
+      <div class="login-form">
+        <div>
+          <label for="loginOtpInput">Enter 6-digit code</label>
+          <input
+            type="tel"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            maxlength="6"
+            id="loginOtpInput"
+            placeholder="000000"
+            autocomplete="one-time-code"
+            style="font-size: 22px; letter-spacing: 10px; text-align: center; font-weight: 700; font-family: monospace;"
+          />
+        </div>
+        <button type="button" class="login-submit" id="verifyOtpBtn" onclick="verifyLoginOtp()">Sign In →</button>
+        <button type="button" id="backToEmailBtn" onclick="backToLoginEmail()" style="background: transparent; border: 1px solid #e2ddd6; color: var(--text-soft); padding: 12px; border-radius: 60px; font-weight: 600; cursor: pointer; font-family: inherit; font-size: 0.9rem;">← Use a different email</button>
       </div>
-      <button type="submit" class="login-submit">Log In →</button>
-    </form>
-    <p style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border-light); text-align:center; font-size:0.9rem; color:var(--text-muted);">
-      Don't have access yet? <a href="https://theunspoken.co.in/Pricing" style="color:var(--gold); text-decoration:none; font-weight:600;">Explore Plans →</a>
-    </p>
+      <p style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border-light); text-align:center; font-size:0.9rem; color:var(--text-muted);">
+        Didn't get it? <a href="javascript:void(0)" onclick="requestLoginOtp(true)" style="color:var(--gold); text-decoration:none; font-weight:600;">Resend code</a>
+      </p>
+    </div>
   </div>
 </div>
-
+  
 <!-- GATE MODAL — collects name, email, stage before redirect -->
 <div id="gateModal" class="modal gate-modal">
   <div class="modal-overlay" data-close="gateModal"></div>
@@ -1714,9 +1742,110 @@ document.querySelectorAll('[data-close]').forEach(el => {
     document.getElementById(el.dataset.close).classList.remove('is-visible');
   });
 });
+// ============================================================
+// OTP LOGIN (from home page)
+// ============================================================
+const LOGIN_BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
+
 document.getElementById('signInBtn').addEventListener('click', e => {
   e.preventDefault();
+  openLoginModal();
+});
+
+function openLoginModal() {
+  // Reset to step 1
+  document.getElementById('loginStepEmail').style.display = 'block';
+  document.getElementById('loginStepOtp').style.display = 'none';
+  document.getElementById('loginEmailOtp').value = '';
+  document.getElementById('loginOtpInput').value = '';
   document.getElementById('loginModal').classList.add('is-visible');
+  setTimeout(() => document.getElementById('loginEmailOtp').focus(), 100);
+}
+
+// Step 1 → Send OTP
+async function requestLoginOtp(isResend = false) {
+  const emailInput = document.getElementById('loginEmailOtp');
+  const email = emailInput.value.trim();
+  const btn = isResend ? event.target : document.getElementById('sendOtpBtn');
+
+  if (!email) { alert('Please enter your email.'); return; }
+
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = 'Sending…';
+
+  try {
+    const res = await fetch(`${LOGIN_BACKEND_URL}/api/auth/request-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Failed to send code');
+
+    // Move to Step 2
+    document.getElementById('loginEmailDisplay').textContent = email;
+    document.getElementById('loginStepEmail').style.display = 'none';
+    document.getElementById('loginStepOtp').style.display = 'block';
+    setTimeout(() => document.getElementById('loginOtpInput').focus(), 100);
+  } catch (err) {
+    alert(err.message);
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+// Step 2 → Verify OTP
+async function verifyLoginOtp() {
+  const email = document.getElementById('loginEmailDisplay').textContent;
+  const otp = document.getElementById('loginOtpInput').value.trim();
+  const btn = document.getElementById('verifyOtpBtn');
+
+  if (!otp || otp.length !== 6) { alert('Please enter the 6-digit code.'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Verifying…';
+
+  try {
+    const res = await fetch(`${LOGIN_BACKEND_URL}/api/auth/verify-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Invalid code');
+
+    // Success → redirect to product page with session token
+    const targetUrl = `https://theunspoken.co.in/Product?session=${encodeURIComponent(data.session_token)}`;
+    console.log('🔀 Redirecting to product:', targetUrl);
+    window.location.assign(targetUrl);
+  } catch (err) {
+    alert(`Login failed: ${err.message}`);
+    btn.disabled = false;
+    btn.textContent = 'Sign In →';
+  }
+}
+
+// Back to email step
+function backToLoginEmail() {
+  document.getElementById('loginStepEmail').style.display = 'block';
+  document.getElementById('loginStepOtp').style.display = 'none';
+  document.getElementById('loginOtpInput').value = '';
+  const sendBtn = document.getElementById('sendOtpBtn');
+  sendBtn.disabled = false;
+  sendBtn.textContent = 'Send Code →';
+}
+
+// Auto-submit when 6 digits entered
+document.addEventListener('DOMContentLoaded', () => {
+  const otpInput = document.getElementById('loginOtpInput');
+  if (otpInput) {
+    otpInput.addEventListener('input', () => {
+      if (otpInput.value.length === 6) {
+        verifyLoginOtp();
+      }
+    });
+  }
 });
 document.getElementById('phoneCloseBtn').addEventListener('click', () => {
   recorder1.reset();
