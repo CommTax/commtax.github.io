@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <!-- Razorpay Checkout Script -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <style>
     /* ============================================================
        ROOT COLOR SYSTEM
@@ -115,6 +117,72 @@
       transition: color 0.2s;
     }
     .nav-links a:hover {
+      color: var(--gold);
+    }
+
+    /* PRODUCT DROPDOWN */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown > a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      color: #3d3a34;
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .dropdown > a:hover {
+      color: var(--gold);
+    }
+    .dropdown > a::after {
+      content: '▾';
+      font-size: 0.7rem;
+      transition: transform 0.2s;
+    }
+    .dropdown:hover > a::after {
+      transform: rotate(180deg);
+    }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #fff;
+      min-width: 200px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      padding: 8px 0;
+      border: 1px solid var(--border-light);
+      z-index: 100;
+      margin-top: 8px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+    }
+    .dropdown:hover .dropdown-menu {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 20px;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .dropdown-menu a:hover {
+      background: #f8f6f2;
       color: var(--gold);
     }
 
@@ -1024,6 +1092,232 @@
       color: var(--gold);
     }
 
+    /* ============================================================
+       MODAL STYLES
+       ============================================================ */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal.is-visible {
+      display: flex;
+    }
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+    }
+    .modal-content {
+      position: relative;
+      background: #fff;
+      border-radius: 24px;
+      padding: 36px 32px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
+      animation: modalUp 0.3s ease;
+      text-align: center;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    @keyframes modalUp {
+      from { opacity: 0; transform: translateY(30px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      color: #8a8680;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-badge {
+      display: inline-block;
+      background: rgba(184, 148, 60, 0.1);
+      color: var(--gold);
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 40px;
+      margin-bottom: 14px;
+    }
+    .modal-content h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 8px;
+    }
+    .modal-content > p {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+      margin: 0 0 20px;
+      line-height: 1.5;
+    }
+
+    /* LOGIN MODAL */
+    .login-modal .modal-content {
+      padding: 40px 36px;
+      text-align: left;
+    }
+    .login-modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .login-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .login-form label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .login-form input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid #e2ddd6;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      background: var(--bg-cream);
+      font-family: inherit;
+    }
+    .login-form input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .login-submit {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    /* GATE MODAL */
+    .gate-modal .modal-content {
+      padding: 36px 32px;
+      text-align: left;
+      max-width: 460px;
+    }
+    .gate-modal .modal-badge {
+      margin-bottom: 12px;
+    }
+    .gate-modal h3 {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+    .gate-modal .gate-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .gate-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .gate-form label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .gate-form input, .gate-form select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid #e2ddd6;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      background: var(--bg-cream);
+      font-family: inherit;
+    }
+    .gate-form input:focus, .gate-form select:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .gate-stage-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .gate-stage-btn {
+      padding: 12px 10px;
+      border: 1.5px solid #e2ddd6;
+      border-radius: 12px;
+      background: var(--bg-cream);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      text-align: center;
+    }
+    .gate-stage-btn:hover {
+      border-color: var(--gold);
+    }
+    .gate-stage-btn.selected {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #fff;
+    }
+    .gate-submit {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #fff;
+      border: none;
+      padding: 16px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 8px;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    .gate-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .gate-submit:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(184, 148, 60, 0.35);
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.8); }
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       .container { padding: 0 16px; }
@@ -1075,8 +1369,15 @@
         <span class="logo-text">The <span>Unspoken</span></span>
       </a>
       <div class="nav-links">
-        <a href="https://theunspoken.co.in">Home</a>
+        <div class="dropdown">
+          <a href="#">Product</a>
+          <div class="dropdown-menu">
+            <a href="https://theunspoken.co.in/Pricing?plan=sprint">Sprint</a>
+            <a href="https://theunspoken.co.in/Pricing?plan=pass">Practice Pass</a>
+          </div>
+        </div>
         <a href="#faq">FAQ</a>
+        <a href="#" class="btn-ghost" id="signInBtn" style="border-color:var(--gold); padding:8px 20px; font-size:0.85rem;">Sign In</a>
       </div>
     </nav>
   </div>
@@ -1180,7 +1481,7 @@
         <li><i data-lucide="check" style="width:16px; height:16px;"></i> Growing progress profile &amp; adaptive practice</li>
       </ul>
 
-      <a href="#" class="btn-membership">Build My Practice →</a>
+      <a href="#" class="btn-membership" id="membershipCta">Build My Practice →</a>
     </div>
 
   </section>
@@ -1409,8 +1710,78 @@
     </footer>
   </div>
 
+  <!-- ============================================================
+       CHECKOUT MODAL
+       ============================================================ -->
+  <div id="checkoutModal" class="modal gate-modal">
+    <div class="modal-overlay" data-close="checkoutModal"></div>
+    <div class="modal-content">
+      <button class="modal-close" data-close="checkoutModal">&times;</button>
+      <span class="modal-badge">✦ Complete Your Purchase</span>
+      <h3 id="checkoutTitle">Start Your Sprint</h3>
+      <p class="gate-sub" id="checkoutSub">Enter your details to begin your 4-week intensive.</p>
+
+      <form class="gate-form" id="checkoutForm" onsubmit="return false;">
+        <div>
+          <label for="checkoutName">Full Name</label>
+          <input type="text" id="checkoutName" placeholder="e.g. Arun Chockalingam" required />
+        </div>
+        <div>
+          <label for="checkoutEmail">Email</label>
+          <input type="email" id="checkoutEmail" placeholder="e.g. arun@example.com" required />
+        </div>
+        <div>
+          <label for="checkoutPhone">Phone Number</label>
+          <input type="tel" id="checkoutPhone" placeholder="e.g. +91 98765 43210" required />
+        </div>
+        <div>
+          <label for="checkoutSprint">Sprint Focus</label>
+          <select id="checkoutSprint">
+            <option value="interview">Interview Sprint</option>
+            <option value="gd">GD Sprint</option>
+            <option value="leadership">Leadership Presence Sprint</option>
+            <option value="storytelling">Storytelling Sprint</option>
+            <option value="charisma">Charisma Sprint</option>
+          </select>
+        </div>
+        <button type="button" class="gate-submit" id="checkoutSubmit" onclick="initiateRazorpayPayment()">Pay & Start →</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAYWALL MODAL (Optional/Placeholder)
+       ============================================================ -->
+  <div id="paywallModal" class="modal">
+    <div class="modal-overlay" data-close="paywallModal"></div>
+    <div class="modal-content">
+      <button class="modal-close" data-close="paywallModal">&times;</button>
+      <span class="modal-badge">✦ You've used both attempts</span>
+      <h3>Ready to go deeper?</h3>
+      <p>You've seen your gap. Unlock the full engine to keep training and actually close it.</p>
+      <a href="https://theunspoken.co.in/Pricing" class="btn-paid" style="display:block; width:100%; box-sizing:border-box;">Start Practicing →</a>
+      <p style="font-size:0.7rem; color:var(--text-muted); margin-top:10px;">4-day free trial · Cancel anytime</p>
+    </div>
+  </div>
+
   <!-- ===== JAVASCRIPT ===== -->
   <script>
+    // ============================================================
+    // CONFIG
+    // ============================================================
+    const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
+    const PRODUCT_URL = 'https://theunspoken.co.in/Product';
+    const RAZORPAY_KEY_ID = 'rzp_live_TN9VVH5DwiHx0L'; // Replace with your actual Razorpay Key ID
+
+    // ============================================================
+    // GLOBAL STATE
+    // ============================================================
+    let selectedPlan = 'sprint'; // 'sprint' or 'pass'
+    let checkoutData = {}; // To store user details temporarily
+
+    // ============================================================
+    // DOM CONTENT LOADED
+    // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
       // Initialize Lucide icons
       if (typeof lucide !== 'undefined') {
@@ -1539,8 +1910,182 @@
         }
       });
 
+      // ============================================================
+      // CHECKOUT MODAL LOGIC
+      // ============================================================
+      // Sprint CTA
+      document.getElementById('standaloneCta').addEventListener('click', function(e) {
+        e.preventDefault();
+        selectedPlan = 'sprint';
+        
+        // Set the sprint dropdown in the modal to match the current card selection
+        const currentSprint = standaloneSprintSelect.querySelector('span').textContent;
+        document.getElementById('checkoutSprint').value = 
+          currentSprint.includes('Interview') ? 'interview' :
+          currentSprint.includes('GD') ? 'gd' :
+          currentSprint.includes('Leadership') ? 'leadership' :
+          currentSprint.includes('Storytelling') ? 'storytelling' : 'charisma';
+        
+        document.getElementById('checkoutTitle').textContent = 'Start Your Sprint';
+        document.getElementById('checkoutSub').textContent = 'Enter your details to begin your 4-week intensive.';
+        document.getElementById('checkoutModal').classList.add('is-visible');
+      });
+
+      // Membership CTA
+      document.getElementById('membershipCta').addEventListener('click', function(e) {
+        e.preventDefault();
+        selectedPlan = 'pass';
+        
+        const currentSprint = membershipSprintSelect.querySelector('span').textContent;
+        document.getElementById('checkoutSprint').value = 
+          currentSprint.includes('Interview') ? 'interview' :
+          currentSprint.includes('GD') ? 'gd' :
+          currentSprint.includes('Leadership') ? 'leadership' :
+          currentSprint.includes('Storytelling') ? 'storytelling' : 'charisma';
+
+        document.getElementById('checkoutTitle').textContent = 'Build Your Practice';
+        document.getElementById('checkoutSub').textContent = 'Enter your details to start your continuous practice journey.';
+        document.getElementById('checkoutModal').classList.add('is-visible');
+      });
+
+      // Close modal
+      document.querySelectorAll('[data-close="checkoutModal"]').forEach(el => {
+        el.addEventListener('click', () => {
+          document.getElementById('checkoutModal').classList.remove('is-visible');
+        });
+      });
+
       console.log('✅ Pricing page loaded — One goal. One Sprint.');
     });
+
+    // ============================================================
+    // RAZORPAY PAYMENT FLOW
+    // ============================================================
+    async function initiateRazorpayPayment() {
+      // 1. Get user details from the modal
+      const name = document.getElementById('checkoutName').value.trim();
+      const email = document.getElementById('checkoutEmail').value.trim();
+      const phone = document.getElementById('checkoutPhone').value.trim();
+      const sprint = document.getElementById('checkoutSprint').value;
+
+      if (!name || !email || !phone) {
+        alert('Please fill all fields.');
+        return;
+      }
+
+      // Store checkout data for the verification step
+      checkoutData = { name, email, phone, sprint, plan: selectedPlan };
+
+      const btn = document.getElementById('checkoutSubmit');
+      btn.textContent = 'Creating order…';
+      btn.disabled = true;
+
+      try {
+        // 2. Create a Razorpay Order on your backend
+        const orderRes = await fetch(`${BACKEND_URL}/api/checkout/create-order`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            plan: selectedPlan,
+            sprint: sprint,
+            name: name,
+            email: email,
+            phone: phone
+          })
+        });
+
+        if (!orderRes.ok) {
+          const err = await orderRes.json().catch(() => ({}));
+          throw new Error(err.error || 'Failed to create order');
+        }
+
+        const orderData = await orderRes.json();
+        console.log('✅ Razorpay Order created:', orderData.order_id);
+
+        // 3. Open Razorpay Checkout
+        const options = {
+          key: RAZORPAY_KEY_ID,
+          amount: orderData.amount, // Amount in paise
+          currency: orderData.currency || 'INR',
+          name: 'The Unspoken',
+          description: selectedPlan === 'sprint' ? 'Sprint Plan' : 'Practice Pass',
+          order_id: orderData.order_id,
+          prefill: {
+            name: name,
+            email: email,
+            contact: phone
+          },
+          theme: {
+            color: '#b8943c' // Gold color
+          },
+          handler: async function (response) {
+            // 4. On successful payment, verify with your backend
+            btn.textContent = 'Verifying payment…';
+            
+            try {
+              const verifyRes = await fetch(`${BACKEND_URL}/api/checkout/verify-payment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  plan: selectedPlan,
+                  sprint: sprint,
+                  name: name,
+                  email: email,
+                  phone: phone
+                })
+              });
+
+              if (!verifyRes.ok) {
+                const err = await verifyRes.json().catch(() => ({}));
+                throw new Error(err.error || 'Payment verification failed');
+              }
+
+              const verifyData = await verifyRes.json();
+              console.log('✅ Payment verified, session created:', verifyData.user_id);
+
+              // 5. Redirect to product page with session token
+              const targetUrl = `${PRODUCT_URL}?session=${encodeURIComponent(verifyData.session_token)}&plan=${selectedPlan}&sprint=${sprint}`;
+              console.log('🔀 Redirecting to product:', targetUrl);
+              window.location.assign(targetUrl);
+
+            } catch (err) {
+              console.error('❌ Verification failed:', err);
+              alert(`Payment verification failed: ${err.message}. Please contact support.`);
+              btn.textContent = 'Pay & Start →';
+              btn.disabled = false;
+            }
+          },
+          modal: {
+            ondismiss: function() {
+              // User closed the Razorpay modal without paying
+              btn.textContent = 'Pay & Start →';
+              btn.disabled = false;
+            }
+          }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+
+      } catch (err) {
+        console.error('❌ Order creation failed:', err);
+        alert(`Something went wrong: ${err.message}. Please try again.`);
+        btn.textContent = 'Pay & Start →';
+        btn.disabled = false;
+      }
+    }
+
+    // ============================================================
+    // HEALTH PING (optional — keeps backend warm)
+    // ============================================================
+    setInterval(() => {
+      fetch(`${BACKEND_URL}/api/health`).then(r => {
+        if (r.ok) console.log('✅ Backend warm at', new Date().toLocaleTimeString());
+      }).catch(() => {});
+    }, 4 * 60 * 1000);
   </script>
 
 </body>
