@@ -655,7 +655,7 @@
     .text-submit-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); }
     .text-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* === NEW INTERACTIVE JOURNEY SECTION === */
+    /* === INTERACTIVE JOURNEY SECTION === */
     .journey-section {
       padding: 60px 0 40px;
       background: #f4f0ea;
@@ -752,8 +752,7 @@
       margin: 0;
     }
 
-    /* Right Column: Plan Detail Card (Matching Reference Image) */
-    /* Removed the white container background to match the premium, unboxed look */
+    /* Right Column: Plan Detail Card */
     .plan-detail-card {
       background: transparent;
       border-radius: 0;
@@ -780,7 +779,6 @@
       line-height: 1.5;
     }
 
-    /* Image & Aura Wrapper - Premium Borderless Look */
     .plan-image-aura-wrapper {
       position: relative;
       width: 100%;
@@ -792,7 +790,6 @@
       background: transparent;
     }
     
-    /* The Aura Elliptical Rings */
     .plan-image-aura-wrapper::before {
       content: '';
       position: absolute;
@@ -835,7 +832,6 @@
       transform: scale(0.9);
     }
 
-    /* Floating Tags positioned around the image */
     .plan-image-aura-wrapper .floating-tag {
       position: absolute;
       background: rgba(255, 255, 255, 0.98);
@@ -852,7 +848,6 @@
       z-index: 3;
     }
     
-    /* Specific positions for tags (Sprint vs Pass) */
     .tag-sprint-1 { top: 10px; left: 10px; animation-delay: 0s; }
     .tag-sprint-2 { top: 30%; right: -10px; animation-delay: 1.5s; transform: translateY(-50%); }
     .tag-sprint-3 { bottom: 20px; left: 20px; animation-delay: 2.5s; }
@@ -868,7 +863,6 @@
       50% { transform: translateY(-8px); }
     }
 
-    /* Detail CTA button */
     .plan-detail-card .detail-cta {
       display: block;
       text-align: center;
@@ -1009,7 +1003,6 @@
       .nav-links { gap: 12px; flex-wrap: wrap; }
       .nav-links a { font-size: 0.8rem; }
       
-      /* Phone Mockup scaling to fit mobile */
       .phone-wrap { 
         padding: 20px 0; 
         max-width: 100%;
@@ -1020,7 +1013,7 @@
       .phone-frame {
         transform: scale(0.85);
         transform-origin: top center;
-        margin-bottom: -60px; /* Pull up the extra space created by scaling */
+        margin-bottom: -60px;
       }
       
       .side-tag.top-left { left: 0; }
@@ -1215,7 +1208,6 @@
   <div class="hero-left">
     <h1 class="hero-headline">Interactive AI-Powered Practice</h1>
     
-    <!-- Moved "Think clearly..." here -->
     <p class="hero-subhead" style="margin-bottom: 22px;">Think clearly. Structure effectively. Speak precisely</p>
    
     <div class="hero-problems" id="heroProblems">
@@ -1229,7 +1221,6 @@
       <a href="#impact-test" class="btn-free">Discover Your Pattern →</a>
     </div>
 
-    <!-- Moved the 3 badges below the CTA -->
     <div class="hero-badges" style="margin-top: 16px; margin-bottom: 12px;">
       <div class="hero-badge"><span class="badge-icon">✦</span><span class="badge-text">Practice Real<br>moments</span></div>
       <div class="hero-badge"><span class="badge-icon">◇</span><span class="badge-text">Get specific<br>feedback</span></div>
@@ -1335,7 +1326,7 @@
   </div>
 </section>
 
-<!-- NEW INTERACTIVE JOURNEY SECTION -->
+<!-- INTERACTIVE JOURNEY SECTION -->
 <section class="journey-section" id="journey">
   <div class="container">
     <div class="journey-header">
@@ -1358,14 +1349,13 @@
         </div>
       </div>
 
-      <!-- Right Column: Dynamic Plan Detail (Matches Reference Image) -->
+      <!-- Right Column: Dynamic Plan Detail -->
       <div class="plan-detail-card" id="planDetailCard">
         <h3 id="detailTitle">Sprint</h3>
         <p class="detail-sub" id="detailSub">For the moment that matters most.</p>
         
         <div class="plan-image-aura-wrapper">
           <img id="detailImage" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop" alt="Sprint" />
-          <!-- Floating Tags for Sprint -->
           <span class="floating-tag tag-sprint-1" id="tag1">🗣️ Interview</span>
           <span class="floating-tag tag-sprint-2" id="tag2">👥 Group Discussion</span>
           <span class="floating-tag tag-sprint-3" id="tag3">⚡High-Stakes Conversation</span>
@@ -1406,6 +1396,7 @@
 // ============================================================
 const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
 const PRODUCT_URL = 'https://theunspoken.co.in/Product';
+const TRIAL_URL   = 'https://theunspoken.co.in/trial';
 
 if (typeof lucide !== 'undefined') lucide.createIcons();
 
@@ -1421,24 +1412,13 @@ const state = {
   gate: { name: '', email: '', stage: null }
 };
 
-// Map question type → backend prompt info
-const QUESTION_MAP = {
-  intro: {
-    prompt: 'Tell me about yourself.',
-    focus: 'Structure & Conciseness',
-    target: '60 seconds',
-    difficulty: 'easy'
-  },
-  project: {
-    prompt: 'Tell me about a current project or initiative you\'re leading.',
-    focus: 'Narrative & Impact',
-    target: '90 seconds',
-    difficulty: 'medium'
-  }
-};
+// Helper: map question type → question_slot
+function slotFor(questionType) {
+  return questionType === 'project' ? 'q2' : 'q1';
+}
 
 // ============================================================
-// INTERACTIVE JOURNEY SECTION LOGIC
+// INTERACTIVE JOURNEY SECTION
 // ============================================================
 const PLANS = {
   sprint: {
@@ -1475,29 +1455,21 @@ function updatePlanDetail(planKey) {
   const tag3 = document.getElementById('tag3');
   const tag4 = document.getElementById('tag4');
 
-  // Fade out effect
   detailCard.style.opacity = '0.5';
   detailCard.style.transform = 'translateY(10px)';
   detailImage.classList.add('fade-out');
 
   setTimeout(() => {
-    // Update content
     detailTitle.textContent = plan.title;
     detailSub.textContent = plan.sub;
     detailImage.src = plan.image;
-    
-    // Update tags
     tag1.textContent = plan.tags[0];
     tag2.textContent = plan.tags[1];
     tag3.textContent = plan.tags[2];
     tag4.textContent = plan.tags[3];
-
-    // Update CTA
     detailCta.textContent = plan.ctaText;
     detailCta.href = plan.ctaLink;
     detailCta.className = `detail-cta ${plan.ctaClass}`;
-
-    // Fade in effect
     detailCard.style.opacity = '1';
     detailCard.style.transform = 'translateY(0)';
     detailImage.classList.remove('fade-out');
@@ -1506,13 +1478,9 @@ function updatePlanDetail(planKey) {
 
 document.querySelectorAll('.plan-option').forEach(option => {
   option.addEventListener('click', () => {
-    // Update active state
     document.querySelectorAll('.plan-option').forEach(opt => opt.classList.remove('active'));
     option.classList.add('active');
-    
-    // Update detail card
-    const planKey = option.dataset.plan;
-    updatePlanDetail(planKey);
+    updatePlanDetail(option.dataset.plan);
   });
 });
 
@@ -1742,8 +1710,9 @@ document.querySelectorAll('[data-close]').forEach(el => {
     document.getElementById(el.dataset.close).classList.remove('is-visible');
   });
 });
+
 // ============================================================
-// OTP LOGIN (from home page)
+// OTP LOGIN (paid users) — redirects to /Product
 // ============================================================
 const LOGIN_BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
 
@@ -1753,7 +1722,6 @@ document.getElementById('signInBtn').addEventListener('click', e => {
 });
 
 function openLoginModal() {
-  // Reset to step 1
   document.getElementById('loginStepEmail').style.display = 'block';
   document.getElementById('loginStepOtp').style.display = 'none';
   document.getElementById('loginEmailOtp').value = '';
@@ -1762,7 +1730,6 @@ function openLoginModal() {
   setTimeout(() => document.getElementById('loginEmailOtp').focus(), 100);
 }
 
-// Step 1 → Send OTP
 async function requestLoginOtp(isResend = false) {
   const emailInput = document.getElementById('loginEmailOtp');
   const email = emailInput.value.trim();
@@ -1783,7 +1750,6 @@ async function requestLoginOtp(isResend = false) {
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || 'Failed to send code');
 
-    // Move to Step 2
     document.getElementById('loginEmailDisplay').textContent = email;
     document.getElementById('loginStepEmail').style.display = 'none';
     document.getElementById('loginStepOtp').style.display = 'block';
@@ -1795,7 +1761,6 @@ async function requestLoginOtp(isResend = false) {
   }
 }
 
-// Step 2 → Verify OTP
 async function verifyLoginOtp() {
   const email = document.getElementById('loginEmailDisplay').textContent;
   const otp = document.getElementById('loginOtpInput').value.trim();
@@ -1815,9 +1780,9 @@ async function verifyLoginOtp() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || 'Invalid code');
 
-    // Success → redirect to trial page with session token
-    const targetUrl = `https://theunspoken.co.in/trial?session=${encodeURIComponent(data.session_token)}`;
-    console.log('🔀 Redirecting to trial:', targetUrl);
+    // Paid users → /Product
+    const targetUrl = `${PRODUCT_URL}?session=${encodeURIComponent(data.session_token)}`;
+    console.log('🔀 Redirecting paid user to product:', targetUrl);
     window.location.assign(targetUrl);
   } catch (err) {
     alert(`Login failed: ${err.message}`);
@@ -1826,7 +1791,6 @@ async function verifyLoginOtp() {
   }
 }
 
-// Back to email step
 function backToLoginEmail() {
   document.getElementById('loginStepEmail').style.display = 'block';
   document.getElementById('loginStepOtp').style.display = 'none';
@@ -1836,7 +1800,6 @@ function backToLoginEmail() {
   sendBtn.textContent = 'Send Code →';
 }
 
-// Auto-submit when 6 digits entered
 document.addEventListener('DOMContentLoaded', () => {
   const otpInput = document.getElementById('loginOtpInput');
   if (otpInput) {
@@ -1847,8 +1810,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// Phone close button
 document.getElementById('phoneCloseBtn').addEventListener('click', () => {
-  recorder1.reset();
+  if (recorder1) recorder1.reset();
   state.rawBlob = null;
   state.rawText = null;
   document.getElementById('textResponse').value = '';
@@ -1991,7 +1956,7 @@ function createRecorder(cfg) {
 let recorder1 = null;
 
 // ============================================================
-// GATE MODAL LOGIC
+// GATE MODAL
 // ============================================================
 function openGateModal() {
   document.getElementById('gateModal').classList.add('is-visible');
@@ -2021,7 +1986,7 @@ function checkGateReady() {
 }
 
 // ============================================================
-// SUBMIT GATE → UPLOAD TO BACKEND → REDIRECT
+// SUBMIT GATE → UPLOAD → CAPTURE → REDIRECT TO /trial
 // ============================================================
 async function submitGateAndRedirect() {
   if (!state.gate.name || !state.gate.email || !state.gate.stage) {
@@ -2034,7 +1999,9 @@ async function submitGateAndRedirect() {
   btn.disabled = true;
 
   try {
-    // ─── STEP 1: Upload the audio or text to the backend ───
+    const slot = slotFor(state.currentQuestionType);
+
+    // ─── STEP 1: Upload ───
     const formData = new FormData();
     if (state.currentMode === 'voice' && state.rawBlob) {
       formData.append('audio', state.rawBlob, 'recording.webm');
@@ -2044,6 +2011,7 @@ async function submitGateAndRedirect() {
       throw new Error('No audio or text to upload');
     }
     formData.append('question_type', state.currentQuestionType);
+    formData.append('question_slot', slot);   // ← NEW
     formData.append('mode', state.currentMode);
     formData.append('duration_seconds', state.rawDuration || 30);
 
@@ -2056,12 +2024,12 @@ async function submitGateAndRedirect() {
       throw new Error(err.error || 'Upload failed');
     }
     const { drill_id } = await uploadRes.json();
-    console.log('✅ Drill uploaded:', drill_id);
+    console.log('✅ Drill uploaded:', drill_id, 'slot:', slot);
 
-    // ─── STEP 2: Capture the lead (name + email + stage) ───
+    // ─── STEP 2: Capture ───
     btn.textContent = 'Preparing your results…';
 
- const leadRes = await fetch(`${BACKEND_URL}/api/drills/capture`, {
+    const leadRes = await fetch(`${BACKEND_URL}/api/drills/capture`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2070,6 +2038,7 @@ async function submitGateAndRedirect() {
         email: state.gate.email,
         stage: state.gate.stage,
         question_type: state.currentQuestionType,
+        question_slot: slot,   // ← NEW
         mode: state.currentMode
       })
     });
@@ -2080,11 +2049,9 @@ async function submitGateAndRedirect() {
     const { user_id, session_token } = await leadRes.json();
     console.log('✅ Session created for user:', user_id);
 
-    // ─── STEP 3: Redirect with the session token in the URL ───
-    // The token is short-lived and one-time-use.
-    // The product page reads it from ?session= and calls /analyze.
-    const targetUrl = `${PRODUCT_URL}?session=${encodeURIComponent(session_token)}`;
-    console.log('🔀 Redirecting to product:', targetUrl);
+    // ─── STEP 3: Redirect trial user to /trial ───
+    const targetUrl = `${TRIAL_URL}?session=${encodeURIComponent(session_token)}`;
+    console.log('🔀 Redirecting to trial:', targetUrl);
     window.location.assign(targetUrl);
 
   } catch (err) {
@@ -2110,7 +2077,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('textSubmitBtn').disabled = tr1.value.length < 10;
   });
 
-  // Voice submit — save blob, open gate
+  // Voice submit
   document.getElementById('submitVoiceBtn').addEventListener('click', () => {
     const blob = recorder1.getBlob();
     if (!blob) return alert('Please record first.');
@@ -2122,7 +2089,7 @@ document.addEventListener('DOMContentLoaded', () => {
     openGateModal();
   });
 
-  // Text submit — save text, open gate
+  // Text submit
   document.getElementById('textSubmitBtn').addEventListener('click', () => {
     const text = tr1.value.trim();
     if (text.length < 10) return alert('Please write at least 10 characters.');
@@ -2133,7 +2100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     openGateModal();
   });
 
-  // Health ping (optional — keeps backend warm)
+  // Health ping
   setInterval(() => {
     fetch(`${BACKEND_URL}/api/health`).then(r => {
       if (r.ok) console.log('✅ Backend warm at', new Date().toLocaleTimeString());
