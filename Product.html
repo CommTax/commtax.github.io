@@ -368,11 +368,11 @@
           <div class="rep-tracker">
             <div class="rt-left">
               <div class="rt-label">Trials</div>
-              <div class="rt-count" id="q1RepCount">1 <span class="rt-cap">/ 2</span></div>
+              <div class="rt-count" id="q1RepCount">0 <span class="rt-cap">/ 2</span></div>
               <div class="rt-best" id="q1BestSnr">Best score: —</div>
             </div>
             <div class="rt-right">
-              <button class="rep-btn" id="q1RepBtn" onclick="startRep('q1')">🎤 Start Trial 2</button>
+              <button class="rep-btn" id="q1RepBtn" onclick="startRep('q1')">🎤 Start Trial 1</button>
             </div>
           </div>
           <div class="reps-log" id="q1RepsLog"></div>
@@ -417,10 +417,10 @@
 
         <div class="today-summary">
           <h3>Today's Progress</h3>
-          <div class="ts-row"><span>Total trials today</span><span class="ts-val" id="tsTotalReps">1 / 4</span></div>
-          <div class="ts-row"><span>Time spent</span><span class="ts-val" id="tsTimeSpent">1 min</span></div>
+          <div class="ts-row"><span>Total trials today</span><span class="ts-val" id="tsTotalReps">0 / 4</span></div>
+          <div class="ts-row"><span>Time spent</span><span class="ts-val" id="tsTimeSpent">0 min</span></div>
           <div class="ts-row"><span>Best clarity</span><span class="ts-val" id="tsBestSnr">—</span></div>
-          <div class="ts-row"><span>Drills unlocked</span><span class="ts-val" id="tsDrills">1 / 2</span></div>
+          <div class="ts-row"><span>Drills unlocked</span><span class="ts-val" id="tsDrills">0 / 2</span></div>
         </div>
       </section>
 
@@ -827,64 +827,70 @@
       SESSION_TOKEN = params.get('session');
       if (SESSION_TOKEN) window.history.replaceState({}, '', window.location.pathname);
 
-      if (!SESSION_TOKEN) {
-        const stored = localStorage.getItem('unspoken_user');
-        if (stored) {
-          try {
-            USER = JSON.parse(stored);
-            bootScreen.classList.add('hidden');
-            renderAll();
-            return;
-          } catch (e) {}
+      // Priority 1: fresh session token in URL (OTP login or checkout redirect)
+      if (SESSION_TOKEN) {
+        bootTitle.textContent = 'Loading your session…';
+        bootSub.textContent = 'Just a moment.';
+
+        // Try paid session
+        try {
+          const paidRes = await fetch(`${BACKEND_URL}/api/checkout/verify-session`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
+          });
+          if (paidRes.ok) {
+            const paid = await paidRes.json();
+            if (paid.is_paid) {
+              USER = buildPaidUser(paid);
+              try { localStorage.setItem('unspoken_user', JSON.stringify(USER)); } catch (e) {}
+              bootScreen.classList.add('hidden');
+              renderAll();
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('Paid session check failed, falling back:', e);
         }
-        showFreshState();
+
+        // Try drill session (free user landing page flow)
+        bootTitle.textContent = 'Analyzing your response…';
+        bootSub.textContent = 'Checking your pacing, fillers, structure, and impact. This usually takes 5–10 seconds.';
+
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/drills/analyze`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
+          });
+          if (res.status === 401) { showSessionExpired('This session has expired or has already been used.'); return; }
+          if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || `HTTP ${res.status}`); }
+          const data = await res.json();
+          ANALYSIS = data;
+          USER = buildUserFromAnalysis(data);
+          try { localStorage.setItem('unspoken_user', JSON.stringify(USER)); } catch (e) {}
+          bootScreen.classList.add('hidden');
+          renderAll();
+        } catch (err) {
+          console.error('Analysis failed:', err);
+          showErrorState(err.message || 'Something went wrong.');
+        }
         return;
       }
 
-      bootTitle.textContent = 'Loading your session…';
-      bootSub.textContent = 'Just a moment.';
-
-      // STEP 1: Try paid session (both from checkout and from OTP login)
-      try {
-        const paidRes = await fetch(`${BACKEND_URL}/api/checkout/verify-session`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-        });
-        if (paidRes.ok) {
-          const paid = await paidRes.json();
-          if (paid.is_paid) {
-            USER = buildPaidUser(paid);
-            try { localStorage.setItem('unspoken_user', JSON.stringify(USER)); } catch (e) {}
-            bootScreen.classList.add('hidden');
-            renderAll();
-            return;
-          }
+      // Priority 2: cached local user (returning visitor)
+      const stored = localStorage.getItem('unspoken_user');
+      if (stored) {
+        try {
+          USER = JSON.parse(stored);
+          bootScreen.classList.add('hidden');
+          renderAll();
+          return;
+        } catch (e) {
+          localStorage.removeItem('unspoken_user');
         }
-      } catch (e) {
-        console.warn('Paid session check failed, falling back:', e);
       }
 
-      // STEP 2: Try drill session (free user landing page flow)
-      bootTitle.textContent = 'Analyzing your response…';
-      bootSub.textContent = 'Checking your pacing, fillers, structure, and impact. This usually takes 5–10 seconds.';
-
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/drills/analyze`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-        });
-        if (res.status === 401) { showSessionExpired('This session has expired or has already been used.'); return; }
-        if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || `HTTP ${res.status}`); }
-        const data = await res.json();
-        ANALYSIS = data;
-        USER = buildUserFromAnalysis(data);
-        try { localStorage.setItem('unspoken_user', JSON.stringify(USER)); } catch (e) {}
-        bootScreen.classList.add('hidden');
-        renderAll();
-      } catch (err) {
-        console.error('Analysis failed:', err);
-        showErrorState(err.message || 'Something went wrong.');
-      }
+      // Priority 3: fresh landing — no session, no cached user
+      showFreshState();
     }
 
     // ============================================================
@@ -976,6 +982,7 @@
         total_days: 28,
         questions_per_day: 2,
         trials_per_question: 2,
+        is_paid: false,
         landing_trial: {
           q1_prompt: prompt,
           q1_focus: 'Structure & Conciseness',
@@ -1068,35 +1075,36 @@
 
       const promo = document.getElementById('unlockMorePromo');
       if (promo) promo.remove();
-// Hide the standalone "Change Question" card
-const changeCard = document.getElementById('freeChangeCustomizeCard');
-if (changeCard) changeCard.style.display = 'none';
 
-// Inject "Change Question" actions into Q1 card
-const q1Top = document.querySelector('#questionCard1 .qc-top');
-if (q1Top && !q1Top.querySelector('[data-q-actions]')) {
-  const q1Actions = document.createElement('div');
-  q1Actions.setAttribute('data-q-actions', '1');
-  q1Actions.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;';
-  q1Actions.innerHTML = `
-    <button class="qc-action-btn primary-action" onclick="openQuestionPickerFor('q1')">🎯 Change Question</button>
-    <button class="qc-action-btn" onclick="openQuestionBank()">📚 Browse Bank</button>
-  `;
-  q1Top.appendChild(q1Actions);
-}
+      // Hide the standalone "Change Question" card
+      const changeCard = document.getElementById('freeChangeCustomizeCard');
+      if (changeCard) changeCard.style.display = 'none';
 
-// Inject "Change Question" actions into Q2 card
-const q2Top = document.querySelector('#questionCard2 .qc-top');
-if (q2Top && !q2Top.querySelector('[data-q-actions]')) {
-  const q2Actions = document.createElement('div');
-  q2Actions.setAttribute('data-q-actions', '1');
-  q2Actions.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;';
-  q2Actions.innerHTML = `
-    <button class="qc-action-btn primary-action" onclick="openQuestionPickerFor('q2')">🎯 Change Question</button>
-    <button class="qc-action-btn" onclick="openQuestionBank()">📚 Browse Bank</button>
-  `;
-  q2Top.appendChild(q2Actions);
-}
+      // Inject "Change Question" actions into Q1 card
+      const q1Top = document.querySelector('#questionCard1 .qc-top');
+      if (q1Top && !q1Top.querySelector('[data-q-actions]')) {
+        const q1Actions = document.createElement('div');
+        q1Actions.setAttribute('data-q-actions', '1');
+        q1Actions.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;';
+        q1Actions.innerHTML = `
+          <button class="qc-action-btn primary-action" onclick="openQuestionPickerFor('q1')">🎯 Change Question</button>
+          <button class="qc-action-btn" onclick="openQuestionBank()">📚 Browse Bank</button>
+        `;
+        q1Top.appendChild(q1Actions);
+      }
+
+      // Inject "Change Question" actions into Q2 card
+      const q2Top = document.querySelector('#questionCard2 .qc-top');
+      if (q2Top && !q2Top.querySelector('[data-q-actions]')) {
+        const q2Actions = document.createElement('div');
+        q2Actions.setAttribute('data-q-actions', '1');
+        q2Actions.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;';
+        q2Actions.innerHTML = `
+          <button class="qc-action-btn primary-action" onclick="openQuestionPickerFor('q2')">🎯 Change Question</button>
+          <button class="qc-action-btn" onclick="openQuestionBank()">📚 Browse Bank</button>
+        `;
+        q2Top.appendChild(q2Actions);
+      }
 
       loadBackendQuestions(USER.current_day || 1);
 
@@ -1218,51 +1226,46 @@ if (q2Top && !q2Top.querySelector('[data-q-actions]')) {
       console.log('✅ Backend questions loaded for', sprint, 'day', day);
     }
 
-// ============================================================
-// QUESTIONS MODAL
-// ============================================================
-async function openQuestionPicker() {
-  return openQuestionPickerFor('q1');
-}
+    // ============================================================
+    // QUESTIONS MODAL
+    // ============================================================
+    async function openQuestionPickerFor(target) {
+      const sprint = USER.track_id || 'interview';
+      const bank = await fetchQuestions(sprint, null);
 
-async function openQuestionPickerFor(target) {
-  const sprint = USER.track_id || 'interview';
-  const bank = await fetchQuestions(sprint, null);
+      if (!bank || bank.length === 0) {
+        document.getElementById('usModalContent').innerHTML = `
+          <h2>Question bank unavailable</h2>
+          <p class="us-modal-sub">We couldn't load questions right now. Please try again in a moment.</p>
+        `;
+        document.getElementById('usModal').classList.add('is-visible');
+        return;
+      }
 
-  const html = `
-    <h2>Change ${target === 'q1' ? 'Question 1' : 'Question 2'}</h2>
-    <p class="us-modal-sub">Pick a question from the ${formatSprint(sprint)} bank.</p>
-    <div>
-      ${bank.map((q) => `
-        <div class="bank-question" onclick="selectQuestion('${String(q.text).replace(/'/g, "\\'")}', '${String(q.focus).replace(/'/g, "\\'")}', ${q.target_seconds}, '${q.difficulty}', '${target}')">
-          <div class="bq-text">"${q.text}"</div>
-          <div class="bq-meta">Day ${q.day_number} · ${q.focus} · ${q.target_seconds}s · ${q.difficulty}</div>
+      const html = `
+        <h2>Change ${target === 'q1' ? 'Question 1' : 'Question 2'}</h2>
+        <p class="us-modal-sub">Pick a question from the ${formatSprint(sprint)} bank.</p>
+        <div>
+          ${bank.map((q) => `
+            <div class="bank-question" onclick="selectQuestion(${JSON.stringify(q.text)}, ${JSON.stringify(q.focus)}, ${q.target_seconds}, ${JSON.stringify(q.difficulty)}, '${target}')">
+              <div class="bq-text">"${q.text}"</div>
+              <div class="bq-meta">Day ${q.day_number} · ${q.focus} · ${q.target_seconds}s · ${q.difficulty}</div>
+            </div>
+          `).join('')}
         </div>
-      `).join('')}
-    </div>
-  `;
-  document.getElementById('usModalContent').innerHTML = html;
-  document.getElementById('usModal').classList.add('is-visible');
-}
+      `;
+      document.getElementById('usModalContent').innerHTML = html;
+      document.getElementById('usModal').classList.add('is-visible');
+    }
 
-function openQuestionBank() { openQuestionPickerFor('q1'); }
+    function openQuestionBank() { openQuestionPickerFor('q1'); }
 
-function selectQuestion(text, focus, target, difficulty, questionTarget) {
-  const qNum = questionTarget === 'q2' ? 'q2' : 'q1';
-  document.getElementById(`${qNum}Text`).textContent = `"${text}"`;
-  document.getElementById(`${qNum}Meta`).textContent = `Focus: ${focus} · Target: ${target}s`;
-  document.getElementById(`${qNum}Diff`).textContent = `⭐ ${difficulty}`;
-  document.getElementById(`${qNum}Diff`).className = `qc-difficulty ${difficulty.toLowerCase()}`;
-  closeModal();
-}
-
-    function openQuestionBank() { openQuestionPicker(); }
-
-    function selectQuestion(text, focus, target, difficulty) {
-      document.getElementById('q1Text').textContent = `"${text}"`;
-      document.getElementById('q1Meta').textContent = `Focus: ${focus} · Target: ${target}s`;
-      document.getElementById('q1Diff').textContent = `⭐ ${difficulty}`;
-      document.getElementById('q1Diff').className = `qc-difficulty ${difficulty.toLowerCase()}`;
+    function selectQuestion(text, focus, target, difficulty, questionTarget) {
+      const qNum = questionTarget === 'q2' ? 'q2' : 'q1';
+      document.getElementById(`${qNum}Text`).textContent = `"${text}"`;
+      document.getElementById(`${qNum}Meta`).textContent = `Focus: ${focus} · Target: ${target}s`;
+      document.getElementById(`${qNum}Diff`).textContent = `⭐ ${difficulty}`;
+      document.getElementById(`${qNum}Diff`).className = `qc-difficulty ${difficulty.toLowerCase()}`;
       closeModal();
     }
 
@@ -1404,23 +1407,33 @@ function selectQuestion(text, focus, target, difficulty, questionTarget) {
       duration: 0, mode: 'voice'
     };
 
+    // Strip surrounding quotes from a question string before sending to backend
+    function stripQuotes(s) {
+      if (!s) return '';
+      return s.trim().replace(/^["“”']+|["“”']+$/g, '').trim();
+    }
+
     function openRecorderModal(promptText, opts = {}) {
-      activeRecording.target = opts.source === 'activity' ? 'activity' : (promptText === 'q1' ? 'q1' : promptText === 'q2' ? 'q2' : 'custom');
       activeRecording.meta = opts || {};
-      activeRecording.question = opts.source === 'activity' ? promptText : promptText;
       activeRecording.rawBlob = null;
       activeRecording.rawText = null;
       activeRecording.seconds = 0;
       activeRecording.mode = 'voice';
 
+      let qText;
       if (promptText === 'q1' || promptText === 'q2') {
         activeRecording.target = promptText;
-        activeRecording.question = promptText === 'q1'
-          ? document.getElementById('q1Text').textContent
-          : document.getElementById('q2Text').textContent;
+        const el = document.getElementById(promptText === 'q1' ? 'q1Text' : 'q2Text');
+        qText = stripQuotes(el ? el.textContent : '');
+      } else if (opts.source === 'activity') {
+        activeRecording.target = 'activity';
+        qText = promptText;
+      } else {
+        activeRecording.target = 'custom';
+        qText = promptText;
       }
 
-      const qText = activeRecording.question;
+      activeRecording.question = qText;
 
       const old = document.getElementById('recorderModal');
       if (old) old.remove();
@@ -1583,7 +1596,7 @@ function selectQuestion(text, focus, target, difficulty, questionTarget) {
         formData.append('duration_seconds', activeRecording.seconds || 30);
         formData.append('user_id', USER.user_id || '');
         formData.append('sprint', USER.track_id || 'interview');
-        formData.append('question_text', activeRecording.question || '');
+        formData.append('question_text', stripQuotes(activeRecording.question || ''));
 
         const uploadRes = await fetch(`${BACKEND_URL}/api/drills/upload`, { method: 'POST', body: formData });
         if (!uploadRes.ok) {
@@ -1640,6 +1653,13 @@ function selectQuestion(text, focus, target, difficulty, questionTarget) {
       document.getElementById('userRoleEl').textContent = USER.stage ? formatStage(USER.stage) : 'Member';
       document.getElementById('planBadge').textContent = PLAN_LABEL[USER.plan] || 'Trial';
       document.getElementById('headerTrackBadge').textContent = USER.plan === 'trial' ? 'Trial' : (USER.plan === 'pass' ? 'Practice Pass' : 'Sprint Pass');
+      // Sign-In pill: only show for non-logged-in visitors. Trial users arriving via a drill link
+      // are not "logged in" and should be offered sign-in. Paid users are already logged in.
+      const signInPill = document.getElementById('headerSignInPill');
+      if (signInPill) {
+        if (USER.is_paid) signInPill.classList.add('hidden');
+        else signInPill.classList.remove('hidden');
+      }
     }
 
     function renderProfile() {
@@ -1756,34 +1776,13 @@ function selectQuestion(text, focus, target, difficulty, questionTarget) {
     }
 
     // ============================================================
-    // START REP
+    // START REP — works for trial AND paid users
     // ============================================================
     function startRep(which) {
-      if (USER.is_paid || USER.plan === 'sprint' || USER.plan === 'pass') {
-        openRecorderModal(which);
-        return;
-      }
-      const m = USER.landing_trial?.q1_metrics;
-      const baseClarity = m ? m.clarity : 60;
-      const baseStructure = m ? m.structure : 60;
-      const baseImpact = m ? m.impact : 60;
-      const baseTTP = m ? m.timeToPoint : 20;
-      const newTrial = {
-        number: (which === 'q1' ? state.q1Trials.length : state.q2Trials.length) + 1,
-        clarity: baseClarity + Math.floor(Math.random() * 5),
-        structure: baseStructure + Math.floor(Math.random() * 5),
-        impact: baseImpact + Math.floor(Math.random() * 5),
-        timeToPoint: Math.max(5, baseTTP - 2)
-      };
-      if (which === 'q1') { state.q1Trials.push(newTrial); updateQ1Card(); }
-      else {
-        state.q2Trials.push(newTrial);
-        updateQ2Card();
-        if (!state.function && state.q2Trials.length === 1) {
-          setTimeout(() => { document.getElementById('gate2Overlay').style.display = 'flex'; }, 400);
-        }
-      }
-      renderTodayProgress();
+      // Trial users were previously short-circuited here with random scores.
+      // Now every user (trial or paid) opens the real recorder modal so they
+      // can either record a voice rep or type a response.
+      openRecorderModal(which);
     }
 
     // ============================================================
@@ -1965,7 +1964,11 @@ function selectQuestion(text, focus, target, difficulty, questionTarget) {
       const viewMap = { today:'todayView', activities:'activitiesView', dash:'dashView', recordings:'recordingsView', badges:'badgesView', pillars:'pillarsView', learning:'learningView' };
       if (navMap[key]) document.getElementById(navMap[key]).classList.add('active');
       if (viewMap[key]) document.getElementById(viewMap[key]).classList.add('active-view');
-      if (window.innerWidth <= 900) toggleSidebar();
+      // Only close the sidebar on mobile if it's currently open
+      if (window.innerWidth <= 900) {
+        const sidebar = document.getElementById('appSidebar');
+        if (sidebar && sidebar.classList.contains('open')) sidebar.classList.remove('open');
+      }
     }
 
     function switchActivitySub(key, btn) {
