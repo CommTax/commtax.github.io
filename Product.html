@@ -78,6 +78,10 @@
     .ya-list li::before { content: '—'; position: absolute; left: 0; color: var(--accent-cyan); font-weight: 700; }
     .ya-list.wins li::before { content: '→'; color: var(--success); }
     .ya-executive { font-size: 13px; line-height: 1.6; font-weight: 600; padding: 12px 14px; background: linear-gradient(135deg, rgba(184,148,60,0.15), rgba(184,148,60,0.06)); border-left: 3px solid var(--accent-gold); border-radius: 8px; font-style: italic; }
+    .ya-executive-locked { position: relative; overflow: hidden; border-radius: 8px; }
+    .ya-executive-blurred { font-size: 13px; line-height: 1.6; font-weight: 600; padding: 12px 14px; filter: blur(4px); opacity: 0.55; user-select: none; background: linear-gradient(135deg, rgba(184,148,60,0.15), rgba(184,148,60,0.06)); border-left: 3px solid var(--accent-gold); }
+    .ya-executive-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: linear-gradient(180deg, rgba(11,15,25,0.55), rgba(11,15,25,0.9)); }
+    .ya-executive-cta { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--accent-gold), #a07f30); color: #FFF; border: none; cursor: pointer; }
     .ya-footer { margin-top: 20px; display: flex; justify-content: center; }
     .ya-btn { padding: 12px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; }
 
@@ -99,7 +103,6 @@
     .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border: 1px solid transparent; transition: all 0.2s; position: relative; }
     .nav-item:hover { background-color: var(--card-bg); color: #FFF; }
     .nav-item.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
-    .nav-item .nav-lock { margin-left: auto; font-size: 11px; opacity: 0.5; }
     .nav-item .nav-preview { margin-left: auto; font-size: 9px; font-weight: 700; color: var(--accent-cyan); background: rgba(56, 189, 248, 0.15); padding: 2px 6px; border-radius: 4px; letter-spacing: 0.05em; }
     .sidebar-section { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; }
     .sidebar-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; }
@@ -233,15 +236,9 @@
     .view-heading h2 { font-size: 18px; }
     .view-heading .vh-sub { font-size: 12px; color: var(--text-muted); }
 
-    .empty-state { background: var(--panel-bg); border: 1px dashed var(--border-color); border-radius: 12px; padding: 32px 24px; text-align: center; }
-    .empty-state .es-icon { font-size: 40px; margin-bottom: 10px; }
-    .empty-state .es-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
-    .empty-state .es-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; max-width: 420px; margin: 0 auto; }
-
     .lock-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; }
     .lock-pill.sprint { color: var(--accent-gold); background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); }
     .lock-pill.pass { color: var(--accent-purple); background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(139, 92, 246, 0.4); }
-    .lock-pill.free { color: var(--success); background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); }
 
     .feature-preview-lock { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,15,25,0.55), rgba(11,15,25,0.95)); border-radius: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; text-align: center; z-index: 4; }
     .feature-preview-lock .fpl-title { font-size: 13px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
@@ -269,8 +266,8 @@
 
   <div class="boot-screen" id="bootScreen">
     <div class="boot-spinner" id="bootSpinner"></div>
-    <div class="boot-title" id="bootTitle">Analyzing your response…</div>
-    <div class="boot-sub" id="bootSub">Checking your pacing, fillers, structure, and impact. This usually takes 5–10 seconds.</div>
+    <div class="boot-title" id="bootTitle">Loading…</div>
+    <div class="boot-sub" id="bootSub">Just a moment.</div>
   </div>
 
   <div class="preview-banner hidden" id="previewBanner">
@@ -280,28 +277,6 @@
     <div class="pb-right">
       <button class="pb-btn primary" onclick="goToPaywall('sprint')">Enroll in a Sprint</button>
       <button class="pb-btn secondary" onclick="goToPaywall('pass')">Get Practice Pass</button>
-    </div>
-  </div>
-
-  <div id="gate2Overlay" style="position:fixed; inset:0; background:rgba(11,15,25,0.98); backdrop-filter:blur(8px); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px;">
-    <div style="background:var(--panel-bg); border:1px solid var(--border-color); border-radius:16px; padding:32px; width:100%; max-width:560px;">
-      <div style="text-align:center; margin-bottom:24px;">
-        <div style="font-size:24px; margin-bottom:8px;">📊</div>
-        <h2 style="font-size:20px; margin-bottom:6px;">One more thing — unlock your peer benchmark</h2>
-        <p style="font-size:13px; color:var(--text-muted);">Tell us which function best describes your work.</p>
-      </div>
-      <div id="gate2FunctionOptions" style="display:flex; flex-direction:column; gap:10px;">
-        <button class="onboarding-option" onclick="selectFunction(this, 'engineering')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;">🛠️ Engineering / Data</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'bpo')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;">🎧 BPO / Customer Support</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'manufacturing')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;">🏭 Manufacturing / Operations</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'sales')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;">📣 Sales / Marketing / BD</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'finance')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;">💰 Finance / Accounting</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'consulting')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;">📊 Consulting / Strategy</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'design')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;">🎨 Design / Content / Product</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'hr')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;">🤝 HR / People</button>
-        <button class="onboarding-option" onclick="selectFunction(this, 'other')" style="padding:14px 18px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text-main); text-align:left; display:flex; align-items:center; gap:10px;">💼 Other</button>
-      </div>
-      <button id="gate2Submit" onclick="submitGateTwo()" disabled style="margin-top:20px; width:100%; padding:12px 20px; border-radius:8px; font-weight:700; background:var(--primary); color:#FFF; border:none; cursor:pointer; opacity:0.5;">Show My Peer Benchmark →</button>
     </div>
   </div>
 
@@ -680,41 +655,7 @@
           <span class="vh-sub" id="dashSubtitle">Your performance across reps</span>
         </div>
 
-        <div class="your-analysis-card" id="yourAnalysisCard">
-          <div class="ya-header">
-            <span class="ya-badge">✦ YOUR ANALYSIS</span>
-            <span class="ya-sub">Here's what we found in your first response</span>
-          </div>
-          <div class="ya-score-block">
-            <div class="ya-score">
-              <span class="ya-score-value" id="yaScoreValue">—</span>
-              <span class="ya-score-denom">/10</span>
-            </div>
-            <div class="ya-score-label">Overall Score</div>
-          </div>
-          <div class="ya-grid">
-            <div class="ya-box">
-              <div class="ya-box-label">What I Noticed</div>
-              <div class="ya-pattern-name" id="yaPatternName">—</div>
-              <div class="ya-pattern-desc" id="yaPatternDesc">—</div>
-            </div>
-            <div class="ya-box">
-              <div class="ya-box-label">What Got Lost</div>
-              <ul class="ya-list" id="yaGotLostList"><li>—</li></ul>
-            </div>
-            <div class="ya-box">
-              <div class="ya-box-label">Quick Wins</div>
-              <ul class="ya-list wins" id="yaWinsList"><li>—</li></ul>
-            </div>
-            <div class="ya-box">
-              <div class="ya-box-label">Your Executive Version</div>
-              <div class="ya-executive" id="yaExecutiveVersion">—</div>
-            </div>
-          </div>
-          <div class="ya-footer">
-            <button class="ya-btn" onclick="switchView('today')">🎙 Try Again in Today →</button>
-          </div>
-        </div>
+        <div class="your-analysis-card" id="yourAnalysisCard"></div>
 
         <div class="timeline-bar">
           <span style="font-weight: 700; font-size: 14px;">PERFORMANCE OVER TIME</span>
@@ -794,13 +735,6 @@
             <button class="fpl-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint — ₹499 →</button>
           </div>
         </div>
-
-        <div class="dash-wide-box" style="opacity:0.5;">
-          <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px;">Preview · Last 3 Sessions</div>
-          <div class="rep-log-item" style="margin-bottom:6px;"><span>Session · Today 09:14</span><span class="rl-score">Clarity 72% · Structure 68% · Impact 65%</span></div>
-          <div class="rep-log-item" style="margin-bottom:6px;"><span>Session · Yesterday 18:02</span><span class="rl-score">Clarity 68% · Structure 62% · Impact 60%</span></div>
-          <div class="rep-log-item"><span>Session · 2 days ago</span><span class="rl-score">Clarity 64% · Structure 58% · Impact 55%</span></div>
-        </div>
       </section>
 
       <section class="view-panel" id="badgesView">
@@ -827,34 +761,10 @@
           <span class="vh-sub">The four foundations we train</span>
         </div>
         <div class="sub-activity-card-grid">
-          <div class="activity-card">
-            <div class="ac-body">
-              <div class="activity-card-tag">Pillar 1</div>
-              <div class="activity-card-title">Structure</div>
-              <div class="activity-card-desc">STAR, PSO, BLUF. Give your ideas a spine listeners can follow.</div>
-            </div>
-          </div>
-          <div class="activity-card">
-            <div class="ac-body">
-              <div class="activity-card-tag">Pillar 2</div>
-              <div class="activity-card-title">Conciseness</div>
-              <div class="activity-card-desc">Time-to-Point, filler elimination, headline discipline.</div>
-            </div>
-          </div>
-          <div class="activity-card">
-            <div class="ac-body">
-              <div class="activity-card-tag">Pillar 3</div>
-              <div class="activity-card-title">Tone</div>
-              <div class="activity-card-desc">Warmth without weakness. Authority without arrogance.</div>
-            </div>
-          </div>
-          <div class="activity-card">
-            <div class="ac-body">
-              <div class="activity-card-tag">Pillar 4</div>
-              <div class="activity-card-title">Presence</div>
-              <div class="activity-card-desc">Pacing, pauses, and gravitas in high-stakes rooms.</div>
-            </div>
-          </div>
+          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 1</div><div class="activity-card-title">Structure</div><div class="activity-card-desc">STAR, PSO, BLUF. Give your ideas a spine listeners can follow.</div></div></div>
+          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 2</div><div class="activity-card-title">Conciseness</div><div class="activity-card-desc">Time-to-Point, filler elimination, headline discipline.</div></div></div>
+          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 3</div><div class="activity-card-title">Tone</div><div class="activity-card-desc">Warmth without weakness. Authority without arrogance.</div></div></div>
+          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 4</div><div class="activity-card-title">Presence</div><div class="activity-card-desc">Pacing, pauses, and gravitas in high-stakes rooms.</div></div></div>
         </div>
       </section>
 
@@ -873,37 +783,6 @@
             <div class="fpl-title sprint">🔒 Unlocked with Sprint</div>
             <div class="fpl-desc">Pyramid Principle, BLUF, STAR, PSO and more — plus role-tailored lessons.</div>
             <button class="fpl-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint — ₹499 →</button>
-          </div>
-        </div>
-
-        <div class="sub-activity-card-grid" style="opacity:0.55;">
-          <div class="activity-card">
-            <div class="ac-body">
-              <div class="activity-card-tag">3-Min Concept</div>
-              <div class="activity-card-title">The Pyramid Principle</div>
-              <div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div>
-            </div>
-          </div>
-          <div class="activity-card">
-            <div class="ac-body">
-              <div class="activity-card-tag">3-Min Concept</div>
-              <div class="activity-card-title">BLUF Method</div>
-              <div class="activity-card-desc">Bottom Line Up Front for executive communication.</div>
-            </div>
-          </div>
-          <div class="activity-card">
-            <div class="ac-body">
-              <div class="activity-card-tag">3-Min Concept</div>
-              <div class="activity-card-title">The STAR Method</div>
-              <div class="activity-card-desc">Situation → Task → Action → Result. Interview gold standard.</div>
-            </div>
-          </div>
-          <div class="activity-card">
-            <div class="ac-body">
-              <div class="activity-card-tag">3-Min Concept</div>
-              <div class="activity-card-title">The PSO Framework</div>
-              <div class="activity-card-desc">Problem → Solution → Outcome for updates and pitches.</div>
-            </div>
           </div>
         </div>
       </section>
@@ -928,12 +807,11 @@
     // ============================================================
     let USER = null;
     let SESSION_TOKEN = null;
-    let ANALYSIS = null;
     let state = {
       q1Trials: [],
       q2Trials: [],
-      function: null,
-      trial: null
+      activityTrials: [],
+      function: null
     };
     let CACHED_BANK = {};
 
@@ -951,11 +829,12 @@
       SESSION_TOKEN = params.get('session');
       if (SESSION_TOKEN) window.history.replaceState({}, '', window.location.pathname);
 
+      // Priority 1: session token in URL
       if (SESSION_TOKEN) {
         bootTitle.textContent = 'Loading your session…';
         bootSub.textContent = 'Just a moment.';
 
-        // 1a. Paid session
+        // 1a. Paid user?
         try {
           const paidRes = await fetch(`${BACKEND_URL}/api/checkout/verify-session`, {
             method: 'POST',
@@ -972,14 +851,14 @@
             }
           }
         } catch (e) {
-          console.warn('Paid session check failed, falling back:', e);
+          console.warn('Paid session check failed:', e);
         }
 
-        // 1b. Trial session
+        // 1b. Trial user
         bootTitle.textContent = 'Loading your trial…';
         bootSub.textContent = 'Fetching your analysis and questions.';
         try {
-          const trialRes = await fetch(`${BACKEND_URL}/api/trial/session`, {
+          const trialRes = await fetch(`${BACKEND_URL}/api/drills/session`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
           });
@@ -990,34 +869,19 @@
             bootScreen.classList.add('hidden');
             renderAll();
             return;
+          } else if (trialRes.status === 401) {
+            showSessionExpired('Your session has expired. Start a new drill.');
+            return;
           }
         } catch (e) {
-          console.warn('Trial session check failed, falling back:', e);
+          console.warn('Trial session check failed:', e);
         }
 
-        // 1c. Legacy drill-analyze
-        bootTitle.textContent = 'Analyzing your response…';
-        bootSub.textContent = 'Checking your pacing, fillers, structure, and impact. This usually takes 5–10 seconds.';
-        try {
-          const res = await fetch(`${BACKEND_URL}/api/drills/analyze`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-          });
-          if (res.status === 401) { showSessionExpired('This session has expired or has already been used.'); return; }
-          if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || `HTTP ${res.status}`); }
-          const data = await res.json();
-          ANALYSIS = data;
-          USER = buildUserFromAnalysis(data);
-          try { localStorage.setItem('unspoken_user', JSON.stringify(USER)); } catch (e) {}
-          bootScreen.classList.add('hidden');
-          renderAll();
-        } catch (err) {
-          console.error('Analysis failed:', err);
-          showErrorState(err.message || 'Something went wrong.');
-        }
+        showSessionExpired('We couldn\'t load this session. Please try again from the landing page.');
         return;
       }
 
+      // Priority 2: cached user
       const stored = localStorage.getItem('unspoken_user');
       if (stored) {
         try {
@@ -1053,14 +917,12 @@
         trials_per_question: 2,
         sprint_start_date: paid.sprint_start_date || null,
         sprint_end_date: paid.sprint_end_date || null,
-        landing_trial: null,
         is_paid: true
       };
     }
 
     function buildTrialUser(trial) {
-      const analysis = trial.analysis || {};
-      const q1Metrics = extractMetrics(analysis);
+      const analysis = trial.analysis ? normalizeAnalysis(trial.analysis) : null;
       const answered = trial.answered === 'q2' ? 'q2' : 'q1';
 
       return {
@@ -1083,81 +945,40 @@
           q2_text: trial.q2_text || DEFAULT_Q2,
           trials_used: trial.trials_used || { q1: answered === 'q1' ? 1 : 0, q2: answered === 'q2' ? 1 : 0 },
           cap: trial.trials_cap_per_question || TRIAL_CAP_PER_QUESTION,
-          analysis: q1Metrics
+          analysis
         }
       };
     }
 
-    function buildUserFromAnalysis(data) {
-      const q1Metrics = extractMetrics(data);
-      const prompt = data.question_text || DEFAULT_Q1;
-      return {
-        user_id: data.user_id || 'u_' + Date.now(),
-        drill_id: data.drill_id,
-        name: data.name || 'Guest',
-        email: data.email || '',
-        stage: data.stage || 'early',
-        function: null,
-        plan: 'trial',
-        track_id: null,
-        current_day: 1,
-        total_days: 28,
-        questions_per_day: 2,
-        trials_per_question: TRIAL_CAP_PER_QUESTION,
-        is_paid: false,
-        trial: {
-          answered: prompt === DEFAULT_Q2 ? 'q2' : 'q1',
-          q1_text: DEFAULT_Q1,
-          q2_text: DEFAULT_Q2,
-          trials_used: { q1: 1, q2: 0 },
-          cap: TRIAL_CAP_PER_QUESTION,
-          analysis: q1Metrics
-        }
-      };
-    }
-
-    function extractMetrics(data) {
-      const signals = data.signals || {};
-      const metrics = data.metrics || {};
-      const diagnosis = data.diagnosis || {};
-      const gap = data.gap || {};
-      const coaching = data.coaching || {};
-      const rewrite = data.before_after_rewrite || {};
-      const score = Math.max(1, Math.min(10, Math.round(((metrics.impact || 55) / 10) * 10) / 10));
+    // Normalize the backend payload into a flat structure the UI can consume.
+    // No invented numbers — nulls stay null.
+    function normalizeAnalysis(data) {
+      if (!data) return null;
+      const m = data.metrics || {};
+      const s = data.signals || {};
+      const d = data.diagnosis || {};
+      const g = data.gap || {};
+      const c = data.coaching || {};
+      const r = data.before_after_rewrite || {};
 
       return {
-        wpm: signals.words_per_minute || 128,
-        wordCount: signals.word_count || 0,
-        fillerRatio: signals.filler_words?.percentage || 0,
-        fillerTotal: signals.filler_words?.total || 0,
-        avgSentence: signals.sentences?.average_length || 0,
-        longPauses: (signals.long_pauses || []).length,
-        clarity: metrics.clarity || Math.round(score * 10),
-        structure: metrics.structure || Math.round(score * 9),
-        impact: metrics.impact || Math.round(score * 8),
-        timeToPoint: signals.main_point_delay_seconds || 0,
-        overallScore: score.toFixed(1),
-        patternName: diagnosis.pattern_name || 'The Communicator',
-        patternDesc: diagnosis.pattern_description || 'You get your point across but could tighten the delivery.',
-        gapGotLost: gap.what_got_lost || '',
-        gapUnspoken: gap.unspoken_gap || '',
-        wins: [
-          coaching.one_thing_to_change || 'Lead with the point',
-          (signals.filler_words?.total || 0) > 3 ? 'Cut filler words' : 'Front-load your result',
-          (signals.sentences?.average_length || 0) > 15 ? 'Shorten your sentences' : 'Add a clear structure marker'
-        ],
-        strengths: [
-          'Clear opening — you led with the situation',
-          'Steady pacing at ' + (signals.words_per_minute || 128) + ' WPM',
-          (signals.filler_words?.total || 0) === 0 ? 'No filler words detected' : 'Limited hedging language'
-        ],
-        improvements: [
-          'Reduce filler words (' + (signals.filler_words?.percentage || 0) + '% — target < 3%)',
-          'Quantify your outcome (add a % or figure)',
-          'Add a 2-second pause after your conclusion'
-        ],
-        transcript: data.transcribed_text || '',
-        executiveVersion: rewrite.executive_version || coaching.executive_version || ''
+        clarity: m.clarity ?? null,
+        structure: m.structure ?? null,
+        impact: m.impact ?? null,
+        overallScore: m.overall_score ?? null,
+        timeToPoint: s.main_point_delay_seconds ?? null,
+        wordsPerMinute: s.words_per_minute ?? null,
+        fillerTotal: s.filler_words?.total ?? 0,
+        fillerPct: s.filler_words?.percentage ?? 0,
+        patternName: d.pattern_name ?? null,
+        patternDesc: d.pattern_description ?? null,
+        gapGotLost: g.what_got_lost ?? null,
+        gapUnspoken: g.unspoken_gap ?? null,
+        oneThingToChange: c.one_thing_to_change ?? null,
+        executiveVersion: r.executive_version ?? null,
+        transcript: data.transcribed_text ?? '',
+        questionSlot: data.question_slot ?? null,
+        questionText: data.question_text ?? null
       };
     }
 
@@ -1204,32 +1025,8 @@
       document.getElementById('previewBannerText').innerHTML =
         `👋 Hi <strong>${escapeHtml(USER.name)}</strong> — you've used <strong>${countTrials(t)}</strong> of ${cap * 2} free trials. Upgrade for unlimited practice.`;
 
-      // Show "PREVIEW" pill on locked nav items
-      setNavPreview('navActivities', true);
-      setNavPreview('navRecordings', true);
-      setNavPreview('navLearning', true);
-
-      document.getElementById('todayTrackTitle').textContent = 'Your Trial';
-      document.getElementById('todayFocus').textContent = `2 default questions · ${cap} trials each`;
-      document.getElementById('todayStreak').textContent = 'Trial';
-      document.getElementById('dayCounter').textContent = `${countTrials(t)} / ${cap * 2} trials`;
-
       renderTrialQuestionCards();
       renderTodayProgress();
-    }
-
-    function setNavPreview(id, show) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const existing = el.querySelector('.nav-preview');
-      if (show && !existing) {
-        const pill = document.createElement('span');
-        pill.className = 'nav-preview';
-        pill.textContent = 'PREVIEW';
-        el.appendChild(pill);
-      } else if (!show && existing) {
-        existing.remove();
-      }
     }
 
     function countTrials(t) {
@@ -1238,7 +1035,6 @@
 
     function renderTrialQuestionCards() {
       const t = USER.trial;
-      const cap = t.cap || TRIAL_CAP_PER_QUESTION;
 
       document.getElementById('q1Text').textContent = `"${t.q1_text}"`;
       document.getElementById('q1Meta').textContent = 'Focus: Structure & Conciseness · Target: 60s';
@@ -1255,26 +1051,17 @@
       document.getElementById('questionCard2').classList.remove('locked');
 
       // Seed the answered question's log with the landing-page analysis
-      if (t.answered === 'q1') {
-        state.q1Trials = [{
+      if (t.analysis) {
+        const seed = {
           number: 1,
           clarity: t.analysis.clarity,
           structure: t.analysis.structure,
           impact: t.analysis.impact,
           timeToPoint: t.analysis.timeToPoint,
           fromLanding: true
-        }];
-        state.q2Trials = [];
-      } else {
-        state.q1Trials = [];
-        state.q2Trials = [{
-          number: 1,
-          clarity: t.analysis.clarity,
-          structure: t.analysis.structure,
-          impact: t.analysis.impact,
-          timeToPoint: t.analysis.timeToPoint,
-          fromLanding: true
-        }];
+        };
+        if (t.answered === 'q1') { state.q1Trials = [seed]; state.q2Trials = []; }
+        else { state.q1Trials = []; state.q2Trials = [seed]; }
       }
 
       updateTrialQuestionCard('q1');
@@ -1289,12 +1076,14 @@
       const cap = t.cap || TRIAL_CAP_PER_QUESTION;
       const used = t.trials_used?.[which] || 0;
       const trials = which === 'q1' ? state.q1Trials : state.q2Trials;
-      const best = trials.length ? Math.max(...trials.map(x => x.clarity)) : null;
+      const best = trials.length && trials.some(x => x.clarity != null)
+        ? Math.max(...trials.filter(x => x.clarity != null).map(x => x.clarity))
+        : null;
 
       document.getElementById(`${which}RepCount`).innerHTML =
         `${used} <span class="rt-cap">/ ${cap}</span>`;
       document.getElementById(`${which}BestSnr`).textContent =
-        best ? `Best clarity: ${best}%` : 'Best score: —';
+        best != null ? `Best clarity: ${best}%` : 'Best score: —';
 
       const btn = document.getElementById(`${which}RepBtn`);
       if (used >= cap) {
@@ -1312,7 +1101,7 @@
       document.getElementById(`${which}RepsLog`).innerHTML = trials.map((tr, i) => `
         <div class="rep-log-item">
           <span>Trial ${tr.number || i + 1}${tr.fromLanding ? ' (from landing page)' : ''}</span>
-          <span class="rl-score">Clarity ${tr.clarity}% · Structure ${tr.structure}% · Impact ${tr.impact}%</span>
+          <span class="rl-score">${tr.clarity != null ? `Clarity ${tr.clarity}%` : 'Clarity —'} · ${tr.structure != null ? `Structure ${tr.structure}%` : 'Structure —'} · ${tr.impact != null ? `Impact ${tr.impact}%` : 'Impact —'}</span>
         </div>
       `).join('');
     }
@@ -1345,13 +1134,6 @@
       document.querySelectorAll('.feature-preview-lock').forEach(el => el.remove());
       document.querySelectorAll('.lock-overlay').forEach(el => el.remove());
       document.querySelectorAll('.locked-preview').forEach(el => el.classList.remove('locked-preview'));
-
-      // Remove preview-only blur on Recordings / Learning preview lists
-      document.querySelectorAll('#recordingsView .dash-wide-box, #learningView .sub-activity-card-grid').forEach(el => {
-        el.style.opacity = '1';
-      });
-      const recPreviewLabel = document.querySelector('#recordingsView .dash-wide-box > div:first-child');
-      if (recPreviewLabel && recPreviewLabel.textContent.includes('Preview')) recPreviewLabel.remove();
 
       // Replace lock CTAs with live "Start Now" buttons
       document.querySelectorAll('.ac-lock-cta').forEach(el => {
@@ -1497,30 +1279,18 @@
       document.getElementById('q1Label').textContent = `Q1 of 2 · Day ${day || 1}`;
       document.getElementById('q1Diff').textContent = `⭐ ${q1.difficulty}`;
       document.getElementById('q1Diff').className = `qc-difficulty ${q1.difficulty.toLowerCase()}`;
-      document.getElementById('q1RepCount').innerHTML = `0 <span class="rt-cap">/ 2</span>`;
-      document.getElementById('q1BestSnr').textContent = 'Best score: —';
-      document.getElementById('q1RepsLog').innerHTML = '';
-      document.getElementById('q1RepBtn').disabled = false;
-      document.getElementById('q1RepBtn').textContent = '🎤 Start Trial 1';
 
       document.getElementById('q2Text').textContent = `"${q2.text}"`;
       document.getElementById('q2Meta').textContent = `Focus: ${q2.focus} · Target: ${q2.target_seconds}s`;
       document.getElementById('q2Label').textContent = `Q2 of 2 · Day ${day || 1}`;
       document.getElementById('q2Diff').textContent = `⭐⭐ ${q2.difficulty}`;
       document.getElementById('q2Diff').className = `qc-difficulty ${q2.difficulty.toLowerCase()}`;
-      document.getElementById('q2RepCount').innerHTML = `0 <span class="rt-cap">/ 2</span>`;
-      document.getElementById('q2BestSnr').textContent = 'Best score: —';
-      document.getElementById('q2RepsLog').innerHTML = '';
 
       document.getElementById('questionCard2').classList.remove('locked');
       const q2Btn = document.getElementById('q2RepBtn');
       q2Btn.disabled = false;
       q2Btn.textContent = '🎤 Start Trial 1';
       q2Btn.onclick = () => startRep('q2');
-
-      document.getElementById('tsTotalReps').textContent = '0 / 4';
-      document.getElementById('tsDrills').textContent = '0 / 2';
-      document.getElementById('tsBestSnr').textContent = '—';
     }
 
     // ============================================================
@@ -1783,7 +1553,7 @@
         activeRecording.timerInterval = setInterval(() => {
           activeRecording.seconds++;
           updateRecTimer();
-          if (activeRecording.seconds >= 60) stopRecording();
+          if (activeRecording.seconds >= 90) stopRecording();
         }, 1000);
       } catch (err) {
         console.error('Mic error:', err);
@@ -1810,7 +1580,7 @@
     }
 
     // ============================================================
-    // SUBMIT REP TO BACKEND
+    // SUBMIT REP TO BACKEND (upload → capture → analyze)
     // ============================================================
     async function submitRepToBackend() {
       const which = activeRecording.target;
@@ -1820,8 +1590,7 @@
 
       if (activeRecording.mode === 'voice' && !activeRecording.rawBlob) return alert('Please record first.');
       if (activeRecording.mode === 'text') {
-        const ta = document.getElementById('recTextInput');
-        activeRecording.rawText = ta.value.trim();
+        activeRecording.rawText = document.getElementById('recTextInput').value.trim();
         if (activeRecording.rawText.length < 10) return alert('Please write at least 10 characters.');
       }
 
@@ -1829,6 +1598,7 @@
       if (textBtn) { textBtn.disabled = true; textBtn.textContent = 'Analyzing…'; }
 
       try {
+        // ── 1. Upload ──
         const formData = new FormData();
         if (activeRecording.mode === 'voice' && activeRecording.rawBlob) {
           formData.append('audio', activeRecording.rawBlob, 'recording.webm');
@@ -1836,48 +1606,86 @@
           formData.append('text', activeRecording.rawText);
         }
         formData.append('question_type', which === 'q1' || which === 'q2' ? 'practice' : (activeRecording.meta.category || 'practice'));
-        formData.append('question_slot', which === 'q1' || which === 'q2' ? which : '');
+        formData.append('question_slot', (which === 'q1' || which === 'q2') ? which : '');
         formData.append('mode', activeRecording.mode);
         formData.append('duration_seconds', activeRecording.seconds || 30);
-        formData.append('user_id', USER.user_id || '');
-        formData.append('sprint', USER.track_id || 'interview');
-        formData.append('question_text', stripQuotes(activeRecording.question || ''));
-        if (isTrial) formData.append('trial', 'true');
+        formData.append('user_id', USER.user_id || USER.email || '');
+        formData.append('trial', isTrial ? 'true' : 'false');
 
-        const headers = {};
-        if (!isTrial && SESSION_TOKEN) headers['Authorization'] = `Bearer ${SESSION_TOKEN}`;
-
-        const uploadRes = await fetch(`${BACKEND_URL}/api/drills/upload`, { method: 'POST', body: formData, headers });
-
-        if (uploadRes.status === 403) {
-          const err = await uploadRes.json().catch(() => ({}));
-          if (err.error === 'TRIAL_CAP_REACHED' || err.detail === 'TRIAL_CAP_REACHED') {
-            alert('You\'ve reached the trial cap for this question. Upgrade to a Sprint to continue.');
-            closeRecorderModal();
-            goToPaywall('sprint');
-            return;
-          }
-        }
-
+        const uploadRes = await fetch(`${BACKEND_URL}/api/drills/upload`, { method: 'POST', body: formData });
         if (!uploadRes.ok) {
           const err = await uploadRes.json().catch(() => ({}));
           throw new Error(err.error || err.detail || `Upload failed (${uploadRes.status})`);
         }
         const { drill_id } = await uploadRes.json();
 
-        let analysis = {};
-        try {
-          const analyzeRes = await fetch(`${BACKEND_URL}/api/drills/analyze`, {
+        // ── 2. Get an auth token ──
+        let authToken;
+        if (isTrial) {
+          // Capture links the drill to email + issues a long-lived session token.
+          const captureRes = await fetch(`${BACKEND_URL}/api/drills/capture`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${drill_id}` }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              drill_id,
+              name: USER.name,
+              email: USER.email,
+              stage: USER.stage || 'early',
+              question_type: activeRecording.meta.category || 'practice',
+              question_slot: (which === 'q1' || which === 'q2') ? which : null,
+              mode: activeRecording.mode
+            }),
           });
-          if (analyzeRes.ok) analysis = await analyzeRes.json();
-        } catch (e) { console.warn('Analyze failed:', e); }
+          if (!captureRes.ok) {
+            const err = await captureRes.json().catch(() => ({}));
+            throw new Error(err.error || err.detail || `Capture failed (${captureRes.status})`);
+          }
+          const capture = await captureRes.json();
+          authToken = capture.session_token;
+          SESSION_TOKEN = authToken;   // keep for subsequent calls
+        } else {
+          authToken = SESSION_TOKEN;
+        }
 
-        const metrics = extractMetrics(analysis);
+        // ── 3. Analyze ──
+        const analyzeRes = await fetch(`${BACKEND_URL}/api/drills/analyze`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ drill_id }),
+        });
 
-        const newTrial = {
-          number: (which === 'q1' ? state.q1Trials.length : state.q2Trials.length) + 1,
+        // Cap reached
+        if (analyzeRes.status === 403) {
+          const err = await analyzeRes.json().catch(() => ({}));
+          const detail = err.detail || err;
+          if (detail?.error === 'TRIAL_CAP_REACHED' || err.error === 'TRIAL_CAP_REACHED') {
+            alert('You\'ve reached the trial cap for this question. Upgrade to a Sprint to continue.');
+            closeRecorderModal();
+            goToPaywall('sprint');
+            return;
+          }
+          throw new Error(detail?.error || detail || 'Forbidden');
+        }
+
+        if (analyzeRes.status === 401) {
+          closeRecorderModal();
+          showSessionExpired('Your session has expired. Please sign in again.');
+          return;
+        }
+
+        if (!analyzeRes.ok) {
+          const err = await analyzeRes.json().catch(() => ({}));
+          throw new Error(err.error || err.detail || `Analyze failed (${analyzeRes.status})`);
+        }
+
+        const rawAnalysis = await analyzeRes.json();
+        const metrics = normalizeAnalysis(rawAnalysis);
+
+        const newRep = {
+          number: (which === 'q1' ? state.q1Trials.length : which === 'q2' ? state.q2Trials.length : state.activityTrials.length) + 1,
           clarity: metrics.clarity,
           structure: metrics.structure,
           impact: metrics.impact,
@@ -1885,16 +1693,13 @@
           transcript: metrics.transcript,
           drillId: drill_id,
           activity: activeRecording.meta.title || null,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          full: rawAnalysis
         };
 
-        if (which === 'q1') { state.q1Trials.push(newTrial); }
-        else if (which === 'q2') { state.q2Trials.push(newTrial); }
-        else {
-          // Activity rep — also add to a general activity log
-          if (!state.activityTrials) state.activityTrials = [];
-          state.activityTrials.push(newTrial);
-        }
+        if (which === 'q1') state.q1Trials.push(newRep);
+        else if (which === 'q2') state.q2Trials.push(newRep);
+        else state.activityTrials.push(newRep);
 
         if (isTrial && (which === 'q1' || which === 'q2')) {
           if (!USER.trial.trials_used) USER.trial.trials_used = { q1: 0, q2: 0 };
@@ -1911,7 +1716,7 @@
         closeRecorderModal();
         setTimeout(() => {
           const label = activeRecording.meta.title || 'Rep';
-          alert(`✅ ${label} saved!\n\nClarity: ${newTrial.clarity}%\nStructure: ${newTrial.structure}%\nImpact: ${newTrial.impact}%`);
+          alert(`✅ ${label} saved!\n\nClarity: ${metrics.clarity ?? '—'}%\nStructure: ${metrics.structure ?? '—'}%\nImpact: ${metrics.impact ?? '—'}%`);
         }, 200);
       } catch (err) {
         console.error('❌ Submit failed:', err);
@@ -1938,18 +1743,16 @@
     }
 
     // ============================================================
-    // PROGRESS VIEW (trial uses accumulated reps; paid uses sprint overview)
+    // PROGRESS VIEW
     // ============================================================
     function renderProgressView() {
       if (USER.is_paid) {
-        // Paid: keep sprint overview card. Progress metrics are populated by loadBackendQuestions + reps.
-        // Nothing else to do here unless the user has reps in this session.
         renderProgressMetricsFromReps();
+        renderRepHistory([...state.q1Trials, ...state.q2Trials, ...state.activityTrials]);
         return;
       }
 
-      // Trial: build metrics from all reps (landing + product-page)
-      const allReps = [...state.q1Trials, ...state.q2Trials, ...(state.activityTrials || [])];
+      const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
       const t = USER.trial;
       const m = t.analysis;
 
@@ -1958,6 +1761,29 @@
         : 'Your performance across reps';
 
       // Analysis summary card
+      const execHtml = (m && m.executiveVersion)
+        ? `<div class="ya-executive">"${escapeHtml(m.executiveVersion)}"</div>`
+        : `
+            <div class="ya-executive-locked">
+              <div class="ya-executive-blurred">Your executive version will appear here — a rewritten, high-impact answer you can borrow from.</div>
+              <div class="ya-executive-overlay">
+                <span class="lock-pill sprint">🔒 Executive Version — Unlocked with Sprint</span>
+                <button class="ya-executive-cta" onclick="goToPaywall('sprint')">Unlock →</button>
+              </div>
+            </div>
+          `;
+
+      const scoreVal = (m && m.overallScore != null) ? m.overallScore : '—';
+      const patternName = (m && m.patternName) ? m.patternName : '—';
+      const patternDesc = (m && m.patternDesc) ? m.patternDesc : '—';
+      const gotLost = [
+        (m && m.gapGotLost) || 'Your credibility and authority in the first 10 seconds',
+        (m && m.gapUnspoken) || 'Between your intent to sound confident and how you actually land'
+      ];
+      const wins = (m && m.oneThingToChange)
+        ? [m.oneThingToChange, 'Front-load your result', 'Add a clear structure marker']
+        : ['Lead with the point', 'Cut filler words', 'Add a clear structure marker'];
+
       document.getElementById('yourAnalysisCard').innerHTML = `
         <div class="ya-header">
           <span class="ya-badge">✦ YOUR ANALYSIS</span>
@@ -1965,7 +1791,7 @@
         </div>
         <div class="ya-score-block">
           <div class="ya-score">
-            <span class="ya-score-value">${m.overallScore || '—'}</span>
+            <span class="ya-score-value">${scoreVal}</span>
             <span class="ya-score-denom">/10</span>
           </div>
           <div class="ya-score-label">Overall Score</div>
@@ -1973,25 +1799,24 @@
         <div class="ya-grid">
           <div class="ya-box">
             <div class="ya-box-label">What I Noticed</div>
-            <div class="ya-pattern-name">${escapeHtml(m.patternName || '—')}</div>
-            <div class="ya-pattern-desc">${escapeHtml(m.patternDesc || '—')}</div>
+            <div class="ya-pattern-name">${escapeHtml(patternName)}</div>
+            <div class="ya-pattern-desc">${escapeHtml(patternDesc)}</div>
           </div>
           <div class="ya-box">
             <div class="ya-box-label">What Got Lost</div>
             <ul class="ya-list">
-              <li>${escapeHtml(m.gapGotLost || 'Your credibility and authority in the first 10 seconds')}</li>
-              <li>${escapeHtml(m.gapUnspoken || 'Between your intent to sound confident and how you actually land')}</li>
+              ${gotLost.map(g => `<li>${escapeHtml(g)}</li>`).join('')}
             </ul>
           </div>
           <div class="ya-box">
             <div class="ya-box-label">Quick Wins</div>
             <ul class="ya-list wins">
-              ${(m.wins || []).map(w => `<li>${escapeHtml(w)}</li>`).join('')}
+              ${wins.map(w => `<li>${escapeHtml(w)}</li>`).join('')}
             </ul>
           </div>
           <div class="ya-box">
             <div class="ya-box-label">Your Executive Version</div>
-            <div class="ya-executive">"${escapeHtml(m.executiveVersion || 'Your executive version here.')}"</div>
+            ${execHtml}
           </div>
         </div>
         <div class="ya-footer">
@@ -2005,36 +1830,37 @@
     }
 
     function renderProgressMetricsFromReps() {
-      const allReps = [...state.q1Trials, ...state.q2Trials, ...(state.activityTrials || [])];
-      const t = USER.trial;
+      const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
 
-      // Pick the "current" metrics: if trial & reps exist, use latest; else landing analysis
-      let latest;
+      let latest = null;
       if (allReps.length) {
-        latest = allReps[allReps.length - 1];
-      } else if (t && t.analysis) {
-        latest = t.analysis;
-      } else {
-        // Paid with no reps this session → show dashes
-        setDashEmpty();
-        return;
+        // Prefer the latest rep with a real clarity value
+        for (let i = allReps.length - 1; i >= 0; i--) {
+          if (allReps[i].clarity != null) { latest = allReps[i]; break; }
+        }
       }
+      if (!latest && !USER.is_paid && USER.trial && USER.trial.analysis) {
+        latest = USER.trial.analysis;
+      }
+      if (!latest) { setDashEmpty(); return; }
 
-      document.getElementById('metricTTP').textContent = `${latest.timeToPoint ?? '—'}s`;
+      const fmt = (v, suffix = '') => (v == null ? '—' : `${v}${suffix}`);
+
+      document.getElementById('metricTTP').textContent = fmt(latest.timeToPoint, 's');
       document.getElementById('metricTTPSub').textContent = allReps.length > 1 ? 'Tracking across reps' : 'Keep practicing to lower this';
 
-      document.getElementById('metricClarity').textContent = `${latest.clarity ?? '—'} / 100`;
-      document.getElementById('metricClaritySub').textContent = (latest.clarity >= 80) ? '🟢 Strong' : '🟡 Getting started';
+      document.getElementById('metricClarity').textContent = fmt(latest.clarity, ' / 100');
+      document.getElementById('metricClaritySub').textContent = (latest.clarity != null && latest.clarity >= 80) ? '🟢 Strong' : '🟡 Getting started';
 
-      document.getElementById('metricStructure').textContent = `${latest.structure ?? '—'} / 100`;
+      document.getElementById('metricStructure').textContent = fmt(latest.structure, ' / 100');
       document.getElementById('metricStructureSub').textContent = 'Practice BLUF framing';
 
-      document.getElementById('metricImpact').textContent = `${latest.impact ?? '—'} / 100`;
+      document.getElementById('metricImpact').textContent = fmt(latest.impact, ' / 100');
       document.getElementById('metricImpactSub').textContent = 'Quantify outcomes';
 
-      document.getElementById('dashSnrValue').textContent = `${latest.clarity ?? 0}%`;
+      document.getElementById('dashSnrValue').textContent = fmt(latest.clarity, '%');
       document.getElementById('dashSnrSignal').style.width = `${latest.clarity ?? 0}%`;
-      document.getElementById('dashSnrNoise').style.width = `${100 - (latest.clarity ?? 0)}%`;
+      document.getElementById('dashSnrNoise').style.width = `${latest.clarity != null ? 100 - latest.clarity : 0}%`;
     }
 
     function setDashEmpty() {
@@ -2047,25 +1873,21 @@
     }
 
     function renderFeedbackFromReps() {
-      const t = USER.trial;
-      const m = (t && t.analysis) || {};
+      const m = (USER.trial && USER.trial.analysis) || {};
 
-      const wellList = document.getElementById('dashWellList');
-      const improveList = document.getElementById('dashImproveList');
-
-      const strengths = m.strengths || [
-        'Clear opening',
-        'Steady pacing',
-        'Limited hedging language'
+      const strengths = [
+        m.wordsPerMinute ? `Steady pacing at ${m.wordsPerMinute} WPM` : 'Clear opening',
+        m.fillerTotal === 0 ? 'No filler words detected' : 'Limited hedging language',
+        'You answered in your own words'
       ];
-      const improvements = m.improvements || [
-        'Reduce filler words',
-        'Quantify your outcome',
+      const improvements = [
+        m.fillerPct != null ? `Reduce filler words (${m.fillerPct}% — target < 3%)` : 'Reduce filler words',
+        'Quantify your outcome (add a % or figure)',
         'Add a 2-second pause after your conclusion'
       ];
 
-      wellList.innerHTML = strengths.map(s => `<li>${escapeHtml(s)}</li>`).join('');
-      improveList.innerHTML = improvements.map(s => `<li>${escapeHtml(s)}</li>`).join('');
+      document.getElementById('dashWellList').innerHTML = strengths.map(s => `<li>${escapeHtml(s)}</li>`).join('');
+      document.getElementById('dashImproveList').innerHTML = improvements.map(s => `<li>${escapeHtml(s)}</li>`).join('');
     }
 
     function renderRepHistory(allReps) {
@@ -2076,13 +1898,14 @@
         list.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">No reps yet — start on Today.</div>';
         return;
       }
-      list.innerHTML = allReps.slice().reverse().map((r, i) => {
+      list.innerHTML = allReps.slice().reverse().map((r) => {
         const label = r.fromLanding ? 'From landing page' : (r.activity ? r.activity : 'Practice rep');
         const time = r.timestamp ? new Date(r.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
+        const fmt = (v) => v == null ? '—' : `${v}%`;
         return `
           <div class="rep-log-item">
             <span>${escapeHtml(label)}${time ? ' · ' + escapeHtml(time) : ''}</span>
-            <span class="rl-score">Clarity ${r.clarity}% · Structure ${r.structure}% · Impact ${r.impact}%</span>
+            <span class="rl-score">Clarity ${fmt(r.clarity)} · Structure ${fmt(r.structure)} · Impact ${fmt(r.impact)}</span>
           </div>
         `;
       }).join('');
@@ -2109,7 +1932,8 @@
       document.getElementById('tsTotalReps').textContent = `${total} / 4`;
       document.getElementById('tsTimeSpent').textContent = `${Math.max(1, total)} min`;
       const all = [...state.q1Trials, ...state.q2Trials];
-      document.getElementById('tsBestSnr').textContent = all.length ? `${Math.max(...all.map(t => t.clarity))}%` : '—';
+      const validClarity = all.map(t => t.clarity).filter(v => v != null);
+      document.getElementById('tsBestSnr').textContent = validClarity.length ? `${Math.max(...validClarity)}%` : '—';
       const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
       document.getElementById('tsDrills').textContent = `${drills} / 2`;
       document.getElementById('dayProgressFill').style.width = `${(drills / 2) * 100}%`;
@@ -2120,7 +1944,6 @@
         const cap = USER.trial.cap * 2;
         document.getElementById('dayCounter').textContent = `${used} / ${cap} trials`;
       }
-      // Update the "Try Again" bar message
       const taMsg = document.getElementById('taMessage');
       if (taMsg) {
         if (USER.is_paid) {
@@ -2132,29 +1955,6 @@
             : 'Trial cap reached — upgrade to continue.';
         }
       }
-    }
-
-    // ============================================================
-    // GATE #2 (kept for compatibility)
-    // ============================================================
-    let gate2Selected = null;
-    function selectFunction(btn, fn) {
-      document.querySelectorAll('#gate2FunctionOptions button').forEach(b => {
-        b.style.borderColor = 'var(--border-color)';
-        b.style.background = 'var(--card-bg)';
-      });
-      btn.style.borderColor = 'var(--accent-cyan)';
-      btn.style.background = 'rgba(56, 189, 248, 0.15)';
-      gate2Selected = fn;
-      const sub = document.getElementById('gate2Submit');
-      sub.disabled = false;
-      sub.style.opacity = '1';
-    }
-    function submitGateTwo() {
-      if (!gate2Selected) return;
-      state.function = gate2Selected;
-      document.getElementById('profileFunction').innerHTML = `<option selected>${formatFunction(state.function)}</option>`;
-      document.getElementById('gate2Overlay').style.display = 'none';
     }
 
     // ============================================================
@@ -2322,10 +2122,7 @@
       const viewMap = { today:'todayView', activities:'activitiesView', dash:'dashView', recordings:'recordingsView', badges:'badgesView', pillars:'pillarsView', learning:'learningView' };
       if (navMap[key]) document.getElementById(navMap[key]).classList.add('active');
       if (viewMap[key]) document.getElementById(viewMap[key]).classList.add('active-view');
-
-      // Re-render progress whenever the user opens it (picks up new reps)
       if (key === 'dash') renderProgressView();
-
       if (window.innerWidth <= 900) {
         const sidebar = document.getElementById('appSidebar');
         if (sidebar && sidebar.classList.contains('open')) sidebar.classList.remove('open');
@@ -2395,28 +2192,7 @@
       boot.appendChild(fresh);
     }
 
-    function showErrorState(msg) {
-      const boot = document.getElementById('bootScreen');
-      boot.classList.remove('hidden');
-      document.getElementById('bootSpinner').classList.add('hidden');
-      boot.setAttribute('data-error', '1');
-      document.getElementById('bootTitle').innerHTML = '⚠️ We couldn\'t analyze your response';
-      boot.querySelectorAll('.boot-btn').forEach(b => b.remove());
-      document.getElementById('bootSub').innerHTML = (msg || 'Something went wrong.') + '<br><br>Your response is safe.';
-      const retry = document.createElement('button');
-      retry.className = 'boot-btn';
-      retry.textContent = '🔄 Retry';
-      retry.onclick = () => location.reload();
-      const signIn = document.createElement('button');
-      signIn.className = 'boot-btn secondary';
-      signIn.style.marginTop = '8px';
-      signIn.textContent = '🔑 Sign In with Email';
-      signIn.onclick = openOtpModal;
-      boot.appendChild(retry);
-      boot.appendChild(signIn);
-    }
-
-    console.log('🚀 Product page loaded — trial + paid flows active, all views visible.');
+    console.log('🚀 Product page loaded — trial + paid flows active.');
   </script>
 </body>
 </html>
