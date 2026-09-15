@@ -92,28 +92,26 @@
     .ya-metric-row .ya-metric-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); border-radius: 3px; }
     .ya-metric-row .ya-metric-value { width: 34px; text-align: right; font-weight: 700; color: var(--text-main); }
 
-.ya-transcript {
-  font-size: 13px;
-  line-height: 1.65;
-  color: var(--text-main);
-  max-height: 220px;
-  overflow-y: auto;
-  padding: 12px 14px;
-  background: rgba(0, 0, 0, 0.25);
-  border-left: 3px solid var(--accent-cyan);
-  border-radius: 8px;
-  font-style: italic;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-.ya-transcript-empty {
-  color: var(--text-muted);
-  font-style: normal;
-  font-size: 12px;
-}
+    .ya-transcript {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--text-main);
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 12px 14px;
+      background: rgba(0, 0, 0, 0.25);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 8px;
+      font-style: italic;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .ya-transcript-empty {
+      color: var(--text-muted);
+      font-style: normal;
+      font-size: 12px;
+    }
 
-    
-    
     .top-header { background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; flex-wrap: wrap; gap: 12px; }
     .brand { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
     .track-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-cyan); background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 10px; border-radius: 20px; margin-left: 8px; -webkit-text-fill-color: var(--accent-cyan); }
@@ -689,9 +687,9 @@
 
         <div class="dash-grid">
           <div class="metric-box"><div class="metric-label">Time-to-Point</div><div class="metric-value" id="metricTTP">—</div><div class="metric-sub" id="metricTTPSub">—</div></div>
-          <div class="metric-box"><div class="metric-label">Clarity Score</div><div class="metric-value" id="metricClarity">—</div><div class="metric-sub" id="metricClaritySub">—</div></div>
-          <div class="metric-box"><div class="metric-label">Structure</div><div class="metric-value" id="metricStructure">—</div><div class="metric-sub" id="metricStructureSub">—</div></div>
-          <div class="metric-box"><div class="metric-label">Impact &amp; Gravitas</div><div class="metric-value" id="metricImpact">—</div><div class="metric-sub" id="metricImpactSub">—</div></div>
+          <div class="metric-box"><div class="metric-label">Filler discipline</div><div class="metric-value" id="metricFillerDiscipline">—</div><div class="metric-sub" id="metricFillerDisciplineSub">—</div></div>
+          <div class="metric-box"><div class="metric-label">Point-first</div><div class="metric-value" id="metricPointFirst">—</div><div class="metric-sub" id="metricPointFirstSub">—</div></div>
+          <div class="metric-box"><div class="metric-label">Concreteness</div><div class="metric-value" id="metricConcreteness">—</div><div class="metric-sub" id="metricConcretenessSub">—</div></div>
         </div>
 
         <div class="dash-wide-box">
@@ -916,9 +914,10 @@
       const r = data.before_after_rewrite || {};
 
       return {
-        clarity: m.clarity ?? null,
-        structure: m.structure ?? null,
-        impact: m.impact ?? null,
+        // New honest names with fallbacks to the old ones
+        fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
+        pointFirst: m.point_first ?? m.structure ?? null,
+        concreteness: m.concreteness ?? m.impact ?? null,
         overallScore: m.overall_score ?? null,
         timeToPoint: s.main_point_delay_seconds ?? null,
         wordsPerMinute: s.words_per_minute ?? null,
@@ -986,10 +985,11 @@
       if (USER.analysis) {
         const seed = {
           number: 1,
-          clarity: USER.analysis.clarity,
-          structure: USER.analysis.structure,
-          impact: USER.analysis.impact,
+          fillerDiscipline: USER.analysis.fillerDiscipline,
+          pointFirst: USER.analysis.pointFirst,
+          concreteness: USER.analysis.concreteness,
           timeToPoint: USER.analysis.timeToPoint,
+          transcript: USER.analysis.transcript,
           fromLanding: true
         };
         if (USER.answered === 'q1') { state.q1Trials = [seed]; state.q2Trials = []; }
@@ -1004,11 +1004,11 @@
       const used = USER.trials_used?.[which] || 0;
       const cap = USER.cap;
       const trials = which === 'q1' ? state.q1Trials : state.q2Trials;
-      const valid = trials.filter(x => x.clarity != null);
-      const best = valid.length ? Math.max(...valid.map(x => x.clarity)) : null;
+      const valid = trials.filter(x => x.fillerDiscipline != null);
+      const best = valid.length ? Math.max(...valid.map(x => x.fillerDiscipline)) : null;
 
       document.getElementById(`${which}RepCount`).innerHTML = `${used} <span class="rt-cap">/ ${cap}</span>`;
-      document.getElementById(`${which}BestSnr`).textContent = best != null ? `Best clarity: ${best}%` : 'Best score: —';
+      document.getElementById(`${which}BestSnr`).textContent = best != null ? `Best filler discipline: ${best}%` : 'Best score: —';
 
       const btn = document.getElementById(`${which}RepBtn`);
       if (used >= cap) {
@@ -1027,20 +1027,20 @@
         <div class="rep-log-item">
           <span>Trial ${tr.number || i + 1}${tr.fromLanding ? ' (from landing page)' : ''}</span>
           <span class="rl-score">${
-                tr.transcript
-        ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"`
-        : '—'
-    }</span>
-  </div>
-`).join('');
+            tr.transcript
+              ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"`
+              : '—'
+          }</span>
+        </div>
+      `).join('');
+    }
 
-            
     function renderTodayProgress() {
       const total = state.q1Trials.length + state.q2Trials.length;
       document.getElementById('tsTotalReps').textContent = `${total} / 4`;
       document.getElementById('tsTimeSpent').textContent = `${Math.max(1, total)} min`;
       const all = [...state.q1Trials, ...state.q2Trials];
-      const valid = all.map(t => t.clarity).filter(v => v != null);
+      const valid = all.map(t => t.fillerDiscipline).filter(v => v != null);
       document.getElementById('tsBestSnr').textContent = valid.length ? `${Math.max(...valid)}%` : '—';
       const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
       document.getElementById('tsDrills').textContent = `${drills} / 2`;
@@ -1090,9 +1090,6 @@
             </div>
           `;
 
-      const v = (val) => val == null ? '—' : val;
-      const pct = (val) => val == null ? 0 : val;
-
       document.getElementById('yourAnalysisCard').innerHTML = `
         <div class="ya-header">
           <span class="ya-badge">✦ YOUR PATTERN</span>
@@ -1115,13 +1112,12 @@
             <ul class="ya-list wins">${wins.map(w => `<li>${escapeHtml(w)}</li>`).join('')}</ul>
           </div>
           <div class="ya-box">
-  <div class="ya-box-label">What You Said</div>
-  <div class="ya-transcript">${
-    (m && m.transcript)
-      ? escapeHtml(m.transcript)
-      : '<span class="ya-transcript-empty">No speech detected — try recording again with your microphone unmuted.</span>'                    
-           </div>
-            </div>
+            <div class="ya-box-label">What You Said</div>
+            <div class="ya-transcript">${
+              (m && m.transcript)
+                ? escapeHtml(m.transcript)
+                : '<span class="ya-transcript-empty">No speech detected — try recording again with your microphone unmuted.</span>'
+            }</div>
           </div>
           <div class="ya-box">
             <div class="ya-box-label">Your Executive Version</div>
@@ -1142,7 +1138,7 @@
       let latest = null;
       if (allReps.length) {
         for (let i = allReps.length - 1; i >= 0; i--) {
-          if (allReps[i].clarity != null) { latest = allReps[i]; break; }
+          if (allReps[i].fillerDiscipline != null) { latest = allReps[i]; break; }
         }
       }
       if (!latest && m) latest = m;
@@ -1152,19 +1148,32 @@
 
       document.getElementById('metricTTP').textContent = fmt(latest.timeToPoint, 's');
       document.getElementById('metricTTPSub').textContent = allReps.length > 1 ? 'Tracking across reps' : 'Keep practicing to lower this';
-      document.getElementById('metricClarity').textContent = fmt(latest.clarity, ' / 100');
-      document.getElementById('metricClaritySub').textContent = (latest.clarity != null && latest.clarity >= 80) ? '🟢 Strong' : '🟡 Getting started';
-      document.getElementById('metricStructure').textContent = fmt(latest.structure, ' / 100');
-      document.getElementById('metricStructureSub').textContent = 'Practice BLUF framing';
-      document.getElementById('metricImpact').textContent = fmt(latest.impact, ' / 100');
-      document.getElementById('metricImpactSub').textContent = 'Quantify outcomes';
-      document.getElementById('dashSnrValue').textContent = fmt(latest.clarity, '%');
-      document.getElementById('dashSnrSignal').style.width = `${latest.clarity ?? 0}%`;
-      document.getElementById('dashSnrNoise').style.width = `${latest.clarity != null ? 100 - latest.clarity : 0}%`;
+
+      document.getElementById('metricFillerDiscipline').textContent = fmt(latest.fillerDiscipline, ' / 100');
+      document.getElementById('metricFillerDisciplineSub').textContent =
+        (latest.fillerDiscipline != null && latest.fillerDiscipline >= 80) ? '🟢 Few fillers' :
+        (latest.fillerDiscipline != null && latest.fillerDiscipline >= 60) ? '🟡 Some fillers' :
+        '🔴 Trim filler words';
+
+      document.getElementById('metricPointFirst').textContent = fmt(latest.pointFirst, ' / 100');
+      document.getElementById('metricPointFirstSub').textContent =
+        (latest.pointFirst != null && latest.pointFirst >= 80) ? '🟢 Lead with the point' :
+        (latest.pointFirst != null && latest.pointFirst >= 60) ? '🟡 Point arrives late' :
+        '🔴 Bury the lede';
+
+      document.getElementById('metricConcreteness').textContent = fmt(latest.concreteness, ' / 100');
+      document.getElementById('metricConcretenessSub').textContent =
+        (latest.concreteness != null && latest.concreteness >= 80) ? '🟢 Specific and verifiable' :
+        (latest.concreteness != null && latest.concreteness >= 60) ? '🟡 Add more specifics' :
+        '🔴 Quantify your outcomes';
+
+      document.getElementById('dashSnrValue').textContent = fmt(latest.fillerDiscipline, '%');
+      document.getElementById('dashSnrSignal').style.width = `${latest.fillerDiscipline ?? 0}%`;
+      document.getElementById('dashSnrNoise').style.width = `${latest.fillerDiscipline != null ? 100 - latest.fillerDiscipline : 0}%`;
     }
 
     function setDashEmpty() {
-      ['metricTTP','metricClarity','metricStructure','metricImpact'].forEach(id => {
+      ['metricTTP','metricFillerDiscipline','metricPointFirst','metricConcreteness'].forEach(id => {
         document.getElementById(id).textContent = '—';
       });
       document.getElementById('dashSnrValue').textContent = '—';
@@ -1198,11 +1207,14 @@
       list.innerHTML = allReps.slice().reverse().map((r) => {
         const label = r.fromLanding ? 'From landing page' : (r.activity ? r.activity : 'Practice rep');
         const time = r.timestamp ? new Date(r.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
-        const fmt = (val) => val == null ? '—' : `${val}%`;
         return `
           <div class="rep-log-item">
             <span>${escapeHtml(label)}${time ? ' · ' + escapeHtml(time) : ''}</span>
-            <span class="rl-score">Clarity ${fmt(r.clarity)} · Structure ${fmt(r.structure)} · Impact ${fmt(r.impact)}</span>
+            <span class="rl-score">${
+              r.transcript
+                ? `"${escapeHtml(r.transcript.slice(0, 80))}${r.transcript.length > 80 ? '…' : ''}"`
+                : '—'
+            }</span>
           </div>
         `;
       }).join('');
@@ -1471,9 +1483,9 @@
 
         const newRep = {
           number: ((which === 'q1') ? state.q1Trials.length : (which === 'q2') ? state.q2Trials.length : state.activityTrials.length) + 1,
-          clarity: metrics.clarity,
-          structure: metrics.structure,
-          impact: metrics.impact,
+          fillerDiscipline: metrics.fillerDiscipline,
+          pointFirst: metrics.pointFirst,
+          concreteness: metrics.concreteness,
           timeToPoint: metrics.timeToPoint,
           transcript: metrics.transcript,
           drillId: drill_id,
@@ -1500,7 +1512,7 @@
         closeRecorderModal();
         setTimeout(() => {
           const label = activeRecording.meta.title || 'Rep';
-          alert(`✅ ${label} saved!\n\nClarity: ${metrics.clarity ?? '—'}%\nStructure: ${metrics.structure ?? '—'}%\nImpact: ${metrics.impact ?? '—'}%`);
+          alert(`✅ ${label} saved!\n\nFiller discipline: ${metrics.fillerDiscipline ?? '—'}\nPoint-first: ${metrics.pointFirst ?? '—'}\nConcreteness: ${metrics.concreteness ?? '—'}`);
         }, 200);
       } catch (err) {
         console.error('❌ Submit failed:', err);
