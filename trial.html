@@ -1205,20 +1205,50 @@ const execHtml = (m && m.executiveVersion)
       document.getElementById('dashSnrNoise').style.width = '0%';
     }
 
-    function renderFeedback(m) {
-      const strengths = [
-        (m && m.wordsPerMinute) ? `Steady pacing at ${m.wordsPerMinute} WPM` : 'Clear opening',
-        (m && m.fillerTotal === 0) ? 'No filler words detected' : 'Limited hedging language',
-        'You answered in your own words'
-      ];
-      const improvements = [
-        (m && m.fillerPct != null) ? `Reduce filler words (${m.fillerPct}% — target < 3%)` : 'Reduce filler words',
-        'Quantify your outcome (add a % or figure)',
-        'Add a 2-second pause after your conclusion'
-      ];
-      document.getElementById('dashWellList').innerHTML = strengths.map(s => `<li>${escapeHtml(s)}</li>`).join('');
-      document.getElementById('dashImproveList').innerHTML = improvements.map(s => `<li>${escapeHtml(s)}</li>`).join('');
-    }
+function renderFeedback(m) {
+  // "What Was Going Well" — derived from real signals
+  const strengths = [];
+  if (m && m.wordsPerMinute) {
+    strengths.push(`Steady pacing at ${m.wordsPerMinute} WPM`);
+  }
+  if (m && m.fillerTotal === 0) {
+    strengths.push('No filler words detected');
+  } else if (m && m.fillerTotal > 0) {
+    strengths.push(`${m.fillerTotal} filler words (${m.fillerPct}%)`);
+  }
+  if (m && m.vocabUnique && m.vocabUnique >= 20) {
+    strengths.push(`Rich vocabulary — ${m.vocabUnique} unique words`);
+  }
+  if (m && m.snr != null && m.snr >= 80) {
+    strengths.push(`High signal-to-noise ratio (${m.snr}%)`);
+  }
+  if (!strengths.length) {
+    strengths.push('You completed a rep — that\'s the first step');
+  }
+
+  // "What to Improve" — from Gemini's coaching + real signals
+  const improvements = [];
+  if (m && m.oneThingToChange) {
+    improvements.push(m.oneThingToChange);
+  }
+  if (m && m.fillerPct != null && m.fillerPct >= 3) {
+    improvements.push(`Reduce filler words (${m.fillerPct}% — target < 3%)`);
+  }
+  if (m && m.timeToPoint != null && m.timeToPoint > 10) {
+    improvements.push(`Get to the point faster (currently ${m.timeToPoint}s — target < 10s)`);
+  }
+  if (m && m.wordsPerMinute && m.wordsPerMinute < 100) {
+    improvements.push('Pick up the pace slightly — aim for 120–160 WPM');
+  }
+  if (!improvements.length) {
+    improvements.push('Keep practicing — try a different scenario');
+  }
+
+  document.getElementById('dashWellList').innerHTML =
+    strengths.slice(0, 4).map(s => `<li>${escapeHtml(s)}</li>`).join('');
+  document.getElementById('dashImproveList').innerHTML =
+    improvements.slice(0, 4).map(s => `<li>${escapeHtml(s)}</li>`).join('');
+}
 
     function renderRepHistory(allReps) {
       const list = document.getElementById('repHistoryList');
