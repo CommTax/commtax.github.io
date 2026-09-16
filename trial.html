@@ -1458,18 +1458,36 @@ function renderFeedback(m) {
 
       try {
         // 1. Upload
-        const formData = new FormData();
-        if (activeRecording.mode === 'voice' && activeRecording.rawBlob) {
-          formData.append('audio', activeRecording.rawBlob, 'recording.webm');
-        } else {
-          formData.append('text', activeRecording.rawText);
-        }
-        formData.append('question_type', which === 'q1' || which === 'q2' ? 'practice' : (activeRecording.meta.category || 'practice'));
-        formData.append('question_slot', (which === 'q1' || which === 'q2') ? which : '');
-        formData.append('mode', activeRecording.mode);
-        formData.append('duration_seconds', activeRecording.seconds || 30);
-        formData.append('user_id', USER.user_id || USER.email || '');
-        formData.append('trial', 'true');
+const formData = new FormData();
+if (activeRecording.mode === 'voice' && activeRecording.rawBlob) {
+  formData.append('audio', activeRecording.rawBlob, 'recording.webm');
+} else {
+  formData.append('text', activeRecording.rawText);
+}
+
+// Determine which question this is
+const isQ1 = which === 'q1';
+const isQ2 = which === 'q2';
+const slot = isQ1 ? 'q1' : isQ2 ? 'q2' : '';
+const qtype = isQ1 ? 'intro' : isQ2 ? 'project' : 'practice';
+
+// The actual prompt text — read from the visible card
+const promptEl = isQ1
+  ? document.getElementById('q1Text')
+  : isQ2
+    ? document.getElementById('q2Text')
+    : null;
+const promptText = promptEl
+  ? promptEl.textContent.replace(/^["“”]|["“”]$/g, '').trim()
+  : (activeRecording.question || activeRecording.meta.category || 'Practice rep');
+
+formData.append('question_type', qtype);
+formData.append('question_slot', slot);
+formData.append('question_prompt', promptText);   // ← NEW: required by backend
+formData.append('mode', activeRecording.mode);
+formData.append('duration_seconds', activeRecording.seconds || 30);
+formData.append('user_id', USER.user_id || USER.email || '');
+formData.append('trial', 'true');
 
         const uploadRes = await fetch(`${BACKEND_URL}/api/trial/upload`, { method: 'POST', body: formData });
         if (!uploadRes.ok) {
