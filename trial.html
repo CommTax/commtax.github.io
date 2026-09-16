@@ -1332,24 +1332,34 @@ function renderFeedback(m) {
             <button id="recVoiceSubmit" onclick="submitRep()" style="display:none;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;">Submit My Response →</button>
           </div>
           <div id="recTextPane" style="display:none;">
-            <textarea id="recTextInput" placeholder="Type your response here..." maxlength="500" style="width:100%;min-height:120px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
-            <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="recCharCount">0</span> / 500</div>
+<textarea id="recTextInput" placeholder="Type your response here (300 words max)..." style="width:100%;min-height:120px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
+<div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="recWordCount">0</span> / 300 words</div>
             <button id="recTextSubmit" onclick="submitRep()" disabled style="margin-top:12px;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;opacity:0.5;">Submit My Response →</button>
           </div>
         </div>
       `;
       document.body.appendChild(modal);
 
-      const ta = document.getElementById('recTextInput');
-      if (ta) {
-        ta.addEventListener('input', (e) => {
-          const val = e.target.value;
-          document.getElementById('recCharCount').textContent = val.length;
-          const btn = document.getElementById('recTextSubmit');
-          btn.disabled = val.length < 10;
-          btn.style.opacity = val.length < 10 ? '0.5' : '1';
-        });
-      }
+const ta = document.getElementById('recTextInput');
+if (ta) {
+  ta.addEventListener('input', (e) => {
+    const val = e.target.value;
+    const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+    const wc = document.getElementById('recWordCount');
+    const btn = document.getElementById('recTextSubmit');
+
+    if (wc) {
+      wc.textContent = words;
+      // Turn red if over 300
+      wc.style.color = words > 300 ? '#EF4444' : '';
+    }
+
+    // Enable when 10+ chars AND under 300 words
+    const valid = val.length >= 10 && words <= 300;
+    btn.disabled = !valid;
+    btn.style.opacity = valid ? '1' : '0.5';
+  });
+}
     }
 
     function closeRecorderModal() {
@@ -1408,12 +1418,13 @@ function renderFeedback(m) {
         const submitBtn = document.getElementById('recVoiceSubmit');
         if (recBtn) { recBtn.style.background = '#6e6a62'; recBtn.textContent = '■'; }
         if (status) status.textContent = '🎙️ Recording…';
+        if (document.getElementById('recTimer')) document.getElementById('recTimer').style.color = '';
         if (submitBtn) submitBtn.style.display = 'none';
         updateRecTimer();
         activeRecording.timerInterval = setInterval(() => {
           activeRecording.seconds++;
           updateRecTimer();
-          if (activeRecording.seconds >= 90) stopRecording();
+          if (activeRecording.seconds >= 30) stopRecording();
         }, 1000);
       } catch (err) {
         console.error('Mic error:', err);
@@ -1432,12 +1443,27 @@ function renderFeedback(m) {
       if (status) status.textContent = '⏳ Processing…';
     }
 
-    function updateRecTimer() {
-      const m = Math.floor(activeRecording.seconds / 60);
-      const s = activeRecording.seconds % 60;
-      const t = document.getElementById('recTimer');
-      if (t) t.textContent = `${m}:${s.toString().padStart(2, '0')}`;
-    }
+function updateRecTimer() {
+  const m = Math.floor(activeRecording.seconds / 60);
+  const s = activeRecording.seconds % 60;
+  const t = document.getElementById('recTimer');
+  const status = document.getElementById('recStatus');
+  if (t) t.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+
+  // Warning states as time runs out
+  if (activeRecording.seconds >= 30) {
+    if (t) t.style.color = '#EF4444';
+    if (status) status.textContent = '⏱️ Time up — stopping';
+  } else if (activeRecording.seconds >= 25) {
+    if (t) t.style.color = '#EF4444';
+    if (status) status.textContent = `⚠️ ${30 - activeRecording.seconds}s left`;
+  } else if (activeRecording.seconds >= 20) {
+    if (t) t.style.color = '#F59E0B';
+    if (status) status.textContent = `${30 - activeRecording.seconds}s left`;
+  } else {
+    if (t) t.style.color = '';
+  }
+}
 
     // ============================================================
     // SUBMIT REP (upload → capture → analyze)
@@ -1448,10 +1474,16 @@ function renderFeedback(m) {
       const textBtn = document.getElementById('recTextSubmit');
 
       if (activeRecording.mode === 'voice' && !activeRecording.rawBlob) return alert('Please record first.');
-      if (activeRecording.mode === 'text') {
-        activeRecording.rawText = document.getElementById('recTextInput').value.trim();
-        if (activeRecording.rawText.length < 10) return alert('Please write at least 10 characters.');
-      }
+if (activeRecording.mode === 'text') {
+  activeRecording.rawText = document.getElementById('recTextInput').value.trim();
+  if (activeRecording.rawText.length < 10) {
+    return alert('Please write at least 10 characters.');
+  }
+  const words = activeRecording.rawText.split(/\s+/).length;
+  if (words > 300) {
+    return alert(`Text responses are capped at 300 words. You have ${words}. Please trim.`);
+  }
+}
 
       if (voiceBtn) { voiceBtn.disabled = true; voiceBtn.textContent = 'Analyzing…'; }
       if (textBtn) { textBtn.disabled = true; textBtn.textContent = 'Analyzing…'; }
@@ -1485,7 +1517,10 @@ formData.append('question_type', qtype);
 formData.append('question_slot', slot);
 formData.append('question_prompt', promptText);   // ← NEW: required by backend
 formData.append('mode', activeRecording.mode);
-formData.append('duration_seconds', activeRecording.seconds || 30);
+const duration = activeRecording.mode === 'voice'
+  ? activeRecording.seconds
+  : Math.max(10, Math.round((activeRecording.rawText || '').split(/\s+/).length / 2.5));
+formData.append('duration_seconds', duration);
 formData.append('user_id', USER.user_id || USER.email || '');
 formData.append('trial', 'true');
 
