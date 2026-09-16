@@ -1996,7 +1996,17 @@ document.getElementById('gateMobile').addEventListener('input', e => {
 });
 
 function checkGateReady() {
-  const ready = state.gate.name && state.gate.email && state.gate.mobile.length === 10 && state.gate.stage;
+  const name   = document.getElementById('gateName').value.trim();
+  const email  = document.getElementById('gateEmail').value.trim();
+  const mobile = document.getElementById('gateMobile').value.replace(/\D/g, '');
+  const stage  = state.gate.stage;
+
+  const ready = name && email && mobile.length === 10 && stage;
+
+  state.gate.name   = name;
+  state.gate.email  = email;
+  state.gate.mobile = mobile;
+
   document.getElementById('gateSubmit').disabled = !ready;
 }
 
