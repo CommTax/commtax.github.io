@@ -2041,10 +2041,11 @@ async function submitGateAndRedirect() {
     } else {
       throw new Error('No audio or text to upload');
     }
-    formData.append('question_type', state.currentQuestionType);
-    formData.append('question_slot', slot);   // ← NEW
-    formData.append('mode', state.currentMode);
-    formData.append('duration_seconds', state.rawDuration || 30);
+formData.append('question_type', state.currentQuestionType);
+formData.append('question_slot', slot);
+formData.append('question_prompt', document.getElementById('promptText').textContent.replace(/^"|"$/g, ''));
+formData.append('mode', state.currentMode);
+formData.append('duration_seconds', state.rawDuration || 30);
 
     const uploadRes = await fetch(`${BACKEND_URL}/api/trial/upload`, {
       method: 'POST',
