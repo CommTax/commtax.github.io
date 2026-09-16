@@ -29,62 +29,52 @@
     }
     .hidden { display: none !important; }
 
+    /* ── BOOT / LOGIN SCREEN ── */
     .boot-screen { position: fixed; inset: 0; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; padding: 24px; z-index: 9999; }
     .boot-screen.hidden { display: none; }
     .boot-spinner { width: 52px; height: 52px; border: 3px solid rgba(56, 189, 248, 0.15); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 0.9s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .boot-title { font-size: 20px; font-weight: 700; text-align: center; }
-    .boot-sub { font-size: 13px; color: var(--text-muted); text-align: center; max-width: 420px; line-height: 1.5; }
+    .boot-sub { font-size: 13px; color: var(--text-muted); text-align: center; max-width: 440px; line-height: 1.5; }
     .boot-btn { padding: 12px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; }
     .boot-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
     .boot-btn.secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
 
-    .preview-banner { background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(139, 92, 246, 0.12)); border-bottom: 1px solid rgba(56, 189, 248, 0.4); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 12px; }
-    .preview-banner.hidden { display: none; }
-    .preview-banner .pb-left { display: flex; align-items: center; gap: 10px; }
-    .preview-banner .pb-left strong { color: var(--accent-cyan); }
-    .preview-banner .pb-right { display: flex; gap: 8px; flex-wrap: wrap; }
-    .preview-banner .pb-btn { padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; }
-    .preview-banner .pb-btn.primary { background: var(--primary); color: #FFF; }
-    .preview-banner .pb-btn.secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+    /* ── LOGIN CARD ── */
+    .login-box {
+      max-width: 420px; width: 100%;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 36px 32px;
+      text-align: left;
+    }
+    .login-box .lb-logo { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 20px; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .login-box h2 { font-size: 22px; margin-bottom: 6px; }
+    .login-box .lb-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 22px; line-height: 1.5; }
+    .login-box label { display: block; font-size: 12px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
+    .login-box input {
+      width: 100%; padding: 14px 16px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 15px;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: inherit;
+    }
+    .login-box input:focus { outline: none; border-color: var(--accent-cyan); }
+    .login-box .lb-submit {
+      width: 100%; margin-top: 16px; padding: 14px;
+      border-radius: 100px; border: none;
+      background: var(--primary); color: #fff;
+      font-weight: 700; font-size: 14px; cursor: pointer;
+      font-family: inherit;
+    }
+    .login-box .lb-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .login-box .lb-footer { margin-top: 18px; text-align: center; font-size: 12px; color: var(--text-muted); }
+    .login-box .lb-footer a { color: var(--accent-cyan); text-decoration: none; font-weight: 600; }
 
-    .lock-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11, 15, 25, 0.75) 0%, rgba(11, 15, 25, 0.95) 100%); backdrop-filter: blur(3px); border-radius: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; z-index: 5; gap: 10px; }
-    .lock-overlay .lock-icon { font-size: 36px; line-height: 1; margin-bottom: 4px; }
-    .lock-overlay .lock-title { font-size: 15px; font-weight: 700; }
-    .lock-overlay .lock-desc { font-size: 12px; color: var(--text-muted); max-width: 380px; line-height: 1.5; }
-    .lock-overlay .lock-cta { margin-top: 8px; padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--accent-gold), #a07f30); color: #FFF; border: none; cursor: pointer; }
-    .lockable { position: relative; overflow: hidden; }
-    .activity-card.locked-preview { position: relative; overflow: hidden; }
-    .activity-card.locked-preview .ac-body { filter: blur(0.5px); opacity: 0.5; }
-    .activity-card .ac-lock-cta { margin-top: 6px; padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--accent-gold), #a07f30); color: #FFF; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; }
-    .activity-card .ac-lock-cta.pass-tier { background: linear-gradient(135deg, var(--accent-purple), #5b21b6); }
-
-    .your-analysis-card { background: linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(139, 92, 246, 0.06)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 16px; padding: 26px 28px; position: relative; overflow: hidden; }
-    .ya-header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
-    .ya-badge { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-cyan); background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); padding: 4px 12px; border-radius: 20px; }
-    .ya-sub { font-size: 12px; color: var(--text-muted); }
-    .ya-score-block { text-align: center; padding: 18px 0 22px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 22px; }
-    .ya-score { display: inline-flex; align-items: baseline; gap: 4px; }
-    .ya-score-value { font-size: 64px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .ya-score-denom { font-size: 22px; font-weight: 600; color: var(--text-muted); }
-    .ya-score-label { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-top: 8px; }
-    .ya-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .ya-box { background: rgba(11, 15, 25, 0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px 18px; }
-    .ya-box-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-cyan); font-weight: 700; margin-bottom: 10px; }
-    .ya-pattern-name { font-size: 18px; font-weight: 800; color: var(--accent-gold); margin-bottom: 6px; }
-    .ya-pattern-desc { font-size: 12px; line-height: 1.55; color: var(--text-muted); }
-    .ya-list { list-style: none; padding: 0; margin: 0; }
-    .ya-list li { font-size: 12px; line-height: 1.55; padding-left: 18px; position: relative; margin-bottom: 6px; }
-    .ya-list li::before { content: '—'; position: absolute; left: 0; color: var(--accent-cyan); font-weight: 700; }
-    .ya-list.wins li::before { content: '→'; color: var(--success); }
-    .ya-executive { font-size: 13px; line-height: 1.6; font-weight: 600; padding: 12px 14px; background: linear-gradient(135deg, rgba(184,148,60,0.15), rgba(184,148,60,0.06)); border-left: 3px solid var(--accent-gold); border-radius: 8px; font-style: italic; }
-    .ya-executive-locked { position: relative; overflow: hidden; border-radius: 8px; }
-    .ya-executive-blurred { font-size: 13px; line-height: 1.6; font-weight: 600; padding: 12px 14px; filter: blur(4px); opacity: 0.55; user-select: none; background: linear-gradient(135deg, rgba(184,148,60,0.15), rgba(184,148,60,0.06)); border-left: 3px solid var(--accent-gold); }
-    .ya-executive-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: linear-gradient(180deg, rgba(11,15,25,0.55), rgba(11,15,25,0.9)); }
-    .ya-executive-cta { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--accent-gold), #a07f30); color: #FFF; border: none; cursor: pointer; }
-    .ya-footer { margin-top: 20px; display: flex; justify-content: center; }
-    .ya-btn { padding: 12px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; }
-
+    /* ── TOP HEADER ── */
     .top-header { background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; flex-wrap: wrap; gap: 12px; }
     .brand { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
     .track-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-cyan); background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 10px; border-radius: 20px; margin-left: 8px; -webkit-text-fill-color: var(--accent-cyan); }
@@ -94,16 +84,14 @@
     .stat-pill strong { color: var(--accent-cyan); font-weight: 700; }
     .stat-pill.streak strong { color: var(--accent-gold); }
     .stat-pill.achievements strong { color: var(--accent-purple); }
-    .stat-pill.signin-pill { cursor: pointer; border-color: var(--accent-cyan); }
-    .stat-pill.signin-pill:hover { background: rgba(56, 189, 248, 0.08); }
 
+    /* ── LAYOUT ── */
     .app-layout { display: flex; flex: 1; overflow: hidden; position: relative; min-height: 0; }
     .sidebar { width: 320px; background-color: var(--panel-bg); border-right: 1px solid var(--border-color); padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; z-index: 20; transition: transform 0.3s ease; flex-shrink: 0; }
     .nav-group { display: flex; flex-direction: column; gap: 4px; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border: 1px solid transparent; transition: all 0.2s; position: relative; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
     .nav-item:hover { background-color: var(--card-bg); color: #FFF; }
     .nav-item.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
-    .nav-item .nav-preview { margin-left: auto; font-size: 9px; font-weight: 700; color: var(--accent-cyan); background: rgba(56, 189, 248, 0.15); padding: 2px 6px; border-radius: 4px; letter-spacing: 0.05em; }
     .sidebar-section { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; }
     .sidebar-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; }
     .field-group { margin-bottom: 8px; }
@@ -112,7 +100,6 @@
     select { width: 100%; background-color: var(--bg-dark); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 10px; border-radius: 6px; font-family: inherit; font-size: 12px; }
     .user-profile-card { margin-top: auto; background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
     .plan-badge { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-gold); background-color: rgba(245, 158, 11, 0.15); padding: 3px 8px; border-radius: 4px; width: fit-content; }
-    .plan-badge.trial { color: var(--accent-cyan); background-color: rgba(56, 189, 248, 0.15); }
     .user-info { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
     .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #2563EB, #8B5CF6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
     .user-details { display: flex; flex-direction: column; overflow: hidden; }
@@ -125,6 +112,7 @@
     .view-panel { display: none; flex-direction: column; gap: 20px; }
     .view-panel.active-view { display: flex; }
 
+    /* ── TODAY ── */
     .today-header-bar { background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(139, 92, 246, 0.10)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
     .today-header-bar .th-left h2 { font-size: 20px; margin-bottom: 4px; }
     .today-header-bar .th-left .th-sub { font-size: 12px; color: var(--text-muted); }
@@ -135,8 +123,6 @@
     .day-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); transition: width 0.4s; }
 
     .question-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 16px; position: relative; }
-    .question-card.locked { background: linear-gradient(135deg, var(--panel-bg), rgba(56, 189, 248, 0.03)); }
-    .question-card.completed { border-color: var(--success); background: linear-gradient(135deg, var(--panel-bg), rgba(16, 185, 129, 0.06)); }
     .qc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
     .qc-left { flex: 1; min-width: 240px; }
     .qc-label { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -150,7 +136,6 @@
 
     .qc-action-btn { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
     .qc-action-btn:hover:not(:disabled) { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.08); color: var(--accent-cyan); }
-    .qc-action-btn.primary-action { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 
     .rep-tracker { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
     .rep-tracker .rt-left .rt-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px; }
@@ -162,7 +147,6 @@
     .rep-btn { padding: 12px 22px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
     .rep-btn:hover:not(:disabled) { background: var(--primary-hover); }
     .rep-btn:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; }
-    .rep-btn.done { background: transparent; border: 1px solid var(--success); color: var(--success); }
 
     .reps-log { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
     .rep-log-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 10px; background: var(--bg-dark); border-radius: 6px; color: var(--text-muted); }
@@ -173,6 +157,38 @@
     .ts-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border-color); }
     .ts-row:last-child { border-bottom: none; }
     .ts-row .ts-val { font-weight: 700; }
+
+    /* ── PROGRESS ── */
+    .view-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .view-heading h2 { font-size: 18px; }
+    .view-heading .vh-sub { font-size: 12px; color: var(--text-muted); }
+
+    .your-analysis-card { background: linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(139, 92, 246, 0.06)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 16px; padding: 26px 28px; position: relative; overflow: hidden; }
+    .ya-header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+    .ya-badge { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-cyan); background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); padding: 4px 12px; border-radius: 20px; }
+    .ya-sub { font-size: 12px; color: var(--text-muted); }
+    .ya-pattern-block { text-align: center; padding: 24px 0 26px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 22px; }
+    .ya-pattern-kicker { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; }
+    .ya-pattern-name-hero { font-size: 34px; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+    .ya-pattern-desc-hero { font-size: 14px; line-height: 1.6; color: var(--text-muted); max-width: 520px; margin: 0 auto; }
+    .ya-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .ya-box { background: rgba(11, 15, 25, 0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px 18px; }
+    .ya-box-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-cyan); font-weight: 700; margin-bottom: 10px; }
+    .ya-list { list-style: none; padding: 0; margin: 0; }
+    .ya-list li { font-size: 12px; line-height: 1.55; padding-left: 18px; position: relative; margin-bottom: 6px; }
+    .ya-list li::before { content: '—'; position: absolute; left: 0; color: var(--accent-cyan); font-weight: 700; }
+    .ya-list.wins li::before { content: '→'; color: var(--success); }
+    .ya-executive { font-size: 13px; line-height: 1.6; font-weight: 600; padding: 12px 14px; background: linear-gradient(135deg, rgba(184,148,60,0.15), rgba(184,148,60,0.06)); border-left: 3px solid var(--accent-gold); border-radius: 8px; font-style: italic; }
+    .ya-transcript { font-size: 13px; line-height: 1.65; color: var(--text-main); max-height: 220px; overflow-y: auto; padding: 12px 14px; background: rgba(0, 0, 0, 0.25); border-left: 3px solid var(--accent-cyan); border-radius: 8px; font-style: italic; white-space: pre-wrap; word-break: break-word; }
+    .ya-transcript-empty { color: var(--text-muted); font-style: normal; font-size: 12px; }
+    .ya-metrics-mini { display: flex; flex-direction: column; gap: 10px; }
+    .ya-metric-row { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+    .ya-metric-row .ya-metric-label { width: 70px; color: var(--text-muted); font-weight: 600; }
+    .ya-metric-row .ya-metric-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+    .ya-metric-row .ya-metric-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); border-radius: 3px; }
+    .ya-metric-row .ya-metric-value { width: 34px; text-align: right; font-weight: 700; color: var(--text-main); }
+    .ya-footer { margin-top: 20px; display: flex; justify-content: center; }
+    .ya-btn { padding: 12px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; }
 
     .timeline-bar { display: flex; justify-content: space-between; align-items: center; background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
     .timeline-tabs { display: flex; gap: 8px; }
@@ -203,17 +219,20 @@
     .try-again-bar .ta-text strong { color: var(--text-main); }
     .try-again-bar .ta-btn { padding: 12px 24px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
 
+    /* ── ACTIVITIES ── */
     .activity-sub-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
     .sub-tab-btn { padding: 8px 14px; background-color: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; }
     .sub-tab-btn:hover { border-color: var(--accent-cyan); color: var(--text-main); }
     .sub-tab-btn.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
     .sub-activity-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
     .activity-card { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: transform 0.2s, border-color 0.2s; position: relative; }
-    .activity-card:hover:not(.locked-preview) { border-color: var(--accent-cyan); transform: translateY(-2px); }
+    .activity-card:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
     .activity-card-title { font-size: 15px; font-weight: 700; }
     .activity-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
     .activity-card-tag { font-size: 10px; font-weight: 700; color: var(--accent-purple); text-transform: uppercase; }
+    .ac-start-cta { margin-top: 6px; padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--success), #059669); color: #FFF; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; }
 
+    /* ── ACHIEVEMENTS ── */
     .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
     .badge-item { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .badge-item.locked { opacity: 0.35; }
@@ -221,6 +240,7 @@
     .badge-name { font-size: 12px; font-weight: 700; }
     .badge-desc { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
 
+    /* ── MODALS ── */
     .us-modal-backdrop { position: fixed; inset: 0; background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
     .us-modal-backdrop.is-visible { display: flex; }
     .us-modal { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 28px; width: 100%; max-width: 640px; max-height: 85vh; overflow-y: auto; position: relative; }
@@ -231,22 +251,6 @@
     .us-modal .bank-question:hover { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.05); }
     .us-modal .bank-question .bq-text { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
     .us-modal .bank-question .bq-meta { font-size: 11px; color: var(--text-muted); }
-
-    .view-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-    .view-heading h2 { font-size: 18px; }
-    .view-heading .vh-sub { font-size: 12px; color: var(--text-muted); }
-
-    .lock-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; }
-    .lock-pill.sprint { color: var(--accent-gold); background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); }
-    .lock-pill.pass { color: var(--accent-purple); background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(139, 92, 246, 0.4); }
-
-    .feature-preview-lock { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,15,25,0.55), rgba(11,15,25,0.95)); border-radius: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; text-align: center; z-index: 4; }
-    .feature-preview-lock .fpl-title { font-size: 13px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-    .feature-preview-lock .fpl-title.sprint { color: var(--accent-gold); }
-    .feature-preview-lock .fpl-title.pass { color: var(--accent-purple); }
-    .feature-preview-lock .fpl-desc { font-size: 12px; color: var(--text-muted); max-width: 360px; line-height: 1.5; }
-    .feature-preview-lock .fpl-cta { margin-top: 6px; padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 700; color: #FFF; border: none; cursor: pointer; background: linear-gradient(135deg, var(--accent-gold), #a07f30); }
-    .feature-preview-lock .fpl-cta.pass { background: linear-gradient(135deg, var(--accent-purple), #5b21b6); }
 
     @media (max-width: 900px) {
       .dash-grid { grid-template-columns: 1fr; }
@@ -264,22 +268,453 @@
 </head>
 <body>
 
+  <!-- BOOT / LOGIN SCREEN -->
   <div class="boot-screen" id="bootScreen">
     <div class="boot-spinner" id="bootSpinner"></div>
     <div class="boot-title" id="bootTitle">Loading…</div>
     <div class="boot-sub" id="bootSub">Just a moment.</div>
   </div>
 
-  <div class="preview-banner hidden" id="previewBanner">
-    <div class="pb-left" id="previewBannerText">
-      👋 Hi <strong id="previewName">there</strong> — here's your trial.
-    </div>
-    <div class="pb-right">
-      <button class="pb-btn primary" onclick="goToPaywall('sprint')">Enroll in a Sprint</button>
-      <button class="pb-btn secondary" onclick="goToPaywall('pass')">Get Practice Pass</button>
+  <!-- MAIN APP (hidden until logged in) -->
+  <div id="mainApp" class="hidden">
+
+    <header class="top-header">
+      <div class="brand">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        🚀 Unspoken Studio
+        <span class="track-badge" id="headerTrackBadge">—</span>
+      </div>
+      <div class="global-stats">
+        <div class="stat-pill"><span>Plan:</span><strong id="headerPlan">—</strong></div>
+        <div class="stat-pill"><span>Sprint Day:</span><strong id="headerDay">—</strong></div>
+        <div class="stat-pill streak"><span>Streak:</span><strong id="headerStreak">—</strong></div>
+        <div class="stat-pill"><span>Completed:</span><strong id="headerCompleted">0 Tasks</strong></div>
+        <div class="stat-pill achievements"><span>Achievements:</span><strong id="headerAchievements">🏆 0 Badges</strong></div>
+      </div>
+    </header>
+
+    <div class="app-layout">
+      <aside class="sidebar" id="appSidebar">
+        <div class="nav-group">
+          <div class="nav-item active" id="navToday" onclick="switchView('today')"><span>🏠</span> Today</div>
+          <div class="nav-item" id="navActivities" onclick="switchView('activities')"><span>🎯</span> Activities</div>
+          <div class="nav-item" id="navDash" onclick="switchView('dash')"><span>📊</span> Pattern &amp; Progress</div>
+          <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><span>🎙️</span> My Recordings</div>
+          <div class="nav-item" id="navBadges" onclick="switchView('badges')"><span>🏆</span> Achievements</div>
+          <div class="nav-item" id="navPillars" onclick="switchView('pillars')"><span>🏛️</span> Pillars</div>
+          <div class="nav-item" id="navLearning" onclick="switchView('learning')"><span>📚</span> My Learning</div>
+        </div>
+        <hr style="border-color: var(--border-color);" />
+        <div class="sidebar-section">
+          <div class="sidebar-title">Your Profile</div>
+          <div class="field-group">
+            <label>Name</label>
+            <select id="profileName" disabled style="opacity: 0.7;"><option>—</option></select>
+          </div>
+          <div class="field-group">
+            <label>Sprint</label>
+            <select id="profileSprint" disabled style="opacity: 0.7;"><option>—</option></select>
+          </div>
+        </div>
+        <div class="user-profile-card">
+          <div class="plan-badge" id="planBadge">—</div>
+          <div class="user-info">
+            <div class="user-avatar" id="userAvatarEl">A</div>
+            <div class="user-details">
+              <div class="user-name" id="userNameEl">—</div>
+              <div class="user-role-sub" id="userRoleEl">—</div>
+            </div>
+          </div>
+          <button class="signout-btn" onclick="signOut()">Sign Out</button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+
+        <!-- TODAY -->
+        <section class="view-panel active-view" id="todayView">
+          <div class="today-header-bar">
+            <div class="th-left">
+              <h2 id="todayTrackTitle">Your Sprint</h2>
+              <div class="th-sub" id="todayFocus">Loading questions…</div>
+              <div class="day-progress-bar"><div class="day-progress-fill" id="dayProgressFill" style="width: 0%;"></div></div>
+            </div>
+            <div class="th-right">
+              <div class="day-counter" id="dayCounter">Day —</div>
+              <div class="streak" id="todayStreak">—</div>
+            </div>
+          </div>
+
+          <div class="question-card" id="questionCard1">
+            <div class="qc-top">
+              <div class="qc-left">
+                <div class="qc-label"><span id="q1Label">Q1 of 2</span></div>
+                <div class="qc-text" id="q1Text">—</div>
+                <div class="qc-meta" id="q1Meta">—</div>
+              </div>
+              <div class="qc-right"><div class="qc-difficulty easy" id="q1Diff">⭐ Easy</div></div>
+            </div>
+            <div class="rep-tracker">
+              <div class="rt-left">
+                <div class="rt-label">Trials</div>
+                <div class="rt-count" id="q1RepCount">0 <span class="rt-cap">/ 2</span></div>
+                <div class="rt-best" id="q1BestSnr">Best score: —</div>
+              </div>
+              <div class="rt-right">
+                <button class="rep-btn" id="q1RepBtn" onclick="startRep('q1')">🎤 Start Trial 1</button>
+              </div>
+            </div>
+            <div class="reps-log" id="q1RepsLog"></div>
+          </div>
+
+          <div class="question-card" id="questionCard2">
+            <div class="qc-top">
+              <div class="qc-left">
+                <div class="qc-label"><span id="q2Label">Q2 of 2</span></div>
+                <div class="qc-text" id="q2Text">—</div>
+                <div class="qc-meta" id="q2Meta">—</div>
+              </div>
+              <div class="qc-right"><div class="qc-difficulty medium" id="q2Diff">⭐⭐ Medium</div></div>
+            </div>
+            <div class="rep-tracker">
+              <div class="rt-left">
+                <div class="rt-label">Trials</div>
+                <div class="rt-count" id="q2RepCount">0 <span class="rt-cap">/ 2</span></div>
+                <div class="rt-best" id="q2BestSnr">Best score: —</div>
+              </div>
+              <div class="rt-right">
+                <button class="rep-btn" id="q2RepBtn" onclick="startRep('q2')">🎤 Start Trial 1</button>
+              </div>
+            </div>
+            <div class="reps-log" id="q2RepsLog"></div>
+          </div>
+
+          <div class="today-summary">
+            <h3>Today's Progress</h3>
+            <div class="ts-row"><span>Total reps today</span><span class="ts-val" id="tsTotalReps">0 / 4</span></div>
+            <div class="ts-row"><span>Time spent</span><span class="ts-val" id="tsTimeSpent">0 min</span></div>
+            <div class="ts-row"><span>Best score</span><span class="ts-val" id="tsBestSnr">—</span></div>
+            <div class="ts-row"><span>Drills completed</span><span class="ts-val" id="tsDrills">0 / 2</span></div>
+          </div>
+        </section>
+
+        <!-- ACTIVITIES -->
+        <section class="view-panel" id="activitiesView">
+          <div class="view-heading">
+            <h2>🎯 Activities</h2>
+            <span class="vh-sub">Extra practice beyond today's drills</span>
+          </div>
+
+          <div class="activity-sub-tabs">
+            <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">Voice Reps</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">Scenario Library</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('drills', this)">Communication Drills</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('daily-challenge', this)">Daily Challenge</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('reflection', this)">Reflection Journal</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('bites', this)">Learning Bites</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)">Simulator</button>
+          </div>
+
+          <div id="sub-voice-reps" class="sub-activity-panel">
+            <div class="sub-activity-card-grid">
+              <div class="activity-card" data-activity="Quick Rep" data-type="voice">
+                <div><div class="activity-card-tag">45 Seconds · Core Habit</div>
+                <div class="activity-card-title">Quick Rep</div>
+                <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Challenge Rep" data-type="voice">
+                <div><div class="activity-card-tag">90 Seconds · Pressure</div>
+                <div class="activity-card-title">Challenge Rep</div>
+                <div class="activity-card-desc">Harder workplace scenario under timed pressure.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Blind Rep" data-type="voice">
+                <div><div class="activity-card-tag">Instinct Test · No Prep</div>
+                <div class="activity-card-title">Blind Rep</div>
+                <div class="activity-card-desc">Random scenario revealed as recording begins.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Repeat Rep" data-type="voice">
+                <div><div class="activity-card-tag">Targeted Improvement</div>
+                <div class="activity-card-title">Repeat Rep</div>
+                <div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="sub-scenarios" class="sub-activity-panel hidden">
+            <div class="sub-activity-card-grid">
+              <div class="activity-card" data-activity="Interview Questions" data-type="voice">
+                <div><div class="activity-card-tag">Skill Builder</div>
+                <div class="activity-card-title">Interview Questions</div>
+                <div class="activity-card-desc">Tell me about yourself · Salary negotiation · Why this role</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Project & Team Updates" data-type="voice">
+                <div><div class="activity-card-tag">Workplace Moments</div>
+                <div class="activity-card-title">Project &amp; Team Updates</div>
+                <div class="activity-card-desc">Project update · Handling pushback · Delivering bad news</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Leadership Situations" data-type="voice">
+                <div><div class="activity-card-tag">Leadership</div>
+                <div class="activity-card-title">Leadership Situations</div>
+                <div class="activity-card-desc">Team conflict · Motivating underperformers</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Client & Stakeholder" data-type="voice">
+                <div><div class="activity-card-tag">Executive Presence</div>
+                <div class="activity-card-title">Client &amp; Stakeholder</div>
+                <div class="activity-card-desc">Pitching an idea · Handling objections</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="sub-drills" class="sub-activity-panel hidden">
+            <div class="sub-activity-card-grid">
+              <div class="activity-card" data-activity="Headline Drill" data-type="voice">
+                <div><div class="activity-card-tag">Precision Drill</div>
+                <div class="activity-card-title">Headline Drill</div>
+                <div class="activity-card-desc">State your main point in one clear sentence.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Filler Elimination" data-type="voice">
+                <div><div class="activity-card-tag">Precision Drill</div>
+                <div class="activity-card-title">Filler Elimination</div>
+                <div class="activity-card-desc">Zero filler words for 30 seconds.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Time-to-Point" data-type="voice">
+                <div><div class="activity-card-tag">Precision Drill</div>
+                <div class="activity-card-title">Time-to-Point</div>
+                <div class="activity-card-desc">Deliver your key recommendation in under 5 seconds.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Structure Drill (PSO)" data-type="voice">
+                <div><div class="activity-card-tag">Precision Drill</div>
+                <div class="activity-card-title">Structure Drill (PSO)</div>
+                <div class="activity-card-desc">Answer using Problem → Solution → Outcome.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Start Now</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="sub-daily-challenge" class="sub-activity-panel hidden">
+            <div class="question-card">
+              <div class="qc-label"><span>Today's Global Challenge</span></div>
+              <div class="qc-text" style="font-size:15px;">Handling Hostile Pushback</div>
+              <div class="qc-meta">Scenario: A senior VP cuts you off mid-presentation and says "This strategy won't scale." Respond concisely in 45 seconds.</div>
+              <button class="ac-start-cta" style="margin-top:12px;" onclick="startActivityFromCard(this.closest('.question-card'))" data-activity="Daily Challenge" data-type="voice">▶ Start Now</button>
+            </div>
+          </div>
+
+          <div id="sub-reflection" class="sub-activity-panel hidden">
+            <div class="question-card">
+              <div class="qc-label"><span>Reflection Journal</span></div>
+              <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6;">
+                Reflect on what you intended to say vs what you actually said. Track your patterns over time.
+              </div>
+              <textarea id="reflectionInput" placeholder="What did you intend to say vs what you actually said?" maxlength="1000" style="width:100%;min-height:160px;margin-top:12px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
+              <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="reflCount">0</span> / 1000</div>
+              <button class="ac-start-cta" style="margin-top:12px;" onclick="submitReflection()">Save Reflection →</button>
+            </div>
+          </div>
+
+          <div id="sub-bites" class="sub-activity-panel hidden">
+            <div class="sub-activity-card-grid">
+              <div class="activity-card" data-activity="The Pyramid Principle" data-type="content">
+                <div><div class="activity-card-tag">3-Min Concept</div>
+                <div class="activity-card-title">The Pyramid Principle</div>
+                <div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Read</button>
+              </div>
+              <div class="activity-card" data-activity="BLUF Method" data-type="content">
+                <div><div class="activity-card-tag">3-Min Concept</div>
+                <div class="activity-card-title">BLUF Method</div>
+                <div class="activity-card-desc">Bottom Line Up Front for executive communication.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Read</button>
+              </div>
+              <div class="activity-card" data-activity="The STAR Method" data-type="content">
+                <div><div class="activity-card-tag">3-Min Concept</div>
+                <div class="activity-card-title">The STAR Method</div>
+                <div class="activity-card-desc">Situation → Task → Action → Result. Interview gold standard.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Read</button>
+              </div>
+              <div class="activity-card" data-activity="The PSO Framework" data-type="content">
+                <div><div class="activity-card-tag">3-Min Concept</div>
+                <div class="activity-card-title">The PSO Framework</div>
+                <div class="activity-card-desc">Problem → Solution → Outcome for updates and pitches.</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Read</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="sub-simulator" class="sub-activity-panel hidden">
+            <div class="question-card" style="border-color: var(--accent-purple);">
+              <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
+              <div class="qc-text" style="font-size:18px;">Full 5-Question End-to-End Mock Interview</div>
+              <div class="qc-meta">Simulate a 15-minute high-stakes executive panel interview with dynamic follow-ups and comprehensive debrief.</div>
+              <button class="ac-start-cta" style="margin-top:14px;" onclick="startActivityFromCard(this.closest('.question-card'))" data-activity="Interview Simulator" data-type="voice">▶ Start Now</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROGRESS -->
+        <section class="view-panel" id="dashView">
+          <div class="view-heading">
+            <h2>📊 Pattern &amp; Progress</h2>
+            <span class="vh-sub" id="dashSubtitle">Your performance across reps</span>
+          </div>
+
+          <div class="your-analysis-card" id="yourAnalysisCard"></div>
+
+          <div class="timeline-bar">
+            <span style="font-weight: 700; font-size: 14px;">PERFORMANCE OVER TIME</span>
+            <div class="timeline-tabs">
+              <button class="time-tab active" onclick="setTimeline('1w', this)">Last 1 Week</button>
+              <button class="time-tab" onclick="setTimeline('2w', this)">Last 2 Weeks</button>
+              <button class="time-tab" onclick="setTimeline('1m', this)">Last 1 Month</button>
+            </div>
+          </div>
+
+          <div class="dash-grid">
+            <div class="metric-box"><div class="metric-label">Time-to-Point</div><div class="metric-value" id="metricTTP">—</div><div class="metric-sub" id="metricTTPSub">—</div></div>
+            <div class="metric-box"><div class="metric-label">Filler discipline</div><div class="metric-value" id="metricFillerDiscipline">—</div><div class="metric-sub" id="metricFillerDisciplineSub">—</div></div>
+            <div class="metric-box"><div class="metric-label">Point-first</div><div class="metric-value" id="metricPointFirst">—</div><div class="metric-sub" id="metricPointFirstSub">—</div></div>
+            <div class="metric-box"><div class="metric-label">Concreteness</div><div class="metric-value" id="metricConcreteness">—</div><div class="metric-sub" id="metricConcretenessSub">—</div></div>
+          </div>
+
+          <div class="dash-wide-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 700; font-size: 14px;">Clarity &amp; Focus</span>
+              <span style="font-weight: 700; font-size: 13px;">Target: 85% · Current: <span style="color: var(--success);" id="dashSnrValue">—</span></span>
+            </div>
+            <div class="snr-container">
+              <div class="snr-bar-wrapper">
+                <div class="snr-signal" id="dashSnrSignal" style="width: 0%;"></div>
+                <div class="snr-noise" id="dashSnrNoise" style="width: 0%;"></div>
+                <div class="ghost-line" style="left: 62%;"></div>
+              </div>
+              <div class="snr-ticks"><span>0% (Fluff)</span><span>25%</span><span>50%</span><span>75% (Target)</span><span>100% (Pure Signal)</span></div>
+            </div>
+          </div>
+
+          <div class="feedback-grid">
+            <div class="feedback-box well">
+              <div class="feedback-title" style="color: var(--success);"><span>✅</span> What Was Going Well</div>
+              <ul class="feedback-list" id="dashWellList"><li>—</li></ul>
+            </div>
+            <div class="feedback-box improve">
+              <div class="feedback-title" style="color: var(--accent-gold);"><span>🎯</span> What to Improve</div>
+              <ul class="feedback-list" id="dashImproveList"><li>—</li></ul>
+            </div>
+          </div>
+
+          <div class="dash-wide-box" id="repHistoryBox">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-weight: 700; font-size: 14px;">📼 Rep History</span>
+              <span style="font-size: 12px; color: var(--text-muted);" id="repHistoryCount">0 reps</span>
+            </div>
+            <div id="repHistoryList" style="display:flex; flex-direction:column; gap:8px;">
+              <div style="font-size:12px; color:var(--text-muted);">No reps yet — start on Today.</div>
+            </div>
+          </div>
+
+          <div class="try-again-bar">
+            <div class="ta-text">
+              <strong>Want to improve your score?</strong><br />
+              <span id="taMessage">Start a rep to build your progress.</span>
+            </div>
+            <button class="ta-btn" onclick="switchView('today')">🎙 Try Again →</button>
+          </div>
+        </section>
+
+        <!-- RECORDINGS -->
+        <section class="view-panel" id="recordingsView">
+          <div class="view-heading">
+            <h2>🎙️ My Recordings</h2>
+            <span class="vh-sub">Replay every practice session</span>
+          </div>
+          <div class="question-card">
+            <div class="qc-label"><span>Your recordings library</span></div>
+            <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6;">
+              Replay every practice session. Track your progress over time. Compare reps across days.
+            </div>
+            <div id="recordingsList" style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
+              <div style="font-size:12px;color:var(--text-muted);">Your recordings will appear here as you practice.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ACHIEVEMENTS -->
+        <section class="view-panel" id="badgesView">
+          <div class="view-heading">
+            <h2>🏆 Achievements</h2>
+            <span class="vh-sub">Unlock badges as you practice</span>
+          </div>
+          <div class="badges-grid">
+            <div class="badge-item" id="badgeFirstRep"><div class="badge-icon">🎯</div><div class="badge-name">First Rep</div><div class="badge-desc">You completed your first voice rep.</div></div>
+            <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">5-Day Streak</div><div class="badge-desc">Practice 5 days in a row.</div></div>
+            <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Speed Demon</div><div class="badge-desc">Time-to-Point under 10 seconds.</div></div>
+            <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Filler Killer</div><div class="badge-desc">Zero filler words in a rep.</div></div>
+            <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Orator</div><div class="badge-desc">Score above 90% on any rep.</div></div>
+          </div>
+        </section>
+
+        <!-- PILLARS -->
+        <section class="view-panel" id="pillarsView">
+          <div class="view-heading">
+            <h2>🏛️ Pillars of Executive Communication</h2>
+            <span class="vh-sub">The four foundations we train</span>
+          </div>
+          <div class="sub-activity-card-grid">
+            <div class="activity-card"><div><div class="activity-card-tag">Pillar 1</div><div class="activity-card-title">Structure</div><div class="activity-card-desc">STAR, PSO, BLUF. Give your ideas a spine listeners can follow.</div></div></div>
+            <div class="activity-card"><div><div class="activity-card-tag">Pillar 2</div><div class="activity-card-title">Conciseness</div><div class="activity-card-desc">Time-to-Point, filler elimination, headline discipline.</div></div></div>
+            <div class="activity-card"><div><div class="activity-card-tag">Pillar 3</div><div class="activity-card-title">Tone</div><div class="activity-card-desc">Warmth without weakness. Authority without arrogance.</div></div></div>
+            <div class="activity-card"><div><div class="activity-card-tag">Pillar 4</div><div class="activity-card-title">Presence</div><div class="activity-card-desc">Pacing, pauses, and gravitas in high-stakes rooms.</div></div></div>
+          </div>
+        </section>
+
+        <!-- LEARNING -->
+        <section class="view-panel" id="learningView">
+          <div class="view-heading">
+            <h2>📚 My Learning</h2>
+            <span class="vh-sub">3-minute frameworks and micro-lessons</span>
+          </div>
+          <div class="question-card">
+            <div class="qc-label"><span>Curated learning</span></div>
+            <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6;">
+              Framework deep-dives, worked examples, and role-specific micro-lessons tailored to your function.
+            </div>
+          </div>
+          <div class="sub-activity-card-grid">
+            <div class="activity-card" data-activity="The Pyramid Principle" data-type="content">
+              <div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">The Pyramid Principle</div><div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div></div>
+              <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Read</button>
+            </div>
+            <div class="activity-card" data-activity="BLUF Method" data-type="content">
+              <div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">BLUF Method</div><div class="activity-card-desc">Bottom Line Up Front for executive communication.</div></div>
+              <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Read</button>
+            </div>
+            <div class="activity-card" data-activity="The STAR Method" data-type="content">
+              <div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">The STAR Method</div><div class="activity-card-desc">Situation → Task → Action → Result.</div></div>
+              <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Read</button>
+            </div>
+            <div class="activity-card" data-activity="The PSO Framework" data-type="content">
+              <div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">The PSO Framework</div><div class="activity-card-desc">Problem → Solution → Outcome for updates and pitches.</div></div>
+              <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">▶ Read</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
     </div>
   </div>
 
+  <!-- SHARED MODAL -->
   <div class="us-modal-backdrop" id="usModal">
     <div class="us-modal">
       <button class="us-modal-close" onclick="closeModal()">×</button>
@@ -287,520 +722,14 @@
     </div>
   </div>
 
-  <header class="top-header">
-    <div class="brand">
-      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-      🚀 Unspoken Studio
-      <span class="track-badge" id="headerTrackBadge">—</span>
-    </div>
-    <div class="global-stats">
-      <div class="stat-pill signin-pill" id="headerSignInPill" onclick="openOtpModal()">
-        <span>🔑</span><strong>Sign In</strong>
-      </div>
-      <div class="stat-pill"><span>Member Since:</span><strong id="headerMemberSince">Just now</strong></div>
-      <div class="stat-pill streak"><span>Streak:</span><strong id="headerStreak">—</strong></div>
-      <div class="stat-pill"><span>Completed:</span><strong id="headerCompleted">0 Tasks</strong></div>
-      <div class="stat-pill achievements"><span>Achievements:</span><strong id="headerAchievements">🏆 0 Badges</strong></div>
-    </div>
-  </header>
-
-  <div class="app-layout">
-    <aside class="sidebar" id="appSidebar">
-      <div class="nav-group">
-        <div class="nav-item active" id="navToday" onclick="switchView('today')"><span>🏠</span> Today</div>
-        <div class="nav-item" id="navActivities" onclick="switchView('activities')"><span>🎯</span> Activities <span class="nav-preview">PREVIEW</span></div>
-        <div class="nav-item" id="navDash" onclick="switchView('dash')"><span>📊</span> Progress</div>
-        <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><span>🎙️</span> My Recordings <span class="nav-preview">PREVIEW</span></div>
-        <div class="nav-item" id="navBadges" onclick="switchView('badges')"><span>🏆</span> Achievements</div>
-        <div class="nav-item" id="navPillars" onclick="switchView('pillars')"><span>🏛️</span> Pillars</div>
-        <div class="nav-item" id="navLearning" onclick="switchView('learning')"><span>📚</span> My Learning <span class="nav-preview">PREVIEW</span></div>
-      </div>
-      <hr style="border-color: var(--border-color);" />
-      <div class="sidebar-section">
-        <div class="sidebar-title">Your Profile</div>
-        <div class="field-group">
-          <label>Career Stage</label>
-          <select id="profileStage" disabled style="opacity: 0.7;"><option>—</option></select>
-        </div>
-        <div class="field-group">
-          <label>Function</label>
-          <select id="profileFunction" disabled style="opacity: 0.7;"><option>—</option></select>
-        </div>
-      </div>
-      <div class="user-profile-card">
-        <div class="plan-badge trial" id="planBadge">Trial</div>
-        <div class="user-info">
-          <div class="user-avatar" id="userAvatarEl">A</div>
-          <div class="user-details">
-            <div class="user-name" id="userNameEl">—</div>
-            <div class="user-role-sub" id="userRoleEl">Getting started</div>
-          </div>
-        </div>
-        <button class="signout-btn hidden" id="signOutBtn" onclick="signOut()">Sign Out</button>
-      </div>
-    </aside>
-
-    <main class="main-content">
-
-      <section class="view-panel active-view" id="todayView">
-        <div class="today-header-bar">
-          <div class="th-left">
-            <h2 id="todayTrackTitle">Your Trial</h2>
-            <div class="th-sub" id="todayFocus">2 questions · 2 trials each</div>
-            <div class="day-progress-bar"><div class="day-progress-fill" id="dayProgressFill" style="width: 0%;"></div></div>
-          </div>
-          <div class="th-right">
-            <div class="day-counter" id="dayCounter">0 / 2 drills</div>
-            <div class="streak" id="todayStreak">Trial</div>
-          </div>
-        </div>
-
-        <div class="question-card" id="questionCard1">
-          <div class="qc-top">
-            <div class="qc-left">
-              <div class="qc-label"><span id="q1Label">Q1 of 2</span></div>
-              <div class="qc-text" id="q1Text">—</div>
-              <div class="qc-meta" id="q1Meta">—</div>
-            </div>
-            <div class="qc-right"><div class="qc-difficulty easy" id="q1Diff">⭐ Easy</div></div>
-          </div>
-          <div class="rep-tracker">
-            <div class="rt-left">
-              <div class="rt-label">Trials</div>
-              <div class="rt-count" id="q1RepCount">0 <span class="rt-cap">/ 2</span></div>
-              <div class="rt-best" id="q1BestSnr">Best score: —</div>
-            </div>
-            <div class="rt-right">
-              <button class="rep-btn" id="q1RepBtn" onclick="startRep('q1')">🎤 Start Trial 1</button>
-            </div>
-          </div>
-          <div class="reps-log" id="q1RepsLog"></div>
-        </div>
-
-        <div class="question-card" id="questionCard2">
-          <div class="qc-top">
-            <div class="qc-left">
-              <div class="qc-label"><span id="q2Label">Q2 of 2</span></div>
-              <div class="qc-text" id="q2Text">—</div>
-              <div class="qc-meta" id="q2Meta">—</div>
-            </div>
-            <div class="qc-right"><div class="qc-difficulty medium" id="q2Diff">⭐⭐ Medium</div></div>
-          </div>
-          <div class="rep-tracker">
-            <div class="rt-left">
-              <div class="rt-label">Trials</div>
-              <div class="rt-count" id="q2RepCount">0 <span class="rt-cap">/ 2</span></div>
-              <div class="rt-best" id="q2BestSnr">Best score: —</div>
-            </div>
-            <div class="rt-right">
-              <button class="rep-btn" id="q2RepBtn" onclick="startRep('q2')">🎤 Start Trial 1</button>
-            </div>
-          </div>
-          <div class="reps-log" id="q2RepsLog"></div>
-        </div>
-
-        <div class="question-card" id="freeChangeCustomizeCard">
-          <div class="qc-top">
-            <div class="qc-left">
-              <div class="qc-label"><span>Want to change the question?</span></div>
-              <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
-                Question switching and customization unlock with a Sprint.
-              </div>
-            </div>
-          </div>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="qc-action-btn primary-action" onclick="goToPaywall('sprint')">🔒 Change Question — Enroll in Sprint</button>
-            <button class="qc-action-btn primary-action" onclick="goToPaywall('sprint')">🔒 Customize Question — Enroll in Sprint</button>
-          </div>
-        </div>
-
-        <div class="today-summary">
-          <h3>Today's Progress</h3>
-          <div class="ts-row"><span>Total trials today</span><span class="ts-val" id="tsTotalReps">0 / 4</span></div>
-          <div class="ts-row"><span>Time spent</span><span class="ts-val" id="tsTimeSpent">0 min</span></div>
-          <div class="ts-row"><span>Best clarity</span><span class="ts-val" id="tsBestSnr">—</span></div>
-          <div class="ts-row"><span>Drills unlocked</span><span class="ts-val" id="tsDrills">0 / 2</span></div>
-        </div>
-      </section>
-
-      <section class="view-panel" id="activitiesView">
-        <div class="view-heading">
-          <h2>🎯 Activities</h2>
-          <span class="vh-sub">Extra practice beyond today's drills</span>
-        </div>
-
-        <div class="activity-sub-tabs">
-          <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">Voice Reps</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">Scenario Library</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('drills', this)">Communication Drills</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('daily-challenge', this)">Daily Challenge</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('reflection', this)">Reflection Journal</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('bites', this)">Learning Bites</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)">Simulator</button>
-        </div>
-
-        <div id="sub-voice-reps" class="sub-activity-panel">
-          <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview" data-activity="Quick Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">45 Seconds · Core Habit</div>
-                <div class="activity-card-title">Quick Rep</div>
-                <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Challenge Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">90 Seconds · Pressure</div>
-                <div class="activity-card-title">Challenge Rep</div>
-                <div class="activity-card-desc">Harder workplace scenario under timed pressure.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Blind Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Instinct Test · No Prep</div>
-                <div class="activity-card-title">Blind Rep</div>
-                <div class="activity-card-desc">Random scenario revealed as recording begins.</div>
-              </div>
-              <button class="ac-lock-cta pass-tier" onclick="goToPaywall('pass')">🔒 Unlocked with Practice Pass — ₹1,299/mo</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Repeat Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Targeted Improvement</div>
-                <div class="activity-card-title">Repeat Rep</div>
-                <div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div>
-              </div>
-              <button class="ac-lock-cta pass-tier" onclick="goToPaywall('pass')">🔒 Unlocked with Practice Pass — ₹1,299/mo</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="sub-scenarios" class="sub-activity-panel hidden">
-          <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview" data-activity="Interview Questions" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Skill Builder</div>
-                <div class="activity-card-title">Interview Questions</div>
-                <div class="activity-card-desc">Tell me about yourself · Salary negotiation · Why this role</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Project & Team Updates" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Workplace Moments</div>
-                <div class="activity-card-title">Project &amp; Team Updates</div>
-                <div class="activity-card-desc">Project update · Handling pushback · Delivering bad news</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Leadership Situations" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Leadership</div>
-                <div class="activity-card-title">Leadership Situations</div>
-                <div class="activity-card-desc">Team conflict · Motivating underperformers</div>
-              </div>
-              <button class="ac-lock-cta pass-tier" onclick="goToPaywall('pass')">🔒 Unlocked with Practice Pass — ₹1,299/mo</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Client & Stakeholder" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Executive Presence</div>
-                <div class="activity-card-title">Client &amp; Stakeholder</div>
-                <div class="activity-card-desc">Pitching an idea · Handling objections</div>
-              </div>
-              <button class="ac-lock-cta pass-tier" onclick="goToPaywall('pass')">🔒 Unlocked with Practice Pass — ₹1,299/mo</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="sub-drills" class="sub-activity-panel hidden">
-          <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview" data-activity="Headline Drill" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Precision Drill</div>
-                <div class="activity-card-title">Headline Drill</div>
-                <div class="activity-card-desc">State your main point in one clear sentence.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Filler Elimination" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Precision Drill</div>
-                <div class="activity-card-title">Filler Elimination</div>
-                <div class="activity-card-desc">Zero filler words for 30 seconds.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Time-to-Point" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Precision Drill</div>
-                <div class="activity-card-title">Time-to-Point</div>
-                <div class="activity-card-desc">Deliver your key recommendation in under 5 seconds.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Structure Drill (PSO)" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Precision Drill</div>
-                <div class="activity-card-title">Structure Drill (PSO)</div>
-                <div class="activity-card-desc">Answer using Problem → Solution → Outcome.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="sub-daily-challenge" class="sub-activity-panel hidden">
-          <div class="dash-wide-box lockable" data-activity="Daily Challenge" data-type="voice">
-            <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">COMMUNITY EXPERIENCE</div>
-            <h2 style="font-size: 18px; margin-top: 4px;">Today's Global Challenge: Handling Hostile Pushback</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">
-              Scenario: A senior VP cuts you off mid-presentation and says "This strategy won't scale." Respond concisely in 45 seconds.
-            </p>
-            <div class="lock-overlay">
-              <div class="lock-icon">🔒</div>
-              <div class="lock-title">Unlocked with Sprint</div>
-              <div class="lock-desc">Join thousands of practitioners tackling the same daily scenario.</div>
-              <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint — ₹499 →</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="sub-reflection" class="sub-activity-panel hidden">
-          <div class="question-card lockable" data-activity="Reflection Journal" data-type="text">
-            <div class="qc-label"><span>Metacognition &amp; Self-Awareness Reflection</span></div>
-            <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
-              Reflect on what you intended to say vs what you actually said. Track your patterns over time.
-            </div>
-            <div class="lock-overlay">
-              <div class="lock-icon">🔒</div>
-              <div class="lock-title">Unlocked with Sprint</div>
-              <div class="lock-desc">Daily journaling builds self-awareness. Available with Sprint and Pass plans.</div>
-              <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint — ₹499 →</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="sub-bites" class="sub-activity-panel hidden">
-          <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview" data-activity="The Pyramid Principle" data-type="content">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">The Pyramid Principle</div>
-                <div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="BLUF Method" data-type="content">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">BLUF Method</div>
-                <div class="activity-card-desc">Bottom Line Up Front for executive communication.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="The STAR Method" data-type="content">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">The STAR Method</div>
-                <div class="activity-card-desc">Situation → Task → Action → Result. Interview gold standard.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="The PSO Framework" data-type="content">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">The PSO Framework</div>
-                <div class="activity-card-desc">Problem → Solution → Outcome for updates and pitches.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="sub-simulator" class="sub-activity-panel hidden">
-          <div class="dash-wide-box lockable" data-activity="Interview Simulator" data-type="voice" style="border-color: var(--accent-purple);">
-            <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
-            <h2 style="font-size: 18px;">Full 5-Question End-to-End Mock Interview</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">
-              Simulate a 15-minute high-stakes executive panel interview with dynamic follow-ups and comprehensive debrief.
-            </p>
-            <div class="lock-overlay">
-              <div class="lock-icon">🔒</div>
-              <div class="lock-title">Unlocked with Practice Pass</div>
-              <div class="lock-desc">Full simulator + dynamic follow-ups + debrief included in the Pass.</div>
-              <button class="lock-cta" onclick="goToPaywall('pass')">Get Practice Pass — ₹1,299/mo →</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="question-card" id="unlockMorePromo" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.10), rgba(139, 92, 246, 0.06)); border-color: rgba(245, 158, 11, 0.3);">
-          <div class="qc-top">
-            <div class="qc-left">
-              <div class="qc-label" style="color: var(--accent-gold);">🔒 Unlock More Sprints</div>
-              <div class="qc-text" style="font-size: 16px;">You're on the Trial. Upgrade to access the full library.</div>
-              <div class="qc-meta">6 Sprints · 336 questions · unlimited practice</div>
-            </div>
-          </div>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="rep-btn" onclick="goToPaywall('sprint')" style="background: linear-gradient(135deg, var(--accent-gold), #a07f30);">Enroll in a Sprint — ₹499</button>
-            <button class="rep-btn" onclick="goToPaywall('pass')" style="background: var(--primary);">Get Practice Pass — ₹1,299/mo</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="view-panel" id="dashView">
-        <div class="view-heading">
-          <h2>📊 Progress</h2>
-          <span class="vh-sub" id="dashSubtitle">Your performance across reps</span>
-        </div>
-
-        <div class="your-analysis-card" id="yourAnalysisCard"></div>
-
-        <div class="timeline-bar">
-          <span style="font-weight: 700; font-size: 14px;">PERFORMANCE OVER TIME</span>
-          <div class="timeline-tabs">
-            <button class="time-tab active" onclick="setTimeline('1w', this)">Last 1 Week</button>
-            <button class="time-tab" onclick="setTimeline('2w', this)">Last 2 Weeks</button>
-            <button class="time-tab" onclick="setTimeline('1m', this)">Last 1 Month</button>
-          </div>
-        </div>
-
-        <div class="dash-grid">
-          <div class="metric-box"><div class="metric-label">Time-to-Point</div><div class="metric-value" id="metricTTP">—</div><div class="metric-sub" id="metricTTPSub">—</div></div>
-          <div class="metric-box"><div class="metric-label">Clarity Score</div><div class="metric-value" id="metricClarity">—</div><div class="metric-sub" id="metricClaritySub">—</div></div>
-          <div class="metric-box"><div class="metric-label">Structure</div><div class="metric-value" id="metricStructure">—</div><div class="metric-sub" id="metricStructureSub">—</div></div>
-          <div class="metric-box"><div class="metric-label">Impact &amp; Gravitas</div><div class="metric-value" id="metricImpact">—</div><div class="metric-sub" id="metricImpactSub">—</div></div>
-        </div>
-
-        <div class="dash-wide-box">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 700; font-size: 14px;">Clarity &amp; Focus</span>
-            <span style="font-weight: 700; font-size: 13px;">Target: 85% · Current: <span style="color: var(--success);" id="dashSnrValue">—</span></span>
-          </div>
-          <div class="snr-container">
-            <div class="snr-bar-wrapper">
-              <div class="snr-signal" id="dashSnrSignal" style="width: 0%;"></div>
-              <div class="snr-noise" id="dashSnrNoise" style="width: 0%;"></div>
-              <div class="ghost-line" style="left: 62%;"></div>
-            </div>
-            <div class="snr-ticks"><span>0% (Fluff)</span><span>25%</span><span>50%</span><span>75% (Target)</span><span>100% (Pure Signal)</span></div>
-          </div>
-        </div>
-
-        <div class="feedback-grid">
-          <div class="feedback-box well">
-            <div class="feedback-title" style="color: var(--success);"><span>✅</span> What Was Going Well</div>
-            <ul class="feedback-list" id="dashWellList"><li>—</li></ul>
-          </div>
-          <div class="feedback-box improve">
-            <div class="feedback-title" style="color: var(--accent-gold);"><span>🎯</span> What to Improve</div>
-            <ul class="feedback-list" id="dashImproveList"><li>—</li></ul>
-          </div>
-        </div>
-
-        <div class="dash-wide-box" id="repHistoryBox">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            <span style="font-weight: 700; font-size: 14px;">📼 Rep History</span>
-            <span style="font-size: 12px; color: var(--text-muted);" id="repHistoryCount">0 reps</span>
-          </div>
-          <div id="repHistoryList" style="display:flex; flex-direction:column; gap:8px;">
-            <div style="font-size:12px; color:var(--text-muted);">No reps yet — start on Today.</div>
-          </div>
-        </div>
-
-        <div class="try-again-bar">
-          <div class="ta-text">
-            <strong>Want to improve your score?</strong><br />
-            <span id="taMessage">Start a rep to build your progress.</span>
-          </div>
-          <button class="ta-btn" onclick="switchView('today')">🎙 Try Again →</button>
-        </div>
-      </section>
-
-      <section class="view-panel" id="recordingsView">
-        <div class="view-heading">
-          <h2>🎙️ My Recordings</h2>
-          <span class="vh-sub">Replay every practice session</span>
-        </div>
-
-        <div class="question-card" id="recordingsPreviewCard">
-          <div class="qc-label"><span>Your recordings library</span></div>
-          <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
-            Replay every practice session. Track your progress over time. Compare reps across days. Tag your best responses.
-          </div>
-          <div class="feature-preview-lock" id="recordingsLock">
-            <div class="fpl-title sprint">🔒 Unlocked with Sprint</div>
-            <div class="fpl-desc">Replay any past rep, compare across days, and measure your growth.</div>
-            <button class="fpl-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint — ₹499 →</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="view-panel" id="badgesView">
-        <div class="view-heading">
-          <h2>🏆 Achievements</h2>
-          <span class="vh-sub">Unlock badges as you practice</span>
-        </div>
-        <div class="badges-grid">
-          <div class="badge-item" id="badgeFirstRep">
-            <div class="badge-icon">🎯</div>
-            <div class="badge-name">First Rep</div>
-            <div class="badge-desc">You completed your first voice rep.</div>
-          </div>
-          <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">5-Day Streak</div><div class="badge-desc">Practice 5 days in a row.</div></div>
-          <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Speed Demon</div><div class="badge-desc">Time-to-Point under 10 seconds.</div></div>
-          <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Filler Killer</div><div class="badge-desc">Zero filler words in a rep.</div></div>
-          <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Orator</div><div class="badge-desc">Score above 90% on any rep.</div></div>
-        </div>
-      </section>
-
-      <section class="view-panel" id="pillarsView">
-        <div class="view-heading">
-          <h2>🏛️ Pillars of Executive Communication</h2>
-          <span class="vh-sub">The four foundations we train</span>
-        </div>
-        <div class="sub-activity-card-grid">
-          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 1</div><div class="activity-card-title">Structure</div><div class="activity-card-desc">STAR, PSO, BLUF. Give your ideas a spine listeners can follow.</div></div></div>
-          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 2</div><div class="activity-card-title">Conciseness</div><div class="activity-card-desc">Time-to-Point, filler elimination, headline discipline.</div></div></div>
-          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 3</div><div class="activity-card-title">Tone</div><div class="activity-card-desc">Warmth without weakness. Authority without arrogance.</div></div></div>
-          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 4</div><div class="activity-card-title">Presence</div><div class="activity-card-desc">Pacing, pauses, and gravitas in high-stakes rooms.</div></div></div>
-        </div>
-      </section>
-
-      <section class="view-panel" id="learningView">
-        <div class="view-heading">
-          <h2>📚 My Learning</h2>
-          <span class="vh-sub">3-minute frameworks and micro-lessons</span>
-        </div>
-
-        <div class="question-card" id="learningPreviewCard">
-          <div class="qc-label"><span>Curated learning</span></div>
-          <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
-            Framework deep-dives, worked examples, and role-specific micro-lessons tailored to your function.
-          </div>
-          <div class="feature-preview-lock" id="learningLock">
-            <div class="fpl-title sprint">🔒 Unlocked with Sprint</div>
-            <div class="fpl-desc">Pyramid Principle, BLUF, STAR, PSO and more — plus role-tailored lessons.</div>
-            <button class="fpl-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint — ₹499 →</button>
-          </div>
-        </div>
-      </section>
-
-    </main>
-  </div>
-
   <script>
     // ============================================================
     // CONFIG
     // ============================================================
-    const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
+    const BACKEND_URL = 'https://unspoken-backend-nqvl.onrender.com';
     const PAYWALL_URL = 'https://theunspoken.co.in/Pricing';
-    const PLAN_LABEL = { trial: 'Trial', sprint: 'Sprint Pass', pass: 'Practice Pass' };
-    const TRIAL_CAP_PER_QUESTION = 2;
-
-    const DEFAULT_Q1 = "Tell me about yourself — your background, what you do, and what drives you professionally.";
-    const DEFAULT_Q2 = "Tell me about a current project or initiative you're leading or involved in.";
+    const PLAN_LABEL = { sprint: 'Sprint Pass', pass: 'Practice Pass' };
+    const CAP_PER_QUESTION = 2;
 
     // ============================================================
     // RUNTIME
@@ -811,7 +740,7 @@
       q1Trials: [],
       q2Trials: [],
       activityTrials: [],
-      function: null
+      questions: { q1: null, q2: null }
     };
     let CACHED_BANK = {};
 
@@ -821,137 +750,451 @@
     document.addEventListener('DOMContentLoaded', bootstrap);
 
     async function bootstrap() {
-      const bootScreen = document.getElementById('bootScreen');
-      const bootTitle = document.getElementById('bootTitle');
-      const bootSub = document.getElementById('bootSub');
-
       const params = new URLSearchParams(window.location.search);
       SESSION_TOKEN = params.get('session');
       if (SESSION_TOKEN) window.history.replaceState({}, '', window.location.pathname);
 
-      // Priority 1: session token in URL
+      // Priority 1: token in URL
       if (SESSION_TOKEN) {
-        bootTitle.textContent = 'Loading your session…';
-        bootSub.textContent = 'Just a moment.';
-
-        // 1a. Paid user?
         try {
-          const paidRes = await fetch(`${BACKEND_URL}/api/checkout/verify-session`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-          });
-          if (paidRes.ok) {
-            const paid = await paidRes.json();
-            if (paid.is_paid) {
-              USER = buildPaidUser(paid);
-              try { localStorage.setItem('unspoken_user', JSON.stringify(USER)); } catch (e) {}
-              bootScreen.classList.add('hidden');
-              renderAll();
-              return;
-            }
-          }
-        } catch (e) {
-          console.warn('Paid session check failed:', e);
-        }
-
-        // 1b. Trial user
-        bootTitle.textContent = 'Loading your trial…';
-        bootSub.textContent = 'Fetching your analysis and questions.';
-        try {
-          const trialRes = await fetch(`${BACKEND_URL}/api/drills/session`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-          });
-          if (trialRes.ok) {
-            const trial = await trialRes.json();
-            USER = buildTrialUser(trial);
-            try { localStorage.setItem('unspoken_user', JSON.stringify(USER)); } catch (e) {}
-            bootScreen.classList.add('hidden');
-            renderAll();
-            return;
-          } else if (trialRes.status === 401) {
-            showSessionExpired('Your session has expired. Start a new drill.');
-            return;
-          }
-        } catch (e) {
-          console.warn('Trial session check failed:', e);
-        }
-
-        showSessionExpired('We couldn\'t load this session. Please try again from the landing page.');
-        return;
+          localStorage.setItem('unspoken_paid_session', SESSION_TOKEN);
+        } catch (e) {}
+        const ok = await verifyPaidSession(SESSION_TOKEN);
+        if (ok) return;
       }
 
-      // Priority 2: cached user
-      const stored = localStorage.getItem('unspoken_user');
-      if (stored) {
-        try {
-          USER = JSON.parse(stored);
-          bootScreen.classList.add('hidden');
-          renderAll();
-          return;
-        } catch (e) {
-          localStorage.removeItem('unspoken_user');
-        }
+      // Priority 2: cached session
+      const cached = localStorage.getItem('unspoken_paid_session');
+      if (cached) {
+        SESSION_TOKEN = cached;
+        const ok = await verifyPaidSession(cached);
+        if (ok) return;
       }
 
-      showFreshState();
+      // Priority 3: show login
+      showLoginScreen();
+    }
+
+    async function verifyPaidSession(token) {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/checkout/verify-session`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) return false;
+        const data = await res.json();
+        if (!data.is_paid) return false;
+        USER = buildPaidUser(data);
+        await loadQuestionsForToday();
+        document.getElementById('bootScreen').classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
+        renderAll();
+        return true;
+      } catch (e) {
+        console.warn('verifyPaidSession failed:', e);
+        return false;
+      }
     }
 
     // ============================================================
-    // BUILD USERS
+    // BUILD USER
     // ============================================================
-    function buildPaidUser(paid) {
+    function buildPaidUser(data) {
       return {
-        user_id: paid.user_id,
-        drill_id: null,
-        name: paid.name || 'Member',
-        email: paid.email || '',
-        phone: paid.phone || '',
-        stage: null,
-        function: null,
-        plan: paid.plan || 'sprint',
-        track_id: paid.sprint || 'interview',
-        current_day: paid.current_day || 1,
-        total_days: paid.total_days || 28,
-        questions_per_day: 2,
-        trials_per_question: 2,
-        sprint_start_date: paid.sprint_start_date || null,
-        sprint_end_date: paid.sprint_end_date || null,
+        user_id: data.user_id,
+        email: data.email,
+        name: data.name || 'Member',
+        plan: data.plan || 'sprint',
+        track_id: data.sprint || 'interview',
+        current_day: data.current_day || 1,
+        total_days: data.total_days || 28,
         is_paid: true
       };
     }
 
-    function buildTrialUser(trial) {
-      const analysis = trial.analysis ? normalizeAnalysis(trial.analysis) : null;
-      const answered = trial.answered === 'q2' ? 'q2' : 'q1';
-
-      return {
-        user_id: trial.user_id || ('trial_' + Date.now()),
-        drill_id: trial.drill_id || null,
-        name: trial.name || 'Guest',
-        email: trial.email || '',
-        stage: trial.stage || 'early',
-        function: trial.function || null,
-        plan: 'trial',
-        track_id: null,
-        current_day: 1,
-        total_days: 28,
-        questions_per_day: 2,
-        trials_per_question: TRIAL_CAP_PER_QUESTION,
-        is_paid: false,
-        trial: {
-          answered,
-          q1_text: trial.q1_text || DEFAULT_Q1,
-          q2_text: trial.q2_text || DEFAULT_Q2,
-          trials_used: trial.trials_used || { q1: answered === 'q1' ? 1 : 0, q2: answered === 'q2' ? 1 : 0 },
-          cap: trial.trials_cap_per_question || TRIAL_CAP_PER_QUESTION,
-          analysis
-        }
-      };
+    // ============================================================
+    // LOGIN SCREEN
+    // ============================================================
+    function showLoginScreen() {
+      const boot = document.getElementById('bootScreen');
+      boot.innerHTML = `
+        <div class="login-box">
+          <div class="lb-logo">The Unspoken</div>
+          <h2 id="loginTitle">Welcome back</h2>
+          <p class="lb-sub" id="loginSub">Enter your email to receive a 6-digit sign-in code.</p>
+          <div id="loginStep1">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" />
+            <button class="lb-submit" id="loginSendBtn" onclick="requestLoginOtp()">Send Code →</button>
+          </div>
+          <div id="loginStep2" class="hidden">
+            <label for="loginOtp">6-digit code</label>
+            <input type="tel" inputmode="numeric" maxlength="6" id="loginOtp" placeholder="000000"
+                   style="font-size:24px;letter-spacing:12px;text-align:center;font-weight:700;font-family:'SF Mono',Menlo,monospace;"
+                   onkeydown="if(event.key==='Enter')verifyLoginOtp()" />
+            <button class="lb-submit" id="loginVerifyBtn" onclick="verifyLoginOtp()">Sign In →</button>
+            <p style="margin-top:14px;text-align:center;font-size:12px;color:var(--text-muted);">
+              Didn't get it? <a href="javascript:void(0)" onclick="requestLoginOtp(true)">Resend code</a>
+            </p>
+          </div>
+          <p class="lb-footer">
+            Don't have an account? <a href="${PAYWALL_URL}">Explore Plans →</a>
+          </p>
+        </div>
+      `;
+      boot.classList.remove('hidden');
     }
 
-    // Normalize the backend payload into a flat structure the UI can consume.
-    // No invented numbers — nulls stay null.
+    let loginEmail = '';
+    async function requestLoginOtp(isResend = false) {
+      const input = document.getElementById('loginEmail');
+      const email = (input ? input.value : loginEmail).trim();
+      if (!email) return alert('Please enter your email.');
+      loginEmail = email;
+      const btn = document.getElementById(isResend ? document.querySelector('.lb-footer a') : 'loginSendBtn');
+      const sendBtn = document.getElementById('loginSendBtn');
+      const verifyBtn = document.getElementById('loginVerifyBtn');
+      if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = 'Sending…'; }
+      if (verifyBtn) { verifyBtn.disabled = true; verifyBtn.textContent = 'Verifying…'; }
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/auth/request-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Failed to send code');
+        document.getElementById('loginStep1').classList.add('hidden');
+        document.getElementById('loginStep2').classList.remove('hidden');
+        document.getElementById('loginTitle').textContent = 'Check your inbox';
+        document.getElementById('loginSub').innerHTML = `We sent a code to <strong style="color:var(--text-main);">${escapeHtml(email)}</strong>`;
+        setTimeout(() => document.getElementById('loginOtp')?.focus(), 100);
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = 'Send Code →'; }
+        if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Sign In →'; }
+      }
+    }
+
+    async function verifyLoginOtp() {
+      const otp = document.getElementById('loginOtp').value.trim();
+      if (!otp || otp.length !== 6) return alert('Please enter the 6-digit code.');
+      const btn = document.getElementById('loginVerifyBtn');
+      btn.disabled = true;
+      btn.textContent = 'Verifying…';
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/auth/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: loginEmail, otp })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Invalid code');
+        const url = `${window.location.origin}${window.location.pathname}?session=${encodeURIComponent(data.session_token)}`;
+        window.location.assign(url);
+      } catch (err) {
+        alert(`Login failed: ${err.message}`);
+        btn.disabled = false;
+        btn.textContent = 'Sign In →';
+      }
+    }
+
+    // ============================================================
+    // LOAD QUESTIONS
+    // ============================================================
+    async function loadQuestionsForToday() {
+      const sprint = USER.track_id || 'interview';
+      const day = USER.current_day || 1;
+      const cacheKey = `${sprint}-${day}`;
+      let questions = CACHED_BANK[cacheKey];
+      if (!questions) {
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/questions?sprint=${sprint}&day=${day}`, {
+            headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            questions = data.questions || [];
+            CACHED_BANK[cacheKey] = questions;
+          }
+        } catch (e) {
+          console.warn('loadQuestionsForToday failed:', e);
+        }
+      }
+      if (questions && questions.length) {
+        state.questions.q1 = questions[0];
+        state.questions.q2 = questions[1] || questions[0];
+      }
+    }
+
+    // ============================================================
+    // RENDER ALL
+    // ============================================================
+    function renderAll() {
+      renderHeader();
+      renderProfile();
+      renderQuestionCards();
+      renderTodayProgress();
+      renderProgressView();
+      switchView('today');
+    }
+
+    function renderHeader() {
+      document.getElementById('userNameEl').textContent = USER.name;
+      document.getElementById('userAvatarEl').textContent = (USER.name || 'A').charAt(0).toUpperCase();
+      document.getElementById('userRoleEl').textContent = USER.email;
+      document.getElementById('planBadge').textContent = PLAN_LABEL[USER.plan] || 'Member';
+      document.getElementById('headerPlan').textContent = PLAN_LABEL[USER.plan] || '—';
+      document.getElementById('headerDay').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
+      document.getElementById('headerTrackBadge').textContent = `${formatSprint(USER.track_id)} · ${PLAN_LABEL[USER.plan] || ''}`;
+      document.getElementById('headerStreak').textContent = '0';
+      document.getElementById('headerCompleted').textContent = '0 Tasks';
+      document.getElementById('headerAchievements').textContent = '🏆 0 Badges';
+
+      document.getElementById('todayTrackTitle').textContent = `${formatSprint(USER.track_id)} Sprint`;
+      document.getElementById('todayFocus').textContent = `Day ${USER.current_day} of ${USER.total_days} · 2 questions · 2 trials each`;
+      document.getElementById('dayCounter').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
+      document.getElementById('todayStreak').textContent = '0 day streak';
+      document.getElementById('dayProgressFill').style.width = '5%';
+    }
+
+    function renderProfile() {
+      document.getElementById('profileName').innerHTML = `<option selected>${escapeHtml(USER.name)}</option>`;
+      document.getElementById('profileSprint').innerHTML = `<option selected>${formatSprint(USER.track_id)}</option>`;
+    }
+
+    function renderQuestionCards() {
+      const q1 = state.questions.q1;
+      const q2 = state.questions.q2;
+
+      if (q1) {
+        document.getElementById('q1Text').textContent = `"${q1.text}"`;
+        document.getElementById('q1Meta').textContent = `Focus: ${q1.focus} · Target: ${q1.target_seconds}s`;
+        document.getElementById('q1Diff').textContent = `⭐ ${q1.difficulty}`;
+        document.getElementById('q1Diff').className = `qc-difficulty ${q1.difficulty}`;
+      }
+      if (q2) {
+        document.getElementById('q2Text').textContent = `"${q2.text}"`;
+        document.getElementById('q2Meta').textContent = `Focus: ${q2.focus} · Target: ${q2.target_seconds}s`;
+        document.getElementById('q2Diff').textContent = `⭐⭐ ${q2.difficulty}`;
+        document.getElementById('q2Diff').className = `qc-difficulty ${q2.difficulty}`;
+      }
+      document.getElementById('q1Label').textContent = `Q1 of 2 · Day ${USER.current_day}`;
+      document.getElementById('q2Label').textContent = `Q2 of 2 · Day ${USER.current_day}`;
+
+      updateQuestionCard('q1');
+      updateQuestionCard('q2');
+    }
+
+    function updateQuestionCard(which) {
+      const trials = which === 'q1' ? state.q1Trials : state.q2Trials;
+      const valid = trials.filter(x => x.fillerDiscipline != null);
+      const best = valid.length ? Math.max(...valid.map(x => x.fillerDiscipline)) : null;
+
+      document.getElementById(`${which}RepCount`).innerHTML = `${trials.length} <span class="rt-cap">/ ${CAP_PER_QUESTION}</span>`;
+      document.getElementById(`${which}BestSnr`).textContent = best != null ? `Best filler discipline: ${best}%` : 'Best score: —';
+
+      const btn = document.getElementById(`${which}RepBtn`);
+      btn.textContent = trials.length === 0 ? '🎤 Start Trial 1' : `🎤 Start Trial ${trials.length + 1}`;
+      btn.disabled = false;
+      btn.onclick = () => startRep(which);
+
+      document.getElementById(`${which}RepsLog`).innerHTML = trials.map((tr, i) => `
+        <div class="rep-log-item">
+          <span>Trial ${i + 1}</span>
+          <span class="rl-score">${
+            tr.transcript
+              ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"`
+              : '—'
+          }</span>
+        </div>
+      `).join('');
+    }
+
+    function renderTodayProgress() {
+      const total = state.q1Trials.length + state.q2Trials.length;
+      document.getElementById('tsTotalReps').textContent = `${total} / 4`;
+      document.getElementById('tsTimeSpent').textContent = `${Math.max(1, total)} min`;
+      const all = [...state.q1Trials, ...state.q2Trials];
+      const valid = all.map(t => t.fillerDiscipline).filter(v => v != null);
+      document.getElementById('tsBestSnr').textContent = valid.length ? `${Math.max(...valid)}` : '—';
+      const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
+      document.getElementById('tsDrills').textContent = `${drills} / 2`;
+      document.getElementById('dayProgressFill').style.width = `${(drills / 2) * 100}%`;
+    }
+
+    // ============================================================
+    // PROGRESS VIEW
+    // ============================================================
+    function renderProgressView() {
+      const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
+      const latest = allReps.length ? allReps[allReps.length - 1] : null;
+      const m = latest && latest.full ? normalizeAnalysis(latest.full) : null;
+
+      document.getElementById('dashSubtitle').textContent = allReps.length
+        ? `Pattern & performance based on ${allReps.length} rep${allReps.length === 1 ? '' : 's'}`
+        : 'Complete a rep to unlock your pattern analysis';
+
+      const patternName = (m && m.patternName) ? m.patternName : 'Your Pattern';
+      const patternDesc = (m && m.patternDesc) ? m.patternDesc : 'Complete a rep to see your communication pattern.';
+
+      const gotLost = [
+        (m && m.gapGotLost) || 'Your credibility and authority in the first 10 seconds',
+        (m && m.gapUnspoken) || 'Between your intent to sound confident and how you actually land'
+      ];
+      const wins = (m && m.oneThingToChange)
+        ? [m.oneThingToChange, 'Front-load your result', 'Add a clear structure marker']
+        : ['Lead with the point', 'Cut filler words', 'Add a clear structure marker'];
+
+      const execHtml = (m && m.executiveVersion)
+        ? `<div class="ya-executive">"${escapeHtml(m.executiveVersion)}"</div>`
+        : `<div class="ya-executive" style="font-style:normal;color:var(--text-muted);">Your executive version will appear here once you complete a rep.</div>`;
+
+      document.getElementById('yourAnalysisCard').innerHTML = `
+        <div class="ya-header">
+          <span class="ya-badge">✦ YOUR PATTERN</span>
+          <span class="ya-sub">Here's what we found in your latest rep</span>
+        </div>
+
+        <div class="ya-pattern-block">
+          <div class="ya-pattern-kicker">YOUR PATTERN</div>
+          <div class="ya-pattern-name-hero">${escapeHtml(patternName)}</div>
+          <div class="ya-pattern-desc-hero">${escapeHtml(patternDesc)}</div>
+        </div>
+
+        <div class="ya-grid">
+          <div class="ya-box">
+            <div class="ya-box-label">What Got Lost</div>
+            <ul class="ya-list">${gotLost.map(g => `<li>${escapeHtml(g)}</li>`).join('')}</ul>
+          </div>
+          <div class="ya-box">
+            <div class="ya-box-label">Quick Wins</div>
+            <ul class="ya-list wins">${wins.map(w => `<li>${escapeHtml(w)}</li>`).join('')}</ul>
+          </div>
+          <div class="ya-box">
+            <div class="ya-box-label">What You Said</div>
+            <div class="ya-transcript">${
+              (m && m.transcript)
+                ? escapeHtml(m.transcript)
+                : '<span class="ya-transcript-empty">Complete a rep to see your transcript here.</span>'
+            }</div>
+          </div>
+          <div class="ya-box">
+            <div class="ya-box-label">Your Executive Version</div>
+            ${execHtml}
+          </div>
+        </div>
+        <div class="ya-footer">
+          <button class="ya-btn" onclick="switchView('today')">🎙 Try Again in Today →</button>
+        </div>
+      `;
+
+      renderProgressMetrics(m);
+      renderFeedback(m);
+      renderRepHistory(allReps);
+      renderRecordingsList(allReps);
+    }
+
+    function renderProgressMetrics(m) {
+      const fmt = (v, suffix='') => (v == null ? '—' : `${v}${suffix}`);
+
+      if (!m) {
+        ['metricTTP','metricFillerDiscipline','metricPointFirst','metricConcreteness'].forEach(id => {
+          document.getElementById(id).textContent = '—';
+        });
+        document.getElementById('dashSnrValue').textContent = '—';
+        document.getElementById('dashSnrSignal').style.width = '0%';
+        document.getElementById('dashSnrNoise').style.width = '0%';
+        return;
+      }
+
+      document.getElementById('metricTTP').textContent = fmt(m.timeToPoint, 's');
+      document.getElementById('metricTTPSub').textContent = 'Keep practicing to lower this';
+
+      document.getElementById('metricFillerDiscipline').textContent = fmt(m.fillerDiscipline, ' / 100');
+      document.getElementById('metricFillerDisciplineSub').textContent =
+        (m.fillerDiscipline != null && m.fillerDiscipline >= 80) ? '🟢 Few fillers' :
+        (m.fillerDiscipline != null && m.fillerDiscipline >= 60) ? '🟡 Some fillers' : '🔴 Trim filler words';
+
+      document.getElementById('metricPointFirst').textContent = fmt(m.pointFirst, ' / 100');
+      document.getElementById('metricPointFirstSub').textContent =
+        (m.pointFirst != null && m.pointFirst >= 80) ? '🟢 Lead with the point' :
+        (m.pointFirst != null && m.pointFirst >= 60) ? '🟡 Point arrives late' : '🔴 Bury the lede';
+
+      document.getElementById('metricConcreteness').textContent = fmt(m.concreteness, ' / 100');
+      document.getElementById('metricConcretenessSub').textContent =
+        (m.concreteness != null && m.concreteness >= 80) ? '🟢 Specific and verifiable' :
+        (m.concreteness != null && m.concreteness >= 60) ? '🟡 Add more specifics' : '🔴 Quantify your outcomes';
+
+      document.getElementById('dashSnrValue').textContent = fmt(m.fillerDiscipline, '%');
+      document.getElementById('dashSnrSignal').style.width = `${m.fillerDiscipline ?? 0}%`;
+      document.getElementById('dashSnrNoise').style.width = `${m.fillerDiscipline != null ? 100 - m.fillerDiscipline : 0}%`;
+    }
+
+    function renderFeedback(m) {
+      const strengths = [];
+      const improvements = [];
+
+      if (m) {
+        if (m.wordsPerMinute) strengths.push(`Steady pacing at ${m.wordsPerMinute} WPM`);
+        if (m.fillerTotal === 0) strengths.push('No filler words detected');
+        if (m.vocabUnique && m.vocabUnique >= 20) strengths.push(`Rich vocabulary — ${m.vocabUnique} unique words`);
+        if (m.snr != null && m.snr >= 80) strengths.push(`High signal-to-noise ratio (${m.snr}%)`);
+
+        if (m.oneThingToChange) improvements.push(m.oneThingToChange);
+        if (m.fillerPct != null && m.fillerPct >= 3) improvements.push(`Reduce filler words (${m.fillerPct}% — target < 3%)`);
+        if (m.timeToPoint != null && m.timeToPoint > 10) improvements.push(`Get to the point faster (currently ${m.timeToPoint}s — target < 10s)`);
+        if (m.wordsPerMinute && m.wordsPerMinute < 100) improvements.push('Pick up the pace slightly — aim for 120–160 WPM');
+      }
+
+      if (!strengths.length) strengths.push('Complete a rep to see what\'s working');
+      if (!improvements.length) improvements.push('Complete a rep to see what to improve');
+
+      document.getElementById('dashWellList').innerHTML = strengths.map(s => `<li>${escapeHtml(s)}</li>`).join('');
+      document.getElementById('dashImproveList').innerHTML = improvements.map(s => `<li>${escapeHtml(s)}</li>`).join('');
+    }
+
+    function renderRepHistory(allReps) {
+      const list = document.getElementById('repHistoryList');
+      const count = document.getElementById('repHistoryCount');
+      count.textContent = `${allReps.length} rep${allReps.length === 1 ? '' : 's'}`;
+      if (!allReps.length) {
+        list.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">No reps yet — start on Today.</div>';
+        return;
+      }
+      list.innerHTML = allReps.slice().reverse().map((r) => {
+        const label = r.activity ? r.activity : 'Practice rep';
+        const time = r.timestamp ? new Date(r.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
+        return `
+          <div class="rep-log-item">
+            <span>${escapeHtml(label)}${time ? ' · ' + escapeHtml(time) : ''}</span>
+            <span class="rl-score">${
+              r.transcript ? `"${escapeHtml(r.transcript.slice(0, 80))}${r.transcript.length > 80 ? '…' : ''}"` : '—'
+            }</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderRecordingsList(allReps) {
+      const list = document.getElementById('recordingsList');
+      if (!list) return;
+      if (!allReps.length) {
+        list.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Your recordings will appear here as you practice.</div>';
+        return;
+      }
+      list.innerHTML = allReps.slice().reverse().map(r => `
+        <div class="rep-log-item">
+          <span>${escapeHtml(r.activity || 'Practice rep')}${r.timestamp ? ' · ' + new Date(r.timestamp).toLocaleDateString() : ''}</span>
+          <span class="rl-score">${r.transcript ? escapeHtml(r.transcript.slice(0, 80)) : '—'}</span>
+        </div>
+      `).join('');
+    }
+
+    // ============================================================
+    // ANALYSIS NORMALIZATION
+    // ============================================================
     function normalizeAnalysis(data) {
       if (!data) return null;
       const m = data.metrics || {};
@@ -962,453 +1205,26 @@
       const r = data.before_after_rewrite || {};
 
       return {
-        clarity: m.clarity ?? null,
-        structure: m.structure ?? null,
-        impact: m.impact ?? null,
+        fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
+        pointFirst: m.point_first ?? m.structure ?? null,
+        concreteness: m.concreteness ?? m.impact ?? null,
         overallScore: m.overall_score ?? null,
         timeToPoint: s.main_point_delay_seconds ?? null,
         wordsPerMinute: s.words_per_minute ?? null,
         fillerTotal: s.filler_words?.total ?? 0,
         fillerPct: s.filler_words?.percentage ?? 0,
+        snr: s.signal_to_noise_ratio ?? null,
+        vocabUnique: s.vocabulary?.unique ?? null,
+        vocabTotal: s.vocabulary?.total ?? null,
+        vocabRichness: s.vocabulary?.richness ?? null,
         patternName: d.pattern_name ?? null,
         patternDesc: d.pattern_description ?? null,
         gapGotLost: g.what_got_lost ?? null,
         gapUnspoken: g.unspoken_gap ?? null,
         oneThingToChange: c.one_thing_to_change ?? null,
         executiveVersion: r.executive_version ?? null,
-        transcript: data.transcribed_text ?? '',
-        questionSlot: data.question_slot ?? null,
-        questionText: data.question_text ?? null
+        transcript: data.transcribed_text ?? ''
       };
-    }
-
-    // ============================================================
-    // RENDER ALL
-    // ============================================================
-    function renderAll() {
-      renderHeader();
-      renderProfile();
-
-      const isPaid = USER.is_paid === true || USER.plan === 'sprint' || USER.plan === 'pass';
-
-      if (isPaid) {
-        console.log('✅ Paid user loaded:', USER.plan, USER.track_id);
-        applyPaidUserUI();
-      } else {
-        console.log('👤 Trial user loaded');
-        applyTrialUserUI();
-      }
-      renderProgressView();
-      switchView('today');
-    }
-
-    // ============================================================
-    // TRIAL USER UI
-    // ============================================================
-    function applyTrialUserUI() {
-      const t = USER.trial;
-      const cap = t.cap || TRIAL_CAP_PER_QUESTION;
-
-      document.getElementById('signOutBtn').classList.remove('hidden');
-      document.getElementById('planBadge').textContent = 'Trial';
-      document.getElementById('planBadge').classList.add('trial');
-      document.getElementById('headerTrackBadge').textContent = 'Trial';
-      document.getElementById('userRoleEl').textContent = 'Free trial';
-      document.getElementById('headerSignInPill').classList.remove('hidden');
-
-      document.getElementById('headerMemberSince').textContent = 'Just now';
-      document.getElementById('headerCompleted').textContent = '0 Tasks';
-      document.getElementById('headerAchievements').textContent = '🏆 0 Badges';
-
-      document.getElementById('previewBanner').classList.remove('hidden');
-      document.getElementById('previewName').textContent = USER.name;
-      document.getElementById('previewBannerText').innerHTML =
-        `👋 Hi <strong>${escapeHtml(USER.name)}</strong> — you've used <strong>${countTrials(t)}</strong> of ${cap * 2} free trials. Upgrade for unlimited practice.`;
-
-      renderTrialQuestionCards();
-      renderTodayProgress();
-    }
-
-    function countTrials(t) {
-      return (t.trials_used?.q1 || 0) + (t.trials_used?.q2 || 0);
-    }
-
-    function renderTrialQuestionCards() {
-      const t = USER.trial;
-
-      document.getElementById('q1Text').textContent = `"${t.q1_text}"`;
-      document.getElementById('q1Meta').textContent = 'Focus: Structure & Conciseness · Target: 60s';
-      document.getElementById('q1Label').textContent = `Q1 of 2${t.answered === 'q1' ? ' · You answered this' : ''}`;
-      document.getElementById('q1Diff').textContent = '⭐ Easy';
-      document.getElementById('q1Diff').className = 'qc-difficulty easy';
-
-      document.getElementById('q2Text').textContent = `"${t.q2_text}"`;
-      document.getElementById('q2Meta').textContent = 'Focus: Narrative & Relevance · Target: 90s';
-      document.getElementById('q2Label').textContent = `Q2 of 2${t.answered === 'q2' ? ' · You answered this' : ''}`;
-      document.getElementById('q2Diff').textContent = '⭐⭐ Medium';
-      document.getElementById('q2Diff').className = 'qc-difficulty medium';
-
-      document.getElementById('questionCard2').classList.remove('locked');
-
-      // Seed the answered question's log with the landing-page analysis
-      if (t.analysis) {
-        const seed = {
-          number: 1,
-          clarity: t.analysis.clarity,
-          structure: t.analysis.structure,
-          impact: t.analysis.impact,
-          timeToPoint: t.analysis.timeToPoint,
-          fromLanding: true
-        };
-        if (t.answered === 'q1') { state.q1Trials = [seed]; state.q2Trials = []; }
-        else { state.q1Trials = []; state.q2Trials = [seed]; }
-      }
-
-      updateTrialQuestionCard('q1');
-      updateTrialQuestionCard('q2');
-
-      const promo = document.getElementById('freeChangeCustomizeCard');
-      if (promo) promo.style.display = 'none';
-    }
-
-    function updateTrialQuestionCard(which) {
-      const t = USER.trial;
-      const cap = t.cap || TRIAL_CAP_PER_QUESTION;
-      const used = t.trials_used?.[which] || 0;
-      const trials = which === 'q1' ? state.q1Trials : state.q2Trials;
-      const best = trials.length && trials.some(x => x.clarity != null)
-        ? Math.max(...trials.filter(x => x.clarity != null).map(x => x.clarity))
-        : null;
-
-      document.getElementById(`${which}RepCount`).innerHTML =
-        `${used} <span class="rt-cap">/ ${cap}</span>`;
-      document.getElementById(`${which}BestSnr`).textContent =
-        best != null ? `Best clarity: ${best}%` : 'Best score: —';
-
-      const btn = document.getElementById(`${which}RepBtn`);
-      if (used >= cap) {
-        btn.textContent = '✓ Trial cap reached — upgrade to continue';
-        btn.disabled = true;
-        btn.classList.add('done');
-        btn.onclick = () => goToPaywall('sprint');
-      } else {
-        btn.textContent = used === 0 ? '🎤 Start Trial 1' : `🎤 Start Trial ${used + 1}`;
-        btn.disabled = false;
-        btn.classList.remove('done');
-        btn.onclick = () => startRep(which);
-      }
-
-      document.getElementById(`${which}RepsLog`).innerHTML = trials.map((tr, i) => `
-        <div class="rep-log-item">
-          <span>Trial ${tr.number || i + 1}${tr.fromLanding ? ' (from landing page)' : ''}</span>
-          <span class="rl-score">${tr.clarity != null ? `Clarity ${tr.clarity}%` : 'Clarity —'} · ${tr.structure != null ? `Structure ${tr.structure}%` : 'Structure —'} · ${tr.impact != null ? `Impact ${tr.impact}%` : 'Impact —'}</span>
-        </div>
-      `).join('');
-    }
-
-    // ============================================================
-    // PAID USER UI
-    // ============================================================
-    function applyPaidUserUI() {
-      const isSprint = USER.plan === 'sprint';
-      const isPass = USER.plan === 'pass';
-
-      document.getElementById('previewBanner').classList.add('hidden');
-      document.getElementById('signOutBtn').classList.remove('hidden');
-      document.getElementById('headerSignInPill').classList.add('hidden');
-
-      const planLabel = isPass ? 'Practice Pass' : 'Sprint Pass';
-      document.getElementById('planBadge').textContent = planLabel;
-      document.getElementById('planBadge').classList.remove('trial');
-      document.getElementById('headerTrackBadge').textContent = `${formatSprint(USER.track_id)} · ${planLabel}`;
-      document.getElementById('userRoleEl').textContent = `Focus: ${formatSprint(USER.track_id)}`;
-
-      document.getElementById('headerMemberSince').textContent = USER.sprint_start_date
-        ? new Date(USER.sprint_start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-        : 'Just now';
-      document.getElementById('headerCompleted').textContent = '0 Tasks';
-      document.getElementById('headerAchievements').textContent = '🏆 0 Badges';
-
-      // Remove every preview lock
-      document.querySelectorAll('.nav-preview').forEach(el => el.remove());
-      document.querySelectorAll('.feature-preview-lock').forEach(el => el.remove());
-      document.querySelectorAll('.lock-overlay').forEach(el => el.remove());
-      document.querySelectorAll('.locked-preview').forEach(el => el.classList.remove('locked-preview'));
-
-      // Replace lock CTAs with live "Start Now" buttons
-      document.querySelectorAll('.ac-lock-cta').forEach(el => {
-        const isPassOnly = el.textContent.includes('Practice Pass');
-        if (isSprint && isPassOnly) {
-          el.textContent = '🔒 Practice Pass Required';
-          el.disabled = true;
-          el.style.opacity = '0.6';
-          el.style.cursor = 'not-allowed';
-        } else {
-          el.remove();
-        }
-      });
-
-      document.querySelectorAll('.sub-activity-panel .activity-card, .sub-activity-panel .dash-wide-box, .sub-activity-panel .question-card').forEach(card => {
-        if (card.querySelector('.ac-lock-cta')) return;
-        if (card.dataset.activity === undefined) return;
-        if (!card.querySelector('[data-injected-cta]')) {
-          const btn = document.createElement('button');
-          btn.className = 'ac-lock-cta';
-          btn.setAttribute('data-injected-cta', '1');
-          btn.style.background = 'linear-gradient(135deg, var(--success), #059669)';
-          btn.textContent = '▶ Start Now';
-          btn.onclick = () => startActivityFromCard(card);
-          card.appendChild(btn);
-        }
-      });
-
-      const promo = document.getElementById('unlockMorePromo');
-      if (promo) promo.remove();
-
-      const changeCard = document.getElementById('freeChangeCustomizeCard');
-      if (changeCard) changeCard.style.display = 'none';
-
-      // Inject "Change Question" actions
-      const q1Top = document.querySelector('#questionCard1 .qc-top');
-      if (q1Top && !q1Top.querySelector('[data-q-actions]')) {
-        const el = document.createElement('div');
-        el.setAttribute('data-q-actions', '1');
-        el.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;';
-        el.innerHTML = `
-          <button class="qc-action-btn primary-action" onclick="openQuestionPickerFor('q1')">🎯 Change Question</button>
-          <button class="qc-action-btn" onclick="openQuestionBank()">📚 Browse Bank</button>
-        `;
-        q1Top.appendChild(el);
-      }
-      const q2Top = document.querySelector('#questionCard2 .qc-top');
-      if (q2Top && !q2Top.querySelector('[data-q-actions]')) {
-        const el = document.createElement('div');
-        el.setAttribute('data-q-actions', '1');
-        el.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;';
-        el.innerHTML = `
-          <button class="qc-action-btn primary-action" onclick="openQuestionPickerFor('q2')">🎯 Change Question</button>
-          <button class="qc-action-btn" onclick="openQuestionBank()">📚 Browse Bank</button>
-        `;
-        q2Top.appendChild(el);
-      }
-
-      loadBackendQuestions(USER.current_day || 1);
-
-      const analysisCard = document.getElementById('yourAnalysisCard');
-      if (analysisCard) {
-        analysisCard.innerHTML = `
-          <div class="ya-header">
-            <span class="ya-badge">✦ YOUR SPRINT</span>
-            <span class="ya-sub">Track your growth across the ${USER.total_days}-day sprint</span>
-          </div>
-          <div class="ya-score-block">
-            <div class="ya-score">
-              <span class="ya-score-value">${USER.current_day}</span>
-              <span class="ya-score-denom"> / ${USER.total_days}</span>
-            </div>
-            <div class="ya-score-label">Day of Sprint</div>
-          </div>
-          <div class="ya-grid">
-            <div class="ya-box">
-              <div class="ya-box-label">Your Sprint</div>
-              <div class="ya-pattern-name">${formatSprint(USER.track_id)}</div>
-              <div class="ya-pattern-desc">Focus on this sprint type for the full duration. New questions unlock daily.</div>
-            </div>
-            <div class="ya-box">
-              <div class="ya-box-label">Focus Areas</div>
-              <ul class="ya-list">
-                <li>Structure your answers clearly</li>
-                <li>Reduce filler words</li>
-                <li>Quantify outcomes</li>
-              </ul>
-            </div>
-            <div class="ya-box">
-              <div class="ya-box-label">Daily Commitment</div>
-              <ul class="ya-list wins">
-                <li>2 questions per day</li>
-                <li>2 trials per question</li>
-                <li>5–10 minutes</li>
-              </ul>
-            </div>
-            <div class="ya-box">
-              <div class="ya-box-label">Your Plan</div>
-              <div class="ya-executive">You're on the ${planLabel}. ${isPass ? 'Switch sprints anytime — no extra cost.' : 'Complete this sprint and choose your next focus.'}</div>
-            </div>
-          </div>
-        `;
-      }
-
-      document.getElementById('todayTrackTitle').textContent = `${formatSprint(USER.track_id)} Sprint`;
-      document.getElementById('todayFocus').textContent = `Day ${USER.current_day} of ${USER.total_days} · 2 questions · 2 trials each`;
-      document.getElementById('dayCounter').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
-      document.getElementById('todayStreak').textContent = '0 day streak';
-      document.getElementById('dayProgressFill').style.width = '5%';
-    }
-
-    // ============================================================
-    // LOAD BACKEND QUESTIONS (paid users)
-    // ============================================================
-    async function fetchQuestions(sprint, day) {
-      const cacheKey = `${sprint}-${day || 'all'}`;
-      if (CACHED_BANK[cacheKey]) return CACHED_BANK[cacheKey];
-      try {
-        const url = day
-          ? `${BACKEND_URL}/api/questions?sprint=${sprint}&day=${day}`
-          : `${BACKEND_URL}/api/questions?sprint=${sprint}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        CACHED_BANK[cacheKey] = data.questions || [];
-        return CACHED_BANK[cacheKey];
-      } catch (err) {
-        console.warn('fetchQuestions failed:', err);
-        return [];
-      }
-    }
-
-    async function loadBackendQuestions(day) {
-      const sprint = USER.track_id || 'interview';
-      const questions = await fetchQuestions(sprint, day || 1);
-      if (!questions || questions.length === 0) return;
-
-      const q1 = questions[0];
-      const q2 = questions[1] || questions[0];
-
-      document.getElementById('q1Text').textContent = `"${q1.text}"`;
-      document.getElementById('q1Meta').textContent = `Focus: ${q1.focus} · Target: ${q1.target_seconds}s`;
-      document.getElementById('q1Label').textContent = `Q1 of 2 · Day ${day || 1}`;
-      document.getElementById('q1Diff').textContent = `⭐ ${q1.difficulty}`;
-      document.getElementById('q1Diff').className = `qc-difficulty ${q1.difficulty.toLowerCase()}`;
-
-      document.getElementById('q2Text').textContent = `"${q2.text}"`;
-      document.getElementById('q2Meta').textContent = `Focus: ${q2.focus} · Target: ${q2.target_seconds}s`;
-      document.getElementById('q2Label').textContent = `Q2 of 2 · Day ${day || 1}`;
-      document.getElementById('q2Diff').textContent = `⭐⭐ ${q2.difficulty}`;
-      document.getElementById('q2Diff').className = `qc-difficulty ${q2.difficulty.toLowerCase()}`;
-
-      document.getElementById('questionCard2').classList.remove('locked');
-      const q2Btn = document.getElementById('q2RepBtn');
-      q2Btn.disabled = false;
-      q2Btn.textContent = '🎤 Start Trial 1';
-      q2Btn.onclick = () => startRep('q2');
-    }
-
-    // ============================================================
-    // QUESTIONS MODAL
-    // ============================================================
-    async function openQuestionPickerFor(target) {
-      const sprint = USER.track_id || 'interview';
-      const bank = await fetchQuestions(sprint, null);
-
-      if (!bank || bank.length === 0) {
-        document.getElementById('usModalContent').innerHTML = `
-          <h2>Question bank unavailable</h2>
-          <p class="us-modal-sub">We couldn't load questions right now. Please try again in a moment.</p>
-        `;
-        document.getElementById('usModal').classList.add('is-visible');
-        return;
-      }
-
-      document.getElementById('usModalContent').innerHTML = `
-        <h2>Change ${target === 'q1' ? 'Question 1' : 'Question 2'}</h2>
-        <p class="us-modal-sub">Pick a question from the ${formatSprint(sprint)} bank.</p>
-        <div>
-          ${bank.map(q => `
-            <div class="bank-question" onclick="selectQuestion(${JSON.stringify(q.text)}, ${JSON.stringify(q.focus)}, ${q.target_seconds}, ${JSON.stringify(q.difficulty)}, '${target}')">
-              <div class="bq-text">"${escapeHtml(q.text)}"</div>
-              <div class="bq-meta">Day ${q.day_number} · ${escapeHtml(q.focus)} · ${q.target_seconds}s · ${escapeHtml(q.difficulty)}</div>
-            </div>
-          `).join('')}
-        </div>
-      `;
-      document.getElementById('usModal').classList.add('is-visible');
-    }
-
-    function openQuestionBank() { openQuestionPickerFor('q1'); }
-
-    function selectQuestion(text, focus, target, difficulty, questionTarget) {
-      const qNum = questionTarget === 'q2' ? 'q2' : 'q1';
-      document.getElementById(`${qNum}Text`).textContent = `"${text}"`;
-      document.getElementById(`${qNum}Meta`).textContent = `Focus: ${focus} · Target: ${target}s`;
-      document.getElementById(`${qNum}Diff`).textContent = `⭐ ${difficulty}`;
-      document.getElementById(`${qNum}Diff`).className = `qc-difficulty ${difficulty.toLowerCase()}`;
-      closeModal();
-    }
-
-    function closeModal() {
-      document.getElementById('usModal').classList.remove('is-visible');
-    }
-
-    // ============================================================
-    // ACTIVITY ROUTER
-    // ============================================================
-    async function startActivityFromCard(card) {
-      const activity = card.dataset.activity || card.querySelector('.activity-card-title')?.textContent || 'Practice';
-      const type = card.dataset.type || 'voice';
-
-      if (type === 'content') { openContentModal(activity); return; }
-      if (type === 'text') { openReflectionModal(activity); return; }
-
-      const prompt = await pickPromptForActivity(activity);
-      openRecorderModal(prompt, { source: 'activity', title: activity, category: activity });
-    }
-
-    async function pickPromptForActivity(activity) {
-      const sprint = USER.track_id || 'interview';
-      const bank = await fetchQuestions(sprint, null);
-
-      if (activity === 'Blind Rep' || activity === 'Daily Challenge') {
-        const q = bank[Math.floor(Math.random() * bank.length)];
-        return q ? q.text : DEFAULT_Q1;
-      }
-      if (activity === 'Repeat Rep' || activity === 'Interview Simulator') {
-        const q = bank[0];
-        return q ? q.text : DEFAULT_Q1;
-      }
-
-      const dayQuestions = await fetchQuestions(sprint, USER.current_day || 1);
-      if (dayQuestions.length) return dayQuestions[0].text;
-      const fallback = bank[0];
-      return fallback ? fallback.text : DEFAULT_Q1;
-    }
-
-    // ============================================================
-    // CONTENT / REFLECTION MODALS
-    // ============================================================
-    function openContentModal(title) {
-      const content = {
-        'The Pyramid Principle': { body: `<p style="margin-bottom:12px;"><strong>Core idea:</strong> Lead with your conclusion first. Then support it with 3 key pillars. Then back each pillar with evidence.</p><p><strong>Example:</strong> "We should delay the launch by 2 weeks. Three reasons: (1) QA needs more time, (2) two critical bugs remain open, (3) the marketing campaign isn't ready."</p>` },
-        'BLUF Method': { body: `<p style="margin-bottom:12px;"><strong>Core idea:</strong> Bottom Line Up Front. Say the point, then explain.</p><p><strong>Example:</strong> "I recommend Option B. Here's why in 30 seconds..."</p>` },
-        'The STAR Method': { body: `<p style="margin-bottom:12px;"><strong>S — Situation:</strong> Set the scene briefly.</p><p style="margin-bottom:12px;"><strong>T — Task:</strong> What was your responsibility?</p><p style="margin-bottom:12px;"><strong>A — Action:</strong> What specific steps did YOU take?</p><p><strong>R — Result:</strong> What was the measurable outcome?</p>` },
-        'The PSO Framework': { body: `<p style="margin-bottom:12px;"><strong>P — Problem:</strong> What's the problem in one sentence?</p><p style="margin-bottom:12px;"><strong>S — Solution:</strong> What do you recommend?</p><p><strong>O — Outcome:</strong> What will change if we do this?</p>` }
-      };
-      const data = content[title] || { body: '<p>Content coming soon.</p>' };
-      document.getElementById('usModalContent').innerHTML = `
-        <h2>${escapeHtml(title)}</h2>
-        <p class="us-modal-sub">3-minute micro-lesson</p>
-        <div style="font-size:14px;line-height:1.65;color:var(--text-main);">${data.body}</div>
-      `;
-      document.getElementById('usModal').classList.add('is-visible');
-    }
-
-    function openReflectionModal(activity) {
-      document.getElementById('usModalContent').innerHTML = `
-        <h2>Reflection Journal</h2>
-        <p class="us-modal-sub">What did you intend to say vs what you actually said?</p>
-        <textarea id="reflectionInput" placeholder="Write your reflection here..." maxlength="1000" style="width:100%;min-height:180px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
-        <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="reflCount">0</span> / 1000</div>
-        <button onclick="submitReflection()" style="margin-top:12px;width:100%;padding:14px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;">Save Reflection →</button>
-      `;
-      document.getElementById('usModal').classList.add('is-visible');
-      const ta = document.getElementById('reflectionInput');
-      ta.addEventListener('input', () => { document.getElementById('reflCount').textContent = ta.value.length; });
-    }
-
-    function submitReflection() {
-      const text = document.getElementById('reflectionInput')?.value?.trim();
-      if (!text || text.length < 10) { alert('Please write at least 10 characters.'); return; }
-      closeModal();
-      setTimeout(() => alert('✅ Reflection saved.'), 200);
     }
 
     // ============================================================
@@ -1419,7 +1235,7 @@
       mediaRecorder: null, chunks: [],
       seconds: 0, timerInterval: null,
       isRecording: false, rawBlob: null, rawText: null,
-      duration: 0, mode: 'voice'
+      mode: 'voice'
     };
 
     function stripQuotes(s) {
@@ -1469,11 +1285,12 @@
               <span id="recTimer" style="font-size:15px;font-weight:700;min-width:50px;">0:00</span>
               <span id="recStatus" style="font-size:12px;color:var(--text-muted);flex:1;">Ready to record</span>
             </div>
+            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:10px;">Voice is capped at 30 seconds</div>
             <button id="recVoiceSubmit" onclick="submitRepToBackend()" style="display:none;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;">Submit My Response →</button>
           </div>
           <div id="recTextPane" style="display:none;">
-            <textarea id="recTextInput" placeholder="Type your response here..." maxlength="500" style="width:100%;min-height:120px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
-            <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="recCharCount">0</span> / 500</div>
+            <textarea id="recTextInput" placeholder="Type your response here (300 words max)..." style="width:100%;min-height:120px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
+            <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="recWordCount">0</span> / 300 words</div>
             <button id="recTextSubmit" onclick="submitRepToBackend()" disabled style="margin-top:12px;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;opacity:0.5;">Submit My Response →</button>
           </div>
         </div>
@@ -1484,10 +1301,13 @@
       if (ta) {
         ta.addEventListener('input', (e) => {
           const val = e.target.value;
-          document.getElementById('recCharCount').textContent = val.length;
+          const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+          const wc = document.getElementById('recWordCount');
           const btn = document.getElementById('recTextSubmit');
-          btn.disabled = val.length < 10;
-          btn.style.opacity = val.length < 10 ? '0.5' : '1';
+          if (wc) { wc.textContent = words; wc.style.color = words > 300 ? '#EF4444' : ''; }
+          const valid = val.length >= 10 && words <= 300;
+          btn.disabled = !valid;
+          btn.style.opacity = valid ? '1' : '0.5';
         });
       }
     }
@@ -1546,14 +1366,16 @@
         const recBtn = document.getElementById('recRecordBtn');
         const status = document.getElementById('recStatus');
         const submitBtn = document.getElementById('recVoiceSubmit');
+        const timerEl = document.getElementById('recTimer');
         if (recBtn) { recBtn.style.background = '#6e6a62'; recBtn.textContent = '■'; }
         if (status) status.textContent = '🎙️ Recording…';
         if (submitBtn) submitBtn.style.display = 'none';
+        if (timerEl) timerEl.style.color = '';
         updateRecTimer();
         activeRecording.timerInterval = setInterval(() => {
           activeRecording.seconds++;
           updateRecTimer();
-          if (activeRecording.seconds >= 90) stopRecording();
+          if (activeRecording.seconds >= 30) stopRecording();
         }, 1000);
       } catch (err) {
         console.error('Mic error:', err);
@@ -1576,103 +1398,93 @@
       const m = Math.floor(activeRecording.seconds / 60);
       const s = activeRecording.seconds % 60;
       const t = document.getElementById('recTimer');
+      const status = document.getElementById('recStatus');
       if (t) t.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+
+      if (activeRecording.seconds >= 30) {
+        if (t) t.style.color = '#EF4444';
+        if (status) status.textContent = '⏱️ Time up — stopping';
+      } else if (activeRecording.seconds >= 25) {
+        if (t) t.style.color = '#EF4444';
+        if (status) status.textContent = `⚠️ ${30 - activeRecording.seconds}s left`;
+      } else if (activeRecording.seconds >= 20) {
+        if (t) t.style.color = '#F59E0B';
+        if (status) status.textContent = `${30 - activeRecording.seconds}s left`;
+      }
     }
 
     // ============================================================
-    // SUBMIT REP TO BACKEND (upload → capture → analyze)
+    // SUBMIT REP
     // ============================================================
     async function submitRepToBackend() {
       const which = activeRecording.target;
       const voiceBtn = document.getElementById('recVoiceSubmit');
       const textBtn = document.getElementById('recTextSubmit');
-      const isTrial = !USER.is_paid;
 
       if (activeRecording.mode === 'voice' && !activeRecording.rawBlob) return alert('Please record first.');
+      if (activeRecording.mode === 'voice' && activeRecording.seconds > 30) {
+        return alert('Voice responses are capped at 30 seconds. Please re-record.');
+      }
       if (activeRecording.mode === 'text') {
         activeRecording.rawText = document.getElementById('recTextInput').value.trim();
         if (activeRecording.rawText.length < 10) return alert('Please write at least 10 characters.');
+        const words = activeRecording.rawText.split(/\s+/).length;
+        if (words > 300) return alert(`Text responses are capped at 300 words. You have ${words}. Please trim.`);
       }
 
       if (voiceBtn) { voiceBtn.disabled = true; voiceBtn.textContent = 'Analyzing…'; }
       if (textBtn) { textBtn.disabled = true; textBtn.textContent = 'Analyzing…'; }
 
       try {
-        // ── 1. Upload ──
+        const isQ1 = which === 'q1';
+        const isQ2 = which === 'q2';
+        const slot = isQ1 ? 'q1' : isQ2 ? 'q2' : '';
+        const qtype = isQ1 ? 'intro' : isQ2 ? 'project' : 'practice';
+
+        const promptEl = isQ1 ? document.getElementById('q1Text') : isQ2 ? document.getElementById('q2Text') : null;
+        const promptText = promptEl
+          ? promptEl.textContent.replace(/^["“”]|["“”]$/g, '').trim()
+          : (activeRecording.question || activeRecording.meta.category || 'Practice rep');
+
+        // 1. Upload
         const formData = new FormData();
         if (activeRecording.mode === 'voice' && activeRecording.rawBlob) {
           formData.append('audio', activeRecording.rawBlob, 'recording.webm');
         } else {
           formData.append('text', activeRecording.rawText);
         }
-        formData.append('question_type', which === 'q1' || which === 'q2' ? 'practice' : (activeRecording.meta.category || 'practice'));
-        formData.append('question_slot', (which === 'q1' || which === 'q2') ? which : '');
+        formData.append('question_type', qtype);
+        formData.append('question_slot', slot);
+        formData.append('question_prompt', promptText);
         formData.append('mode', activeRecording.mode);
-        formData.append('duration_seconds', activeRecording.seconds || 30);
-        formData.append('user_id', USER.user_id || USER.email || '');
-        formData.append('trial', isTrial ? 'true' : 'false');
+        formData.append('duration_seconds', activeRecording.mode === 'voice'
+          ? activeRecording.seconds
+          : Math.max(10, Math.round((activeRecording.rawText || '').split(/\s+/).length / 2.5)));
 
-        const uploadRes = await fetch(`${BACKEND_URL}/api/drills/upload`, { method: 'POST', body: formData });
+        const uploadRes = await fetch(`${BACKEND_URL}/api/paid/upload`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` },
+          body: formData
+        });
         if (!uploadRes.ok) {
           const err = await uploadRes.json().catch(() => ({}));
           throw new Error(err.error || err.detail || `Upload failed (${uploadRes.status})`);
         }
         const { drill_id } = await uploadRes.json();
 
-        // ── 2. Get an auth token ──
-        let authToken;
-        if (isTrial) {
-          // Capture links the drill to email + issues a long-lived session token.
-          const captureRes = await fetch(`${BACKEND_URL}/api/drills/capture`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              drill_id,
-              name: USER.name,
-              email: USER.email,
-              stage: USER.stage || 'early',
-              question_type: activeRecording.meta.category || 'practice',
-              question_slot: (which === 'q1' || which === 'q2') ? which : null,
-              mode: activeRecording.mode
-            }),
-          });
-          if (!captureRes.ok) {
-            const err = await captureRes.json().catch(() => ({}));
-            throw new Error(err.error || err.detail || `Capture failed (${captureRes.status})`);
-          }
-          const capture = await captureRes.json();
-          authToken = capture.session_token;
-          SESSION_TOKEN = authToken;   // keep for subsequent calls
-        } else {
-          authToken = SESSION_TOKEN;
-        }
-
-        // ── 3. Analyze ──
-        const analyzeRes = await fetch(`${BACKEND_URL}/api/drills/analyze`, {
+        // 2. Analyze
+        const analyzeRes = await fetch(`${BACKEND_URL}/api/paid/analyze`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${authToken}`,
+            'Authorization': `Bearer ${SESSION_TOKEN}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ drill_id }),
+          body: JSON.stringify({ drill_id })
         });
-
-        // Cap reached
-        if (analyzeRes.status === 403) {
-          const err = await analyzeRes.json().catch(() => ({}));
-          const detail = err.detail || err;
-          if (detail?.error === 'TRIAL_CAP_REACHED' || err.error === 'TRIAL_CAP_REACHED') {
-            alert('You\'ve reached the trial cap for this question. Upgrade to a Sprint to continue.');
-            closeRecorderModal();
-            goToPaywall('sprint');
-            return;
-          }
-          throw new Error(detail?.error || detail || 'Forbidden');
-        }
 
         if (analyzeRes.status === 401) {
           closeRecorderModal();
-          showSessionExpired('Your session has expired. Please sign in again.');
+          signOut();
           return;
         }
 
@@ -1686,9 +1498,9 @@
 
         const newRep = {
           number: (which === 'q1' ? state.q1Trials.length : which === 'q2' ? state.q2Trials.length : state.activityTrials.length) + 1,
-          clarity: metrics.clarity,
-          structure: metrics.structure,
-          impact: metrics.impact,
+          fillerDiscipline: metrics.fillerDiscipline,
+          pointFirst: metrics.pointFirst,
+          concreteness: metrics.concreteness,
           timeToPoint: metrics.timeToPoint,
           transcript: metrics.transcript,
           drillId: drill_id,
@@ -1701,22 +1513,14 @@
         else if (which === 'q2') state.q2Trials.push(newRep);
         else state.activityTrials.push(newRep);
 
-        if (isTrial && (which === 'q1' || which === 'q2')) {
-          if (!USER.trial.trials_used) USER.trial.trials_used = { q1: 0, q2: 0 };
-          USER.trial.trials_used[which] = (USER.trial.trials_used[which] || 0) + 1;
-          USER.trial.analysis = metrics;
-          USER.trial.answered = which;
-          updateTrialQuestionCard('q1');
-          updateTrialQuestionCard('q2');
-          try { localStorage.setItem('unspoken_user', JSON.stringify(USER)); } catch (e) {}
-        }
-
+        updateQuestionCard('q1');
+        updateQuestionCard('q2');
         renderTodayProgress();
         renderProgressView();
         closeRecorderModal();
         setTimeout(() => {
           const label = activeRecording.meta.title || 'Rep';
-          alert(`✅ ${label} saved!\n\nClarity: ${metrics.clarity ?? '—'}%\nStructure: ${metrics.structure ?? '—'}%\nImpact: ${metrics.impact ?? '—'}%`);
+          alert(`✅ ${label} saved!\n\nFiller discipline: ${metrics.fillerDiscipline ?? '—'}\nPoint-first: ${metrics.pointFirst ?? '—'}\nConcreteness: ${metrics.concreteness ?? '—'}`);
         }, 200);
       } catch (err) {
         console.error('❌ Submit failed:', err);
@@ -1730,388 +1534,64 @@
     // START REP
     // ============================================================
     function startRep(which) {
-      if (!USER.is_paid && (which === 'q1' || which === 'q2')) {
-        const used = USER.trial?.trials_used?.[which] || 0;
-        const cap = USER.trial?.cap || TRIAL_CAP_PER_QUESTION;
-        if (used >= cap) {
-          alert('You\'ve reached the trial cap for this question. Upgrade to a Sprint to continue.');
-          goToPaywall('sprint');
-          return;
-        }
-      }
       openRecorderModal(which);
     }
 
     // ============================================================
-    // PROGRESS VIEW
+    // ACTIVITIES
     // ============================================================
-    function renderProgressView() {
-      if (USER.is_paid) {
-        renderProgressMetricsFromReps();
-        renderRepHistory([...state.q1Trials, ...state.q2Trials, ...state.activityTrials]);
-        return;
+    async function startActivityFromCard(card) {
+      const activity = card.dataset.activity || card.querySelector('.activity-card-title')?.textContent || 'Practice';
+      const type = card.dataset.type || 'voice';
+
+      if (type === 'content') { openContentModal(activity); return; }
+      if (type === 'text') { return; } // reflection handled inline in DOM
+
+      const prompt = await pickPromptForActivity(activity);
+      openRecorderModal(prompt, { source: 'activity', title: activity, category: activity });
+    }
+
+    async function pickPromptForActivity(activity) {
+      const sprint = USER.track_id || 'interview';
+      const questions = CACHED_BANK[`${sprint}-${USER.current_day}`] || [];
+      if (activity === 'Blind Rep' || activity === 'Daily Challenge' || activity === 'Interview Simulator') {
+        const q = questions[Math.floor(Math.random() * questions.length)];
+        return q ? q.text : 'Tell me about yourself.';
       }
+      const q = questions[0];
+      return q ? q.text : 'Tell me about yourself.';
+    }
 
-      const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
-      const t = USER.trial;
-      const m = t.analysis;
-
-      document.getElementById('dashSubtitle').textContent = allReps.length
-        ? `Based on ${allReps.length} rep${allReps.length === 1 ? '' : 's'}`
-        : 'Your performance across reps';
-
-      // Analysis summary card
-      const execHtml = (m && m.executiveVersion)
-        ? `<div class="ya-executive">"${escapeHtml(m.executiveVersion)}"</div>`
-        : `
-            <div class="ya-executive-locked">
-              <div class="ya-executive-blurred">Your executive version will appear here — a rewritten, high-impact answer you can borrow from.</div>
-              <div class="ya-executive-overlay">
-                <span class="lock-pill sprint">🔒 Executive Version — Unlocked with Sprint</span>
-                <button class="ya-executive-cta" onclick="goToPaywall('sprint')">Unlock →</button>
-              </div>
-            </div>
-          `;
-
-      const scoreVal = (m && m.overallScore != null) ? m.overallScore : '—';
-      const patternName = (m && m.patternName) ? m.patternName : '—';
-      const patternDesc = (m && m.patternDesc) ? m.patternDesc : '—';
-      const gotLost = [
-        (m && m.gapGotLost) || 'Your credibility and authority in the first 10 seconds',
-        (m && m.gapUnspoken) || 'Between your intent to sound confident and how you actually land'
-      ];
-      const wins = (m && m.oneThingToChange)
-        ? [m.oneThingToChange, 'Front-load your result', 'Add a clear structure marker']
-        : ['Lead with the point', 'Cut filler words', 'Add a clear structure marker'];
-
-      document.getElementById('yourAnalysisCard').innerHTML = `
-        <div class="ya-header">
-          <span class="ya-badge">✦ YOUR ANALYSIS</span>
-          <span class="ya-sub">Here's what we found in your latest response</span>
-        </div>
-        <div class="ya-score-block">
-          <div class="ya-score">
-            <span class="ya-score-value">${scoreVal}</span>
-            <span class="ya-score-denom">/10</span>
-          </div>
-          <div class="ya-score-label">Overall Score</div>
-        </div>
-        <div class="ya-grid">
-          <div class="ya-box">
-            <div class="ya-box-label">What I Noticed</div>
-            <div class="ya-pattern-name">${escapeHtml(patternName)}</div>
-            <div class="ya-pattern-desc">${escapeHtml(patternDesc)}</div>
-          </div>
-          <div class="ya-box">
-            <div class="ya-box-label">What Got Lost</div>
-            <ul class="ya-list">
-              ${gotLost.map(g => `<li>${escapeHtml(g)}</li>`).join('')}
-            </ul>
-          </div>
-          <div class="ya-box">
-            <div class="ya-box-label">Quick Wins</div>
-            <ul class="ya-list wins">
-              ${wins.map(w => `<li>${escapeHtml(w)}</li>`).join('')}
-            </ul>
-          </div>
-          <div class="ya-box">
-            <div class="ya-box-label">Your Executive Version</div>
-            ${execHtml}
-          </div>
-        </div>
-        <div class="ya-footer">
-          <button class="ya-btn" onclick="switchView('today')">🎙 Try Again in Today →</button>
-        </div>
+    function openContentModal(title) {
+      const content = {
+        'The Pyramid Principle': '<p><strong>Core idea:</strong> Lead with your conclusion first, then support it with 3 key pillars, then back each pillar with evidence.</p><p><strong>Example:</strong> "We should delay the launch by 2 weeks. Three reasons: QA needs more time, two critical bugs remain open, the marketing campaign isn\'t ready."</p>',
+        'BLUF Method': '<p><strong>Core idea:</strong> Bottom Line Up Front. Say the point, then explain.</p><p><strong>Example:</strong> "I recommend Option B. Here\'s why in 30 seconds..."</p>',
+        'The STAR Method': '<p><strong>S — Situation:</strong> Set the scene briefly.</p><p><strong>T — Task:</strong> What was your responsibility?</p><p><strong>A — Action:</strong> What specific steps did YOU take?</p><p><strong>R — Result:</strong> What was the measurable outcome?</p>',
+        'The PSO Framework': '<p><strong>P — Problem:</strong> What\'s the problem in one sentence?</p><p><strong>S — Solution:</strong> What do you recommend?</p><p><strong>O — Outcome:</strong> What will change if we do this?</p>'
+      };
+      document.getElementById('usModalContent').innerHTML = `
+        <h2>${escapeHtml(title)}</h2>
+        <p class="us-modal-sub">3-minute micro-lesson</p>
+        <div style="font-size:14px;line-height:1.65;color:var(--text-main);">${content[title] || '<p>Content coming soon.</p>'}</div>
       `;
-
-      renderProgressMetricsFromReps();
-      renderFeedbackFromReps();
-      renderRepHistory(allReps);
+      document.getElementById('usModal').classList.add('is-visible');
     }
 
-    function renderProgressMetricsFromReps() {
-      const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
-
-      let latest = null;
-      if (allReps.length) {
-        // Prefer the latest rep with a real clarity value
-        for (let i = allReps.length - 1; i >= 0; i--) {
-          if (allReps[i].clarity != null) { latest = allReps[i]; break; }
-        }
-      }
-      if (!latest && !USER.is_paid && USER.trial && USER.trial.analysis) {
-        latest = USER.trial.analysis;
-      }
-      if (!latest) { setDashEmpty(); return; }
-
-      const fmt = (v, suffix = '') => (v == null ? '—' : `${v}${suffix}`);
-
-      document.getElementById('metricTTP').textContent = fmt(latest.timeToPoint, 's');
-      document.getElementById('metricTTPSub').textContent = allReps.length > 1 ? 'Tracking across reps' : 'Keep practicing to lower this';
-
-      document.getElementById('metricClarity').textContent = fmt(latest.clarity, ' / 100');
-      document.getElementById('metricClaritySub').textContent = (latest.clarity != null && latest.clarity >= 80) ? '🟢 Strong' : '🟡 Getting started';
-
-      document.getElementById('metricStructure').textContent = fmt(latest.structure, ' / 100');
-      document.getElementById('metricStructureSub').textContent = 'Practice BLUF framing';
-
-      document.getElementById('metricImpact').textContent = fmt(latest.impact, ' / 100');
-      document.getElementById('metricImpactSub').textContent = 'Quantify outcomes';
-
-      document.getElementById('dashSnrValue').textContent = fmt(latest.clarity, '%');
-      document.getElementById('dashSnrSignal').style.width = `${latest.clarity ?? 0}%`;
-      document.getElementById('dashSnrNoise').style.width = `${latest.clarity != null ? 100 - latest.clarity : 0}%`;
+    function submitReflection() {
+      const ta = document.getElementById('reflectionInput');
+      const text = ta?.value?.trim();
+      if (!text || text.length < 10) return alert('Please write at least 10 characters.');
+      ta.value = '';
+      document.getElementById('reflCount').textContent = '0';
+      alert('✅ Reflection saved.');
     }
 
-    function setDashEmpty() {
-      ['metricTTP','metricClarity','metricStructure','metricImpact'].forEach(id => {
-        document.getElementById(id).textContent = '—';
-      });
-      document.getElementById('dashSnrValue').textContent = '—';
-      document.getElementById('dashSnrSignal').style.width = '0%';
-      document.getElementById('dashSnrNoise').style.width = '0%';
-    }
-
-    function renderFeedbackFromReps() {
-      const m = (USER.trial && USER.trial.analysis) || {};
-
-      const strengths = [
-        m.wordsPerMinute ? `Steady pacing at ${m.wordsPerMinute} WPM` : 'Clear opening',
-        m.fillerTotal === 0 ? 'No filler words detected' : 'Limited hedging language',
-        'You answered in your own words'
-      ];
-      const improvements = [
-        m.fillerPct != null ? `Reduce filler words (${m.fillerPct}% — target < 3%)` : 'Reduce filler words',
-        'Quantify your outcome (add a % or figure)',
-        'Add a 2-second pause after your conclusion'
-      ];
-
-      document.getElementById('dashWellList').innerHTML = strengths.map(s => `<li>${escapeHtml(s)}</li>`).join('');
-      document.getElementById('dashImproveList').innerHTML = improvements.map(s => `<li>${escapeHtml(s)}</li>`).join('');
-    }
-
-    function renderRepHistory(allReps) {
-      const list = document.getElementById('repHistoryList');
-      const count = document.getElementById('repHistoryCount');
-      count.textContent = `${allReps.length} rep${allReps.length === 1 ? '' : 's'}`;
-      if (!allReps.length) {
-        list.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">No reps yet — start on Today.</div>';
-        return;
-      }
-      list.innerHTML = allReps.slice().reverse().map((r) => {
-        const label = r.fromLanding ? 'From landing page' : (r.activity ? r.activity : 'Practice rep');
-        const time = r.timestamp ? new Date(r.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
-        const fmt = (v) => v == null ? '—' : `${v}%`;
-        return `
-          <div class="rep-log-item">
-            <span>${escapeHtml(label)}${time ? ' · ' + escapeHtml(time) : ''}</span>
-            <span class="rl-score">Clarity ${fmt(r.clarity)} · Structure ${fmt(r.structure)} · Impact ${fmt(r.impact)}</span>
-          </div>
-        `;
-      }).join('');
+    function closeModal() {
+      document.getElementById('usModal').classList.remove('is-visible');
     }
 
     // ============================================================
-    // RENDER HELPERS
-    // ============================================================
-    function renderHeader() {
-      document.getElementById('userNameEl').textContent = USER.name;
-      document.getElementById('userAvatarEl').textContent = (USER.name || 'A').charAt(0).toUpperCase();
-      document.getElementById('planBadge').textContent = PLAN_LABEL[USER.plan] || 'Trial';
-      document.getElementById('planBadge').classList.toggle('trial', USER.plan === 'trial');
-      document.getElementById('headerTrackBadge').textContent = USER.plan === 'trial' ? 'Trial' : (USER.plan === 'pass' ? 'Practice Pass' : 'Sprint Pass');
-    }
-
-    function renderProfile() {
-      if (USER.stage) document.getElementById('profileStage').innerHTML = `<option selected>${formatStage(USER.stage)}</option>`;
-      if (USER.function) document.getElementById('profileFunction').innerHTML = `<option selected>${formatFunction(USER.function)}</option>`;
-    }
-
-    function renderTodayProgress() {
-      const total = state.q1Trials.length + state.q2Trials.length;
-      document.getElementById('tsTotalReps').textContent = `${total} / 4`;
-      document.getElementById('tsTimeSpent').textContent = `${Math.max(1, total)} min`;
-      const all = [...state.q1Trials, ...state.q2Trials];
-      const validClarity = all.map(t => t.clarity).filter(v => v != null);
-      document.getElementById('tsBestSnr').textContent = validClarity.length ? `${Math.max(...validClarity)}%` : '—';
-      const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
-      document.getElementById('tsDrills').textContent = `${drills} / 2`;
-      document.getElementById('dayProgressFill').style.width = `${(drills / 2) * 100}%`;
-      if (USER.is_paid) {
-        document.getElementById('dayCounter').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
-      } else {
-        const used = countTrials(USER.trial);
-        const cap = USER.trial.cap * 2;
-        document.getElementById('dayCounter').textContent = `${used} / ${cap} trials`;
-      }
-      const taMsg = document.getElementById('taMessage');
-      if (taMsg) {
-        if (USER.is_paid) {
-          taMsg.textContent = 'Complete today\'s reps to build your streak.';
-        } else {
-          const remaining = Math.max(0, USER.trial.cap * 2 - total);
-          taMsg.textContent = remaining > 0
-            ? `You have ${remaining} free trial${remaining === 1 ? '' : 's'} left.`
-            : 'Trial cap reached — upgrade to continue.';
-        }
-      }
-    }
-
-    // ============================================================
-    // OTP LOGIN FLOW
-    // ============================================================
-    function openOtpModal() {
-      const old = document.getElementById('otpModal');
-      if (old) old.remove();
-      const modal = document.createElement('div');
-      modal.id = 'otpModal';
-      modal.className = 'us-modal-backdrop is-visible';
-      modal.innerHTML = `
-        <div class="us-modal" style="max-width: 440px;">
-          <button class="us-modal-close" onclick="closeOtpModal()">×</button>
-          <div style="font-size: 10px; color: var(--accent-cyan); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px;">🔑 Sign In</div>
-          <h2 style="font-size: 22px; margin-bottom: 6px;">Enter your email</h2>
-          <p class="us-modal-sub">We'll send a 6-digit code to your inbox.</p>
-          <input type="email" id="otpEmailInput" placeholder="you@example.com"
-            style="width:100%;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-size:15px;background:var(--bg-dark);color:var(--text-main);"
-            onkeydown="if(event.key==='Enter')requestOtp()" />
-          <button id="otpSendBtn" onclick="requestOtp()"
-            style="width:100%;margin-top:16px;padding:14px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;">
-            Send Code →
-          </button>
-          <p style="margin-top:16px;text-align:center;font-size:12px;color:var(--text-muted);">
-            Don't have an account? <a href="${PAYWALL_URL}" style="color:var(--accent-cyan);text-decoration:none;font-weight:600;">Explore Plans →</a>
-          </p>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      setTimeout(() => document.getElementById('otpEmailInput')?.focus(), 100);
-    }
-
-    function closeOtpModal() {
-      const m = document.getElementById('otpModal');
-      if (m) m.remove();
-    }
-
-    async function requestOtp() {
-      const email = document.getElementById('otpEmailInput').value.trim();
-      const btn = document.getElementById('otpSendBtn');
-      if (!email) return alert('Please enter your email.');
-      btn.disabled = true;
-      btn.textContent = 'Sending…';
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/auth/request-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'Failed to send code');
-        openOtpVerifyModal(email);
-      } catch (err) {
-        alert(err.message);
-        btn.disabled = false;
-        btn.textContent = 'Send Code →';
-      }
-    }
-
-    function openOtpVerifyModal(email) {
-      closeOtpModal();
-      const modal = document.createElement('div');
-      modal.id = 'otpVerifyModal';
-      modal.className = 'us-modal-backdrop is-visible';
-      modal.innerHTML = `
-        <div class="us-modal" style="max-width: 440px;">
-          <button class="us-modal-close" onclick="document.getElementById('otpVerifyModal').remove()">×</button>
-          <div style="font-size: 10px; color: var(--accent-cyan); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px;">🔑 Sign In</div>
-          <h2 style="font-size: 22px; margin-bottom: 6px;">Enter the code</h2>
-          <p class="us-modal-sub">Sent to <strong style="color:var(--text-main);">${escapeHtml(email)}</strong></p>
-          <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="otpCodeInput" placeholder="000000"
-            style="width:100%;padding:18px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-size:24px;letter-spacing:12px;text-align:center;font-weight:700;background:var(--bg-dark);color:var(--text-main);font-family:'SF Mono',Menlo,monospace;"
-            onkeydown="if(event.key==='Enter')verifyOtp('${escapeHtml(email)}')" />
-          <button id="otpVerifyBtn" onclick="verifyOtp('${escapeHtml(email)}')"
-            style="width:100%;margin-top:16px;padding:14px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;">
-            Sign In →
-          </button>
-          <p style="margin-top:16px;text-align:center;font-size:12px;color:var(--text-muted);">
-            Didn't get it? <a href="javascript:void(0)" onclick="resendOtp('${escapeHtml(email)}')" style="color:var(--accent-cyan);text-decoration:none;font-weight:600;">Resend code</a>
-          </p>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      setTimeout(() => document.getElementById('otpCodeInput')?.focus(), 100);
-    }
-
-    async function verifyOtp(email) {
-      const otp = document.getElementById('otpCodeInput').value.trim();
-      const btn = document.getElementById('otpVerifyBtn');
-      if (!otp || otp.length !== 6) return alert('Please enter the 6-digit code.');
-      btn.disabled = true;
-      btn.textContent = 'Verifying…';
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/auth/verify-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, otp }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'Invalid code');
-        const url = `${window.location.origin}${window.location.pathname}?session=${encodeURIComponent(data.session_token)}`;
-        window.location.assign(url);
-      } catch (err) {
-        alert(`Login failed: ${err.message}`);
-        btn.disabled = false;
-        btn.textContent = 'Sign In →';
-      }
-    }
-
-    async function resendOtp(email) {
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/auth/request-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'Failed to resend');
-        alert('New code sent. Check your inbox.');
-      } catch (err) {
-        alert(err.message);
-      }
-    }
-
-    function signOut() {
-      localStorage.removeItem('unspoken_user');
-      window.location.href = window.location.pathname;
-    }
-
-    // ============================================================
-    // HELPERS
-    // ============================================================
-    function escapeHtml(s) {
-      if (s == null) return '';
-      return String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-    function formatStage(s) {
-      const m = { student:'Student / Final Year', fresher:'Fresher (0–1 yr)', early:'Early Career (1–5 yrs)', mid:'Mid Career (5–15 yrs)', senior:'Senior / Lead (15+ yrs)' };
-      return m[s] || s || '—';
-    }
-    function formatFunction(f) {
-      const m = { engineering:'Engineering / Data', bpo:'BPO / Customer Support', manufacturing:'Manufacturing / Ops', sales:'Sales / Marketing / BD', finance:'Finance / Accounting', consulting:'Consulting / Strategy', design:'Design / Content / Product', hr:'HR / People', other:'Other' };
-      return m[f] || f || '—';
-    }
-    function formatSprint(s) {
-      const m = { interview:'Interview', gd:'Group Discussion', leadership:'Leadership Presence', storytelling:'Storytelling', charisma:'Charisma' };
-      return m[s] || s || 'Practice';
-    }
-
-    // ============================================================
-    // NAV
+    // NAVIGATION
     // ============================================================
     function toggleSidebar() { document.getElementById('appSidebar').classList.toggle('open'); }
 
@@ -2141,58 +1621,26 @@
       btn.classList.add('active');
     }
 
-    function goToPaywall(type) { window.location.href = PAYWALL_URL; }
-
-    // ============================================================
-    // BOOT HELPERS
-    // ============================================================
-    function showFreshState() {
-      const boot = document.getElementById('bootScreen');
-      boot.classList.remove('hidden');
-      document.getElementById('bootSpinner').classList.add('hidden');
-      document.getElementById('bootTitle').innerHTML = '👋 Welcome to The Unspoken';
-      document.getElementById('bootSub').innerHTML = 'Sign in to continue your practice, or start a free drill.';
-      boot.querySelectorAll('.boot-btn').forEach(b => b.remove());
-
-      const signIn = document.createElement('button');
-      signIn.className = 'boot-btn';
-      signIn.textContent = '🔑 Sign In with Email';
-      signIn.onclick = openOtpModal;
-
-      const fresh = document.createElement('button');
-      fresh.className = 'boot-btn secondary';
-      fresh.style.marginTop = '8px';
-      fresh.textContent = 'Start a Free Drill';
-      fresh.onclick = () => { window.location.href = 'https://theunspoken.co.in'; };
-
-      boot.appendChild(signIn);
-      boot.appendChild(fresh);
+    function signOut() {
+      localStorage.removeItem('unspoken_paid_session');
+      window.location.href = window.location.pathname;
     }
 
-    function showSessionExpired(msg) {
-      const boot = document.getElementById('bootScreen');
-      boot.classList.remove('hidden');
-      document.getElementById('bootSpinner').classList.add('hidden');
-      document.getElementById('bootTitle').innerHTML = '⏱ Session expired';
-      document.getElementById('bootSub').innerHTML = msg || 'This analysis session has already been used.';
-      boot.querySelectorAll('.boot-btn').forEach(b => b.remove());
-
-      const signIn = document.createElement('button');
-      signIn.className = 'boot-btn';
-      signIn.textContent = '🔑 Sign In with Email';
-      signIn.onclick = openOtpModal;
-
-      const fresh = document.createElement('button');
-      fresh.className = 'boot-btn secondary';
-      fresh.style.marginTop = '8px';
-      fresh.textContent = 'Start a New Drill';
-      fresh.onclick = () => { window.location.href = 'https://theunspoken.co.in'; };
-
-      boot.appendChild(signIn);
-      boot.appendChild(fresh);
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    function escapeHtml(s) {
+      if (s == null) return '';
+      return String(s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function formatSprint(s) {
+      const m = { interview:'Interview', gd:'Group Discussion', leadership:'Leadership Presence', storytelling:'Storytelling', charisma:'Charisma' };
+      return m[s] || s || 'Practice';
     }
 
-    console.log('🚀 Product page loaded — trial + paid flows active.');
+    console.log('🚀 Product page loaded — paid flow active.');
   </script>
 </body>
 </html>
