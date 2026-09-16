@@ -813,7 +813,7 @@
     // ============================================================
     // CONFIG
     // ============================================================
-    const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
+    const BACKEND_URL = 'https://unspoken-backend-nqvl.onrender.com';
     const PAYWALL_URL = 'https://theunspoken.co.in/Pricing';
     const TRIAL_CAP_PER_QUESTION = 2;
     const DEFAULT_Q1 = "Tell me about yourself — your background, what you do, and what drives you professionally.";
@@ -843,7 +843,7 @@
 
       if (SESSION_TOKEN) {
         try {
-          const res = await fetch(`${BACKEND_URL}/api/drills/session`, {
+          const res = await fetch(`${BACKEND_URL}/api/trial/session`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
           });
@@ -884,15 +884,16 @@
     // ============================================================
     // BUILD TRIAL USER
     // ============================================================
-    function buildTrialUser(trial) {
-      const analysis = trial.analysis ? normalizeAnalysis(trial.analysis) : null;
-      const answered = trial.answered === 'q2' ? 'q2' : 'q1';
+function buildTrialUser(trial) {
+  const analysis = trial.analysis ? normalizeAnalysis(trial.analysis) : null;
+  const answered = trial.answered === 'q2' ? 'q2' : 'q1';
 
-      return {
-        user_id: trial.user_id || ('trial_' + Date.now()),
-        name: trial.name || 'Guest',
-        email: trial.email || '',
-        stage: trial.stage || 'early',
+  return {
+    user_id: trial.user_id || ('trial_' + Date.now()),
+    name: trial.name || 'Guest',
+    email: trial.email || '',
+    mobile: trial.mobile || '',
+    stage: trial.stage || 'early',
         function: trial.function || null,
         answered,
         q1_text: trial.q1_text || DEFAULT_Q1,
@@ -913,24 +914,27 @@
       const c = data.coaching || {};
       const r = data.before_after_rewrite || {};
 
-      return {
-        // New honest names with fallbacks to the old ones
-        fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
-        pointFirst: m.point_first ?? m.structure ?? null,
-        concreteness: m.concreteness ?? m.impact ?? null,
-        overallScore: m.overall_score ?? null,
-        timeToPoint: s.main_point_delay_seconds ?? null,
-        wordsPerMinute: s.words_per_minute ?? null,
-        fillerTotal: s.filler_words?.total ?? 0,
-        fillerPct: s.filler_words?.percentage ?? 0,
-        patternName: d.pattern_name ?? null,
-        patternDesc: d.pattern_description ?? null,
-        gapGotLost: g.what_got_lost ?? null,
-        gapUnspoken: g.unspoken_gap ?? null,
-        oneThingToChange: c.one_thing_to_change ?? null,
-        executiveVersion: r.executive_version ?? null,
-        transcript: data.transcribed_text ?? ''
-      };
+return {
+  fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
+  pointFirst: m.point_first ?? m.structure ?? null,
+  concreteness: m.concreteness ?? m.impact ?? null,
+  overallScore: m.overall_score ?? null,
+  timeToPoint: s.main_point_delay_seconds ?? null,
+  wordsPerMinute: s.words_per_minute ?? null,
+  fillerTotal: s.filler_words?.total ?? 0,
+  fillerPct: s.filler_words?.percentage ?? 0,
+  snr: s.signal_to_noise_ratio ?? null,
+  vocabUnique: s.vocabulary?.unique ?? null,
+  vocabTotal: s.vocabulary?.total ?? null,
+  vocabRichness: s.vocabulary?.richness ?? null,
+  patternName: d.pattern_name ?? null,
+  patternDesc: d.pattern_description ?? null,
+  gapGotLost: g.what_got_lost ?? null,
+  gapUnspoken: g.unspoken_gap ?? null,
+  oneThingToChange: c.one_thing_to_change ?? null,
+  executiveVersion: r.executive_version ?? null,
+  transcript: data.transcribed_text ?? ''
+};
     }
 
     // ============================================================
@@ -1078,17 +1082,9 @@
         ? [m.oneThingToChange, 'Front-load your result', 'Add a clear structure marker']
         : ['Lead with the point', 'Cut filler words', 'Add a clear structure marker'];
 
-      const execHtml = (m && m.executiveVersion)
-        ? `<div class="ya-executive">"${escapeHtml(m.executiveVersion)}"</div>`
-        : `
-            <div class="ya-executive-locked">
-              <div class="ya-executive-blurred">Your executive version will appear here — a rewritten, high-impact answer you can borrow from.</div>
-              <div class="ya-executive-overlay">
-                <span class="lock-pill sprint">🔒 Executive Version — Unlocked with Sprint</span>
-                <button class="ya-executive-cta" onclick="goToPaywall('sprint')">Unlock →</button>
-              </div>
-            </div>
-          `;
+const execHtml = (m && m.executiveVersion)
+  ? `<div class="ya-executive">"${escapeHtml(m.executiveVersion)}"</div>`
+  : `<div class="ya-executive" style="color:var(--text-muted); font-style:normal;">Your executive version will appear here once we have a transcript to rewrite.</div>`;
 
       document.getElementById('yourAnalysisCard').innerHTML = `
         <div class="ya-header">
@@ -1119,6 +1115,34 @@
                 : '<span class="ya-transcript-empty">No speech detected — try recording again with your microphone unmuted.</span>'
             }</div>
           </div>
+
+<div class="ya-box">
+  <div class="ya-box-label">Signal & Delivery</div>
+  <div class="ya-metrics-mini">
+    <div class="ya-metric-row">
+      <span class="ya-metric-label">SNR</span>
+      <div class="ya-metric-bar"><div class="ya-metric-fill" style="width:${(m && m.snr) ?? 0}%"></div></div>
+      <span class="ya-metric-value">${(m && m.snr) ?? '—'}</span>
+    </div>
+    <div class="ya-metric-row">
+      <span class="ya-metric-label">WPM</span>
+      <div class="ya-metric-bar"><div class="ya-metric-fill" style="width:${m && m.wordsPerMinute ? Math.min(100, (m.wordsPerMinute / 180) * 100) : 0}%"></div></div>
+      <span class="ya-metric-value">${(m && m.wordsPerMinute) ?? '—'}</span>
+    </div>
+    <div class="ya-metric-row">
+      <span class="ya-metric-label">Fillers</span>
+      <div class="ya-metric-bar"><div class="ya-metric-fill" style="width:${m && m.fillerPct != null ? Math.min(100, m.fillerPct * 10) : 0}%"></div></div>
+      <span class="ya-metric-value">${(m && m.fillerTotal) ?? '—'}</span>
+    </div>
+    <div class="ya-metric-row">
+      <span class="ya-metric-label">Vocab</span>
+      <div class="ya-metric-bar"><div class="ya-metric-fill" style="width:${m && m.vocabRichness != null ? (m.vocabRichness * 100) : 0}%"></div></div>
+      <span class="ya-metric-value">${(m && m.vocabUnique) ?? '—'}</span>
+    </div>
+  </div>
+</div>
+
+          
           <div class="ya-box">
             <div class="ya-box-label">Your Executive Version</div>
             ${execHtml}
@@ -1417,7 +1441,7 @@
         formData.append('user_id', USER.user_id || USER.email || '');
         formData.append('trial', 'true');
 
-        const uploadRes = await fetch(`${BACKEND_URL}/api/drills/upload`, { method: 'POST', body: formData });
+        const uploadRes = await fetch(`${BACKEND_URL}/api/trial/upload`, { method: 'POST', body: formData });
         if (!uploadRes.ok) {
           const err = await uploadRes.json().catch(() => ({}));
           throw new Error(err.error || err.detail || `Upload failed (${uploadRes.status})`);
@@ -1425,18 +1449,19 @@
         const { drill_id } = await uploadRes.json();
 
         // 2. Capture
-        const captureRes = await fetch(`${BACKEND_URL}/api/drills/capture`, {
+        const captureRes = await fetch(`${BACKEND_URL}/api/trial/capture`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            drill_id,
-            name: USER.name,
-            email: USER.email,
-            stage: USER.stage || 'early',
-            question_type: activeRecording.meta.category || 'practice',
-            question_slot: (which === 'q1' || which === 'q2') ? which : null,
-            mode: activeRecording.mode
-          }),
+body: JSON.stringify({
+  drill_id,
+  name: USER.name,
+  email: USER.email,
+  mobile: USER.mobile || '0000000000',
+  stage: USER.stage || 'early',
+  question_type: activeRecording.meta.category || 'practice',
+  question_slot: (which === 'q1' || which === 'q2') ? which : null,
+  mode: activeRecording.mode
+}),
         });
         if (!captureRes.ok) {
           const err = await captureRes.json().catch(() => ({}));
@@ -1446,7 +1471,7 @@
         SESSION_TOKEN = capture.session_token;
 
         // 3. Analyze
-        const analyzeRes = await fetch(`${BACKEND_URL}/api/drills/analyze`, {
+        const analyzeRes = await fetch(`${BACKEND_URL}/api/trial/analyze`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${SESSION_TOKEN}`,
