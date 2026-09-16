@@ -1176,6 +1176,10 @@
         <input type="email" id="gateEmail" placeholder="e.g. arun@example.com" required />
       </div>
       <div>
+  <label for="gateMobile">Mobile</label>
+  <input type="tel" id="gateMobile" placeholder="e.g. 9876543210" pattern="[0-9]{10}" maxlength="10" required />
+</div>
+      <div>
         <label>Where are you in your career?</label>
         <div class="gate-stage-options" id="gateStageOptions">
           <button type="button" class="gate-stage-btn" data-stage="student">🎓 Student</button>
@@ -1394,7 +1398,7 @@
 // ============================================================
 // CONFIG
 // ============================================================
-const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
+const BACKEND_URL = 'https://unspoken-backend-nqvl.onrender.com';
 const PRODUCT_URL = 'https://theunspoken.co.in/Product';
 const TRIAL_URL   = 'https://theunspoken.co.in/trial';
 
@@ -1409,7 +1413,7 @@ const state = {
   rawBlob: null,
   rawText: null,
   rawDuration: 0,
-  gate: { name: '', email: '', stage: null }
+  gate: { name: '', email: '', mobile: '', stage: null }
 };
 
 // Helper: map question type → question_slot
@@ -1714,7 +1718,7 @@ document.querySelectorAll('[data-close]').forEach(el => {
 // ============================================================
 // OTP LOGIN (paid users) — redirects to /Product
 // ============================================================
-const LOGIN_BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
+const LOGIN_BACKEND_URL = 'https://unspoken-backend-nqvl.onrender.com';
 
 document.getElementById('signInBtn').addEventListener('click', e => {
   e.preventDefault();
@@ -1975,13 +1979,14 @@ document.getElementById('gateName').addEventListener('input', e => {
   state.gate.name = e.target.value.trim();
   checkGateReady();
 });
-document.getElementById('gateEmail').addEventListener('input', e => {
-  state.gate.email = e.target.value.trim();
+document.getElementById('gateMobile').addEventListener('input', e => {
+  state.gate.mobile = e.target.value.replace(/\D/g, '').slice(0, 10);
+  e.target.value = state.gate.mobile;
   checkGateReady();
 });
 
 function checkGateReady() {
-  const ready = state.gate.name && state.gate.email && state.gate.stage;
+  const ready = state.gate.name && state.gate.email && state.gate.mobile.length === 10 && state.gate.stage;
   document.getElementById('gateSubmit').disabled = !ready;
 }
 
@@ -1989,8 +1994,12 @@ function checkGateReady() {
 // SUBMIT GATE → UPLOAD → CAPTURE → REDIRECT TO /trial
 // ============================================================
 async function submitGateAndRedirect() {
-  if (!state.gate.name || !state.gate.email || !state.gate.stage) {
+  if (!state.gate.name || !state.gate.email || !state.gate.mobile || !state.gate.stage) {
     alert('Please fill all fields.');
+    return;
+  }
+  if (state.gate.mobile.length !== 10) {
+    alert('Please enter a valid 10-digit mobile number.');
     return;
   }
 
@@ -2015,7 +2024,7 @@ async function submitGateAndRedirect() {
     formData.append('mode', state.currentMode);
     formData.append('duration_seconds', state.rawDuration || 30);
 
-    const uploadRes = await fetch(`${BACKEND_URL}/api/drills/upload`, {
+    const uploadRes = await fetch(`${BACKEND_URL}/api/trial/upload`, {
       method: 'POST',
       body: formData
     });
@@ -2029,13 +2038,14 @@ async function submitGateAndRedirect() {
     // ─── STEP 2: Capture ───
     btn.textContent = 'Preparing your results…';
 
-    const leadRes = await fetch(`${BACKEND_URL}/api/drills/capture`, {
+    const leadRes = await fetch(`${BACKEND_URL}/api/trial/capture`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         drill_id,
         name: state.gate.name,
         email: state.gate.email,
+        mobile: state.gate.mobile,
         stage: state.gate.stage,
         question_type: state.currentQuestionType,
         question_slot: slot,   // ← NEW
