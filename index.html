@@ -2079,13 +2079,31 @@ formData.append('duration_seconds', state.rawDuration || 30);
       const err = await leadRes.json().catch(() => ({}));
       throw new Error(err.error || 'Lead capture failed');
     }
-    const { user_id, session_token } = await leadRes.json();
-    console.log('✅ Session created for user:', user_id);
+const { user_id, session_token } = await leadRes.json();
+console.log('✅ Session created for user:', user_id);
 
-    // ─── STEP 3: Redirect trial user to /trial ───
-    const targetUrl = `${TRIAL_URL}?session=${encodeURIComponent(session_token)}`;
-    console.log('🔀 Redirecting to trial:', targetUrl);
-    window.location.assign(targetUrl);
+// ─── STEP 2.5: Run the analysis ───
+btn.textContent = 'Analyzing your response…';
+
+const analyzeRes = await fetch(`${BACKEND_URL}/api/trial/analyze`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${session_token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ drill_id })
+});
+if (!analyzeRes.ok) {
+  const err = await analyzeRes.json().catch(() => ({}));
+  throw new Error(err.error || err.detail || `Analysis failed (${analyzeRes.status})`);
+}
+const analysisData = await analyzeRes.json();
+console.log('✅ Analysis complete:', analysisData.diagnosis?.pattern_name);
+
+// ─── STEP 3: Redirect trial user to /trial ───
+const targetUrl = `${TRIAL_URL}?session=${encodeURIComponent(session_token)}`;
+console.log('🔀 Redirecting to trial:', targetUrl);
+window.location.assign(targetUrl);
 
   } catch (err) {
     console.error('❌ Flow failed:', err);
