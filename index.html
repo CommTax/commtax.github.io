@@ -2004,12 +2004,14 @@ function checkGateReady() {
 // SUBMIT GATE → UPLOAD → CAPTURE → REDIRECT TO /trial
 // ============================================================
 async function submitGateAndRedirect() {
-  if (!state.gate.name || !state.gate.email || !state.gate.mobile || !state.gate.stage) {
-    alert('Please fill all fields.');
-    return;
-  }
-  if (state.gate.mobile.length !== 10) {
-    alert('Please enter a valid 10-digit mobile number.');
+  // Read directly from the DOM to avoid stale state
+  state.gate.name   = document.getElementById('gateName').value.trim();
+  state.gate.email  = document.getElementById('gateEmail').value.trim();
+  state.gate.mobile = document.getElementById('gateMobile').value.replace(/\D/g, '').slice(0, 10);
+  // stage is set when the user clicks a stage button (already in state.gate.stage)
+
+  if (!state.gate.name || !state.gate.email || state.gate.mobile.length !== 10 || !state.gate.stage) {
+    alert('Please fill all fields correctly.');
     return;
   }
 
