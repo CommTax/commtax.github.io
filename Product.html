@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -874,11 +876,11 @@
           </div>
 
           <div id="sub-daily-challenge" class="sub-activity-panel hidden">
-            <div class="question-card">
+            <div class="question-card" data-activity="Daily Challenge" data-type="voice">
               <div class="qc-label"><span>Today's Global Challenge</span></div>
               <div class="qc-text" style="font-size:15px;">Handling Hostile Pushback</div>
               <div class="qc-meta">Scenario: A senior VP cuts you off mid-presentation and says "This strategy won't scale." Respond concisely in 45 seconds.</div>
-              <button class="ac-start-cta" style="margin-top:12px;" onclick="startActivityFromCard(this.closest('.question-card'))" data-activity="Daily Challenge" data-type="voice">
+              <button class="ac-start-cta" style="margin-top:12px;" onclick="startActivityFromCard(this.closest('.question-card'))">
                 <i data-lucide="play"></i> Start Now
               </button>
             </div>
@@ -904,11 +906,11 @@
           </div>
 
           <div id="sub-simulator" class="sub-activity-panel hidden">
-            <div class="question-card" style="border-color: var(--accent-purple);">
+            <div class="question-card" style="border-color: var(--accent-purple);" data-activity="Interview Simulator" data-type="voice">
               <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
               <div class="qc-text" style="font-size:18px;">Full 5-Question End-to-End Mock Interview</div>
               <div class="qc-meta">Simulate a 15-minute high-stakes executive panel interview with dynamic follow-ups and comprehensive debrief.</div>
-              <button class="ac-start-cta" style="margin-top:14px;" onclick="startActivityFromCard(this.closest('.question-card'))" data-activity="Interview Simulator" data-type="voice">
+              <button class="ac-start-cta" style="margin-top:14px;" onclick="startActivityFromCard(this.closest('.question-card'))">
                 <i data-lucide="play"></i> Start Now
               </button>
             </div>
@@ -1237,11 +1239,6 @@
   <div class="confetti-layer" id="confettiLayer"></div>
 
   <script>
-    // placeholder — replaced by Message 3
-  </script>
-</body>
-
-  <script>
     // ============================================================
     // CONFIG
     // ============================================================
@@ -1249,12 +1246,16 @@
     const PAYWALL_URL = 'https://theunspoken.co.in/Pricing';
     const PLAN_LABEL = { sprint: 'Sprint Pass', pass: 'Practice Pass' };
     const CAP_PER_QUESTION = 2;
+    const VOICE_MAX_SECONDS = 30;
+    const TEXT_MAX_WORDS = 300;
 
     // ============================================================
     // LUCIDE HELPER
     // ============================================================
     function renderIcons() {
-      if (window.lucide) lucide.createIcons();
+      if (window.lucide && typeof lucide.createIcons === 'function') {
+        try { lucide.createIcons(); } catch (e) { /* no-op */ }
+      }
     }
 
     // ============================================================
@@ -1674,8 +1675,36 @@
     // ============================================================
     document.addEventListener('DOMContentLoaded', () => {
       renderIcons();
+      wireGlobalListeners();
       bootstrap();
     });
+
+    function wireGlobalListeners() {
+      // Reflection journal character counter
+      const refl = document.getElementById('reflectionInput');
+      if (refl) {
+        refl.addEventListener('input', (e) => {
+          const counter = document.getElementById('reflCount');
+          if (counter) counter.textContent = String(e.target.value.length);
+        });
+      }
+
+      // Close modal on backdrop click
+      const modal = document.getElementById('usModal');
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeModal();
+        });
+      }
+
+      // Close sidebar on outside click (mobile)
+      document.addEventListener('click', (e) => {
+        const sidebar = document.getElementById('appSidebar');
+        const toggle = e.target.closest('.menu-toggle');
+        if (!sidebar || !sidebar.classList.contains('open') || toggle) return;
+        if (!sidebar.contains(e.target)) sidebar.classList.remove('open');
+      });
+    }
 
     async function bootstrap() {
       const params = new URLSearchParams(window.location.search);
@@ -1728,7 +1757,7 @@
         email: data.email,
         name: data.name || 'Member',
         plan: data.plan || 'sprint',
-        track_id: data.sprint || 'interview',
+        track_id: data.sprint || data.track_id || 'interview',
         current_day: data.current_day || 1,
         total_days: data.total_days || 28,
         is_paid: true,
@@ -1830,6 +1859,11 @@
     // ============================================================
     // LOAD QUESTIONS
     // ============================================================
+    const FALLBACK_QUESTIONS = [
+      { text: 'Tell me about yourself.', focus: 'Concise self-intro', target_seconds: 60, difficulty: 'easy' },
+      { text: 'Walk me through a project you\'re proud of.', focus: 'Structured storytelling', target_seconds: 90, difficulty: 'medium' }
+    ];
+
     async function loadQuestionsForToday() {
       const sprint = USER.track_id || 'interview';
       const day = USER.current_day || 1;
@@ -1849,10 +1883,12 @@
           console.warn('loadQuestionsForToday failed:', e);
         }
       }
-      if (questions && questions.length) {
-        state.questions.q1 = questions[0];
-        state.questions.q2 = questions[1] || questions[0];
+      if (!questions || !questions.length) {
+        questions = FALLBACK_QUESTIONS;
+        CACHED_BANK[cacheKey] = questions;
       }
+      state.questions.q1 = questions[0];
+      state.questions.q2 = questions[1] || questions[0];
     }
 
     // ============================================================
@@ -1928,9 +1964,12 @@
       document.getElementById(`${which}BestSnr`).textContent = best != null ? `Best filler discipline: ${best}%` : 'Best score: —';
 
       const btn = document.getElementById(`${which}RepBtn`);
-      btn.innerHTML = `<i data-lucide="mic"></i> Start Trial ${trials.length + 1}`;
-      btn.disabled = false;
-      btn.onclick = () => startRep(which);
+      const capReached = trials.length >= CAP_PER_QUESTION;
+      btn.innerHTML = capReached
+        ? `<i data-lucide="check"></i> Cap reached`
+        : `<i data-lucide="mic"></i> Start Trial ${trials.length + 1}`;
+      btn.disabled = capReached;
+      btn.onclick = () => { if (!capReached) startRep(which); };
 
       document.getElementById(`${which}RepsLog`).innerHTML = trials.map((tr, i) => `
         <div class="rep-log-item">
@@ -2188,7 +2227,7 @@
     function renderBitesTabs() {
       const tabs = document.getElementById('bitesCatTabs');
       if (!tabs) return;
-      tabs.innerHTML = Object.entries(BITES_LIBRARY).map(([key, cat], idx) => `
+      tabs.innerHTML = Object.entries(BITES_LIBRARY).map(([key, cat]) => `
         <button class="bites-cat-btn ${key === activeBitesCategory ? 'active' : ''}" onclick="switchBitesCategory('${key}', this)">
           <i data-lucide="${cat.icon}"></i> ${escapeHtml(cat.label)}
         </button>
@@ -2199,7 +2238,7 @@
     function switchBitesCategory(cat, btn) {
       activeBitesCategory = cat;
       document.querySelectorAll('.bites-cat-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
       renderBitesGrid();
     }
 
@@ -2294,7 +2333,8 @@
         role: 'obSceneRole',
         celebrate: 'obSceneCelebrate'
       };
-      document.getElementById(map[step]).classList.remove('hidden');
+      const el = document.getElementById(map[step]);
+      if (el) el.classList.remove('hidden');
       renderIcons();
     }
 
@@ -2345,6 +2385,10 @@
       btn.classList.add('selected');
       OB.role = btn.dataset.value;
 
+      // Advance to celebrate immediately; save in background
+      obGoToStep('celebrate');
+      obLaunchConfetti();
+
       try {
         const res = await fetch(`${BACKEND_URL}/api/paid/profile`, {
           method: 'POST',
@@ -2370,15 +2414,11 @@
       } catch (e) {
         console.warn('Profile save error:', e);
       }
-
-      setTimeout(() => {
-        obGoToStep('celebrate');
-        obLaunchConfetti();
-      }, 420);
     }
 
     function obLaunchConfetti() {
       const layer = document.getElementById('confettiLayer');
+      if (!layer) return;
       layer.innerHTML = '';
       const colors = ['#38BDF8','#8B5CF6','#F59E0B','#10B981','#EF4444','#F9FAFB'];
       const count = 90;
@@ -2421,11 +2461,18 @@
     }
 
     function openRecorderModal(promptText, opts = {}) {
+      // Reset recording state
       activeRecording.meta = opts || {};
       activeRecording.rawBlob = null;
       activeRecording.rawText = null;
       activeRecording.seconds = 0;
       activeRecording.mode = 'voice';
+      activeRecording.isRecording = false;
+      activeRecording.chunks = [];
+      if (activeRecording.timerInterval) {
+        clearInterval(activeRecording.timerInterval);
+        activeRecording.timerInterval = null;
+      }
 
       let qText;
       if (promptText === 'q1' || promptText === 'q2') {
@@ -2470,14 +2517,14 @@
               <span id="recTimer" style="font-size:15px;font-weight:700;min-width:50px;">0:00</span>
               <span id="recStatus" style="font-size:12px;color:var(--text-muted);flex:1;">Ready to record</span>
             </div>
-            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:10px;">Voice is capped at 30 seconds</div>
-            <button id="recVoiceSubmit" onclick="submitRepToBackend()" style="display:none;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
+            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:10px;">Voice is capped at ${VOICE_MAX_SECONDS} seconds</div>
+            <button id="recVoiceSubmit" onclick="submitRepToBackend()" style="display:none;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;align-items:center;justify-content:center;gap:8px;">
               Submit My Response <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
             </button>
           </div>
           <div id="recTextPane" style="display:none;">
-            <textarea id="recTextInput" placeholder="Type your response here (300 words max)..." style="width:100%;min-height:120px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
-            <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="recWordCount">0</span> / 300 words</div>
+            <textarea id="recTextInput" placeholder="Type your response here (${TEXT_MAX_WORDS} words max)..." style="width:100%;min-height:120px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
+            <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="recWordCount">0</span> / ${TEXT_MAX_WORDS} words</div>
             <button id="recTextSubmit" onclick="submitRepToBackend()" disabled style="margin-top:12px;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;opacity:0.5;font-family:inherit;">
               Submit My Response →
             </button>
@@ -2494,8 +2541,8 @@
           const words = val.trim() ? val.trim().split(/\s+/).length : 0;
           const wc = document.getElementById('recWordCount');
           const btn = document.getElementById('recTextSubmit');
-          if (wc) { wc.textContent = words; wc.style.color = words > 300 ? '#EF4444' : ''; }
-          const valid = val.length >= 10 && words <= 300;
+          if (wc) { wc.textContent = words; wc.style.color = words > TEXT_MAX_WORDS ? '#EF4444' : ''; }
+          const valid = val.length >= 10 && words <= TEXT_MAX_WORDS;
           btn.disabled = !valid;
           btn.style.opacity = valid ? '1' : '0.5';
         });
@@ -2505,7 +2552,9 @@
     function closeRecorderModal() {
       const modal = document.getElementById('recorderModal');
       if (modal) modal.remove();
-      if (activeRecording.mediaRecorder && activeRecording.mediaRecorder.state !== 'inactive') activeRecording.mediaRecorder.stop();
+      if (activeRecording.mediaRecorder && activeRecording.mediaRecorder.state !== 'inactive') {
+        try { activeRecording.mediaRecorder.stop(); } catch (e) {}
+      }
       if (activeRecording.timerInterval) clearInterval(activeRecording.timerInterval);
       activeRecording.isRecording = false;
       activeRecording.seconds = 0;
@@ -2566,7 +2615,7 @@
         activeRecording.timerInterval = setInterval(() => {
           activeRecording.seconds++;
           updateRecTimer();
-          if (activeRecording.seconds >= 30) stopRecording();
+          if (activeRecording.seconds >= VOICE_MAX_SECONDS) stopRecording();
         }, 1000);
       } catch (err) {
         console.error('Mic error:', err);
@@ -2592,15 +2641,15 @@
       const status = document.getElementById('recStatus');
       if (t) t.textContent = `${m}:${s.toString().padStart(2, '0')}`;
 
-      if (activeRecording.seconds >= 30) {
+      if (activeRecording.seconds >= VOICE_MAX_SECONDS) {
         if (t) t.style.color = '#EF4444';
         if (status) status.textContent = 'Time up — stopping';
       } else if (activeRecording.seconds >= 25) {
         if (t) t.style.color = '#EF4444';
-        if (status) status.textContent = `${30 - activeRecording.seconds}s left`;
+        if (status) status.textContent = `${VOICE_MAX_SECONDS - activeRecording.seconds}s left`;
       } else if (activeRecording.seconds >= 20) {
         if (t) t.style.color = '#F59E0B';
-        if (status) status.textContent = `${30 - activeRecording.seconds}s left`;
+        if (status) status.textContent = `${VOICE_MAX_SECONDS - activeRecording.seconds}s left`;
       }
     }
 
@@ -2612,15 +2661,25 @@
       const voiceBtn = document.getElementById('recVoiceSubmit');
       const textBtn = document.getElementById('recTextSubmit');
 
-      if (activeRecording.mode === 'voice' && !activeRecording.rawBlob) return alert('Please record first.');
-      if (activeRecording.mode === 'voice' && activeRecording.seconds > 30) {
-        return alert('Voice responses are capped at 30 seconds. Please re-record.');
-      }
-      if (activeRecording.mode === 'text') {
-        activeRecording.rawText = document.getElementById('recTextInput').value.trim();
-        if (activeRecording.rawText.length < 10) return alert('Please write at least 10 characters.');
-        const words = activeRecording.rawText.split(/\s+/).length;
-        if (words > 300) return alert(`Text responses are capped at 300 words. You have ${words}. Please trim.`);
+      // Capture metadata BEFORE any modal close resets it
+      const repMeta = {
+        target: which,
+        activityTitle: activeRecording.meta.title || null,
+        activityCategory: activeRecording.meta.category || null,
+        mode: activeRecording.mode,
+        seconds: activeRecording.seconds,
+        rawBlob: activeRecording.rawBlob,
+        rawText: activeRecording.rawText,
+        question: activeRecording.question
+      };
+
+      if (repMeta.mode === 'voice' && !repMeta.rawBlob) return alert('Please record first.');
+      if (repMeta.mode === 'text') {
+        const ta = document.getElementById('recTextInput');
+        repMeta.rawText = ta ? ta.value.trim() : '';
+        if (repMeta.rawText.length < 10) return alert('Please write at least 10 characters.');
+        const words = repMeta.rawText.split(/\s+/).length;
+        if (words > TEXT_MAX_WORDS) return alert(`Text responses are capped at ${TEXT_MAX_WORDS} words. You have ${words}. Please trim.`);
       }
 
       if (voiceBtn) { voiceBtn.disabled = true; voiceBtn.textContent = 'Analyzing…'; }
@@ -2632,24 +2691,21 @@
         const slot = isQ1 ? 'q1' : isQ2 ? 'q2' : '';
         const qtype = isQ1 ? 'intro' : isQ2 ? 'project' : 'practice';
 
-        const promptEl = isQ1 ? document.getElementById('q1Text') : isQ2 ? document.getElementById('q2Text') : null;
-        const promptText = promptEl
-          ? promptEl.textContent.replace(/^["“”]|["“”]$/g, '').trim()
-          : (activeRecording.question || activeRecording.meta.category || 'Practice rep');
+        const promptText = stripQuotes(repMeta.question || '');
 
         const formData = new FormData();
-        if (activeRecording.mode === 'voice' && activeRecording.rawBlob) {
-          formData.append('audio', activeRecording.rawBlob, 'recording.webm');
+        if (repMeta.mode === 'voice' && repMeta.rawBlob) {
+          formData.append('audio', repMeta.rawBlob, 'recording.webm');
         } else {
-          formData.append('text', activeRecording.rawText);
+          formData.append('text', repMeta.rawText);
         }
         formData.append('question_type', qtype);
         formData.append('question_slot', slot);
         formData.append('question_prompt', promptText);
-        formData.append('mode', activeRecording.mode);
-        formData.append('duration_seconds', activeRecording.mode === 'voice'
-          ? activeRecording.seconds
-          : Math.max(10, Math.round((activeRecording.rawText || '').split(/\s+/).length / 2.5)));
+        formData.append('mode', repMeta.mode);
+        formData.append('duration_seconds', repMeta.mode === 'voice'
+          ? repMeta.seconds
+          : Math.max(10, Math.round((repMeta.rawText || '').split(/\s+/).length / 2.5)));
 
         const uploadRes = await fetch(`${BACKEND_URL}/api/paid/upload`, {
           method: 'POST',
@@ -2693,7 +2749,7 @@
           timeToPoint: metrics.timeToPoint,
           transcript: metrics.transcript,
           drillId: drill_id,
-          activity: activeRecording.meta.title || null,
+          activity: repMeta.activityTitle,
           timestamp: new Date().toISOString(),
           full: rawAnalysis
         };
@@ -2708,7 +2764,7 @@
         renderProgressView();
         closeRecorderModal();
         setTimeout(() => {
-          const label = activeRecording.meta.title || 'Rep';
+          const label = repMeta.activityTitle || 'Rep';
           alert(`✅ ${label} saved!\n\nFiller discipline: ${metrics.fillerDiscipline ?? '—'}\nPoint-first: ${metrics.pointFirst ?? '—'}\nConcreteness: ${metrics.concreteness ?? '—'}`);
         }, 200);
       } catch (err) {
@@ -2720,6 +2776,11 @@
     }
 
     function startRep(which) {
+      const trials = which === 'q1' ? state.q1Trials : state.q2Trials;
+      if (trials.length >= CAP_PER_QUESTION) {
+        alert('You\'ve reached the trial cap for this question. Try the other question or an activity.');
+        return;
+      }
       openRecorderModal(which);
     }
 
@@ -2727,6 +2788,7 @@
     // ACTIVITIES
     // ============================================================
     async function startActivityFromCard(card) {
+      if (!card) return;
       const activity = card.dataset.activity || card.querySelector('.activity-card-title')?.textContent || 'Practice';
       const type = card.dataset.type || 'voice';
 
@@ -2739,11 +2801,14 @@
 
     async function pickPromptForActivity(activity) {
       const sprint = USER.track_id || 'interview';
-      const questions = CACHED_BANK[`${sprint}-${USER.current_day}`] || [];
-      if (activity === 'Blind Rep' || activity === 'Daily Challenge' || activity === 'Interview Simulator') {
+      const questions = CACHED_BANK[`${sprint}-${USER.current_day}`] || FALLBACK_QUESTIONS;
+      // Activities that should use a random prompt
+      const randomActivities = ['Blind Rep', 'Daily Challenge', 'Interview Simulator'];
+      if (randomActivities.includes(activity)) {
         const q = questions[Math.floor(Math.random() * questions.length)];
         return q ? q.text : 'Tell me about yourself.';
       }
+      // Other activities use the first question of the day
       const q = questions[0];
       return q ? q.text : 'Tell me about yourself.';
     }
@@ -2769,7 +2834,8 @@
       const text = ta?.value?.trim();
       if (!text || text.length < 10) return alert('Please write at least 10 characters.');
       ta.value = '';
-      document.getElementById('reflCount').textContent = '0';
+      const counter = document.getElementById('reflCount');
+      if (counter) counter.textContent = '0';
       alert('✅ Reflection saved.');
     }
 
@@ -2790,6 +2856,7 @@
       if (navMap[key]) document.getElementById(navMap[key]).classList.add('active');
       if (viewMap[key]) document.getElementById(viewMap[key]).classList.add('active-view');
       if (key === 'dash') renderProgressView();
+      if (key === 'activities') { renderBitesTabs(); renderBitesGrid(); }
       if (window.innerWidth <= 900) {
         const sidebar = document.getElementById('appSidebar');
         if (sidebar && sidebar.classList.contains('open')) sidebar.classList.remove('open');
@@ -2799,9 +2866,10 @@
 
     function switchActivitySub(key, btn) {
       document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
       document.querySelectorAll('.sub-activity-panel').forEach(p => p.classList.add('hidden'));
-      document.getElementById(`sub-${key}`).classList.remove('hidden');
+      const panel = document.getElementById(`sub-${key}`);
+      if (panel) panel.classList.remove('hidden');
       if (key === 'bites') {
         renderBitesTabs();
         renderBitesGrid();
@@ -2811,7 +2879,7 @@
 
     function setTimeline(key, btn) {
       document.querySelectorAll('.time-tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
     }
 
     function signOut() {
@@ -2839,6 +2907,5 @@
 
     console.log('🚀 Product page loaded — paid flow + onboarding + Learning Bites active.');
   </script>
-
-
-
+</body>
+</html>
