@@ -1778,38 +1778,16 @@
       // ── Opportunity (from LLM: one_thing_to_change) ────
       const opportunityText = (m && m.oneThingToChange) ? m.oneThingToChange : null;
 
-      // ── Reframe (from LLM: executive_version) ──────────
-      // On free trial: show first line only, blur rest, lock CTA.
-      let reframeHtml = '';
-      const fullReframe = (m && m.executiveVersion) ? m.executiveVersion : null;
-      if (fullReframe) {
-        const firstSentenceEnd = fullReframe.search(/[.!?](\s|$)/);
-        let firstLine, restOfText;
-        if (firstSentenceEnd !== -1) {
-          firstLine = fullReframe.slice(0, firstSentenceEnd + 1).trim();
-          restOfText = fullReframe.slice(firstSentenceEnd + 1).trim();
-        } else {
-          firstLine = fullReframe;
-          restOfText = '';
-        }
-        reframeHtml = `
-          <div class="ya-executive-locked">
-            <div class="ya-executive-blurred">${escapeHtml(firstLine)} ${escapeHtml(restOfText || 'The full rewrite shows you exactly how to lead with your strongest signal and make it stick.')}</div>
-            <div class="ya-executive-overlay">
-              <span class="lock-pill">🔒 Full Reframe</span>
-              <button class="ya-executive-cta" onclick="goToPaywall('sprint')">Upgrade to Unlock</button>
-            </div>
-          </div>
-        `;
-      } else {
-        reframeHtml = `<div class="ya-executive-locked">
-          <div class="ya-executive-blurred">Your personalised reframe will appear here once the analysis completes.</div>
-          <div class="ya-executive-overlay">
-            <span class="lock-pill">🔒 Full Reframe</span>
-            <button class="ya-executive-cta" onclick="goToPaywall('sprint')">Upgrade to Unlock</button>
-          </div>
-        </div>`;
-      }
+// ── Reframe (from LLM: executive_version) ──────────
+// Shown fully to trial users — it demonstrates the transformation
+// and makes them want the practice loop (Rep 2, Rep 3, pressure tests).
+const fullReframe = (m && m.executiveVersion) ? m.executiveVersion : null;
+let reframeHtml = '';
+if (fullReframe) {
+  reframeHtml = `<div class="ya-executive">"${escapeHtml(fullReframe)}"</div>`;
+} else {
+  reframeHtml = `<div class="ya-box-text empty">Your personalised reframe will appear here once the analysis completes.</div>`;
+}
 
       document.getElementById('yourAnalysisCard').innerHTML = `
         <div class="ya-header">
