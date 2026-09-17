@@ -36,7 +36,7 @@
     .icon-lg { width: 20px; height: 20px; stroke-width: 2; }
     .icon-xl { width: 24px; height: 24px; stroke-width: 1.8; }
 
-    /* ── BOOT / LOGIN SCREEN ── */
+    /* ── BOOT SCREEN ── */
     .boot-screen { position: fixed; inset: 0; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; padding: 24px; z-index: 9999; }
     .boot-screen.hidden { display: none; }
     .boot-spinner { width: 52px; height: 52px; border: 3px solid rgba(56, 189, 248, 0.15); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 0.9s linear infinite; }
@@ -69,8 +69,21 @@
     .nav-item:hover { background-color: var(--card-bg); color: #FFF; }
     .nav-item.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
     .nav-item .nav-icon { width: 16px; height: 16px; stroke-width: 2; flex-shrink: 0; }
-    .nav-item.locked { position: relative; opacity: 0.6; }
-    .nav-item.locked::after { content: "🔒"; position: absolute; right: 12px; font-size: 12px; }
+    .nav-item.locked { position: relative; }
+    .nav-item.locked .lock-badge {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--accent-gold);
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
     .sidebar-section { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; }
     .sidebar-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; }
     .field-group { margin-bottom: 8px; }
@@ -84,8 +97,8 @@
     .user-details { display: flex; flex-direction: column; overflow: hidden; }
     .user-name { font-size: 13px; font-weight: 700; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
     .user-role-sub { font-size: 10px; color: var(--text-muted); }
-    .signout-btn { margin-top: 8px; padding: 8px 10px; font-size: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); cursor: pointer; width: 100%; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .signout-btn:hover { border-color: var(--danger); color: var(--danger); }
+    .signout-btn { margin-top: 8px; padding: 8px 10px; font-size: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); cursor: pointer; width: 100%; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
+    .signout-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
     .signout-btn .icon { width: 12px; height: 12px; }
 
     .main-content { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
@@ -198,33 +211,134 @@
     .try-again-bar .ta-btn { padding: 12px 24px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
     .try-again-bar .ta-btn .icon { width: 14px; height: 14px; }
 
-    /* ── BLURRED / LOCKED VIEWS ── */
-    .locked-view {
-      position: relative;
-      filter: blur(6px);
-      opacity: 0.5;
-      pointer-events: none;
-      user-select: none;
-    }
-    .locked-view::after {
-      content: "🔒 Unlock with Sprint or Pass";
+    /* ── ACTIVITIES / DRILLS / SCENARIOS ── */
+    .activity-sub-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
+    .sub-tab-btn { padding: 8px 14px; background-color: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
+    .sub-tab-btn .icon { width: 13px; height: 13px; stroke-width: 2.2; }
+    .sub-tab-btn:hover { border-color: var(--accent-cyan); color: var(--text-main); }
+    .sub-tab-btn.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
+    .sub-activity-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .activity-card { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: transform 0.2s, border-color 0.2s; position: relative; }
+    .activity-card:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
+    .activity-card-title { font-size: 15px; font-weight: 700; }
+    .activity-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .activity-card-tag { font-size: 10px; font-weight: 700; color: var(--accent-purple); text-transform: uppercase; }
+    .ac-start-cta { margin-top: 6px; padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--success), #059669); color: #FFF; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; font-family: inherit; }
+    .ac-start-cta .icon { width: 13px; height: 13px; }
+
+    /* ── BADGES / ACHIEVEMENTS ── */
+    .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+    .badge-item { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .badge-item.locked { opacity: 0.35; }
+    .badge-icon { font-size: 32px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+    .badge-icon .icon { width: 32px; height: 32px; stroke-width: 1.8; color: var(--accent-gold); }
+    .badge-item.locked .icon { color: var(--text-muted); }
+    .badge-name { font-size: 12px; font-weight: 700; }
+    .badge-desc { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── LEARNING BITES ── */
+    .bites-cat-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); margin-bottom: 4px; }
+    .bites-cat-btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-family: inherit; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+    .bites-cat-btn .icon { width: 13px; height: 13px; stroke-width: 2.2; }
+    .bites-cat-btn:hover { border-color: var(--accent-cyan); color: var(--text-main); }
+    .bites-cat-btn.active { background: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
+    .bite-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; transition: transform 0.2s, border-color 0.2s; cursor: pointer; }
+    .bite-card:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
+    .bite-card-title { font-size: 16px; font-weight: 800; color: var(--text-main); }
+    .bite-card-hook { font-size: 12px; font-weight: 700; color: var(--accent-gold); font-style: italic; line-height: 1.5; }
+    .bite-card-desc { font-size: 12.5px; line-height: 1.65; color: var(--text-muted); }
+    .bite-card-cta { margin-top: 4px; font-size: 11px; font-weight: 700; color: var(--accent-cyan); letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 5px; }
+    .bite-card-cta .icon { width: 11px; height: 11px; }
+
+    /* ── COMMUNICATION DRILLS ── */
+    .drills-container { display: flex; flex-direction: column; gap: 28px; }
+    .drill-category { display: flex; flex-direction: column; gap: 14px; }
+    .drill-category-header { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+    .drill-category-header .dc-icon { width: 18px; height: 18px; color: var(--accent-cyan); flex-shrink: 0; }
+    .drill-category-header .dc-title { font-size: 14px; font-weight: 800; letter-spacing: 0.02em; color: var(--text-main); text-transform: uppercase; }
+    .drill-category-header .dc-count { font-size: 10px; font-weight: 700; color: var(--text-muted); background: var(--bg-dark); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 20px; margin-left: auto; }
+    .drill-category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+
+    /* ── LOCK OVERLAY (inside cards) ── */
+    .lock-overlay {
       position: absolute;
       inset: 0;
+      background: rgba(11, 15, 25, 0.82);
+      backdrop-filter: blur(3px);
+      border-radius: 12px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: rgba(11, 15, 25, 0.6);
-      backdrop-filter: blur(2px);
+      gap: 10px;
+      padding: 20px;
+      text-align: center;
+      z-index: 20;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .lock-overlay:hover {
+      background: rgba(11, 15, 25, 0.75);
+    }
+    .lock-overlay .lock-icon-lg {
+      width: 36px;
+      height: 36px;
+      stroke-width: 1.8;
+      color: var(--accent-gold);
+    }
+    .lock-overlay .lock-title {
+      font-size: 14px;
+      font-weight: 800;
       color: var(--text-main);
-      font-size: 16px;
+      letter-spacing: 0.02em;
+    }
+    .lock-overlay .lock-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .lock-overlay .lock-cta {
+      margin-top: 4px;
+      padding: 8px 20px;
+      border-radius: 100px;
+      background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+      color: #fff;
       font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      z-index: 100;
-      border-radius: 12px;
-      pointer-events: none;
+      font-size: 12px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.35);
+      transition: transform 0.2s;
+    }
+    .lock-overlay .lock-cta:hover {
+      transform: translateY(-2px);
+    }
+    .lock-overlay .lock-price {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .lock-overlay .price-pill {
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      border: 1.5px solid var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent-cyan);
+    }
+    .lock-overlay .price-pill.gold {
+      border-color: var(--accent-gold);
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--accent-gold);
     }
 
+    /* ── UNLOCK BANNER (top of locked views) ── */
     .unlock-banner {
       display: flex;
       justify-content: space-between;
@@ -255,6 +369,7 @@
       gap: 8px;
       transition: transform 0.2s;
       white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.35);
     }
     .unlock-banner .unlock-btn:hover {
       transform: translateY(-2px);
@@ -338,23 +453,28 @@
           <div class="nav-item active" id="navToday" onclick="switchView('today')">
             <i data-lucide="house" class="nav-icon"></i> Today
           </div>
-          <div class="nav-item locked" id="navActivities" onclick="redirectToPricing()">
+          <div class="nav-item locked" id="navActivities" onclick="switchView('activities')">
             <i data-lucide="target" class="nav-icon"></i> Activities
+            <span class="lock-badge">PRO</span>
           </div>
           <div class="nav-item" id="navDash" onclick="switchView('dash')">
             <i data-lucide="bar-chart-3" class="nav-icon"></i> Pattern &amp; Progress
           </div>
-          <div class="nav-item locked" id="navRecordings" onclick="redirectToPricing()">
+          <div class="nav-item locked" id="navRecordings" onclick="switchView('recordings')">
             <i data-lucide="mic" class="nav-icon"></i> My Reps
+            <span class="lock-badge">PRO</span>
           </div>
-          <div class="nav-item locked" id="navBadges" onclick="redirectToPricing()">
+          <div class="nav-item locked" id="navBadges" onclick="switchView('badges')">
             <i data-lucide="trophy" class="nav-icon"></i> Achievements
+            <span class="lock-badge">PRO</span>
           </div>
-          <div class="nav-item locked" id="navPillars" onclick="redirectToPricing()">
+          <div class="nav-item locked" id="navPillars" onclick="switchView('pillars')">
             <i data-lucide="landmark" class="nav-icon"></i> Pillars
+            <span class="lock-badge">PRO</span>
           </div>
-          <div class="nav-item locked" id="navLearning" onclick="redirectToPricing()">
+          <div class="nav-item locked" id="navLearning" onclick="switchView('learning')">
             <i data-lucide="book-open" class="nav-icon"></i> My Learning
+            <span class="lock-badge">PRO</span>
           </div>
         </div>
         <hr style="border-color: var(--border-color);" />
@@ -393,7 +513,7 @@
               <div class="user-role-sub" id="userRoleEl">Free trial</div>
             </div>
           </div>
-          <a href="https://theunspoken.co.in/Pricing" class="signout-btn" style="text-decoration:none;">
+          <a href="https://theunspoken.co.in/Pricing" class="signout-btn" style="text-decoration:none;" target="_blank">
             <i data-lucide="sparkles"></i> Upgrade Plan
           </a>
         </div>
@@ -561,69 +681,360 @@
           </div>
         </section>
 
-        <!-- LOCKED VIEWS (blurred with upgrade prompt) -->
+        <!-- ACTIVITIES VIEW (clickable, cards with lock overlay) -->
         <section class="view-panel" id="activitiesView">
-          <div class="locked-view" style="padding:40px;text-align:center;">
-            <div class="unlock-banner" style="margin-bottom:0;">
-              <p>🔒 Unlock Activities, Reps, Achievements & More</p>
-              <a href="https://theunspoken.co.in/Pricing" class="unlock-btn" target="_blank">
-                <i data-lucide="sparkles"></i> Upgrade Now
-              </a>
+          <div class="view-heading">
+            <h2><i data-lucide="target"></i> Activities</h2>
+            <span class="vh-sub">Extra practice beyond today's drills</span>
+          </div>
+
+          <div class="unlock-banner">
+            <p>🔒 Unlock all Activities with Sprint or Pass</p>
+            <a href="https://theunspoken.co.in/Pricing" class="unlock-btn" target="_blank">
+              <i data-lucide="sparkles"></i> Upgrade Now
+            </a>
+          </div>
+
+          <div class="activity-sub-tabs">
+            <button class="sub-tab-btn active">
+              <i data-lucide="mic"></i> Voice Reps
+            </button>
+            <button class="sub-tab-btn">
+              <i data-lucide="library"></i> Scenario Library
+            </button>
+            <button class="sub-tab-btn">
+              <i data-lucide="crosshair"></i> Communication Drills
+            </button>
+            <button class="sub-tab-btn">
+              <i data-lucide="flame"></i> Daily Challenge
+            </button>
+          </div>
+
+          <div class="sub-activity-card-grid" style="margin-top:16px;">
+            <!-- Voice Reps cards with lock overlay -->
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Quick Rep</div>
+                <div class="lock-sub">45 seconds · Core Habit</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">45 Seconds · Core Habit</div>
+              <div class="activity-card-title">Quick Rep</div>
+              <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div>
             </div>
-            <h2 style="margin-top:24px;">Activities</h2>
-            <p style="color:var(--text-muted);">Extra practice beyond today's drills</p>
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Challenge Rep</div>
+                <div class="lock-sub">90 seconds · Pressure</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">90 Seconds · Pressure</div>
+              <div class="activity-card-title">Challenge Rep</div>
+              <div class="activity-card-desc">Harder workplace scenario under timed pressure.</div>
+            </div>
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Blind Rep</div>
+                <div class="lock-sub">Instinct Test · No Prep</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">Instinct Test · No Prep</div>
+              <div class="activity-card-title">Blind Rep</div>
+              <div class="activity-card-desc">Random scenario revealed as recording begins.</div>
+            </div>
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Repeat Rep</div>
+                <div class="lock-sub">Targeted Improvement</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">Targeted Improvement</div>
+              <div class="activity-card-title">Repeat Rep</div>
+              <div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div>
+            </div>
           </div>
         </section>
 
+        <!-- MY REPS VIEW (clickable, content locked) -->
         <section class="view-panel" id="recordingsView">
-          <div class="locked-view" style="padding:40px;text-align:center;">
-            <div class="unlock-banner" style="margin-bottom:0;">
-              <p>🔒 Unlock My Reps</p>
-              <a href="https://theunspoken.co.in/Pricing" class="unlock-btn" target="_blank">
-                <i data-lucide="sparkles"></i> Upgrade Now
-              </a>
+          <div class="view-heading">
+            <h2><i data-lucide="mic"></i> My Reps</h2>
+            <span class="vh-sub">Every practice session you've completed</span>
+          </div>
+          <div class="unlock-banner">
+            <p>🔒 Unlock My Reps with Sprint or Pass</p>
+            <a href="https://theunspoken.co.in/Pricing" class="unlock-btn" target="_blank">
+              <i data-lucide="sparkles"></i> Upgrade Now
+            </a>
+          </div>
+          <div class="question-card" style="position:relative; min-height:200px;">
+            <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')" style="border-radius:14px;">
+              <i data-lucide="lock" class="lock-icon-lg"></i>
+              <div class="lock-title">Unlock Rep History</div>
+              <div class="lock-sub">Compare transcripts and metrics across sessions</div>
+              <div class="lock-price">
+                <span class="price-pill">Sprint ₹999</span>
+                <span class="price-pill gold">Pass ₹1999</span>
+              </div>
+              <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
             </div>
-            <h2 style="margin-top:24px;">My Reps</h2>
-            <p style="color:var(--text-muted);">Every practice session you've completed</p>
+            <div class="qc-label"><span>Rep history</span></div>
+            <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6; filter:blur(4px);">
+              Every rep you've done, newest first. Compare transcripts and metrics across sessions to see your progress.
+            </div>
           </div>
         </section>
 
+        <!-- ACHIEVEMENTS VIEW (clickable, cards with lock overlay) -->
         <section class="view-panel" id="badgesView">
-          <div class="locked-view" style="padding:40px;text-align:center;">
-            <div class="unlock-banner" style="margin-bottom:0;">
-              <p>🔒 Unlock Achievements</p>
-              <a href="https://theunspoken.co.in/Pricing" class="unlock-btn" target="_blank">
-                <i data-lucide="sparkles"></i> Upgrade Now
-              </a>
+          <div class="view-heading">
+            <h2><i data-lucide="trophy"></i> Achievements</h2>
+            <span class="vh-sub">Unlock badges as you practice</span>
+          </div>
+          <div class="unlock-banner">
+            <p>🔒 Unlock Achievements with Sprint or Pass</p>
+            <a href="https://theunspoken.co.in/Pricing" class="unlock-btn" target="_blank">
+              <i data-lucide="sparkles"></i> Upgrade Now
+            </a>
+          </div>
+          <div class="badges-grid">
+            <div class="badge-item" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')" style="border-radius:12px;">
+                <i data-lucide="lock" class="lock-icon-lg" style="width:28px;height:28px;"></i>
+                <div class="lock-price">
+                  <span class="price-pill">₹999</span>
+                  <span class="price-pill gold">₹1999</span>
+                </div>
+                <span class="lock-cta" style="font-size:10px;padding:6px 14px;"><i data-lucide="sparkles" style="width:11px;height:11px;"></i> Upgrade</span>
+              </div>
+              <div class="badge-icon"><i data-lucide="target"></i></div>
+              <div class="badge-name">First Rep</div>
+              <div class="badge-desc">You completed your first voice rep.</div>
             </div>
-            <h2 style="margin-top:24px;">Achievements</h2>
-            <p style="color:var(--text-muted);">Unlock badges as you practice</p>
+            <div class="badge-item locked" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')" style="border-radius:12px;">
+                <i data-lucide="lock" class="lock-icon-lg" style="width:28px;height:28px;"></i>
+                <div class="lock-price">
+                  <span class="price-pill">₹999</span>
+                  <span class="price-pill gold">₹1999</span>
+                </div>
+                <span class="lock-cta" style="font-size:10px;padding:6px 14px;"><i data-lucide="sparkles" style="width:11px;height:11px;"></i> Upgrade</span>
+              </div>
+              <div class="badge-icon"><i data-lucide="lock"></i></div>
+              <div class="badge-name">5-Day Streak</div>
+              <div class="badge-desc">Practice 5 days in a row.</div>
+            </div>
+            <div class="badge-item locked" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')" style="border-radius:12px;">
+                <i data-lucide="lock" class="lock-icon-lg" style="width:28px;height:28px;"></i>
+                <div class="lock-price">
+                  <span class="price-pill">₹999</span>
+                  <span class="price-pill gold">₹1999</span>
+                </div>
+                <span class="lock-cta" style="font-size:10px;padding:6px 14px;"><i data-lucide="sparkles" style="width:11px;height:11px;"></i> Upgrade</span>
+              </div>
+              <div class="badge-icon"><i data-lucide="lock"></i></div>
+              <div class="badge-name">Speed Demon</div>
+              <div class="badge-desc">Time-to-Point under 10 seconds.</div>
+            </div>
+            <div class="badge-item locked" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')" style="border-radius:12px;">
+                <i data-lucide="lock" class="lock-icon-lg" style="width:28px;height:28px;"></i>
+                <div class="lock-price">
+                  <span class="price-pill">₹999</span>
+                  <span class="price-pill gold">₹1999</span>
+                </div>
+                <span class="lock-cta" style="font-size:10px;padding:6px 14px;"><i data-lucide="sparkles" style="width:11px;height:11px;"></i> Upgrade</span>
+              </div>
+              <div class="badge-icon"><i data-lucide="lock"></i></div>
+              <div class="badge-name">Filler Killer</div>
+              <div class="badge-desc">Zero filler words in a rep.</div>
+            </div>
+            <div class="badge-item locked" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')" style="border-radius:12px;">
+                <i data-lucide="lock" class="lock-icon-lg" style="width:28px;height:28px;"></i>
+                <div class="lock-price">
+                  <span class="price-pill">₹999</span>
+                  <span class="price-pill gold">₹1999</span>
+                </div>
+                <span class="lock-cta" style="font-size:10px;padding:6px 14px;"><i data-lucide="sparkles" style="width:11px;height:11px;"></i> Upgrade</span>
+              </div>
+              <div class="badge-icon"><i data-lucide="lock"></i></div>
+              <div class="badge-name">Orator</div>
+              <div class="badge-desc">Score above 90% on any rep.</div>
+            </div>
           </div>
         </section>
 
+        <!-- PILLARS VIEW (clickable, cards with lock overlay) -->
         <section class="view-panel" id="pillarsView">
-          <div class="locked-view" style="padding:40px;text-align:center;">
-            <div class="unlock-banner" style="margin-bottom:0;">
-              <p>🔒 Unlock Pillars</p>
-              <a href="https://theunspoken.co.in/Pricing" class="unlock-btn" target="_blank">
-                <i data-lucide="sparkles"></i> Upgrade Now
-              </a>
+          <div class="view-heading">
+            <h2><i data-lucide="landmark"></i> Pillars of Executive Communication</h2>
+            <span class="vh-sub">The four foundations we train</span>
+          </div>
+          <div class="unlock-banner">
+            <p>🔒 Unlock Pillars with Sprint or Pass</p>
+            <a href="https://theunspoken.co.in/Pricing" class="unlock-btn" target="_blank">
+              <i data-lucide="sparkles"></i> Upgrade Now
+            </a>
+          </div>
+          <div class="sub-activity-card-grid">
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Pillar 1</div>
+                <div class="lock-sub">Structure</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">Pillar 1</div>
+              <div class="activity-card-title">Structure</div>
+              <div class="activity-card-desc">STAR, PSO, BLUF. Give your ideas a spine listeners can follow.</div>
             </div>
-            <h2 style="margin-top:24px;">Pillars of Executive Communication</h2>
-            <p style="color:var(--text-muted);">The four foundations we train</p>
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Pillar 2</div>
+                <div class="lock-sub">Conciseness</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">Pillar 2</div>
+              <div class="activity-card-title">Conciseness</div>
+              <div class="activity-card-desc">Time-to-Point, filler elimination, headline discipline.</div>
+            </div>
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Pillar 3</div>
+                <div class="lock-sub">Tone</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">Pillar 3</div>
+              <div class="activity-card-title">Tone</div>
+              <div class="activity-card-desc">Warmth without weakness. Authority without arrogance.</div>
+            </div>
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Pillar 4</div>
+                <div class="lock-sub">Presence</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">Pillar 4</div>
+              <div class="activity-card-title">Presence</div>
+              <div class="activity-card-desc">Pacing, pauses, and gravitas in high-stakes rooms.</div>
+            </div>
           </div>
         </section>
 
+        <!-- MY LEARNING VIEW (clickable, cards with lock overlay) -->
         <section class="view-panel" id="learningView">
-          <div class="locked-view" style="padding:40px;text-align:center;">
-            <div class="unlock-banner" style="margin-bottom:0;">
-              <p>🔒 Unlock My Learning</p>
-              <a href="https://theunspoken.co.in/Pricing" class="unlock-btn" target="_blank">
-                <i data-lucide="sparkles"></i> Upgrade Now
-              </a>
+          <div class="view-heading">
+            <h2><i data-lucide="book-open"></i> My Learning</h2>
+            <span class="vh-sub">3-minute frameworks and micro-lessons</span>
+          </div>
+          <div class="unlock-banner">
+            <p>🔒 Unlock My Learning with Sprint or Pass</p>
+            <a href="https://theunspoken.co.in/Pricing" class="unlock-btn" target="_blank">
+              <i data-lucide="sparkles"></i> Upgrade Now
+            </a>
+          </div>
+          <div class="sub-activity-card-grid">
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-sub">The Pyramid Principle</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">The Pyramid Principle</div>
+              <div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div>
             </div>
-            <h2 style="margin-top:24px;">My Learning</h2>
-            <p style="color:var(--text-muted);">3-minute frameworks and micro-lessons</p>
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-sub">BLUF Method</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">BLUF Method</div>
+              <div class="activity-card-desc">Bottom Line Up Front for executive communication.</div>
+            </div>
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-sub">The STAR Method</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">The STAR Method</div>
+              <div class="activity-card-desc">Situation → Task → Action → Result.</div>
+            </div>
+            <div class="activity-card" style="position:relative;">
+              <div class="lock-overlay" onclick="window.open('https://theunspoken.co.in/Pricing','_blank')">
+                <i data-lucide="lock" class="lock-icon-lg"></i>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-sub">The PSO Framework</div>
+                <div class="lock-price">
+                  <span class="price-pill">Sprint ₹999</span>
+                  <span class="price-pill gold">Pass ₹1999</span>
+                </div>
+                <span class="lock-cta"><i data-lucide="sparkles" style="width:13px;height:13px;"></i> Upgrade</span>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">The PSO Framework</div>
+              <div class="activity-card-desc">Problem → Solution → Outcome for updates and pitches.</div>
+            </div>
           </div>
         </section>
 
@@ -731,7 +1142,6 @@
       if (SESSION_TOKEN) {
         await loadTrialSession();
       } else {
-        // No token — show trial screen immediately with empty inputs
         showMainApp();
       }
     }
@@ -765,7 +1175,6 @@
             full: data.analysis,
             timestamp: new Date().toISOString()
           };
-          // Figure out which slot it belongs to
           if (data.answered === 'q1') {
             state.q1Trials.push(latestRep);
           } else if (data.answered === 'q2') {
@@ -773,12 +1182,6 @@
           } else {
             state.activityTrials.push(latestRep);
           }
-        }
-
-        // Update trial counts from backend
-        if (data.trials_used) {
-          // We rebuild state arrays based on counts
-          // (For simplicity, keep local trials as-is)
         }
 
         showMainApp();
@@ -1467,10 +1870,6 @@
       renderIcons();
     }
 
-    function redirectToPricing() {
-      window.open(PAYWALL_URL, '_blank');
-    }
-
     function setTimeline(key, btn) {
       document.querySelectorAll('.time-tab').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
@@ -1490,7 +1889,7 @@
         .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
-    console.log('🚀 Trial dashboard loaded — paid flow + onboarding + Drills + Scenarios active.');
+    console.log('🚀 Trial dashboard loaded — locked tabs clickable with upgrade prompts.');
   </script>
 </body>
 </html>
