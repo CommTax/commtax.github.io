@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Unspoken Studio — Your Trial</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <style>
     :root {
       --bg-dark: #0B0F19;
@@ -48,15 +49,19 @@
     .preview-banner .pb-btn.primary { background: var(--primary); color: #FFF; }
     .preview-banner .pb-btn.secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
 
-    .lock-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11, 15, 25, 0.75) 0%, rgba(11, 15, 25, 0.95) 100%); backdrop-filter: blur(3px); border-radius: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; z-index: 5; gap: 10px; }
-    .lock-overlay .lock-icon { font-size: 36px; line-height: 1; margin-bottom: 4px; }
-    .lock-overlay .lock-title { font-size: 15px; font-weight: 700; }
-    .lock-overlay .lock-desc { font-size: 12px; color: var(--text-muted); max-width: 380px; line-height: 1.5; }
-    .lock-overlay .lock-cta { margin-top: 8px; padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--accent-gold), #a07f30); color: #FFF; border: none; cursor: pointer; }
+    .lock-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11, 15, 25, 0.72) 0%, rgba(11, 15, 25, 0.95) 100%); backdrop-filter: blur(3px); border-radius: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; z-index: 5; gap: 8px; cursor: pointer; transition: background 0.2s; }
+    .lock-overlay:hover { background: linear-gradient(180deg, rgba(11, 15, 25, 0.65) 0%, rgba(11, 15, 25, 0.9) 100%); }
+    .lock-overlay .lock-icon { font-size: 30px; line-height: 1; margin-bottom: 2px; }
+    .lock-overlay .lock-title { font-size: 14px; font-weight: 700; }
+    .lock-overlay .lock-desc { font-size: 11px; color: var(--text-muted); max-width: 320px; line-height: 1.5; }
+    .lock-overlay .lock-price-row { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; justify-content: center; }
+    .lock-overlay .price-pill { padding: 5px 12px; border-radius: 100px; font-size: 10px; font-weight: 800; letter-spacing: 0.04em; }
+    .lock-overlay .price-pill.sprint { color: var(--accent-gold); background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.45); }
+    .lock-overlay .price-pill.pass { color: var(--accent-purple); background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.5); }
+    .lock-overlay .lock-cta { margin-top: 6px; padding: 9px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--accent-gold), #a07f30); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
     .lockable { position: relative; overflow: hidden; }
 
-    .activity-card.locked-preview { position: relative; overflow: hidden; }
-    .activity-card.locked-preview .ac-body { filter: blur(0.5px); opacity: 0.5; }
+    .activity-card { position: relative; }
     .activity-card .ac-lock-cta { margin-top: 6px; padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--accent-gold), #a07f30); color: #FFF; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; }
     .activity-card .ac-lock-cta.pass-tier { background: linear-gradient(135deg, var(--accent-purple), #5b21b6); }
 
@@ -64,12 +69,10 @@
     .ya-header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
     .ya-badge { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-cyan); background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); padding: 4px 12px; border-radius: 20px; }
     .ya-sub { font-size: 12px; color: var(--text-muted); }
-
     .ya-pattern-block { text-align: center; padding: 24px 0 26px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 22px; }
     .ya-pattern-kicker { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; }
     .ya-pattern-name-hero { font-size: 34px; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
     .ya-pattern-desc-hero { font-size: 14px; line-height: 1.6; color: var(--text-muted); max-width: 520px; margin: 0 auto; }
-
     .ya-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .ya-box { background: rgba(11, 15, 25, 0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px 18px; }
     .ya-box-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-cyan); font-weight: 700; margin-bottom: 10px; }
@@ -84,33 +87,8 @@
     .ya-executive-cta { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--accent-gold), #a07f30); color: #FFF; border: none; cursor: pointer; }
     .ya-footer { margin-top: 20px; display: flex; justify-content: center; }
     .ya-btn { padding: 12px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; }
-
-    .ya-metrics-mini { display: flex; flex-direction: column; gap: 10px; }
-    .ya-metric-row { display: flex; align-items: center; gap: 10px; font-size: 12px; }
-    .ya-metric-row .ya-metric-label { width: 70px; color: var(--text-muted); font-weight: 600; }
-    .ya-metric-row .ya-metric-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
-    .ya-metric-row .ya-metric-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); border-radius: 3px; }
-    .ya-metric-row .ya-metric-value { width: 34px; text-align: right; font-weight: 700; color: var(--text-main); }
-
-    .ya-transcript {
-      font-size: 13px;
-      line-height: 1.65;
-      color: var(--text-main);
-      max-height: 220px;
-      overflow-y: auto;
-      padding: 12px 14px;
-      background: rgba(0, 0, 0, 0.25);
-      border-left: 3px solid var(--accent-cyan);
-      border-radius: 8px;
-      font-style: italic;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .ya-transcript-empty {
-      color: var(--text-muted);
-      font-style: normal;
-      font-size: 12px;
-    }
+    .ya-transcript { font-size: 13px; line-height: 1.65; color: var(--text-main); max-height: 220px; overflow-y: auto; padding: 12px 14px; background: rgba(0, 0, 0, 0.25); border-left: 3px solid var(--accent-cyan); border-radius: 8px; font-style: italic; white-space: pre-wrap; word-break: break-word; }
+    .ya-transcript-empty { color: var(--text-muted); font-style: normal; font-size: 12px; }
 
     .top-header { background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; flex-wrap: wrap; gap: 12px; }
     .brand { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
@@ -228,18 +206,25 @@
     .try-again-bar .ta-btn { padding: 12px 24px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
 
     .activity-sub-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
-    .sub-tab-btn { padding: 8px 14px; background-color: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+    .sub-tab-btn { padding: 8px 14px; background-color: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
     .sub-tab-btn:hover { border-color: var(--accent-cyan); color: var(--text-main); }
     .sub-tab-btn.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
     .sub-activity-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-    .activity-card { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: transform 0.2s, border-color 0.2s; position: relative; }
+    .activity-card { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: transform 0.2s, border-color 0.2s; position: relative; min-height: 168px; }
     .activity-card-title { font-size: 15px; font-weight: 700; }
     .activity-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
     .activity-card-tag { font-size: 10px; font-weight: 700; color: var(--accent-purple); text-transform: uppercase; }
 
+    .drills-container { display: flex; flex-direction: column; gap: 26px; }
+    .drill-category { display: flex; flex-direction: column; gap: 14px; }
+    .drill-category-header { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+    .drill-category-header .dc-icon { width: 18px; height: 18px; color: var(--accent-cyan); flex-shrink: 0; }
+    .drill-category-header .dc-title { font-size: 14px; font-weight: 800; letter-spacing: 0.02em; color: var(--text-main); text-transform: uppercase; }
+    .drill-category-header .dc-count { font-size: 10px; font-weight: 700; color: var(--text-muted); background: var(--bg-dark); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 20px; margin-left: auto; }
+    .drill-category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+
     .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
-    .badge-item { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-    .badge-item.locked { opacity: 0.35; }
+    .badge-item { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; min-height: 168px; }
     .badge-icon { font-size: 32px; line-height: 1; }
     .badge-name { font-size: 12px; font-weight: 700; }
     .badge-desc { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
@@ -259,13 +244,17 @@
     .lock-pill.sprint { color: var(--accent-gold); background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); }
     .lock-pill.pass { color: var(--accent-purple); background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(139, 92, 246, 0.4); }
 
-    .feature-preview-lock { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,15,25,0.55), rgba(11,15,25,0.95)); border-radius: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; text-align: center; z-index: 4; }
+    .feature-preview-lock { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,15,25,0.6), rgba(11,15,25,0.95)); border-radius: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; text-align: center; z-index: 4; }
     .feature-preview-lock .fpl-title { font-size: 13px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
     .feature-preview-lock .fpl-title.sprint { color: var(--accent-gold); }
     .feature-preview-lock .fpl-title.pass { color: var(--accent-purple); }
     .feature-preview-lock .fpl-desc { font-size: 12px; color: var(--text-muted); max-width: 360px; line-height: 1.5; }
     .feature-preview-lock .fpl-cta { margin-top: 6px; padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 700; color: #FFF; border: none; cursor: pointer; background: linear-gradient(135deg, var(--accent-gold), #a07f30); }
     .feature-preview-lock .fpl-cta.pass { background: linear-gradient(135deg, var(--accent-purple), #5b21b6); }
+
+    /* Section divider between locked sub-groups */
+    .locked-group-heading { display: flex; align-items: center; gap: 10px; padding: 6px 0 10px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+    .locked-group-heading .lg-line { flex: 1; height: 1px; background: var(--border-color); }
 
     @media (max-width: 900px) {
       .dash-grid { grid-template-columns: 1fr; }
@@ -294,8 +283,8 @@
       👋 Hi <strong id="previewName">there</strong> — here's your trial.
     </div>
     <div class="pb-right">
-      <button class="pb-btn primary" onclick="goToPaywall('sprint')">Enroll in a Sprint</button>
-      <button class="pb-btn secondary" onclick="goToPaywall('pass')">Get Practice Pass</button>
+      <button class="pb-btn primary" onclick="goToPaywall('sprint')">Enroll in a Sprint — ₹999</button>
+      <button class="pb-btn secondary" onclick="goToPaywall('pass')">Get Practice Pass — ₹1999</button>
     </div>
   </div>
 
@@ -329,29 +318,43 @@
         <div class="nav-item active" id="navToday" onclick="switchView('today')"><span>🏠</span> Today</div>
         <div class="nav-item" id="navActivities" onclick="switchView('activities')"><span>🎯</span> Activities <span class="nav-preview">PREVIEW</span></div>
         <div class="nav-item" id="navDash" onclick="switchView('dash')"><span>📊</span> Pattern &amp; Progress</div>
-        <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><span>🎙️</span> My Recordings <span class="nav-preview">PREVIEW</span></div>
-        <div class="nav-item" id="navBadges" onclick="switchView('badges')"><span>🏆</span> Achievements</div>
-        <div class="nav-item" id="navPillars" onclick="switchView('pillars')"><span>🏛️</span> Pillars</div>
+        <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><span>🎙️</span> My Reps <span class="nav-preview">PREVIEW</span></div>
+        <div class="nav-item" id="navBadges" onclick="switchView('badges')"><span>🏆</span> Achievements <span class="nav-preview">PREVIEW</span></div>
+        <div class="nav-item" id="navPillars" onclick="switchView('pillars')"><span>🏛️</span> Pillars <span class="nav-preview">PREVIEW</span></div>
         <div class="nav-item" id="navLearning" onclick="switchView('learning')"><span>📚</span> My Learning <span class="nav-preview">PREVIEW</span></div>
       </div>
       <hr style="border-color: var(--border-color);" />
       <div class="sidebar-section">
         <div class="sidebar-title">Your Profile</div>
         <div class="field-group">
-          <label>Career Stage</label>
-          <select id="profileStage" disabled style="opacity: 0.7;"><option>—</option></select>
+          <label>Name</label>
+          <input type="text" id="inputName" placeholder="Your name" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border-color);background:var(--bg-dark);color:var(--text-main);font-family:inherit;font-size:12px;" />
         </div>
         <div class="field-group">
-          <label>Function</label>
-          <select id="profileFunction" disabled style="opacity: 0.7;"><option>—</option></select>
+          <label>Email</label>
+          <input type="email" id="inputEmail" placeholder="you@example.com" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border-color);background:var(--bg-dark);color:var(--text-main);font-family:inherit;font-size:12px;" />
+        </div>
+        <div class="field-group">
+          <label>Mobile</label>
+          <input type="tel" id="inputMobile" placeholder="+91 98765 43210" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border-color);background:var(--bg-dark);color:var(--text-main);font-family:inherit;font-size:12px;" />
+        </div>
+        <div class="field-group">
+          <label>Career Stage</label>
+          <select id="inputStage">
+            <option value="student">Student / Final Year</option>
+            <option value="fresher">Fresher (0–1 yr)</option>
+            <option value="early" selected>Early Career (1–5 yrs)</option>
+            <option value="mid">Mid Career (5–15 yrs)</option>
+            <option value="senior">Senior / Lead (15+ yrs)</option>
+          </select>
         </div>
       </div>
       <div class="user-profile-card">
         <div class="plan-badge" id="planBadge">Trial</div>
         <div class="user-info">
-          <div class="user-avatar" id="userAvatarEl">A</div>
+          <div class="user-avatar" id="userAvatarEl">G</div>
           <div class="user-details">
-            <div class="user-name" id="userNameEl">—</div>
+            <div class="user-name" id="userNameEl">Guest</div>
             <div class="user-role-sub" id="userRoleEl">Free trial</div>
           </div>
         </div>
@@ -361,6 +364,7 @@
 
     <main class="main-content">
 
+      <!-- ============================ TODAY ============================ -->
       <section class="view-panel active-view" id="todayView">
         <div class="today-header-bar">
           <div class="th-left">
@@ -428,8 +432,8 @@
             </div>
           </div>
           <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="qc-action-btn" onclick="goToPaywall('sprint')">🔒 Change Question — Enroll in Sprint</button>
-            <button class="qc-action-btn" onclick="goToPaywall('sprint')">🔒 Customize Question — Enroll in Sprint</button>
+            <button class="qc-action-btn" onclick="goToPaywall('sprint')">🔒 Change Question — Enroll in Sprint (₹999)</button>
+            <button class="qc-action-btn" onclick="goToPaywall('sprint')">🔒 Customize Question — Enroll in Sprint (₹999)</button>
           </div>
         </div>
 
@@ -442,6 +446,7 @@
         </div>
       </section>
 
+      <!-- ============================ ACTIVITIES ============================ -->
       <section class="view-panel" id="activitiesView">
         <div class="view-heading">
           <h2>🎯 Activities</h2>
@@ -449,206 +454,829 @@
         </div>
 
         <div class="activity-sub-tabs">
-          <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">Voice Reps</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">Scenario Library</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('drills', this)">Communication Drills</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('daily-challenge', this)">Daily Challenge</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('reflection', this)">Reflection Journal</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('bites', this)">Learning Bites</button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)">Simulator</button>
+          <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">🎤 Voice Reps</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">📚 Scenario Library</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('drills', this)">🎯 Communication Drills</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('daily-challenge', this)">🔥 Daily Challenge</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('reflection', this)">📝 Reflection Journal</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('bites', this)">📖 Learning Bites</button>
+          <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)">🎬 Simulator</button>
         </div>
 
+        <!-- VOICE REPS: 6 cards -->
         <div id="sub-voice-reps" class="sub-activity-panel">
           <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview" data-activity="Quick Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">45 Seconds · Core Habit</div>
-                <div class="activity-card-title">Quick Rep</div>
-                <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Quick Rep</div>
+                <div class="lock-desc">Your chosen scenario, 45s timer, instant feedback.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
+              <div class="activity-card-tag">45 Seconds · Core Habit</div>
+              <div class="activity-card-title">Quick Rep</div>
+              <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div>
             </div>
-            <div class="activity-card locked-preview" data-activity="Challenge Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">90 Seconds · Pressure</div>
-                <div class="activity-card-title">Challenge Rep</div>
-                <div class="activity-card-desc">Harder workplace scenario under timed pressure.</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Challenge Rep</div>
+                <div class="lock-desc">Harder workplace scenario under timed pressure.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
+              <div class="activity-card-tag">90 Seconds · Pressure</div>
+              <div class="activity-card-title">Challenge Rep</div>
+              <div class="activity-card-desc">Harder workplace scenario under timed pressure.</div>
             </div>
-            <div class="activity-card locked-preview" data-activity="Blind Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Instinct Test · No Prep</div>
-                <div class="activity-card-title">Blind Rep</div>
-                <div class="activity-card-desc">Random scenario revealed as recording begins.</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Blind Rep</div>
+                <div class="lock-desc">Random scenario revealed as recording begins.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta pass-tier" onclick="goToPaywall('pass')">🔒 Unlocked with Practice Pass — ₹1,299/mo</button>
+              <div class="activity-card-tag">Instinct Test · No Prep</div>
+              <div class="activity-card-title">Blind Rep</div>
+              <div class="activity-card-desc">Random scenario revealed as recording begins.</div>
             </div>
-            <div class="activity-card locked-preview" data-activity="Repeat Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Targeted Improvement</div>
-                <div class="activity-card-title">Repeat Rep</div>
-                <div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Repeat Rep</div>
+                <div class="lock-desc">Redo your lowest SNR rep to measure growth.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta pass-tier" onclick="goToPaywall('pass')">🔒 Unlocked with Practice Pass — ₹1,299/mo</button>
+              <div class="activity-card-tag">Targeted Improvement</div>
+              <div class="activity-card-title">Repeat Rep</div>
+              <div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Pressure Rep</div>
+                <div class="lock-desc">Rapid-fire interruptions — answer in 20 seconds flat.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">Speed · 20 Seconds</div>
+              <div class="activity-card-title">Pressure Rep</div>
+              <div class="activity-card-desc">Rapid-fire interruptions — answer in 20 seconds flat.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Cold Open Rep</div>
+                <div class="lock-desc">No context, no warm-up — deliver the headline cold.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">Cold Start · No Warm-up</div>
+              <div class="activity-card-title">Cold Open Rep</div>
+              <div class="activity-card-desc">No context, no warm-up — deliver the headline cold.</div>
             </div>
           </div>
         </div>
 
+        <!-- SCENARIO LIBRARY: 8 cards -->
         <div id="sub-scenarios" class="sub-activity-panel hidden">
           <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">Skill Builder</div>
-                <div class="activity-card-title">Interview Questions</div>
-                <div class="activity-card-desc">Tell me about yourself · Salary negotiation · Why this role</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Scenario Library</div>
+                <div class="lock-desc">Interview Questions · 12 role-based scenarios.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
+              <div class="activity-card-tag">Skill Builder</div>
+              <div class="activity-card-title">Interview Questions</div>
+              <div class="activity-card-desc">Real interview questions tailored to your role.</div>
             </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">Workplace Moments</div>
-                <div class="activity-card-title">Project &amp; Team Updates</div>
-                <div class="activity-card-desc">Project update · Handling pushback · Delivering bad news</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Group Discussion</div>
+                <div class="lock-desc">Enter, build on, and steer a group conversation.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
+              <div class="activity-card-tag">GD Sprint</div>
+              <div class="activity-card-title">Group Discussion</div>
+              <div class="activity-card-desc">Enter, build on, and steer a group conversation.</div>
             </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">Leadership</div>
-                <div class="activity-card-title">Leadership Situations</div>
-                <div class="activity-card-desc">Team conflict · Motivating underperformers</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Leadership Situations</div>
+                <div class="lock-desc">Conflict, feedback, delegation, managing up.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta pass-tier" onclick="goToPaywall('pass')">🔒 Unlocked with Practice Pass — ₹1,299/mo</button>
+              <div class="activity-card-tag">Leadership Presence</div>
+              <div class="activity-card-title">Leadership Situations</div>
+              <div class="activity-card-desc">Conflict, feedback, delegation, managing up.</div>
             </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">Executive Presence</div>
-                <div class="activity-card-title">Client &amp; Stakeholder</div>
-                <div class="activity-card-desc">Pitching an idea · Handling objections</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Project & Team Updates</div>
+                <div class="lock-desc">Deliver updates, handle pushback, raise bad news.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta pass-tier" onclick="goToPaywall('pass')">🔒 Unlocked with Practice Pass — ₹1,299/mo</button>
+              <div class="activity-card-tag">Workplace Moments</div>
+              <div class="activity-card-title">Project &amp; Team Updates</div>
+              <div class="activity-card-desc">Deliver updates, handle pushback, raise bad news.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Client & Stakeholder</div>
+                <div class="lock-desc">Pitch ideas, handle objections, manage relationships.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">Executive Presence</div>
+              <div class="activity-card-title">Client &amp; Stakeholder</div>
+              <div class="activity-card-desc">Pitch ideas, handle objections, manage relationships.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Storytelling</div>
+                <div class="lock-desc">Turn a flat update or dry fact into something memorable.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">Storytelling Sprint</div>
+              <div class="activity-card-title">Storytelling</div>
+              <div class="activity-card-desc">Turn a flat update or dry fact into something memorable.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Charisma & Social Presence</div>
+                <div class="lock-desc">Build rapport, make small talk land, come across well.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">Charisma Sprint</div>
+              <div class="activity-card-title">Charisma &amp; Social Presence</div>
+              <div class="activity-card-desc">Build rapport, make small talk land, come across well.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Salary Negotiation</div>
+                <div class="lock-desc">Anchoring, countering, and closing a better offer.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">High-Stakes Conversation</div>
+              <div class="activity-card-title">Salary Negotiation</div>
+              <div class="activity-card-desc">Anchoring, countering, and closing a better offer.</div>
             </div>
           </div>
         </div>
 
+        <!-- COMMUNICATION DRILLS: 4 categories -->
         <div id="sub-drills" class="sub-activity-panel hidden">
-          <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">Precision Drill</div>
-                <div class="activity-card-title">Headline Drill</div>
-                <div class="activity-card-desc">State your main point in one clear sentence.</div>
+          <div class="drills-container">
+
+            <div class="drill-category">
+              <div class="drill-category-header">
+                <span class="dc-icon">✂️</span>
+                <span class="dc-title">Rambling Reduction</span>
+                <span class="dc-count">6 drills</span>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">Precision Drill</div>
-                <div class="activity-card-title">Filler Elimination</div>
-                <div class="activity-card-desc">Zero filler words for 30 seconds.</div>
+              <div class="drill-category-grid">
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Headline Drill</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Rambling Reduction</div>
+                  <div class="activity-card-title">Headline Drill</div>
+                  <div class="activity-card-desc">State your main point in one sentence — under 15 words.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Filler Elimination</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Rambling Reduction</div>
+                  <div class="activity-card-title">Filler Elimination</div>
+                  <div class="activity-card-desc">Speak for 30 seconds with zero fillers — no um, like, so.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock One Idea Only</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Rambling Reduction</div>
+                  <div class="activity-card-title">One Idea Only</div>
+                  <div class="activity-card-desc">Answer with exactly one idea. No tangents, no "and also".</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Compression Ladder</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Rambling Reduction</div>
+                  <div class="activity-card-title">Compression Ladder</div>
+                  <div class="activity-card-desc">Answer in 60s, then 30s, then 15s — same core point.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Relevance Cut</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Rambling Reduction</div>
+                  <div class="activity-card-title">Relevance Cut</div>
+                  <div class="activity-card-desc">Tag each sentence KEEP, SUPPORT, or CUT — then re-record.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Destination Check</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Rambling Reduction</div>
+                  <div class="activity-card-title">Destination Check</div>
+                  <div class="activity-card-desc">Type the one line you want to end on, then land there.</div>
+                </div>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
             </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">Precision Drill</div>
-                <div class="activity-card-title">Time-to-Point</div>
-                <div class="activity-card-desc">Deliver your key recommendation in under 5 seconds.</div>
+
+            <div class="drill-category">
+              <div class="drill-category-header">
+                <span class="dc-icon">🧱</span>
+                <span class="dc-title">Structure Preparation</span>
+                <span class="dc-count">5 drills</span>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
-            </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">Precision Drill</div>
-                <div class="activity-card-title">Structure Drill (PSO)</div>
-                <div class="activity-card-desc">Answer using Problem → Solution → Outcome.</div>
+              <div class="drill-category-grid">
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Structure Drill (PSO)</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Structure Preparation</div>
+                  <div class="activity-card-title">Structure Drill (PSO)</div>
+                  <div class="activity-card-desc">Answer using Problem → Solution → Outcome. One sentence each.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Frame Drill</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Structure Preparation</div>
+                  <div class="activity-card-title">Frame Drill</div>
+                  <div class="activity-card-desc">Type a 3-word outline before the mic activates. Then record.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Signpost Drill</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Structure Preparation</div>
+                  <div class="activity-card-title">Signpost Drill</div>
+                  <div class="activity-card-desc">Use explicit sequence markers — "First... Second... Finally..."</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Point-Ranking Drill</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Structure Preparation</div>
+                  <div class="activity-card-title">Point-Ranking Drill</div>
+                  <div class="activity-card-desc">Rank 3 possible points by importance, lead with your #1.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Template Ladder</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Structure Preparation</div>
+                  <div class="activity-card-title">Template Ladder</div>
+                  <div class="activity-card-desc">Answer three times — using PRE, SAR, and PSO. Notice which fits.</div>
+                </div>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
             </div>
+
+            <div class="drill-category">
+              <div class="drill-category-header">
+                <span class="dc-icon">🎯</span>
+                <span class="dc-title">Precision &amp; Impact</span>
+                <span class="dc-count">6 drills</span>
+              </div>
+              <div class="drill-category-grid">
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Time-to-Point</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Precision &amp; Impact</div>
+                  <div class="activity-card-title">Time-to-Point</div>
+                  <div class="activity-card-desc">Deliver your key recommendation in under 5 seconds.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Specificity Swap</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Precision &amp; Impact</div>
+                  <div class="activity-card-title">Specificity Swap</div>
+                  <div class="activity-card-desc">Replace one vague phrase with a real number, name, or example.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Close Strong</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Precision &amp; Impact</div>
+                  <div class="activity-card-title">Close Strong</div>
+                  <div class="activity-card-desc">End by restating your headline point in different words.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Claim → Example</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Precision &amp; Impact</div>
+                  <div class="activity-card-title">Claim → Example</div>
+                  <div class="activity-card-desc">Make one claim. Immediately follow it with a specific instance.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Contrast Frame</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Precision &amp; Impact</div>
+                  <div class="activity-card-title">Contrast Frame</div>
+                  <div class="activity-card-desc">Frame as before/after — "Before X, we had Y. Now we have Z."</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Jargon Swap</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Precision &amp; Impact</div>
+                  <div class="activity-card-title">Jargon Swap</div>
+                  <div class="activity-card-desc">We flag one jargon phrase; re-record it in plain language.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="drill-category">
+              <div class="drill-category-header">
+                <span class="dc-icon">🎙️</span>
+                <span class="dc-title">Delivery &amp; Orator Training</span>
+                <span class="dc-count">4 drills</span>
+              </div>
+              <div class="drill-category-grid">
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Pause Training</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Delivery &amp; Orator Training</div>
+                  <div class="activity-card-title">Pause Training</div>
+                  <div class="activity-card-desc">Deliver with one deliberate 1–2 second pause after your key line.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Vocal Variety Drill</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Delivery &amp; Orator Training</div>
+                  <div class="activity-card-title">Vocal Variety Drill</div>
+                  <div class="activity-card-desc">Say the same sentence three times — flat, slower, then rising.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Breathing Reset</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Delivery &amp; Orator Training</div>
+                  <div class="activity-card-title">Breathing Reset</div>
+                  <div class="activity-card-desc">Take one visible breath before you start. Don't rush in.</div>
+                </div>
+                <div class="activity-card">
+                  <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">Unlock Anchor Focus</div>
+                    <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                    <button class="lock-cta">Upgrade →</button>
+                  </div>
+                  <div class="activity-card-tag">Delivery &amp; Orator Training</div>
+                  <div class="activity-card-title">Anchor Focus</div>
+                  <div class="activity-card-desc">Keep your eyes on the on-screen anchor for the full answer.</div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
+        <!-- DAILY CHALLENGE -->
         <div id="sub-daily-challenge" class="sub-activity-panel hidden">
-          <div class="dash-wide-box lockable">
+          <div class="dash-wide-box lockable" style="margin-bottom:16px;">
             <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">COMMUNITY EXPERIENCE</div>
             <h2 style="font-size: 18px; margin-top: 4px;">Today's Global Challenge: Handling Hostile Pushback</h2>
             <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">
               Scenario: A senior VP cuts you off mid-presentation and says "This strategy won't scale." Respond concisely in 45 seconds.
             </p>
-            <div class="lock-overlay">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
               <div class="lock-icon">🔒</div>
-              <div class="lock-title">Unlocked with Sprint</div>
+              <div class="lock-title">Unlock Today's Challenge</div>
               <div class="lock-desc">Join thousands of practitioners tackling the same daily scenario.</div>
-              <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint — ₹499 →</button>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
             </div>
           </div>
-        </div>
 
-        <div id="sub-reflection" class="sub-activity-panel hidden">
-          <div class="question-card lockable">
-            <div class="qc-label"><span>Metacognition &amp; Self-Awareness Reflection</span></div>
-            <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
-              Reflect on what you intended to say vs what you actually said. Track your patterns over time.
-            </div>
-            <div class="lock-overlay">
-              <div class="lock-icon">🔒</div>
-              <div class="lock-title">Unlocked with Sprint</div>
-              <div class="lock-desc">Daily journaling builds self-awareness. Available with Sprint and Pass plans.</div>
-              <button class="lock-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint — ₹499 →</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="sub-bites" class="sub-activity-panel hidden">
+          <div class="locked-group-heading">Past Challenges <span class="lg-line"></span></div>
           <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">The Pyramid Principle</div>
-                <div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Past Challenge</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
+              <div class="activity-card-tag">Day 12 · Finance</div>
+              <div class="activity-card-title">Handling a Budget Cut</div>
+              <div class="activity-card-desc">Your CFO cuts your budget 30% mid-quarter. Respond.</div>
             </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">BLUF Method</div>
-                <div class="activity-card-desc">Bottom Line Up Front for executive communication.</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Past Challenge</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
+              <div class="activity-card-tag">Day 11 · Leadership</div>
+              <div class="activity-card-title">Delivering Bad News</div>
+              <div class="activity-card-desc">You must tell the team the project is being shelved.</div>
             </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">The STAR Method</div>
-                <div class="activity-card-desc">Situation → Task → Action → Result. Interview gold standard.</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Past Challenge</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
+              <div class="activity-card-tag">Day 10 · Client</div>
+              <div class="activity-card-title">Angry Client Call</div>
+              <div class="activity-card-desc">A top client is threatening to leave. Win them back.</div>
             </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">The PSO Framework</div>
-                <div class="activity-card-desc">Problem → Solution → Outcome for updates and pitches.</div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Past Challenge</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
               </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">🔒 Unlocked with Sprint — ₹499</button>
+              <div class="activity-card-tag">Day 9 · Interview</div>
+              <div class="activity-card-title">Why Should We Hire You?</div>
+              <div class="activity-card-desc">Deliver a memorable 45-second close to your interview.</div>
             </div>
           </div>
         </div>
 
-        <div id="sub-simulator" class="sub-activity-panel hidden">
-          <div class="dash-wide-box lockable" style="border-color: var(--accent-purple);">
-            <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
-            <h2 style="font-size: 18px;">Full 5-Question End-to-End Mock Interview</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">
-              Simulate a 15-minute high-stakes executive panel interview with dynamic follow-ups and comprehensive debrief.
-            </p>
-            <div class="lock-overlay">
+        <!-- REFLECTION JOURNAL -->
+        <div id="sub-reflection" class="sub-activity-panel hidden">
+          <div class="locked-group-heading">Reflection Prompts <span class="lg-line"></span></div>
+          <div class="sub-activity-card-grid" style="margin-bottom:18px;">
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Reflection Prompt</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">Prompt 1</div>
+              <div class="activity-card-title">Intent vs Impact</div>
+              <div class="activity-card-desc">What did you intend to say vs what did the listener actually hear?</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Reflection Prompt</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">Prompt 2</div>
+              <div class="activity-card-title">Filler Triggers</div>
+              <div class="activity-card-desc">When do you reach for fillers most — nerves, uncertainty, or speed?</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Reflection Prompt</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">Prompt 3</div>
+              <div class="activity-card-title">Pattern Tracker</div>
+              <div class="activity-card-desc">What pattern keeps showing up across your reps this week?</div>
+            </div>
+          </div>
+          <div class="question-card lockable">
+            <div class="qc-label"><span>Write Your Reflection</span></div>
+            <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
+              Journal daily. Track what you intended to say vs what you actually said.
+            </div>
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
               <div class="lock-icon">🔒</div>
-              <div class="lock-title">Unlocked with Practice Pass</div>
-              <div class="lock-desc">Full simulator + dynamic follow-ups + debrief included in the Pass.</div>
-              <button class="lock-cta" onclick="goToPaywall('pass')">Get Practice Pass — ₹1,299/mo →</button>
+              <div class="lock-title">Unlock the Journal</div>
+              <div class="lock-desc">Daily journaling builds self-awareness. Available with Sprint and Pass plans.</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEARNING BITES: 5 categories -->
+        <div id="sub-bites" class="sub-activity-panel hidden">
+          <div class="locked-group-heading">Structure <span class="lg-line"></span></div>
+          <div class="sub-activity-card-grid" style="margin-bottom:18px;">
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">The Pyramid Principle</div>
+              <div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">SCQA Framework</div>
+              <div class="activity-card-desc">Situation → Complication → Question → Answer.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">MECE</div>
+              <div class="activity-card-desc">Mutually Exclusive, Collectively Exhaustive.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">Rule of Three</div>
+              <div class="activity-card-desc">Group your points into threes — the memory sweet spot.</div>
+            </div>
+          </div>
+
+          <div class="locked-group-heading">Thinking <span class="lg-line"></span></div>
+          <div class="sub-activity-card-grid" style="margin-bottom:18px;">
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">One-Breath Rule</div>
+              <div class="activity-card-desc">If you can't say it in one breath, you haven't found it yet.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">The Elevator Test</div>
+              <div class="activity-card-desc">Compress any answer to 15 seconds.</div>
+            </div>
+          </div>
+
+          <div class="locked-group-heading">Impact <span class="lg-line"></span></div>
+          <div class="sub-activity-card-grid" style="margin-bottom:18px;">
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">BLUF</div>
+              <div class="activity-card-desc">Bottom Line Up Front — the decision, before the context.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">Signal Sandwich</div>
+              <div class="activity-card-desc">Headline → detail → headline again.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">Specificity Over Abstraction</div>
+              <div class="activity-card-desc">Swap vague claims for concrete numbers or images.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">The Contrast Frame</div>
+              <div class="activity-card-desc">"Before X, we had Y. Now we have Z."</div>
+            </div>
+          </div>
+
+          <div class="locked-group-heading">Expression <span class="lg-line"></span></div>
+          <div class="sub-activity-card-grid" style="margin-bottom:18px;">
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">Pause-and-Land</div>
+              <div class="activity-card-desc">A deliberate 1–2 second pause after your key line.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">Vocal Variety</div>
+              <div class="activity-card-desc">Pace / pitch / pause — how it's said changes how it lands.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">Anaphora</div>
+              <div class="activity-card-desc">Repeat a phrase at the start of successive points.</div>
+            </div>
+          </div>
+
+          <div class="locked-group-heading">Connection <span class="lg-line"></span></div>
+          <div class="sub-activity-card-grid">
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">STAR Method</div>
+              <div class="activity-card-desc">Situation → Task → Action → Result.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">PSO Framework</div>
+              <div class="activity-card-desc">Problem → Solution → Outcome.</div>
+            </div>
+            <div class="activity-card">
+              <div class="lock-overlay" onclick="goToPaywall('sprint')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Lesson</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">3-Min Concept</div>
+              <div class="activity-card-title">Point-Story-Point</div>
+              <div class="activity-card-desc">Takeaway, story, takeaway again.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIMULATOR -->
+        <div id="sub-simulator" class="sub-activity-panel hidden">
+          <div class="sub-activity-card-grid">
+            <div class="activity-card" style="border-color: var(--accent-purple);">
+              <div class="lock-overlay" onclick="goToPaywall('pass')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Panel Interview</div>
+                <div class="lock-desc">Full 5-question executive panel interview simulation.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta" style="background: linear-gradient(135deg, var(--accent-purple), #5b21b6);">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">Premium Simulation</div>
+              <div class="activity-card-title">Panel Interview</div>
+              <div class="activity-card-desc">15-minute mock with dynamic follow-ups and full debrief.</div>
+            </div>
+            <div class="activity-card" style="border-color: var(--accent-purple);">
+              <div class="lock-overlay" onclick="goToPaywall('pass')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Sales Pitch</div>
+                <div class="lock-desc">End-to-end pitch to a skeptical enterprise buyer.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta" style="background: linear-gradient(135deg, var(--accent-purple), #5b21b6);">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">Premium Simulation</div>
+              <div class="activity-card-title">Sales Pitch</div>
+              <div class="activity-card-desc">Full pitch to a skeptical enterprise buyer with live objections.</div>
+            </div>
+            <div class="activity-card" style="border-color: var(--accent-purple);">
+              <div class="lock-overlay" onclick="goToPaywall('pass')">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-title">Unlock Difficult Conversation</div>
+                <div class="lock-desc">Practice a hard 1:1 — layoff, PIP, or conflict resolution.</div>
+                <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+                <button class="lock-cta" style="background: linear-gradient(135deg, var(--accent-purple), #5b21b6);">Upgrade →</button>
+              </div>
+              <div class="activity-card-tag">Premium Simulation</div>
+              <div class="activity-card-title">Difficult Conversation</div>
+              <div class="activity-card-desc">Practice a hard 1:1 — layoff, PIP, or conflict resolution.</div>
             </div>
           </div>
         </div>
@@ -656,18 +1284,19 @@
         <div class="question-card" id="unlockMorePromo" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.10), rgba(139, 92, 246, 0.06)); border-color: rgba(245, 158, 11, 0.3);">
           <div class="qc-top">
             <div class="qc-left">
-              <div class="qc-label" style="color: var(--accent-gold);">🔒 Unlock More Sprints</div>
-              <div class="qc-text" style="font-size: 16px;">You're on the Trial. Upgrade to access the full library.</div>
-              <div class="qc-meta">6 Sprints · 336 questions · unlimited practice</div>
+              <div class="qc-label" style="color: var(--accent-gold);">🔒 Unlock All Activities</div>
+              <div class="qc-text" style="font-size: 16px;">Upgrade to access the full library.</div>
+              <div class="qc-meta">7 categories · 40+ activities · unlimited practice</div>
             </div>
           </div>
           <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="rep-btn" onclick="goToPaywall('sprint')" style="background: linear-gradient(135deg, var(--accent-gold), #a07f30);">Enroll in a Sprint — ₹499</button>
-            <button class="rep-btn" onclick="goToPaywall('pass')" style="background: var(--primary);">Get Practice Pass — ₹1,299/mo</button>
+            <button class="rep-btn" onclick="goToPaywall('sprint')" style="background: linear-gradient(135deg, var(--accent-gold), #a07f30);">Enroll in a Sprint — ₹999</button>
+            <button class="rep-btn" onclick="goToPaywall('pass')" style="background: linear-gradient(135deg, var(--accent-purple), #5b21b6);">Get Practice Pass — ₹1999</button>
           </div>
         </div>
       </section>
 
+      <!-- ============================ PATTERN & PROGRESS ============================ -->
       <section class="view-panel" id="dashView">
         <div class="view-heading">
           <h2>📊 Pattern &amp; Progress</h2>
@@ -737,25 +1366,30 @@
         </div>
       </section>
 
+      <!-- ============================ MY REPS ============================ -->
       <section class="view-panel" id="recordingsView">
         <div class="view-heading">
-          <h2>🎙️ My Recordings</h2>
+          <h2>🎙️ My Reps</h2>
           <span class="vh-sub">Replay every practice session</span>
         </div>
 
-        <div class="question-card">
-          <div class="qc-label"><span>Your recordings library</span></div>
-          <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
+        <div class="locked-group-heading">Your Recordings Library <span class="lg-line"></span></div>
+        <div class="question-card lockable">
+          <div class="qc-label"><span>All reps — newest first</span></div>
+          <div class="qc-text" style="font-size: 14px; font-weight: 500; color: var(--text-muted); line-height: 1.6;">
             Replay every practice session. Track your progress over time. Compare reps across days. Tag your best responses.
           </div>
-          <div class="feature-preview-lock">
-            <div class="fpl-title sprint">🔒 Unlocked with Sprint</div>
-            <div class="fpl-desc">Replay any past rep, compare across days, and measure your growth.</div>
-            <button class="fpl-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint — ₹499 →</button>
+          <div class="lock-overlay" onclick="goToPaywall('sprint')">
+            <div class="lock-icon">🔒</div>
+            <div class="lock-title">Unlock My Reps Library</div>
+            <div class="lock-desc">Replay any past rep, compare across days, and measure your growth.</div>
+            <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+            <button class="lock-cta">Upgrade →</button>
           </div>
         </div>
       </section>
 
+      <!-- ============================ ACHIEVEMENTS ============================ -->
       <section class="view-panel" id="badgesView">
         <div class="view-heading">
           <h2>🏆 Achievements</h2>
@@ -763,45 +1397,254 @@
         </div>
         <div class="badges-grid">
           <div class="badge-item">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Badge</div>
+              <div class="lock-price-row"><span class="price-pill sprint">₹999</span><span class="price-pill pass">₹1999</span></div>
+              <button class="lock-cta" style="font-size:10px;padding:6px 12px;">Upgrade →</button>
+            </div>
             <div class="badge-icon">🎯</div>
             <div class="badge-name">First Rep</div>
             <div class="badge-desc">You completed your first voice rep.</div>
           </div>
-          <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">5-Day Streak</div><div class="badge-desc">Practice 5 days in a row.</div></div>
-          <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Speed Demon</div><div class="badge-desc">Time-to-Point under 10 seconds.</div></div>
-          <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Filler Killer</div><div class="badge-desc">Zero filler words in a rep.</div></div>
-          <div class="badge-item locked"><div class="badge-icon">🔒</div><div class="badge-name">Orator</div><div class="badge-desc">Score above 90% on any rep.</div></div>
+          <div class="badge-item">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Badge</div>
+              <div class="lock-price-row"><span class="price-pill sprint">₹999</span><span class="price-pill pass">₹1999</span></div>
+              <button class="lock-cta" style="font-size:10px;padding:6px 12px;">Upgrade →</button>
+            </div>
+            <div class="badge-icon">🔥</div>
+            <div class="badge-name">5-Day Streak</div>
+            <div class="badge-desc">Practice 5 days in a row.</div>
+          </div>
+          <div class="badge-item">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Badge</div>
+              <div class="lock-price-row"><span class="price-pill sprint">₹999</span><span class="price-pill pass">₹1999</span></div>
+              <button class="lock-cta" style="font-size:10px;padding:6px 12px;">Upgrade →</button>
+            </div>
+            <div class="badge-icon">⚡</div>
+            <div class="badge-name">Speed Demon</div>
+            <div class="badge-desc">Time-to-Point under 10 seconds.</div>
+          </div>
+          <div class="badge-item">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Badge</div>
+              <div class="lock-price-row"><span class="price-pill sprint">₹999</span><span class="price-pill pass">₹1999</span></div>
+              <button class="lock-cta" style="font-size:10px;padding:6px 12px;">Upgrade →</button>
+            </div>
+            <div class="badge-icon">🧹</div>
+            <div class="badge-name">Filler Killer</div>
+            <div class="badge-desc">Zero filler words in a rep.</div>
+          </div>
+          <div class="badge-item">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Badge</div>
+              <div class="lock-price-row"><span class="price-pill sprint">₹999</span><span class="price-pill pass">₹1999</span></div>
+              <button class="lock-cta" style="font-size:10px;padding:6px 12px;">Upgrade →</button>
+            </div>
+            <div class="badge-icon">🎤</div>
+            <div class="badge-name">Orator</div>
+            <div class="badge-desc">Score above 90% on any rep.</div>
+          </div>
+          <div class="badge-item">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Badge</div>
+              <div class="lock-price-row"><span class="price-pill sprint">₹999</span><span class="price-pill pass">₹1999</span></div>
+              <button class="lock-cta" style="font-size:10px;padding:6px 12px;">Upgrade →</button>
+            </div>
+            <div class="badge-icon">📈</div>
+            <div class="badge-name">Improver</div>
+            <div class="badge-desc">Beat your own best score in any rep.</div>
+          </div>
+          <div class="badge-item">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Badge</div>
+              <div class="lock-price-row"><span class="price-pill sprint">₹999</span><span class="price-pill pass">₹1999</span></div>
+              <button class="lock-cta" style="font-size:10px;padding:6px 12px;">Upgrade →</button>
+            </div>
+            <div class="badge-icon">💎</div>
+            <div class="badge-name">Concrete Crusher</div>
+            <div class="badge-desc">Score 90+ on Concreteness.</div>
+          </div>
+          <div class="badge-item">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Badge</div>
+              <div class="lock-price-row"><span class="price-pill sprint">₹999</span><span class="price-pill pass">₹1999</span></div>
+              <button class="lock-cta" style="font-size:10px;padding:6px 12px;">Upgrade →</button>
+            </div>
+            <div class="badge-icon">🎯</div>
+            <div class="badge-name">Point First</div>
+            <div class="badge-desc">Score 90+ on Point-first.</div>
+          </div>
         </div>
       </section>
 
+      <!-- ============================ PILLARS ============================ -->
       <section class="view-panel" id="pillarsView">
         <div class="view-heading">
           <h2>🏛️ Pillars of Executive Communication</h2>
           <span class="vh-sub">The four foundations we train</span>
         </div>
         <div class="sub-activity-card-grid">
-          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 1</div><div class="activity-card-title">Structure</div><div class="activity-card-desc">STAR, PSO, BLUF. Give your ideas a spine listeners can follow.</div></div></div>
-          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 2</div><div class="activity-card-title">Conciseness</div><div class="activity-card-desc">Time-to-Point, filler elimination, headline discipline.</div></div></div>
-          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 3</div><div class="activity-card-title">Tone</div><div class="activity-card-desc">Warmth without weakness. Authority without arrogance.</div></div></div>
-          <div class="activity-card"><div class="ac-body"><div class="activity-card-tag">Pillar 4</div><div class="activity-card-title">Presence</div><div class="activity-card-desc">Pacing, pauses, and gravitas in high-stakes rooms.</div></div></div>
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Pillar 1</div>
+              <div class="lock-desc">Structure — STAR, PSO, BLUF.</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">Pillar 1</div>
+            <div class="activity-card-title">Structure</div>
+            <div class="activity-card-desc">STAR, PSO, BLUF. Give your ideas a spine listeners can follow.</div>
+          </div>
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Pillar 2</div>
+              <div class="lock-desc">Conciseness — Time-to-Point, filler elimination.</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">Pillar 2</div>
+            <div class="activity-card-title">Conciseness</div>
+            <div class="activity-card-desc">Time-to-Point, filler elimination, headline discipline.</div>
+          </div>
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Pillar 3</div>
+              <div class="lock-desc">Tone — warmth without weakness.</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">Pillar 3</div>
+            <div class="activity-card-title">Tone</div>
+            <div class="activity-card-desc">Warmth without weakness. Authority without arrogance.</div>
+          </div>
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Pillar 4</div>
+              <div class="lock-desc">Presence — pacing, pauses, gravitas.</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">Pillar 4</div>
+            <div class="activity-card-title">Presence</div>
+            <div class="activity-card-desc">Pacing, pauses, and gravitas in high-stakes rooms.</div>
+          </div>
         </div>
       </section>
 
+      <!-- ============================ MY LEARNING ============================ -->
       <section class="view-panel" id="learningView">
         <div class="view-heading">
           <h2>📚 My Learning</h2>
           <span class="vh-sub">3-minute frameworks and micro-lessons</span>
         </div>
 
-        <div class="question-card">
-          <div class="qc-label"><span>Curated learning</span></div>
-          <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
-            Framework deep-dives, worked examples, and role-specific micro-lessons tailored to your function.
+        <div class="locked-group-heading">Frameworks <span class="lg-line"></span></div>
+        <div class="sub-activity-card-grid" style="margin-bottom:18px;">
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Lesson</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">3-Min Concept</div>
+            <div class="activity-card-title">The Pyramid Principle</div>
+            <div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div>
           </div>
-          <div class="feature-preview-lock">
-            <div class="fpl-title sprint">🔒 Unlocked with Sprint</div>
-            <div class="fpl-desc">Pyramid Principle, BLUF, STAR, PSO and more — plus role-tailored lessons.</div>
-            <button class="fpl-cta" onclick="goToPaywall('sprint')">Enroll in a Sprint — ₹499 →</button>
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Lesson</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">3-Min Concept</div>
+            <div class="activity-card-title">BLUF Method</div>
+            <div class="activity-card-desc">Bottom Line Up Front for executive communication.</div>
+          </div>
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Lesson</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">3-Min Concept</div>
+            <div class="activity-card-title">The STAR Method</div>
+            <div class="activity-card-desc">Situation → Task → Action → Result.</div>
+          </div>
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Lesson</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">3-Min Concept</div>
+            <div class="activity-card-title">The PSO Framework</div>
+            <div class="activity-card-desc">Problem → Solution → Outcome for updates and pitches.</div>
+          </div>
+        </div>
+
+        <div class="locked-group-heading">Role-Specific Lessons <span class="lg-line"></span></div>
+        <div class="sub-activity-card-grid">
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Lesson</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">Engineers</div>
+            <div class="activity-card-title">Explaining Technical Work to Non-Technical Leaders</div>
+            <div class="activity-card-desc">Translate complexity without losing substance.</div>
+          </div>
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Lesson</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">Product Managers</div>
+            <div class="activity-card-title">Selling a Roadmap to Skeptical Stakeholders</div>
+            <div class="activity-card-desc">Frame trade-offs and build alignment.</div>
+          </div>
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Lesson</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">Sales</div>
+            <div class="activity-card-title">Running a Discovery Call That Doesn't Feel Like a Pitch</div>
+            <div class="activity-card-desc">Ask better questions, close with clarity.</div>
+          </div>
+          <div class="activity-card">
+            <div class="lock-overlay" onclick="goToPaywall('sprint')">
+              <div class="lock-icon">🔒</div>
+              <div class="lock-title">Unlock Lesson</div>
+              <div class="lock-price-row"><span class="price-pill sprint">Sprint ₹999</span><span class="price-pill pass">Pass ₹1999</span></div>
+              <button class="lock-cta">Upgrade →</button>
+            </div>
+            <div class="activity-card-tag">Consulting</div>
+            <div class="activity-card-title">The Minto Pyramid in Client Updates</div>
+            <div class="activity-card-desc">Answer-first structure for high-stakes advisory work.</div>
           </div>
         </div>
       </section>
@@ -813,9 +1656,11 @@
     // ============================================================
     // CONFIG
     // ============================================================
-    const BACKEND_URL = 'https://unspoken-backend-yvbi.onrender.com';
+    const BACKEND_URL = 'https://unspoken-backend-nqvl.onrender.com';
     const PAYWALL_URL = 'https://theunspoken.co.in/Pricing';
     const TRIAL_CAP_PER_QUESTION = 2;
+    const VOICE_MAX_SECONDS = 90;
+    const TEXT_MAX_CHARS = 500;
     const DEFAULT_Q1 = "Tell me about yourself — your background, what you do, and what drives you professionally.";
     const DEFAULT_Q2 = "Tell me about a current project or initiative you're leading or involved in.";
 
@@ -824,17 +1669,15 @@
     // ============================================================
     let USER = null;
     let SESSION_TOKEN = null;
-    let state = {
-      q1Trials: [],
-      q2Trials: [],
-      activityTrials: [],
-      function: null
-    };
+    let state = { q1Trials: [], q2Trials: [], activityTrials: [] };
 
     // ============================================================
     // BOOT
     // ============================================================
-    document.addEventListener('DOMContentLoaded', bootstrap);
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+      bootstrap();
+    });
 
     async function bootstrap() {
       const params = new URLSearchParams(window.location.search);
@@ -843,7 +1686,7 @@
 
       if (SESSION_TOKEN) {
         try {
-          const res = await fetch(`${BACKEND_URL}/api/drills/session`, {
+          const res = await fetch(`${BACKEND_URL}/api/trial/session`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
           });
@@ -855,13 +1698,8 @@
             renderAll();
             return;
           }
-          if (res.status === 401) {
-            showSessionExpired('Your trial session has expired. Start a new drill.');
-            return;
-          }
-        } catch (e) {
-          console.warn('Trial session load failed:', e);
-        }
+          if (res.status === 401) { showSessionExpired('Your trial session has expired. Start a new drill.'); return; }
+        } catch (e) { console.warn('Trial session load failed:', e); }
         showSessionExpired('We couldn\'t load your trial. Please start again from the landing page.');
         return;
       }
@@ -873,17 +1711,12 @@
           document.getElementById('bootScreen').classList.add('hidden');
           renderAll();
           return;
-        } catch (e) {
-          localStorage.removeItem('unspoken_trial_user');
-        }
+        } catch (e) { localStorage.removeItem('unspoken_trial_user'); }
       }
 
       showFreshState();
     }
 
-    // ============================================================
-    // BUILD TRIAL USER
-    // ============================================================
     function buildTrialUser(trial) {
       const analysis = trial.analysis ? normalizeAnalysis(trial.analysis) : null;
       const answered = trial.answered === 'q2' ? 'q2' : 'q1';
@@ -893,7 +1726,6 @@
         name: trial.name || 'Guest',
         email: trial.email || '',
         stage: trial.stage || 'early',
-        function: trial.function || null,
         answered,
         q1_text: trial.q1_text || DEFAULT_Q1,
         q2_text: trial.q2_text || DEFAULT_Q2,
@@ -903,7 +1735,6 @@
       };
     }
 
-    // Normalize the backend payload into a flat structure. No invented numbers.
     function normalizeAnalysis(data) {
       if (!data) return null;
       const m = data.metrics || {};
@@ -912,9 +1743,7 @@
       const g = data.gap || {};
       const c = data.coaching || {};
       const r = data.before_after_rewrite || {};
-
       return {
-        // New honest names with fallbacks to the old ones
         fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
         pointFirst: m.point_first ?? m.structure ?? null,
         concreteness: m.concreteness ?? m.impact ?? null,
@@ -943,6 +1772,7 @@
       renderTodayProgress();
       renderProgressView();
       switchView('today');
+      if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
     }
 
     function renderHeader() {
@@ -958,8 +1788,9 @@
     }
 
     function renderProfile() {
-      if (USER.stage) document.getElementById('profileStage').innerHTML = `<option selected>${formatStage(USER.stage)}</option>`;
-      if (USER.function) document.getElementById('profileFunction').innerHTML = `<option selected>${formatFunction(USER.function)}</option>`;
+      if (USER.stage) document.getElementById('inputStage').value = USER.stage;
+      if (USER.name) document.getElementById('inputName').value = USER.name;
+      if (USER.email) document.getElementById('inputEmail').value = USER.email;
     }
 
     function countTrials() {
@@ -979,9 +1810,6 @@
       document.getElementById('q2Diff').textContent = '⭐⭐ Medium';
       document.getElementById('q2Diff').className = 'qc-difficulty medium';
 
-      document.getElementById('questionCard2').classList.remove('locked');
-
-      // Seed the answered question's log with the landing-page analysis
       if (USER.analysis) {
         const seed = {
           number: 1,
@@ -1027,9 +1855,7 @@
         <div class="rep-log-item">
           <span>Trial ${tr.number || i + 1}${tr.fromLanding ? ' (from landing page)' : ''}</span>
           <span class="rl-score">${
-            tr.transcript
-              ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"`
-              : '—'
+            tr.transcript ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"` : '—'
           }</span>
         </div>
       `).join('');
@@ -1084,7 +1910,7 @@
             <div class="ya-executive-locked">
               <div class="ya-executive-blurred">Your executive version will appear here — a rewritten, high-impact answer you can borrow from.</div>
               <div class="ya-executive-overlay">
-                <span class="lock-pill sprint">🔒 Executive Version — Unlocked with Sprint</span>
+                <span class="lock-pill sprint">🔒 Executive Version — Unlocked with Sprint (₹999)</span>
                 <button class="ya-executive-cta" onclick="goToPaywall('sprint')">Unlock →</button>
               </div>
             </div>
@@ -1211,9 +2037,7 @@
           <div class="rep-log-item">
             <span>${escapeHtml(label)}${time ? ' · ' + escapeHtml(time) : ''}</span>
             <span class="rl-score">${
-              r.transcript
-                ? `"${escapeHtml(r.transcript.slice(0, 80))}${r.transcript.length > 80 ? '…' : ''}"`
-                : '—'
+              r.transcript ? `"${escapeHtml(r.transcript.slice(0, 80))}${r.transcript.length > 80 ? '…' : ''}"` : '—'
             }</span>
           </div>
         `;
@@ -1278,8 +2102,8 @@
             <button id="recVoiceSubmit" onclick="submitRep()" style="display:none;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;">Submit My Response →</button>
           </div>
           <div id="recTextPane" style="display:none;">
-            <textarea id="recTextInput" placeholder="Type your response here..." maxlength="500" style="width:100%;min-height:120px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
-            <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="recCharCount">0</span> / 500</div>
+            <textarea id="recTextInput" placeholder="Type your response here..." maxlength="${TEXT_MAX_CHARS}" style="width:100%;min-height:120px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
+            <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="recCharCount">0</span> / ${TEXT_MAX_CHARS}</div>
             <button id="recTextSubmit" onclick="submitRep()" disabled style="margin-top:12px;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;opacity:0.5;">Submit My Response →</button>
           </div>
         </div>
@@ -1359,7 +2183,7 @@
         activeRecording.timerInterval = setInterval(() => {
           activeRecording.seconds++;
           updateRecTimer();
-          if (activeRecording.seconds >= 90) stopRecording();
+          if (activeRecording.seconds >= VOICE_MAX_SECONDS) stopRecording();
         }, 1000);
       } catch (err) {
         console.error('Mic error:', err);
@@ -1393,6 +2217,20 @@
       const voiceBtn = document.getElementById('recVoiceSubmit');
       const textBtn = document.getElementById('recTextSubmit');
 
+      const name = document.getElementById('inputName')?.value?.trim() || USER.name || 'Guest';
+      const email = document.getElementById('inputEmail')?.value?.trim() || USER.email || '';
+      const mobile = document.getElementById('inputMobile')?.value?.trim() || '';
+      const stage = document.getElementById('inputStage')?.value || USER.stage || 'early';
+
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address in the sidebar before submitting.');
+        return;
+      }
+
+      USER.name = name;
+      USER.email = email;
+      USER.stage = stage;
+
       if (activeRecording.mode === 'voice' && !activeRecording.rawBlob) return alert('Please record first.');
       if (activeRecording.mode === 'text') {
         activeRecording.rawText = document.getElementById('recTextInput').value.trim();
@@ -1410,14 +2248,19 @@
         } else {
           formData.append('text', activeRecording.rawText);
         }
-        formData.append('question_type', which === 'q1' || which === 'q2' ? 'practice' : (activeRecording.meta.category || 'practice'));
+        formData.append('question_type', (which === 'q1' || which === 'q2') ? 'practice' : 'practice');
         formData.append('question_slot', (which === 'q1' || which === 'q2') ? which : '');
+        formData.append('question_prompt', activeRecording.question || '');
         formData.append('mode', activeRecording.mode);
         formData.append('duration_seconds', activeRecording.seconds || 30);
-        formData.append('user_id', USER.user_id || USER.email || '');
-        formData.append('trial', 'true');
 
-        const uploadRes = await fetch(`${BACKEND_URL}/api/drills/upload`, { method: 'POST', body: formData });
+        // Use a token if we already have one, else use the placeholder (upload allows anonymous)
+        const uploadHeaders = SESSION_TOKEN ? { 'Authorization': `Bearer ${SESSION_TOKEN}` } : {};
+        const uploadRes = await fetch(`${BACKEND_URL}/api/trial/upload`, {
+          method: 'POST',
+          headers: uploadHeaders,
+          body: formData
+        });
         if (!uploadRes.ok) {
           const err = await uploadRes.json().catch(() => ({}));
           throw new Error(err.error || err.detail || `Upload failed (${uploadRes.status})`);
@@ -1425,18 +2268,17 @@
         const { drill_id } = await uploadRes.json();
 
         // 2. Capture
-        const captureRes = await fetch(`${BACKEND_URL}/api/drills/capture`, {
+        const captureRes = await fetch(`${BACKEND_URL}/api/trial/capture`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             drill_id,
-            name: USER.name,
-            email: USER.email,
-            stage: USER.stage || 'early',
-            question_type: activeRecording.meta.category || 'practice',
-            question_slot: (which === 'q1' || which === 'q2') ? which : null,
-            mode: activeRecording.mode
-          }),
+            name,
+            email,
+            mobile,
+            stage,
+            question_slot: (which === 'q1' || which === 'q2') ? which : null
+          })
         });
         if (!captureRes.ok) {
           const err = await captureRes.json().catch(() => ({}));
@@ -1444,15 +2286,18 @@
         }
         const capture = await captureRes.json();
         SESSION_TOKEN = capture.session_token;
+        USER.user_id = capture.user_id || email;
+        try { localStorage.setItem('unspoken_trial_user', JSON.stringify(USER)); } catch (e) {}
+        try { localStorage.setItem('unspoken_trial_session', SESSION_TOKEN); } catch (e) {}
 
         // 3. Analyze
-        const analyzeRes = await fetch(`${BACKEND_URL}/api/drills/analyze`, {
+        const analyzeRes = await fetch(`${BACKEND_URL}/api/trial/analyze`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${SESSION_TOKEN}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ drill_id }),
+          body: JSON.stringify({ drill_id })
         });
 
         if (analyzeRes.status === 403) {
@@ -1466,13 +2311,11 @@
           }
           throw new Error(detail?.error || detail || 'Forbidden');
         }
-
         if (analyzeRes.status === 401) {
           closeRecorderModal();
           showSessionExpired('Your session has expired. Please start a new drill.');
           return;
         }
-
         if (!analyzeRes.ok) {
           const err = await analyzeRes.json().catch(() => ({}));
           throw new Error(err.error || err.detail || `Analyze failed (${analyzeRes.status})`);
@@ -1510,9 +2353,13 @@
         renderTodayProgress();
         renderProgressView();
         closeRecorderModal();
+
+        // Redirect to Pattern & Progress
+        switchView('dash');
+
         setTimeout(() => {
           const label = activeRecording.meta.title || 'Rep';
-          alert(`✅ ${label} saved!\n\nFiller discipline: ${metrics.fillerDiscipline ?? '—'}\nPoint-first: ${metrics.pointFirst ?? '—'}\nConcreteness: ${metrics.concreteness ?? '—'}`);
+          alert(`✅ ${label} saved!\n\nFiller discipline: ${metrics.fillerDiscipline ?? '—'}\nPoint-first: ${metrics.pointFirst ?? '—'}\nConcreteness: ${metrics.concreteness ?? '—'}\n\nYou're now on Pattern & Progress.`);
         }, 200);
       } catch (err) {
         console.error('❌ Submit failed:', err);
@@ -1522,9 +2369,6 @@
       }
     }
 
-    // ============================================================
-    // START REP
-    // ============================================================
     function startRep(which) {
       if (which === 'q1' || which === 'q2') {
         const used = USER.trials_used?.[which] || 0;
@@ -1555,13 +2399,15 @@
         const sidebar = document.getElementById('appSidebar');
         if (sidebar && sidebar.classList.contains('open')) sidebar.classList.remove('open');
       }
+      if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
     }
 
     function switchActivitySub(key, btn) {
       document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       document.querySelectorAll('.sub-activity-panel').forEach(p => p.classList.add('hidden'));
-      document.getElementById(`sub-${key}`).classList.remove('hidden');
+      const panel = document.getElementById(`sub-${key}`);
+      if (panel) panel.classList.remove('hidden');
     }
 
     function setTimeline(key, btn) {
@@ -1573,6 +2419,7 @@
 
     function signOut() {
       localStorage.removeItem('unspoken_trial_user');
+      localStorage.removeItem('unspoken_trial_session');
       window.location.href = 'https://theunspoken.co.in';
     }
 
@@ -1588,18 +2435,7 @@
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
     }
-    function formatStage(s) {
-      const m = { student:'Student / Final Year', fresher:'Fresher (0–1 yr)', early:'Early Career (1–5 yrs)', mid:'Mid Career (5–15 yrs)', senior:'Senior / Lead (15+ yrs)' };
-      return m[s] || s || '—';
-    }
-    function formatFunction(f) {
-      const m = { engineering:'Engineering / Data', bpo:'BPO / Customer Support', manufacturing:'Manufacturing / Ops', sales:'Sales / Marketing / BD', finance:'Finance / Accounting', consulting:'Consulting / Strategy', design:'Design / Content / Product', hr:'HR / People', other:'Other' };
-      return m[f] || f || '—';
-    }
 
-    // ============================================================
-    // BOOT HELPERS
-    // ============================================================
     function showFreshState() {
       const boot = document.getElementById('bootScreen');
       boot.classList.remove('hidden');
@@ -1628,7 +2464,7 @@
       boot.appendChild(fresh);
     }
 
-    console.log('🚀 Trial page loaded — trial-only flow.');
+    console.log('🚀 Trial dashboard loaded — full preview with Sprint ₹999 / Pass ₹1999.');
   </script>
 </body>
 </html>
