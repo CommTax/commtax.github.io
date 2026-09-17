@@ -1,1586 +1,1481 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="data:," />
-  <title>Unspoken Studio — Your Trial</title>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <style>
-    :root {
-      --bg-dark: #0B0F19;
-      --panel-bg: #111827;
-      --card-bg: #1F2937;
-      --border-color: #374151;
-      --primary: #2563EB;
-      --primary-hover: #1D4ED8;
-      --accent-cyan: #38BDF8;
-      --accent-gold: #F59E0B;
-      --accent-purple: #8B5CF6;
-      --danger: #EF4444;
-      --success: #10B981;
-      --text-main: #F9FAFB;
-      --text-muted: #9CA3AF;
-      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>The Unspoken — Your Journey</title>
+
+<style>
+
+:root {
+    --bg: #f5f5f2;
+    --card: #ffffff;
+    --text: #151515;
+    --muted: #777;
+    --line: #e5e5e1;
+    --soft: #f0f0ec;
+    --black: #111111;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+.screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+.login-wrapper {
+    width: 100%;
+    max-width: 430px;
+}
+
+.brand {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.brand-name {
+    font-size: 23px;
+    font-weight: 650;
+    letter-spacing: -1px;
+}
+
+.brand-sub {
+    color: #999;
+    margin-top: 6px;
+    font-size: 13px;
+}
+
+.login-card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.05);
+}
+
+.login-card h1 {
+    font-size: 32px;
+    letter-spacing: -1.5px;
+    margin: 0 0 10px;
+}
+
+.login-card p {
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.field {
+    margin-bottom: 18px;
+}
+
+.field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.field input {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    outline: none;
+    transition: .2s;
+}
+
+.field input:focus {
+    border-color: #777;
+}
+
+.primary-btn {
+    width: 100%;
+    border: 0;
+    background: var(--black);
+    color: white;
+    padding: 16px;
+    border-radius: 11px;
+    margin-top: 8px;
+}
+
+.demo {
+    margin-top: 20px;
+    padding: 14px;
+    background: var(--soft);
+    border-radius: 10px;
+    font-size: 12px;
+    color: #777;
+    text-align: center;
+}
+
+
+/* =====================================================
+   JOURNEY
+===================================================== */
+
+.journey {
+    width: 100%;
+    max-width: 850px;
+    margin: auto;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 55px;
+}
+
+.logo {
+    font-size: 18px;
+    font-weight: 650;
+}
+
+.step-count {
+    color: #999;
+    font-size: 12px;
+}
+
+
+/* progress */
+
+.progress {
+    height: 3px;
+    background: #e5e5e2;
+    margin-bottom: 55px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #111;
+    transition: .4s ease;
+}
+
+
+/* question */
+
+.question {
+    animation: enter .45s ease;
+}
+
+@keyframes enter {
+
+    from {
+        opacity: 0;
+        transform: translateY(15px);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background-color: var(--bg-dark); color: var(--text-main);
-      font-family: var(--font); display: flex; flex-direction: column;
-      min-height: 100vh; overflow-x: hidden;
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-    .hidden { display: none !important; }
 
-    .icon { width: 16px; height: 16px; stroke-width: 2; flex-shrink: 0; display: inline-block; vertical-align: middle; }
+}
 
-    /* ── BOOT ── */
-    .boot-screen { position: fixed; inset: 0; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; padding: 24px; z-index: 9999; }
-    .boot-screen.hidden { display: none; }
-    .boot-spinner { width: 52px; height: 52px; border: 3px solid rgba(56, 189, 248, 0.15); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 0.9s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .boot-title { font-size: 20px; font-weight: 700; text-align: center; }
-    .boot-sub { font-size: 13px; color: var(--text-muted); text-align: center; max-width: 440px; line-height: 1.5; }
-    .boot-btn { padding: 12px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; font-family: inherit; }
-    .boot-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+.eyebrow {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 17px;
+}
 
-    /* ── PREVIEW BANNER ── */
-    .preview-banner { background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(139, 92, 246, 0.12)); border-bottom: 1px solid rgba(56, 189, 248, 0.4); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 12px; }
-    .preview-banner.hidden { display: none; }
-    .preview-banner .pb-left { display: flex; align-items: center; gap: 8px; }
-    .preview-banner .pb-left strong { color: var(--accent-cyan); }
-    .preview-banner .pb-left .icon { width: 14px; height: 14px; color: var(--accent-cyan); }
-    .preview-banner .pb-right { display: flex; gap: 8px; flex-wrap: wrap; }
-    .preview-banner .pb-btn { padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; display: inline-flex; align-items: center; gap: 5px; }
-    .preview-banner .pb-btn .icon { width: 12px; height: 12px; }
-    .preview-banner .pb-btn.primary { background: var(--primary); color: #FFF; }
-    .preview-banner .pb-btn.secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+.question h1 {
+    font-size: clamp(38px, 6vw, 58px);
+    line-height: 1;
+    letter-spacing: -3px;
+    margin: 0 0 17px;
+    max-width: 720px;
+}
 
-    /* ── LOCK OVERLAYS (full-card) ── */
-    .lock-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11, 15, 25, 0.75) 0%, rgba(11, 15, 25, 0.95) 100%); backdrop-filter: blur(3px); border-radius: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; z-index: 5; gap: 10px; }
-    .lock-overlay .lock-icon-wrap { width: 44px; height: 44px; border-radius: 50%; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
-    .lock-overlay .lock-icon-wrap.pass-tier { background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.4); }
-    .lock-overlay .lock-icon { width: 20px; height: 20px; stroke-width: 2.2; color: var(--accent-gold); }
-    .lock-overlay .lock-icon.pass-tier { color: var(--accent-purple); }
-    .lock-overlay .lock-title { font-size: 15px; font-weight: 700; }
-    .lock-overlay .lock-desc { font-size: 12px; color: var(--text-muted); max-width: 380px; line-height: 1.5; }
-    .lock-overlay .lock-cta { margin-top: 8px; padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--accent-gold), #a07f30); color: #FFF; border: none; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
-    .lock-overlay .lock-cta .icon { width: 13px; height: 13px; }
-    .lock-overlay .lock-cta.pass-tier { background: linear-gradient(135deg, var(--accent-purple), #5b21b6); }
-    .lockable { position: relative; overflow: hidden; }
+.question-intro {
+    font-size: 17px;
+    color: #777;
+    line-height: 1.6;
+    max-width: 650px;
+    margin-bottom: 40px;
+}
 
-    /* ── LOCKED-PREVIEW CARDS ── */
-    .activity-card.locked-preview { position: relative; overflow: hidden; }
-    .activity-card.locked-preview .ac-body { filter: blur(0.5px); opacity: 0.55; }
-    .activity-card .ac-lock-cta { margin-top: 6px; padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--accent-gold), #a07f30); color: #FFF; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; font-family: inherit; }
-    .activity-card .ac-lock-cta .icon { width: 13px; height: 13px; }
-    .activity-card .ac-lock-cta.pass-tier { background: linear-gradient(135deg, var(--accent-purple), #5b21b6); }
 
-    /* ── TOP HEADER ── */
-    .top-header { background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; flex-wrap: wrap; gap: 12px; }
-    .brand { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
-    .brand-icon { width: 22px; height: 22px; stroke-width: 2.2; color: var(--accent-cyan); -webkit-text-fill-color: var(--accent-cyan); }
-    .track-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-cyan); background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 10px; border-radius: 20px; margin-left: 8px; -webkit-text-fill-color: var(--accent-cyan); }
-    .menu-toggle { display: none; background: none; border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 10px; border-radius: 6px; cursor: pointer; align-items: center; justify-content: center; }
-    .menu-toggle .icon { width: 18px; height: 18px; }
-    .global-stats { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .stat-pill { background-color: var(--bg-dark); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; font-size: 11px; display: flex; align-items: center; gap: 6px; }
-    .stat-pill .icon { width: 13px; height: 13px; stroke-width: 2.2; }
-    .stat-pill .stat-icon-primary { color: var(--accent-cyan); }
-    .stat-pill .stat-icon-streak { color: var(--accent-gold); }
-    .stat-pill .stat-icon-achievements { color: var(--accent-purple); }
-    .stat-pill strong { color: var(--accent-cyan); font-weight: 700; }
-    .stat-pill.streak strong { color: var(--accent-gold); }
-    .stat-pill.achievements strong { color: var(--accent-purple); }
-    .stat-pill.signin-pill { cursor: pointer; border-color: var(--accent-cyan); }
-    .stat-pill.signin-pill:hover { background: rgba(56, 189, 248, 0.08); }
+/* =====================================================
+   OPTIONS
+===================================================== */
 
-    /* ── LAYOUT ── */
-    .app-layout { display: flex; flex: 1; overflow: hidden; position: relative; min-height: 0; }
-    .sidebar { width: 320px; background-color: var(--panel-bg); border-right: 1px solid var(--border-color); padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; z-index: 20; transition: transform 0.3s ease; flex-shrink: 0; }
-    .nav-group { display: flex; flex-direction: column; gap: 4px; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border: 1px solid transparent; transition: all 0.2s; position: relative; }
-    .nav-item:hover { background-color: var(--card-bg); color: #FFF; }
-    .nav-item.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
-    .nav-item .nav-icon { width: 16px; height: 16px; stroke-width: 2; flex-shrink: 0; }
-    .nav-item .nav-preview { margin-left: auto; font-size: 9px; font-weight: 700; color: var(--accent-cyan); background: rgba(56, 189, 248, 0.15); padding: 2px 6px; border-radius: 4px; letter-spacing: 0.05em; }
-    .sidebar-section { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; }
-    .sidebar-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; }
-    .field-group { margin-bottom: 8px; }
-    .field-group:last-child { margin-bottom: 0; }
-    label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-    select { width: 100%; background-color: var(--bg-dark); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 10px; border-radius: 6px; font-family: inherit; font-size: 12px; }
-    .user-profile-card { margin-top: auto; background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
-    .plan-badge { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-cyan); background-color: rgba(56, 189, 248, 0.15); padding: 3px 8px; border-radius: 4px; width: fit-content; }
-    .user-info { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
-    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #2563EB, #8B5CF6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
-    .user-details { display: flex; flex-direction: column; overflow: hidden; }
-    .user-name { font-size: 13px; font-weight: 700; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
-    .user-role-sub { font-size: 10px; color: var(--text-muted); }
-    .signout-btn { margin-top: 8px; padding: 8px 10px; font-size: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); cursor: pointer; width: 100%; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .signout-btn:hover { border-color: var(--danger); color: var(--danger); }
-    .signout-btn .icon { width: 12px; height: 12px; }
+.options {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 12px;
+}
 
-    .main-content { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
-    .view-panel { display: none; flex-direction: column; gap: 20px; }
-    .view-panel.active-view { display: flex; }
+.option {
+    border: 1px solid var(--line);
+    background: white;
+    border-radius: 17px;
+    padding: 23px;
+    text-align: left;
+    transition: .2s ease;
+}
 
-    /* ── TODAY ── */
-    .today-header-bar { background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(139, 92, 246, 0.10)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
-    .today-header-bar .th-left h2 { font-size: 20px; margin-bottom: 4px; }
-    .today-header-bar .th-left .th-sub { font-size: 12px; color: var(--text-muted); }
-    .today-header-bar .th-right { text-align: right; }
-    .today-header-bar .th-right .day-counter { font-size: 22px; font-weight: 800; color: var(--accent-cyan); }
-    .today-header-bar .th-right .streak { font-size: 12px; color: var(--accent-gold); font-weight: 700; margin-top: 4px; display: inline-flex; align-items: center; gap: 5px; }
-    .today-header-bar .th-right .streak .icon { width: 13px; height: 13px; }
-    .day-progress-bar { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; margin-top: 10px; }
-    .day-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); transition: width 0.4s; }
+.option:hover {
+    transform: translateY(-2px);
+    border-color: #aaa;
+}
 
-    .question-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 16px; position: relative; }
-    .question-card.locked { background: linear-gradient(135deg, var(--panel-bg), rgba(56, 189, 248, 0.03)); }
-    .qc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
-    .qc-left { flex: 1; min-width: 240px; }
-    .qc-label { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .qc-text { font-size: 17px; font-weight: 700; line-height: 1.4; }
-    .qc-meta { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
-    .qc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-    .qc-difficulty { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
-    .qc-difficulty .icon { width: 11px; height: 11px; }
-    .qc-difficulty.easy { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-    .qc-difficulty.medium { background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); }
-    .qc-difficulty.hard { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+.option.selected {
+    border: 1.5px solid #111;
+    background: #fafaf8;
+}
 
-    .qc-action-btn { padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
-    .qc-action-btn:hover:not(:disabled) { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.08); color: var(--accent-cyan); }
-    .qc-action-btn .icon { width: 13px; height: 13px; }
+.option-icon {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
 
-    .rep-tracker { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-    .rep-tracker .rt-left .rt-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px; }
-    .rep-tracker .rt-left .rt-count { font-size: 18px; font-weight: 800; }
-    .rep-tracker .rt-left .rt-count .rt-cap { font-size: 13px; color: var(--text-muted); font-weight: 600; }
-    .rep-tracker .rt-left .rt-best { font-size: 11px; color: var(--success); margin-top: 2px; font-weight: 600; }
-    .rep-tracker .rt-right { display: flex; gap: 8px; align-items: center; }
+.option-title {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 6px;
+}
 
-    .rep-btn { padding: 12px 22px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
-    .rep-btn:hover:not(:disabled) { background: var(--primary-hover); }
-    .rep-btn:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; }
-    .rep-btn.done { background: transparent; border: 1px solid var(--success); color: var(--success); }
-    .rep-btn .icon { width: 15px; height: 15px; }
+.option-description {
+    color: #888;
+    font-size: 12px;
+    line-height: 1.5;
+}
 
-    .reps-log { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
-    .rep-log-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 10px; background: var(--bg-dark); border-radius: 6px; color: var(--text-muted); }
-    .rep-log-item .rl-score { color: var(--success); font-weight: 700; }
 
-    .today-summary { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 20px; }
-    .today-summary h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 12px; font-weight: 700; }
-    .ts-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border-color); }
-    .ts-row:last-child { border-bottom: none; }
-    .ts-row .ts-val { font-weight: 700; }
+/* =====================================================
+   TEXT INPUT
+===================================================== */
 
-    /* ── PATTERN ANALYSIS ── */
-    .your-analysis-card { background: linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(139, 92, 246, 0.06)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 16px; padding: 26px 28px; position: relative; overflow: hidden; }
-    .ya-header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
-    .ya-badge { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-cyan); background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; }
-    .ya-badge .icon { width: 11px; height: 11px; stroke-width: 2.4; }
-    .ya-sub { font-size: 12px; color: var(--text-muted); }
-    .ya-pattern-block { text-align: center; padding: 24px 0 26px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 22px; }
-    .ya-pattern-kicker { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; }
-    .ya-pattern-name-hero { font-size: 34px; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-    .ya-pattern-desc-hero { font-size: 14px; line-height: 1.6; color: var(--text-muted); max-width: 520px; margin: 0 auto; }
-    .ya-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .ya-box { background: rgba(11, 15, 25, 0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px 18px; }
-    .ya-box-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-cyan); font-weight: 700; margin-bottom: 10px; }
-    .ya-list { list-style: none; padding: 0; margin: 0; }
-    .ya-list li { font-size: 12px; line-height: 1.55; padding-left: 18px; position: relative; margin-bottom: 6px; }
-    .ya-list li::before { content: '—'; position: absolute; left: 0; color: var(--accent-cyan); font-weight: 700; }
-    .ya-list.wins li::before { content: '→'; color: var(--success); }
-    .ya-executive { font-size: 13px; line-height: 1.6; font-weight: 600; padding: 12px 14px; background: linear-gradient(135deg, rgba(184,148,60,0.15), rgba(184,148,60,0.06)); border-left: 3px solid var(--accent-gold); border-radius: 8px; font-style: italic; }
-    .ya-footer { margin-top: 20px; display: flex; justify-content: center; }
-    .ya-btn { padding: 12px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
-    .ya-btn .icon { width: 14px; height: 14px; }
+.big-input {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: white;
+    padding: 20px;
+    font-size: 17px;
+    min-height: 130px;
+    resize: vertical;
+    outline: none;
+}
 
-    .ya-metrics-mini { display: flex; flex-direction: column; gap: 10px; }
-    .ya-metric-row { display: flex; align-items: center; gap: 10px; font-size: 12px; }
-    .ya-metric-row .ya-metric-label { width: 70px; color: var(--text-muted); font-weight: 600; }
-    .ya-metric-row .ya-metric-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
-    .ya-metric-row .ya-metric-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); border-radius: 3px; }
-    .ya-metric-row .ya-metric-value { width: 34px; text-align: right; font-weight: 700; color: var(--text-main); }
+.big-input:focus {
+    border-color: #888;
+}
 
-    .ya-transcript { font-size: 13px; line-height: 1.65; color: var(--text-main); max-height: 220px; overflow-y: auto; padding: 12px 14px; background: rgba(0, 0, 0, 0.25); border-left: 3px solid var(--accent-cyan); border-radius: 8px; font-style: italic; white-space: pre-wrap; word-break: break-word; }
-    .ya-transcript-empty { color: var(--text-muted); font-style: normal; font-size: 12px; }
 
-    /* ── PROGRESS ── */
-    .view-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-    .view-heading h2 { font-size: 18px; display: flex; align-items: center; gap: 8px; }
-    .view-heading h2 .icon { width: 18px; height: 18px; color: var(--accent-cyan); }
-    .view-heading .vh-sub { font-size: 12px; color: var(--text-muted); }
+/* =====================================================
+   CONTINUE
+===================================================== */
 
-    .timeline-bar { display: flex; justify-content: space-between; align-items: center; background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
-    .timeline-tabs { display: flex; gap: 8px; }
-    .time-tab { padding: 6px 14px; border-radius: 6px; background-color: var(--bg-dark); border: 1px solid var(--border-color); color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
-    .time-tab.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
-    .dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .metric-box { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; position: relative; }
-    .metric-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-    .metric-value { font-size: 22px; font-weight: 800; margin-top: 6px; }
-    .metric-sub { font-size: 11px; color: var(--success); margin-top: 4px; font-weight: 600; }
-    .dash-wide-box { grid-column: span 4; background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; position: relative; }
-    .feedback-grid { grid-column: span 4; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .feedback-box { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; position: relative; }
-    .feedback-box.well { border-left: 4px solid var(--success); }
-    .feedback-box.improve { border-left: 4px solid var(--accent-gold); }
-    .feedback-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-    .feedback-title .icon { width: 16px; height: 16px; }
-    .feedback-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-    .feedback-list li { font-size: 12px; line-height: 1.5; position: relative; padding-left: 16px; }
-    .feedback-list li::before { content: "•"; position: absolute; left: 0; color: var(--text-muted); }
-    .snr-container { margin-top: 8px; background-color: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; }
-    .snr-bar-wrapper { height: 14px; width: 100%; background-color: var(--border-color); border-radius: 6px; overflow: hidden; margin-top: 8px; display: flex; position: relative; }
-    .snr-signal { height: 100%; background-color: var(--success); transition: width 0.3s; }
-    .snr-noise { height: 100%; background-color: var(--danger); transition: width 0.3s; }
-    .ghost-line { position: absolute; top: 0; bottom: 0; width: 3px; background-color: #FFF; box-shadow: 0 0 6px rgba(255,255,255,0.8); z-index: 5; }
-    .snr-ticks { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-top: 4px; }
-    .try-again-bar { margin-top: 12px; background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(139, 92, 246, 0.08)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
-    .try-again-bar .ta-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
-    .try-again-bar .ta-text strong { color: var(--text-main); }
-    .try-again-bar .ta-btn { padding: 12px 24px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
-    .try-again-bar .ta-btn .icon { width: 14px; height: 14px; }
+.action-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 35px;
+}
 
-    /* ── ACTIVITIES ── */
-    .activity-sub-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
-    .sub-tab-btn { padding: 8px 14px; background-color: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
-    .sub-tab-btn .icon { width: 13px; height: 13px; stroke-width: 2.2; }
-    .sub-tab-btn:hover { border-color: var(--accent-cyan); color: var(--text-main); }
-    .sub-tab-btn.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
-    .sub-activity-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-    .activity-card { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: transform 0.2s, border-color 0.2s; position: relative; }
-    .activity-card:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
-    .activity-card-title { font-size: 15px; font-weight: 700; }
-    .activity-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-    .activity-card-tag { font-size: 10px; font-weight: 700; color: var(--accent-purple); text-transform: uppercase; }
+.back {
+    border: 0;
+    background: transparent;
+    color: #999;
+}
 
-    .drills-container { display: flex; flex-direction: column; gap: 28px; }
-    .drill-category { display: flex; flex-direction: column; gap: 14px; }
-    .drill-category-header { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
-    .drill-category-header .dc-icon { width: 18px; height: 18px; color: var(--accent-cyan); flex-shrink: 0; }
-    .drill-category-header .dc-title { font-size: 14px; font-weight: 800; letter-spacing: 0.02em; color: var(--text-main); text-transform: uppercase; }
-    .drill-category-header .dc-count { font-size: 10px; font-weight: 700; color: var(--text-muted); background: var(--bg-dark); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 20px; margin-left: auto; }
-    .drill-category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.continue {
+    background: #111;
+    color: white;
+    border: 0;
+    padding: 14px 24px;
+    border-radius: 11px;
+}
 
-    /* ── ACHIEVEMENTS ── */
-    .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
-    .badge-item { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-    .badge-item.locked { opacity: 0.35; }
-    .badge-icon { display: flex; align-items: center; justify-content: center; }
-    .badge-icon .icon { width: 32px; height: 32px; stroke-width: 1.8; color: var(--accent-gold); }
-    .badge-item.locked .icon { color: var(--text-muted); }
-    .badge-name { font-size: 12px; font-weight: 700; }
-    .badge-desc { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
 
-    /* ── MODAL ── */
-    .us-modal-backdrop { position: fixed; inset: 0; background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
-    .us-modal-backdrop.is-visible { display: flex; }
-    .us-modal { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 28px; width: 100%; max-width: 640px; max-height: 85vh; overflow-y: auto; position: relative; }
-    .us-modal-close { position: absolute; top: 14px; right: 18px; background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; }
-    .us-modal-close .icon { width: 18px; height: 18px; }
-    .us-modal h2 { font-size: 20px; margin-bottom: 6px; }
-    .us-modal .us-modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+/* =====================================================
+   PROFILE RESULT
+===================================================== */
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 900px) {
-      .dash-grid { grid-template-columns: 1fr; }
-      .dash-wide-box, .feedback-grid { grid-column: span 1; grid-template-columns: 1fr; }
-      .ya-grid { grid-template-columns: 1fr; }
-      .menu-toggle { display: flex; }
-      .sidebar { position: absolute; top: 0; bottom: 0; left: 0; transform: translateX(-100%); box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
-      .sidebar.open { transform: translateX(0); }
-      .today-header-bar { flex-direction: column; align-items: flex-start; }
-      .today-header-bar .th-right { text-align: left; }
-      .qc-top { flex-direction: column; align-items: flex-start; }
-      .qc-right { align-items: flex-start; width: 100%; }
+.result {
+    animation: enter .5s ease;
+}
+
+.result-header {
+    margin-bottom: 35px;
+}
+
+.result-header h1 {
+    font-size: clamp(42px,6vw,64px);
+    line-height: .95;
+    letter-spacing: -3px;
+    margin: 0;
+}
+
+.result-header p {
+    color: #777;
+    line-height: 1.6;
+    max-width: 600px;
+    font-size: 17px;
+}
+
+.profile-card {
+    background: #111;
+    color: white;
+    border-radius: 25px;
+    padding: 35px;
+    margin-bottom: 15px;
+}
+
+.profile-label {
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 2px;
+    opacity: .5;
+}
+
+.profile-card h2 {
+    font-size: 31px;
+    letter-spacing: -1px;
+    margin: 12px 0;
+}
+
+.profile-card p {
+    color: #aaa;
+    line-height: 1.6;
+}
+
+.edge {
+    margin-top: 25px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.edge strong {
+    font-size: 20px;
+}
+
+.edge span {
+    color: #666;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 15px;
+}
+
+.summary-card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 19px;
+    padding: 25px;
+}
+
+.summary-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #999;
+}
+
+.summary-value {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.start {
+    width: 100%;
+    margin-top: 25px;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:650px) {
+
+    .screen {
+        padding: 20px;
+        align-items: flex-start;
     }
-  </style>
+
+    .login-card {
+        padding: 28px;
+    }
+
+    .options {
+        grid-template-columns: 1fr;
+    }
+
+    .question h1 {
+        letter-spacing: -2px;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .action-row {
+        position: sticky;
+        bottom: 0;
+        background: var(--bg);
+        padding: 15px 0;
+    }
+
+}
+
+</style>
 </head>
+
+
 <body>
 
-  <div class="boot-screen" id="bootScreen">
-    <div class="boot-spinner" id="bootSpinner"></div>
-    <div class="boot-title" id="bootTitle">Loading your trial…</div>
-    <div class="boot-sub" id="bootSub">Fetching your analysis and questions.</div>
-  </div>
 
-  <div class="preview-banner" id="previewBanner">
-    <div class="pb-left" id="previewBannerText">
-      <i data-lucide="hand" class="icon"></i>
-      <span>Hi <strong id="previewName">there</strong> — here's your trial.</span>
-    </div>
-    <div class="pb-right">
-      <button class="pb-btn primary" onclick="goToPaywall('sprint')">
-        <i data-lucide="zap" class="icon"></i> Enroll in a Sprint
-      </button>
-      <button class="pb-btn secondary" onclick="goToPaywall('pass')">
-        <i data-lucide="star" class="icon"></i> Get Practice Pass
-      </button>
-    </div>
-  </div>
+<!-- =====================================================
+     LOGIN SCREEN
+===================================================== -->
 
-  <div class="us-modal-backdrop" id="usModal">
-    <div class="us-modal">
-      <button class="us-modal-close" onclick="closeModal()" aria-label="Close">
-        <i data-lucide="x"></i>
-      </button>
-      <div id="usModalContent"></div>
-    </div>
-  </div>
+<section id="loginScreen" class="screen">
 
-  <header class="top-header">
-    <div class="brand">
-      <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
-        <i data-lucide="menu"></i>
-      </button>
-      <i data-lucide="rocket" class="brand-icon"></i>
-      Unspoken Studio
-      <span class="track-badge" id="headerTrackBadge">Trial</span>
-    </div>
-    <div class="global-stats">
-      <div class="stat-pill signin-pill" onclick="goToPaywall('sprint')">
-        <i data-lucide="sparkles" class="stat-icon-primary"></i>
-        <strong>Upgrade</strong>
-      </div>
-      <div class="stat-pill">
-        <i data-lucide="clock" class="stat-icon-primary"></i>
-        <span>Member Since:</span><strong id="headerMemberSince">Just now</strong>
-      </div>
-      <div class="stat-pill streak">
-        <i data-lucide="flame" class="stat-icon-streak"></i>
-        <span>Trials used:</span><strong id="headerStreak">—</strong>
-      </div>
-      <div class="stat-pill">
-        <i data-lucide="circle-check" class="stat-icon-primary"></i>
-        <span>Completed:</span><strong id="headerCompleted">0 Tasks</strong>
-      </div>
-      <div class="stat-pill achievements">
-        <i data-lucide="trophy" class="stat-icon-achievements"></i>
-        <span>Achievements:</span><strong id="headerAchievements">0 Badges</strong>
-      </div>
-    </div>
-  </header>
+    <div class="login-wrapper">
 
-  <div class="app-layout">
-    <aside class="sidebar" id="appSidebar">
-      <div class="nav-group">
-        <div class="nav-item active" id="navToday" onclick="switchView('today')">
-          <i data-lucide="house" class="nav-icon"></i> Today
-        </div>
-        <div class="nav-item" id="navActivities" onclick="switchView('activities')">
-          <i data-lucide="target" class="nav-icon"></i> Activities <span class="nav-preview">PREVIEW</span>
-        </div>
-        <div class="nav-item" id="navDash" onclick="switchView('dash')">
-          <i data-lucide="bar-chart-3" class="nav-icon"></i> Pattern &amp; Progress
-        </div>
-        <div class="nav-item" id="navRecordings" onclick="switchView('recordings')">
-          <i data-lucide="mic" class="nav-icon"></i> My Recordings <span class="nav-preview">PREVIEW</span>
-        </div>
-        <div class="nav-item" id="navBadges" onclick="switchView('badges')">
-          <i data-lucide="trophy" class="nav-icon"></i> Achievements
-        </div>
-        <div class="nav-item" id="navPillars" onclick="switchView('pillars')">
-          <i data-lucide="landmark" class="nav-icon"></i> Pillars
-        </div>
-        <div class="nav-item" id="navLearning" onclick="switchView('learning')">
-          <i data-lucide="book-open" class="nav-icon"></i> My Learning <span class="nav-preview">PREVIEW</span>
-        </div>
-      </div>
-      <hr style="border-color: var(--border-color);" />
-      <div class="sidebar-section">
-        <div class="sidebar-title">Your Profile</div>
-        <div class="field-group">
-          <label>Career Stage</label>
-          <select id="profileStage" disabled style="opacity: 0.7;"><option>—</option></select>
-        </div>
-        <div class="field-group">
-          <label>Function</label>
-          <select id="profileFunction" disabled style="opacity: 0.7;"><option>—</option></select>
-        </div>
-      </div>
-      <div class="user-profile-card">
-        <div class="plan-badge" id="planBadge">Trial</div>
-        <div class="user-info">
-          <div class="user-avatar" id="userAvatarEl">A</div>
-          <div class="user-details">
-            <div class="user-name" id="userNameEl">—</div>
-            <div class="user-role-sub" id="userRoleEl">Free trial</div>
-          </div>
-        </div>
-        <button class="signout-btn" onclick="signOut()">
-          <i data-lucide="rotate-ccw"></i> Start Over
-        </button>
-      </div>
-    </aside>
+        <div class="brand">
 
-    <main class="main-content">
-
-      <!-- TODAY -->
-      <section class="view-panel active-view" id="todayView">
-        <div class="today-header-bar">
-          <div class="th-left">
-            <h2 id="todayTrackTitle">Your Trial</h2>
-            <div class="th-sub" id="todayFocus">2 questions · 2 trials each</div>
-            <div class="day-progress-bar"><div class="day-progress-fill" id="dayProgressFill" style="width: 0%;"></div></div>
-          </div>
-          <div class="th-right">
-            <div class="day-counter" id="dayCounter">0 / 4 trials</div>
-            <div class="streak" id="todayStreak">
-              <i data-lucide="flame"></i>
-              <span>Trial</span>
+            <div class="brand-name">
+                The Unspoken
             </div>
-          </div>
+
+            <div class="brand-sub">
+                Communication Practice
+            </div>
+
         </div>
 
-        <div class="question-card" id="questionCard1">
-          <div class="qc-top">
-            <div class="qc-left">
-              <div class="qc-label"><span id="q1Label">Q1 of 2</span></div>
-              <div class="qc-text" id="q1Text">—</div>
-              <div class="qc-meta" id="q1Meta">—</div>
-            </div>
-            <div class="qc-right">
-              <div class="qc-difficulty easy" id="q1Diff">
-                <i data-lucide="star"></i> Easy
-              </div>
-            </div>
-          </div>
-          <div class="rep-tracker">
-            <div class="rt-left">
-              <div class="rt-label">Trials</div>
-              <div class="rt-count" id="q1RepCount">0 <span class="rt-cap">/ 2</span></div>
-              <div class="rt-best" id="q1BestSnr">Best score: —</div>
-            </div>
-            <div class="rt-right">
-              <button class="rep-btn" id="q1RepBtn" onclick="startRep('q1')">
-                <i data-lucide="mic"></i> Start Trial 1
-              </button>
-            </div>
-          </div>
-          <div class="reps-log" id="q1RepsLog"></div>
-        </div>
 
-        <div class="question-card" id="questionCard2">
-          <div class="qc-top">
-            <div class="qc-left">
-              <div class="qc-label"><span id="q2Label">Q2 of 2</span></div>
-              <div class="qc-text" id="q2Text">—</div>
-              <div class="qc-meta" id="q2Meta">—</div>
-            </div>
-            <div class="qc-right">
-              <div class="qc-difficulty medium" id="q2Diff">
-                <i data-lucide="star"></i><i data-lucide="star"></i> Medium
-              </div>
-            </div>
-          </div>
-          <div class="rep-tracker">
-            <div class="rt-left">
-              <div class="rt-label">Trials</div>
-              <div class="rt-count" id="q2RepCount">0 <span class="rt-cap">/ 2</span></div>
-              <div class="rt-best" id="q2BestSnr">Best score: —</div>
-            </div>
-            <div class="rt-right">
-              <button class="rep-btn" id="q2RepBtn" onclick="startRep('q2')">
-                <i data-lucide="mic"></i> Start Trial 1
-              </button>
-            </div>
-          </div>
-          <div class="reps-log" id="q2RepsLog"></div>
-        </div>
+        <div class="login-card">
 
-        <div class="question-card" id="freeChangeCustomizeCard">
-          <div class="qc-top">
-            <div class="qc-left">
-              <div class="qc-label">
-                <i data-lucide="lock" class="icon" style="width:12px;height:12px;color:var(--accent-gold);"></i>
-                <span>Want to change the question?</span>
-              </div>
-              <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
-                Question switching and customization unlock with a Sprint.
-              </div>
-            </div>
-          </div>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="qc-action-btn" onclick="goToPaywall('sprint')">
-              <i data-lucide="lock"></i> Change Question — Enroll in Sprint
-            </button>
-            <button class="qc-action-btn" onclick="goToPaywall('sprint')">
-              <i data-lucide="lock"></i> Customize Question — Enroll in Sprint
-            </button>
-          </div>
-        </div>
+            <h1>
+                Welcome back.
+            </h1>
 
-        <div class="today-summary">
-          <h3>Today's Progress</h3>
-          <div class="ts-row"><span>Total trials today</span><span class="ts-val" id="tsTotalReps">0 / 4</span></div>
-          <div class="ts-row"><span>Time spent</span><span class="ts-val" id="tsTimeSpent">0 min</span></div>
-          <div class="ts-row"><span>Best clarity</span><span class="ts-val" id="tsBestSnr">—</span></div>
-          <div class="ts-row"><span>Drills unlocked</span><span class="ts-val" id="tsDrills">0 / 2</span></div>
-        </div>
-      </section>
-
-      <!-- ACTIVITIES -->
-      <section class="view-panel" id="activitiesView">
-        <div class="view-heading">
-          <h2><i data-lucide="target"></i> Activities</h2>
-          <span class="vh-sub">Extra practice beyond today's drills</span>
-        </div>
-
-        <div class="activity-sub-tabs">
-          <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">
-            <i data-lucide="mic"></i> Voice Reps
-          </button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">
-            <i data-lucide="library"></i> Scenario Library
-          </button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('drills', this)">
-            <i data-lucide="crosshair"></i> Communication Drills
-          </button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('daily-challenge', this)">
-            <i data-lucide="flame"></i> Daily Challenge
-          </button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('reflection', this)">
-            <i data-lucide="notebook-pen"></i> Reflection Journal
-          </button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('bites', this)">
-            <i data-lucide="book-open"></i> Learning Bites
-          </button>
-          <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)">
-            <i data-lucide="presentation"></i> Simulator
-          </button>
-        </div>
-
-        <div id="sub-voice-reps" class="sub-activity-panel">
-          <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview" data-activity="Quick Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">45 Seconds · Core Habit</div>
-                <div class="activity-card-title">Quick Rep</div>
-                <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">
-                <i data-lucide="lock"></i> Unlocked with Sprint — ₹499
-              </button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Challenge Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">90 Seconds · Pressure</div>
-                <div class="activity-card-title">Challenge Rep</div>
-                <div class="activity-card-desc">Harder workplace scenario under timed pressure.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">
-                <i data-lucide="lock"></i> Unlocked with Sprint — ₹499
-              </button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Blind Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Instinct Test · No Prep</div>
-                <div class="activity-card-title">Blind Rep</div>
-                <div class="activity-card-desc">Random scenario revealed as recording begins.</div>
-              </div>
-              <button class="ac-lock-cta pass-tier" onclick="goToPaywall('pass')">
-                <i data-lucide="lock"></i> Unlocked with Practice Pass — ₹1,299/mo
-              </button>
-            </div>
-            <div class="activity-card locked-preview" data-activity="Repeat Rep" data-type="voice">
-              <div class="ac-body">
-                <div class="activity-card-tag">Targeted Improvement</div>
-                <div class="activity-card-title">Repeat Rep</div>
-                <div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div>
-              </div>
-              <button class="ac-lock-cta pass-tier" onclick="goToPaywall('pass')">
-                <i data-lucide="lock"></i> Unlocked with Practice Pass — ₹1,299/mo
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div id="sub-scenarios" class="sub-activity-panel hidden">
-          <div id="scenariosGrid" class="sub-activity-card-grid"></div>
-        </div>
-
-        <div id="sub-drills" class="sub-activity-panel hidden">
-          <div id="drillsGrid" class="drills-container"></div>
-        </div>
-
-        <div id="sub-daily-challenge" class="sub-activity-panel hidden">
-          <div class="dash-wide-box lockable">
-            <div class="qc-label" style="font-size: 11px; color: var(--accent-cyan); font-weight: 700; margin-bottom: 6px;">COMMUNITY EXPERIENCE</div>
-            <h2 style="font-size: 18px; margin-top: 4px;">Today's Global Challenge: Handling Hostile Pushback</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">
-              Scenario: A senior VP cuts you off mid-presentation and says "This strategy won't scale." Respond concisely in 45 seconds.
+            <p>
+                Your communication journey continues here.
+                Sign in to pick up where you left off.
             </p>
-            <div class="lock-overlay">
-              <div class="lock-icon-wrap">
-                <i data-lucide="lock" class="lock-icon"></i>
-              </div>
-              <div class="lock-title">Unlocked with Sprint</div>
-              <div class="lock-desc">Join thousands of practitioners tackling the same daily scenario.</div>
-              <button class="lock-cta" onclick="goToPaywall('sprint')">
-                Enroll in a Sprint — ₹499 <i data-lucide="arrow-right" class="icon"></i>
-              </button>
-            </div>
-          </div>
-        </div>
 
-        <div id="sub-reflection" class="sub-activity-panel hidden">
-          <div class="question-card lockable">
-            <div class="qc-label"><span>Metacognition &amp; Self-Awareness Reflection</span></div>
-            <div class="qc-text" style="font-size: 14px; font-weight: 600; color: var(--text-muted); line-height: 1.5;">
-              Reflect on what you intended to say vs what you actually said. Track your patterns over time.
-            </div>
-            <div class="lock-overlay">
-              <div class="lock-icon-wrap">
-                <i data-lucide="lock" class="lock-icon"></i>
-              </div>
-              <div class="lock-title">Unlocked with Sprint</div>
-              <div class="lock-desc">Daily journaling builds self-awareness. Available with Sprint and Pass plans.</div>
-              <button class="lock-cta" onclick="goToPaywall('sprint')">
-                Enroll in a Sprint — ₹499 <i data-lucide="arrow-right" class="icon"></i>
-              </button>
-            </div>
-          </div>
-        </div>
 
-        <div id="sub-bites" class="sub-activity-panel hidden">
-          <div class="sub-activity-card-grid">
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">The Pyramid Principle</div>
-                <div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">
-                <i data-lucide="lock"></i> Unlocked with Sprint — ₹499
-              </button>
-            </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">BLUF Method</div>
-                <div class="activity-card-desc">Bottom Line Up Front for executive communication.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">
-                <i data-lucide="lock"></i> Unlocked with Sprint — ₹499
-              </button>
-            </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">The STAR Method</div>
-                <div class="activity-card-desc">Situation → Task → Action → Result.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">
-                <i data-lucide="lock"></i> Unlocked with Sprint — ₹499
-              </button>
-            </div>
-            <div class="activity-card locked-preview">
-              <div class="ac-body">
-                <div class="activity-card-tag">3-Min Concept</div>
-                <div class="activity-card-title">The PSO Framework</div>
-                <div class="activity-card-desc">Problem → Solution → Outcome for updates and pitches.</div>
-              </div>
-              <button class="ac-lock-cta" onclick="goToPaywall('sprint')">
-                <i data-lucide="lock"></i> Unlocked with Sprint — ₹499
-              </button>
-            </div>
-          </div>
-        </div>
+            <div class="field">
 
-        <div id="sub-simulator" class="sub-activity-panel hidden">
-          <div class="dash-wide-box lockable" style="border-color: var(--accent-purple);">
-            <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
-            <h2 style="font-size: 18px;">Full 5-Question End-to-End Mock Interview</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">
-              Simulate a 15-minute high-stakes executive panel interview with dynamic follow-ups and comprehensive debrief.
-            </p>
-            <div class="lock-overlay">
-              <div class="lock-icon-wrap pass-tier">
-                <i data-lucide="lock" class="lock-icon pass-tier"></i>
-              </div>
-              <div class="lock-title">Unlocked with Practice Pass</div>
-              <div class="lock-desc">Full simulator + dynamic follow-ups + debrief included in the Pass.</div>
-              <button class="lock-cta pass-tier" onclick="goToPaywall('pass')">
-                Get Practice Pass — ₹1,299/mo <i data-lucide="arrow-right" class="icon"></i>
-              </button>
-            </div>
-          </div>
-        </div>
+                <label>
+                    EMAIL OR USER ID
+                </label>
 
-        <div class="question-card" id="unlockMorePromo" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.10), rgba(139, 92, 246, 0.06)); border-color: rgba(245, 158, 11, 0.3);">
-          <div class="qc-top">
-            <div class="qc-left">
-              <div class="qc-label" style="color: var(--accent-gold);">
-                <i data-lucide="lock" style="width:12px;height:12px;"></i>
-                <span>Unlock More Sprints</span>
-              </div>
-              <div class="qc-text" style="font-size: 16px;">You're on the Trial. Upgrade to access the full library.</div>
-              <div class="qc-meta">6 Sprints · 336 questions · unlimited practice</div>
+                <input
+                    id="loginId"
+                    type="text"
+                    placeholder="Enter your email"
+                >
+
             </div>
-          </div>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="rep-btn" onclick="goToPaywall('sprint')" style="background: linear-gradient(135deg, var(--accent-gold), #a07f30);">
-              <i data-lucide="zap"></i> Enroll in a Sprint — ₹499
+
+
+            <div class="field">
+
+                <label>
+                    PASSWORD
+                </label>
+
+                <input
+                    id="loginPassword"
+                    type="password"
+                    placeholder="Enter your password"
+                >
+
+            </div>
+
+
+            <button
+                class="primary-btn"
+                onclick="login()">
+
+                Continue →
+
             </button>
-            <button class="rep-btn" onclick="goToPaywall('pass')" style="background: var(--primary);">
-              <i data-lucide="star"></i> Get Practice Pass — ₹1,299/mo
-            </button>
-          </div>
-        </div>
-      </section>
 
-      <!-- PROGRESS -->
-      <section class="view-panel" id="dashView">
-        <div class="view-heading">
-          <h2><i data-lucide="bar-chart-3"></i> Pattern &amp; Progress</h2>
-          <span class="vh-sub" id="dashSubtitle">Your performance across reps</span>
-        </div>
 
-        <div class="your-analysis-card" id="yourAnalysisCard"></div>
+            <div class="demo">
 
-        <div class="timeline-bar">
-          <span style="font-weight: 700; font-size: 14px;">PERFORMANCE OVER TIME</span>
-          <div class="timeline-tabs">
-            <button class="time-tab active" onclick="setTimeline('1w', this)">Last 1 Week</button>
-            <button class="time-tab" onclick="setTimeline('2w', this)">Last 2 Weeks</button>
-            <button class="time-tab" onclick="setTimeline('1m', this)">Last 1 Month</button>
-          </div>
-        </div>
+                Demo access:
+                <strong>demo@theunspoken.co.in</strong>
+                /
+                <strong>unspoken123</strong>
 
-        <div class="dash-grid">
-          <div class="metric-box"><div class="metric-label">Time-to-Point</div><div class="metric-value" id="metricTTP">—</div><div class="metric-sub" id="metricTTPSub">—</div></div>
-          <div class="metric-box"><div class="metric-label">Filler discipline</div><div class="metric-value" id="metricFillerDiscipline">—</div><div class="metric-sub" id="metricFillerDisciplineSub">—</div></div>
-          <div class="metric-box"><div class="metric-label">Point-first</div><div class="metric-value" id="metricPointFirst">—</div><div class="metric-sub" id="metricPointFirstSub">—</div></div>
-          <div class="metric-box"><div class="metric-label">Concreteness</div><div class="metric-value" id="metricConcreteness">—</div><div class="metric-sub" id="metricConcretenessSub">—</div></div>
-        </div>
-
-        <div class="dash-wide-box">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-weight: 700; font-size: 14px;">Clarity &amp; Focus</span>
-            <span style="font-weight: 700; font-size: 13px;">Target: 85% · Current: <span style="color: var(--success);" id="dashSnrValue">—</span></span>
-          </div>
-          <div class="snr-container">
-            <div class="snr-bar-wrapper">
-              <div class="snr-signal" id="dashSnrSignal" style="width: 0%;"></div>
-              <div class="snr-noise" id="dashSnrNoise" style="width: 0%;"></div>
-              <div class="ghost-line" style="left: 62%;"></div>
             </div>
-            <div class="snr-ticks"><span>0% (Fluff)</span><span>25%</span><span>50%</span><span>75% (Target)</span><span>100% (Pure Signal)</span></div>
-          </div>
+
         </div>
 
-        <div class="feedback-grid">
-          <div class="feedback-box well">
-            <div class="feedback-title" style="color: var(--success);">
-              <i data-lucide="circle-check"></i> What Was Going Well
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     JOURNEY SCREEN
+===================================================== -->
+
+<section id="journeyScreen"
+         class="screen hidden">
+
+<div class="journey">
+
+    <div class="topbar">
+
+        <div class="logo">
+            The Unspoken
+        </div>
+
+        <div class="step-count"
+             id="stepCount">
+
+            01 / 06
+
+        </div>
+
+    </div>
+
+
+    <div class="progress">
+
+        <div
+            id="progressFill"
+            class="progress-fill">
+        </div>
+
+    </div>
+
+
+    <div id="questionContainer"></div>
+
+</div>
+
+</section>
+
+
+
+<!-- =====================================================
+     RESULT SCREEN
+===================================================== -->
+
+<section id="resultScreen"
+         class="screen hidden">
+
+<div class="journey result">
+
+    <div class="result-header">
+
+        <div class="eyebrow">
+            Your communication profile
+        </div>
+
+        <h1>
+            Now we know<br>
+            where you're going.
+        </h1>
+
+        <p>
+            Your practice will now adapt to your role,
+            your goals and the moments that matter to you.
+        </p>
+
+    </div>
+
+
+    <div class="profile-card">
+
+        <div class="profile-label">
+            Your current mission
+        </div>
+
+        <h2 id="resultMission">
+            Become more influential.
+        </h2>
+
+        <p id="resultDescription">
+            Your practice will focus on helping you communicate
+            with greater clarity, presence and influence.
+        </p>
+
+
+        <div class="edge">
+
+            <span>Your growth edge</span>
+
+            <strong>
+                Clarity
+            </strong>
+
+            <span>→</span>
+
+            <strong>
+                Influence
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                You are
             </div>
-            <ul class="feedback-list" id="dashWellList"><li>—</li></ul>
-          </div>
-          <div class="feedback-box improve">
-            <div class="feedback-title" style="color: var(--accent-gold);">
-              <i data-lucide="target"></i> What to Improve
+
+            <div
+                id="resultProfile"
+                class="summary-value">
             </div>
-            <ul class="feedback-list" id="dashImproveList"><li>—</li></ul>
-          </div>
+
         </div>
 
-        <div class="dash-wide-box" id="repHistoryBox">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            <span style="font-weight: 700; font-size: 14px;">Rep History</span>
-            <span style="font-size: 12px; color: var(--text-muted);" id="repHistoryCount">0 reps</span>
-          </div>
-          <div id="repHistoryList" style="display:flex; flex-direction:column; gap:8px;">
-            <div style="font-size:12px; color:var(--text-muted);">No reps yet — start on Today.</div>
-          </div>
-        </div>
 
-        <div class="try-again-bar">
-          <div class="ta-text">
-            <strong>Want to improve your score?</strong><br />
-            <span id="taMessage">Start a rep to build your progress.</span>
-          </div>
-          <button class="ta-btn" onclick="switchView('today')">
-            <i data-lucide="mic"></i> Try Again
-          </button>
-        </div>
-      </section>
+        <div class="summary-card">
 
-      <!-- MY RECORDINGS -->
-      <section class="view-panel" id="recordingsView">
-        <div class="view-heading">
-          <h2><i data-lucide="mic"></i> My Recordings</h2>
-          <span class="vh-sub">Replay every practice session</span>
-        </div>
-
-        <div class="question-card">
-          <div class="qc-label"><span>Your recordings library</span></div>
-          <div class="qc-text" style="font-size: 14px; font-weight: 500; color: var(--text-muted); line-height: 1.6;">
-            Replay every practice session. Track your progress over time. Compare reps across days. Tag your best responses.
-          </div>
-          <div class="lock-overlay" style="position:relative;border-radius:12px;min-height:200px;">
-            <div class="lock-icon-wrap">
-              <i data-lucide="lock" class="lock-icon"></i>
+            <div class="summary-label">
+                Primary focus
             </div>
-            <div class="lock-title">Unlocked with Sprint</div>
-            <div class="lock-desc">Replay any past rep, compare across days, and measure your growth.</div>
-            <button class="lock-cta" onclick="goToPaywall('sprint')">
-              Enroll in a Sprint — ₹499 <i data-lucide="arrow-right" class="icon"></i>
-            </button>
-          </div>
-        </div>
-      </section>
 
-      <!-- ACHIEVEMENTS -->
-      <section class="view-panel" id="badgesView">
-        <div class="view-heading">
-          <h2><i data-lucide="trophy"></i> Achievements</h2>
-          <span class="vh-sub">Unlock badges as you practice</span>
-        </div>
-        <div class="badges-grid">
-          <div class="badge-item">
-            <div class="badge-icon"><i data-lucide="target"></i></div>
-            <div class="badge-name">First Rep</div>
-            <div class="badge-desc">You completed your first voice rep.</div>
-          </div>
-          <div class="badge-item locked"><div class="badge-icon"><i data-lucide="lock"></i></div><div class="badge-name">5-Day Streak</div><div class="badge-desc">Practice 5 days in a row.</div></div>
-          <div class="badge-item locked"><div class="badge-icon"><i data-lucide="lock"></i></div><div class="badge-name">Speed Demon</div><div class="badge-desc">Time-to-Point under 10 seconds.</div></div>
-          <div class="badge-item locked"><div class="badge-icon"><i data-lucide="lock"></i></div><div class="badge-name">Filler Killer</div><div class="badge-desc">Zero filler words in a rep.</div></div>
-          <div class="badge-item locked"><div class="badge-icon"><i data-lucide="lock"></i></div><div class="badge-name">Orator</div><div class="badge-desc">Score above 90% on any rep.</div></div>
-        </div>
-      </section>
-
-      <!-- PILLARS -->
-      <section class="view-panel" id="pillarsView">
-        <div class="view-heading">
-          <h2><i data-lucide="landmark"></i> Pillars of Executive Communication</h2>
-          <span class="vh-sub">The four foundations we train</span>
-        </div>
-        <div class="sub-activity-card-grid">
-          <div class="activity-card"><div><div class="activity-card-tag">Pillar 1</div><div class="activity-card-title">Structure</div><div class="activity-card-desc">STAR, PSO, BLUF. Give your ideas a spine listeners can follow.</div></div></div>
-          <div class="activity-card"><div><div class="activity-card-tag">Pillar 2</div><div class="activity-card-title">Conciseness</div><div class="activity-card-desc">Time-to-Point, filler elimination, headline discipline.</div></div></div>
-          <div class="activity-card"><div><div class="activity-card-tag">Pillar 3</div><div class="activity-card-title">Tone</div><div class="activity-card-desc">Warmth without weakness. Authority without arrogance.</div></div></div>
-          <div class="activity-card"><div><div class="activity-card-tag">Pillar 4</div><div class="activity-card-title">Presence</div><div class="activity-card-desc">Pacing, pauses, and gravitas in high-stakes rooms.</div></div></div>
-        </div>
-      </section>
-
-      <!-- LEARNING -->
-      <section class="view-panel" id="learningView">
-        <div class="view-heading">
-          <h2><i data-lucide="book-open"></i> My Learning</h2>
-          <span class="vh-sub">3-minute frameworks and micro-lessons</span>
-        </div>
-
-        <div class="question-card">
-          <div class="qc-label"><span>Curated learning</span></div>
-          <div class="qc-text" style="font-size: 14px; font-weight: 500; color: var(--text-muted); line-height: 1.6;">
-            Framework deep-dives, worked examples, and role-specific micro-lessons tailored to your function.
-          </div>
-          <div class="lock-overlay" style="position:relative;border-radius:12px;min-height:200px;">
-            <div class="lock-icon-wrap">
-              <i data-lucide="lock" class="lock-icon"></i>
+            <div
+                id="resultGoal"
+                class="summary-value">
             </div>
-            <div class="lock-title">Unlocked with Sprint</div>
-            <div class="lock-desc">Pyramid Principle, BLUF, STAR, PSO and more — plus role-tailored lessons.</div>
-            <button class="lock-cta" onclick="goToPaywall('sprint')">
-              Enroll in a Sprint — ₹499 <i data-lucide="arrow-right" class="icon"></i>
-            </button>
-          </div>
+
         </div>
-      </section>
 
-    </main>
-  </div>
 
-  <script>
-    // ============================================================
-    // CONFIG
-    // ============================================================
-    const BACKEND_URL = 'https://unspoken-backend-nqvl.onrender.com';
-    const PAYWALL_URL = 'https://theunspoken.co.in/Pricing';
-    const TRIAL_CAP_PER_QUESTION = 2;
-    const DEFAULT_Q1 = "Tell me about yourself — your background, what you do, and what drives you professionally.";
-    const DEFAULT_Q2 = "Tell me about a current project or initiative you're leading or involved in.";
+        <div class="summary-card">
 
-    // ============================================================
-    // LUCIDE HELPER
-    // ============================================================
-    function renderIcons() {
-      if (window.lucide && typeof lucide.createIcons === 'function') {
-        try { lucide.createIcons(); } catch (e) { /* no-op */ }
-      }
-    }
+            <div class="summary-label">
+                Your situation
+            </div>
 
-    // ============================================================
-    // SCENARIO LIBRARY (7 cards, same as Product)
-    // ============================================================
-    const SCENARIOS_LIBRARY = [
-      { id: 'interview-questions', sprint: 'Interview Sprint', title: 'Interview Questions', desc: 'Practice real interview questions tailored to your role — from screening calls to panel rounds.', meta: '12 scenarios · Role-based', activity: 'Interview Questions', dynamic: true },
-      { id: 'group-discussion', sprint: 'GD Sprint', title: 'Group Discussion', desc: 'Learn to enter, build on, and steer a group conversation — without getting drowned out or going off track.', meta: '8 scenarios', activity: 'Group Discussion', dynamic: true },
-      { id: 'leadership-situations', sprint: 'Leadership Presence Sprint', title: 'Leadership Situations', desc: 'Handle the moments that define you as a leader — conflict, feedback, delegation, and managing up.', meta: '10 scenarios', activity: 'Leadership Situations', lockTier: 'pass' },
-      { id: 'project-team-updates', sprint: 'Leadership Presence Sprint', title: 'Project & Team Updates', desc: 'Deliver updates, handle pushback, and raise bad news — clearly, without burying it in caveats.', meta: '9 scenarios', activity: 'Project & Team Updates', lockTier: 'sprint' },
-      { id: 'client-stakeholder', sprint: 'Leadership Presence Sprint', title: 'Client & Stakeholder', desc: 'Pitch ideas, handle objections, and manage client relationships with confidence.', meta: '7 scenarios', activity: 'Client & Stakeholder', lockTier: 'pass' },
-      { id: 'storytelling', sprint: 'Storytelling Sprint', title: 'Storytelling', desc: 'Turn a flat update or a dry fact into something people actually remember.', meta: '7 scenarios', activity: 'Storytelling', lockTier: 'pass' },
-      { id: 'charisma-social', sprint: 'Charisma Sprint', title: 'Charisma & Social Presence', desc: 'Build rapport, make small talk land, and come across as someone people want to work with.', meta: '6 scenarios', activity: 'Charisma & Social Presence', lockTier: 'pass' }
-    ];
+            <div
+                id="resultContext"
+                class="summary-value">
+            </div>
 
-    // ============================================================
-    // COMMUNICATION DRILLS (4 categories, 21 drills — same as Product)
-    // ============================================================
-    const DRILLS_LIBRARY = [
-      { category: 'Rambling Reduction', icon: 'scissors', drills: [
-        { id: 'headline', title: 'Headline Drill', desc: 'State your main point in one sentence — before you say anything else. Under 15 words.', activity: 'Headline Drill' },
-        { id: 'filler-elimination', title: 'Filler Elimination', desc: 'Speak for 30 seconds on any topic. Zero fillers — no "um," "like," "so," "actually."', activity: 'Filler Elimination' },
-        { id: 'one-idea-only', title: 'One Idea Only', desc: 'Answer with exactly one idea. No tangents, no "and also."', activity: 'One Idea Only' },
-        { id: 'compression-ladder', title: 'Compression Ladder', desc: 'Answer the same question in 60 seconds, then 30, then 15. Same core point every time.', activity: 'Compression Ladder' },
-        { id: 'relevance-cut', title: 'Relevance Cut', desc: 'Mark each sentence of your last answer KEEP, SUPPORT, or CUT — then re-record using only KEEP and SUPPORT.', activity: 'Relevance Cut' },
-        { id: 'destination-check', title: 'Destination Check', desc: 'Type the one line you want to end on. Then record your answer and see if you land there.', activity: 'Destination Check' }
-      ]},
-      { category: 'Structure Preparation', icon: 'layout-grid', drills: [
-        { id: 'structure-pso', title: 'Structure Drill (PSO)', desc: 'Answer using Problem → Solution → Outcome. One sentence each.', activity: 'Structure Drill (PSO)' },
-        { id: 'frame-drill', title: 'Frame Drill', desc: 'Type a 3-word outline before the mic activates. Then record.', activity: 'Frame Drill' },
-        { id: 'signpost-drill', title: 'Signpost Drill', desc: 'Structure your answer using explicit sequence markers — "First... Second... Finally..."', activity: 'Signpost Drill' },
-        { id: 'point-ranking', title: 'Point-Ranking Drill', desc: 'Rank 3 possible points by importance before recording. Then answer, leading with your #1.', activity: 'Point-Ranking Drill' },
-        { id: 'template-ladder', title: 'Template Ladder', desc: 'Answer the same prompt three times — once each using PRE, SAR, and PSO. Notice which felt most natural.', activity: 'Template Ladder' }
-      ]},
-      { category: 'Precision & Impact', icon: 'target', drills: [
-        { id: 'time-to-point', title: 'Time-to-Point', desc: 'Deliver your key recommendation in under 5 seconds. Explanation comes after, not before.', activity: 'Time-to-Point' },
-        { id: 'specificity-swap', title: 'Specificity Swap', desc: 'Replace one vague phrase in your answer with a real number, name, or example.', activity: 'Specificity Swap' },
-        { id: 'close-strong', title: 'Close Strong', desc: 'End your answer by restating your headline point — in different words than your opener.', activity: 'Close Strong' },
-        { id: 'claim-example', title: 'Claim → Example', desc: 'Make one claim. Immediately follow it with one real, specific instance that proves it.', activity: 'Claim → Example' },
-        { id: 'contrast-frame-drill', title: 'Contrast Frame', desc: 'Frame your answer as a before/after — "Before X, we had Y. Now we have Z."', activity: 'Contrast Frame' },
-        { id: 'jargon-swap', title: 'Jargon Swap', desc: 'We\'ll flag one jargon or abstract phrase from your last answer. Re-record that sentence in plain language.', activity: 'Jargon Swap' }
-      ]},
-      { category: 'Delivery & Orator Training', icon: 'mic', drills: [
-        { id: 'pause-training', title: 'Pause Training', desc: 'Deliver your answer with one deliberate 1–2 second pause after your key line.', activity: 'Pause Training' },
-        { id: 'vocal-variety-drill', title: 'Vocal Variety Drill', desc: 'Say the same sentence three times — flat, then slower with emphasis, then rising pitch on the final word.', activity: 'Vocal Variety Drill' },
-        { id: 'breathing-reset', title: 'Breathing Reset', desc: 'Take one visible breath before you start speaking. Don\'t rush into the answer.', activity: 'Breathing Reset' },
-        { id: 'anchor-focus', title: 'Anchor Focus', desc: 'Keep your eyes on the on-screen anchor point for the full duration of your answer.', activity: 'Anchor Focus' }
-      ]}
-    ];
+        </div>
 
-    // ============================================================
-    // RUNTIME
-    // ============================================================
-    let USER = null;
-    let SESSION_TOKEN = null;
-    let state = { q1Trials: [], q2Trials: [], activityTrials: [] };
 
-    // ============================================================
-    // BOOT
-    // ============================================================
-    document.addEventListener('DOMContentLoaded', () => {
-      renderIcons();
-      wireGlobalListeners();
-      bootstrap();
-    });
+        <div class="summary-card">
 
-    function wireGlobalListeners() {
-      const modal = document.getElementById('usModal');
-      if (modal) {
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) closeModal();
-        });
-      }
-      document.addEventListener('click', (e) => {
-        const sidebar = document.getElementById('appSidebar');
-        const toggle = e.target.closest('.menu-toggle');
-        if (!sidebar || !sidebar.classList.contains('open') || toggle) return;
-        if (!sidebar.contains(e.target)) sidebar.classList.remove('open');
-      });
-    }
+            <div class="summary-label">
+                What matters
+            </div>
 
-    async function bootstrap() {
-      const params = new URLSearchParams(window.location.search);
-      SESSION_TOKEN = params.get('session');
-      if (SESSION_TOKEN) window.history.replaceState({}, '', window.location.pathname);
+            <div
+                id="resultNeed"
+                class="summary-value">
+            </div>
 
-      if (SESSION_TOKEN) {
-        try {
-          const res = await fetch(`${BACKEND_URL}/api/trial/session`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-          });
-          if (res.ok) {
-            const trial = await res.json();
-            USER = buildTrialUser(trial);
-            try { localStorage.setItem('unspoken_trial_user', JSON.stringify(USER)); } catch (e) {}
-            document.getElementById('bootScreen').classList.add('hidden');
-            renderAll();
-            return;
-          }
-          if (res.status === 401) {
-            showSessionExpired('Your trial session has expired. Start a new drill.');
-            return;
-          }
-        } catch (e) {
-          console.warn('Trial session load failed:', e);
+        </div>
+
+    </div>
+
+
+    <button
+        class="primary-btn start"
+        onclick="startPractice()">
+
+        Enter my practice →
+        
+    </button>
+
+</div>
+
+</section>
+
+
+
+<script>
+
+
+/* =====================================================
+   USER DATA
+===================================================== */
+
+const user = {
+
+    profile: "",
+    goal: "",
+    context: "",
+    need: "",
+    role: "",
+    audience: ""
+
+};
+
+
+/* =====================================================
+   QUESTIONS
+===================================================== */
+
+const questions = [
+
+{
+
+    type: "choice",
+
+    eyebrow: "01 · YOUR STARTING POINT",
+
+    title:
+    "Where are you in your journey?",
+
+    intro:
+    "Your communication needs change as your role changes. Tell us where you are today.",
+
+    key: "profile",
+
+    options: [
+
+        {
+            icon: "🎓",
+            title: "Student",
+            description:
+            "Building confidence for college, interviews and opportunities.",
+            value: "Student"
+        },
+
+        {
+            icon: "🚀",
+            title: "Early-career professional",
+            description:
+            "Building credibility, confidence and a professional voice.",
+            value: "Early-career professional"
+        },
+
+        {
+            icon: "💼",
+            title: "Senior professional",
+            description:
+            "Leading people, ideas, decisions and conversations.",
+            value: "Senior professional"
+        },
+
+        {
+            icon: "🧑‍💻",
+            title: "Freelancer / Independent",
+            description:
+            "Winning clients, presenting ideas and building trust.",
+            value: "Freelancer"
+        },
+
+        {
+            icon: "🌱",
+            title: "Communication builder",
+            description:
+            "I want to become a more capable communicator.",
+            value: "Communication builder"
         }
-        showSessionExpired('We couldn\'t load your trial. Please start again from the landing page.');
-        return;
-      }
 
-      const stored = localStorage.getItem('unspoken_trial_user');
-      if (stored) {
-        try {
-          USER = JSON.parse(stored);
-          document.getElementById('bootScreen').classList.add('hidden');
-          renderAll();
-          return;
-        } catch (e) {
-          localStorage.removeItem('unspoken_trial_user');
+    ]
+
+},
+
+{
+
+    type: "choice",
+
+    eyebrow: "02 · YOUR DIRECTION",
+
+    title:
+    "What would you most like to change about how you communicate?",
+
+    intro:
+    "Choose the shift that would make the biggest difference to you right now.",
+
+    key: "goal",
+
+    options: [
+
+        {
+            icon: "🎯",
+            title: "Be clearer",
+            description:
+            "Get to the point and make complex ideas easy to understand.",
+            value: "Clarity"
+        },
+
+        {
+            icon: "🧩",
+            title: "Organise my thinking",
+            description:
+            "Turn scattered thoughts into a clear, compelling structure.",
+            value: "Structure"
+        },
+
+        {
+            icon: "🎤",
+            title: "Become a stronger speaker",
+            description:
+            "Build presence, confidence and command of the room.",
+            value: "Oratory"
+        },
+
+        {
+            icon: "⚡",
+            title: "Have more impact",
+            description:
+            "Make your message memorable and leave an impression.",
+            value: "Impact"
+        },
+
+        {
+            icon: "→",
+            title: "Influence people",
+            description:
+            "Move people from hearing your message to acting on it.",
+            value: "Influence"
+        },
+
+        {
+            icon: "🌱",
+            title: "I want to improve overall",
+            description:
+            "Understand my communication and build across multiple areas.",
+            value: "Overall communication"
         }
-      }
 
-      showFreshState();
-    }
+    ]
 
-    function buildTrialUser(trial) {
-      const analysis = trial.analysis ? normalizeAnalysis(trial.analysis) : null;
-      const answered = trial.answered === 'q2' ? 'q2' : 'q1';
-      return {
-        user_id: trial.user_id || ('trial_' + Date.now()),
-        name: trial.name || 'Guest',
-        email: trial.email || '',
-        mobile: trial.mobile || '',
-        stage: trial.stage || 'early',
-        function: trial.function || null,
-        answered,
-        q1_text: trial.q1_text || DEFAULT_Q1,
-        q2_text: trial.q2_text || DEFAULT_Q2,
-        trials_used: trial.trials_used || { q1: answered === 'q1' ? 1 : 0, q2: answered === 'q2' ? 1 : 0 },
-        cap: trial.trials_cap_per_question || TRIAL_CAP_PER_QUESTION,
-        analysis
-      };
-    }
+},
 
-    function normalizeAnalysis(data) {
-      if (!data) return null;
-      const m = data.metrics || {};
-      const s = data.signals || {};
-      const d = data.diagnosis || {};
-      const g = data.gap || {};
-      const c = data.coaching || {};
-      const r = data.before_after_rewrite || {};
-      return {
-        fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
-        pointFirst: m.point_first ?? m.structure ?? null,
-        concreteness: m.concreteness ?? m.impact ?? null,
-        overallScore: m.overall_score ?? null,
-        timeToPoint: s.main_point_delay_seconds ?? null,
-        wordsPerMinute: s.words_per_minute ?? null,
-        fillerTotal: s.filler_words?.total ?? 0,
-        fillerPct: s.filler_words?.percentage ?? 0,
-        snr: s.signal_to_noise_ratio ?? null,
-        vocabUnique: s.vocabulary?.unique ?? null,
-        vocabTotal: s.vocabulary?.total ?? null,
-        vocabRichness: s.vocabulary?.richness ?? null,
-        patternName: d.pattern_name ?? null,
-        patternDesc: d.pattern_description ?? null,
-        gapGotLost: g.what_got_lost ?? null,
-        gapUnspoken: g.unspoken_gap ?? null,
-        oneThingToChange: c.one_thing_to_change ?? null,
-        executiveVersion: r.executive_version ?? null,
-        transcript: data.transcribed_text ?? ''
-      };
-    }
+{
 
-    // ============================================================
-    // RENDER
-    // ============================================================
-    function renderAll() {
-      renderHeader();
-      renderProfile();
-      renderQuestionCards();
-      renderTodayProgress();
-      renderProgressView();
-      renderScenariosGrid();
-      renderDrillsGrid();
-      switchView('today');
-      renderIcons();
-    }
+    type: "choice",
 
-    function renderHeader() {
-      document.getElementById('userNameEl').textContent = USER.name;
-      document.getElementById('userAvatarEl').textContent = (USER.name || 'A').charAt(0).toUpperCase();
-      document.getElementById('headerMemberSince').textContent = 'Just now';
-      document.getElementById('headerCompleted').textContent = '0 Tasks';
-      document.getElementById('headerAchievements').textContent = '0 Badges';
-      document.getElementById('headerStreak').textContent = `${countTrials()} / ${USER.cap * 2}`;
-      document.getElementById('previewName').textContent = USER.name;
-      document.getElementById('previewBannerText').innerHTML =
-        `<i data-lucide="hand" class="icon"></i><span>Hi <strong>${escapeHtml(USER.name)}</strong> — you've used <strong>${countTrials()}</strong> of ${USER.cap * 2} free trials. Upgrade for unlimited practice.</span>`;
-      renderIcons();
-    }
+    eyebrow: "03 · THE MOMENT",
 
-    function renderProfile() {
-      if (USER.stage) document.getElementById('profileStage').innerHTML = `<option selected>${formatStage(USER.stage)}</option>`;
-      if (USER.function) document.getElementById('profileFunction').innerHTML = `<option selected>${formatFunction(USER.function)}</option>`;
-    }
+    title:
+    "Where do you want your communication to work harder for you?",
 
-    function countTrials() {
-      return (USER.trials_used?.q1 || 0) + (USER.trials_used?.q2 || 0);
-    }
+    intro:
+    "Think about a moment where the right words could change the outcome.",
 
-    function renderQuestionCards() {
-      document.getElementById('q1Text').textContent = `"${USER.q1_text}"`;
-      document.getElementById('q1Meta').textContent = 'Focus: Structure & Conciseness · Target: 60s';
-      document.getElementById('q1Label').textContent = `Q1 of 2${USER.answered === 'q1' ? ' · You answered this' : ''}`;
-      document.getElementById('q1Diff').innerHTML = '<i data-lucide="star"></i> Easy';
-      document.getElementById('q1Diff').className = 'qc-difficulty easy';
+    key: "context",
 
-      document.getElementById('q2Text').textContent = `"${USER.q2_text}"`;
-      document.getElementById('q2Meta').textContent = 'Focus: Narrative & Relevance · Target: 90s';
-      document.getElementById('q2Label').textContent = `Q2 of 2${USER.answered === 'q2' ? ' · You answered this' : ''}`;
-      document.getElementById('q2Diff').innerHTML = '<i data-lucide="star"></i><i data-lucide="star"></i> Medium';
-      document.getElementById('q2Diff').className = 'qc-difficulty medium';
+    options: [
 
-      document.getElementById('questionCard2').classList.remove('locked');
+        {
+            icon: "🎤",
+            title: "Interview",
+            description:
+            "Make your introduction memorable and handle difficult questions.",
+            value: "Interview"
+        },
 
-      if (USER.analysis) {
-        const seed = {
-          number: 1,
-          fillerDiscipline: USER.analysis.fillerDiscipline,
-          pointFirst: USER.analysis.pointFirst,
-          concreteness: USER.analysis.concreteness,
-          timeToPoint: USER.analysis.timeToPoint,
-          transcript: USER.analysis.transcript,
-          fromLanding: true
-        };
-        if (USER.answered === 'q1') { state.q1Trials = [seed]; state.q2Trials = []; }
-        else { state.q1Trials = []; state.q2Trials = [seed]; }
-      }
+        {
+            icon: "🚀",
+            title: "Promotion",
+            description:
+            "Make the case for your value and your next opportunity.",
+            value: "Promotion"
+        },
 
-      updateQuestionCard('q1');
-      updateQuestionCard('q2');
-      renderIcons();
-    }
+        {
+            icon: "👥",
+            title: "Leadership",
+            description:
+            "Align, inspire and influence people around a direction.",
+            value: "Leadership"
+        },
 
-    function updateQuestionCard(which) {
-      const used = USER.trials_used?.[which] || 0;
-      const cap = USER.cap;
-      const trials = which === 'q1' ? state.q1Trials : state.q2Trials;
-      const valid = trials.filter(x => x.fillerDiscipline != null);
-      const best = valid.length ? Math.max(...valid.map(x => x.fillerDiscipline)) : null;
+        {
+            icon: "📊",
+            title: "Presentation",
+            description:
+            "Hold attention and make your ideas land.",
+            value: "Presentation"
+        },
 
-      document.getElementById(`${which}RepCount`).innerHTML = `${used} <span class="rt-cap">/ ${cap}</span>`;
-      document.getElementById(`${which}BestSnr`).textContent = best != null ? `Best filler discipline: ${best}%` : 'Best score: —';
+        {
+            icon: "🤝",
+            title: "Difficult conversation",
+            description:
+            "Say what needs to be said without losing the relationship.",
+            value: "Difficult conversation"
+        },
 
-      const btn = document.getElementById(`${which}RepBtn`);
-      if (used >= cap) {
-        btn.innerHTML = '<i data-lucide="check"></i> Trial cap reached — upgrade to continue';
-        btn.disabled = true;
-        btn.classList.add('done');
-        btn.onclick = () => goToPaywall('sprint');
-      } else {
-        btn.innerHTML = `<i data-lucide="mic"></i> Start Trial ${used + 1}`;
-        btn.disabled = false;
-        btn.classList.remove('done');
-        btn.onclick = () => startRep(which);
-      }
-
-      document.getElementById(`${which}RepsLog`).innerHTML = trials.map((tr, i) => `
-        <div class="rep-log-item">
-          <span>Trial ${tr.number || i + 1}${tr.fromLanding ? ' (from landing page)' : ''}</span>
-          <span class="rl-score">${
-            tr.transcript
-              ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"`
-              : '—'
-          }</span>
-        </div>
-      `).join('');
-      renderIcons();
-    }
-
-    function renderTodayProgress() {
-      const total = state.q1Trials.length + state.q2Trials.length;
-      document.getElementById('tsTotalReps').textContent = `${total} / 4`;
-      document.getElementById('tsTimeSpent').textContent = `${Math.max(1, total)} min`;
-      const all = [...state.q1Trials, ...state.q2Trials];
-      const valid = all.map(t => t.fillerDiscipline).filter(v => v != null);
-      document.getElementById('tsBestSnr').textContent = valid.length ? `${Math.max(...valid)}%` : '—';
-      const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
-      document.getElementById('tsDrills').textContent = `${drills} / 2`;
-      document.getElementById('dayProgressFill').style.width = `${(drills / 2) * 100}%`;
-      document.getElementById('dayCounter').textContent = `${countTrials()} / ${USER.cap * 2} trials`;
-
-      const taMsg = document.getElementById('taMessage');
-      if (taMsg) {
-        const remaining = Math.max(0, USER.cap * 2 - total);
-        taMsg.textContent = remaining > 0
-          ? `You have ${remaining} free trial${remaining === 1 ? '' : 's'} left.`
-          : 'Trial cap reached — upgrade to continue.';
-      }
-    }
-
-    // ============================================================
-    // PROGRESS VIEW — identical to Product
-    // ============================================================
-    function renderProgressView() {
-      const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
-      const m = USER.analysis;
-
-      document.getElementById('dashSubtitle').textContent = allReps.length
-        ? `Pattern & performance based on ${allReps.length} rep${allReps.length === 1 ? '' : 's'}`
-        : 'Your pattern and performance across reps';
-
-      const patternName = (m && m.patternName) ? m.patternName : 'Your Pattern';
-      const patternDesc = (m && m.patternDesc) ? m.patternDesc : 'Complete a rep to see your communication pattern.';
-
-      const gotLost = [
-        (m && m.gapGotLost) || 'Your credibility and authority in the first 10 seconds',
-        (m && m.gapUnspoken) || 'Between your intent to sound confident and how you actually land'
-      ];
-      const wins = (m && m.oneThingToChange)
-        ? [m.oneThingToChange, 'Front-load your result', 'Add a clear structure marker']
-        : ['Lead with the point', 'Cut filler words', 'Add a clear structure marker'];
-
-      const execHtml = (m && m.executiveVersion)
-        ? `<div class="ya-executive">"${escapeHtml(m.executiveVersion)}"</div>`
-        : `<div class="ya-executive" style="color:var(--text-muted); font-style:normal;">Your executive version will appear here once we have a transcript to rewrite.</div>`;
-
-      document.getElementById('yourAnalysisCard').innerHTML = `
-        <div class="ya-header">
-          <span class="ya-badge"><i data-lucide="sparkles"></i> YOUR PATTERN</span>
-          <span class="ya-sub">Unfiltered Insights</span>
-        </div>
-
-        <div class="ya-pattern-block">
-          <div class="ya-pattern-kicker">YOUR PATTERN</div>
-          <div class="ya-pattern-name-hero">${escapeHtml(patternName)}</div>
-          <div class="ya-pattern-desc-hero">${escapeHtml(patternDesc)}</div>
-        </div>
-
-        <div class="ya-grid">
-          <div class="ya-box">
-            <div class="ya-box-label">What Got Lost</div>
-            <ul class="ya-list">${gotLost.map(g => `<li>${escapeHtml(g)}</li>`).join('')}</ul>
-          </div>
-          <div class="ya-box">
-            <div class="ya-box-label">Quick Wins</div>
-            <ul class="ya-list wins">${wins.map(w => `<li>${escapeHtml(w)}</li>`).join('')}</ul>
-          </div>
-          <div class="ya-box">
-            <div class="ya-box-label">What You Said</div>
-            <div class="ya-transcript">${
-              (m && m.transcript)
-                ? escapeHtml(m.transcript)
-                : '<span class="ya-transcript-empty">No speech detected — try recording again with your microphone unmuted.</span>'
-            }</div>
-          </div>
-
-          <div class="ya-box">
-            <div class="ya-box-label">Signal & Delivery</div>
-            <div class="ya-metrics-mini">
-              <div class="ya-metric-row">
-                <span class="ya-metric-label">SNR</span>
-                <div class="ya-metric-bar"><div class="ya-metric-fill" style="width:${(m && m.snr) ?? 0}%"></div></div>
-                <span class="ya-metric-value">${(m && m.snr) ?? '—'}</span>
-              </div>
-              <div class="ya-metric-row">
-                <span class="ya-metric-label">WPM</span>
-                <div class="ya-metric-bar"><div class="ya-metric-fill" style="width:${m && m.wordsPerMinute ? Math.min(100, (m.wordsPerMinute / 180) * 100) : 0}%"></div></div>
-                <span class="ya-metric-value">${(m && m.wordsPerMinute) ?? '—'}</span>
-              </div>
-              <div class="ya-metric-row">
-                <span class="ya-metric-label">Fillers</span>
-                <div class="ya-metric-bar"><div class="ya-metric-fill" style="width:${m && m.fillerPct != null ? Math.min(100, m.fillerPct * 10) : 0}%"></div></div>
-                <span class="ya-metric-value">${(m && m.fillerTotal) ?? '—'}</span>
-              </div>
-              <div class="ya-metric-row">
-                <span class="ya-metric-label">Vocab</span>
-                <div class="ya-metric-bar"><div class="ya-metric-fill" style="width:${m && m.vocabRichness != null ? (m.vocabRichness * 100) : 0}%"></div></div>
-                <span class="ya-metric-value">${(m && m.vocabUnique) ?? '—'}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="ya-box">
-            <div class="ya-box-label">Your Executive Version</div>
-            ${execHtml}
-          </div>
-        </div>
-
-        <div class="ya-footer">
-          <button class="ya-btn" onclick="switchView('today')">
-            <i data-lucide="mic"></i> Try Again in Today
-          </button>
-        </div>
-      `;
-
-      renderProgressMetrics(allReps, m);
-      renderFeedback(m);
-      renderRepHistory(allReps);
-      renderIcons();
-    }
-
-    function renderProgressMetrics(allReps, m) {
-      let latest = null;
-      if (allReps.length) {
-        for (let i = allReps.length - 1; i >= 0; i--) {
-          if (allReps[i].fillerDiscipline != null) { latest = allReps[i]; break; }
+        {
+            icon: "💼",
+            title: "Client / business conversation",
+            description:
+            "Handle objections, persuade and build trust.",
+            value: "Client conversation"
         }
-      }
-      if (!latest && m) latest = m;
-      if (!latest) { setDashEmpty(); return; }
 
-      const fmt = (v, suffix = '') => (v == null ? '—' : `${v}${suffix}`);
+    ]
 
-      document.getElementById('metricTTP').textContent = fmt(latest.timeToPoint, 's');
-      document.getElementById('metricTTPSub').textContent = allReps.length > 1 ? 'Tracking across reps' : 'Keep practicing to lower this';
+},
 
-      document.getElementById('metricFillerDiscipline').textContent = fmt(latest.fillerDiscipline, ' / 100');
-      document.getElementById('metricFillerDisciplineSub').textContent =
-        (latest.fillerDiscipline != null && latest.fillerDiscipline >= 80) ? 'Few fillers' :
-        (latest.fillerDiscipline != null && latest.fillerDiscipline >= 60) ? 'Some fillers' :
-        'Trim filler words';
+{
 
-      document.getElementById('metricPointFirst').textContent = fmt(latest.pointFirst, ' / 100');
-      document.getElementById('metricPointFirstSub').textContent =
-        (latest.pointFirst != null && latest.pointFirst >= 80) ? 'Lead with the point' :
-        (latest.pointFirst != null && latest.pointFirst >= 60) ? 'Point arrives late' :
-        'Bury the lede';
+    type: "choice",
 
-      document.getElementById('metricConcreteness').textContent = fmt(latest.concreteness, ' / 100');
-      document.getElementById('metricConcretenessSub').textContent =
-        (latest.concreteness != null && latest.concreteness >= 80) ? 'Specific and verifiable' :
-        (latest.concreteness != null && latest.concreteness >= 60) ? 'Add more specifics' :
-        'Quantify your outcomes';
+    eyebrow: "04 · YOUR AUDIENCE",
 
-      document.getElementById('dashSnrValue').textContent = fmt(latest.fillerDiscipline, '%');
-      document.getElementById('dashSnrSignal').style.width = `${latest.fillerDiscipline ?? 0}%`;
-      document.getElementById('dashSnrNoise').style.width = `${latest.fillerDiscipline != null ? 100 - latest.fillerDiscipline : 0}%`;
-    }
+    title:
+    "Who do you most need to move?",
 
-    function setDashEmpty() {
-      ['metricTTP','metricFillerDiscipline','metricPointFirst','metricConcreteness'].forEach(id => {
-        document.getElementById(id).textContent = '—';
-      });
-      document.getElementById('dashSnrValue').textContent = '—';
-      document.getElementById('dashSnrSignal').style.width = '0%';
-      document.getElementById('dashSnrNoise').style.width = '0%';
-    }
+    intro:
+    "Influence changes depending on who is listening.",
 
-    function renderFeedback(m) {
-      const strengths = [];
-      const improvements = [];
-      if (m) {
-        if (m.wordsPerMinute) strengths.push(`Steady pacing at ${m.wordsPerMinute} WPM`);
-        if (m.fillerTotal === 0) strengths.push('No filler words detected');
-        else if (m.fillerTotal > 0) strengths.push(`${m.fillerTotal} filler words (${m.fillerPct}%)`);
-        if (m.vocabUnique && m.vocabUnique >= 20) strengths.push(`Rich vocabulary — ${m.vocabUnique} unique words`);
-        if (m.snr != null && m.snr >= 80) strengths.push(`High signal-to-noise ratio (${m.snr}%)`);
-        if (m.oneThingToChange) improvements.push(m.oneThingToChange);
-        if (m.fillerPct != null && m.fillerPct >= 3) improvements.push(`Reduce filler words (${m.fillerPct}% — target < 3%)`);
-        if (m.timeToPoint != null && m.timeToPoint > 10) improvements.push(`Get to the point faster (currently ${m.timeToPoint}s — target < 10s)`);
-        if (m.wordsPerMinute && m.wordsPerMinute < 100) improvements.push('Pick up the pace slightly — aim for 120–160 WPM');
-      }
-      if (!strengths.length) strengths.push('You completed a rep — that\'s the first step');
-      if (!improvements.length) improvements.push('Keep practicing — try a different scenario');
+    key: "audience",
 
-      document.getElementById('dashWellList').innerHTML = strengths.slice(0, 4).map(s => `<li>${escapeHtml(s)}</li>`).join('');
-      document.getElementById('dashImproveList').innerHTML = improvements.slice(0, 4).map(s => `<li>${escapeHtml(s)}</li>`).join('');
-    }
+    options: [
 
-    function renderRepHistory(allReps) {
-      const list = document.getElementById('repHistoryList');
-      const count = document.getElementById('repHistoryCount');
-      count.textContent = `${allReps.length} rep${allReps.length === 1 ? '' : 's'}`;
-      if (!allReps.length) {
-        list.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">No reps yet — start on Today.</div>';
-        return;
-      }
-      list.innerHTML = allReps.slice().reverse().map((r) => {
-        const label = r.fromLanding ? 'From landing page' : (r.activity ? r.activity : 'Practice rep');
-        const time = r.timestamp ? new Date(r.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
-        return `
-          <div class="rep-log-item">
-            <span>${escapeHtml(label)}${time ? ' · ' + escapeHtml(time) : ''}</span>
-            <span class="rl-score">${
-              r.transcript ? `"${escapeHtml(r.transcript.slice(0, 80))}${r.transcript.length > 80 ? '…' : ''}"` : '—'
-            }</span>
-          </div>
-        `;
-      }).join('');
-    }
+        {
+            icon: "👔",
+            title: "Senior leaders",
+            description:
+            "Executives, managers, decision-makers.",
+            value: "Senior leaders"
+        },
 
-    // ============================================================
-    // SCENARIO + DRILL GRIDS (all locked for trial)
-    // ============================================================
-    function renderScenariosGrid() {
-      const grid = document.getElementById('scenariosGrid');
-      if (!grid) return;
-      grid.innerHTML = SCENARIOS_LIBRARY.map(s => {
-        const isPass = s.lockTier === 'pass';
-        const ctaLabel = isPass
-          ? 'Unlocked with Practice Pass — ₹1,299/mo'
-          : 'Unlocked with Sprint — ₹499';
-        return `
-          <div class="activity-card locked-preview">
-            <div class="ac-body">
-              <div class="activity-card-tag">${escapeHtml(s.sprint)}</div>
-              <div class="activity-card-title">${escapeHtml(s.title)}</div>
-              <div class="activity-card-desc">${escapeHtml(s.desc)}</div>
-              <div style="font-size:10px;font-weight:700;color:var(--accent-cyan);margin-top:6px;letter-spacing:0.04em;">${escapeHtml(s.meta)}</div>
-            </div>
-            <button class="ac-lock-cta ${isPass ? 'pass-tier' : ''}" onclick="goToPaywall('${isPass ? 'pass' : 'sprint'}')">
-              <i data-lucide="lock"></i> ${ctaLabel}
-            </button>
-          </div>
-        `;
-      }).join('');
-      renderIcons();
-    }
+        {
+            icon: "👥",
+            title: "My team",
+            description:
+            "Peers, direct reports and colleagues.",
+            value: "My team"
+        },
 
-    function renderDrillsGrid() {
-      const grid = document.getElementById('drillsGrid');
-      if (!grid) return;
-      grid.innerHTML = DRILLS_LIBRARY.map(cat => `
-        <div class="drill-category">
-          <div class="drill-category-header">
-            <i data-lucide="${cat.icon}" class="dc-icon"></i>
-            <span class="dc-title">${escapeHtml(cat.category)}</span>
-            <span class="dc-count">${cat.drills.length}</span>
-          </div>
-          <div class="drill-category-grid">
-            ${cat.drills.map(d => `
-              <div class="activity-card locked-preview">
-                <div class="ac-body">
-                  <div class="activity-card-tag">${escapeHtml(cat.category)}</div>
-                  <div class="activity-card-title">${escapeHtml(d.title)}</div>
-                  <div class="activity-card-desc">${escapeHtml(d.desc)}</div>
-                </div>
-                <button class="ac-lock-cta" onclick="goToPaywall('sprint')">
-                  <i data-lucide="lock"></i> Unlocked with Sprint — ₹499
-                </button>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `).join('');
-      renderIcons();
-    }
+        {
+            icon: "🤝",
+            title: "Clients",
+            description:
+            "Customers, partners and external stakeholders.",
+            value: "Clients"
+        },
 
-    // ============================================================
-    // NAVIGATION
-    // ============================================================
-    function toggleSidebar() { document.getElementById('appSidebar').classList.toggle('open'); }
+        {
+            icon: "🎓",
+            title: "Interviewers",
+            description:
+            "Recruiters, hiring managers and panels.",
+            value: "Interviewers"
+        },
 
-    function switchView(key) {
-      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-view'));
-      const navMap = { today:'navToday', activities:'navActivities', dash:'navDash', recordings:'navRecordings', badges:'navBadges', pillars:'navPillars', learning:'navLearning' };
-      const viewMap = { today:'todayView', activities:'activitiesView', dash:'dashView', recordings:'recordingsView', badges:'badgesView', pillars:'pillarsView', learning:'learningView' };
-      if (navMap[key]) document.getElementById(navMap[key]).classList.add('active');
-      if (viewMap[key]) document.getElementById(viewMap[key]).classList.add('active-view');
-      if (key === 'dash') renderProgressView();
-      if (key === 'activities') {
-        renderScenariosGrid();
-        renderDrillsGrid();
-      }
-      if (window.innerWidth <= 900) {
-        const sidebar = document.getElementById('appSidebar');
-        if (sidebar && sidebar.classList.contains('open')) sidebar.classList.remove('open');
-      }
-      renderIcons();
-    }
+        {
+            icon: "🌎",
+            title: "An audience",
+            description:
+            "Groups, events, presentations or public speaking.",
+            value: "An audience"
+        }
 
-    function switchActivitySub(key, btn) {
-      document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      document.querySelectorAll('.sub-activity-panel').forEach(p => p.classList.add('hidden'));
-      const panel = document.getElementById(`sub-${key}`);
-      if (panel) panel.classList.remove('hidden');
-      if (key === 'scenarios') renderScenariosGrid();
-      if (key === 'drills') renderDrillsGrid();
-      renderIcons();
-    }
+    ]
 
-    function setTimeline(key, btn) {
-      document.querySelectorAll('.time-tab').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-    }
+},
 
-    function goToPaywall(type) { window.location.href = PAYWALL_URL; }
+{
 
-    function signOut() {
-      localStorage.removeItem('unspoken_trial_user');
-      window.location.href = 'https://theunspoken.co.in';
-    }
+    type: "text",
 
-function startRep(which) {
-  if (which === 'q1' || which === 'q2') {
-    const used = USER.trials_used?.[which] || 0;
-    const cap = USER.cap || TRIAL_CAP_PER_QUESTION;
-    if (used >= cap) {
-      alert('You\'ve reached the trial cap for this question. Upgrade to a Sprint to continue.');
-      goToPaywall('sprint');
-      return;
-    }
-  }
-  openRecorderModal(which);  // ← keep this — it's your existing recorder modal
+    eyebrow: "05 · YOUR UNFINISHED SENTENCE",
+
+    title:
+    "Complete this honestly.",
+
+    intro:
+    "Think about the communication moment that frustrates you most.",
+
+    key: "need",
+
+    placeholder:
+    "I wish I could communicate better when…"
+
+},
+
+{
+
+    type: "text",
+
+    eyebrow: "06 · YOUR NEXT VERSION",
+
+    title:
+    "How do you want people to experience you?",
+
+    intro:
+    "Not what do you want to say. What do you want your communication to make people feel or do?",
+
+    key: "role",
+
+    placeholder:
+    "I want people to experience me as…"
+
 }
-      // Recording modal (kept in the original trial flow — see original file if you need it)
-      alert('Recording modal — unchanged from your current trial build. Trial users practice via the Today tab only.');
+
+];
+
+
+let currentStep = 0;
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function login() {
+
+    const id =
+        document.getElementById("loginId").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value.trim();
+
+
+    if (
+        id === "demo@theunspoken.co.in" &&
+        password === "unspoken123"
+    ) {
+
+        document
+            .getElementById("loginScreen")
+            .classList.add("hidden");
+
+        document
+            .getElementById("journeyScreen")
+            .classList.remove("hidden");
+
+        renderQuestion();
+
+    } else {
+
+        alert(
+            "For this prototype use:\n\n" +
+            "ID: demo@theunspoken.co.in\n" +
+            "Password: unspoken123"
+        );
+
     }
 
-    // ============================================================
-    // HELPERS
-    // ============================================================
-    function escapeHtml(s) {
-      if (s == null) return '';
-      return String(s)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    }
-    function formatStage(s) {
-      const m = { student:'Student / Final Year', fresher:'Fresher (0–1 yr)', early:'Early Career (1–5 yrs)', mid:'Mid Career (5–15 yrs)', senior:'Senior / Lead (15+ yrs)' };
-      return m[s] || s || '—';
-    }
-    function formatFunction(f) {
-      const m = { engineering:'Engineering / Data', bpo:'BPO / Customer Support', manufacturing:'Manufacturing / Ops', sales:'Sales / Marketing / BD', finance:'Finance / Accounting', consulting:'Consulting / Strategy', design:'Design / Content / Product', hr:'HR / People', other:'Other' };
-      return m[f] || f || '—';
-    }
-    function closeModal() {
-      document.getElementById('usModal').classList.remove('is-visible');
+}
+
+
+/* =====================================================
+   RENDER QUESTION
+===================================================== */
+
+function renderQuestion() {
+
+    const q = questions[currentStep];
+
+    const container =
+        document.getElementById("questionContainer");
+
+
+    document.getElementById("stepCount")
+        .innerText =
+        String(currentStep + 1).padStart(2,"0")
+        + " / "
+        + String(questions.length).padStart(2,"0");
+
+
+    document.getElementById("progressFill")
+        .style.width =
+        ((currentStep) / questions.length * 100) + "%";
+
+
+    let html = `
+
+        <div class="question">
+
+            <div class="eyebrow">
+                ${q.eyebrow}
+            </div>
+
+            <h1>
+                ${q.title}
+            </h1>
+
+            <div class="question-intro">
+                ${q.intro}
+            </div>
+    `;
+
+
+    if (q.type === "choice") {
+
+        html += `<div class="options">`;
+
+        q.options.forEach(option => {
+
+            html += `
+
+                <button
+                    class="option"
+                    onclick="selectOption(
+                        this,
+                        '${q.key}',
+                        '${option.value}'
+                    )">
+
+                    <div class="option-icon">
+                        ${option.icon}
+                    </div>
+
+                    <div class="option-title">
+                        ${option.title}
+                    </div>
+
+                    <div class="option-description">
+                        ${option.description}
+                    </div>
+
+                </button>
+
+            `;
+
+        });
+
+        html += `</div>`;
+
     }
 
-    // ============================================================
-    // BOOT HELPERS
-    // ============================================================
-    function showFreshState() {
-      const boot = document.getElementById('bootScreen');
-      boot.classList.remove('hidden');
-      document.getElementById('bootSpinner').classList.add('hidden');
-      document.getElementById('bootTitle').innerHTML = 'Welcome to The Unspoken';
-      boot.querySelectorAll('.boot-btn').forEach(b => b.remove());
-      document.getElementById('bootSub').innerHTML = 'Start a free drill to see how the product works.';
-      const fresh = document.createElement('button');
-      fresh.className = 'boot-btn';
-      fresh.textContent = 'Start a Free Drill';
-      fresh.onclick = () => { window.location.href = 'https://theunspoken.co.in'; };
-      boot.appendChild(fresh);
+
+    if (q.type === "text") {
+
+        html += `
+
+            <textarea
+                id="textAnswer"
+                class="big-input"
+                placeholder="${q.placeholder}">
+            </textarea>
+
+        `;
+
     }
 
-    function showSessionExpired(msg) {
-      const boot = document.getElementById('bootScreen');
-      boot.classList.remove('hidden');
-      document.getElementById('bootSpinner').classList.add('hidden');
-      boot.querySelectorAll('.boot-btn').forEach(b => b.remove());
-      document.getElementById('bootTitle').innerHTML = 'Session expired';
-      document.getElementById('bootSub').innerHTML = msg || 'This trial session has already been used.';
-      const fresh = document.createElement('button');
-      fresh.className = 'boot-btn';
-      fresh.textContent = 'Start a New Drill';
-      fresh.onclick = () => { window.location.href = 'https://theunspoken.co.in'; };
-      boot.appendChild(fresh);
+
+    html += `
+
+        <div class="action-row">
+
+            <button
+                class="back"
+                onclick="previousQuestion()"
+                ${currentStep === 0 ? "disabled" : ""}>
+
+                ← Back
+
+            </button>
+
+            <button
+                class="continue"
+                onclick="nextQuestion()">
+
+                ${currentStep === questions.length - 1
+                    ? "Build my profile →"
+                    : "Continue →"}
+
+            </button>
+
+        </div>
+
+        </div>
+
+    `;
+
+
+    container.innerHTML = html;
+
+}
+
+
+/* =====================================================
+   SELECT OPTION
+===================================================== */
+
+function selectOption(button,key,value) {
+
+    document
+        .querySelectorAll(".option")
+        .forEach(el =>
+            el.classList.remove("selected")
+        );
+
+    button.classList.add("selected");
+
+    user[key] = value;
+
+}
+
+
+/* =====================================================
+   NEXT
+===================================================== */
+
+function nextQuestion() {
+
+    const q = questions[currentStep];
+
+
+    if (q.type === "text") {
+
+        const input =
+            document.getElementById("textAnswer");
+
+        if (!input || !input.value.trim()) {
+
+            alert(
+                "Take a moment to answer this honestly."
+            );
+
+            return;
+
+        }
+
+        user[q.key] =
+            input.value.trim();
+
     }
 
-    console.log('🚀 Trial page loaded — Lucide icons + locked previews for Scenarios & Drills.');
-  </script>
+
+    if (
+        q.type === "choice" &&
+        !user[q.key]
+    ) {
+
+        alert(
+            "Choose the option that feels most like you."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        currentStep <
+        questions.length - 1
+    ) {
+
+        currentStep++;
+
+        renderQuestion();
+
+    } else {
+
+        showResult();
+
+    }
+
+}
+
+
+/* =====================================================
+   BACK
+===================================================== */
+
+function previousQuestion() {
+
+    if (currentStep > 0) {
+
+        currentStep--;
+
+        renderQuestion();
+
+    }
+
+}
+
+
+/* =====================================================
+   RESULT
+===================================================== */
+
+function showResult() {
+
+    document
+        .getElementById("journeyScreen")
+        .classList.add("hidden");
+
+    document
+        .getElementById("resultScreen")
+        .classList.remove("hidden");
+
+
+    document
+        .getElementById("resultProfile")
+        .innerText =
+        user.profile;
+
+
+    document
+        .getElementById("resultGoal")
+        .innerText =
+        user.goal;
+
+
+    document
+        .getElementById("resultContext")
+        .innerText =
+        user.context;
+
+
+    document
+        .getElementById("resultNeed")
+        .innerText =
+        user.need;
+
+
+    let mission =
+        "Become a more powerful communicator.";
+
+
+    let description =
+        "Your practice will adapt to your goals, audience and the moments that matter most to you.";
+
+
+    if (
+        user.context === "Interview"
+    ) {
+
+        mission =
+        "Become more memorable in the moments that matter.";
+
+        description =
+        "Your practice will focus on answering with clarity, telling compelling stories and creating a stronger impression.";
+
+    }
+
+
+    if (
+        user.context === "Leadership"
+    ) {
+
+        mission =
+        "Become a communicator people want to follow.";
+
+        description =
+        "Your practice will focus on presence, clarity, influence and communicating direction with conviction.";
+
+    }
+
+
+    if (
+        user.context === "Promotion"
+    ) {
+
+        mission =
+        "Make your value impossible to overlook.";
+
+        description =
+        "Your practice will help you communicate your impact, make your case and ask with confidence.";
+
+    }
+
+
+    if (
+        user.context === "Presentation"
+    ) {
+
+        mission =
+        "Turn your ideas into something people remember.";
+
+        description =
+        "Your practice will focus on structure, storytelling, presence and audience engagement.";
+
+    }
+
+
+    document
+        .getElementById("resultMission")
+        .innerText =
+        mission;
+
+
+    document
+        .getElementById("resultDescription")
+        .innerText =
+        description;
+
+
+    localStorage.setItem(
+        "unspokenProfile",
+        JSON.stringify(user)
+    );
+
+}
+
+
+/* =====================================================
+   START PRACTICE
+===================================================== */
+
+function startPractice() {
+
+    alert(
+        "Your personalised practice environment would open here.\n\n" +
+        "Next: your first real communication moment."
+    );
+
+}
+
+</script>
+
 </body>
 </html>
-  
+```
