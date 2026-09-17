@@ -134,9 +134,6 @@
     .qc-difficulty.medium { background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); }
     .qc-difficulty.hard { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
-    .qc-action-btn { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
-    .qc-action-btn:hover:not(:disabled) { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.08); color: var(--accent-cyan); }
-
     .rep-tracker { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
     .rep-tracker .rt-left .rt-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px; }
     .rep-tracker .rt-left .rt-count { font-size: 18px; font-weight: 800; }
@@ -181,12 +178,6 @@
     .ya-executive { font-size: 13px; line-height: 1.6; font-weight: 600; padding: 12px 14px; background: linear-gradient(135deg, rgba(184,148,60,0.15), rgba(184,148,60,0.06)); border-left: 3px solid var(--accent-gold); border-radius: 8px; font-style: italic; }
     .ya-transcript { font-size: 13px; line-height: 1.65; color: var(--text-main); max-height: 220px; overflow-y: auto; padding: 12px 14px; background: rgba(0, 0, 0, 0.25); border-left: 3px solid var(--accent-cyan); border-radius: 8px; font-style: italic; white-space: pre-wrap; word-break: break-word; }
     .ya-transcript-empty { color: var(--text-muted); font-style: normal; font-size: 12px; }
-    .ya-metrics-mini { display: flex; flex-direction: column; gap: 10px; }
-    .ya-metric-row { display: flex; align-items: center; gap: 10px; font-size: 12px; }
-    .ya-metric-row .ya-metric-label { width: 70px; color: var(--text-muted); font-weight: 600; }
-    .ya-metric-row .ya-metric-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
-    .ya-metric-row .ya-metric-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); border-radius: 3px; }
-    .ya-metric-row .ya-metric-value { width: 34px; text-align: right; font-weight: 700; color: var(--text-main); }
     .ya-footer { margin-top: 20px; display: flex; justify-content: center; }
     .ya-btn { padding: 12px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; }
 
@@ -247,10 +238,237 @@
     .us-modal-close { position: absolute; top: 14px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
     .us-modal h2 { font-size: 20px; margin-bottom: 6px; }
     .us-modal .us-modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-    .us-modal .bank-question { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s; }
-    .us-modal .bank-question:hover { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.05); }
-    .us-modal .bank-question .bq-text { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-    .us-modal .bank-question .bq-meta { font-size: 11px; color: var(--text-muted); }
+
+    /* ── ONBOARDING ── */
+    .onboarding-backdrop {
+      position: fixed; inset: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(37,99,235,0.18), rgba(11,15,25,0.97) 65%);
+      backdrop-filter: blur(10px);
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .onboarding-backdrop.is-visible { display: flex; }
+
+    .onboarding-stage {
+      width: 100%;
+      max-width: 620px;
+      background: linear-gradient(135deg, rgba(31,41,55,0.92), rgba(17,24,39,0.96));
+      border: 1px solid rgba(56,189,248,0.35);
+      border-radius: 24px;
+      padding: 44px 40px 36px;
+      position: relative;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 60px rgba(56,189,248,0.08);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .ob-scene { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .ob-scene.hidden { display: none; }
+
+    /* ── WELCOME ROBOT ── */
+    .ob-robot {
+      width: 140px; height: 160px;
+      margin-bottom: 8px;
+      animation: obFloatIn 1.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 12px 24px rgba(56,189,248,0.35));
+    }
+    .ob-robot .ob-eye { animation: obBlink 3.2s infinite; }
+    @keyframes obFloatIn {
+      0% { opacity: 0; transform: translateY(80px) scale(0.85); }
+      60% { opacity: 1; transform: translateY(-8px) scale(1.03); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes obBlink {
+      0%, 92%, 100% { opacity: 1; }
+      95% { opacity: 0.2; }
+    }
+
+    /* ── SPEECH BUBBLE ── */
+    .ob-bubble {
+      position: relative;
+      background: rgba(11,15,25,0.85);
+      border: 1px solid rgba(56,189,248,0.35);
+      border-radius: 18px;
+      padding: 22px 28px;
+      margin-bottom: 22px;
+      max-width: 460px;
+      text-align: center;
+    }
+    .ob-bubble::before {
+      content: '';
+      position: absolute;
+      top: -8px; left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 14px; height: 14px;
+      background: rgba(11,15,25,0.85);
+      border-left: 1px solid rgba(56,189,248,0.35);
+      border-top: 1px solid rgba(56,189,248,0.35);
+      border-top-left-radius: 3px;
+    }
+    .ob-line {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-main);
+      opacity: 0;
+      animation: obFadeUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    .ob-line strong { color: var(--accent-cyan); font-weight: 800; }
+    .ob-line + .ob-line { margin-top: 6px; }
+    @keyframes obFadeUp {
+      0% { opacity: 0; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── BUTTONS ── */
+    .ob-btn {
+      padding: 14px 32px;
+      border-radius: 100px;
+      border: none;
+      background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+      color: #FFF;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 8px 24px rgba(37,99,235,0.4);
+      animation: obFadeUp 0.5s ease forwards;
+      opacity: 0;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .ob-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(37,99,235,0.5); }
+
+    .ob-back {
+      margin-top: 18px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 6px 12px;
+    }
+    .ob-back:hover { color: var(--text-main); }
+
+    /* ── PROGRESS DOTS ── */
+    .ob-progress { display: flex; gap: 10px; margin-bottom: 12px; }
+    .ob-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+    .ob-dot.active { background: var(--accent-cyan); box-shadow: 0 0 12px rgba(56,189,248,0.6); transform: scale(1.2); }
+    .ob-dot.done { background: var(--success); }
+
+    .ob-step-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .ob-question {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 26px;
+      max-width: 480px;
+    }
+
+    /* ── PILLS ── */
+    .ob-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      max-width: 520px;
+      margin-bottom: 8px;
+    }
+    .ob-pills.wide { grid-template-columns: 1fr; }
+    .ob-pill {
+      padding: 14px 18px;
+      background: rgba(11,15,25,0.7);
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      line-height: 1.4;
+    }
+    .ob-pill:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(56,189,248,0.08);
+      transform: translateY(-2px);
+    }
+    .ob-pill.selected {
+      border-color: var(--accent-cyan);
+      background: rgba(56,189,248,0.15);
+      box-shadow: 0 0 20px rgba(56,189,248,0.3);
+      animation: obPillPulse 0.4s ease;
+    }
+    @keyframes obPillPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+
+    /* ── CELEBRATION ── */
+    .ob-trophy {
+      font-size: 80px;
+      line-height: 1;
+      margin-bottom: 20px;
+      animation: obTrophyBounce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes obTrophyBounce {
+      0% { opacity: 0; transform: scale(0.2) rotate(-15deg); }
+      60% { opacity: 1; transform: scale(1.15) rotate(5deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0); }
+    }
+    .ob-congrats {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #38BDF8, #8B5CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .ob-congrats-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 26px;
+      max-width: 400px;
+      line-height: 1.6;
+    }
+
+    /* ── CONFETTI ── */
+    .confetti-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3100;
+      overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 14px;
+      top: -20px;
+      opacity: 0;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(-20px) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(105vh) rotate(720deg); }
+    }
+
+    @media (max-width: 640px) {
+      .onboarding-stage { padding: 32px 24px 28px; }
+      .ob-question { font-size: 19px; }
+      .ob-pills { grid-template-columns: 1fr; }
+    }
 
     @media (max-width: 900px) {
       .dash-grid { grid-template-columns: 1fr; }
@@ -299,7 +517,7 @@
           <div class="nav-item active" id="navToday" onclick="switchView('today')"><span>🏠</span> Today</div>
           <div class="nav-item" id="navActivities" onclick="switchView('activities')"><span>🎯</span> Activities</div>
           <div class="nav-item" id="navDash" onclick="switchView('dash')"><span>📊</span> Pattern &amp; Progress</div>
-          <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><span>🎙️</span> My Recordings</div>
+          <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><span>🎙️</span> My Reps</div>
           <div class="nav-item" id="navBadges" onclick="switchView('badges')"><span>🏆</span> Achievements</div>
           <div class="nav-item" id="navPillars" onclick="switchView('pillars')"><span>🏛️</span> Pillars</div>
           <div class="nav-item" id="navLearning" onclick="switchView('learning')"><span>📚</span> My Learning</div>
@@ -632,19 +850,19 @@
           </div>
         </section>
 
-        <!-- RECORDINGS -->
+        <!-- MY REPS -->
         <section class="view-panel" id="recordingsView">
           <div class="view-heading">
-            <h2>🎙️ My Recordings</h2>
-            <span class="vh-sub">Replay every practice session</span>
+            <h2>🎙️ My Reps</h2>
+            <span class="vh-sub">Every practice session you've completed</span>
           </div>
           <div class="question-card">
-            <div class="qc-label"><span>Your recordings library</span></div>
+            <div class="qc-label"><span>Rep history</span></div>
             <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6;">
-              Replay every practice session. Track your progress over time. Compare reps across days.
+              Every rep you've done, newest first. Compare transcripts and metrics across sessions to see your progress.
             </div>
             <div id="recordingsList" style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
-              <div style="font-size:12px;color:var(--text-muted);">Your recordings will appear here as you practice.</div>
+              <div style="font-size:12px;color:var(--text-muted);">Your reps will appear here as you practice.</div>
             </div>
           </div>
         </section>
@@ -722,6 +940,81 @@
     </div>
   </div>
 
+  <!-- ONBOARDING OVERLAY -->
+  <div class="onboarding-backdrop" id="onboardingModal">
+    <div class="onboarding-stage" id="onboardingStage">
+
+      <!-- STEP 0: Welcome -->
+      <div class="ob-scene" id="obSceneWelcome">
+        <div class="ob-robot" aria-hidden="true">
+          <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="robotBody" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#38BDF8"/>
+                <stop offset="100%" stop-color="#8B5CF6"/>
+              </linearGradient>
+            </defs>
+            <ellipse cx="60" cy="134" rx="26" ry="3" fill="rgba(56,189,248,0.25)"/>
+            <rect x="30" y="30" width="60" height="52" rx="16" fill="url(#robotBody)"/>
+            <rect x="42" y="46" width="36" height="14" rx="7" fill="#0B0F19"/>
+            <circle cx="52" cy="53" r="3.5" fill="#38BDF8" class="ob-eye"/>
+            <circle cx="68" cy="53" r="3.5" fill="#38BDF8" class="ob-eye"/>
+            <rect x="56" y="20" width="8" height="12" rx="3" fill="#8B5CF6"/>
+            <circle cx="60" cy="18" r="5" fill="#F59E0B"/>
+            <rect x="44" y="84" width="32" height="6" rx="3" fill="#1F2937"/>
+            <rect x="36" y="94" width="48" height="32" rx="12" fill="url(#robotBody)"/>
+            <rect x="52" y="104" width="16" height="6" rx="3" fill="#F9FAFB" opacity="0.9"/>
+          </svg>
+        </div>
+        <div class="ob-bubble">
+          <div class="ob-line" style="animation-delay:0.3s;">Welcome, <strong id="obWelcomeName">friend</strong>.</div>
+          <div class="ob-line" style="animation-delay:0.9s;">You're here to speak with intent.</div>
+          <div class="ob-line" style="animation-delay:1.5s;">Let's personalize your journey.</div>
+        </div>
+        <button class="ob-btn" style="animation-delay:2.2s;" onclick="obGoToStep('years')">Continue →</button>
+      </div>
+
+      <!-- STEP 1: Years of experience -->
+      <div class="ob-scene hidden" id="obSceneYears">
+        <div class="ob-progress"><span class="ob-dot active"></span><span class="ob-dot"></span><span class="ob-dot"></span></div>
+        <div class="ob-step-label">Step 1 of 3</div>
+        <h2 class="ob-question">How many years of experience do you have?</h2>
+        <div class="ob-pills" id="obYearsPills"></div>
+        <button class="ob-back" onclick="obGoToStep('welcome')">← Back</button>
+      </div>
+
+      <!-- STEP 2: Target industry -->
+      <div class="ob-scene hidden" id="obSceneIndustry">
+        <div class="ob-progress"><span class="ob-dot done"></span><span class="ob-dot active"></span><span class="ob-dot"></span></div>
+        <div class="ob-step-label">Step 2 of 3</div>
+        <h2 class="ob-question">Which industry are you targeting?</h2>
+        <div class="ob-pills" id="obIndustryPills"></div>
+        <button class="ob-back" onclick="obGoToStep('years')">← Back</button>
+      </div>
+
+      <!-- STEP 3: Target role -->
+      <div class="ob-scene hidden" id="obSceneRole">
+        <div class="ob-progress"><span class="ob-dot done"></span><span class="ob-dot done"></span><span class="ob-dot active"></span></div>
+        <div class="ob-step-label">Step 3 of 3</div>
+        <h2 class="ob-question">What role are you targeting?</h2>
+        <div class="ob-pills" id="obRolePills"></div>
+        <button class="ob-back" onclick="obGoToStep('industry')">← Back</button>
+      </div>
+
+      <!-- STEP 4: Celebration -->
+      <div class="ob-scene hidden" id="obSceneCelebrate">
+        <div class="ob-trophy">🏆</div>
+        <h2 class="ob-congrats">You're all set, <span id="obCongratsName">friend</span>.</h2>
+        <p class="ob-congrats-sub">Your scenarios are personalized. Time to practice.</p>
+        <button class="ob-btn" onclick="obFinish()">Start practising →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONFETTI LAYER -->
+  <div class="confetti-layer" id="confettiLayer"></div>
+
   <script>
     // ============================================================
     // CONFIG
@@ -730,6 +1023,160 @@
     const PAYWALL_URL = 'https://theunspoken.co.in/Pricing';
     const PLAN_LABEL = { sprint: 'Sprint Pass', pass: 'Practice Pass' };
     const CAP_PER_QUESTION = 2;
+
+    // ============================================================
+    // ONBOARDING DATA
+    // ============================================================
+    const OB_YEARS = [
+      { value: 'student', label: 'Student' },
+      { value: 'fresher', label: 'Fresher (0–1 year)' },
+      { value: 'early', label: 'Early career (1–5 years)' },
+      { value: 'mid', label: 'Mid career (6–12 years)' },
+      { value: 'senior', label: 'Senior (13–20 years)' },
+      { value: 'leadership', label: 'Leadership (20+ years)' },
+    ];
+
+    const OB_INDUSTRIES = [
+      { value: 'it_software', label: 'IT / Software / SaaS' },
+      { value: 'bpo_services', label: 'BPO / Customer Services' },
+      { value: 'bfsi', label: 'Banking / Financial Services / Insurance' },
+      { value: 'consulting', label: 'Consulting / Advisory' },
+      { value: 'manufacturing', label: 'Manufacturing / Industrial' },
+      { value: 'retail_ecommerce', label: 'Retail / E-commerce / D2C' },
+      { value: 'healthcare', label: 'Healthcare / Pharma / Life Sciences' },
+      { value: 'education', label: 'Education / EdTech' },
+      { value: 'media_design', label: 'Media / Design / Content' },
+      { value: 'energy_infra', label: 'Energy / Infrastructure / Real Estate' },
+      { value: 'government_psu', label: 'Government / Public Sector / PSU' },
+      { value: 'startup', label: 'Startups / Early-stage' },
+      { value: 'other', label: 'Other' },
+    ];
+
+    const OB_ROLES_BY_INDUSTRY = {
+      it_software: [
+        { value: 'software_engineer', label: 'Software Engineer / Developer' },
+        { value: 'data_analyst', label: 'Data Analyst / Scientist' },
+        { value: 'product_manager', label: 'Product Manager' },
+        { value: 'devops', label: 'DevOps / SRE / Cloud' },
+        { value: 'qa', label: 'QA / Test Engineering' },
+        { value: 'designer', label: 'UI / UX Designer' },
+        { value: 'engineering_manager', label: 'Engineering Manager' },
+        { value: 'solution_architect', label: 'Solution Architect' },
+        { value: 'business_analyst', label: 'Business Analyst' },
+        { value: 'other', label: 'Other' },
+      ],
+      bpo_services: [
+        { value: 'process_associate', label: 'Process Associate / Agent' },
+        { value: 'team_lead_bpo', label: 'Team Leader' },
+        { value: 'quality_analyst', label: 'Quality Analyst' },
+        { value: 'trainer_bpo', label: 'Trainer' },
+        { value: 'operations_manager', label: 'Operations Manager' },
+        { value: 'workforce_mgmt', label: 'Workforce Management' },
+        { value: 'account_manager', label: 'Account / Client Manager' },
+        { value: 'other', label: 'Other' },
+      ],
+      bfsi: [
+        { value: 'relationship_manager', label: 'Relationship Manager' },
+        { value: 'credit_analyst', label: 'Credit / Risk Analyst' },
+        { value: 'investment_banking', label: 'Investment Banking Analyst' },
+        { value: 'wealth_manager', label: 'Wealth / Portfolio Manager' },
+        { value: 'compliance_officer', label: 'Compliance / KYC Officer' },
+        { value: 'finance_manager', label: 'Finance / Accounts Manager' },
+        { value: 'insurance_agent', label: 'Insurance Sales' },
+        { value: 'audit', label: 'Audit / Internal Controls' },
+        { value: 'other', label: 'Other' },
+      ],
+      consulting: [
+        { value: 'management_consultant', label: 'Management Consultant' },
+        { value: 'strategy_analyst', label: 'Strategy Analyst' },
+        { value: 'business_analyst_consulting', label: 'Business Analyst' },
+        { value: 'implementation_consultant', label: 'Implementation Consultant' },
+        { value: 'engagement_manager', label: 'Engagement Manager' },
+        { value: 'partner_principal', label: 'Partner / Principal' },
+        { value: 'other', label: 'Other' },
+      ],
+      manufacturing: [
+        { value: 'production_engineer', label: 'Production / Plant Engineer' },
+        { value: 'quality_engineer', label: 'Quality Engineer' },
+        { value: 'supply_chain', label: 'Supply Chain / Procurement' },
+        { value: 'maintenance', label: 'Maintenance / Reliability' },
+        { value: 'operations_manager_mfg', label: 'Operations Manager' },
+        { value: 'ehs_officer', label: 'EHS / Safety Officer' },
+        { value: 'project_manager_mfg', label: 'Project Manager' },
+        { value: 'other', label: 'Other' },
+      ],
+      retail_ecommerce: [
+        { value: 'store_manager', label: 'Store Manager' },
+        { value: 'category_manager', label: 'Category Manager' },
+        { value: 'supply_chain_retail', label: 'Supply Chain / Logistics' },
+        { value: 'ecommerce_ops', label: 'E-commerce Operations' },
+        { value: 'marketing_retail', label: 'Marketing / Brand' },
+        { value: 'customer_experience', label: 'Customer Experience' },
+        { value: 'merchandiser', label: 'Merchandiser' },
+        { value: 'other', label: 'Other' },
+      ],
+      healthcare: [
+        { value: 'medical_rep', label: 'Medical Representative' },
+        { value: 'clinical_research', label: 'Clinical Research Associate' },
+        { value: 'regulatory', label: 'Regulatory Affairs' },
+        { value: 'hospital_admin', label: 'Hospital / Healthcare Administration' },
+        { value: 'pharma_production', label: 'Pharma Production / QA' },
+        { value: 'healthcare_consulting', label: 'Healthcare Consulting' },
+        { value: 'other', label: 'Other' },
+      ],
+      education: [
+        { value: 'teacher_trainer', label: 'Teacher / Trainer' },
+        { value: 'academic_counselor', label: 'Academic Counselor' },
+        { value: 'curriculum_designer', label: 'Curriculum Designer' },
+        { value: 'edtech_sales', label: 'EdTech Sales / BD' },
+        { value: 'institution_admin', label: 'Institution Administration' },
+        { value: 'research_education', label: 'Research / Curriculum' },
+        { value: 'other', label: 'Other' },
+      ],
+      media_design: [
+        { value: 'graphic_designer', label: 'Graphic / Visual Designer' },
+        { value: 'content_writer', label: 'Content Writer / Editor' },
+        { value: 'video_producer', label: 'Video Producer / Editor' },
+        { value: 'marketing_media', label: 'Marketing / Social Media' },
+        { value: 'creative_director', label: 'Creative Director' },
+        { value: 'journalist', label: 'Journalist / Reporter' },
+        { value: 'other', label: 'Other' },
+      ],
+      energy_infra: [
+        { value: 'project_engineer', label: 'Project Engineer' },
+        { value: 'site_manager', label: 'Site / Construction Manager' },
+        { value: 'real_estate_sales', label: 'Real Estate Sales' },
+        { value: 'energy_analyst', label: 'Energy Analyst' },
+        { value: 'infra_consultant', label: 'Infrastructure Consultant' },
+        { value: 'other', label: 'Other' },
+      ],
+      government_psu: [
+        { value: 'civil_services', label: 'Civil Services (IAS/IPS/IFS)' },
+        { value: 'psu_engineer', label: 'PSU Engineer / Officer' },
+        { value: 'defence', label: 'Defence / Armed Forces' },
+        { value: 'public_admin', label: 'Public Administration' },
+        { value: 'policy', label: 'Policy / Governance' },
+        { value: 'other', label: 'Other' },
+      ],
+      startup: [
+        { value: 'founder', label: 'Founder / Co-founder' },
+        { value: 'early_employee', label: 'Early Employee (1–20)' },
+        { value: 'growth_lead', label: 'Growth / Marketing Lead' },
+        { value: 'generalist', label: 'Generalist / Chief of Staff' },
+        { value: 'engineering_startup', label: 'Engineering / Product' },
+        { value: 'other', label: 'Other' },
+      ],
+      other: [
+        { value: 'other', label: 'Other' },
+      ],
+    };
+
+    // Onboarding state
+    let OB = {
+      years: null,
+      industry: null,
+      role: null,
+    };
 
     // ============================================================
     // RUNTIME
@@ -756,9 +1203,7 @@
 
       // Priority 1: token in URL
       if (SESSION_TOKEN) {
-        try {
-          localStorage.setItem('unspoken_paid_session', SESSION_TOKEN);
-        } catch (e) {}
+        try { localStorage.setItem('unspoken_paid_session', SESSION_TOKEN); } catch (e) {}
         const ok = await verifyPaidSession(SESSION_TOKEN);
         if (ok) return;
       }
@@ -808,7 +1253,12 @@
         track_id: data.sprint || 'interview',
         current_day: data.current_day || 1,
         total_days: data.total_days || 28,
-        is_paid: true
+        is_paid: true,
+        // NEW — profile fields
+        years_experience: data.years_experience || null,
+        target_industry: data.target_industry || null,
+        target_role: data.target_role || null,
+        profile_completed: !!data.profile_completed,
       };
     }
 
@@ -851,7 +1301,6 @@
       const email = (input ? input.value : loginEmail).trim();
       if (!email) return alert('Please enter your email.');
       loginEmail = email;
-      const btn = document.getElementById(isResend ? document.querySelector('.lb-footer a') : 'loginSendBtn');
       const sendBtn = document.getElementById('loginSendBtn');
       const verifyBtn = document.getElementById('loginVerifyBtn');
       if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = 'Sending…'; }
@@ -938,6 +1387,7 @@
       renderTodayProgress();
       renderProgressView();
       switchView('today');
+      maybeShowOnboarding();
     }
 
     function renderHeader() {
@@ -1181,15 +1631,34 @@
       const list = document.getElementById('recordingsList');
       if (!list) return;
       if (!allReps.length) {
-        list.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Your recordings will appear here as you practice.</div>';
+        list.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Your reps will appear here as you practice.</div>';
         return;
       }
-      list.innerHTML = allReps.slice().reverse().map(r => `
-        <div class="rep-log-item">
-          <span>${escapeHtml(r.activity || 'Practice rep')}${r.timestamp ? ' · ' + new Date(r.timestamp).toLocaleDateString() : ''}</span>
-          <span class="rl-score">${r.transcript ? escapeHtml(r.transcript.slice(0, 80)) : '—'}</span>
-        </div>
-      `).join('');
+      const sorted = allReps.slice().reverse();
+      list.innerHTML = sorted.map((r, idx) => {
+        const label = r.activity ? r.activity : 'Practice rep';
+        const time = r.timestamp ? new Date(r.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
+        const transcript = r.transcript
+          ? escapeHtml(r.transcript.slice(0, 220)) + (r.transcript.length > 220 ? '…' : '')
+          : '<em style="color:var(--text-muted);">No transcript captured</em>';
+        const fd = r.fillerDiscipline, pf = r.pointFirst, cc = r.concreteness;
+        const scoreLine = [
+          fd != null ? `Filler ${fd}` : null,
+          pf != null ? `Point-first ${pf}` : null,
+          cc != null ? `Concrete ${cc}` : null,
+        ].filter(Boolean).join(' · ') || 'No metrics yet';
+
+        return `
+          <div style="background:var(--bg-dark);border:1px solid var(--border-color);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;">
+              <div style="font-size:13px;font-weight:700;color:var(--text-main);">Rep #${sorted.length - idx} · ${escapeHtml(label)}</div>
+              <div style="font-size:11px;color:var(--text-muted);">${escapeHtml(time)}</div>
+            </div>
+            <div style="font-size:12px;line-height:1.6;color:var(--text-main);font-style:italic;padding-left:10px;border-left:2px solid var(--accent-cyan);">${transcript}</div>
+            <div style="font-size:11px;color:var(--success);font-weight:600;">${escapeHtml(scoreLine)}</div>
+          </div>
+        `;
+      }).join('');
     }
 
     // ============================================================
@@ -1225,6 +1694,153 @@
         executiveVersion: r.executive_version ?? null,
         transcript: data.transcribed_text ?? ''
       };
+    }
+
+    // ============================================================
+    // ONBOARDING — WELCOME → PROFILE STEPS → CELEBRATION
+    // ============================================================
+    function maybeShowOnboarding() {
+      if (!USER.is_paid) return;
+      if (USER.profile_completed) return;
+
+      OB = { years: null, industry: null, role: null };
+
+      document.getElementById('obWelcomeName').textContent = USER.name || 'friend';
+      document.getElementById('obCongratsName').textContent = USER.name || 'friend';
+
+      obRenderYears();
+      obRenderIndustries();
+      obRenderRoles(null);
+
+      // Reset to welcome
+      ['obSceneWelcome','obSceneYears','obSceneIndustry','obSceneRole','obSceneCelebrate']
+        .forEach(id => document.getElementById(id).classList.add('hidden'));
+      document.getElementById('obSceneWelcome').classList.remove('hidden');
+
+      document.getElementById('onboardingModal').classList.add('is-visible');
+    }
+
+    function obGoToStep(step) {
+      ['obSceneWelcome','obSceneYears','obSceneIndustry','obSceneRole','obSceneCelebrate']
+        .forEach(id => document.getElementById(id).classList.add('hidden'));
+
+      const map = {
+        welcome: 'obSceneWelcome',
+        years: 'obSceneYears',
+        industry: 'obSceneIndustry',
+        role: 'obSceneRole',
+        celebrate: 'obSceneCelebrate',
+      };
+      document.getElementById(map[step]).classList.remove('hidden');
+    }
+
+    function obRenderYears() {
+      const container = document.getElementById('obYearsPills');
+      container.innerHTML = OB_YEARS.map(y =>
+        `<button class="ob-pill" data-value="${y.value}" onclick="obPickYears(this)">${escapeHtml(y.label)}</button>`
+      ).join('');
+    }
+
+    function obRenderIndustries() {
+      const container = document.getElementById('obIndustryPills');
+      container.innerHTML = OB_INDUSTRIES.map(i =>
+        `<button class="ob-pill" data-value="${i.value}" onclick="obPickIndustry(this)">${escapeHtml(i.label)}</button>`
+      ).join('');
+    }
+
+    function obRenderRoles(industry) {
+      const container = document.getElementById('obRolePills');
+      const roles = OB_ROLES_BY_INDUSTRY[industry] || [];
+      if (!roles.length) {
+        container.innerHTML = '<div style="color:var(--text-muted);font-size:13px;">Select an industry first</div>';
+        return;
+      }
+      container.innerHTML = roles.map(r =>
+        `<button class="ob-pill" data-value="${r.value}" onclick="obPickRole(this)">${escapeHtml(r.label)}</button>`
+      ).join('');
+    }
+
+    function obPickYears(btn) {
+      document.querySelectorAll('#obYearsPills .ob-pill').forEach(p => p.classList.remove('selected'));
+      btn.classList.add('selected');
+      OB.years = btn.dataset.value;
+      setTimeout(() => obGoToStep('industry'), 380);
+    }
+
+    function obPickIndustry(btn) {
+      document.querySelectorAll('#obIndustryPills .ob-pill').forEach(p => p.classList.remove('selected'));
+      btn.classList.add('selected');
+      OB.industry = btn.dataset.value;
+      OB.role = null;
+      obRenderRoles(OB.industry);
+      setTimeout(() => obGoToStep('role'), 380);
+    }
+
+    async function obPickRole(btn) {
+      document.querySelectorAll('#obRolePills .ob-pill').forEach(p => p.classList.remove('selected'));
+      btn.classList.add('selected');
+      OB.role = btn.dataset.value;
+
+      // Save profile via backend
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/paid/profile`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SESSION_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            years_experience: OB.years,
+            target_industry: OB.industry,
+            target_role: OB.role
+          })
+        });
+        if (res.ok) {
+          USER.years_experience = OB.years;
+          USER.target_industry = OB.industry;
+          USER.target_role = OB.role;
+          USER.profile_completed = true;
+        } else {
+          const err = await res.json().catch(() => ({}));
+          console.warn('Profile save failed:', err);
+        }
+      } catch (e) {
+        console.warn('Profile save error:', e);
+      }
+
+      // Celebrate
+      setTimeout(() => {
+        obGoToStep('celebrate');
+        obLaunchConfetti();
+      }, 420);
+    }
+
+    function obLaunchConfetti() {
+      const layer = document.getElementById('confettiLayer');
+      layer.innerHTML = '';
+      const colors = ['#38BDF8','#8B5CF6','#F59E0B','#10B981','#EF4444','#F9FAFB'];
+      const count = 90;
+
+      for (let i = 0; i < count; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = (2.2 + Math.random() * 2.2) + 's';
+        piece.style.animationDelay = (Math.random() * 0.7) + 's';
+        piece.style.width = (6 + Math.random() * 8) + 'px';
+        piece.style.height = (10 + Math.random() * 10) + 'px';
+        piece.style.borderRadius = Math.random() > 0.5 ? '2px' : '50%';
+        layer.appendChild(piece);
+      }
+
+      // Clear after 6s
+      setTimeout(() => { layer.innerHTML = ''; }, 6500);
+    }
+
+    function obFinish() {
+      document.getElementById('onboardingModal').classList.remove('is-visible');
+      document.getElementById('confettiLayer').innerHTML = '';
     }
 
     // ============================================================
@@ -1545,7 +2161,7 @@
       const type = card.dataset.type || 'voice';
 
       if (type === 'content') { openContentModal(activity); return; }
-      if (type === 'text') { return; } // reflection handled inline in DOM
+      if (type === 'text') { return; }
 
       const prompt = await pickPromptForActivity(activity);
       openRecorderModal(prompt, { source: 'activity', title: activity, category: activity });
@@ -1640,7 +2256,7 @@
       return m[s] || s || 'Practice';
     }
 
-    console.log('🚀 Product page loaded — paid flow active.');
+    console.log('🚀 Product page loaded — paid flow + onboarding active.');
   </script>
 </body>
 </html>
