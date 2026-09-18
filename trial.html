@@ -1572,47 +1572,50 @@
      * Nothing here invents content — every field is either pulled from the LLM
      * payload or left null so the UI can show an honest empty state.
      */
-    function normalizeAnalysis(data) {
-      if (!data) return null;
-      const m = data.metrics || {};
-      const s = data.signals || {};
-      const d = data.diagnosis || {};
-      const g = data.gap || {};
-      const c = data.coaching || {};
-      const r = data.before_after_rewrite || {};
+   function normalizeAnalysis(data) {
+  if (!data) return null;
+  const m = data.metrics || {};
+  const s = data.signals || {};
+  const d = data.diagnosis || {};
+  const g = data.gap || {};
+  const c = data.coaching || {};
+  const r = data.before_after_rewrite || {};
 
-      return {
-        // Metrics
-        fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
-        pointFirst: m.point_first ?? m.structure ?? null,
-        concreteness: m.concreteness ?? m.impact ?? null,
-        overallScore: m.overall_score ?? null,
+  return {
+    // Metrics
+    fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
+    pointFirst: m.point_first ?? m.structure ?? null,
+    concreteness: m.concreteness ?? m.impact ?? null,
+    overallScore: m.overall_score ?? null,
 
-        // Signals
-        timeToPoint: s.main_point_delay_seconds ?? null,
-        wordsPerMinute: s.words_per_minute ?? null,
-        fillerTotal: s.filler_words?.total ?? 0,
-        fillerPct: s.filler_words?.percentage ?? 0,
+    // Signals
+    timeToPoint: s.main_point_delay_seconds ?? null,
+    wordsPerMinute: s.words_per_minute ?? null,
+    fillerTotal: s.filler_words?.total ?? 0,
+    fillerPct: s.filler_words?.percentage ?? 0,
 
-        // Diagnosis (pattern)
-        patternName: d.pattern_name ?? null,
-        patternDesc: d.pattern_description ?? null,
+    // Diagnosis (pattern)
+    patternName: d.pattern_name ?? null,
+    patternDesc: d.pattern_description ?? null,
 
-        // Gap (what got lost / what the listener may hear)
-        gapGotLost: g.what_got_lost ?? null,
-        gapUnspoken: g.unspoken_gap ?? null,
+    // Gap (what got lost / what the listener may hear)
+    gapGotLost: g.what_got_lost ?? null,
+    gapUnspoken: g.unspoken_gap ?? null,
 
-        // Coaching (opportunity)
-        oneThingToChange: c.one_thing_to_change ?? null,
+    // Coaching (opportunity)
+    oneThingToChange: c.one_thing_to_change ?? null,
 
-        // Rewrite (reframe)
-        executiveVersion: r.executive_version ?? null,
+    // Rewrite (reframe)
+    executiveVersion: r.executive_version ?? null,
 
-        // Raw transcript
-        transcript: data.transcribed_text ?? ''
-      };
-    }
+    // Raw transcript
+    transcript: data.transcribed_text ?? '',
 
+    // NEW — LLM-specific fields (were being dropped)
+    listenerQuestion: d.listener_question ?? g.unspoken_gap ?? null,
+    whyThisMatters:   d.why_this_matters ?? null,
+  };
+}
     // ============================================================
     // RENDER
     // ============================================================
@@ -1736,140 +1739,145 @@
     // ============================================================
     // PROGRESS VIEW — the trial's hero screen
     // ============================================================
-    function renderProgressView() {
-      const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
-      const m = USER.analysis;
+function renderProgressView() {
+  const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
+  const m = USER.analysis;
 
-      document.getElementById('dashSubtitle').textContent = allReps.length
-        ? `What your first rep revealed — and what your listener may have missed.`
-        : 'Complete a rep to see your pattern.';
+  document.getElementById('dashSubtitle').textContent = allReps.length
+    ? `What your first rep revealed — and what your listener may have missed.`
+    : 'Complete a rep to see your pattern.';
 
-      // ── Pattern (from LLM) ─────────────────────────────
-      const patternName = (m && m.patternName) ? m.patternName : '—';
-      const patternDesc = (m && m.patternDesc) ? m.patternDesc : '';
+  // ── Pattern ────────────────────────────────────────
+  const patternName = (m && m.patternName) ? m.patternName : '—';
+  const patternDesc = (m && m.patternDesc) ? m.patternDesc : '';
 
-      // ── What Got Lost (from LLM) ───────────────────────
-      const gotLostText = (m && m.gapGotLost) ? m.gapGotLost : null;
+  // ── What Got Lost ──────────────────────────────────
+  const gotLostText = (m && m.gapGotLost) ? m.gapGotLost : null;
 
-      // ── What The Listener May Hear (from LLM) ──────────
-      const listenerText = (m && m.gapUnspoken) ? m.gapUnspoken : null;
+  // ── What The Listener May Hear ─────────────────────
+  // Read from m.listenerQuestion (mapped from diagnosis.listener_question).
+  const listenerText = (m && (m.listenerQuestion || m.gapUnspoken))
+    ? (m.listenerQuestion || m.gapUnspoken)
+    : null;
 
-      // ── What You Said (transcript) ─────────────────────
-      const transcriptHtml = (m && m.transcript)
-        ? `<div class="ya-transcript">${escapeHtml(m.transcript)}</div>`
-        : `<div class="ya-transcript-empty">No speech detected — try recording again with your microphone unmuted.</div>`;
+  // ── What You Said ──────────────────────────────────
+  const transcriptHtml = (m && m.transcript)
+    ? `<div class="ya-transcript">${escapeHtml(m.transcript)}</div>`
+    : `<div class="ya-transcript-empty">No speech detected — try recording again with your microphone unmuted.</div>`;
 
-      // ── Baseline metrics (from LLM) ────────────────────
-      let baseline = null;
-      if (allReps.length) {
-        for (let i = allReps.length - 1; i >= 0; i--) {
-          if (allReps[i].fillerDiscipline != null || allReps[i].pointFirst != null) {
-            baseline = allReps[i];
-            break;
-          }
-        }
+  // ── Baseline metrics ───────────────────────────────
+  let baseline = null;
+  if (allReps.length) {
+    for (let i = allReps.length - 1; i >= 0; i--) {
+      if (allReps[i].fillerDiscipline != null || allReps[i].pointFirst != null) {
+        baseline = allReps[i];
+        break;
       }
-      if (!baseline && m) baseline = m;
-
-      const baseTTP = (baseline && baseline.timeToPoint != null) ? `${baseline.timeToPoint}s` : '—';
-      const basePointFirst = (baseline && baseline.pointFirst != null) ? baseline.pointFirst : '—';
-      const baseConcreteness = (baseline && baseline.concreteness != null) ? baseline.concreteness : '—';
-
-      // ── Opportunity (from LLM: one_thing_to_change) ────
-      const opportunityText = (m && m.oneThingToChange) ? m.oneThingToChange : null;
-
-// ── Reframe (from LLM: executive_version) ──────────
-// Shown fully to trial users — it demonstrates the transformation
-// and makes them want the practice loop (Rep 2, Rep 3, pressure tests).
-const fullReframe = (m && m.executiveVersion) ? m.executiveVersion : null;
-let reframeHtml = '';
-if (fullReframe) {
-  reframeHtml = `<div class="ya-executive">"${escapeHtml(fullReframe)}"</div>`;
-} else {
-  reframeHtml = `<div class="ya-box-text empty">Your personalised reframe will appear here once the analysis completes.</div>`;
-}
-
-      document.getElementById('yourAnalysisCard').innerHTML = `
-        <div class="ya-header">
-          <span class="ya-badge">✦ YOUR PATTERN</span>
-          <span class="ya-sub">What your first rep revealed</span>
-        </div>
-
-        <div class="ya-pattern-block">
-          <div class="ya-pattern-name-hero">${escapeHtml(patternName)}</div>
-          ${patternDesc ? `<div class="ya-pattern-desc-hero">${escapeHtml(patternDesc)}</div>` : ''}
-        </div>
-
-        <div class="ya-grid">
-          <div class="ya-box">
-            <div class="ya-box-label">What Got Lost</div>
-            ${gotLostText
-              ? `<div class="ya-box-text">${escapeHtml(gotLostText)}</div>`
-              : `<div class="ya-box-text empty">Analysis pending — no gap detected in this rep.</div>`}
-          </div>
-          <div class="ya-box">
-            <div class="ya-box-label">What The Listener May Hear</div>
-            ${listenerText
-              ? `<div class="ya-box-text italic">"${escapeHtml(listenerText)}"</div>`
-              : `<div class="ya-box-text empty">The listener's perception will appear here once analysed.</div>`}
-          </div>
-        </div>
-
-        <div class="ya-box" style="margin-top:16px;">
-          <div class="ya-box-label">What You Said</div>
-          ${transcriptHtml}
-        </div>
-
-        <div class="ya-baseline" style="margin-top:22px;">
-          <div class="ya-box-label" style="margin-bottom:14px;">Your Baseline</div>
-          <div class="ya-baseline-grid">
-            <div class="ya-baseline-cell">
-              <div class="ya-baseline-num">${escapeHtml(String(baseTTP))}</div>
-              <div class="ya-baseline-label">Time-to-Point</div>
-            </div>
-            <div class="ya-baseline-cell">
-              <div class="ya-baseline-num">${escapeHtml(String(basePointFirst))}<span class="ya-baseline-suffix">/100</span></div>
-              <div class="ya-baseline-label">Point-first</div>
-            </div>
-            <div class="ya-baseline-cell">
-              <div class="ya-baseline-num">${escapeHtml(String(baseConcreteness))}<span class="ya-baseline-suffix">/100</span></div>
-              <div class="ya-baseline-label">Concreteness</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="ya-opportunity" style="margin-top:22px;">
-          <div class="ya-box-label">Your Opportunity</div>
-          ${opportunityText
-            ? `<div class="ya-box-text">${escapeHtml(opportunityText)}</div>`
-            : `<div class="ya-box-text">Don't add more. <strong>Organize what you already have.</strong></div>`}
-          <div class="ya-box-text" style="margin-top:12px;">Your next answer should follow:</div>
-          <div class="ya-framework">POINT → EVIDENCE → VALUE</div>
-        </div>
-
-        <div class="ya-reframe-block" style="margin-top:22px;">
-          <div class="ya-box-label">Your Reframe</div>
-          ${reframeHtml}
-        </div>
-
-        <div class="ya-why" style="margin-top:26px;">
-          <div class="ya-box-label">Why This Matters</div>
-          <p>In an interview, you may have only a few seconds to establish your professional identity. Your answer contained good information — but the information arrived without a clear hierarchy.</p>
-          <p>The problem isn't that you don't have enough to say. <strong>It's that your strongest point isn't arriving first.</strong></p>
-          <p class="ya-manifesto">You said it. We found the pattern. Now practice until the pattern changes.</p>
-        </div>
-
-        <div class="ya-retry-block">
-          <div class="ya-retry-question">Ready to see if you can change it?</div>
-          <button class="ya-btn-retry" onclick="switchView('today')">🎙 RETRY THIS REP →</button>
-          <div class="ya-retry-note">Your pattern changes when you practice, get feedback, and try again.</div>
-        </div>
-      `;
-
-      renderRepHistory(allReps);
-
-      if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
     }
+  }
+  if (!baseline && m) baseline = m;
+
+  const baseTTP = (baseline && baseline.timeToPoint != null) ? `${baseline.timeToPoint}s` : '—';
+  const basePointFirst = (baseline && baseline.pointFirst != null) ? baseline.pointFirst : '—';
+  const baseConcreteness = (baseline && baseline.concreteness != null) ? baseline.concreteness : '—';
+
+  // ── Opportunity ────────────────────────────────────
+  const opportunityText = (m && m.oneThingToChange) ? m.oneThingToChange : null;
+
+  // ── Reframe ────────────────────────────────────────
+  const fullReframe = (m && m.executiveVersion) ? m.executiveVersion : null;
+  const reframeHtml = fullReframe
+    ? `<div class="ya-executive">"${escapeHtml(fullReframe)}"</div>`
+    : `<div class="ya-box-text empty">Your personalised reframe will appear here once the analysis completes.</div>`;
+
+  // ── Why This Matters (DYNAMIC) ─────────────────────
+  const whyThisMattersHtml = (m && m.whyThisMatters)
+    ? m.whyThisMatters
+        .split(/\n\n+/)
+        .map(para => `<p>${escapeHtml(para)}</p>`)
+        .join('')
+    : `<p>In a room where you have only a few seconds to establish your professional identity, the order in which your ideas arrive matters as much as the ideas themselves.</p>
+       <p>The problem isn't that you don't have enough to say. <strong>It's that your strongest point isn't arriving first.</strong></p>`;
+
+  document.getElementById('yourAnalysisCard').innerHTML = `
+    <div class="ya-header">
+      <span class="ya-badge">✦ YOUR PATTERN</span>
+      <span class="ya-sub">What your first rep revealed</span>
+    </div>
+
+    <div class="ya-pattern-block">
+      <div class="ya-pattern-name-hero">${escapeHtml(patternName)}</div>
+      ${patternDesc ? `<div class="ya-pattern-desc-hero">${escapeHtml(patternDesc)}</div>` : ''}
+    </div>
+
+    <div class="ya-grid">
+      <div class="ya-box">
+        <div class="ya-box-label">What Got Lost</div>
+        ${gotLostText
+          ? `<div class="ya-box-text">${escapeHtml(gotLostText)}</div>`
+          : `<div class="ya-box-text empty">Analysis pending — no gap detected in this rep.</div>`}
+      </div>
+      <div class="ya-box">
+        <div class="ya-box-label">What The Listener May Hear</div>
+        ${listenerText
+          ? `<div class="ya-box-text italic">"${escapeHtml(listenerText)}"</div>`
+          : `<div class="ya-box-text empty">The listener's perception will appear here once analysed.</div>`}
+      </div>
+    </div>
+
+    <div class="ya-box" style="margin-top:16px;">
+      <div class="ya-box-label">What You Said</div>
+      ${transcriptHtml}
+    </div>
+
+    <div class="ya-baseline" style="margin-top:22px;">
+      <div class="ya-box-label" style="margin-bottom:14px;">Your Baseline</div>
+      <div class="ya-baseline-grid">
+        <div class="ya-baseline-cell">
+          <div class="ya-baseline-num">${escapeHtml(String(baseTTP))}</div>
+          <div class="ya-baseline-label">Time-to-Point</div>
+        </div>
+        <div class="ya-baseline-cell">
+          <div class="ya-baseline-num">${escapeHtml(String(basePointFirst))}<span class="ya-baseline-suffix">/100</span></div>
+          <div class="ya-baseline-label">Point-first</div>
+        </div>
+        <div class="ya-baseline-cell">
+          <div class="ya-baseline-num">${escapeHtml(String(baseConcreteness))}<span class="ya-baseline-suffix">/100</span></div>
+          <div class="ya-baseline-label">Concreteness</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ya-opportunity" style="margin-top:22px;">
+      <div class="ya-box-label">Your Opportunity</div>
+      ${opportunityText
+        ? `<div class="ya-box-text">${escapeHtml(opportunityText)}</div>`
+        : `<div class="ya-box-text">Don't add more. <strong>Organize what you already have.</strong></div>`}
+      <div class="ya-box-text" style="margin-top:12px;">Your next answer should follow:</div>
+      <div class="ya-framework">POINT → EVIDENCE → VALUE</div>
+    </div>
+
+    <div class="ya-reframe-block" style="margin-top:22px;">
+      <div class="ya-box-label">Your Reframe</div>
+      ${reframeHtml}
+      <div class="ya-reframe-footnote">Same experience. Clearer signal. Now practice until this becomes your default.</div>
+    </div>
+
+    <div class="ya-why" style="margin-top:26px;">
+      <div class="ya-box-label">Why This Matters</div>
+      ${whyThisMattersHtml}
+      <p class="ya-manifesto">You said it. We found the pattern. Now practice until the pattern changes.</p>
+    </div>
+
+    <div class="ya-retry-block">
+      <div class="ya-retry-question">Ready to see if you can change it?</div>
+      <button class="ya-btn-retry" onclick="switchView('today')">🎙 RETRY THIS REP →</button>
+      <div class="ya-retry-note">Your pattern won't change because you read a report.<br />It changes when you practice, get feedback, and try again.</div>
+    </div>
+  `;
+
+  if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+}
 
     function renderRepHistory(allReps) {
       // Rep history is no longer surfaced in the trial — kept for paid views.
