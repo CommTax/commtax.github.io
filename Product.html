@@ -2892,10 +2892,17 @@ document.getElementById('headerTrackBadge').textContent = isPass
         renderBadges();
 
         closeRecorderModal();
-        setTimeout(() => {
+        // ⭐ Auto-navigate to Pattern & Progress after a Today rep
+        const isTodayRep = (which === 'q1' || which === 'q2');
+        if (isTodayRep) {
+          switchView('dash');
+        } else {
+          // Activities still show the small confirmation alert
           const label = repMeta.activityTitle || 'Rep';
-          alert(`✅ ${label} saved!\n\nFiller discipline: ${metrics.fillerDiscipline ?? '—'}\nPoint-first: ${metrics.pointFirst ?? '—'}\nConcreteness: ${metrics.concreteness ?? '—'}`);
-        }, 200);
+          setTimeout(() => {
+            alert(`✅ ${label} saved!`);
+          }, 200);
+        }
       } catch (err) {
         console.error('❌ Submit failed:', err);
         alert(`Something went wrong: ${err.message}`);
