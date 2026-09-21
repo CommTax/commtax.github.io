@@ -618,6 +618,10 @@
             <label>Sprint</label>
             <select id="profileSprint" disabled style="opacity: 0.7;"><option>—</option></select>
           </div>
+          <div class="field-group">
+            <label>Enrolled</label>
+            <select id="profileEnrolled" disabled style="opacity: 0.7;"><option>—</option></select>
+          </div>
         </div>
         <div class="user-profile-card">
           <div class="plan-badge" id="planBadge">—</div>
@@ -795,7 +799,9 @@
           </div>
 
           <div id="sub-scenarios" class="sub-activity-panel hidden">
-            <div id="scenariosGrid" class="sub-activity-card-grid"></div>
+            <div id="scenariosGrid" class="sub-activity-card-grid">
+              <div style="font-size:12px;color:var(--text-muted);grid-column:1/-1;padding:20px;">Loading scenarios…</div>
+            </div>
           </div>
 
           <div id="sub-drills" class="sub-activity-panel hidden">
@@ -943,32 +949,8 @@
             <h2><i data-lucide="trophy"></i> Achievements</h2>
             <span class="vh-sub">Unlock badges as you practice</span>
           </div>
-          <div class="badges-grid">
-            <div class="badge-item" id="badgeFirstRep">
-              <div class="badge-icon"><i data-lucide="target"></i></div>
-              <div class="badge-name">First Rep</div>
-              <div class="badge-desc">You completed your first voice rep.</div>
-            </div>
-            <div class="badge-item locked">
-              <div class="badge-icon"><i data-lucide="lock"></i></div>
-              <div class="badge-name">5-Day Streak</div>
-              <div class="badge-desc">Practice 5 days in a row.</div>
-            </div>
-            <div class="badge-item locked">
-              <div class="badge-icon"><i data-lucide="lock"></i></div>
-              <div class="badge-name">Speed Demon</div>
-              <div class="badge-desc">Time-to-Point under 10 seconds.</div>
-            </div>
-            <div class="badge-item locked">
-              <div class="badge-icon"><i data-lucide="lock"></i></div>
-              <div class="badge-name">Filler Killer</div>
-              <div class="badge-desc">Zero filler words in a rep.</div>
-            </div>
-            <div class="badge-item locked">
-              <div class="badge-icon"><i data-lucide="lock"></i></div>
-              <div class="badge-name">Orator</div>
-              <div class="badge-desc">Score above 90% on any rep.</div>
-            </div>
+          <div class="badges-grid" id="badgesGrid">
+            <!-- dynamically rendered -->
           </div>
         </section>
 
@@ -1173,8 +1155,11 @@
     const PAYWALL_URL = 'https://theunspoken.co.in/Pricing';
     const PLAN_LABEL = { sprint: 'Sprint Pass', pass: 'Practice Pass' };
     const CAP_PER_QUESTION = 2;
-    const VOICE_MAX_SECONDS = 30;
-    const TEXT_MAX_WORDS = 300;
+
+    // ⭐ Time limits — every response stays well under 3 minutes
+    const VOICE_MAX_SECONDS = 90;   // 1.5 min voice cap
+    const TOTAL_MAX_SECONDS = 180;  // 3 min hard ceiling per response
+    const TEXT_MAX_WORDS = 300;     // ~2 min read-time
 
     // ============================================================
     // LUCIDE HELPER
@@ -1634,9 +1619,9 @@
     ];
 
     // ============================================================
-    // SCENARIO LIBRARY — DATA
+    // SCENARIO LIBRARY — FALLBACK ONLY (backend is source of truth)
     // ============================================================
-    const SCENARIOS_LIBRARY = [
+    const FALLBACK_SCENARIOS = [
       {
         id: 'interview-questions',
         sprint: 'Interview Sprint',
@@ -1711,6 +1696,7 @@
     let CACHED_BANK = {};
     let OB = { years: null, industry: null, role: null };
     let activeBitesCategory = 'structure';
+    let SCENARIOS_CACHE = null;
 
     // ============================================================
     // BOOT
@@ -1780,6 +1766,7 @@
         document.getElementById('bootScreen').classList.add('hidden');
         document.getElementById('mainApp').classList.remove('hidden');
         renderAll();
+        startStatsRefresh();
         return true;
       } catch (e) {
         console.warn('verifyPaidSession failed:', e);
@@ -1799,12 +1786,78 @@
         track_id: data.sprint || data.track_id || 'interview',
         current_day: data.current_day || 1,
         total_days: data.total_days || 28,
+        enrolled_at: data.enrolled_at || data.created_at || new Date().toISOString(),
         is_paid: true,
         years_experience: data.years_experience || null,
         target_industry: data.target_industry || null,
         target_role: data.target_role || null,
-        profile_completed: !!data.profile_completed
+        profile_completed: !!data.profile_completed,
+        stats: {
+          current_streak: 0,
+          longest_streak: 0,
+          completed_tasks: 0,
+          total_tasks: 0,
+          achievements_unlocked: 0,
+          achievements_total: 5
+        }
       };
+    }
+
+    // ============================================================
+    // DAY + STATS CALCULATIONS
+    // ============================================================
+    function computeCurrentDay(enrolledAt, totalDays) {
+      if (!enrolledAt) return 1;
+      const start = new Date(enrolledAt);
+      start.setHours(0, 0, 0, 0);
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const diffDays = Math.floor((now - start) / 86400000) + 1;
+      return Math.max(1, Math.min(diffDays, totalDays));
+    }
+
+    function formatEnrolledDate(enrolledAt) {
+      if (!enrolledAt) return '—';
+      return new Date(enrolledAt).toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric'
+      });
+    }
+
+    async function loadUserStats() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/paid/stats`, {
+          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.enrolled_at) USER.enrolled_at = data.enrolled_at;
+          if (data.total_days) USER.total_days = data.total_days;
+          USER.stats = {
+            current_streak: data.current_streak ?? 0,
+            longest_streak: data.longest_streak ?? 0,
+            completed_tasks: data.completed_tasks ?? 0,
+            total_tasks: data.total_tasks ?? (USER.total_days * 2),
+            achievements_unlocked: data.achievements_unlocked ?? 0,
+            achievements_total: data.achievements_total ?? 5
+          };
+        }
+      } catch (e) {
+        console.warn('loadUserStats failed (using fallbacks):', e);
+      }
+
+      // Always recompute the day from enrolled_at (source of truth)
+      USER.current_day = computeCurrentDay(USER.enrolled_at, USER.total_days);
+    }
+
+    // Refresh stats every 5 min so an idle tab stays current
+    let statsRefreshHandle = null;
+    function startStatsRefresh() {
+      if (statsRefreshHandle) return;
+      statsRefreshHandle = setInterval(async () => {
+        await loadUserStats();
+        renderHeader();
+        renderBadges();
+      }, 5 * 60 * 1000);
     }
 
     // ============================================================
@@ -1904,19 +1957,21 @@
     ];
 
     async function loadQuestionsForToday() {
+      await loadUserStats(); // refresh day + stats first
       const sprint = USER.track_id || 'interview';
       const day = USER.current_day || 1;
       const cacheKey = `${sprint}-${day}`;
       let questions = CACHED_BANK[cacheKey];
       if (!questions) {
         try {
-          const res = await fetch(`${BACKEND_URL}/api/questions?sprint=${sprint}&day=${day}`, {
-            headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-          });
+          const res = await fetch(
+            `${BACKEND_URL}/api/questions?sprint=${encodeURIComponent(sprint)}&day=${day}`,
+            { headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` } }
+          );
           if (res.ok) {
             const data = await res.json();
             questions = data.questions || [];
-            CACHED_BANK[cacheKey] = questions;
+            if (questions.length) CACHED_BANK[cacheKey] = questions;
           }
         } catch (e) {
           console.warn('loadQuestionsForToday failed:', e);
@@ -1942,34 +1997,67 @@
       renderBitesTabs();
       renderBitesGrid();
       renderDrillsGrid();
-      renderScenariosGrid();
+      renderScenariosGrid(); // async — loads from backend
+      renderBadges();
       switchView('today');
       maybeShowOnboarding();
       renderIcons();
     }
 
     function renderHeader() {
+      const s = USER.stats;
+      const enrolledStr = formatEnrolledDate(USER.enrolled_at);
+
+      // Sidebar / profile
       document.getElementById('userNameEl').textContent = USER.name;
       document.getElementById('userAvatarEl').textContent = (USER.name || 'A').charAt(0).toUpperCase();
       document.getElementById('userRoleEl').textContent = USER.email;
       document.getElementById('planBadge').textContent = PLAN_LABEL[USER.plan] || 'Member';
-      document.getElementById('headerPlan').textContent = PLAN_LABEL[USER.plan] || '—';
-      document.getElementById('headerDay').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
-      document.getElementById('headerTrackBadge').textContent = `${formatSprint(USER.track_id)} · ${PLAN_LABEL[USER.plan] || ''}`;
-      document.getElementById('headerStreak').textContent = '0';
-      document.getElementById('headerCompleted').textContent = '0 Tasks';
-      document.getElementById('headerAchievements').textContent = '0 Badges';
 
-      document.getElementById('todayTrackTitle').textContent = `${formatSprint(USER.track_id)} Sprint`;
-      document.getElementById('todayFocus').textContent = `Day ${USER.current_day} of ${USER.total_days} · 2 questions · 2 trials each`;
-      document.getElementById('dayCounter').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
-      document.getElementById('todayStreak').querySelector('span').textContent = '0 day streak';
-      document.getElementById('dayProgressFill').style.width = '5%';
+      // Header pills
+      document.getElementById('headerPlan').textContent = PLAN_LABEL[USER.plan] || '—';
+      document.getElementById('headerDay').textContent =
+        `Day ${USER.current_day} / ${USER.total_days}`;
+      document.getElementById('headerTrackBadge').textContent =
+        `${formatSprint(USER.track_id)} · ${PLAN_LABEL[USER.plan] || ''}`;
+
+      // Streak
+      document.getElementById('headerStreak').textContent =
+        `${s.current_streak} day${s.current_streak === 1 ? '' : 's'}`;
+
+      // Completed
+      document.getElementById('headerCompleted').textContent =
+        `${s.completed_tasks} Task${s.completed_tasks === 1 ? '' : 's'}`;
+
+      // Achievements
+      document.getElementById('headerAchievements').textContent =
+        `${s.achievements_unlocked} Badge${s.achievements_unlocked === 1 ? '' : 's'}`;
+
+      // Today page header
+      document.getElementById('todayTrackTitle').textContent =
+        `${formatSprint(USER.track_id)} Sprint`;
+      document.getElementById('todayFocus').textContent =
+        `Day ${USER.current_day} of ${USER.total_days} · Enrolled ${enrolledStr} · 2 questions · 2 trials each`;
+      document.getElementById('dayCounter').textContent =
+        `Day ${USER.current_day} / ${USER.total_days}`;
+
+      const streakEl = document.getElementById('todayStreak');
+      if (streakEl) {
+        const span = streakEl.querySelector('span');
+        if (span) span.textContent =
+          `${s.current_streak} day streak · longest ${s.longest_streak}`;
+      }
+
+      // Progress fill = day progress out of total
+      const pct = Math.min(100, (USER.current_day / USER.total_days) * 100);
+      document.getElementById('dayProgressFill').style.width = pct + '%';
     }
 
     function renderProfile() {
       document.getElementById('profileName').innerHTML = `<option selected>${escapeHtml(USER.name)}</option>`;
       document.getElementById('profileSprint').innerHTML = `<option selected>${formatSprint(USER.track_id)}</option>`;
+      const enrolledEl = document.getElementById('profileEnrolled');
+      if (enrolledEl) enrolledEl.innerHTML = `<option selected>${formatEnrolledDate(USER.enrolled_at)}</option>`;
     }
 
     function renderQuestionCards() {
@@ -2035,6 +2123,34 @@
       const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
       document.getElementById('tsDrills').textContent = `${drills} / 2`;
       document.getElementById('dayProgressFill').style.width = `${(drills / 2) * 100}%`;
+    }
+
+    // ============================================================
+    // BADGES — DYNAMIC
+    // ============================================================
+    const ACHIEVEMENT_DEFS = [
+      { id: 'first_rep', name: 'First Rep',     desc: 'You completed your first voice rep.', icon: 'target',   check: s => s.completed_tasks >= 1 },
+      { id: 'streak_5',  name: '5-Day Streak',  desc: 'Practice 5 days in a row.',           icon: 'flame',    check: s => s.current_streak >= 5 },
+      { id: 'speed',     name: 'Speed Demon',   desc: 'Time-to-Point under 10 seconds.',     icon: 'zap',      check: () => false },
+      { id: 'filler',    name: 'Filler Killer', desc: 'Zero filler words in a rep.',         icon: 'scissors', check: () => false },
+      { id: 'orator',    name: 'Orator',        desc: 'Score above 90% on any rep.',         icon: 'award',    check: () => false }
+    ];
+
+    function renderBadges() {
+      const grid = document.getElementById('badgesGrid');
+      if (!grid) return;
+      const s = USER.stats || {};
+      grid.innerHTML = ACHIEVEMENT_DEFS.map(def => {
+        const unlocked = def.check(s);
+        return `
+          <div class="badge-item ${unlocked ? '' : 'locked'}">
+            <div class="badge-icon"><i data-lucide="${unlocked ? def.icon : 'lock'}"></i></div>
+            <div class="badge-name">${escapeHtml(def.name)}</div>
+            <div class="badge-desc">${escapeHtml(def.desc)}</div>
+          </div>
+        `;
+      }).join('');
+      renderIcons();
     }
 
     // ============================================================
@@ -2372,13 +2488,40 @@
     }
 
     // ============================================================
-    // SCENARIO LIBRARY — RENDERING
+    // SCENARIO LIBRARY — DYNAMIC FROM BACKEND
     // ============================================================
-    function renderScenariosGrid() {
+    async function fetchScenariosFromBackend() {
+      if (SCENARIOS_CACHE) return SCENARIOS_CACHE;
+      const sprint = USER.track_id || 'interview';
+      const plan = USER.plan || 'sprint';
+      try {
+        const params = new URLSearchParams({ sprint, plan });
+        const res = await fetch(`${BACKEND_URL}/api/scenarios?${params}`, {
+          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const list = Array.isArray(data.scenarios) ? data.scenarios : [];
+          if (list.length) {
+            SCENARIOS_CACHE = list;
+            return list;
+          }
+        }
+      } catch (e) {
+        console.warn('fetchScenariosFromBackend failed, using fallback:', e);
+      }
+      SCENARIOS_CACHE = FALLBACK_SCENARIOS;
+      return SCENARIOS_CACHE;
+    }
+
+    async function renderScenariosGrid() {
       const grid = document.getElementById('scenariosGrid');
       if (!grid) return;
-      grid.innerHTML = SCENARIOS_LIBRARY.map(s => `
-        <div class="activity-card" data-activity="${escapeHtml(s.activity)}" data-type="voice" data-scenario-id="${s.id}" data-dynamic="${s.dynamic ? 'true' : 'false'}">
+      grid.innerHTML = `<div style="font-size:12px;color:var(--text-muted);grid-column:1/-1;padding:20px;">Loading scenarios…</div>`;
+      const list = await fetchScenariosFromBackend();
+      grid.innerHTML = list.map(s => `
+        <div class="activity-card" data-activity="${escapeHtml(s.activity)}" data-type="voice"
+             data-scenario-id="${escapeHtml(s.id)}" data-dynamic="${s.dynamic ? 'true' : 'false'}">
           <div>
             <div class="activity-card-tag">${escapeHtml(s.sprint)}</div>
             <div class="activity-card-title">${escapeHtml(s.title)}</div>
@@ -2501,6 +2644,8 @@
           USER.target_industry = OB.industry;
           USER.target_role = OB.role;
           USER.profile_completed = true;
+          // Invalidate scenario cache so backend can re-filter
+          SCENARIOS_CACHE = null;
         } else {
           const err = await res.json().catch(() => ({}));
           console.warn('Profile save failed:', err);
@@ -2610,7 +2755,7 @@
               <span id="recTimer" style="font-size:15px;font-weight:700;min-width:50px;">0:00</span>
               <span id="recStatus" style="font-size:12px;color:var(--text-muted);flex:1;">Ready to record</span>
             </div>
-            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:10px;">Voice is capped at ${VOICE_MAX_SECONDS} seconds</div>
+            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:10px;">Voice capped at ${VOICE_MAX_SECONDS}s (total response ≤ ${Math.round(TOTAL_MAX_SECONDS/60)} min)</div>
             <button id="recVoiceSubmit" onclick="submitRepToBackend()" style="display:none;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;align-items:center;justify-content:center;gap:8px;">
               Submit My Response <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
             </button>
@@ -2734,15 +2879,16 @@
       const status = document.getElementById('recStatus');
       if (t) t.textContent = `${m}:${s.toString().padStart(2, '0')}`;
 
-      if (activeRecording.seconds >= VOICE_MAX_SECONDS) {
+      const remaining = VOICE_MAX_SECONDS - activeRecording.seconds;
+      if (remaining <= 0) {
         if (t) t.style.color = '#EF4444';
         if (status) status.textContent = 'Time up — stopping';
-      } else if (activeRecording.seconds >= 25) {
+      } else if (remaining <= 10) {
         if (t) t.style.color = '#EF4444';
-        if (status) status.textContent = `${VOICE_MAX_SECONDS - activeRecording.seconds}s left`;
-      } else if (activeRecording.seconds >= 20) {
+        if (status) status.textContent = `${remaining}s left`;
+      } else if (remaining <= 20) {
         if (t) t.style.color = '#F59E0B';
-        if (status) status.textContent = `${VOICE_MAX_SECONDS - activeRecording.seconds}s left`;
+        if (status) status.textContent = `${remaining}s left`;
       }
     }
 
@@ -2854,6 +3000,12 @@
         updateQuestionCard('q2');
         renderTodayProgress();
         renderProgressView();
+
+        // Refresh live stats (streak / completed / achievements)
+        await loadUserStats();
+        renderHeader();
+        renderBadges();
+
         closeRecorderModal();
         setTimeout(() => {
           const label = repMeta.activityTitle || 'Rep';
@@ -2984,6 +3136,7 @@
       if (navMap[key]) document.getElementById(navMap[key]).classList.add('active');
       if (viewMap[key]) document.getElementById(viewMap[key]).classList.add('active-view');
       if (key === 'dash') renderProgressView();
+      if (key === 'badges') renderBadges();
       if (key === 'activities') {
         renderBitesTabs();
         renderBitesGrid();
@@ -3044,7 +3197,7 @@
       return m[s] || s || 'Practice';
     }
 
-    console.log('🚀 Product page loaded — paid flow + onboarding + Drills + Scenarios active.');
+    console.log('🚀 Product page loaded — dynamic stats + day + scenarios + badges active.');
   </script>
 </body>
 </html>
