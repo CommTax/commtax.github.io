@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Unspoken Studio — Your Dashboard</title>
+  <link rel="icon" href="data:," />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <style>
     :root {
@@ -31,9 +32,6 @@
     .hidden { display: none !important; }
 
     .icon { width: 16px; height: 16px; stroke-width: 2; flex-shrink: 0; display: inline-block; vertical-align: middle; }
-    .icon-sm { width: 13px; height: 13px; stroke-width: 2.2; }
-    .icon-lg { width: 20px; height: 20px; stroke-width: 2; }
-    .icon-xl { width: 24px; height: 24px; stroke-width: 1.8; }
 
     .boot-screen { position: fixed; inset: 0; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; padding: 24px; z-index: 9999; }
     .boot-screen.hidden { display: none; }
@@ -42,8 +40,6 @@
     .boot-title { font-size: 20px; font-weight: 700; text-align: center; }
     .boot-sub { font-size: 13px; color: var(--text-muted); text-align: center; max-width: 440px; line-height: 1.5; }
     .boot-btn { padding: 12px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; }
-    .boot-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
-    .boot-btn.secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
 
     .login-box { max-width: 420px; width: 100%; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 36px 32px; text-align: left; }
     .login-box .lb-logo { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 20px; background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -102,7 +98,6 @@
     .user-role-sub { font-size: 10px; color: var(--text-muted); }
     .signout-btn { margin-top: 8px; padding: 8px 10px; font-size: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); cursor: pointer; width: 100%; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .signout-btn:hover { border-color: var(--danger); color: var(--danger); }
-    .signout-btn .icon { width: 12px; height: 12px; }
 
     .main-content { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
     .view-panel { display: none; flex-direction: column; gap: 20px; }
@@ -114,7 +109,6 @@
     .today-header-bar .th-right { text-align: right; }
     .today-header-bar .th-right .day-counter { font-size: 22px; font-weight: 800; color: var(--accent-cyan); }
     .today-header-bar .th-right .streak { font-size: 12px; color: var(--accent-gold); font-weight: 700; margin-top: 4px; display: inline-flex; align-items: center; gap: 5px; }
-    .today-header-bar .th-right .streak .icon { width: 13px; height: 13px; }
     .day-progress-bar { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; margin-top: 10px; }
     .day-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); transition: width 0.4s; }
 
@@ -126,7 +120,6 @@
     .qc-meta { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
     .qc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
     .qc-difficulty { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
-    .qc-difficulty .icon { width: 11px; height: 11px; }
     .qc-difficulty.easy { background: rgba(16, 185, 129, 0.15); color: var(--success); }
     .qc-difficulty.medium { background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); }
     .qc-difficulty.hard { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
@@ -136,19 +129,17 @@
     .qc-action-btn:hover { border-color: var(--accent-cyan); color: var(--text-main); background: rgba(56, 189, 248, 0.06); }
     .qc-action-btn i[data-lucide] { width: 12px; height: 12px; }
     .qc-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .qc-custom-badge { font-size: 9px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-gold); background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); padding: 3px 8px; border-radius: 6px; margin-left: 8px; vertical-align: middle; -webkit-text-fill-color: var(--accent-gold); }
+    .qc-custom-badge { font-size: 9px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-gold); background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); padding: 3px 8px; border-radius: 6px; margin-left: 8px; vertical-align: middle; }
 
     .rep-tracker { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-    .rep-tracker .rt-left .rt-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px; }
-    .rep-tracker .rt-left .rt-count { font-size: 18px; font-weight: 800; }
-    .rep-tracker .rt-left .rt-count .rt-cap { font-size: 13px; color: var(--text-muted); font-weight: 600; }
-    .rep-tracker .rt-left .rt-best { font-size: 11px; color: var(--success); margin-top: 2px; font-weight: 600; }
-    .rep-tracker .rt-right { display: flex; gap: 8px; align-items: center; }
+    .rep-tracker .rt-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px; }
+    .rep-tracker .rt-count { font-size: 18px; font-weight: 800; }
+    .rep-tracker .rt-cap { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+    .rep-tracker .rt-best { font-size: 11px; color: var(--success); margin-top: 2px; font-weight: 600; }
 
     .rep-btn { padding: 12px 22px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
     .rep-btn:hover:not(:disabled) { background: var(--primary-hover); }
     .rep-btn:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; }
-    .rep-btn .icon { width: 15px; height: 15px; }
 
     .reps-log { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
     .rep-log-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 10px; background: var(--bg-dark); border-radius: 6px; color: var(--text-muted); }
@@ -162,7 +153,6 @@
     .your-analysis-card { background: linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(139, 92, 246, 0.06)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 16px; padding: 26px 28px; position: relative; overflow: hidden; }
     .ya-header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
     .ya-badge { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-cyan); background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; }
-    .ya-badge .icon { width: 11px; height: 11px; stroke-width: 2.4; }
     .ya-sub { font-size: 12px; color: var(--text-muted); }
     .ya-pattern-block { text-align: center; padding: 24px 0 26px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 22px; }
     .ya-pattern-kicker { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; }
@@ -180,7 +170,6 @@
     .ya-transcript-empty { color: var(--text-muted); font-style: normal; font-size: 12px; }
     .ya-footer { margin-top: 20px; display: flex; justify-content: center; }
     .ya-btn { padding: 12px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
-    .ya-btn .icon { width: 14px; height: 14px; }
 
     .timeline-bar { display: flex; justify-content: space-between; align-items: center; background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
     .timeline-tabs { display: flex; gap: 8px; }
@@ -197,7 +186,6 @@
     .feedback-box.well { border-left: 4px solid var(--success); }
     .feedback-box.improve { border-left: 4px solid var(--accent-gold); }
     .feedback-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-    .feedback-title .icon { width: 16px; height: 16px; }
     .feedback-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
     .feedback-list li { font-size: 12px; line-height: 1.5; position: relative; padding-left: 16px; }
     .feedback-list li::before { content: "•"; position: absolute; left: 0; color: var(--text-muted); }
@@ -211,11 +199,9 @@
     .try-again-bar .ta-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
     .try-again-bar .ta-text strong { color: var(--text-main); }
     .try-again-bar .ta-btn { padding: 12px 24px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
-    .try-again-bar .ta-btn .icon { width: 14px; height: 14px; }
 
     .activity-sub-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
     .sub-tab-btn { padding: 8px 14px; background-color: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
-    .sub-tab-btn .icon { width: 13px; height: 13px; stroke-width: 2.2; }
     .sub-tab-btn:hover { border-color: var(--accent-cyan); color: var(--text-main); }
     .sub-tab-btn.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
     .sub-activity-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
@@ -225,7 +211,6 @@
     .activity-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
     .activity-card-tag { font-size: 10px; font-weight: 700; color: var(--accent-purple); text-transform: uppercase; }
     .ac-start-cta { margin-top: 6px; padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--success), #059669); color: #FFF; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; font-family: inherit; }
-    .ac-start-cta .icon { width: 13px; height: 13px; }
 
     .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
     .badge-item { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -238,7 +223,6 @@
 
     .bites-cat-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); margin-bottom: 4px; }
     .bites-cat-btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-family: inherit; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
-    .bites-cat-btn .icon { width: 13px; height: 13px; stroke-width: 2.2; }
     .bites-cat-btn:hover { border-color: var(--accent-cyan); color: var(--text-main); }
     .bites-cat-btn.active { background: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
     .bite-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; transition: transform 0.2s, border-color 0.2s; cursor: pointer; }
@@ -247,7 +231,6 @@
     .bite-card-hook { font-size: 12px; font-weight: 700; color: var(--accent-gold); font-style: italic; line-height: 1.5; }
     .bite-card-desc { font-size: 12.5px; line-height: 1.65; color: var(--text-muted); }
     .bite-card-cta { margin-top: 4px; font-size: 11px; font-weight: 700; color: var(--accent-cyan); letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 5px; }
-    .bite-card-cta .icon { width: 11px; height: 11px; }
 
     .drills-container { display: flex; flex-direction: column; gap: 28px; }
     .drill-category { display: flex; flex-direction: column; gap: 14px; }
@@ -261,7 +244,6 @@
     .us-modal-backdrop.is-visible { display: flex; }
     .us-modal { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 28px; width: 100%; max-width: 640px; max-height: 85vh; overflow-y: auto; position: relative; }
     .us-modal-close { position: absolute; top: 14px; right: 18px; background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; }
-    .us-modal-close .icon { width: 18px; height: 18px; }
     .us-modal h2 { font-size: 20px; margin-bottom: 6px; }
     .us-modal .us-modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
 
@@ -284,11 +266,9 @@
     @keyframes obFadeUp { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
 
     .ob-btn { padding: 14px 32px; border-radius: 100px; border: none; background: linear-gradient(135deg, var(--primary), var(--accent-purple)); color: #FFF; font-weight: 700; font-size: 15px; cursor: pointer; font-family: inherit; box-shadow: 0 8px 24px rgba(37,99,235,0.4); animation: obFadeUp 0.5s ease forwards; opacity: 0; transition: transform 0.2s, box-shadow 0.2s; display: inline-flex; align-items: center; gap: 8px; }
-    .ob-btn .icon { width: 15px; height: 15px; }
     .ob-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(37,99,235,0.5); }
 
     .ob-back { margin-top: 18px; background: none; border: none; color: var(--text-muted); font-size: 13px; cursor: pointer; font-family: inherit; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px; }
-    .ob-back .icon { width: 13px; height: 13px; }
     .ob-back:hover { color: var(--text-main); }
 
     .ob-progress { display: flex; gap: 10px; margin-bottom: 12px; }
@@ -300,11 +280,9 @@
     .ob-question { font-size: 22px; font-weight: 700; line-height: 1.35; margin-bottom: 26px; max-width: 480px; }
 
     .ob-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 520px; margin-bottom: 8px; }
-    .ob-pills.wide { grid-template-columns: 1fr; }
     .ob-pill { padding: 14px 18px; background: rgba(11,15,25,0.7); border: 1.5px solid var(--border-color); border-radius: 12px; color: var(--text-main); font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; text-align: left; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); line-height: 1.4; }
     .ob-pill:hover { border-color: var(--accent-cyan); background: rgba(56,189,248,0.08); transform: translateY(-2px); }
-    .ob-pill.selected { border-color: var(--accent-cyan); background: rgba(56,189,248,0.15); box-shadow: 0 0 20px rgba(56,189,248,0.3); animation: obPillPulse 0.4s ease; }
-    @keyframes obPillPulse { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
+    .ob-pill.selected { border-color: var(--accent-cyan); background: rgba(56,189,248,0.15); box-shadow: 0 0 20px rgba(56,189,248,0.3); }
 
     .ob-trophy { font-size: 80px; line-height: 1; margin-bottom: 20px; animation: obTrophyBounce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1); }
     @keyframes obTrophyBounce { 0% { opacity: 0; transform: scale(0.2) rotate(-15deg); } 60% { opacity: 1; transform: scale(1.15) rotate(5deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
@@ -320,7 +298,6 @@
       .ob-question { font-size: 19px; }
       .ob-pills { grid-template-columns: 1fr; }
     }
-
     @media (max-width: 900px) {
       .dash-grid { grid-template-columns: 1fr; }
       .dash-wide-box, .feedback-grid { grid-column: span 1; grid-template-columns: 1fr; }
@@ -337,16 +314,13 @@
 </head>
 <body>
 
-  <!-- BOOT / LOGIN SCREEN -->
   <div class="boot-screen" id="bootScreen">
     <div class="boot-spinner" id="bootSpinner"></div>
     <div class="boot-title" id="bootTitle">Loading…</div>
     <div class="boot-sub" id="bootSub">Just a moment.</div>
   </div>
 
-  <!-- MAIN APP -->
   <div id="mainApp" class="hidden">
-
     <header class="top-header">
       <div class="brand">
         <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
@@ -357,104 +331,53 @@
         <span class="track-badge" id="headerTrackBadge">—</span>
       </div>
       <div class="global-stats">
-        <div class="stat-pill">
-          <i data-lucide="credit-card" class="stat-icon-primary"></i>
-          <span>Plan:</span><strong id="headerPlan">—</strong>
-        </div>
-        <div class="stat-pill">
-          <i data-lucide="calendar-days" class="stat-icon-primary"></i>
-          <span>Sprint Day:</span><strong id="headerDay">—</strong>
-        </div>
-        <div class="stat-pill streak">
-          <i data-lucide="flame" class="stat-icon-streak"></i>
-          <span>Streak:</span><strong id="headerStreak">—</strong>
-        </div>
-        <div class="stat-pill">
-          <i data-lucide="circle-check" class="stat-icon-primary"></i>
-          <span>Completed:</span><strong id="headerCompleted">0 Tasks</strong>
-        </div>
-        <div class="stat-pill achievements">
-          <i data-lucide="trophy" class="stat-icon-achievements"></i>
-          <span>Achievements:</span><strong id="headerAchievements">0 Badges</strong>
-        </div>
+        <div class="stat-pill"><i data-lucide="credit-card" class="stat-icon-primary"></i><span>Plan:</span><strong id="headerPlan">—</strong></div>
+        <div class="stat-pill"><i data-lucide="calendar-days" class="stat-icon-primary"></i><span>Sprint Day:</span><strong id="headerDay">—</strong></div>
+        <div class="stat-pill streak"><i data-lucide="flame" class="stat-icon-streak"></i><span>Streak:</span><strong id="headerStreak">—</strong></div>
+        <div class="stat-pill"><i data-lucide="circle-check" class="stat-icon-primary"></i><span>Completed:</span><strong id="headerCompleted">0 Tasks</strong></div>
+        <div class="stat-pill achievements"><i data-lucide="trophy" class="stat-icon-achievements"></i><span>Achievements:</span><strong id="headerAchievements">0 Badges</strong></div>
       </div>
     </header>
 
     <div class="app-layout">
       <aside class="sidebar" id="appSidebar">
         <div class="nav-group">
-          <div class="nav-item active" id="navToday" onclick="switchView('today')">
-            <i data-lucide="house" class="nav-icon"></i> Today
-          </div>
-          <div class="nav-item" id="navActivities" onclick="switchView('activities')">
-            <i data-lucide="target" class="nav-icon"></i> Activities
-          </div>
-          <div class="nav-item" id="navDash" onclick="switchView('dash')">
-            <i data-lucide="bar-chart-3" class="nav-icon"></i> Pattern &amp; Progress
-          </div>
-          <div class="nav-item" id="navRecordings" onclick="switchView('recordings')">
-            <i data-lucide="mic" class="nav-icon"></i> My Reps
-          </div>
-          <div class="nav-item" id="navBadges" onclick="switchView('badges')">
-            <i data-lucide="trophy" class="nav-icon"></i> Achievements
-          </div>
-          <div class="nav-item" id="navPillars" onclick="switchView('pillars')">
-            <i data-lucide="landmark" class="nav-icon"></i> Pillars
-          </div>
-          <div class="nav-item" id="navLearning" onclick="switchView('learning')">
-            <i data-lucide="book-open" class="nav-icon"></i> My Learning
-          </div>
+          <div class="nav-item active" id="navToday" onclick="switchView('today')"><i data-lucide="house" class="nav-icon"></i> Today</div>
+          <div class="nav-item" id="navActivities" onclick="switchView('activities')"><i data-lucide="target" class="nav-icon"></i> Activities</div>
+          <div class="nav-item" id="navDash" onclick="switchView('dash')"><i data-lucide="bar-chart-3" class="nav-icon"></i> Pattern &amp; Progress</div>
+          <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><i data-lucide="mic" class="nav-icon"></i> My Reps</div>
+          <div class="nav-item" id="navBadges" onclick="switchView('badges')"><i data-lucide="trophy" class="nav-icon"></i> Achievements</div>
+          <div class="nav-item" id="navPillars" onclick="switchView('pillars')"><i data-lucide="landmark" class="nav-icon"></i> Pillars</div>
+          <div class="nav-item" id="navLearning" onclick="switchView('learning')"><i data-lucide="book-open" class="nav-icon"></i> My Learning</div>
         </div>
         <hr style="border-color: var(--border-color);" />
 
-        <!-- FOCUS SWITCHER — Pass users only -->
         <div class="sidebar-section hidden" id="focusSwitcher">
           <div class="sidebar-title" style="display:flex;justify-content:space-between;align-items:center;">
-            Your Focus
-            <span style="font-size:9px;color:var(--accent-gold);font-weight:800;letter-spacing:0.08em;">✏️ EDITABLE</span>
+            Your Focus <span style="font-size:9px;color:var(--accent-gold);font-weight:800;letter-spacing:0.08em;">✏️ EDITABLE</span>
           </div>
-
-          <div class="field-group">
-            <label>Team</label>
-            <select id="focusTeam"></select>
-          </div>
-          <div class="field-group">
-            <label>Role</label>
-            <select id="focusRole"></select>
-          </div>
-          <div class="field-group">
-            <label>Level</label>
-            <select id="focusLevel"></select>
-          </div>
-          <div class="field-group">
-            <label>Career stage</label>
-            <select id="focusStage"></select>
-          </div>
-
+          <div class="field-group"><label>Role Family</label><select id="focusRoleFamily" onchange="onFocusFamilyChange()"></select></div>
+          <div class="field-group"><label>Role</label><select id="focusRole"></select></div>
+          <div class="field-group"><label>Career Stage</label><select id="focusCareerStage"></select></div>
+          <div class="field-group"><label>Track</label><select id="focusTrack"></select></div>
           <button class="ac-start-cta" style="margin-top:10px;" id="focusApplyBtn" onclick="promptFocusChange()">
             <i data-lucide="refresh-cw"></i> Apply &amp; Reload Questions
           </button>
         </div>
 
-        <!-- READ-ONLY PROFILE -->
         <div class="sidebar-section">
           <div class="sidebar-title" style="display:flex;justify-content:space-between;align-items:center;">
             Your Profile
-            <span
-              id="profileLockBadge"
-              class="hidden"
-              title="Your focus is locked because you're on Sprint Pass. Upgrade to Practice Pass to switch roles."
-              style="font-size:9px;color:var(--text-muted);font-weight:800;letter-spacing:0.08em;cursor:help;"
-            >🔒 LOCKED</span>
+            <span id="profileLockBadge" class="hidden" title="Your focus is locked because you're on Sprint Pass. Upgrade to Practice Pass to switch roles." style="font-size:9px;color:var(--text-muted);font-weight:800;letter-spacing:0.08em;cursor:help;">🔒 LOCKED</span>
           </div>
-
           <div class="profile-row"><span class="profile-label">Name</span><span class="profile-value" id="profileNameText">—</span></div>
           <div class="profile-row"><span class="profile-label">Plan</span><span class="profile-value" id="profilePlanText">—</span></div>
           <div class="profile-row" id="profileSprintRow"><span class="profile-label">Sprint</span><span class="profile-value" id="profileSprintText">—</span></div>
-          <div class="profile-row"><span class="profile-label">Team</span><span class="profile-value" id="profileTeamText">—</span></div>
+          <div class="profile-row"><span class="profile-label">Industry</span><span class="profile-value" id="profileIndustryText">—</span></div>
+          <div class="profile-row"><span class="profile-label">Role Family</span><span class="profile-value" id="profileFamilyText">—</span></div>
           <div class="profile-row"><span class="profile-label">Role</span><span class="profile-value" id="profileRoleText">—</span></div>
-          <div class="profile-row"><span class="profile-label">Level</span><span class="profile-value" id="profileLevelText">—</span></div>
-          <div class="profile-row"><span class="profile-label">Career stage</span><span class="profile-value" id="profileStageText">—</span></div>
+          <div class="profile-row"><span class="profile-label">Career Stage</span><span class="profile-value" id="profileStageText">—</span></div>
+          <div class="profile-row"><span class="profile-label">Track</span><span class="profile-value" id="profileTrackText">—</span></div>
           <div class="profile-row"><span class="profile-label">Enrolled</span><span class="profile-value" id="profileEnrolledText">—</span></div>
         </div>
 
@@ -467,14 +390,11 @@
               <div class="user-role-sub" id="userRoleEl">—</div>
             </div>
           </div>
-          <button class="signout-btn" onclick="signOut()">
-            <i data-lucide="log-out"></i> Sign Out
-          </button>
+          <button class="signout-btn" onclick="signOut()"><i data-lucide="log-out"></i> Sign Out</button>
         </div>
       </aside>
 
       <main class="main-content">
-
         <!-- TODAY -->
         <section class="view-panel active-view" id="todayView">
           <div class="today-header-bar">
@@ -485,10 +405,7 @@
             </div>
             <div class="th-right">
               <div class="day-counter" id="dayCounter">Day —</div>
-              <div class="streak" id="todayStreak">
-                <i data-lucide="flame"></i>
-                <span>—</span>
-              </div>
+              <div class="streak" id="todayStreak"><i data-lucide="flame"></i><span>—</span></div>
             </div>
           </div>
 
@@ -499,19 +416,11 @@
                 <div class="qc-text" id="q1Text">—</div>
                 <div class="qc-meta" id="q1Meta">—</div>
               </div>
-              <div class="qc-right">
-                <div class="qc-difficulty easy" id="q1Diff">
-                  <i data-lucide="star"></i> Easy
-                </div>
-              </div>
+              <div class="qc-right"><div class="qc-difficulty easy" id="q1Diff"><i data-lucide="star"></i> Easy</div></div>
             </div>
             <div class="qc-actions">
-              <button class="qc-action-btn" onclick="changeQuestion('q1')">
-                <i data-lucide="refresh-cw"></i> Change question
-              </button>
-              <button class="qc-action-btn" onclick="customizeQuestion('q1')">
-                <i data-lucide="pencil-line"></i> Customize
-              </button>
+              <button class="qc-action-btn" onclick="changeQuestion('q1')"><i data-lucide="refresh-cw"></i> Change question</button>
+              <button class="qc-action-btn" onclick="customizeQuestion('q1')"><i data-lucide="pencil-line"></i> Customize</button>
             </div>
             <div class="rep-tracker">
               <div class="rt-left">
@@ -520,9 +429,7 @@
                 <div class="rt-best" id="q1BestSnr">Best score: —</div>
               </div>
               <div class="rt-right">
-                <button class="rep-btn" id="q1RepBtn" onclick="startRep('q1')">
-                  <i data-lucide="mic"></i> Start Trial 1
-                </button>
+                <button class="rep-btn" id="q1RepBtn" onclick="startRep('q1')"><i data-lucide="mic"></i> Start Trial 1</button>
               </div>
             </div>
             <div class="reps-log" id="q1RepsLog"></div>
@@ -535,19 +442,11 @@
                 <div class="qc-text" id="q2Text">—</div>
                 <div class="qc-meta" id="q2Meta">—</div>
               </div>
-              <div class="qc-right">
-                <div class="qc-difficulty medium" id="q2Diff">
-                  <i data-lucide="star"></i><i data-lucide="star"></i> Medium
-                </div>
-              </div>
+              <div class="qc-right"><div class="qc-difficulty medium" id="q2Diff"><i data-lucide="star"></i><i data-lucide="star"></i> Medium</div></div>
             </div>
             <div class="qc-actions">
-              <button class="qc-action-btn" onclick="changeQuestion('q2')">
-                <i data-lucide="refresh-cw"></i> Change question
-              </button>
-              <button class="qc-action-btn" onclick="customizeQuestion('q2')">
-                <i data-lucide="pencil-line"></i> Customize
-              </button>
+              <button class="qc-action-btn" onclick="changeQuestion('q2')"><i data-lucide="refresh-cw"></i> Change question</button>
+              <button class="qc-action-btn" onclick="customizeQuestion('q2')"><i data-lucide="pencil-line"></i> Customize</button>
             </div>
             <div class="rep-tracker">
               <div class="rt-left">
@@ -556,9 +455,7 @@
                 <div class="rt-best" id="q2BestSnr">Best score: —</div>
               </div>
               <div class="rt-right">
-                <button class="rep-btn" id="q2RepBtn" onclick="startRep('q2')">
-                  <i data-lucide="mic"></i> Start Trial 1
-                </button>
+                <button class="rep-btn" id="q2RepBtn" onclick="startRep('q2')"><i data-lucide="mic"></i> Start Trial 1</button>
               </div>
             </div>
             <div class="reps-log" id="q2RepsLog"></div>
@@ -567,77 +464,23 @@
 
         <!-- ACTIVITIES -->
         <section class="view-panel" id="activitiesView">
-          <div class="view-heading">
-            <h2><i data-lucide="target"></i> Activities</h2>
-            <span class="vh-sub">Extra practice beyond today's drills</span>
-          </div>
-
+          <div class="view-heading"><h2><i data-lucide="target"></i> Activities</h2><span class="vh-sub">Extra practice beyond today's drills</span></div>
           <div class="activity-sub-tabs">
-            <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)">
-              <i data-lucide="mic"></i> Voice Reps
-            </button>
-            <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)">
-              <i data-lucide="library"></i> Scenario Library
-            </button>
-            <button class="sub-tab-btn" onclick="switchActivitySub('drills', this)">
-              <i data-lucide="crosshair"></i> Communication Drills
-            </button>
-            <button class="sub-tab-btn" onclick="switchActivitySub('daily-challenge', this)">
-              <i data-lucide="flame"></i> Daily Challenge
-            </button>
-            <button class="sub-tab-btn" onclick="switchActivitySub('reflection', this)">
-              <i data-lucide="notebook-pen"></i> Reflection Journal
-            </button>
-            <button class="sub-tab-btn" onclick="switchActivitySub('bites', this)">
-              <i data-lucide="book-open"></i> Learning Bites
-            </button>
-            <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)">
-              <i data-lucide="presentation"></i> Simulator
-            </button>
+            <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)"><i data-lucide="mic"></i> Voice Reps</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)"><i data-lucide="library"></i> Scenario Library</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('drills', this)"><i data-lucide="crosshair"></i> Communication Drills</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('daily-challenge', this)"><i data-lucide="flame"></i> Daily Challenge</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('reflection', this)"><i data-lucide="notebook-pen"></i> Reflection Journal</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('bites', this)"><i data-lucide="book-open"></i> Learning Bites</button>
+            <button class="sub-tab-btn" onclick="switchActivitySub('simulator', this)"><i data-lucide="presentation"></i> Simulator</button>
           </div>
 
           <div id="sub-voice-reps" class="sub-activity-panel">
             <div class="sub-activity-card-grid">
-              <div class="activity-card" data-activity="Quick Rep" data-type="voice">
-                <div>
-                  <div class="activity-card-tag">45 Seconds · Core Habit</div>
-                  <div class="activity-card-title">Quick Rep</div>
-                  <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div>
-                </div>
-                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
-                  <i data-lucide="play"></i> Start Now
-                </button>
-              </div>
-              <div class="activity-card" data-activity="Challenge Rep" data-type="voice">
-                <div>
-                  <div class="activity-card-tag">90 Seconds · Pressure</div>
-                  <div class="activity-card-title">Challenge Rep</div>
-                  <div class="activity-card-desc">Harder workplace scenario under timed pressure.</div>
-                </div>
-                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
-                  <i data-lucide="play"></i> Start Now
-                </button>
-              </div>
-              <div class="activity-card" data-activity="Blind Rep" data-type="voice">
-                <div>
-                  <div class="activity-card-tag">Instinct Test · No Prep</div>
-                  <div class="activity-card-title">Blind Rep</div>
-                  <div class="activity-card-desc">Random scenario revealed as recording begins.</div>
-                </div>
-                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
-                  <i data-lucide="play"></i> Start Now
-                </button>
-              </div>
-              <div class="activity-card" data-activity="Repeat Rep" data-type="voice">
-                <div>
-                  <div class="activity-card-tag">Targeted Improvement</div>
-                  <div class="activity-card-title">Repeat Rep</div>
-                  <div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div>
-                </div>
-                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
-                  <i data-lucide="play"></i> Start Now
-                </button>
-              </div>
+              <div class="activity-card" data-activity="Quick Rep" data-type="voice"><div><div class="activity-card-tag">45 Seconds · Core Habit</div><div class="activity-card-title">Quick Rep</div><div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button></div>
+              <div class="activity-card" data-activity="Challenge Rep" data-type="voice"><div><div class="activity-card-tag">90 Seconds · Pressure</div><div class="activity-card-title">Challenge Rep</div><div class="activity-card-desc">Harder workplace scenario under timed pressure.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button></div>
+              <div class="activity-card" data-activity="Blind Rep" data-type="voice"><div><div class="activity-card-tag">Instinct Test · No Prep</div><div class="activity-card-title">Blind Rep</div><div class="activity-card-desc">Random scenario revealed as recording begins.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button></div>
+              <div class="activity-card" data-activity="Repeat Rep" data-type="voice"><div><div class="activity-card-tag">Targeted Improvement</div><div class="activity-card-title">Repeat Rep</div><div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button></div>
             </div>
           </div>
 
@@ -647,32 +490,24 @@
             </div>
           </div>
 
-          <div id="sub-drills" class="sub-activity-panel hidden">
-            <div id="drillsGrid" class="drills-container"></div>
-          </div>
+          <div id="sub-drills" class="sub-activity-panel hidden"><div id="drillsGrid" class="drills-container"></div></div>
 
           <div id="sub-daily-challenge" class="sub-activity-panel hidden">
             <div class="question-card" data-activity="Daily Challenge" data-type="voice">
               <div class="qc-label"><span>Today's Global Challenge</span></div>
               <div class="qc-text" style="font-size:15px;">Handling Hostile Pushback</div>
               <div class="qc-meta">Scenario: A senior VP cuts you off mid-presentation and says "This strategy won't scale." Respond concisely in 45 seconds.</div>
-              <button class="ac-start-cta" style="margin-top:12px;" onclick="startActivityFromCard(this.closest('.question-card'))">
-                <i data-lucide="play"></i> Start Now
-              </button>
+              <button class="ac-start-cta" style="margin-top:12px;" onclick="startActivityFromCard(this.closest('.question-card'))"><i data-lucide="play"></i> Start Now</button>
             </div>
           </div>
 
           <div id="sub-reflection" class="sub-activity-panel hidden">
             <div class="question-card">
               <div class="qc-label"><span>Reflection Journal</span></div>
-              <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6;">
-                Reflect on what you intended to say vs what you actually said. Track your patterns over time.
-              </div>
+              <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6;">Reflect on what you intended to say vs what you actually said. Track your patterns over time.</div>
               <textarea id="reflectionInput" placeholder="What did you intend to say vs what you actually said?" maxlength="1000" style="width:100%;min-height:160px;margin-top:12px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
               <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="reflCount">0</span> / 1000</div>
-              <button class="ac-start-cta" style="margin-top:12px;" onclick="submitReflection()">
-                <i data-lucide="save"></i> Save Reflection
-              </button>
+              <button class="ac-start-cta" style="margin-top:12px;" onclick="submitReflection()"><i data-lucide="save"></i> Save Reflection</button>
             </div>
           </div>
 
@@ -686,22 +521,15 @@
               <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
               <div class="qc-text" style="font-size:18px;">Full 5-Question End-to-End Mock Interview</div>
               <div class="qc-meta">Simulate a 15-minute high-stakes executive panel interview with dynamic follow-ups and comprehensive debrief.</div>
-              <button class="ac-start-cta" style="margin-top:14px;" onclick="startActivityFromCard(this.closest('.question-card'))">
-                <i data-lucide="play"></i> Start Now
-              </button>
+              <button class="ac-start-cta" style="margin-top:14px;" onclick="startActivityFromCard(this.closest('.question-card'))"><i data-lucide="play"></i> Start Now</button>
             </div>
           </div>
         </section>
 
         <!-- PROGRESS -->
         <section class="view-panel" id="dashView">
-          <div class="view-heading">
-            <h2><i data-lucide="bar-chart-3"></i> Pattern &amp; Progress</h2>
-            <span class="vh-sub" id="dashSubtitle">Your performance across reps</span>
-          </div>
-
+          <div class="view-heading"><h2><i data-lucide="bar-chart-3"></i> Pattern &amp; Progress</h2><span class="vh-sub" id="dashSubtitle">Your performance across reps</span></div>
           <div class="your-analysis-card" id="yourAnalysisCard"></div>
-
           <div class="timeline-bar">
             <span style="font-weight: 700; font-size: 14px;">PERFORMANCE OVER TIME</span>
             <div class="timeline-tabs">
@@ -710,19 +538,14 @@
               <button class="time-tab" onclick="setTimeline('1m', this)">Last 1 Month</button>
             </div>
           </div>
-
           <div class="dash-grid">
             <div class="metric-box"><div class="metric-label">Time-to-Point</div><div class="metric-value" id="metricTTP">—</div><div class="metric-sub" id="metricTTPSub">—</div></div>
             <div class="metric-box"><div class="metric-label">Filler discipline</div><div class="metric-value" id="metricFillerDiscipline">—</div><div class="metric-sub" id="metricFillerDisciplineSub">—</div></div>
             <div class="metric-box"><div class="metric-label">Point-first</div><div class="metric-value" id="metricPointFirst">—</div><div class="metric-sub" id="metricPointFirstSub">—</div></div>
             <div class="metric-box"><div class="metric-label">Concreteness</div><div class="metric-value" id="metricConcreteness">—</div><div class="metric-sub" id="metricConcretenessSub">—</div></div>
           </div>
-
           <div class="dash-wide-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span style="font-weight: 700; font-size: 14px;">Clarity &amp; Focus</span>
-              <span style="font-weight: 700; font-size: 13px;">Target: 85% · Current: <span style="color: var(--success);" id="dashSnrValue">—</span></span>
-            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><span style="font-weight: 700; font-size: 14px;">Clarity &amp; Focus</span><span style="font-weight: 700; font-size: 13px;">Target: 85% · Current: <span style="color: var(--success);" id="dashSnrValue">—</span></span></div>
             <div class="snr-container">
               <div class="snr-bar-wrapper">
                 <div class="snr-signal" id="dashSnrSignal" style="width: 0%;"></div>
@@ -732,54 +555,26 @@
               <div class="snr-ticks"><span>0% (Fluff)</span><span>25%</span><span>50%</span><span>75% (Target)</span><span>100% (Pure Signal)</span></div>
             </div>
           </div>
-
           <div class="feedback-grid">
-            <div class="feedback-box well">
-              <div class="feedback-title" style="color: var(--success);">
-                <i data-lucide="circle-check"></i> What Was Going Well
-              </div>
-              <ul class="feedback-list" id="dashWellList"><li>—</li></ul>
-            </div>
-            <div class="feedback-box improve">
-              <div class="feedback-title" style="color: var(--accent-gold);">
-                <i data-lucide="target"></i> What to Improve
-              </div>
-              <ul class="feedback-list" id="dashImproveList"><li>—</li></ul>
-            </div>
+            <div class="feedback-box well"><div class="feedback-title" style="color: var(--success);"><i data-lucide="circle-check"></i> What Was Going Well</div><ul class="feedback-list" id="dashWellList"><li>—</li></ul></div>
+            <div class="feedback-box improve"><div class="feedback-title" style="color: var(--accent-gold);"><i data-lucide="target"></i> What to Improve</div><ul class="feedback-list" id="dashImproveList"><li>—</li></ul></div>
           </div>
-
           <div class="dash-wide-box" id="repHistoryBox">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span style="font-weight: 700; font-size: 14px;">Rep History</span>
-              <span style="font-size: 12px; color: var(--text-muted);" id="repHistoryCount">0 reps</span>
-            </div>
-            <div id="repHistoryList" style="display:flex; flex-direction:column; gap:8px;">
-              <div style="font-size:12px; color:var(--text-muted);">No reps yet — start on Today.</div>
-            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;"><span style="font-weight: 700; font-size: 14px;">Rep History</span><span style="font-size: 12px; color: var(--text-muted);" id="repHistoryCount">0 reps</span></div>
+            <div id="repHistoryList" style="display:flex; flex-direction:column; gap:8px;"><div style="font-size:12px; color:var(--text-muted);">No reps yet — start on Today.</div></div>
           </div>
-
           <div class="try-again-bar">
-            <div class="ta-text">
-              <strong>Want to improve your score?</strong><br />
-              <span id="taMessage">Start a rep to build your progress.</span>
-            </div>
-            <button class="ta-btn" onclick="switchView('today')">
-              <i data-lucide="mic"></i> Try Again
-            </button>
+            <div class="ta-text"><strong>Want to improve your score?</strong><br /><span id="taMessage">Start a rep to build your progress.</span></div>
+            <button class="ta-btn" onclick="switchView('today')"><i data-lucide="mic"></i> Try Again</button>
           </div>
         </section>
 
         <!-- MY REPS -->
         <section class="view-panel" id="recordingsView">
-          <div class="view-heading">
-            <h2><i data-lucide="mic"></i> My Reps</h2>
-            <span class="vh-sub">Every practice session you've completed</span>
-          </div>
+          <div class="view-heading"><h2><i data-lucide="mic"></i> My Reps</h2><span class="vh-sub">Every practice session you've completed</span></div>
           <div class="question-card">
             <div class="qc-label"><span>Rep history</span></div>
-            <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6;">
-              Every rep you've done, newest first. Compare transcripts and metrics across sessions to see your progress.
-            </div>
+            <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6;">Every rep you've done, newest first. Compare transcripts and metrics across sessions to see your progress.</div>
             <div id="recordingsList" style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
               <div style="font-size:12px;color:var(--text-muted);">Your reps will appear here as you practice.</div>
             </div>
@@ -788,19 +583,13 @@
 
         <!-- ACHIEVEMENTS -->
         <section class="view-panel" id="badgesView">
-          <div class="view-heading">
-            <h2><i data-lucide="trophy"></i> Achievements</h2>
-            <span class="vh-sub">Unlock badges as you practice</span>
-          </div>
+          <div class="view-heading"><h2><i data-lucide="trophy"></i> Achievements</h2><span class="vh-sub">Unlock badges as you practice</span></div>
           <div class="badges-grid" id="badgesGrid"></div>
         </section>
 
         <!-- PILLARS -->
         <section class="view-panel" id="pillarsView">
-          <div class="view-heading">
-            <h2><i data-lucide="landmark"></i> Pillars of Executive Communication</h2>
-            <span class="vh-sub">The four foundations we train</span>
-          </div>
+          <div class="view-heading"><h2><i data-lucide="landmark"></i> Pillars of Executive Communication</h2><span class="vh-sub">The four foundations we train</span></div>
           <div class="sub-activity-card-grid">
             <div class="activity-card"><div><div class="activity-card-tag">Pillar 1</div><div class="activity-card-title">Structure</div><div class="activity-card-desc">STAR, PSO, BLUF. Give your ideas a spine listeners can follow.</div></div></div>
             <div class="activity-card"><div><div class="activity-card-tag">Pillar 2</div><div class="activity-card-title">Conciseness</div><div class="activity-card-desc">Time-to-Point, filler elimination, headline discipline.</div></div></div>
@@ -811,142 +600,66 @@
 
         <!-- LEARNING -->
         <section class="view-panel" id="learningView">
-          <div class="view-heading">
-            <h2><i data-lucide="book-open"></i> My Learning</h2>
-            <span class="vh-sub">3-minute frameworks and micro-lessons</span>
-          </div>
+          <div class="view-heading"><h2><i data-lucide="book-open"></i> My Learning</h2><span class="vh-sub">3-minute frameworks and micro-lessons</span></div>
           <div class="question-card">
             <div class="qc-label"><span>Curated learning</span></div>
-            <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6;">
-              Framework deep-dives, worked examples, and role-specific micro-lessons tailored to your function.
-            </div>
+            <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6;">Framework deep-dives, worked examples, and role-specific micro-lessons tailored to your function.</div>
           </div>
           <div class="sub-activity-card-grid">
-            <div class="activity-card" data-activity="The Pyramid Principle" data-type="content">
-              <div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">The Pyramid Principle</div><div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div></div>
-              <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="book-open"></i> Read</button>
-            </div>
-            <div class="activity-card" data-activity="BLUF Method" data-type="content">
-              <div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">BLUF Method</div><div class="activity-card-desc">Bottom Line Up Front for executive communication.</div></div>
-              <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="book-open"></i> Read</button>
-            </div>
-            <div class="activity-card" data-activity="The STAR Method" data-type="content">
-              <div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">The STAR Method</div><div class="activity-card-desc">Situation → Task → Action → Result.</div></div>
-              <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="book-open"></i> Read</button>
-            </div>
-            <div class="activity-card" data-activity="The PSO Framework" data-type="content">
-              <div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">The PSO Framework</div><div class="activity-card-desc">Problem → Solution → Outcome for updates and pitches.</div></div>
-              <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="book-open"></i> Read</button>
-            </div>
+            <div class="activity-card" data-activity="The Pyramid Principle" data-type="content"><div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">The Pyramid Principle</div><div class="activity-card-desc">Lead with the conclusion, then support with 3 pillars.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="book-open"></i> Read</button></div>
+            <div class="activity-card" data-activity="BLUF Method" data-type="content"><div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">BLUF Method</div><div class="activity-card-desc">Bottom Line Up Front for executive communication.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="book-open"></i> Read</button></div>
+            <div class="activity-card" data-activity="The STAR Method" data-type="content"><div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">The STAR Method</div><div class="activity-card-desc">Situation → Task → Action → Result.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="book-open"></i> Read</button></div>
+            <div class="activity-card" data-activity="The PSO Framework" data-type="content"><div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">The PSO Framework</div><div class="activity-card-desc">Problem → Solution → Outcome for updates and pitches.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="book-open"></i> Read</button></div>
           </div>
         </section>
-
       </main>
     </div>
   </div>
 
-  <!-- SHARED MODAL -->
-  <div class="us-modal-backdrop" id="usModal">
-    <div class="us-modal">
-      <button class="us-modal-close" onclick="closeModal()" aria-label="Close">
-        <i data-lucide="x"></i>
-      </button>
-      <div id="usModalContent"></div>
-    </div>
-  </div>
+  <!-- MODALS -->
+  <div class="us-modal-backdrop" id="usModal"><div class="us-modal"><button class="us-modal-close" onclick="closeModal()" aria-label="Close"><i data-lucide="x"></i></button><div id="usModalContent"></div></div></div>
 
-  <!-- CUSTOMIZE QUESTION MODAL -->
   <div class="us-modal-backdrop" id="customizeModal">
     <div class="us-modal" style="max-width: 520px;">
-      <button class="us-modal-close" onclick="closeCustomizeModal()" aria-label="Close">
-        <i data-lucide="x"></i>
-      </button>
+      <button class="us-modal-close" onclick="closeCustomizeModal()" aria-label="Close"><i data-lucide="x"></i></button>
       <h2 style="font-size: 20px; margin-bottom: 6px;">Customize Question</h2>
       <p class="us-modal-sub">Type your own question. It'll replace the current one for today.</p>
-      <label for="customizeInput" style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">
-        Your question
-      </label>
-      <textarea
-        id="customizeInput"
-        placeholder="e.g., Tell me about a time you had to say no to a senior stakeholder."
-        maxlength="280"
-        style="width: 100%; min-height: 100px; padding: 14px 16px; border: 1.5px solid var(--border-color); border-radius: 12px; font-family: inherit; font-size: 14px; background: var(--bg-dark); color: var(--text-main); resize: vertical;"
-      ></textarea>
-      <div style="text-align: right; font-size: 11px; color: var(--text-muted); margin-top: 6px;">
-        <span id="customizeCount">0</span> / 280
-      </div>
-      <button class="ac-start-cta" style="margin-top: 14px;" onclick="saveCustomQuestion()">
-        <i data-lucide="check"></i> Use This Question
-      </button>
+      <label for="customizeInput" style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">Your question</label>
+      <textarea id="customizeInput" placeholder="e.g., Tell me about a time you had to say no to a senior stakeholder." maxlength="280" style="width: 100%; min-height: 100px; padding: 14px 16px; border: 1.5px solid var(--border-color); border-radius: 12px; font-family: inherit; font-size: 14px; background: var(--bg-dark); color: var(--text-main); resize: vertical;"></textarea>
+      <div style="text-align: right; font-size: 11px; color: var(--text-muted); margin-top: 6px;"><span id="customizeCount">0</span> / 280</div>
+      <button class="ac-start-cta" style="margin-top: 14px;" onclick="saveCustomQuestion()"><i data-lucide="check"></i> Use This Question</button>
     </div>
   </div>
 
-  <!-- FOCUS CHANGE CONFIRMATION MODAL -->
   <div class="us-modal-backdrop" id="focusConfirmModal">
     <div class="us-modal" style="max-width: 460px;">
-      <button class="us-modal-close" onclick="closeFocusConfirm()" aria-label="Close">
-        <i data-lucide="x"></i>
-      </button>
-
+      <button class="us-modal-close" onclick="closeFocusConfirm()" aria-label="Close"><i data-lucide="x"></i></button>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-        <div style="width:44px;height:44px;border-radius:50%;background:rgba(245,158,11,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i data-lucide="alert-triangle" style="width:22px;height:22px;color:var(--accent-gold);"></i>
-        </div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(245,158,11,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i data-lucide="alert-triangle" style="width:22px;height:22px;color:var(--accent-gold);"></i></div>
         <h2 style="font-size:19px;margin:0;">Change your focus?</h2>
       </div>
-
-      <p style="font-size:13.5px;line-height:1.6;color:var(--text-muted);margin-bottom:18px;">
-        Switching your focus will <strong style="color:var(--text-main);">reset today's questions and drills</strong>.
-        You'll get a fresh set of questions tailored to the new focus.
-        Your streak, past reps, and achievements are not affected.
-      </p>
-
+      <p style="font-size:13.5px;line-height:1.6;color:var(--text-muted);margin-bottom:18px;">Switching your focus will <strong style="color:var(--text-main);">reset today's questions and drills</strong>. You'll get a fresh set of questions tailored to the new focus. Your streak, past reps, and achievements are not affected.</p>
       <div style="background:var(--bg-dark);border:1px solid var(--border-color);border-radius:10px;padding:14px;font-size:12px;line-height:1.7;margin-bottom:18px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-          <span style="color:var(--text-muted);">Team:</span>
-          <span id="focusChangeTeam" style="font-weight:700;">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-          <span style="color:var(--text-muted);">Role:</span>
-          <span id="focusChangeRole" style="font-weight:700;">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-          <span style="color:var(--text-muted);">Level:</span>
-          <span id="focusChangeLevel" style="font-weight:700;">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;">
-          <span style="color:var(--text-muted);">Career stage:</span>
-          <span id="focusChangeStage" style="font-weight:700;">—</span>
-        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="color:var(--text-muted);">Role Family:</span><span id="focusChangeFamily" style="font-weight:700;">—</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="color:var(--text-muted);">Role:</span><span id="focusChangeRole" style="font-weight:700;">—</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="color:var(--text-muted);">Career Stage:</span><span id="focusChangeStage" style="font-weight:700;">—</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Track:</span><span id="focusChangeTrack" style="font-weight:700;">—</span></div>
       </div>
-
       <div style="display:flex;gap:10px;">
-        <button
-          onclick="closeFocusConfirm()"
-          style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border-color);background:transparent;color:var(--text-muted);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;"
-        >Cancel</button>
-        <button
-          onclick="confirmFocusChange()"
-          style="flex:1;padding:12px;border-radius:10px;border:none;background:var(--accent-gold);color:#0B0F19;font-family:inherit;font-weight:800;font-size:13px;cursor:pointer;"
-        >Yes, reset &amp; reload</button>
+        <button onclick="closeFocusConfirm()" style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border-color);background:transparent;color:var(--text-muted);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;">Cancel</button>
+        <button onclick="confirmFocusChange()" style="flex:1;padding:12px;border-radius:10px;border:none;background:var(--accent-gold);color:#0B0F19;font-family:inherit;font-weight:800;font-size:13px;cursor:pointer;">Yes, reset &amp; reload</button>
       </div>
     </div>
   </div>
 
-  <!-- ONBOARDING OVERLAY -->
+  <!-- ONBOARDING -->
   <div class="onboarding-backdrop" id="onboardingModal">
     <div class="onboarding-stage" id="onboardingStage">
 
-      <!-- STEP 0: Welcome -->
       <div class="ob-scene" id="obSceneWelcome">
         <div class="ob-robot" aria-hidden="true">
           <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="robotBody" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#38BDF8"/>
-                <stop offset="100%" stop-color="#8B5CF6"/>
-              </linearGradient>
-            </defs>
+            <defs><linearGradient id="robotBody" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#38BDF8"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
             <ellipse cx="60" cy="134" rx="26" ry="3" fill="rgba(56,189,248,0.25)"/>
             <rect x="30" y="30" width="60" height="52" rx="16" fill="url(#robotBody)"/>
             <rect x="42" y="46" width="36" height="14" rx="7" fill="#0B0F19"/>
@@ -964,86 +677,61 @@
           <div class="ob-line" style="animation-delay:0.9s;">You're here to speak with intent.</div>
           <div class="ob-line" style="animation-delay:1.5s;">Let's personalize your journey.</div>
         </div>
-        <button class="ob-btn" style="animation-delay:2.2s;" onclick="obGoToStep('years')">
-          Continue <i data-lucide="arrow-right"></i>
-        </button>
+        <button class="ob-btn" style="animation-delay:2.2s;" onclick="obGoToStep('industry')">Continue <i data-lucide="arrow-right"></i></button>
       </div>
 
-      <!-- STEP 1: Years -->
-      <div class="ob-scene hidden" id="obSceneYears">
+      <div class="ob-scene hidden" id="obSceneIndustry">
         <div class="ob-progress"><span class="ob-dot active"></span><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot"></span></div>
         <div class="ob-step-label">Step 1 of 5</div>
-        <h2 class="ob-question">How many years of experience do you have?</h2>
-        <div class="ob-pills" id="obYearsPills"></div>
-        <button class="ob-back" onclick="obGoToStep('welcome')">
-          <i data-lucide="arrow-left"></i> Back
-        </button>
-      </div>
-
-      <!-- STEP 2: Industry -->
-      <div class="ob-scene hidden" id="obSceneIndustry">
-        <div class="ob-progress"><span class="ob-dot done"></span><span class="ob-dot active"></span><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot"></span></div>
-        <div class="ob-step-label">Step 2 of 5</div>
         <h2 class="ob-question">Which industry are you targeting?</h2>
         <div class="ob-pills" id="obIndustryPills"></div>
-        <button class="ob-back" onclick="obGoToStep('years')">
-          <i data-lucide="arrow-left"></i> Back
-        </button>
+        <button class="ob-back" onclick="obGoToStep('welcome')"><i data-lucide="arrow-left"></i> Back</button>
       </div>
 
-      <!-- STEP 3: Role -->
+      <div class="ob-scene hidden" id="obSceneFamily">
+        <div class="ob-progress"><span class="ob-dot done"></span><span class="ob-dot active"></span><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot"></span></div>
+        <div class="ob-step-label">Step 2 of 5</div>
+        <h2 class="ob-question">Which role family are you in?</h2>
+        <div class="ob-pills" id="obFamilyPills"></div>
+        <button class="ob-back" onclick="obGoToStep('industry')"><i data-lucide="arrow-left"></i> Back</button>
+      </div>
+
       <div class="ob-scene hidden" id="obSceneRole">
         <div class="ob-progress"><span class="ob-dot done"></span><span class="ob-dot done"></span><span class="ob-dot active"></span><span class="ob-dot"></span><span class="ob-dot"></span></div>
         <div class="ob-step-label">Step 3 of 5</div>
         <h2 class="ob-question">What role are you targeting?</h2>
         <div class="ob-pills" id="obRolePills"></div>
-        <button class="ob-back" onclick="obGoToStep('industry')">
-          <i data-lucide="arrow-left"></i> Back
-        </button>
+        <button class="ob-back" onclick="obGoToStep('family')"><i data-lucide="arrow-left"></i> Back</button>
       </div>
 
-      <!-- STEP 4: Team -->
-      <div class="ob-scene hidden" id="obSceneTeam">
+      <div class="ob-scene hidden" id="obSceneStage">
         <div class="ob-progress"><span class="ob-dot done"></span><span class="ob-dot done"></span><span class="ob-dot done"></span><span class="ob-dot active"></span><span class="ob-dot"></span></div>
         <div class="ob-step-label">Step 4 of 5</div>
-        <h2 class="ob-question">Which team are you on (or targeting)?</h2>
-        <div class="ob-pills" id="obTeamPills"></div>
-        <button class="ob-back" onclick="obGoToStep('role')">
-          <i data-lucide="arrow-left"></i> Back
-        </button>
+        <h2 class="ob-question">How many years of experience do you have?</h2>
+        <div class="ob-pills" id="obStagePills"></div>
+        <button class="ob-back" onclick="obGoToStep('role')"><i data-lucide="arrow-left"></i> Back</button>
       </div>
 
-      <!-- STEP 5: Level -->
-      <div class="ob-scene hidden" id="obSceneLevel">
+      <div class="ob-scene hidden" id="obSceneTrack">
         <div class="ob-progress"><span class="ob-dot done"></span><span class="ob-dot done"></span><span class="ob-dot done"></span><span class="ob-dot done"></span><span class="ob-dot active"></span></div>
         <div class="ob-step-label">Step 5 of 5</div>
-        <h2 class="ob-question">What's your level?</h2>
-        <div class="ob-pills" id="obLevelPills"></div>
-        <button class="ob-back" onclick="obGoToStep('team')">
-          <i data-lucide="arrow-left"></i> Back
-        </button>
+        <h2 class="ob-question">What's your track?</h2>
+        <div class="ob-pills" id="obTrackPills"></div>
+        <button class="ob-back" onclick="obGoToStep('stage')"><i data-lucide="arrow-left"></i> Back</button>
       </div>
 
-      <!-- Celebration -->
       <div class="ob-scene hidden" id="obSceneCelebrate">
         <div class="ob-trophy"><i data-lucide="trophy" style="width:80px;height:80px;stroke-width:1.4;color:var(--accent-gold);"></i></div>
         <h2 class="ob-congrats">You're all set, <span id="obCongratsName">friend</span>.</h2>
         <p class="ob-congrats-sub">Your scenarios are personalized. Time to practice.</p>
-        <button class="ob-btn" onclick="obFinish()">
-          Start practising <i data-lucide="arrow-right"></i>
-        </button>
+        <button class="ob-btn" onclick="obFinish()">Start practising <i data-lucide="arrow-right"></i></button>
       </div>
-
     </div>
   </div>
 
-  <!-- CONFETTI LAYER -->
   <div class="confetti-layer" id="confettiLayer"></div>
 
   <script>
-    // ============================================================
-    // CONFIG
-    // ============================================================
     const BACKEND_URL = 'https://unspoken-backend-nqvl.onrender.com';
     const PAYWALL_URL = 'https://theunspoken.co.in/Pricing';
     const PLAN_LABEL = { sprint: 'Sprint Pass', pass: 'Practice Pass' };
@@ -1052,197 +740,167 @@
     const TOTAL_MAX_SECONDS = 180;
     const TEXT_MAX_WORDS = 300;
 
-    // ============================================================
-    // LUCIDE
-    // ============================================================
     function renderIcons() {
       if (window.lucide && typeof lucide.createIcons === 'function') {
         try { lucide.createIcons(); } catch (e) {}
       }
     }
 
-// ============================================================
-// ONBOARDING DATA
-// ============================================================
-
-// ── Industry (vertical the user works in / targets) ──
-const OB_INDUSTRIES = [
-  { value: 'it_software',       label: 'IT / Software / SaaS' },
-  { value: 'bpo_services',      label: 'BPO / Customer Services' },
-  { value: 'bfsi',              label: 'Banking / Financial Services / Insurance' },
-  { value: 'consulting',        label: 'Consulting / Advisory' },
-  { value: 'manufacturing',     label: 'Manufacturing / Industrial' },
-  { value: 'retail_ecommerce',  label: 'Retail / E-commerce / D2C' },
-  { value: 'healthcare',        label: 'Healthcare / Pharma / Life Sciences' },
-  { value: 'education',         label: 'Education / EdTech' },
-  { value: 'media_design',      label: 'Media / Design / Content' },
-  { value: 'energy_infra',      label: 'Energy / Infrastructure / Real Estate' },
-  { value: 'government_psu',    label: 'Government / Public Sector / PSU' },
-  { value: 'startup',           label: 'Startups / Early-stage' },
-  { value: 'other',             label: 'Other' },
-];
-
-// ── Role Family (discipline) ──
-const OB_ROLE_FAMILIES = [
-  { value: 'technology',            label: 'Technology' },
-  { value: 'product_and_program',   label: 'Product & Program Management' },
-  { value: 'sales_and_bd',          label: 'Sales & Business Development' },
-  { value: 'operations',            label: 'Operations' },
-  { value: 'marketing_and_growth',  label: 'Marketing & Growth' },
-  { value: 'finance_and_accounting',label: 'Finance & Accounting' },
-  { value: 'hr_and_people',         label: 'HR & People' },
-  { value: 'customer_success',      label: 'Customer Success & Support' },
-  { value: 'consulting',            label: 'Consulting' },
-  { value: 'healthcare_life_sci',   label: 'Healthcare & Life Sciences' },
-  { value: 'bfsi',                  label: 'Banking, Financial Services & Insurance (BFSI)' },
-  { value: 'design',                label: 'Design' },
-];
-
-// ── Role (specific title inside each family) ──
-const OB_ROLES_BY_FAMILY = {
-  technology: [
-    { value: 'software_engineer',      label: 'Software Engineer' },
-    { value: 'data_analyst',           label: 'Data Analyst' },
-    { value: 'data_scientist_ml',      label: 'Data Scientist / ML Engineer' },
-    { value: 'qa_test_engineer',       label: 'QA / Test Engineer' },
-    { value: 'devops_sre_engineer',    label: 'DevOps / SRE Engineer' },
-    { value: 'it_support_systems',     label: 'IT Support / Systems Engineer' },
-  ],
-  product_and_program: [
-    { value: 'product_manager',        label: 'Product Manager' },
-    { value: 'program_manager',        label: 'Program Manager' },
-    { value: 'project_manager',        label: 'Project Manager' },
-    { value: 'business_analyst',       label: 'Business Analyst' },
-  ],
-  sales_and_bd: [
-    { value: 'bd_executive',           label: 'Business Development Executive/Associate' },
-    { value: 'account_executive',      label: 'Account Executive' },
-    { value: 'sales_manager',          label: 'Sales Manager' },
-    { value: 'inside_sales_rep',       label: 'Inside Sales Representative' },
-  ],
-  operations: [
-    { value: 'operations_executive',   label: 'Operations Executive/Analyst' },
-    { value: 'supply_chain_logistics', label: 'Supply Chain / Logistics Executive' },
-    { value: 'operations_manager',     label: 'Operations Manager' },
-    { value: 'process_quality_analyst',label: 'Process / Quality Analyst' },
-  ],
-  marketing_and_growth: [
-    { value: 'marketing_executive',    label: 'Marketing Executive' },
-    { value: 'digital_marketing_growth',label: 'Digital Marketing / Growth Associate' },
-    { value: 'content_marketing',      label: 'Content Marketing Specialist' },
-    { value: 'brand_manager',          label: 'Brand Manager' },
-  ],
-  finance_and_accounting: [
-    { value: 'financial_analyst',      label: 'Financial Analyst' },
-    { value: 'accountant',             label: 'Accountant' },
-    { value: 'finance_manager',        label: 'Finance Manager' },
-    { value: 'investment_equity_analyst',label: 'Investment / Equity Analyst' },
-  ],
-  hr_and_people: [
-    { value: 'hr_generalist_hrbp',     label: 'HR Generalist / HRBP' },
-    { value: 'talent_acquisition',     label: 'Talent Acquisition / Recruiter' },
-    { value: 'hr_operations',          label: 'HR Operations Executive' },
-    { value: 'ld_specialist',          label: 'L&D Specialist' },
-  ],
-  customer_success: [
-    { value: 'customer_support',       label: 'Customer Support Executive' },
-    { value: 'customer_success_manager',label: 'Customer Success Manager' },
-    { value: 'technical_support',      label: 'Technical Support Engineer' },
-  ],
-  consulting: [
-    { value: 'management_consultant',  label: 'Business / Management Consultant (Analyst level)' },
-    { value: 'strategy_consultant',    label: 'Strategy Consultant' },
-  ],
-  healthcare_life_sci: [
-    { value: 'healthcare_ops_manager', label: 'Healthcare Operations / Program Manager' },
-    { value: 'clinical_medical_affairs',label: 'Clinical / Medical Affairs Associate' },
-    { value: 'pharma_sales_marketing', label: 'Pharma Sales / Marketing Executive' },
-  ],
-  bfsi: [
-    { value: 'relationship_manager',   label: 'Relationship Manager' },
-    { value: 'credit_risk_analyst',    label: 'Credit / Risk Analyst' },
-    { value: 'branch_operations',      label: 'Branch Operations Executive' },
-    { value: 'insurance_sales_advisory',label: 'Insurance Sales / Advisory' },
-  ],
-  design: [
-    { value: 'ux_product_designer',    label: 'UX / Product Designer' },
-    { value: 'graphic_visual_designer',label: 'Graphic / Visual Designer' },
-    { value: 'ux_researcher',          label: 'UX Researcher' },
-  ],
-};
-
-// ── Career Stage ──
-const OB_CAREER_STAGES = [
-  { value: 'student',    label: 'Student' },
-  { value: 'fresher',    label: 'Fresher (0–1 year)' },
-  { value: 'early',      label: 'Early career (1–5 years)' },
-  { value: 'mid',        label: 'Mid career (6–12 years)' },
-  { value: 'senior',     label: 'Senior (13–20 years)' },
-  { value: 'leadership', label: 'Leadership (20+ years)' },
-];
-
-// ── Track ──
-const OB_TRACKS = [
-  { value: 'ic',        label: 'Individual Contributor' },
-  { value: 'manager',   label: 'Manager' },
-  { value: 'leader',    label: 'Senior Leader' },
-  { value: 'executive', label: 'Executive' },
-];
     // ============================================================
-    // LEARNING BITES
+    // ONBOARDING DATA
     // ============================================================
-    const BITES_LIBRARY = {
-      structure: {
-        label: 'Structure',
-        icon: 'layout-grid',
-        techniques: [
-          { id: 'pyramid', title: 'The Pyramid Principle', hook: 'Lead with the answer. Support it with three reasons.', brief: 'Most people build up to their point. This flips it — start with the conclusion, then back it with your strongest 2–3 supporting arguments. Used by McKinsey consultants for exactly this reason: it respects the listener\'s time.', what: 'A top-down communication structure — Answer first, then Reasons, then Evidence for each reason.', why: 'Listeners (especially busy ones — managers, interviewers, panels) decide whether to keep listening in the first 10 seconds. If the point comes last, you\'ve lost half your audience before you get there.', how: ['State your conclusion/recommendation in one sentence.', 'Give 2–3 reasons that support it.', 'For each reason, give one piece of evidence or example.'], exampleWeak: 'So we ran the numbers, looked at three vendors...', exampleStrong: 'I recommend Vendor B. Two reasons: it\'s 15% cheaper, and their support response time beat the other two.', bestFor: 'Status updates, recommendations.' },
-          { id: 'scqa', title: 'SCQA (Situation – Complication – Question – Answer)', hook: 'Frame why this matters, then say what to do.', brief: 'Set the scene, introduce the problem, pose the question it raises, then answer it.', what: 'Situation → Complication → Question → Answer.', why: 'It builds a shared starting point before you ask someone to accept your conclusion.', how: ['Situation: neutral context.', 'Complication: what changed.', 'Question: the natural question.', 'Answer: your point.'], exampleWeak: 'We should switch vendors.', exampleStrong: 'We\'ve used Vendor A for 2 years. Their costs just went up 20%. So the question is: renew or switch? I recommend we switch.', bestFor: 'Pitches, proposals, updates.' },
-          { id: 'mece', title: 'MECE (Mutually Exclusive, Collectively Exhaustive)', hook: 'Points that don\'t overlap, and don\'t leave gaps.', brief: 'A structuring test — before you present a list of points, check that no two points say the same thing, and together they cover the whole picture.', what: 'A structuring test.', why: 'Overlapping or incomplete points are the #1 reason a "structured" answer still feels scattered.', how: ['Sketch your points, ask: "Could two of these merge? Is anything missing?"'], exampleWeak: 'Three factors: Cost, Budget, Vendor pricing.', exampleStrong: 'Three factors: Cost, Timeline, Quality.', bestFor: 'Prepping any answer with multiple points.' },
-          { id: 'rule-of-three', title: 'Rule of Three', hook: 'Group your points into threes.', brief: 'Audiences remember triads better than any other number. Two feels thin, four feels like a list nobody will remember.', what: 'Present supporting points in groups of three.', why: 'Human short-term recall is naturally strong for groups of three.', how: ['Compress to your best 3, or round out a single point to three.'], exampleWeak: 'There are seven reasons we should do this: first...', exampleStrong: 'Three reasons. Speed. Cost. Trust.', bestFor: 'Any spoken answer with multiple supporting points.' },
-        ]
-      },
-      thinking: {
-        label: 'Thinking',
-        icon: 'brain',
-        techniques: [
-          { id: 'one-breath', title: 'The One-Breath Rule', hook: 'If you can\'t say it in one breath, you haven\'t found it yet.', brief: 'A forcing function for clarity — say your core point in a single sentence before you let yourself elaborate.', what: 'State the point in one sentence, under ~15 words, in one breath.', why: 'Rambling is usually a thinking problem wearing a speaking costume.', how: ['Ask: "what\'s the one sentence I\'d text this as?"'], exampleWeak: 'So there are a few things going on here...', exampleStrong: 'We should delay the launch by two weeks. Here\'s why.', bestFor: 'Pre-speaking habit.' },
-          { id: 'elevator', title: 'The Elevator Test', hook: 'Compress any answer to 15 seconds.', brief: 'Practice compressing any answer to 15 seconds. Longer answers should expand this core — not replace it.', what: 'Force any answer into 15 seconds.', why: 'It trains you to identify the actual core of your message.', how: ['Record yourself answering a question in 15 seconds.'], exampleWeak: 'A 2-minute answer that never states the core.', exampleStrong: 'A 2-minute answer whose opening line is the same sentence you\'d say in 15 seconds.', bestFor: 'Interview prep, pitch practice.' },
-        ]
-      },
-      impact: {
-        label: 'Impact',
-        icon: 'target',
-        techniques: [
-          { id: 'bluf', title: 'BLUF (Bottom Line Up Front)', hook: 'State the outcome or ask before the context.', brief: 'Built for executive audiences who need the decision first.', what: 'Open with the single most important sentence — the decision, ask, or outcome.', why: 'Executives are optimizing for "what do I need to decide/know."', how: ['First sentence = bottom line.', 'Everything after is optional context.'], exampleWeak: 'So the vendor had some delays...', exampleStrong: 'I need your approval to extend the deadline by 1 week — the vendor delay pushed testing back.', bestFor: 'Emails, status updates.' },
-          { id: 'signal-sandwich', title: 'Signal Sandwich', hook: 'Headline → detail → headline again.', brief: 'Say the takeaway, explain it, then restate it — so it\'s the last thing they remember.', what: '(1) state takeaway, (2) supporting detail, (3) restate takeaway.', why: 'People remember first and last things best.', how: ['After your explanation, add one closing sentence repeating your point.'], exampleWeak: 'Open with the point, explain at length, trail off on a sub-detail.', exampleStrong: 'Open with the point, explain, close: "So — we should delay the launch by two weeks."', bestFor: 'Any answer longer than 30 seconds.' },
-          { id: 'specificity', title: 'Specificity Over Abstraction', hook: 'Swap vague claims for concrete numbers or images.', brief: 'Precision is what makes a line memorable. "Improved efficiency" is forgettable. "Cut approval time from 5 days to 6 hours" is not.', what: 'Replace abstract claims with a specific number, name, or vivid image.', why: 'Abstract language is generic and forgettable.', how: ['Ask "can I replace this with a number, a name, or a picture?"'], exampleWeak: 'We significantly improved response times.', exampleStrong: 'We cut response time from 48 hours to 4.', bestFor: 'Resumes, interviews, pitches.' },
-          { id: 'contrast-frame', title: 'The Contrast Frame', hook: '"Before X, we had Y. Now we have Z."', brief: 'Contrast creates a mental hook flat description doesn\'t.', what: 'Frame any claim as a before/after or with-without contrast.', why: 'Contrast is a stronger memory cue than a standalone fact.', how: ['Ask "what was true before this, that isn\'t true now?"'], exampleWeak: 'We have a fast onboarding process now.', exampleStrong: 'Onboarding used to take 2 weeks. Now it takes 2 days.', bestFor: 'Interview answers about achievements, pitches.' },
-        ]
-      },
-      expression: {
-        label: 'Expression',
-        icon: 'mic',
-        techniques: [
-          { id: 'pause-land', title: 'Pause-and-Land', hook: 'A deliberate 1–2 second pause after your key line.', brief: 'Silence signals importance. Most people fill every gap.', what: 'After your key point, stop talking for 1–2 seconds.', why: 'Continuous speech reads as equal-weight — everything sounds equally important, so nothing does.', how: ['Identify your key sentence. After saying it, count to two before moving on.'], exampleWeak: 'Rushing past the key sentence straight into the next detail.', exampleStrong: 'Delivering the key sentence, then a 2-second silence, then the next thought.', bestFor: 'Presentations, key moments in interviews.' },
-          { id: 'vocal-variety', title: 'Vocal Variety (Pace / Pitch / Pause)', hook: 'How it\'s said changes how it lands.', brief: 'Monotone delivery kills even good structure.', what: 'Vary pace, pitch, and pause.', why: 'Monotone delivery is processed as low-effort or low-confidence.', how: ['Slow down for your most important line.', 'Speed up through less critical detail.', 'Let pitch rise on emphasis.'], exampleWeak: 'Entire answer at the same speed and pitch.', exampleStrong: 'Slower, lower-register delivery for the key point; faster, lighter for context.', bestFor: 'Any spoken delivery.' },
-          { id: 'anaphora', title: 'Anaphora (Rule of Repetition)', hook: 'Repeat a phrase at the start of successive points.', brief: '"We need clarity. We need ownership. We need speed."', what: 'Repeat the same opening phrase across a sequence of points.', why: 'Combines the Rule of Three with rhythmic repetition.', how: ['Take your 3 main points and share a common opening phrase.'], exampleWeak: 'Three things: one, we need to be clearer. Two, ownership...', exampleStrong: 'This plan is faster. This plan is cheaper. This plan is ready to go today.', bestFor: 'Closing lines in pitches.' },
-        ]
-      },
-      connection: {
-        label: 'Connection',
-        icon: 'users',
-        techniques: [
-          { id: 'star', title: 'STAR Method', hook: 'Situation → Task → Action → Result.', brief: 'The interview gold standard for turning experience into a compelling story.', what: 'Situation → Task → Action → Result.', why: 'It gives raw experience a narrative arc.', how: ['Situation: brief context.', 'Task: the challenge.', 'Action: what YOU did.', 'Result: the outcome, ideally a number.'], exampleWeak: 'I have 5 years of experience in project management...', exampleStrong: 'At Dr. Reddy\'s, our OPD platform launch was slipping. I brought 5 teams into a weekly sync and cut the critical path by 3 weeks. We launched on time and hit 4x our adoption target.', bestFor: 'Behavioral interview answers.' },
-          { id: 'pso', title: 'PSO Framework', hook: 'Problem → Solution → Outcome.', brief: 'The lean version of STAR.', what: 'Problem → Solution → Outcome.', why: 'Faster than STAR — status updates, pitches, quick answers.', how: ['One sentence each.'], exampleWeak: 'We had a lot of issues, so I did a bunch of things...', exampleStrong: 'Our onboarding drop-off was 60%. I redesigned the first-run flow to a single screen. Drop-off fell to 15%.', bestFor: 'Status updates, resume bullets.' },
-          { id: 'point-story-point', title: 'Point-Story-Point', hook: 'Takeaway, story, takeaway again.', brief: 'Toastmasters\' classic structure for persuasive speaking.', what: 'Point → Story → Point.', why: 'Stories create emotional engagement that flat statements can\'t.', how: ['State your point.', 'Tell a 30–60 second story.', 'Restate the point in slightly different phrasing.'], exampleWeak: 'A great story with no framing.', exampleStrong: 'State "Great hiring is about conviction, not consensus." Tell the story. Close: "That\'s why I don\'t wait for consensus."', bestFor: 'Speeches, motivational moments.' },
-        ]
-      }
+
+    const OB_INDUSTRIES = [
+      { value: 'it_software',       label: 'IT / Software / SaaS' },
+      { value: 'bpo_services',      label: 'BPO / Customer Services' },
+      { value: 'bfsi',              label: 'Banking / Financial Services / Insurance' },
+      { value: 'consulting',        label: 'Consulting / Advisory' },
+      { value: 'manufacturing',     label: 'Manufacturing / Industrial' },
+      { value: 'retail_ecommerce',  label: 'Retail / E-commerce / D2C' },
+      { value: 'healthcare',        label: 'Healthcare / Pharma / Life Sciences' },
+      { value: 'education',         label: 'Education / EdTech' },
+      { value: 'media_design',      label: 'Media / Design / Content' },
+      { value: 'energy_infra',      label: 'Energy / Infrastructure / Real Estate' },
+      { value: 'government_psu',    label: 'Government / Public Sector / PSU' },
+      { value: 'startup',           label: 'Startups / Early-stage' },
+      { value: 'other',             label: 'Other' },
+    ];
+
+    const OB_ROLE_FAMILIES = [
+      { value: 'technology',            label: 'Technology' },
+      { value: 'product_and_program',   label: 'Product & Program Management' },
+      { value: 'sales_and_bd',          label: 'Sales & Business Development' },
+      { value: 'operations',            label: 'Operations' },
+      { value: 'marketing_and_growth',  label: 'Marketing & Growth' },
+      { value: 'finance_and_accounting',label: 'Finance & Accounting' },
+      { value: 'hr_and_people',         label: 'HR & People' },
+      { value: 'customer_success',      label: 'Customer Success & Support' },
+      { value: 'consulting',            label: 'Consulting' },
+      { value: 'healthcare_life_sci',   label: 'Healthcare & Life Sciences' },
+      { value: 'bfsi',                  label: 'Banking, Financial Services & Insurance (BFSI)' },
+      { value: 'design',                label: 'Design' },
+    ];
+
+    const OB_ROLES_BY_FAMILY = {
+      technology: [
+        { value: 'software_engineer',      label: 'Software Engineer' },
+        { value: 'data_analyst',           label: 'Data Analyst' },
+        { value: 'data_scientist_ml',      label: 'Data Scientist / ML Engineer' },
+        { value: 'qa_test_engineer',       label: 'QA / Test Engineer' },
+        { value: 'devops_sre_engineer',    label: 'DevOps / SRE Engineer' },
+        { value: 'it_support_systems',     label: 'IT Support / Systems Engineer' },
+      ],
+      product_and_program: [
+        { value: 'product_manager',        label: 'Product Manager' },
+        { value: 'program_manager',        label: 'Program Manager' },
+        { value: 'project_manager',        label: 'Project Manager' },
+        { value: 'business_analyst',       label: 'Business Analyst' },
+      ],
+      sales_and_bd: [
+        { value: 'bd_executive',           label: 'Business Development Executive/Associate' },
+        { value: 'account_executive',      label: 'Account Executive' },
+        { value: 'sales_manager',          label: 'Sales Manager' },
+        { value: 'inside_sales_rep',       label: 'Inside Sales Representative' },
+      ],
+      operations: [
+        { value: 'operations_executive',   label: 'Operations Executive/Analyst' },
+        { value: 'supply_chain_logistics', label: 'Supply Chain / Logistics Executive' },
+        { value: 'operations_manager',     label: 'Operations Manager' },
+        { value: 'process_quality_analyst',label: 'Process / Quality Analyst' },
+      ],
+      marketing_and_growth: [
+        { value: 'marketing_executive',    label: 'Marketing Executive' },
+        { value: 'digital_marketing_growth',label: 'Digital Marketing / Growth Associate' },
+        { value: 'content_marketing',      label: 'Content Marketing Specialist' },
+        { value: 'brand_manager',          label: 'Brand Manager' },
+      ],
+      finance_and_accounting: [
+        { value: 'financial_analyst',      label: 'Financial Analyst' },
+        { value: 'accountant',             label: 'Accountant' },
+        { value: 'finance_manager',        label: 'Finance Manager' },
+        { value: 'investment_equity_analyst',label: 'Investment / Equity Analyst' },
+      ],
+      hr_and_people: [
+        { value: 'hr_generalist_hrbp',     label: 'HR Generalist / HRBP' },
+        { value: 'talent_acquisition',     label: 'Talent Acquisition / Recruiter' },
+        { value: 'hr_operations',          label: 'HR Operations Executive' },
+        { value: 'ld_specialist',          label: 'L&D Specialist' },
+      ],
+      customer_success: [
+        { value: 'customer_support',       label: 'Customer Support Executive' },
+        { value: 'customer_success_manager',label: 'Customer Success Manager' },
+        { value: 'technical_support',      label: 'Technical Support Engineer' },
+      ],
+      consulting: [
+        { value: 'management_consultant',  label: 'Business / Management Consultant (Analyst level)' },
+        { value: 'strategy_consultant',    label: 'Strategy Consultant' },
+      ],
+      healthcare_life_sci: [
+        { value: 'healthcare_ops_manager', label: 'Healthcare Operations / Program Manager' },
+        { value: 'clinical_medical_affairs',label: 'Clinical / Medical Affairs Associate' },
+        { value: 'pharma_sales_marketing', label: 'Pharma Sales / Marketing Executive' },
+      ],
+      bfsi: [
+        { value: 'relationship_manager',   label: 'Relationship Manager' },
+        { value: 'credit_risk_analyst',    label: 'Credit / Risk Analyst' },
+        { value: 'branch_operations',      label: 'Branch Operations Executive' },
+        { value: 'insurance_sales_advisory',label: 'Insurance Sales / Advisory' },
+      ],
+      design: [
+        { value: 'ux_product_designer',    label: 'UX / Product Designer' },
+        { value: 'graphic_visual_designer',label: 'Graphic / Visual Designer' },
+        { value: 'ux_researcher',          label: 'UX Researcher' },
+      ],
     };
 
+    const OB_CAREER_STAGES = [
+      { value: 'student',    label: 'Student' },
+      { value: 'fresher',    label: 'Fresher (0–1 year)' },
+      { value: 'early',      label: 'Early career (1–5 years)' },
+      { value: 'mid',        label: 'Mid career (6–12 years)' },
+      { value: 'senior',     label: 'Senior (13–20 years)' },
+      { value: 'leadership', label: 'Leadership (20+ years)' },
+    ];
+
+    const OB_TRACKS = [
+      { value: 'ic',        label: 'Individual Contributor' },
+      { value: 'manager',   label: 'Manager' },
+      { value: 'leader',    label: 'Senior Leader' },
+      { value: 'executive', label: 'Executive' },
+    ];
+
     // ============================================================
-    // COMMUNICATION DRILLS
+    // LEARNING BITES + DRILLS (static)
     // ============================================================
+    const BITES_LIBRARY = {
+      structure: { label: 'Structure', icon: 'layout-grid', techniques: [
+        { id: 'pyramid', title: 'The Pyramid Principle', hook: 'Lead with the answer. Support it with three reasons.', brief: 'Start with the conclusion, then back it with 2–3 supporting arguments.', what: 'Answer → Reasons → Evidence.', why: 'Listeners decide in 10 seconds whether to keep listening.', how: ['State your conclusion in one sentence.','Give 2–3 reasons.','For each reason, give one piece of evidence.'], exampleWeak: 'So we ran the numbers, looked at three vendors...', exampleStrong: 'I recommend Vendor B. Two reasons: cheaper and faster support.', bestFor: 'Status updates, recommendations.' },
+        { id: 'scqa', title: 'SCQA', hook: 'Frame why this matters, then say what to do.', brief: 'Situation → Complication → Question → Answer.', what: 'Set the scene, introduce the problem, pose the question, answer.', why: 'Builds shared context before the punchline.', how: ['Situation: neutral context.','Complication: what changed.','Question: the natural question.','Answer: your point.'], exampleWeak: 'We should switch vendors.', exampleStrong: 'We have used Vendor A for 2 years. Costs went up 20%. Renew or switch? I recommend switch.', bestFor: 'Pitches, proposals, updates.' },
+        { id: 'mece', title: 'MECE', hook: 'Points that don\'t overlap, and don\'t leave gaps.', brief: 'A structuring test for airtight lists.', what: 'Mutually Exclusive, Collectively Exhaustive.', why: 'Overlap or gaps make answers feel scattered.', how: ['Sketch points. Could two merge? Is anything missing?'], exampleWeak: 'Three factors: Cost, Budget, Vendor pricing.', exampleStrong: 'Three factors: Cost, Timeline, Quality.', bestFor: 'Prepping multi-point answers.' },
+        { id: 'rule-of-three', title: 'Rule of Three', hook: 'Group your points into threes.', brief: 'Triads are most memorable.', what: 'Present supporting points in threes.', why: 'Short-term recall is strongest for groups of three.', how: ['Compress to your best 3.'], exampleWeak: 'Seven reasons: first...', exampleStrong: 'Three reasons. Speed. Cost. Trust.', bestFor: 'Any spoken answer with multiple points.' },
+      ]},
+      thinking: { label: 'Thinking', icon: 'brain', techniques: [
+        { id: 'one-breath', title: 'The One-Breath Rule', hook: 'If you can\'t say it in one breath, you haven\'t found it yet.', brief: 'State your core point in a single sentence first.', what: 'One sentence, under ~15 words.', why: 'Rambling is a thinking problem.', how: ['Ask: "what\'s the one sentence I\'d text this as?"'], exampleWeak: 'So there are a few things going on...', exampleStrong: 'We should delay the launch by two weeks. Here\'s why.', bestFor: 'Pre-speaking habit.' },
+        { id: 'elevator', title: 'The Elevator Test', hook: 'Compress any answer to 15 seconds.', brief: 'Force the core into 15 seconds.', what: 'Practice compression.', why: 'Trains you to identify the core.', how: ['Record yourself in 15 seconds.'], exampleWeak: 'A 2-min answer that never states the core.', exampleStrong: 'A 2-min answer whose opener is the 15-sec version.', bestFor: 'Interview prep, pitch practice.' },
+      ]},
+      impact: { label: 'Impact', icon: 'target', techniques: [
+        { id: 'bluf', title: 'BLUF', hook: 'State the outcome or ask before the context.', brief: 'Bottom Line Up Front.', what: 'Open with the single most important sentence.', why: 'Executives optimize for "what do I decide."', how: ['First sentence = bottom line.'], exampleWeak: 'So the vendor had some delays...', exampleStrong: 'I need approval to extend the deadline by 1 week — vendor delay pushed testing.', bestFor: 'Emails, status updates.' },
+        { id: 'signal-sandwich', title: 'Signal Sandwich', hook: 'Headline → detail → headline.', brief: 'Say the takeaway, explain, restate.', what: 'Takeaway, detail, restate takeaway.', why: 'Primacy/recency effect.', how: ['Add a closing sentence repeating your point.'], exampleWeak: 'Open with the point, trail off on a detail.', exampleStrong: 'Open with the point, explain, close with the point again.', bestFor: 'Any answer > 30s.' },
+        { id: 'specificity', title: 'Specificity Over Abstraction', hook: 'Swap vague claims for concrete numbers.', brief: 'Precision is memorable.', what: 'Replace abstract claims with numbers/names/images.', why: 'Abstract language is forgettable.', how: ['Ask "can I add a number, a name, or a picture?"'], exampleWeak: 'We significantly improved response times.', exampleStrong: 'We cut response time from 48 hours to 4.', bestFor: 'Resumes, interviews, pitches.' },
+        { id: 'contrast-frame', title: 'The Contrast Frame', hook: '"Before X, we had Y. Now we have Z."', brief: 'Before/after framing.', what: 'Frame claims as contrast.', why: 'Contrast is a stronger memory cue.', how: ['Ask: "what was true before this, that isn\'t true now?"'], exampleWeak: 'We have a fast onboarding process now.', exampleStrong: 'Onboarding used to take 2 weeks. Now it takes 2 days.', bestFor: 'Interview answers about achievements, pitches.' },
+      ]},
+      expression: { label: 'Expression', icon: 'mic', techniques: [
+        { id: 'pause-land', title: 'Pause-and-Land', hook: 'A deliberate 1–2 second pause after your key line.', brief: 'Silence signals importance.', what: 'Pause after your key point.', why: 'Continuous speech = equal weight.', how: ['Count to two in your head before moving on.'], exampleWeak: 'Rushing past the key sentence.', exampleStrong: 'Key sentence, then a 2-second silence.', bestFor: 'Presentations, key moments.' },
+        { id: 'vocal-variety', title: 'Vocal Variety', hook: 'How it\'s said changes how it lands.', brief: 'Vary pace, pitch, pause.', what: 'Vary three vocal levers.', why: 'Monotone = low-confidence.', how: ['Slow down for your most important line.','Speed up through detail.','Let pitch rise on emphasis.'], exampleWeak: 'Same speed and pitch throughout.', exampleStrong: 'Slower, lower for the key point; faster, lighter for context.', bestFor: 'Any spoken delivery.' },
+        { id: 'anaphora', title: 'Anaphora', hook: 'Repeat a phrase at the start of successive points.', brief: 'Rhythmic repetition.', what: 'Same opening phrase across points.', why: 'Combines Rule of Three with rhythm.', how: ['Find a common opening phrase for your 3 points.'], exampleWeak: 'Three things: one... two... three...', exampleStrong: 'This plan is faster. This plan is cheaper. This plan is ready.', bestFor: 'Closing lines in pitches.' },
+      ]},
+      connection: { label: 'Connection', icon: 'users', techniques: [
+        { id: 'star', title: 'STAR Method', hook: 'Situation → Task → Action → Result.', brief: 'Interview gold standard for stories.', what: 'Situation, Task, Action, Result.', why: 'Gives raw experience a narrative arc.', how: ['Situation: brief.','Task: the challenge.','Action: what YOU did.','Result: with a number.'], exampleWeak: 'I have 5 years of experience in PM...', exampleStrong: 'At Dr. Reddy\'s, our OPD launch was slipping. I brought 5 teams into a weekly sync and cut the critical path by 3 weeks. We launched on time and hit 4x adoption.', bestFor: 'Behavioral answers.' },
+        { id: 'pso', title: 'PSO Framework', hook: 'Problem → Solution → Outcome.', brief: 'Lean STAR.', what: 'Problem, Solution, Outcome.', why: 'Faster than STAR.', how: ['One sentence each.'], exampleWeak: 'We had a lot of issues...', exampleStrong: 'Onboarding drop-off was 60%. I redesigned the first-run flow. Drop-off fell to 15%.', bestFor: 'Status updates, resume bullets.' },
+        { id: 'point-story-point', title: 'Point-Story-Point', hook: 'Takeaway, story, takeaway again.', brief: 'Toastmasters classic structure.', what: 'Point → Story → Point.', why: 'Stories create emotional engagement.', how: ['Point.','30–60s story.','Restate the point.'], exampleWeak: 'A great story with no framing.', exampleStrong: 'State point. Tell story. Close: "That\'s why I don\'t wait for consensus."', bestFor: 'Speeches, motivational moments.' },
+      ]},
+    };
+
     const DRILLS_LIBRARY = [
       { category: 'Rambling Reduction', icon: 'scissors', drills: [
         { id: 'headline', title: 'Headline Drill', desc: 'State your main point in one sentence — before you say anything else. Under 15 words.', activity: 'Headline Drill' },
@@ -1297,7 +955,7 @@ const OB_TRACKS = [
       questions: { q1: null, q2: null }
     };
     let CACHED_BANK = {};
-    let OB = { years: null, industry: null, role: null, team: null, level: null };
+    let OB = { industry: null, family: null, role: null, stage: null, track: null };
     let activeBitesCategory = 'structure';
     let SCENARIOS_CACHE = null;
     let CUSTOMIZE_TARGET = null;
@@ -1319,22 +977,12 @@ const OB_TRACKS = [
           if (counter) counter.textContent = String(e.target.value.length);
         });
       }
-
       const modal = document.getElementById('usModal');
-      if (modal) {
-        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-      }
-
+      if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
       const custModal = document.getElementById('customizeModal');
-      if (custModal) {
-        custModal.addEventListener('click', (e) => { if (e.target === custModal) closeCustomizeModal(); });
-      }
-
+      if (custModal) custModal.addEventListener('click', (e) => { if (e.target === custModal) closeCustomizeModal(); });
       const focusConfirm = document.getElementById('focusConfirmModal');
-      if (focusConfirm) {
-        focusConfirm.addEventListener('click', (e) => { if (e.target === focusConfirm) closeFocusConfirm(); });
-      }
-
+      if (focusConfirm) focusConfirm.addEventListener('click', (e) => { if (e.target === focusConfirm) closeFocusConfirm(); });
       document.addEventListener('click', (e) => {
         const sidebar = document.getElementById('appSidebar');
         const toggle = e.target.closest('.menu-toggle');
@@ -1347,28 +995,24 @@ const OB_TRACKS = [
       const params = new URLSearchParams(window.location.search);
       SESSION_TOKEN = params.get('session');
       if (SESSION_TOKEN) window.history.replaceState({}, '', window.location.pathname);
-
       if (SESSION_TOKEN) {
         try { localStorage.setItem('unspoken_paid_session', SESSION_TOKEN); } catch (e) {}
         const ok = await verifyPaidSession(SESSION_TOKEN);
         if (ok) return;
       }
-
       const cached = localStorage.getItem('unspoken_paid_session');
       if (cached) {
         SESSION_TOKEN = cached;
         const ok = await verifyPaidSession(cached);
         if (ok) return;
       }
-
       showLoginScreen();
     }
 
     async function verifyPaidSession(token) {
       try {
         const res = await fetch(`${BACKEND_URL}/api/checkout/verify-session`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}` }
+          method: 'POST', headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) return false;
         const data = await res.json();
@@ -1380,10 +1024,7 @@ const OB_TRACKS = [
         renderAll();
         startStatsRefresh();
         return true;
-      } catch (e) {
-        console.warn('verifyPaidSession failed:', e);
-        return false;
-      }
+      } catch (e) { console.warn('verifyPaidSession failed:', e); return false; }
     }
 
     function buildPaidUser(data) {
@@ -1397,16 +1038,13 @@ const OB_TRACKS = [
         total_days: data.total_days || 28,
         enrolled_at: data.enrolled_at || data.created_at || new Date().toISOString(),
         is_paid: true,
-        years_experience: data.years_experience || null,
         target_industry: data.target_industry || null,
-        target_role: data.target_role || null,
-        team_family: data.team_family || null,
-        ic_or_manager: data.ic_or_manager || null,
+        role_family: data.role_family || null,
+        role: data.role || null,
+        career_stage: data.career_stage || null,
+        track: data.track || null,
         profile_completed: !!data.profile_completed,
-        stats: {
-          current_streak: 0, longest_streak: 0, completed_tasks: 0,
-          total_tasks: 0, achievements_unlocked: 0, achievements_total: 5
-        }
+        stats: { current_streak: 0, longest_streak: 0, completed_tasks: 0, total_tasks: 0, achievements_unlocked: 0, achievements_total: 5 }
       };
     }
 
@@ -1417,7 +1055,6 @@ const OB_TRACKS = [
       const diffDays = Math.floor((now - start) / 86400000) + 1;
       return Math.max(1, Math.min(diffDays, totalDays));
     }
-
     function formatEnrolledDate(enrolledAt) {
       if (!enrolledAt) return '—';
       return new Date(enrolledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -1472,17 +1109,11 @@ const OB_TRACKS = [
           </div>
           <div id="loginStep2" class="hidden">
             <label for="loginOtp">6-digit code</label>
-            <input type="tel" inputmode="numeric" maxlength="6" id="loginOtp" placeholder="000000"
-                   style="font-size:24px;letter-spacing:12px;text-align:center;font-weight:700;font-family:'SF Mono',Menlo,monospace;"
-                   onkeydown="if(event.key==='Enter')verifyLoginOtp()" />
+            <input type="tel" inputmode="numeric" maxlength="6" id="loginOtp" placeholder="000000" style="font-size:24px;letter-spacing:12px;text-align:center;font-weight:700;font-family:'SF Mono',Menlo,monospace;" onkeydown="if(event.key==='Enter')verifyLoginOtp()" />
             <button class="lb-submit" id="loginVerifyBtn" onclick="verifyLoginOtp()">Sign In →</button>
-            <p style="margin-top:14px;text-align:center;font-size:12px;color:var(--text-muted);">
-              Didn't get it? <a href="javascript:void(0)" onclick="requestLoginOtp(true)">Resend code</a>
-            </p>
+            <p style="margin-top:14px;text-align:center;font-size:12px;color:var(--text-muted);">Didn't get it? <a href="javascript:void(0)" onclick="requestLoginOtp(true)">Resend code</a></p>
           </div>
-          <p class="lb-footer">
-            Don't have an account? <a href="${PAYWALL_URL}">Explore Plans →</a>
-          </p>
+          <p class="lb-footer">Don't have an account? <a href="${PAYWALL_URL}">Explore Plans →</a></p>
         </div>
       `;
       boot.classList.remove('hidden');
@@ -1551,9 +1182,7 @@ const OB_TRACKS = [
       const sprint = USER.track_id || 'interview';
       const day = USER.current_day || 1;
       const cacheKey = `${sprint}-${day}`;
-
       if (loadQuestionsCache()) return;
-
       let questions = CACHED_BANK[cacheKey];
       if (!questions) {
         try {
@@ -1567,17 +1196,11 @@ const OB_TRACKS = [
           }
         } catch (e) { console.warn('loadQuestionsForToday failed:', e); }
       }
-      if (!questions || !questions.length) {
-        questions = FALLBACK_QUESTIONS;
-        CACHED_BANK[cacheKey] = questions;
-      }
-
+      if (!questions || !questions.length) { questions = FALLBACK_QUESTIONS; CACHED_BANK[cacheKey] = questions; }
       const q1 = questions[0];
       const q2 = questions[1] || questions[0];
-
       state.questions.q1 = { id: q1.id || null, text: q1.text, focus: q1.focus, target_seconds: q1.target_seconds, difficulty: q1.difficulty, custom: false, source: 'bank' };
       state.questions.q2 = { id: q2.id || null, text: q2.text, focus: q2.focus, target_seconds: q2.target_seconds, difficulty: q2.difficulty, custom: false, source: 'bank' };
-
       saveQuestionsCache();
     }
 
@@ -1587,7 +1210,6 @@ const OB_TRACKS = [
         localStorage.setItem(key, JSON.stringify(state.questions));
       } catch (e) {}
     }
-
     function loadQuestionsCache() {
       try {
         const key = `unspoken_questions_${USER.email}_${new Date().toISOString().slice(0, 10)}`;
@@ -1621,59 +1243,49 @@ const OB_TRACKS = [
     function renderHeader() {
       const s = USER.stats;
       const enrolledStr = formatEnrolledDate(USER.enrolled_at);
-
       document.getElementById('userNameEl').textContent = USER.name;
       document.getElementById('userAvatarEl').textContent = (USER.name || 'A').charAt(0).toUpperCase();
       document.getElementById('userRoleEl').textContent = USER.email;
       document.getElementById('planBadge').textContent = PLAN_LABEL[USER.plan] || 'Member';
-
       document.getElementById('headerPlan').textContent = PLAN_LABEL[USER.plan] || '—';
       document.getElementById('headerDay').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
       const isPass = (USER.plan || '').toLowerCase() === 'pass';
-document.getElementById('headerTrackBadge').textContent = isPass
-  ? (PLAN_LABEL[USER.plan] || '')
-  : `${formatSprint(USER.track_id)} · ${PLAN_LABEL[USER.plan] || ''}`;
+      document.getElementById('headerTrackBadge').textContent = isPass
+        ? (PLAN_LABEL[USER.plan] || '')
+        : `${formatSprint(USER.track_id)} · ${PLAN_LABEL[USER.plan] || ''}`;
       document.getElementById('headerStreak').textContent = `${s.current_streak} day${s.current_streak === 1 ? '' : 's'}`;
       document.getElementById('headerCompleted').textContent = `${s.completed_tasks} Task${s.completed_tasks === 1 ? '' : 's'}`;
       document.getElementById('headerAchievements').textContent = `${s.achievements_unlocked} Badge${s.achievements_unlocked === 1 ? '' : 's'}`;
-
-      document.getElementById('todayTrackTitle').textContent = isPass
-  ? 'Today\'s Practice'
-  : `${formatSprint(USER.track_id)} Sprint`;
+      document.getElementById('todayTrackTitle').textContent = isPass ? 'Today\'s Practice' : `${formatSprint(USER.track_id)} Sprint`;
       document.getElementById('todayFocus').textContent = `Day ${USER.current_day} of ${USER.total_days} · Enrolled ${enrolledStr} · 2 questions · 2 trials each`;
       document.getElementById('dayCounter').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
-
       const streakEl = document.getElementById('todayStreak');
       if (streakEl) {
         const span = streakEl.querySelector('span');
         if (span) span.textContent = `${s.current_streak} day streak · longest ${s.longest_streak}`;
       }
-
       const pct = Math.min(100, (USER.current_day / USER.total_days) * 100);
       document.getElementById('dayProgressFill').style.width = pct + '%';
     }
 
     function renderProfile() {
-  const isPass = (USER.plan || '').toLowerCase() === 'pass';
-
-  // Hide the Sprint row entirely for Pass users — the concept doesn't apply.
-  const sprintRow = document.getElementById('profileSprintRow');
-  if (sprintRow) sprintRow.classList.toggle('hidden', isPass);
-
-  const setText = (id, value, muted = false) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = value || '—';
-    el.classList.toggle('muted', muted || !value);
-  };
-
+      const isPass = (USER.plan || '').toLowerCase() === 'pass';
+      const sprintRow = document.getElementById('profileSprintRow');
+      if (sprintRow) sprintRow.classList.toggle('hidden', isPass);
+      const setText = (id, value, muted = false) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = value || '—';
+        el.classList.toggle('muted', muted || !value);
+      };
       setText('profileNameText', USER.name);
       setText('profilePlanText', PLAN_LABEL[USER.plan] || USER.plan || '—');
       setText('profileSprintText', USER.track_id ? formatSprint(USER.track_id) : '—');
-      setText('profileTeamText', formatTeamFamily(USER.team_family));
-      setText('profileRoleText', formatRole(USER.target_role, USER.target_industry));
-      setText('profileLevelText', formatLevel(USER.ic_or_manager));
-      setText('profileStageText', formatYears(USER.years_experience));
+      setText('profileIndustryText', formatIndustry(USER.target_industry));
+      setText('profileFamilyText', formatRoleFamily(USER.role_family));
+      setText('profileRoleText', formatRole(USER.role, USER.role_family));
+      setText('profileStageText', formatCareerStage(USER.career_stage));
+      setText('profileTrackText', formatTrack(USER.track));
       setText('profileEnrolledText', formatEnrolledDate(USER.enrolled_at));
     }
 
@@ -1681,43 +1293,37 @@ document.getElementById('headerTrackBadge').textContent = isPass
       const section = document.getElementById('focusSwitcher');
       const lockBadge = document.getElementById('profileLockBadge');
       if (!section) return;
-
-      const plan = (USER.plan || '').toLowerCase();
-      const isPass = plan === 'pass';
-
+      const isPass = (USER.plan || '').toLowerCase() === 'pass';
       section.classList.toggle('hidden', !isPass);
       if (lockBadge) lockBadge.classList.toggle('hidden', isPass);
       if (!isPass) return;
-
-      document.getElementById('focusTeam').innerHTML = OB_TEAMS.map(t =>
-        `<option value="${t.value}" ${t.value === USER.team_family ? 'selected' : ''}>${escapeHtml(t.label)}</option>`
+      document.getElementById('focusRoleFamily').innerHTML = OB_ROLE_FAMILIES.map(f =>
+        `<option value="${f.value}" ${f.value === USER.role_family ? 'selected' : ''}>${escapeHtml(f.label)}</option>`
       ).join('');
-
-      document.getElementById('focusLevel').innerHTML = OB_LEVELS.map(l =>
-        `<option value="${l.value}" ${l.value === USER.ic_or_manager ? 'selected' : ''}>${escapeHtml(l.label)}</option>`
-      ).join('');
-
-      document.getElementById('focusStage').innerHTML = OB_YEARS.map(y =>
-        `<option value="${y.value}" ${y.value === USER.years_experience ? 'selected' : ''}>${escapeHtml(y.label)}</option>`
-      ).join('');
-
       renderFocusRoleOptions();
+      document.getElementById('focusCareerStage').innerHTML = OB_CAREER_STAGES.map(c =>
+        `<option value="${c.value}" ${c.value === USER.career_stage ? 'selected' : ''}>${escapeHtml(c.label)}</option>`
+      ).join('');
+      document.getElementById('focusTrack').innerHTML = OB_TRACKS.map(t =>
+        `<option value="${t.value}" ${t.value === USER.track ? 'selected' : ''}>${escapeHtml(t.label)}</option>`
+      ).join('');
     }
+
+    function onFocusFamilyChange() { renderFocusRoleOptions(); }
 
     function renderFocusRoleOptions() {
       const roleSel = document.getElementById('focusRole');
       if (!roleSel) return;
-      const industry = USER.target_industry || 'other';
-      const roles = OB_ROLES_BY_INDUSTRY[industry] || OB_ROLES_BY_INDUSTRY['other'];
+      const family = document.getElementById('focusRoleFamily').value;
+      const roles = OB_ROLES_BY_FAMILY[family] || [];
       roleSel.innerHTML = roles.map(r =>
-        `<option value="${r.value}" ${r.value === USER.target_role ? 'selected' : ''}>${escapeHtml(r.label)}</option>`
+        `<option value="${r.value}" ${r.value === USER.role ? 'selected' : ''}>${escapeHtml(r.label)}</option>`
       ).join('');
     }
 
     function renderQuestionCards() {
       const q1 = state.questions.q1;
       const q2 = state.questions.q2;
-
       if (q1) {
         const badge = q1.custom ? '<span class="qc-custom-badge">Custom</span>' : '';
         document.getElementById('q1Text').innerHTML = `"${escapeHtml(q1.text)}"${badge}`;
@@ -1734,7 +1340,6 @@ document.getElementById('headerTrackBadge').textContent = isPass
       }
       document.getElementById('q1Label').textContent = `Q1 of 2 · Day ${USER.current_day}`;
       document.getElementById('q2Label').textContent = `Q2 of 2 · Day ${USER.current_day}`;
-
       updateQuestionCard('q1');
       updateQuestionCard('q2');
       renderIcons();
@@ -1744,27 +1349,20 @@ document.getElementById('headerTrackBadge').textContent = isPass
       const trials = which === 'q1' ? state.q1Trials : state.q2Trials;
       const valid = trials.filter(x => x.fillerDiscipline != null);
       const best = valid.length ? Math.max(...valid.map(x => x.fillerDiscipline)) : null;
-
       document.getElementById(`${which}RepCount`).innerHTML = `${trials.length} <span class="rt-cap">/ ${CAP_PER_QUESTION}</span>`;
       document.getElementById(`${which}BestSnr`).textContent = best != null ? `Best filler discipline: ${best}%` : 'Best score: —';
-
       const btn = document.getElementById(`${which}RepBtn`);
       const capReached = trials.length >= CAP_PER_QUESTION;
       btn.innerHTML = capReached ? `<i data-lucide="check"></i> Cap reached` : `<i data-lucide="mic"></i> Start Trial ${trials.length + 1}`;
       btn.disabled = capReached;
       btn.onclick = () => { if (!capReached) startRep(which); };
-
       document.getElementById(`${which}RepsLog`).innerHTML = trials.map((tr, i) => `
-        <div class="rep-log-item">
-          <span>Trial ${i + 1}</span>
-          <span class="rl-score">${tr.transcript ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"` : '—'}</span>
-        </div>
+        <div class="rep-log-item"><span>Trial ${i + 1}</span><span class="rl-score">${tr.transcript ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"` : '—'}</span></div>
       `).join('');
       renderIcons();
     }
 
     function renderTodayProgress() {
-      const total = state.q1Trials.length + state.q2Trials.length;
       const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
       document.getElementById('dayProgressFill').style.width = `${(drills / 2) * 100}%`;
     }
@@ -1804,11 +1402,9 @@ document.getElementById('headerTrackBadge').textContent = isPass
       const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
       const latest = allReps.length ? allReps[allReps.length - 1] : null;
       const m = latest && latest.full ? normalizeAnalysis(latest.full) : null;
-
       document.getElementById('dashSubtitle').textContent = allReps.length
         ? `Pattern & performance based on ${allReps.length} rep${allReps.length === 1 ? '' : 's'}`
         : 'Complete a rep to unlock your pattern analysis';
-
       const patternName = (m && m.patternName) ? m.patternName : 'Your Pattern';
       const patternDesc = (m && m.patternDesc) ? m.patternDesc : 'Complete a rep to see your communication pattern.';
       const gotLost = [
@@ -1818,11 +1414,9 @@ document.getElementById('headerTrackBadge').textContent = isPass
       const wins = (m && m.oneThingToChange)
         ? [m.oneThingToChange, 'Front-load your result', 'Add a clear structure marker']
         : ['Lead with the point', 'Cut filler words', 'Add a clear structure marker'];
-
       const execHtml = (m && m.executiveVersion)
         ? `<div class="ya-executive">"${escapeHtml(m.executiveVersion)}"</div>`
         : `<div class="ya-executive" style="font-style:normal;color:var(--text-muted);">Your executive version will appear here once you complete a rep.</div>`;
-
       document.getElementById('yourAnalysisCard').innerHTML = `
         <div class="ya-header">
           <span class="ya-badge"><i data-lucide="sparkles"></i> YOUR PATTERN</span>
@@ -1834,32 +1428,16 @@ document.getElementById('headerTrackBadge').textContent = isPass
           <div class="ya-pattern-desc-hero">${escapeHtml(patternDesc)}</div>
         </div>
         <div class="ya-grid">
-          <div class="ya-box">
-            <div class="ya-box-label">What Got Lost</div>
-            <ul class="ya-list">${gotLost.map(g => `<li>${escapeHtml(g)}</li>`).join('')}</ul>
-          </div>
-          <div class="ya-box">
-            <div class="ya-box-label">Quick Wins</div>
-            <ul class="ya-list wins">${wins.map(w => `<li>${escapeHtml(w)}</li>`).join('')}</ul>
-          </div>
-          <div class="ya-box">
-            <div class="ya-box-label">What You Said</div>
-            <div class="ya-transcript">${(m && m.transcript) ? escapeHtml(m.transcript) : '<span class="ya-transcript-empty">Complete a rep to see your transcript here.</span>'}</div>
-          </div>
-          <div class="ya-box">
-            <div class="ya-box-label">Your Executive Version</div>
-            ${execHtml}
-          </div>
+          <div class="ya-box"><div class="ya-box-label">What Got Lost</div><ul class="ya-list">${gotLost.map(g => `<li>${escapeHtml(g)}</li>`).join('')}</ul></div>
+          <div class="ya-box"><div class="ya-box-label">Quick Wins</div><ul class="ya-list wins">${wins.map(w => `<li>${escapeHtml(w)}</li>`).join('')}</ul></div>
+          <div class="ya-box"><div class="ya-box-label">What You Said</div><div class="ya-transcript">${(m && m.transcript) ? escapeHtml(m.transcript) : '<span class="ya-transcript-empty">Complete a rep to see your transcript here.</span>'}</div></div>
+          <div class="ya-box"><div class="ya-box-label">Your Executive Version</div>${execHtml}</div>
         </div>
-        <div class="ya-footer">
-          <button class="ya-btn" onclick="switchView('today')"><i data-lucide="mic"></i> Try Again in Today</button>
-        </div>
+        <div class="ya-footer"><button class="ya-btn" onclick="switchView('today')"><i data-lucide="mic"></i> Try Again in Today</button></div>
       `;
-
       renderProgressMetrics(m);
       renderFeedback(m);
       renderRepHistory(allReps);
-      renderRecordingsList(allReps);
       renderIcons();
     }
 
@@ -1915,148 +1493,100 @@ document.getElementById('headerTrackBadge').textContent = isPass
       list.innerHTML = allReps.slice().reverse().map((r) => {
         const label = r.activity ? r.activity : 'Practice rep';
         const time = r.timestamp ? new Date(r.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
-        return `
-          <div class="rep-log-item">
-            <span>${escapeHtml(label)}${time ? ' · ' + escapeHtml(time) : ''}</span>
-            <span class="rl-score">${r.transcript ? `"${escapeHtml(r.transcript.slice(0, 80))}${r.transcript.length > 80 ? '…' : ''}"` : '—'}</span>
-          </div>
-        `;
+        return `<div class="rep-log-item"><span>${escapeHtml(label)}${time ? ' · ' + escapeHtml(time) : ''}</span><span class="rl-score">${r.transcript ? `"${escapeHtml(r.transcript.slice(0, 80))}${r.transcript.length > 80 ? '…' : ''}"` : '—'}</span></div>`;
       }).join('');
     }
 
-async function renderRecordingsList() {
-  const list = document.getElementById('recordingsList');
-  if (!list) return;
-
-  list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);padding:12px 0;">Loading your reps…</div>`;
-
-  let reps = [];
-  try {
-    const res = await fetch(`${BACKEND_URL}/api/paid/reps`, {
-      headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-    });
-    if (res.ok) {
-      const data = await res.json();
-      reps = data.reps || [];
-    }
-  } catch (e) {
-    console.warn('renderRecordingsList fetch failed:', e);
-  }
-
-  if (!reps.length) {
-    list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);padding:12px 0;">No reps yet — start on Today.</div>`;
-    return;
-  }
-
-  // Group reps by date (YYYY-MM-DD, local time)
-  const groups = {};
-  for (const r of reps) {
-    const ts = r.created_at || r.analyzed_at;
-    const d = ts ? new Date(ts) : new Date();
-    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(r);
-  }
-
-  const sortedKeys = Object.keys(groups).sort().reverse();
-
-  const fmtDateHeader = (key) => {
-    const [y, m, d] = key.split('-').map(Number);
-    const dt = new Date(y, m - 1, d);
-    const today = new Date(); today.setHours(0,0,0,0);
-    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1); yesterday.setHours(0,0,0,0);
-    const dtMid = new Date(dt); dtMid.setHours(0,0,0,0);
-
-    if (dtMid.getTime() === today.getTime()) return 'Today';
-    if (dtMid.getTime() === yesterday.getTime()) return 'Yesterday';
-    return dt.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
-  };
-
-  const extractMetrics = (r) => {
-    const m = r.metrics || {};
-    const s = r.signals || {};
-    return {
-      fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
-      pointFirst:       m.point_first      ?? m.structure ?? null,
-      concreteness:     m.concreteness     ?? m.impact ?? null,
-      overallScore:     m.overall_score    ?? null,
-      timeToPoint:      s.main_point_delay_seconds ?? null,
-      wordsPerMinute:   s.words_per_minute ?? null,
-      fillerTotal:      (s.filler_words || {}).total ?? null,
-    };
-  };
-
-  let html = '';
-  for (const key of sortedKeys) {
-    html += `<div style="margin-bottom:22px;">`;
-    html += `<div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border-color);">${escapeHtml(fmtDateHeader(key))}</div>`;
-
-    for (const r of groups[key]) {
-      const m = extractMetrics(r);
-      const timeStr = r.created_at
-        ? new Date(r.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-        : '';
-
-      const sourceBadge = r.question_source === 'custom'
-        ? '<span style="font-size:9px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent-gold);background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);padding:2px 6px;border-radius:4px;margin-left:6px;">CUSTOM</span>'
-        : r.question_source === 'changed'
-          ? '<span style="font-size:9px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent-cyan);background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.35);padding:2px 6px;border-radius:4px;margin-left:6px;">CHANGED</span>'
-          : '';
-
-      const scoreLine = [
-        m.fillerDiscipline != null ? `Filler ${m.fillerDiscipline}` : null,
-        m.pointFirst       != null ? `Point-first ${m.pointFirst}` : null,
-        m.concreteness     != null ? `Concrete ${m.concreteness}` : null,
-      ].filter(Boolean).join(' · ') || 'No metrics yet';
-
-      const profileBits = [
-        r.user_role_family ? formatTeamFamily(r.user_role_family) : null,
-        r.user_role        ? formatRole(r.user_role, r.user_role_family) : null,
-        r.user_track       ? formatLevel(r.user_track) : null,
-      ].filter(Boolean);
-
-      html += `
-        <div style="background:var(--bg-dark);border:1px solid var(--border-color);border-radius:12px;padding:16px 18px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px;">
-
-          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;">
-            <div style="font-size:11px;color:var(--text-muted);font-weight:700;letter-spacing:0.04em;">
-              ${escapeHtml(timeStr)}${profileBits.length ? ' · ' + escapeHtml(profileBits.join(' · ')) : ''}
+    async function renderRecordingsList() {
+      const list = document.getElementById('recordingsList');
+      if (!list) return;
+      list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);padding:12px 0;">Loading your reps…</div>`;
+      let reps = [];
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/paid/reps`, { headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` } });
+        if (res.ok) { const data = await res.json(); reps = data.reps || []; }
+      } catch (e) { console.warn('renderRecordingsList fetch failed:', e); }
+      if (!reps.length) {
+        list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);padding:12px 0;">No reps yet — start on Today.</div>`;
+        return;
+      }
+      const groups = {};
+      for (const r of reps) {
+        const ts = r.created_at || r.analyzed_at;
+        const d = ts ? new Date(ts) : new Date();
+        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(r);
+      }
+      const sortedKeys = Object.keys(groups).sort().reverse();
+      const fmtDateHeader = (key) => {
+        const [y, m, d] = key.split('-').map(Number);
+        const dt = new Date(y, m - 1, d);
+        const today = new Date(); today.setHours(0,0,0,0);
+        const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1); yesterday.setHours(0,0,0,0);
+        const dtMid = new Date(dt); dtMid.setHours(0,0,0,0);
+        if (dtMid.getTime() === today.getTime()) return 'Today';
+        if (dtMid.getTime() === yesterday.getTime()) return 'Yesterday';
+        return dt.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+      };
+      const extractMetrics = (r) => {
+        const m = r.metrics || {}; const s = r.signals || {};
+        return {
+          fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
+          pointFirst:       m.point_first      ?? m.structure ?? null,
+          concreteness:     m.concreteness     ?? m.impact ?? null,
+        };
+      };
+      let html = '';
+      for (const key of sortedKeys) {
+        html += `<div style="margin-bottom:22px;">`;
+        html += `<div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border-color);">${escapeHtml(fmtDateHeader(key))}</div>`;
+        for (const r of groups[key]) {
+          const m = extractMetrics(r);
+          const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '';
+          const sourceBadge = r.question_source === 'custom'
+            ? '<span style="font-size:9px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent-gold);background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);padding:2px 6px;border-radius:4px;margin-left:6px;">CUSTOM</span>'
+            : r.question_source === 'changed'
+              ? '<span style="font-size:9px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent-cyan);background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.35);padding:2px 6px;border-radius:4px;margin-left:6px;">CHANGED</span>'
+              : '';
+          const scoreLine = [
+            m.fillerDiscipline != null ? `Filler ${m.fillerDiscipline}` : null,
+            m.pointFirst       != null ? `Point-first ${m.pointFirst}` : null,
+            m.concreteness     != null ? `Concrete ${m.concreteness}` : null,
+          ].filter(Boolean).join(' · ') || 'No metrics yet';
+          const profileBits = [
+            r.user_role_family ? formatRoleFamily(r.user_role_family) : null,
+            r.user_role        ? formatRole(r.user_role, r.user_role_family) : null,
+            r.user_career_stage ? formatCareerStage(r.user_career_stage) : null,
+            r.user_track       ? formatTrack(r.user_track) : null,
+          ].filter(Boolean);
+          html += `
+            <div style="background:var(--bg-dark);border:1px solid var(--border-color);border-radius:12px;padding:16px 18px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;">
+                <div style="font-size:11px;color:var(--text-muted);font-weight:700;letter-spacing:0.04em;">${escapeHtml(timeStr)}${profileBits.length ? ' · ' + escapeHtml(profileBits.join(' · ')) : ''}</div>
+                ${sourceBadge}
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:6px;">Question</div>
+                <div style="font-size:14px;font-weight:600;line-height:1.5;color:var(--text-main);">"${escapeHtml(r.question)}"</div>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:6px;">Your Response</div>
+                <div style="font-size:13px;line-height:1.7;color:var(--text-main);font-style:italic;padding:12px 14px;background:rgba(0,0,0,0.25);border-left:3px solid var(--accent-purple);border-radius:8px;white-space:pre-wrap;word-break:break-word;max-height:220px;overflow-y:auto;">${r.transcript ? escapeHtml(r.transcript) : '<em style="color:var(--text-muted);">No transcript captured</em>'}</div>
+              </div>
+              <div style="font-size:11px;font-weight:700;color:var(--success);letter-spacing:0.03em;">${escapeHtml(scoreLine)}</div>
             </div>
-            ${sourceBadge}
-          </div>
-
-          <div>
-            <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:6px;">Question</div>
-            <div style="font-size:14px;font-weight:600;line-height:1.5;color:var(--text-main);">"${escapeHtml(r.question)}"</div>
-          </div>
-
-          <div>
-            <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:6px;">Your Response</div>
-            <div style="font-size:13px;line-height:1.7;color:var(--text-main);font-style:italic;padding:12px 14px;background:rgba(0,0,0,0.25);border-left:3px solid var(--accent-purple);border-radius:8px;white-space:pre-wrap;word-break:break-word;max-height:220px;overflow-y:auto;">
-              ${r.transcript ? escapeHtml(r.transcript) : '<em style="color:var(--text-muted);">No transcript captured</em>'}
-            </div>
-          </div>
-
-          <div style="font-size:11px;font-weight:700;color:var(--success);letter-spacing:0.03em;">${escapeHtml(scoreLine)}</div>
-
-        </div>
-      `;
+          `;
+        }
+        html += `</div>`;
+      }
+      list.innerHTML = html;
+      renderIcons();
     }
 
-    html += `</div>`;
-  }
-
-  list.innerHTML = html;
-  renderIcons();
-}
     function normalizeAnalysis(data) {
       if (!data) return null;
-      const m = data.metrics || {};
-      const s = data.signals || {};
-      const d = data.diagnosis || {};
-      const g = data.gap || {};
-      const c = data.coaching || {};
-      const r = data.before_after_rewrite || {};
+      const m = data.metrics || {}; const s = data.signals || {}; const d = data.diagnosis || {}; const g = data.gap || {}; const c = data.coaching || {}; const r = data.before_after_rewrite || {};
       return {
         fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
         pointFirst: m.point_first ?? m.structure ?? null,
@@ -2081,7 +1611,7 @@ async function renderRecordingsList() {
     }
 
     // ============================================================
-    // LEARNING BITES RENDERING
+    // LEARNING BITES + DRILLS RENDERING
     // ============================================================
     function renderBitesTabs() {
       const tabs = document.getElementById('bitesCatTabs');
@@ -2093,14 +1623,12 @@ async function renderRecordingsList() {
       `).join('');
       renderIcons();
     }
-
     function switchBitesCategory(cat, btn) {
       activeBitesCategory = cat;
       document.querySelectorAll('.bites-cat-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
       renderBitesGrid();
     }
-
     function renderBitesGrid() {
       const grid = document.getElementById('bitesGrid');
       if (!grid) return;
@@ -2116,46 +1644,32 @@ async function renderRecordingsList() {
       `).join('');
       renderIcons();
     }
-
     function openBiteLesson(category, id) {
       const cat = BITES_LIBRARY[category];
       if (!cat) return;
       const t = cat.techniques.find(x => x.id === id);
       if (!t) return;
-
       const howHtml = t.how && t.how.length
         ? `<div style="margin-bottom:22px;"><div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:800;color:var(--accent-cyan);margin-bottom:8px;">How to use it</div><ol style="margin:0;padding-left:20px;font-size:13.5px;line-height:1.75;color:var(--text-main);">${t.how.map(h => `<li style="margin-bottom:6px;">${escapeHtml(h)}</li>`).join('')}</ol></div>` : '';
-
       const exampleHtml = (t.exampleWeak || t.exampleStrong)
         ? `<div style="margin-bottom:22px;">
              <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:800;color:var(--accent-cyan);margin-bottom:8px;">Example</div>
              ${t.exampleWeak ? `<div style="padding:12px 14px;border-radius:8px;font-size:13px;line-height:1.6;margin-top:8px;background:rgba(239,68,68,0.08);border-left:3px solid var(--danger);"><strong style="display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;color:var(--danger);">Weak</strong>${escapeHtml(t.exampleWeak)}</div>` : ''}
              ${t.exampleStrong ? `<div style="padding:12px 14px;border-radius:8px;font-size:13px;line-height:1.6;margin-top:8px;background:rgba(16,185,129,0.08);border-left:3px solid var(--success);"><strong style="display:block;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;color:var(--success);">Strong</strong>${escapeHtml(t.exampleStrong)}</div>` : ''}
            </div>` : '';
-
       const bestForHtml = t.bestFor
         ? `<div style="margin-bottom:22px;"><div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:800;color:var(--accent-cyan);margin-bottom:8px;">Best for</div><div style="display:inline-block;padding:8px 14px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.3);border-radius:8px;font-size:12px;font-weight:600;color:var(--accent-cyan);">${escapeHtml(t.bestFor)}</div></div>` : '';
-
       document.getElementById('usModalContent').innerHTML = `
-        <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-cyan);font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-          <i data-lucide="${cat.icon}" style="width:12px;height:12px;stroke-width:2.4;"></i>
-          ${escapeHtml(cat.label)}
-        </div>
+        <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-cyan);font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><i data-lucide="${cat.icon}" style="width:12px;height:12px;stroke-width:2.4;"></i>${escapeHtml(cat.label)}</div>
         <h2 style="font-size:24px;margin-bottom:4px;">${escapeHtml(t.title)}</h2>
         <div style="font-size:14px;font-style:italic;color:var(--accent-gold);font-weight:600;line-height:1.6;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--border-color);">"${escapeHtml(t.hook)}"</div>
         ${t.what ? `<div style="margin-bottom:22px;"><div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:800;color:var(--accent-cyan);margin-bottom:8px;">What it is</div><p style="font-size:13.5px;line-height:1.7;color:var(--text-main);">${escapeHtml(t.what)}</p></div>` : ''}
         ${t.why ? `<div style="margin-bottom:22px;"><div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:800;color:var(--accent-cyan);margin-bottom:8px;">Why it works</div><p style="font-size:13.5px;line-height:1.7;color:var(--text-main);">${escapeHtml(t.why)}</p></div>` : ''}
-        ${howHtml}
-        ${exampleHtml}
-        ${bestForHtml}
+        ${howHtml}${exampleHtml}${bestForHtml}
       `;
       document.getElementById('usModal').classList.add('is-visible');
       renderIcons();
     }
-
-    // ============================================================
-    // DRILLS RENDERING
-    // ============================================================
     function renderDrillsGrid() {
       const grid = document.getElementById('drillsGrid');
       if (!grid) return;
@@ -2169,14 +1683,8 @@ async function renderRecordingsList() {
           <div class="drill-category-grid">
             ${cat.drills.map(d => `
               <div class="activity-card" data-activity="${escapeHtml(d.activity)}" data-type="voice">
-                <div>
-                  <div class="activity-card-tag">${escapeHtml(cat.category)}</div>
-                  <div class="activity-card-title">${escapeHtml(d.title)}</div>
-                  <div class="activity-card-desc">${escapeHtml(d.desc)}</div>
-                </div>
-                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
-                  <i data-lucide="play"></i> Start Now
-                </button>
+                <div><div class="activity-card-tag">${escapeHtml(cat.category)}</div><div class="activity-card-title">${escapeHtml(d.title)}</div><div class="activity-card-desc">${escapeHtml(d.desc)}</div></div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button>
               </div>
             `).join('')}
           </div>
@@ -2194,9 +1702,7 @@ async function renderRecordingsList() {
       const plan = USER.plan || 'sprint';
       try {
         const params = new URLSearchParams({ sprint, plan });
-        const res = await fetch(`${BACKEND_URL}/api/paid/scenarios?${params}`, {
-          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-        });
+        const res = await fetch(`${BACKEND_URL}/api/paid/scenarios?${params}`, { headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` } });
         if (res.ok) {
           const data = await res.json();
           const list = Array.isArray(data.scenarios) ? data.scenarios : [];
@@ -2206,7 +1712,6 @@ async function renderRecordingsList() {
       SCENARIOS_CACHE = FALLBACK_SCENARIOS;
       return SCENARIOS_CACHE;
     }
-
     async function renderScenariosGrid() {
       const grid = document.getElementById('scenariosGrid');
       if (!grid) return;
@@ -2214,15 +1719,8 @@ async function renderRecordingsList() {
       const list = await fetchScenariosFromBackend();
       grid.innerHTML = list.map(s => `
         <div class="activity-card" data-activity="${escapeHtml(s.activity)}" data-type="voice" data-scenario-id="${escapeHtml(s.id)}" data-dynamic="${s.dynamic ? 'true' : 'false'}">
-          <div>
-            <div class="activity-card-tag">${escapeHtml(s.sprint)}</div>
-            <div class="activity-card-title">${escapeHtml(s.title)}</div>
-            <div class="activity-card-desc">${escapeHtml(s.desc)}</div>
-            <div style="font-size:10px;font-weight:700;color:var(--accent-cyan);margin-top:6px;letter-spacing:0.04em;">${escapeHtml(s.meta)}</div>
-          </div>
-          <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
-            <i data-lucide="play"></i> Start Now
-          </button>
+          <div><div class="activity-card-tag">${escapeHtml(s.sprint)}</div><div class="activity-card-title">${escapeHtml(s.title)}</div><div class="activity-card-desc">${escapeHtml(s.desc)}</div><div style="font-size:10px;font-weight:700;color:var(--accent-cyan);margin-top:6px;letter-spacing:0.04em;">${escapeHtml(s.meta)}</div></div>
+          <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button>
         </div>
       `).join('');
       renderIcons();
@@ -2236,83 +1734,44 @@ async function renderRecordingsList() {
       const btn = document.querySelector(`#${cardId} .qc-action-btn`);
       const current = state.questions[which];
       const excludeId = current && current.id ? current.id : null;
-
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<i data-lucide="loader"></i> Loading…';
-        renderIcons();
-      }
-
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader"></i> Loading…'; renderIcons(); }
       try {
         const params = new URLSearchParams();
         if (excludeId) params.set('exclude_id', excludeId);
-
-        const res = await fetch(`${BACKEND_URL}/api/paid/questions/next?${params}`, {
-          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-        });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.detail || err.error || `HTTP ${res.status}`);
-        }
-
+        const res = await fetch(`${BACKEND_URL}/api/paid/questions/next?${params}`, { headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` } });
+        if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.detail || err.error || `HTTP ${res.status}`); }
         const data = await res.json();
         const q = data.question;
-
-        state.questions[which] = {
-          id: q.id, text: q.text, focus: q.focus,
-          target_seconds: q.target_seconds, difficulty: q.difficulty,
-          custom: false, source: 'changed'
-        };
-
+        state.questions[which] = { id: q.id, text: q.text, focus: q.focus, target_seconds: q.target_seconds, difficulty: q.difficulty, custom: false, source: 'changed' };
         renderQuestionCards();
         saveQuestionsCache();
         renderIcons();
-      } catch (err) {
-        alert(`Couldn't fetch a new question: ${err.message}`);
-      } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = '<i data-lucide="refresh-cw"></i> Change question';
-          renderIcons();
-        }
-      }
+      } catch (err) { alert(`Couldn't fetch a new question: ${err.message}`); }
+      finally { if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="refresh-cw"></i> Change question'; renderIcons(); } }
     }
-
     function customizeQuestion(which) {
       CUSTOMIZE_TARGET = which;
       const current = state.questions[which];
       const modal = document.getElementById('customizeModal');
       const input = document.getElementById('customizeInput');
       const count = document.getElementById('customizeCount');
-
       input.value = (current && current.custom) ? current.text : '';
       count.textContent = String(input.value.length);
       input.oninput = () => { count.textContent = String(input.value.length); };
-
       modal.classList.add('is-visible');
       renderIcons();
       setTimeout(() => input.focus(), 100);
     }
-
     function closeCustomizeModal() {
       document.getElementById('customizeModal').classList.remove('is-visible');
       CUSTOMIZE_TARGET = null;
     }
-
     function saveCustomQuestion() {
       if (!CUSTOMIZE_TARGET) return;
       const input = document.getElementById('customizeInput');
       const text = input.value.trim();
-
       if (text.length < 5) { alert('Please enter a longer question.'); return; }
-
-      state.questions[CUSTOMIZE_TARGET] = {
-        id: null, text: text, focus: 'Custom',
-        target_seconds: 90, difficulty: 'medium',
-        custom: true, source: 'custom'
-      };
-
+      state.questions[CUSTOMIZE_TARGET] = { id: null, text: text, focus: 'Custom', target_seconds: 90, difficulty: 'medium', custom: true, source: 'custom' };
       closeCustomizeModal();
       renderQuestionCards();
       saveQuestionsCache();
@@ -2323,125 +1782,101 @@ async function renderRecordingsList() {
     // FOCUS CHANGE
     // ============================================================
     function promptFocusChange() {
-      const newTeam  = document.getElementById('focusTeam').value;
-      const newRole  = document.getElementById('focusRole').value;
-      const newLevel = document.getElementById('focusLevel').value;
-      const newStage = document.getElementById('focusStage').value;
-
-      if (newTeam === (USER.team_family || '') && newRole === (USER.target_role || '') &&
-          newLevel === (USER.ic_or_manager || '') && newStage === (USER.years_experience || '')) {
+      const newFamily = document.getElementById('focusRoleFamily').value;
+      const newRole   = document.getElementById('focusRole').value;
+      const newStage  = document.getElementById('focusCareerStage').value;
+      const newTrack  = document.getElementById('focusTrack').value;
+      if (newFamily === (USER.role_family || '') && newRole === (USER.role || '') &&
+          newStage === (USER.career_stage || '') && newTrack === (USER.track || '')) {
         alert('No changes to apply.'); return;
       }
-
-      document.getElementById('focusChangeTeam').textContent  = formatTeamFamily(newTeam) || '—';
-      document.getElementById('focusChangeRole').textContent  = formatRole(newRole, USER.target_industry) || '—';
-      document.getElementById('focusChangeLevel').textContent = formatLevel(newLevel) || '—';
-      document.getElementById('focusChangeStage').textContent = formatYears(newStage) || '—';
-
+      document.getElementById('focusChangeFamily').textContent = formatRoleFamily(newFamily) || '—';
+      document.getElementById('focusChangeRole').textContent   = formatRole(newRole, newFamily) || '—';
+      document.getElementById('focusChangeStage').textContent  = formatCareerStage(newStage) || '—';
+      document.getElementById('focusChangeTrack').textContent  = formatTrack(newTrack) || '—';
       document.getElementById('focusConfirmModal').classList.add('is-visible');
       renderIcons();
     }
-
     function closeFocusConfirm() {
       document.getElementById('focusConfirmModal').classList.remove('is-visible');
     }
-
     async function confirmFocusChange() {
-      const newTeam  = document.getElementById('focusTeam').value;
-      const newRole  = document.getElementById('focusRole').value;
-      const newLevel = document.getElementById('focusLevel').value;
-      const newStage = document.getElementById('focusStage').value;
-
+      const newFamily = document.getElementById('focusRoleFamily').value;
+      const newRole   = document.getElementById('focusRole').value;
+      const newStage  = document.getElementById('focusCareerStage').value;
+      const newTrack  = document.getElementById('focusTrack').value;
       closeFocusConfirm();
-
       const btn = document.getElementById('focusApplyBtn');
       const originalHtml = btn ? btn.innerHTML : '';
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<i data-lucide="loader"></i> Applying…';
-        renderIcons();
-      }
-
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader"></i> Applying…'; renderIcons(); }
       try {
         const res = await fetch(`${BACKEND_URL}/api/paid/profile`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${SESSION_TOKEN}`,
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            years_experience: newStage,
+            role_family: newFamily,
+            role: newRole,
+            career_stage: newStage,
+            track: newTrack,
             target_industry: USER.target_industry,
-            target_role: newRole,
-            team_family: newTeam,
-            ic_or_manager: newLevel,
           })
         });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.detail || err.error || `HTTP ${res.status}`);
-        }
-
-        USER.team_family = newTeam;
-        USER.target_role = newRole;
-        USER.ic_or_manager = newLevel;
-        USER.years_experience = newStage;
-
+        if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.detail || err.error || `HTTP ${res.status}`); }
+        USER.role_family = newFamily;
+        USER.role = newRole;
+        USER.career_stage = newStage;
+        USER.track = newTrack;
         state.questions.q1 = null;
         state.questions.q2 = null;
         state.q1Trials = [];
         state.q2Trials = [];
         CACHED_BANK = {};
         SCENARIOS_CACHE = null;
-
-        try {
-          const key = `unspoken_questions_${USER.email}_${new Date().toISOString().slice(0, 10)}`;
-          localStorage.removeItem(key);
-        } catch (e) {}
-
+        try { const key = `unspoken_questions_${USER.email}_${new Date().toISOString().slice(0, 10)}`; localStorage.removeItem(key); } catch (e) {}
         await loadQuestionsForToday();
         renderQuestionCards();
         renderProfile();
         renderFocusSwitcher();
         await renderScenariosGrid();
         renderIcons();
-
         setTimeout(() => alert('✅ Focus updated. Fresh questions loaded.'), 150);
-      } catch (err) {
-        alert(`Couldn't update your focus: ${err.message}`);
-      } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = originalHtml;
-          renderIcons();
-        }
-      }
+      } catch (err) { alert(`Couldn't update your focus: ${err.message}`); }
+      finally { if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; renderIcons(); } }
     }
 
     // ============================================================
     // FORMATTERS
     // ============================================================
-    function formatTeamFamily(slug) {
+    function formatIndustry(slug) {
       if (!slug) return null;
-      const m = { engineering:'Engineering', product:'Product', design:'Design', data:'Data & Analytics', sales:'Sales', marketing:'Marketing', ops:'Operations', finance:'Finance', hr:'People & HR', consulting:'Consulting', other:'Other' };
-      return m[slug] || slug;
+      const f = OB_INDUSTRIES.find(x => x.value === slug);
+      return f ? f.label : slug;
     }
-    function formatRole(slug, industry) {
+    function formatRoleFamily(slug) {
       if (!slug) return null;
-      if (industry && OB_ROLES_BY_INDUSTRY[industry]) {
-        const found = OB_ROLES_BY_INDUSTRY[industry].find(r => r.value === slug);
-        if (found) return found.label;
-      }
+      const f = OB_ROLE_FAMILIES.find(x => x.value === slug);
+      return f ? f.label : slug;
+    }
+    function formatRole(slug, family) {
+      if (!slug) return null;
+      const list = (family && OB_ROLES_BY_FAMILY[family]) || [];
+      const r = list.find(x => x.value === slug);
+      if (r) return r.label;
       return slug.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
-    function formatLevel(slug) {
+    function formatCareerStage(slug) {
       if (!slug) return null;
-      return ({ ic:'Individual Contributor', manager:'Manager', leader:'Senior Leader', executive:'Executive' })[slug] || slug;
+      const f = OB_CAREER_STAGES.find(x => x.value === slug);
+      return f ? f.label : slug;
     }
-    function formatYears(slug) {
+    function formatTrack(slug) {
       if (!slug) return null;
-      return ({ student:'Student', fresher:'Fresher (0–1 yr)', early:'Early career (1–5 yrs)', mid:'Mid career (6–12 yrs)', senior:'Senior (13–20 yrs)', leadership:'Leadership (20+ yrs)' })[slug] || slug;
+      const f = OB_TRACKS.find(x => x.value === slug);
+      return f ? f.label : slug;
+    }
+    function formatSprint(s) {
+      const m = { interview:'Interview', gd:'Group Discussion', leadership:'Leadership Presence', storytelling:'Storytelling', charisma:'Charisma' };
+      return m[s] || s || 'Practice';
     }
 
     // ============================================================
@@ -2450,138 +1885,118 @@ async function renderRecordingsList() {
     function maybeShowOnboarding() {
       if (!USER.is_paid) return;
       if (USER.profile_completed) return;
-
-      OB = { years: null, industry: null, role: null, team: null, level: null };
-
+      OB = { industry: null, family: null, role: null, stage: null, track: null };
       document.getElementById('obWelcomeName').textContent = USER.name || 'friend';
       document.getElementById('obCongratsName').textContent = USER.name || 'friend';
-
-      obRenderYears();
       obRenderIndustries();
-      obRenderRoles(null);
-
-      ['obSceneWelcome','obSceneYears','obSceneIndustry','obSceneRole','obSceneTeam','obSceneLevel','obSceneCelebrate']
+      ['obSceneWelcome','obSceneIndustry','obSceneFamily','obSceneRole','obSceneStage','obSceneTrack','obSceneCelebrate']
         .forEach(id => document.getElementById(id).classList.add('hidden'));
       document.getElementById('obSceneWelcome').classList.remove('hidden');
-
       document.getElementById('onboardingModal').classList.add('is-visible');
       renderIcons();
     }
 
     function obGoToStep(step) {
-      ['obSceneWelcome','obSceneYears','obSceneIndustry','obSceneRole','obSceneTeam','obSceneLevel','obSceneCelebrate']
+      ['obSceneWelcome','obSceneIndustry','obSceneFamily','obSceneRole','obSceneStage','obSceneTrack','obSceneCelebrate']
         .forEach(id => document.getElementById(id).classList.add('hidden'));
-
       const map = {
-        welcome: 'obSceneWelcome', years: 'obSceneYears', industry: 'obSceneIndustry',
-        role: 'obSceneRole', team: 'obSceneTeam', level: 'obSceneLevel', celebrate: 'obSceneCelebrate'
+        welcome: 'obSceneWelcome', industry: 'obSceneIndustry', family: 'obSceneFamily',
+        role: 'obSceneRole', stage: 'obSceneStage', track: 'obSceneTrack', celebrate: 'obSceneCelebrate'
       };
       const el = document.getElementById(map[step]);
       if (el) el.classList.remove('hidden');
       renderIcons();
     }
 
-    function obRenderYears() {
-      const container = document.getElementById('obYearsPills');
-      container.innerHTML = OB_YEARS.map(y =>
-        `<button class="ob-pill" data-value="${y.value}" onclick="obPickYears(this)">${escapeHtml(y.label)}</button>`
-      ).join('');
-    }
-
     function obRenderIndustries() {
-      const container = document.getElementById('obIndustryPills');
-      container.innerHTML = OB_INDUSTRIES.map(i =>
+      const c = document.getElementById('obIndustryPills');
+      c.innerHTML = OB_INDUSTRIES.map(i =>
         `<button class="ob-pill" data-value="${i.value}" onclick="obPickIndustry(this)">${escapeHtml(i.label)}</button>`
       ).join('');
     }
-
-    function obRenderRoles(industry) {
-      const container = document.getElementById('obRolePills');
-      const roles = OB_ROLES_BY_INDUSTRY[industry] || [];
-      if (!roles.length) {
-        container.innerHTML = '<div style="color:var(--text-muted);font-size:13px;">Select an industry first</div>';
-        return;
-      }
-      container.innerHTML = roles.map(r =>
-        `<button class="ob-pill" data-value="${r.value}" onclick="obPickRole(this)">${escapeHtml(r.label)}</button>`
-      ).join('');
-    }
-
-    function obPickYears(btn) {
-      document.querySelectorAll('#obYearsPills .ob-pill').forEach(p => p.classList.remove('selected'));
-      btn.classList.add('selected');
-      OB.years = btn.dataset.value;
-      setTimeout(() => obGoToStep('industry'), 380);
-    }
-
     function obPickIndustry(btn) {
       document.querySelectorAll('#obIndustryPills .ob-pill').forEach(p => p.classList.remove('selected'));
       btn.classList.add('selected');
       OB.industry = btn.dataset.value;
+      obRenderFamilies();
+      setTimeout(() => obGoToStep('family'), 380);
+    }
+
+    function obRenderFamilies() {
+      const c = document.getElementById('obFamilyPills');
+      c.innerHTML = OB_ROLE_FAMILIES.map(f =>
+        `<button class="ob-pill" data-value="${f.value}" onclick="obPickFamily(this)">${escapeHtml(f.label)}</button>`
+      ).join('');
+    }
+    function obPickFamily(btn) {
+      document.querySelectorAll('#obFamilyPills .ob-pill').forEach(p => p.classList.remove('selected'));
+      btn.classList.add('selected');
+      OB.family = btn.dataset.value;
       OB.role = null;
-      obRenderRoles(OB.industry);
+      obRenderRoles(OB.family);
       setTimeout(() => obGoToStep('role'), 380);
     }
 
+    function obRenderRoles(family) {
+      const c = document.getElementById('obRolePills');
+      const roles = OB_ROLES_BY_FAMILY[family] || [];
+      if (!roles.length) { c.innerHTML = '<div style="color:var(--text-muted);font-size:13px;">Select a role family first</div>'; return; }
+      c.innerHTML = roles.map(r =>
+        `<button class="ob-pill" data-value="${r.value}" onclick="obPickRole(this)">${escapeHtml(r.label)}</button>`
+      ).join('');
+    }
     function obPickRole(btn) {
       document.querySelectorAll('#obRolePills .ob-pill').forEach(p => p.classList.remove('selected'));
       btn.classList.add('selected');
       OB.role = btn.dataset.value;
-      obRenderTeams();
-      setTimeout(() => obGoToStep('team'), 380);
+      obRenderStages();
+      setTimeout(() => obGoToStep('stage'), 380);
     }
 
-    function obRenderTeams() {
-      const container = document.getElementById('obTeamPills');
-      container.innerHTML = OB_TEAMS.map(t =>
-        `<button class="ob-pill" data-value="${t.value}" onclick="obPickTeam(this)">${escapeHtml(t.label)}</button>`
+    function obRenderStages() {
+      const c = document.getElementById('obStagePills');
+      c.innerHTML = OB_CAREER_STAGES.map(s =>
+        `<button class="ob-pill" data-value="${s.value}" onclick="obPickStage(this)">${escapeHtml(s.label)}</button>`
       ).join('');
     }
-
-    function obPickTeam(btn) {
-      document.querySelectorAll('#obTeamPills .ob-pill').forEach(p => p.classList.remove('selected'));
+    function obPickStage(btn) {
+      document.querySelectorAll('#obStagePills .ob-pill').forEach(p => p.classList.remove('selected'));
       btn.classList.add('selected');
-      OB.team = btn.dataset.value;
-      obRenderLevels();
-      setTimeout(() => obGoToStep('level'), 380);
+      OB.stage = btn.dataset.value;
+      obRenderTracks();
+      setTimeout(() => obGoToStep('track'), 380);
     }
 
-    function obRenderLevels() {
-      const container = document.getElementById('obLevelPills');
-      container.innerHTML = OB_LEVELS.map(l =>
-        `<button class="ob-pill" data-value="${l.value}" onclick="obPickLevel(this)">${escapeHtml(l.label)}</button>`
+    function obRenderTracks() {
+      const c = document.getElementById('obTrackPills');
+      c.innerHTML = OB_TRACKS.map(t =>
+        `<button class="ob-pill" data-value="${t.value}" onclick="obPickTrack(this)">${escapeHtml(t.label)}</button>`
       ).join('');
     }
-
-    async function obPickLevel(btn) {
-      document.querySelectorAll('#obLevelPills .ob-pill').forEach(p => p.classList.remove('selected'));
+    async function obPickTrack(btn) {
+      document.querySelectorAll('#obTrackPills .ob-pill').forEach(p => p.classList.remove('selected'));
       btn.classList.add('selected');
-      OB.level = btn.dataset.value;
-
+      OB.track = btn.dataset.value;
       obGoToStep('celebrate');
       obLaunchConfetti();
-
       try {
         const res = await fetch(`${BACKEND_URL}/api/paid/profile`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${SESSION_TOKEN}`,
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            years_experience: OB.years,
             target_industry: OB.industry,
-            target_role: OB.role,
-            team_family: OB.team,
-            ic_or_manager: OB.level,
+            role_family: OB.family,
+            role: OB.role,
+            career_stage: OB.stage,
+            track: OB.track,
           })
         });
         if (res.ok) {
-          USER.years_experience = OB.years;
           USER.target_industry = OB.industry;
-          USER.target_role = OB.role;
-          USER.team_family = OB.team;
-          USER.ic_or_manager = OB.level;
+          USER.role_family = OB.family;
+          USER.role = OB.role;
+          USER.career_stage = OB.stage;
+          USER.track = OB.track;
           USER.profile_completed = true;
           SCENARIOS_CACHE = null;
         } else {
@@ -2596,8 +2011,7 @@ async function renderRecordingsList() {
       if (!layer) return;
       layer.innerHTML = '';
       const colors = ['#38BDF8','#8B5CF6','#F59E0B','#10B981','#EF4444','#F9FAFB'];
-      const count = 90;
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < 90; i++) {
         const piece = document.createElement('div');
         piece.className = 'confetti-piece';
         piece.style.left = Math.random() * 100 + '%';
@@ -2611,23 +2025,18 @@ async function renderRecordingsList() {
       }
       setTimeout(() => { layer.innerHTML = ''; }, 6500);
     }
-
     function obFinish() {
       document.getElementById('onboardingModal').classList.remove('is-visible');
       document.getElementById('confettiLayer').innerHTML = '';
     }
 
     // ============================================================
-    // RECORDING MODAL
+    // RECORDING
     // ============================================================
     let activeRecording = {
-      target: null, question: null, meta: {},
-      mediaRecorder: null, chunks: [],
-      seconds: 0, timerInterval: null,
-      isRecording: false, rawBlob: null, rawText: null,
-      mode: 'voice',
-      questionSource: 'bank',
-      bankQuestionId: null
+      target: null, question: null, meta: {}, mediaRecorder: null, chunks: [],
+      seconds: 0, timerInterval: null, isRecording: false, rawBlob: null, rawText: null,
+      mode: 'voice', questionSource: 'bank', bankQuestionId: null
     };
 
     function stripQuotes(s) {
@@ -2645,12 +2054,7 @@ async function renderRecordingsList() {
       activeRecording.chunks = [];
       activeRecording.questionSource = 'bank';
       activeRecording.bankQuestionId = null;
-
-      if (activeRecording.timerInterval) {
-        clearInterval(activeRecording.timerInterval);
-        activeRecording.timerInterval = null;
-      }
-
+      if (activeRecording.timerInterval) { clearInterval(activeRecording.timerInterval); activeRecording.timerInterval = null; }
       let qText;
       if (promptText === 'q1' || promptText === 'q2') {
         activeRecording.target = promptText;
@@ -2661,38 +2065,26 @@ async function renderRecordingsList() {
       } else if (opts.source === 'activity') {
         activeRecording.target = 'activity';
         qText = promptText;
-        activeRecording.questionSource = 'bank';
-        activeRecording.bankQuestionId = null;
       } else {
         activeRecording.target = 'custom';
         qText = promptText;
         activeRecording.questionSource = 'custom';
-        activeRecording.bankQuestionId = null;
       }
       activeRecording.question = qText;
 
       const old = document.getElementById('recorderModal');
       if (old) old.remove();
-
       const modal = document.createElement('div');
       modal.id = 'recorderModal';
       modal.style.cssText = `position:fixed;inset:0;background:rgba(11,15,25,0.9);backdrop-filter:blur(8px);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;`;
       modal.innerHTML = `
         <div style="background:var(--panel-bg);border:1px solid var(--border-color);border-radius:18px;padding:32px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;position:relative;">
-          <button onclick="closeRecorderModal()" style="position:absolute;top:14px;right:18px;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:4px;display:flex;">
-            <i data-lucide="x" style="width:18px;height:18px;"></i>
-          </button>
-          <div style="font-size:10px;color:var(--accent-cyan);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
-            <i data-lucide="mic" style="width:11px;height:11px;"></i> ${escapeHtml(opts.title || 'Practice Rep')}
-          </div>
+          <button onclick="closeRecorderModal()" style="position:absolute;top:14px;right:18px;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:4px;display:flex;"><i data-lucide="x" style="width:18px;height:18px;"></i></button>
+          <div style="font-size:10px;color:var(--accent-cyan);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;"><i data-lucide="mic" style="width:11px;height:11px;"></i> ${escapeHtml(opts.title || 'Practice Rep')}</div>
           <div style="font-size:18px;font-weight:700;line-height:1.4;margin-bottom:24px;">${escapeHtml(qText)}</div>
           <div style="display:flex;gap:8px;margin-bottom:20px;">
-            <button id="recModeVoice" onclick="setRecMode('voice')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent-cyan);background:var(--primary);color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
-              <i data-lucide="mic" style="width:13px;height:13px;"></i> Voice
-            </button>
-            <button id="recModeText" onclick="setRecMode('text')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border-color);background:transparent;color:var(--text-muted);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
-              <i data-lucide="pen-line" style="width:13px;height:13px;"></i> Type
-            </button>
+            <button id="recModeVoice" onclick="setRecMode('voice')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent-cyan);background:var(--primary);color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;"><i data-lucide="mic" style="width:13px;height:13px;"></i> Voice</button>
+            <button id="recModeText" onclick="setRecMode('text')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border-color);background:transparent;color:var(--text-muted);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;"><i data-lucide="pen-line" style="width:13px;height:13px;"></i> Type</button>
           </div>
           <div id="recVoicePane">
             <div style="background:var(--bg-dark);border:1px solid var(--border-color);border-radius:100px;padding:8px 18px 8px 8px;display:flex;align-items:center;gap:14px;margin-bottom:16px;">
@@ -2701,22 +2093,17 @@ async function renderRecordingsList() {
               <span id="recStatus" style="font-size:12px;color:var(--text-muted);flex:1;">Ready to record</span>
             </div>
             <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:10px;">Voice capped at ${VOICE_MAX_SECONDS}s (total ≤ ${Math.round(TOTAL_MAX_SECONDS/60)} min)</div>
-            <button id="recVoiceSubmit" onclick="submitRepToBackend()" style="display:none;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;align-items:center;justify-content:center;gap:8px;">
-              Submit My Response <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
-            </button>
+            <button id="recVoiceSubmit" onclick="submitRepToBackend()" style="display:none;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;align-items:center;justify-content:center;gap:8px;">Submit My Response <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
           </div>
           <div id="recTextPane" style="display:none;">
             <textarea id="recTextInput" placeholder="Type your response here (${TEXT_MAX_WORDS} words max)..." style="width:100%;min-height:120px;padding:14px 16px;border:1.5px solid var(--border-color);border-radius:12px;font-family:inherit;font-size:14px;background:var(--bg-dark);color:var(--text-main);resize:vertical;"></textarea>
             <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px;"><span id="recWordCount">0</span> / ${TEXT_MAX_WORDS} words</div>
-            <button id="recTextSubmit" onclick="submitRepToBackend()" disabled style="margin-top:12px;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;opacity:0.5;font-family:inherit;">
-              Submit My Response →
-            </button>
+            <button id="recTextSubmit" onclick="submitRepToBackend()" disabled style="margin-top:12px;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;opacity:0.5;font-family:inherit;">Submit My Response →</button>
           </div>
         </div>
       `;
       document.body.appendChild(modal);
       renderIcons();
-
       const ta = document.getElementById('recTextInput');
       if (ta) {
         ta.addEventListener('input', (e) => {
@@ -2735,9 +2122,7 @@ async function renderRecordingsList() {
     function closeRecorderModal() {
       const modal = document.getElementById('recorderModal');
       if (modal) modal.remove();
-      if (activeRecording.mediaRecorder && activeRecording.mediaRecorder.state !== 'inactive') {
-        try { activeRecording.mediaRecorder.stop(); } catch (e) {}
-      }
+      if (activeRecording.mediaRecorder && activeRecording.mediaRecorder.state !== 'inactive') { try { activeRecording.mediaRecorder.stop(); } catch (e) {} }
       if (activeRecording.timerInterval) clearInterval(activeRecording.timerInterval);
       activeRecording.isRecording = false;
       activeRecording.seconds = 0;
@@ -2745,7 +2130,6 @@ async function renderRecordingsList() {
       activeRecording.rawBlob = null;
       activeRecording.rawText = null;
     }
-
     function setRecMode(mode) {
       activeRecording.mode = mode;
       const voicePane = document.getElementById('recVoicePane');
@@ -2762,12 +2146,10 @@ async function renderRecordingsList() {
         voiceBtn.style.background = 'transparent'; voiceBtn.style.color = 'var(--text-muted)'; voiceBtn.style.borderColor = 'var(--border-color)';
       }
     }
-
     async function toggleRecording() {
       if (activeRecording.isRecording) stopRecording();
       else await startRecording();
     }
-
     async function startRecording() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
@@ -2800,12 +2182,8 @@ async function renderRecordingsList() {
           updateRecTimer();
           if (activeRecording.seconds >= VOICE_MAX_SECONDS) stopRecording();
         }, 1000);
-      } catch (err) {
-        console.error('Mic error:', err);
-        alert('Please allow microphone access.');
-      }
+      } catch (err) { console.error('Mic error:', err); alert('Please allow microphone access.'); }
     }
-
     function stopRecording() {
       if (!activeRecording.isRecording) return;
       activeRecording.isRecording = false;
@@ -2816,25 +2194,16 @@ async function renderRecordingsList() {
       if (recBtn) { recBtn.style.background = '#a13d2f'; recBtn.textContent = '●'; }
       if (status) status.textContent = '⏳ Processing…';
     }
-
     function updateRecTimer() {
       const m = Math.floor(activeRecording.seconds / 60);
       const s = activeRecording.seconds % 60;
       const t = document.getElementById('recTimer');
       const status = document.getElementById('recStatus');
       if (t) t.textContent = `${m}:${s.toString().padStart(2, '0')}`;
-
       const remaining = VOICE_MAX_SECONDS - activeRecording.seconds;
-      if (remaining <= 0) {
-        if (t) t.style.color = '#EF4444';
-        if (status) status.textContent = 'Time up — stopping';
-      } else if (remaining <= 10) {
-        if (t) t.style.color = '#EF4444';
-        if (status) status.textContent = `${remaining}s left`;
-      } else if (remaining <= 20) {
-        if (t) t.style.color = '#F59E0B';
-        if (status) status.textContent = `${remaining}s left`;
-      }
+      if (remaining <= 0) { if (t) t.style.color = '#EF4444'; if (status) status.textContent = 'Time up — stopping'; }
+      else if (remaining <= 10) { if (t) t.style.color = '#EF4444'; if (status) status.textContent = `${remaining}s left`; }
+      else if (remaining <= 20) { if (t) t.style.color = '#F59E0B'; if (status) status.textContent = `${remaining}s left`; }
     }
 
     // ============================================================
@@ -2844,7 +2213,6 @@ async function renderRecordingsList() {
       const which = activeRecording.target;
       const voiceBtn = document.getElementById('recVoiceSubmit');
       const textBtn = document.getElementById('recTextSubmit');
-
       const repMeta = {
         target: which,
         activityTitle: activeRecording.meta.title || null,
@@ -2855,7 +2223,6 @@ async function renderRecordingsList() {
         rawText: activeRecording.rawText,
         question: activeRecording.question
       };
-
       if (repMeta.mode === 'voice' && !repMeta.rawBlob) return alert('Please record first.');
       if (repMeta.mode === 'text') {
         const ta = document.getElementById('recTextInput');
@@ -2864,23 +2231,17 @@ async function renderRecordingsList() {
         const words = repMeta.rawText.split(/\s+/).length;
         if (words > TEXT_MAX_WORDS) return alert(`Text responses are capped at ${TEXT_MAX_WORDS} words. You have ${words}. Please trim.`);
       }
-
       if (voiceBtn) { voiceBtn.disabled = true; voiceBtn.textContent = 'Analyzing…'; }
       if (textBtn) { textBtn.disabled = true; textBtn.textContent = 'Analyzing…'; }
-
       try {
         const isQ1 = which === 'q1';
         const isQ2 = which === 'q2';
         const slot = isQ1 ? 'q1' : isQ2 ? 'q2' : '';
         const qtype = isQ1 ? 'intro' : isQ2 ? 'project' : 'practice';
         const promptText = stripQuotes(repMeta.question || '');
-
         const formData = new FormData();
-        if (repMeta.mode === 'voice' && repMeta.rawBlob) {
-          formData.append('audio', repMeta.rawBlob, 'recording.webm');
-        } else {
-          formData.append('text', repMeta.rawText);
-        }
+        if (repMeta.mode === 'voice' && repMeta.rawBlob) formData.append('audio', repMeta.rawBlob, 'recording.webm');
+        else formData.append('text', repMeta.rawText);
         formData.append('question_type', qtype);
         formData.append('question_slot', slot);
         formData.append('question_prompt', promptText);
@@ -2888,42 +2249,22 @@ async function renderRecordingsList() {
         formData.append('duration_seconds', repMeta.mode === 'voice'
           ? repMeta.seconds
           : Math.max(10, Math.round((repMeta.rawText || '').split(/\s+/).length / 2.5)));
-
         formData.append('question_source', activeRecording.questionSource || 'bank');
-        if (activeRecording.bankQuestionId) {
-          formData.append('bank_question_id', activeRecording.bankQuestionId);
-        }
-
+        if (activeRecording.bankQuestionId) formData.append('bank_question_id', activeRecording.bankQuestionId);
         const uploadRes = await fetch(`${BACKEND_URL}/api/paid/upload`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` },
-          body: formData
+          method: 'POST', headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }, body: formData
         });
-        if (!uploadRes.ok) {
-          const err = await uploadRes.json().catch(() => ({}));
-          throw new Error(err.error || err.detail || `Upload failed (${uploadRes.status})`);
-        }
+        if (!uploadRes.ok) { const err = await uploadRes.json().catch(() => ({})); throw new Error(err.error || err.detail || `Upload failed (${uploadRes.status})`); }
         const { drill_id } = await uploadRes.json();
-
         const analyzeRes = await fetch(`${BACKEND_URL}/api/paid/analyze`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${SESSION_TOKEN}`,
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ drill_id })
         });
-
         if (analyzeRes.status === 401) { closeRecorderModal(); signOut(); return; }
-
-        if (!analyzeRes.ok) {
-          const err = await analyzeRes.json().catch(() => ({}));
-          throw new Error(err.error || err.detail || `Analyze failed (${analyzeRes.status})`);
-        }
-
+        if (!analyzeRes.ok) { const err = await analyzeRes.json().catch(() => ({})); throw new Error(err.error || err.detail || `Analyze failed (${analyzeRes.status})`); }
         const rawAnalysis = await analyzeRes.json();
         const metrics = normalizeAnalysis(rawAnalysis);
-
         const newRep = {
           number: (which === 'q1' ? state.q1Trials.length : which === 'q2' ? state.q2Trials.length : state.activityTrials.length) + 1,
           fillerDiscipline: metrics.fillerDiscipline,
@@ -2936,32 +2277,20 @@ async function renderRecordingsList() {
           timestamp: new Date().toISOString(),
           full: rawAnalysis
         };
-
         if (which === 'q1') state.q1Trials.push(newRep);
         else if (which === 'q2') state.q2Trials.push(newRep);
         else state.activityTrials.push(newRep);
-
         updateQuestionCard('q1');
         updateQuestionCard('q2');
         renderTodayProgress();
         renderProgressView();
-
         await loadUserStats();
         renderHeader();
         renderBadges();
-
         closeRecorderModal();
-        // ⭐ Auto-navigate to Pattern & Progress after a Today rep
         const isTodayRep = (which === 'q1' || which === 'q2');
-        if (isTodayRep) {
-          switchView('dash');
-        } else {
-          // Activities still show the small confirmation alert
-          const label = repMeta.activityTitle || 'Rep';
-          setTimeout(() => {
-            alert(`✅ ${label} saved!`);
-          }, 200);
-        }
+        if (isTodayRep) { switchView('dash'); }
+        else { setTimeout(() => { alert(`✅ ${repMeta.activityTitle || 'Rep'} saved!`); }, 200); }
       } catch (err) {
         console.error('❌ Submit failed:', err);
         alert(`Something went wrong: ${err.message}`);
@@ -2987,17 +2316,13 @@ async function renderRecordingsList() {
       const activity = card.dataset.activity || card.querySelector('.activity-card-title')?.textContent || 'Practice';
       const type = card.dataset.type || 'voice';
       const isDynamic = card.dataset.dynamic === 'true';
-
       if (type === 'content') { openContentModal(activity); return; }
       if (type === 'text') { return; }
-
       const prompt = isDynamic
         ? await pickDynamicScenarioPrompt(activity)
         : await pickPromptForActivity(activity);
-
       openRecorderModal(prompt, { source: 'activity', title: activity, category: activity });
     }
-
     async function pickPromptForActivity(activity) {
       const sprint = USER.track_id || 'interview';
       const questions = CACHED_BANK[`${sprint}-${USER.current_day}`] || FALLBACK_QUESTIONS;
@@ -3009,22 +2334,14 @@ async function renderRecordingsList() {
       const q = questions[0];
       return q ? q.text : 'Tell me about yourself.';
     }
-
     async function pickDynamicScenarioPrompt(activity) {
       const sprint = USER.track_id || 'interview';
-      const industry = USER.target_industry || null;
-      const role = USER.target_role || null;
-      const years = USER.years_experience || null;
-
       try {
         const params = new URLSearchParams({ activity, sprint });
-        if (industry) params.set('industry', industry);
-        if (role) params.set('role', role);
-        if (years) params.set('years', years);
-
-        const res = await fetch(`${BACKEND_URL}/api/paid/scenarios?${params.toString()}`, {
-          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-        });
+        if (USER.target_industry) params.set('industry', USER.target_industry);
+        if (USER.role_family) params.set('role_family', USER.role_family);
+        if (USER.career_stage) params.set('career_stage', USER.career_stage);
+        const res = await fetch(`${BACKEND_URL}/api/paid/scenarios?${params.toString()}`, { headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` } });
         if (res.ok) {
           const data = await res.json();
           const list = data.scenarios || [];
@@ -3034,13 +2351,11 @@ async function renderRecordingsList() {
           }
         }
       } catch (e) { console.warn('Dynamic scenario fetch failed:', e); }
-
       const fallbackKey = `${sprint}-${USER.current_day}`;
       const questions = CACHED_BANK[fallbackKey] || FALLBACK_QUESTIONS;
       const q = questions[Math.floor(Math.random() * questions.length)];
       return q ? q.text : 'Tell me about yourself.';
     }
-
     function openContentModal(title) {
       const content = {
         'The Pyramid Principle': '<p><strong>Core idea:</strong> Lead with your conclusion first, then support it with 3 key pillars, then back each pillar with evidence.</p><p><strong>Example:</strong> "We should delay the launch by 2 weeks. Three reasons: QA needs more time, two critical bugs remain open, the marketing campaign isn\'t ready."</p>',
@@ -3056,7 +2371,6 @@ async function renderRecordingsList() {
       document.getElementById('usModal').classList.add('is-visible');
       renderIcons();
     }
-
     function submitReflection() {
       const ta = document.getElementById('reflectionInput');
       const text = ta?.value?.trim();
@@ -3066,16 +2380,12 @@ async function renderRecordingsList() {
       if (counter) counter.textContent = '0';
       alert('✅ Reflection saved.');
     }
-
-    function closeModal() {
-      document.getElementById('usModal').classList.remove('is-visible');
-    }
+    function closeModal() { document.getElementById('usModal').classList.remove('is-visible'); }
 
     // ============================================================
     // NAVIGATION
     // ============================================================
     function toggleSidebar() { document.getElementById('appSidebar').classList.toggle('open'); }
-
     function switchView(key) {
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-view'));
@@ -3085,7 +2395,7 @@ async function renderRecordingsList() {
       if (viewMap[key]) document.getElementById(viewMap[key]).classList.add('active-view');
       if (key === 'dash') renderProgressView();
       if (key === 'badges') renderBadges();
-      if (key === 'recordings') renderRecordingsList();   // ⭐ NEW
+      if (key === 'recordings') renderRecordingsList();
       if (key === 'activities') {
         renderBitesTabs();
         renderBitesGrid();
@@ -3098,7 +2408,6 @@ async function renderRecordingsList() {
       }
       renderIcons();
     }
-
     function switchActivitySub(key, btn) {
       document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
@@ -3110,15 +2419,12 @@ async function renderRecordingsList() {
       if (key === 'scenarios') { renderScenariosGrid(); }
       renderIcons();
     }
-
     function setTimeline(key, btn) {
       document.querySelectorAll('.time-tab').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
     }
-
     function signOut() {
       localStorage.removeItem('unspoken_paid_session');
-      // Clear today's cached questions on sign-out
       try {
         const key = `unspoken_questions_${USER.email}_${new Date().toISOString().slice(0, 10)}`;
         localStorage.removeItem(key);
@@ -3139,12 +2445,8 @@ async function renderRecordingsList() {
       if (!s) return '';
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
-    function formatSprint(s) {
-      const m = { interview:'Interview', gd:'Group Discussion', leadership:'Leadership Presence', storytelling:'Storytelling', charisma:'Charisma' };
-      return m[s] || s || 'Practice';
-    }
 
-    console.log('🚀 Product page loaded — dynamic stats + day + scenarios + badges + question actions + focus switcher.');
+    console.log('🚀 Product page loaded — full taxonomy aligned (industry, role_family, role, career_stage, track).');
   </script>
 </body>
 </html>
