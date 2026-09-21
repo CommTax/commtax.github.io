@@ -1963,33 +1963,131 @@ document.getElementById('headerTrackBadge').textContent = isPass
       }).join('');
     }
 
-    function renderRecordingsList(allReps) {
-      const list = document.getElementById('recordingsList');
-      if (!list) return;
-      if (!allReps.length) {
-        list.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Your reps will appear here as you practice.</div>';
-        return;
-      }
-      const sorted = allReps.slice().reverse();
-      list.innerHTML = sorted.map((r, idx) => {
-        const label = r.activity ? r.activity : 'Practice rep';
-        const time = r.timestamp ? new Date(r.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
-        const transcript = r.transcript ? escapeHtml(r.transcript.slice(0, 220)) + (r.transcript.length > 220 ? '…' : '') : '<em style="color:var(--text-muted);">No transcript captured</em>';
-        const fd = r.fillerDiscipline, pf = r.pointFirst, cc = r.concreteness;
-        const scoreLine = [fd != null ? `Filler ${fd}` : null, pf != null ? `Point-first ${pf}` : null, cc != null ? `Concrete ${cc}` : null].filter(Boolean).join(' · ') || 'No metrics yet';
-        return `
-          <div style="background:var(--bg-dark);border:1px solid var(--border-color);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
-            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;">
-              <div style="font-size:13px;font-weight:700;color:var(--text-main);">Rep #${sorted.length - idx} · ${escapeHtml(label)}</div>
-              <div style="font-size:11px;color:var(--text-muted);">${escapeHtml(time)}</div>
+async function renderRecordingsList() {
+  const list = document.getElementById('recordingsList');
+  if (!list) return;
+
+  list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);padding:12px 0;">Loading your reps…</div>`;
+
+  let reps = [];
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/paid/reps`, {
+      headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      reps = data.reps || [];
+    }
+  } catch (e) {
+    console.warn('renderRecordingsList fetch failed:', e);
+  }
+
+  if (!reps.length) {
+    list.innerHTML = `<div style="font-size:12px;color:var(--text-muted);padding:12px 0;">No reps yet — start on Today.</div>`;
+    return;
+  }
+
+  // Group reps by date (YYYY-MM-DD, local time)
+  const groups = {};
+  for (const r of reps) {
+    const ts = r.created_at || r.analyzed_at;
+    const d = ts ? new Date(ts) : new Date();
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(r);
+  }
+
+  const sortedKeys = Object.keys(groups).sort().reverse();
+
+  const fmtDateHeader = (key) => {
+    const [y, m, d] = key.split('-').map(Number);
+    const dt = new Date(y, m - 1, d);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1); yesterday.setHours(0,0,0,0);
+    const dtMid = new Date(dt); dtMid.setHours(0,0,0,0);
+
+    if (dtMid.getTime() === today.getTime()) return 'Today';
+    if (dtMid.getTime() === yesterday.getTime()) return 'Yesterday';
+    return dt.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  const extractMetrics = (r) => {
+    const m = r.metrics || {};
+    const s = r.signals || {};
+    return {
+      fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
+      pointFirst:       m.point_first      ?? m.structure ?? null,
+      concreteness:     m.concreteness     ?? m.impact ?? null,
+      overallScore:     m.overall_score    ?? null,
+      timeToPoint:      s.main_point_delay_seconds ?? null,
+      wordsPerMinute:   s.words_per_minute ?? null,
+      fillerTotal:      (s.filler_words || {}).total ?? null,
+    };
+  };
+
+  let html = '';
+  for (const key of sortedKeys) {
+    html += `<div style="margin-bottom:22px;">`;
+    html += `<div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border-color);">${escapeHtml(fmtDateHeader(key))}</div>`;
+
+    for (const r of groups[key]) {
+      const m = extractMetrics(r);
+      const timeStr = r.created_at
+        ? new Date(r.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+        : '';
+
+      const sourceBadge = r.question_source === 'custom'
+        ? '<span style="font-size:9px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent-gold);background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);padding:2px 6px;border-radius:4px;margin-left:6px;">CUSTOM</span>'
+        : r.question_source === 'changed'
+          ? '<span style="font-size:9px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent-cyan);background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.35);padding:2px 6px;border-radius:4px;margin-left:6px;">CHANGED</span>'
+          : '';
+
+      const scoreLine = [
+        m.fillerDiscipline != null ? `Filler ${m.fillerDiscipline}` : null,
+        m.pointFirst       != null ? `Point-first ${m.pointFirst}` : null,
+        m.concreteness     != null ? `Concrete ${m.concreteness}` : null,
+      ].filter(Boolean).join(' · ') || 'No metrics yet';
+
+      const profileBits = [
+        r.user_role_family ? formatTeamFamily(r.user_role_family) : null,
+        r.user_role        ? formatRole(r.user_role, r.user_role_family) : null,
+        r.user_track       ? formatLevel(r.user_track) : null,
+      ].filter(Boolean);
+
+      html += `
+        <div style="background:var(--bg-dark);border:1px solid var(--border-color);border-radius:12px;padding:16px 18px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px;">
+
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;">
+            <div style="font-size:11px;color:var(--text-muted);font-weight:700;letter-spacing:0.04em;">
+              ${escapeHtml(timeStr)}${profileBits.length ? ' · ' + escapeHtml(profileBits.join(' · ')) : ''}
             </div>
-            <div style="font-size:12px;line-height:1.6;color:var(--text-main);font-style:italic;padding-left:10px;border-left:2px solid var(--accent-cyan);">${transcript}</div>
-            <div style="font-size:11px;color:var(--success);font-weight:600;">${escapeHtml(scoreLine)}</div>
+            ${sourceBadge}
           </div>
-        `;
-      }).join('');
+
+          <div>
+            <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:6px;">Question</div>
+            <div style="font-size:14px;font-weight:600;line-height:1.5;color:var(--text-main);">"${escapeHtml(r.question)}"</div>
+          </div>
+
+          <div>
+            <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:6px;">Your Response</div>
+            <div style="font-size:13px;line-height:1.7;color:var(--text-main);font-style:italic;padding:12px 14px;background:rgba(0,0,0,0.25);border-left:3px solid var(--accent-purple);border-radius:8px;white-space:pre-wrap;word-break:break-word;max-height:220px;overflow-y:auto;">
+              ${r.transcript ? escapeHtml(r.transcript) : '<em style="color:var(--text-muted);">No transcript captured</em>'}
+            </div>
+          </div>
+
+          <div style="font-size:11px;font-weight:700;color:var(--success);letter-spacing:0.03em;">${escapeHtml(scoreLine)}</div>
+
+        </div>
+      `;
     }
 
+    html += `</div>`;
+  }
+
+  list.innerHTML = html;
+  renderIcons();
+}
     function normalizeAnalysis(data) {
       if (!data) return null;
       const m = data.metrics || {};
@@ -3026,6 +3124,7 @@ document.getElementById('headerTrackBadge').textContent = isPass
       if (viewMap[key]) document.getElementById(viewMap[key]).classList.add('active-view');
       if (key === 'dash') renderProgressView();
       if (key === 'badges') renderBadges();
+      if (key === 'recordings') renderRecordingsList();   // ⭐ NEW
       if (key === 'activities') {
         renderBitesTabs();
         renderBitesGrid();
