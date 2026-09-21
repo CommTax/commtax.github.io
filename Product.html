@@ -1199,8 +1199,18 @@
       if (!questions || !questions.length) { questions = FALLBACK_QUESTIONS; CACHED_BANK[cacheKey] = questions; }
       const q1 = questions[0];
       const q2 = questions[1] || questions[0];
-      state.questions.q1 = { id: q1.id || null, text: q1.text, focus: q1.focus, target_seconds: q1.target_seconds, difficulty: q1.difficulty, custom: false, source: 'bank' };
-      state.questions.q2 = { id: q2.id || null, text: q2.text, focus: q2.focus, target_seconds: q2.target_seconds, difficulty: q2.difficulty, custom: false, source: 'bank' };
+state.questions.q1 = {
+  id: q1.id || null, text: q1.text, focus: q1.focus,
+  target_seconds: q1.target_seconds, difficulty: q1.difficulty,
+  question_type: q1.question_type || 'self-intro',
+  custom: false, source: 'bank',
+};
+state.questions.q2 = {
+  id: q2.id || null, text: q2.text, focus: q2.focus,
+  target_seconds: q2.target_seconds, difficulty: q2.difficulty,
+  question_type: q2.question_type || 'behavioral',
+  custom: false, source: 'bank',
+};
       saveQuestionsCache();
     }
 
@@ -1718,7 +1728,13 @@
       grid.innerHTML = `<div style="font-size:12px;color:var(--text-muted);grid-column:1/-1;padding:20px;">Loading scenarios…</div>`;
       const list = await fetchScenariosFromBackend();
       grid.innerHTML = list.map(s => `
-        <div class="activity-card" data-activity="${escapeHtml(s.activity)}" data-type="voice" data-scenario-id="${escapeHtml(s.id)}" data-dynamic="${s.dynamic ? 'true' : 'false'}">
+        const questionType = card.dataset.questionType || 'activity';
+openRecorderModal(prompt, {
+  source: 'activity',
+  title: activity,
+  category: activity,
+  questionType: questionType,
+});
           <div><div class="activity-card-tag">${escapeHtml(s.sprint)}</div><div class="activity-card-title">${escapeHtml(s.title)}</div><div class="activity-card-desc">${escapeHtml(s.desc)}</div><div style="font-size:10px;font-weight:700;color:var(--accent-cyan);margin-top:6px;letter-spacing:0.04em;">${escapeHtml(s.meta)}</div></div>
           <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button>
         </div>
@@ -2056,20 +2072,27 @@
       activeRecording.bankQuestionId = null;
       if (activeRecording.timerInterval) { clearInterval(activeRecording.timerInterval); activeRecording.timerInterval = null; }
       let qText;
-      if (promptText === 'q1' || promptText === 'q2') {
-        activeRecording.target = promptText;
-        const q = state.questions[promptText];
-        qText = q ? q.text : '';
-        activeRecording.questionSource = q ? (q.source || 'bank') : 'bank';
-        activeRecording.bankQuestionId = (q && q.source === 'bank') ? q.id : null;
-      } else if (opts.source === 'activity') {
-        activeRecording.target = 'activity';
-        qText = promptText;
-      } else {
-        activeRecording.target = 'custom';
-        qText = promptText;
-        activeRecording.questionSource = 'custom';
-      }
+if (promptText === 'q1' || promptText === 'q2') {
+  activeRecording.target = promptText;
+  const q = state.questions[promptText];
+  qText = q ? q.text : '';
+  activeRecording.questionSource = q ? (q.source || 'bank') : 'bank';
+  activeRecording.bankQuestionId = (q && q.source === 'bank') ? q.id : null;
+  activeRecording.questionType = (q && q.question_type)
+    || (promptText === 'q1' ? 'self-intro' : 'behavioral');
+} else if (opts.source === 'activity') {
+  activeRecording.target = 'activity';
+  qText = promptText;
+  activeRecording.questionSource = 'bank';
+  activeRecording.bankQuestionId = null;
+  activeRecording.questionType = opts.questionType || 'activity';
+} else {
+  activeRecording.target = 'custom';
+  qText = promptText;
+  activeRecording.questionSource = 'custom';
+  activeRecording.bankQuestionId = null;
+  activeRecording.questionType = 'custom';
+}
       activeRecording.question = qText;
 
       const old = document.getElementById('recorderModal');
@@ -2237,7 +2260,8 @@
         const isQ1 = which === 'q1';
         const isQ2 = which === 'q2';
         const slot = isQ1 ? 'q1' : isQ2 ? 'q2' : '';
-        const qtype = isQ1 ? 'intro' : isQ2 ? 'project' : 'practice';
+        const qtype = activeRecording.questionType
+  || (isQ1 ? 'self-intro' : isQ2 ? 'behavioral' : 'custom');
         const promptText = stripQuotes(repMeta.question || '');
         const formData = new FormData();
         if (repMeta.mode === 'voice' && repMeta.rawBlob) formData.append('audio', repMeta.rawBlob, 'recording.webm');
