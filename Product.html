@@ -463,7 +463,10 @@
         </section>
 
         <section class="view-panel" id="activitiesView">
-          <div class="view-heading"><h2><i data-lucide="target"></i> Activities</h2><span class="vh-sub">Extra practice beyond today's drills</span></div>
+          <div class="view-heading">
+            <h2><i data-lucide="target"></i> Activities</h2>
+            <span class="vh-sub" id="activitiesCapCounter" style="font-size:11px;color:var(--text-muted);font-weight:600;"></span>
+          </div>
           <div class="activity-sub-tabs">
             <button class="sub-tab-btn active" onclick="switchActivitySub('voice-reps', this)"><i data-lucide="mic"></i> Voice Reps</button>
             <button class="sub-tab-btn" onclick="switchActivitySub('scenarios', this)"><i data-lucide="library"></i> Scenario Library</button>
@@ -737,10 +740,6 @@
       }
     }
 
-    // ============================================================
-    // ONBOARDING DATA
-    // ============================================================
-
     const OB_INDUSTRIES = [
       { value: 'it_software',       label: 'IT / Software / SaaS' },
       { value: 'bpo_services',      label: 'BPO / Customer Services' },
@@ -1001,6 +1000,7 @@
         if (!data.is_paid) return false;
         USER = buildPaidUser(data);
         await loadQuestionsForToday();
+        await loadDailyLimits();
         document.getElementById('bootScreen').classList.add('hidden');
         document.getElementById('mainApp').classList.remove('hidden');
         renderAll();
@@ -1026,6 +1026,7 @@
         career_stage: data.career_stage || null,
         track: data.track || null,
         profile_completed: !!data.profile_completed,
+        limits: null,
         stats: { current_streak: 0, longest_streak: 0, completed_tasks: 0, total_tasks: 0, achievements_unlocked: 0, achievements_total: 5 }
       };
     }
@@ -1064,32 +1065,34 @@
       USER.current_day = computeCurrentDay(USER.enrolled_at, USER.total_days);
     }
 
-async function loadDailyLimits() {
-  try {
-    const res = await fetch(`${BACKEND_URL}/api/paid/limits`, {
-      headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
-    });
-    if (res.ok) {
-      const data = await res.json();
-      USER.limits = {
-        today:      data.today      || { used: 0, cap: 10, remaining: 10 },
-        activities: data.activities || { used: 0, cap: 10, remaining: 10 },
-        plan:       data.plan       || 'sprint',
-      };
+    async function loadDailyLimits() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/paid/limits`, {
+          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          USER.limits = {
+            today:      data.today      || { used: 0, cap: 10, remaining: 10 },
+            activities: data.activities || { used: 0, cap: 10, remaining: 10 },
+            plan:       data.plan       || 'sprint',
+          };
+        }
+      } catch (e) {
+        console.warn('loadDailyLimits failed:', e);
+      }
     }
-  } catch (e) {
-    console.warn('loadDailyLimits failed:', e);
-  }
-}
-    
 
     let statsRefreshHandle = null;
     function startStatsRefresh() {
       if (statsRefreshHandle) return;
       statsRefreshHandle = setInterval(async () => {
         await loadUserStats();
+        await loadDailyLimits();
         renderHeader();
         renderBadges();
+        renderTodayCap();
+        renderActivitiesCap();
       }, 5 * 60 * 1000);
     }
 
@@ -1237,6 +1240,8 @@ async function loadDailyLimits() {
       renderDrillsGrid();
       renderScenariosGrid();
       renderBadges();
+      renderTodayCap();
+      renderActivitiesCap();
       switchView('today');
       maybeShowOnboarding();
       renderIcons();
@@ -1355,9 +1360,15 @@ async function loadDailyLimits() {
       document.getElementById(`${which}BestSnr`).textContent = best != null ? `Best filler discipline: ${best}%` : 'Best score: —';
       const btn = document.getElementById(`${which}RepBtn`);
       const capReached = trials.length >= CAP_PER_QUESTION;
-      btn.innerHTML = capReached ? `<i data-lucide="check"></i> Cap reached` : `<i data-lucide="mic"></i> Start Trial ${trials.length + 1}`;
-      btn.disabled = capReached;
-      btn.onclick = () => { if (!capReached) startRep(which); };
+      const dailyRemaining = USER.limits?.today?.remaining ?? 999;
+      const dailyCapHit = dailyRemaining <= 0;
+      btn.innerHTML = capReached
+        ? `<i data-lucide="check"></i> Cap reached`
+        : dailyCapHit
+          ? `<i data-lucide="lock"></i> Daily limit reached`
+          : `<i data-lucide="mic"></i> Start Trial ${trials.length + 1}`;
+      btn.disabled = capReached || dailyCapHit;
+      btn.onclick = () => { if (!capReached && !dailyCapHit) startRep(which); };
       document.getElementById(`${which}RepsLog`).innerHTML = trials.map((tr, i) => `
         <div class="rep-log-item"><span>Trial ${i + 1}</span><span class="rl-score">${tr.transcript ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"` : '—'}</span></div>
       `).join('');
@@ -1368,20 +1379,42 @@ async function loadDailyLimits() {
       const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
       document.getElementById('dayProgressFill').style.width = `${(drills / 2) * 100}%`;
     }
-function renderTodayCap() {
-  const el = document.getElementById('todayCapCounter');
-  if (!el) return;
-  if (!USER.limits || !USER.limits.today) { el.textContent = ''; return; }
-  const t = USER.limits.today;
-  el.textContent = `${t.used} of ${t.cap} reps used today · ${t.remaining} left · resets at midnight`;
-  if (t.remaining === 0) {
-    el.style.color = 'var(--accent-gold)';
-    el.textContent = `Daily limit reached (${t.used}/${t.cap}) · resets at midnight`;
-  } else {
-    el.style.color = '';
-  }
-}
-    
+
+    function renderTodayCap() {
+      const el = document.getElementById('todayCapCounter');
+      if (!el) return;
+      if (!USER.limits || !USER.limits.today) { el.textContent = ''; return; }
+      const t = USER.limits.today;
+      el.textContent = `${t.used} of ${t.cap} reps used today · ${t.remaining} left · resets at midnight`;
+      if (t.remaining === 0) {
+        el.style.color = 'var(--accent-gold)';
+        el.textContent = `Daily limit reached (${t.used}/${t.cap}) · resets at midnight`;
+      } else {
+        el.style.color = '';
+      }
+    }
+
+    function renderActivitiesCap() {
+      const el = document.getElementById('activitiesCapCounter');
+      if (!el) return;
+      if (!USER.limits || !USER.limits.activities) { el.textContent = ''; return; }
+      const a = USER.limits.activities;
+      el.textContent = `${a.used} of ${a.cap} activity reps used today · ${a.remaining} left`;
+      el.style.color = a.remaining === 0 ? 'var(--accent-gold)' : '';
+
+      document.querySelectorAll('.ac-start-cta').forEach(btn => {
+        if (a.remaining === 0) {
+          btn.disabled = true;
+          btn.style.opacity = '0.5';
+          btn.style.cursor = 'not-allowed';
+        } else {
+          btn.disabled = false;
+          btn.style.opacity = '';
+          btn.style.cursor = '';
+        }
+      });
+    }
+
     const ACHIEVEMENT_DEFS = [
       { id: 'first_rep', name: 'First Rep',     desc: 'You completed your first voice rep.', icon: 'target',   check: s => s.completed_tasks >= 1 },
       { id: 'streak_5',  name: '5-Day Streak',  desc: 'Practice 5 days in a row.',           icon: 'flame',    check: s => s.current_streak >= 5 },
@@ -1683,7 +1716,6 @@ function renderTodayCap() {
         executiveVersion: r.executive_version ?? null,
         transcript: data.transcribed_text ?? '',
 
-        // ⭐ NEW — for the trial-aligned UI
         listenerQuestion:     d.listener_question    ?? g.unspoken_gap ?? null,
         recommendedStructure: c.recommended_structure ?? null,
         whyThisMatters:       d.why_this_matters     ?? null,
@@ -1926,9 +1958,12 @@ function renderTodayCap() {
         SCENARIOS_CACHE = null;
         try { const key = `unspoken_questions_${USER.email}_${new Date().toISOString().slice(0, 10)}`; localStorage.removeItem(key); } catch (e) {}
         await loadQuestionsForToday();
+        await loadDailyLimits();
         renderQuestionCards();
         renderProfile();
         renderFocusSwitcher();
+        renderTodayCap();
+        renderActivitiesCap();
         await renderScenariosGrid();
         renderIcons();
         setTimeout(() => alert('✅ Focus updated. Fresh questions loaded.'), 150);
@@ -2373,8 +2408,11 @@ function renderTodayCap() {
         renderTodayProgress();
         renderProgressView();
         await loadUserStats();
+        await loadDailyLimits();
         renderHeader();
         renderBadges();
+        renderTodayCap();
+        renderActivitiesCap();
         closeRecorderModal();
         const isTodayRep = (which === 'q1' || which === 'q2');
         if (isTodayRep) { switchView('dash'); }
@@ -2393,11 +2431,21 @@ function renderTodayCap() {
         alert('You\'ve reached the trial cap for this question. Try the other question or an activity.');
         return;
       }
+      const dailyRemaining = USER.limits?.today?.remaining ?? 999;
+      if (dailyRemaining <= 0) {
+        alert('You\'ve reached your daily limit. Resets at midnight.');
+        return;
+      }
       openRecorderModal(which);
     }
 
     async function startActivityFromCard(card) {
       if (!card) return;
+      const remaining = USER.limits?.activities?.remaining ?? 999;
+      if (remaining <= 0) {
+        alert('Daily activities limit reached. Resets at midnight.');
+        return;
+      }
       const activity = card.dataset.activity || card.querySelector('.activity-card-title')?.textContent || 'Practice';
       const type = card.dataset.type || 'voice';
       const isDynamic = card.dataset.dynamic === 'true';
@@ -2489,6 +2537,7 @@ function renderTodayCap() {
         renderBitesGrid();
         renderDrillsGrid();
         renderScenariosGrid();
+        renderActivitiesCap();
       }
       if (window.innerWidth <= 900) {
         const sidebar = document.getElementById('appSidebar');
@@ -2531,7 +2580,7 @@ function renderTodayCap() {
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
-    console.log('🚀 Product page loaded — full taxonomy + trial-vocab progress view.');
+    console.log('🚀 Product page loaded — daily caps live, trial-vocab progress view.');
   </script>
 </body>
 </html>
