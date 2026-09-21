@@ -401,6 +401,7 @@
               <h2 id="todayTrackTitle">Your Sprint</h2>
               <div class="th-sub" id="todayFocus">Loading questions…</div>
               <div class="day-progress-bar"><div class="day-progress-fill" id="dayProgressFill" style="width: 0%;"></div></div>
+              <div id="todayCapCounter" style="font-size:11px; color:var(--text-muted); margin-top:6px; font-weight:600;"></div>
             </div>
             <div class="th-right">
               <div class="day-counter" id="dayCounter">Day —</div>
@@ -1063,6 +1064,25 @@
       USER.current_day = computeCurrentDay(USER.enrolled_at, USER.total_days);
     }
 
+async function loadDailyLimits() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/paid/limits`, {
+      headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      USER.limits = {
+        today:      data.today      || { used: 0, cap: 10, remaining: 10 },
+        activities: data.activities || { used: 0, cap: 10, remaining: 10 },
+        plan:       data.plan       || 'sprint',
+      };
+    }
+  } catch (e) {
+    console.warn('loadDailyLimits failed:', e);
+  }
+}
+    
+
     let statsRefreshHandle = null;
     function startStatsRefresh() {
       if (statsRefreshHandle) return;
@@ -1348,7 +1368,20 @@
       const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
       document.getElementById('dayProgressFill').style.width = `${(drills / 2) * 100}%`;
     }
-
+function renderTodayCap() {
+  const el = document.getElementById('todayCapCounter');
+  if (!el) return;
+  if (!USER.limits || !USER.limits.today) { el.textContent = ''; return; }
+  const t = USER.limits.today;
+  el.textContent = `${t.used} of ${t.cap} reps used today · ${t.remaining} left · resets at midnight`;
+  if (t.remaining === 0) {
+    el.style.color = 'var(--accent-gold)';
+    el.textContent = `Daily limit reached (${t.used}/${t.cap}) · resets at midnight`;
+  } else {
+    el.style.color = '';
+  }
+}
+    
     const ACHIEVEMENT_DEFS = [
       { id: 'first_rep', name: 'First Rep',     desc: 'You completed your first voice rep.', icon: 'target',   check: s => s.completed_tasks >= 1 },
       { id: 'streak_5',  name: '5-Day Streak',  desc: 'Practice 5 days in a row.',           icon: 'flame',    check: s => s.current_streak >= 5 },
