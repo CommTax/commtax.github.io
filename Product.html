@@ -450,7 +450,7 @@
 
           <div class="profile-row"><span class="profile-label">Name</span><span class="profile-value" id="profileNameText">—</span></div>
           <div class="profile-row"><span class="profile-label">Plan</span><span class="profile-value" id="profilePlanText">—</span></div>
-          <div class="profile-row"><span class="profile-label">Sprint</span><span class="profile-value" id="profileSprintText">—</span></div>
+          <div class="profile-row" id="profileSprintRow"><span class="profile-label">Sprint</span><span class="profile-value" id="profileSprintText">—</span></div>
           <div class="profile-row"><span class="profile-label">Team</span><span class="profile-value" id="profileTeamText">—</span></div>
           <div class="profile-row"><span class="profile-label">Role</span><span class="profile-value" id="profileRoleText">—</span></div>
           <div class="profile-row"><span class="profile-label">Level</span><span class="profile-value" id="profileLevelText">—</span></div>
@@ -1668,12 +1668,17 @@
 
       document.getElementById('headerPlan').textContent = PLAN_LABEL[USER.plan] || '—';
       document.getElementById('headerDay').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
-      document.getElementById('headerTrackBadge').textContent = `${formatSprint(USER.track_id)} · ${PLAN_LABEL[USER.plan] || ''}`;
+      const isPass = (USER.plan || '').toLowerCase() === 'pass';
+document.getElementById('headerTrackBadge').textContent = isPass
+  ? (PLAN_LABEL[USER.plan] || '')
+  : `${formatSprint(USER.track_id)} · ${PLAN_LABEL[USER.plan] || ''}`;
       document.getElementById('headerStreak').textContent = `${s.current_streak} day${s.current_streak === 1 ? '' : 's'}`;
       document.getElementById('headerCompleted').textContent = `${s.completed_tasks} Task${s.completed_tasks === 1 ? '' : 's'}`;
       document.getElementById('headerAchievements').textContent = `${s.achievements_unlocked} Badge${s.achievements_unlocked === 1 ? '' : 's'}`;
 
-      document.getElementById('todayTrackTitle').textContent = `${formatSprint(USER.track_id)} Sprint`;
+      document.getElementById('todayTrackTitle').textContent = isPass
+  ? 'Today\'s Practice'
+  : `${formatSprint(USER.track_id)} Sprint`;
       document.getElementById('todayFocus').textContent = `Day ${USER.current_day} of ${USER.total_days} · Enrolled ${enrolledStr} · 2 questions · 2 trials each`;
       document.getElementById('dayCounter').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
 
@@ -1688,12 +1693,18 @@
     }
 
     function renderProfile() {
-      const setText = (id, value, muted = false) => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.textContent = value || '—';
-        el.classList.toggle('muted', muted || !value);
-      };
+  const isPass = (USER.plan || '').toLowerCase() === 'pass';
+
+  // Hide the Sprint row entirely for Pass users — the concept doesn't apply.
+  const sprintRow = document.getElementById('profileSprintRow');
+  if (sprintRow) sprintRow.classList.toggle('hidden', isPass);
+
+  const setText = (id, value, muted = false) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = value || '—';
+    el.classList.toggle('muted', muted || !value);
+  };
 
       setText('profileNameText', USER.name);
       setText('profilePlanText', PLAN_LABEL[USER.plan] || USER.plan || '—');
