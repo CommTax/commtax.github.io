@@ -101,6 +101,22 @@
             border-color: #FB7185 !important;
         }
 
+        /* Voice captured badge */
+        .voice-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 3px 10px;
+            border-radius: 999px;
+            margin-bottom: 8px;
+        }
+        .voice-badge.hidden { display: none; }
+
         /* Modal styles */
         .modal {
             position: fixed;
@@ -418,7 +434,7 @@
             <div class="glass-card rounded-3xl p-6 sm:p-8 border border-cardBorder">
                 <div class="space-y-5">
                     
-                    <!-- Scenario Type Dropdown - UPDATED WITH ONLY 2 OPTIONS -->
+                    <!-- Scenario Type Dropdown -->
                     <div>
                         <label for="sandboxQuestionType" class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Select Scenario Type</label>
                         <select id="sandboxQuestionType" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-purple-500">
@@ -442,6 +458,12 @@
                                     <span id="recordStatusText">Record Voice (30s Max)</span>
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- Voice Captured Badge (shown after recording) -->
+                        <div id="voiceBadge" class="voice-badge hidden">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span id="voiceBadgeText">Voice captured</span>
                         </div>
 
                         <textarea id="sandboxInput" rows="4" class="w-full bg-darkBg border border-cardBorder rounded-xl p-4 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-purple-500" placeholder="Paste your raw answer or draft story here, or hit 'Record Voice' to speak your answer..."></textarea>
@@ -707,7 +729,7 @@
         // ============================================================
         const state = {
             currentQuestionType: 'intro',
-            currentMode: 'text', // Default to text for this version
+            currentMode: 'text',
             rawBlob: null,
             rawText: null,
             rawDuration: 0,
@@ -719,7 +741,9 @@
             return questionType === 'project' ? 'q2' : 'q1';
         }
 
-        // Mobile Navigation Toggle
+        // ============================================================
+        // MOBILE NAV TOGGLE
+        // ============================================================
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
         if (mobileMenuBtn && mobileMenu) {
@@ -738,35 +762,72 @@
         });
 
         // ============================================================
+        // SANDBOX ELEMENTS
+        // ============================================================
+        const recordVoiceBtn     = document.getElementById('recordVoiceBtn');
+        const recordIcon         = document.getElementById('recordIcon');
+        const recordStatusText   = document.getElementById('recordStatusText');
+        const recordTimer        = document.getElementById('recordTimer');
+        const sandboxInput       = document.getElementById('sandboxInput');
+        const sandboxCompressBtn = document.getElementById('sandboxCompressBtn');
+        const voiceBadge         = document.getElementById('voiceBadge');
+        const voiceBadgeText     = document.getElementById('voiceBadgeText');
+
+        // ============================================================
+        // RECORDING STATE
+        // ============================================================
+        let isRecording     = false;
+        let recordingInterval = null;
+        let secondsLeft     = 30;
+        let mediaRecorder   = null;
+        let audioChunks     = [];
+        let audioBlob       = null;
+        let recordingSeconds = 0;
+        let activeStream    = null;
+
+        // ============================================================
+        // LIVE-TRACK TEXT INPUT (so state stays in sync)
+        // ============================================================
+        sandboxInput.addEventListener('input', () => {
+            const val = sandboxInput.value.trim();
+            if (val.length > 0) {
+                // Typing overrides any prior voice recording
+                state.rawText = val;
+                state.rawBlob = null;
+                state.rawDuration = 0;
+                state.currentMode = 'text';
+                // Hide voice badge if user starts typing a fresh answer
+                if (audioBlob) {
+                    // Keep the blob around (they may still prefer it) but don't show the badge
+                    // Actually — simpler: if they type, treat text as the source of truth.
+                    audioBlob = null;
+                    recordingSeconds = 0;
+                }
+                voiceBadge.classList.add('hidden');
+            } else {
+                state.rawText = null;
+            }
+        });
+
+        // ============================================================
         // VOICE RECORDING (30-second limit)
         // ============================================================
-        const recordVoiceBtn = document.getElementById('recordVoiceBtn');
-        const recordIcon = document.getElementById('recordIcon');
-        const recordStatusText = document.getElementById('recordStatusText');
-        const recordTimer = document.getElementById('recordTimer');
-        const sandboxInput = document.getElementById('sandboxInput');
-
-        let isRecording = false;
-        let recordingInterval = null;
-        let secondsLeft = 30;
-        let mediaRecorder = null;
-        let audioChunks = [];
-        let audioBlob = null;
-        let recordingSeconds = 0;
-
         if (recordVoiceBtn) {
             recordVoiceBtn.addEventListener('click', async () => {
                 if (!isRecording) {
-                    // Start Recording
+                    // ── START RECORDING ──
                     try {
-                        const stream = await navigator.mediaDevices.getUserMedia({ 
-                            audio: { echoCancellation: true, noiseSuppression: true } 
+                        activeStream = await navigator.mediaDevices.getUserMedia({
+                            audio: { echoCancellation: true, noiseSuppression: true }
                         });
-                        
-                        mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+
+                        // ✅ Clear any stale blob so we don't reuse an old recording
+                        audioBlob = null;
                         audioChunks = [];
                         recordingSeconds = 0;
                         secondsLeft = 30;
+
+                        mediaRecorder = new MediaRecorder(activeStream, { mimeType: 'audio/webm;codecs=opus' });
 
                         mediaRecorder.ondataavailable = e => {
                             if (e.data.size > 0) audioChunks.push(e.data);
@@ -774,19 +835,23 @@
 
                         mediaRecorder.onstop = () => {
                             audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                            stream.getTracks().forEach(t => t.stop());
+                            if (activeStream) {
+                                activeStream.getTracks().forEach(t => t.stop());
+                                activeStream = null;
+                            }
                         };
 
                         mediaRecorder.start(1000);
                         isRecording = true;
-                        
+
                         recordTimer.classList.remove('hidden');
-                        recordTimer.innerText = "00:30";
+                        recordTimer.innerText = '00:30';
                         recordVoiceBtn.classList.add('recording-active');
-                        recordIcon.className = "fa-solid fa-stop text-white animate-pulse";
-                        recordStatusText.innerText = "Stop Recording";
-                        sandboxInput.value = "";
-                        sandboxInput.placeholder = "Listening... Speak your raw response now (Max 30 seconds)...";
+                        recordIcon.className = 'fa-solid fa-stop text-white animate-pulse';
+                        recordStatusText.innerText = 'Stop Recording';
+
+                        // NOTE: We do NOT clear sandboxInput.value here,
+                        // so any typed text the user had is preserved.
 
                         recordingInterval = setInterval(() => {
                             secondsLeft--;
@@ -804,7 +869,7 @@
                         alert('Please allow microphone access to record your answer.');
                     }
                 } else {
-                    // Stop Recording Manually
+                    // ── STOP RECORDING MANUALLY ──
                     stopRecording(false);
                 }
             });
@@ -815,49 +880,54 @@
                 mediaRecorder.stop();
             }
             clearInterval(recordingInterval);
+            recordingInterval = null;
+
             isRecording = false;
             recordVoiceBtn.classList.remove('recording-active');
-            recordIcon.className = "fa-solid fa-microphone text-rose-400";
-            recordStatusText.innerText = "Record Voice (30s Max)";
+            recordIcon.className = 'fa-solid fa-microphone text-rose-400';
+            recordStatusText.innerText = 'Record Voice (30s Max)';
             recordTimer.classList.add('hidden');
 
-            const scenario = document.getElementById('sandboxQuestionType').value;
-            
-            // Transcribe audio simulation into text area
-            sandboxInput.value = `[Voice Transcribed - ${recordingSeconds}s duration]: When leading the team during the ${scenario} situation, we had major misalignment across operations and engineering. I stepped in, brought leads together, set daily syncs, and aligned key metrics within two weeks.`;
+            // ✅ DO NOT overwrite the textarea with fake text.
+            // Just show a badge that a voice clip was captured.
+            voiceBadgeText.textContent = `Voice captured (${recordingSeconds}s)`;
+            voiceBadge.classList.remove('hidden');
+
+            // Update state to prefer the voice recording
+            // (unless user later types — the input listener will override)
+            state.rawBlob = null; // will be set on submit after blob is ready
+            state.rawText = null;
+            state.rawDuration = recordingSeconds;
+            state.currentMode = 'voice';
         }
 
         // ============================================================
-        // SANDBOX SUBMIT - Triggers Backend Flow
+        // SANDBOX SUBMIT - Opens Gate Modal
         // ============================================================
-        const sandboxCompressBtn = document.getElementById('sandboxCompressBtn');
-
         if (sandboxCompressBtn) {
             sandboxCompressBtn.addEventListener('click', () => {
                 const text = sandboxInput.value.trim();
                 const questionType = document.getElementById('sandboxQuestionType').value;
+                state.currentQuestionType = questionType;
 
-                // Determine if we have voice or text
-                if (audioBlob && !text) {
-                    // Voice recording exists but no transcription
+                // Decision rule:
+                //  1. If there is meaningful typed text → use text
+                //  2. Else if a fresh voice recording exists → use voice
+                if (text && text.length >= 10) {
+                    state.rawText = text;
+                    state.rawBlob = null;
+                    state.rawDuration = Math.max(10, Math.round(text.split(/\s+/).length / 2.5));
+                    state.currentMode = 'text';
+                } else if (audioBlob && recordingSeconds >= 3) {
                     state.rawBlob = audioBlob;
                     state.rawText = null;
                     state.rawDuration = recordingSeconds;
-                    state.currentQuestionType = questionType;
                     state.currentMode = 'voice';
-                } else if (text && text.length >= 10) {
-                    // Text response
-                    state.rawBlob = null;
-                    state.rawText = text;
-                    state.rawDuration = Math.max(10, Math.round(text.split(/\s+/).length / 2.5));
-                    state.currentQuestionType = questionType;
-                    state.currentMode = 'text';
                 } else {
-                    alert("Please paste a draft response or record your voice answer first.");
+                    alert('Please type at least 10 characters, or record at least 3 seconds of voice.');
                     return;
                 }
 
-                // Open gate modal to collect user info
                 openGateModal();
             });
         }
@@ -913,7 +983,6 @@
         // SUBMIT GATE → UPLOAD → CAPTURE → ANALYZE → REDIRECT
         // ============================================================
         async function submitGateAndRedirect() {
-            // Read directly from the DOM to avoid stale state
             state.gate.name   = document.getElementById('gateName').value.trim();
             state.gate.email  = document.getElementById('gateEmail').value.trim();
             state.gate.mobile = document.getElementById('gateMobile').value.replace(/\D/g, '').slice(0, 10);
@@ -929,21 +998,29 @@
 
             try {
                 const slot = slotFor(state.currentQuestionType);
-                const promptText = document.getElementById('sandboxQuestionType').options[document.getElementById('sandboxQuestionType').selectedIndex].text;
+                const selectEl = document.getElementById('sandboxQuestionType');
+                const promptText = selectEl.options[selectEl.selectedIndex].text;
 
                 // ─── STEP 1: Upload ───
                 const formData = new FormData();
-                if (state.currentMode === 'voice' && state.rawBlob) {
-                    formData.append('audio', state.rawBlob, 'recording.webm');
-                } else if (state.currentMode === 'text' && state.rawText) {
-                    formData.append('text', state.rawText);
+
+                // Re-derive the payload from the current textarea/blob at submit time
+                const liveText = sandboxInput.value.trim();
+
+                if (liveText && liveText.length >= 10) {
+                    // Text takes priority if present
+                    formData.append('text', liveText);
+                    formData.append('mode', 'text');
+                } else if (audioBlob && recordingSeconds >= 3) {
+                    formData.append('audio', audioBlob, 'recording.webm');
+                    formData.append('mode', 'voice');
                 } else {
                     throw new Error('No audio or text to upload');
                 }
+
                 formData.append('question_type', state.currentQuestionType);
                 formData.append('question_slot', slot);
                 formData.append('question_prompt', promptText);
-                formData.append('mode', state.currentMode);
                 formData.append('duration_seconds', state.rawDuration || 30);
 
                 const uploadRes = await fetch(`${BACKEND_URL}/api/trial/upload`, {
@@ -1012,7 +1089,9 @@
             }
         }
 
+        // ============================================================
         // Health ping
+        // ============================================================
         setInterval(() => {
             fetch(`${BACKEND_URL}/api/health`).then(r => {
                 if (r.ok) console.log('✅ Backend warm at', new Date().toLocaleTimeString());
