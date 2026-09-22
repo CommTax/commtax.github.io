@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- ✅ Razorpay Checkout Script -->
+    <!-- Razorpay Checkout Script -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script>
@@ -353,6 +353,31 @@
             text-transform: uppercase;
             padding: 4px 10px;
             border-radius: 999px;
+        }
+
+        /* Billing toggle (Practice Pass) */
+        .billing-toggle {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1.5px solid #22263D;
+            border-radius: 12px;
+            background: #090A0F;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #9CA3AF;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .billing-toggle:hover {
+            border-color: #7C3AED;
+            color: #F3F4F6;
+        }
+        .billing-toggle.active {
+            background: linear-gradient(135deg, #7C3AED, #6366F1);
+            border-color: #7C3AED;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
         }
 
         /* MOBILE CAROUSEL — snap scroll for practice & pricing */
@@ -699,7 +724,6 @@
                     One-time setup • Instant feedback on every response
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <!-- ✅ CHANGED: button now opens Razorpay checkout for the 'lab' plan -->
                     <button type="button" onclick="openCheckout('lab')"
                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-base px-8 py-3.5 rounded-2xl shadow-glow-purple hover:scale-[1.02] transition-all">
                         <span>Get Started </span>
@@ -832,16 +856,17 @@
                         </span>
                         <div class="text-xs font-bold uppercase tracking-wider text-purple-400 mb-2">Answer Lab</div>
                         <h3 class="text-2xl font-extrabold text-white">Fix Your 3 Most Important Answers</h3>
-                        <div class="mt-4 mb-6">
+                        <div class="mt-4 mb-2">
                             <span class="text-4xl font-extrabold text-white">₹199</span>
                         </div>
+                        <div class="text-sm text-gray-400 mb-6">One-time · 3 answers</div>
+
                         <ul class="text-sm text-gray-300 space-y-3 mb-8">
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-purple-400 mt-1"></i><span>Fix your 3 most critical answers</span></li>
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-purple-400 mt-1"></i><span>Full 5-Point Diagnostic report</span></li>
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-purple-400 mt-1"></i><span>Unlimited re-answers &amp; retries</span></li>
                         </ul>
                     </div>
-                    <!-- ✅ CHANGED: now triggers Razorpay checkout for 'lab' -->
                     <button type="button" onclick="openCheckout('lab')" class="w-full text-center bg-cardBorder hover:bg-purple-600 text-white font-semibold py-3 rounded-xl transition-all">Start Answer Lab</button>
                 </div>
 
@@ -856,9 +881,17 @@
                         </span>
                         <div class="text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">Interview Sprint</div>
                         <h3 class="text-2xl font-extrabold text-white">Prepare for Your Interview by Practicing It</h3>
-                        <div class="mt-4 mb-6">
+                        <div class="mt-4 mb-2">
                             <span class="text-4xl font-extrabold text-white">₹1,499</span>
                         </div>
+                        <div class="text-sm text-gray-400 mb-4">One-time · 4 weeks</div>
+
+                        <!-- Cost comparison line -->
+                        <div class="flex items-center gap-2 text-xs text-purple-200 bg-purple-500/10 border-l-2 border-purple-400 px-3 py-2 rounded-lg mb-6">
+                            <i class="fa-solid fa-mug-hot text-purple-300 flex-shrink-0"></i>
+                            <span>Under <strong>₹50/day</strong> — cheaper than a coffee to crack your next interview.</span>
+                        </div>
+
                         <ul class="text-sm text-gray-300 space-y-3 mb-8">
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-purple-400 mt-1"></i><span>4 weeks of unlimited scenario practice</span></li>
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-purple-400 mt-1"></i><span>Role-specific &amp; rapid-fire drills</span></li>
@@ -866,7 +899,6 @@
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-purple-400 mt-1"></i><span>1 Expert Review included</span></li>
                         </ul>
                     </div>
-                    <!-- ✅ CHANGED: now triggers Razorpay checkout for 'sprint' -->
                     <button type="button" onclick="openCheckout('sprint')" class="w-full text-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-3.5 rounded-xl shadow-glow-purple">Start Interview Sprint</button>
                 </div>
 
@@ -878,16 +910,34 @@
                         </span>
                         <div class="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2">Practice Pass</div>
                         <h3 class="text-2xl font-extrabold text-white">Keep Practicing. Keep Improving.</h3>
-                        <div class="mt-4 mb-6">
-                            <span class="text-4xl font-extrabold text-white">₹2,499</span>
+
+                        <!-- Billing toggle -->
+                        <div class="mt-4 mb-2">
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Billing</div>
+                            <div class="flex gap-2">
+                                <button type="button" class="billing-toggle active" data-billing="annual" onclick="selectBilling('annual', this)">Annual</button>
+                                <button type="button" class="billing-toggle" data-billing="monthly" onclick="selectBilling('monthly', this)">Monthly</button>
+                            </div>
                         </div>
+
+                        <!-- Dynamic price -->
+                        <div class="mt-3 mb-2">
+                            <span class="text-4xl font-extrabold text-white" id="passPrice">₹2,499</span>
+                        </div>
+                        <div class="text-sm text-gray-400 mb-4" id="passPriceSub">per month · billed annually (₹29,988/year)</div>
+
+                        <!-- Cost comparison line -->
+                        <div class="flex items-center gap-2 text-xs text-indigo-200 bg-indigo-500/10 border-l-2 border-indigo-400 px-3 py-2 rounded-lg mb-6">
+                            <i class="fa-solid fa-mug-hot text-indigo-300 flex-shrink-0"></i>
+                            <span>Less than <strong>your daily chai</strong> — for the skill that compounds for life.</span>
+                        </div>
+
                         <ul class="text-sm text-gray-300 space-y-3 mb-8">
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-indigo-400 mt-1"></i><span>Ongoing access to scenarios &amp; daily challenges</span></li>
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-indigo-400 mt-1"></i><span>Advanced framework drills (SCQA, MECE)</span></li>
                             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-indigo-400 mt-1"></i><span>Expert Review Sessions</span></li>
                         </ul>
                     </div>
-                    <!-- ✅ CHANGED: now triggers Razorpay checkout for 'pass' -->
                     <button type="button" onclick="openCheckout('pass')" class="w-full text-center bg-cardBorder hover:bg-purple-600 text-white font-semibold py-3 rounded-xl transition-all">Start Practice Pass</button>
                 </div>
             </div>
@@ -1018,7 +1068,7 @@
         </div>
     </div>
 
-    <!-- ✅ CHECKOUT MODAL (Razorpay) -->
+    <!-- CHECKOUT MODAL (Razorpay) -->
     <div id="checkoutModal" class="modal">
         <div class="modal-overlay" data-close="checkoutModal"></div>
         <div class="modal-content">
@@ -1054,7 +1104,7 @@
         const PRODUCT_URL       = 'https://theunspoken.co.in/Product';
         const TRIAL_URL         = 'https://theunspoken.co.in/trial';
 
-        // ✅ Razorpay public key
+        // Razorpay public key
         const RAZORPAY_KEY_ID = 'rzp_live_TN9VVH5DwiHx0L';
 
         const state = {
@@ -1484,9 +1534,10 @@
         }
 
         // ============================================================
-        // ✅ RAZORPAY PAYMENT FLOW
+        // RAZORPAY PAYMENT FLOW
         // ============================================================
         let selectedPlan = 'sprint';
+        let selectedBilling = 'annual';
 
         const PLAN_LABELS = {
             lab: {
@@ -1502,9 +1553,30 @@
             pass: {
                 title: 'Start Practice Pass',
                 sub: 'Enter your details to start your continuous practice journey.',
-                razorpayDesc: 'Practice Pass'
+                razorpayDesc: 'Practice Pass (Annual)'
             }
         };
+
+        // Toggle handler for Practice Pass billing
+        function selectBilling(mode, btn) {
+            selectedBilling = mode;
+
+            document.querySelectorAll('.billing-toggle').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const priceEl = document.getElementById('passPrice');
+            const subEl   = document.getElementById('passPriceSub');
+
+            if (mode === 'annual') {
+                priceEl.textContent = '₹2,499';
+                subEl.textContent   = 'per month · billed annually (₹29,988/year)';
+                PLAN_LABELS.pass.razorpayDesc = 'Practice Pass (Annual)';
+            } else {
+                priceEl.textContent = '₹3,999';
+                subEl.textContent   = 'per month · billed monthly';
+                PLAN_LABELS.pass.razorpayDesc = 'Practice Pass (Monthly)';
+            }
+        }
 
         function openCheckout(plan) {
             selectedPlan = plan;
@@ -1513,6 +1585,7 @@
             document.getElementById('checkoutTitle').textContent = meta.title;
             document.getElementById('checkoutSub').textContent   = meta.sub;
 
+            // Reset button state
             const btn = document.getElementById('checkoutSubmit');
             btn.textContent = 'Pay & Start →';
             btn.disabled = false;
@@ -1543,20 +1616,39 @@
             btn.disabled = true;
 
             try {
+                // Build payload — conditionally include sprint/billing
+                const orderPayload = {
+                    plan: selectedPlan,
+                    name: name,
+                    email: email,
+                    phone: phone
+                };
+
+                // Backend requires 'sprint' for sprint-tier AND lab purchases
+                if (selectedPlan === 'sprint' || selectedPlan === 'lab') {
+                    orderPayload.sprint = 'interview';
+                }
+
+                // Backend requires 'billing' for pass plan
+                if (selectedPlan === 'pass') {
+                    orderPayload.billing = selectedBilling;
+                }
+
                 const orderRes = await fetch(`${BACKEND_URL}/api/checkout/create-order`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        plan: selectedPlan,
-                        name: name,
-                        email: email,
-                        phone: phone
-                    })
+                    body: JSON.stringify(orderPayload)
                 });
 
                 if (!orderRes.ok) {
                     const err = await orderRes.json().catch(() => ({}));
-                    throw new Error(err.error || err.detail || 'Failed to create order');
+                    let msg = 'Failed to create order';
+                    if (typeof err.error === 'string') msg = err.error;
+                    else if (typeof err.detail === 'string') msg = err.detail;
+                    else if (Array.isArray(err.detail) && err.detail.length > 0) {
+                        msg = err.detail.map(d => `${d.loc?.join('.')}: ${d.msg}`).join(' • ');
+                    } else if (err.message) msg = err.message;
+                    throw new Error(msg);
                 }
 
                 const orderData = await orderRes.json();
@@ -1581,23 +1673,37 @@
                         btn.textContent = 'Verifying payment…';
 
                         try {
+                            const verifyPayload = {
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                plan: selectedPlan,
+                                name: name,
+                                email: email,
+                                phone: phone
+                            };
+                            if (selectedPlan === 'sprint' || selectedPlan === 'lab') {
+                                verifyPayload.sprint = 'interview';
+                            }
+                            if (selectedPlan === 'pass') {
+                                verifyPayload.billing = selectedBilling;
+                            }
+
                             const verifyRes = await fetch(`${BACKEND_URL}/api/checkout/verify-payment`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    razorpay_order_id: response.razorpay_order_id,
-                                    razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_signature: response.razorpay_signature,
-                                    plan: selectedPlan,
-                                    name: name,
-                                    email: email,
-                                    phone: phone
-                                })
+                                body: JSON.stringify(verifyPayload)
                             });
 
                             if (!verifyRes.ok) {
                                 const err = await verifyRes.json().catch(() => ({}));
-                                throw new Error(err.error || err.detail || 'Payment verification failed');
+                                let msg = 'Payment verification failed';
+                                if (typeof err.error === 'string') msg = err.error;
+                                else if (typeof err.detail === 'string') msg = err.detail;
+                                else if (Array.isArray(err.detail) && err.detail.length > 0) {
+                                    msg = err.detail.map(d => `${d.loc?.join('.')}: ${d.msg}`).join(' • ');
+                                } else if (err.message) msg = err.message;
+                                throw new Error(msg);
                             }
 
                             const verifyData = await verifyRes.json();
