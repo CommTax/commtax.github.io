@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Razorpay Checkout Script -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="icon" href="data:,">
 
     <script>
         tailwind.config = {
@@ -424,6 +425,16 @@
             }
         }
 
+        /* Pricing carousel — 2 columns on desktop (since Answer Lab removed) */
+        @media (min-width: 768px) {
+            .pricing-carousel-track {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                max-width: 900px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
         .carousel-hint {
             display: flex;
             justify-content: center;
@@ -724,7 +735,7 @@
                     One-time setup • Instant feedback on every response
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <button type="button" onclick="openCheckout('lab')"
+                    <button type="button" onclick="openCheckout('sprint')"
                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-base px-8 py-3.5 rounded-2xl shadow-glow-purple hover:scale-[1.02] transition-all">
                         <span>Get Started </span>
                         <i class="fa-solid fa-arrow-right text-xs"></i>
@@ -846,31 +857,9 @@
                 <p class="text-gray-400 mt-4 text-base">Choose the level of practice that fits what you're preparing for.</p>
             </div>
 
-            <div class="carousel-track">
-             
-                <!-- Option 1: Answer Lab -->
-                <div class="glass-card rounded-3xl p-8 border border-cardBorder flex flex-col justify-between">
-                    <div>
-                        <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-purple-300 bg-purple-500/10 border border-purple-500/30 px-3 py-1 rounded-full mb-3">
-                            ⚡ Quick Fix • Interview in &lt; 48 Hours
-                        </span>
-                        <div class="text-xs font-bold uppercase tracking-wider text-purple-400 mb-2">Answer Lab</div>
-                        <h3 class="text-2xl font-extrabold text-white">Fix Your 3 Most Important Answers</h3>
-                        <div class="mt-4 mb-2">
-                            <span class="text-4xl font-extrabold text-white">₹199</span>
-                        </div>
-                        <div class="text-sm text-gray-400 mb-6">One-time · 3 answers</div>
+            <div class="carousel-track pricing-carousel-track">
 
-                        <ul class="text-sm text-gray-300 space-y-3 mb-8">
-                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-purple-400 mt-1"></i><span>Fix your 3 most critical answers</span></li>
-                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-purple-400 mt-1"></i><span>Full 5-Point Diagnostic report</span></li>
-                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-purple-400 mt-1"></i><span>Unlimited re-answers &amp; retries</span></li>
-                        </ul>
-                    </div>
-                    <button type="button" onclick="openCheckout('lab')" class="w-full text-center bg-cardBorder hover:bg-purple-600 text-white font-semibold py-3 rounded-xl transition-all">Start Answer Lab</button>
-                </div>
-
-                <!-- Option 2: Interview Sprint -->
+                <!-- Option 1: Interview Sprint -->
                 <div class="glass-card rounded-3xl p-8 border-2 border-purple-500 relative flex flex-col justify-between shadow-glow-purple">
                     <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-purple-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
                         Most Popular
@@ -902,7 +891,7 @@
                     <button type="button" onclick="openCheckout('sprint')" class="w-full text-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-3.5 rounded-xl shadow-glow-purple">Start Interview Sprint</button>
                 </div>
 
-                <!-- Option 3: Practice Pass -->
+                <!-- Option 2: Practice Pass -->
                 <div class="glass-card rounded-3xl p-8 border border-cardBorder flex flex-col justify-between">
                     <div>
                         <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-indigo-200 bg-indigo-500/10 border border-indigo-500/30 px-3 py-1 rounded-full mb-3">
@@ -942,8 +931,8 @@
                 </div>
             </div>
 
-            <!-- Carousel hint dots (mobile only) -->
-            <div class="carousel-hint"><span></span><span></span><span></span></div>
+            <!-- Carousel hint dots (mobile only) - 2 cards -->
+            <div class="carousel-hint"><span></span><span></span></div>
 
             <!-- Trust Strip -->
             <div class="w-full flex justify-center mt-8 pt-6 border-t border-cardBorder/60">
@@ -1540,11 +1529,6 @@
         let selectedBilling = 'annual';
 
         const PLAN_LABELS = {
-            lab: {
-                title: 'Start Answer Lab',
-                sub: 'Enter your details to begin your one-time response audit.',
-                razorpayDesc: 'Answer Lab — 3 Response Audits'
-            },
             sprint: {
                 title: 'Start Interview Sprint',
                 sub: 'Enter your details to begin your 4-week intensive.',
@@ -1616,7 +1600,7 @@
             btn.disabled = true;
 
             try {
-                // Build payload — conditionally include sprint/billing
+                // Build payload
                 const orderPayload = {
                     plan: selectedPlan,
                     name: name,
@@ -1624,8 +1608,8 @@
                     phone: phone
                 };
 
-                // Backend requires 'sprint' for sprint-tier AND lab purchases
-                if (selectedPlan === 'sprint' || selectedPlan === 'lab') {
+                // Backend requires 'sprint' for sprint-tier purchases
+                if (selectedPlan === 'sprint') {
                     orderPayload.sprint = 'interview';
                 }
 
@@ -1682,12 +1666,8 @@
                                 email: email,
                                 phone: phone
                             };
-                            if (selectedPlan === 'sprint' || selectedPlan === 'lab') {
-                                verifyPayload.sprint = 'interview';
-                            }
-                            if (selectedPlan === 'pass') {
-                                verifyPayload.billing = selectedBilling;
-                            }
+                            if (selectedPlan === 'sprint') verifyPayload.sprint = 'interview';
+                            if (selectedPlan === 'pass')   verifyPayload.billing = selectedBilling;
 
                             const verifyRes = await fetch(`${BACKEND_URL}/api/checkout/verify-payment`, {
                                 method: 'POST',
