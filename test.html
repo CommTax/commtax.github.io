@@ -100,6 +100,171 @@
             background-color: #F43F5E !important;
             border-color: #FB7185 !important;
         }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal.is-visible {
+            display: flex;
+        }
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            position: relative;
+            background: #11131F;
+            border: 1px solid #22263D;
+            border-radius: 24px;
+            padding: 36px 32px;
+            max-width: 460px;
+            width: 100%;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            animation: modalUp 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        @keyframes modalUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            color: #6B7280;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .modal-close:hover {
+            color: #F3F4F6;
+        }
+        .modal-badge {
+            display: inline-block;
+            background: rgba(124, 58, 237, 0.15);
+            color: #A78BFA;
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 6px 18px;
+            border-radius: 40px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .modal-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #F3F4F6;
+            margin: 0 0 8px;
+        }
+        .modal-content > p {
+            color: #9CA3AF;
+            font-size: 0.9rem;
+            margin: 0 0 20px;
+            line-height: 1.5;
+        }
+
+        /* Gate form */
+        .gate-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .gate-form label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #D1D5DB;
+            margin-bottom: 6px;
+        }
+        .gate-form input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #22263D;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            background: #090A0F;
+            color: #F3F4F6;
+            font-family: inherit;
+        }
+        .gate-form input:focus {
+            outline: none;
+            border-color: #7C3AED;
+        }
+        .gate-form input::placeholder {
+            color: #4B5563;
+        }
+        .gate-stage-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .gate-stage-btn {
+            padding: 12px 10px;
+            border: 1.5px solid #22263D;
+            border-radius: 12px;
+            background: #090A0F;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #9CA3AF;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            text-align: center;
+        }
+        .gate-stage-btn:hover {
+            border-color: #7C3AED;
+            color: #F3F4F6;
+        }
+        .gate-stage-btn.selected {
+            background: #7C3AED;
+            border-color: #7C3AED;
+            color: #fff;
+        }
+        .gate-submit {
+            background: linear-gradient(135deg, #7C3AED, #6366F1);
+            color: #fff;
+            border: none;
+            padding: 16px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 8px;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .gate-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .gate-submit:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
+        }
+
+        /* Recording status */
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+        }
+        .status-dot.is-live {
+            background: #F43F5E;
+            animation: pulse-dot 1s infinite;
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-purple-500 selection:text-white">
@@ -239,7 +404,7 @@
         </div>
     </section>
 
-    <!-- SECTION 1 (MOVED UP): ANSWER AUDITOR INTERACTIVE SANDBOX WITH VOICE RECORDING -->
+    <!-- SECTION 1: ANSWER AUDITOR INTERACTIVE SANDBOX WITH VOICE RECORDING -->
     <section id="sandbox" class="py-20 bg-darkBg relative border-t border-cardBorder/50">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-12">
@@ -247,19 +412,18 @@
                     <i class="fa-solid fa-flask"></i> Interactive Sandbox
                 </div>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Test The Response Compressor</h2>
-                <p class="text-gray-400 text-sm mt-2">Paste a draft response or record up to 45 seconds of voice to see an instant structured reframe.</p>
+                <p class="text-gray-400 text-sm mt-2">Paste a draft response or record up to 30 seconds of voice to see an instant structured reframe.</p>
             </div>
 
             <div class="glass-card rounded-3xl p-6 sm:p-8 border border-cardBorder">
                 <div class="space-y-5">
                     
-                    <!-- Scenario Type Dropdown -->
+                    <!-- Scenario Type Dropdown - UPDATED WITH ONLY 2 OPTIONS -->
                     <div>
                         <label for="sandboxQuestionType" class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Select Scenario Type</label>
                         <select id="sandboxQuestionType" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-purple-500">
-                            <option value="Managing Ambiguity & Conflict">Managing Ambiguity & Conflict</option>
-                            <option value="Leading Turnarounds & Scalability">Leading Turnarounds & Scalability</option>
-                            <option value="Handling Stakeholder Alignment">Handling Stakeholder Alignment</option>
+                            <option value="intro">Tell me about yourself — your background, what you do, and what drives you professionally.</option>
+                            <option value="project">Tell me about a current project or initiative you're leading or involved in.</option>
                         </select>
                     </div>
 
@@ -268,14 +432,14 @@
                         <div class="flex items-center justify-between mb-2">
                             <label for="sandboxInput" class="block text-xs font-bold text-gray-300 uppercase tracking-wider">Your Raw Draft / Unstructured Answer</label>
                             
-                            <!-- Voice Recording Controls (45-second limit) -->
+                            <!-- Voice Recording Controls (30-second limit) -->
                             <div class="flex items-center gap-2">
                                 <span id="recordTimer" class="hidden text-xs font-mono text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">
-                                    00:45
+                                    00:30
                                 </span>
                                 <button id="recordVoiceBtn" type="button" class="inline-flex items-center gap-1.5 text-xs bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 px-3 py-1.5 rounded-lg font-semibold transition-all">
                                     <i id="recordIcon" class="fa-solid fa-microphone text-rose-400"></i>
-                                    <span id="recordStatusText">Record Voice (45s Max)</span>
+                                    <span id="recordStatusText">Record Voice (30s Max)</span>
                                 </button>
                             </div>
                         </div>
@@ -303,7 +467,7 @@
         </div>
     </section>
 
-    <!-- SECTION 2 (MOVED BELOW SANDBOX): FRAMEWORKS SECTION -->
+    <!-- SECTION 2: FRAMEWORKS SECTION -->
     <section id="frameworks" class="py-20 bg-cardBg/40 relative border-t border-cardBorder/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
@@ -493,8 +657,68 @@
         </div>
     </footer>
 
+    <!-- GATE MODAL — collects name, email, mobile, stage before redirect -->
+    <div id="gateModal" class="modal">
+        <div class="modal-overlay" data-close="gateModal"></div>
+        <div class="modal-content">
+            <button class="modal-close" data-close="gateModal">&times;</button>
+            <span class="modal-badge">✦ Almost there</span>
+            <h3>Where should we send your analysis?</h3>
+            <p>We've captured your response. Add your details to unlock your personalized dashboard and see what we found.</p>
+
+            <form class="gate-form" id="gateForm" onsubmit="return false;">
+                <div>
+                    <label for="gateName">Name</label>
+                    <input type="text" id="gateName" placeholder="e.g. Arun Chockalingam" required />
+                </div>
+                <div>
+                    <label for="gateEmail">Email</label>
+                    <input type="email" id="gateEmail" placeholder="e.g. arun@example.com" required />
+                </div>
+                <div>
+                    <label for="gateMobile">Mobile</label>
+                    <input type="tel" id="gateMobile" placeholder="e.g. 9876543210" pattern="[0-9]{10}" maxlength="10" required />
+                </div>
+                <div>
+                    <label>Where are you in your career?</label>
+                    <div class="gate-stage-options" id="gateStageOptions">
+                        <button type="button" class="gate-stage-btn" data-stage="student">🎓 Student</button>
+                        <button type="button" class="gate-stage-btn" data-stage="fresher">🌱 Fresher (0–1 yr)</button>
+                        <button type="button" class="gate-stage-btn" data-stage="early">⚡ Early (1–5 yrs)</button>
+                        <button type="button" class="gate-stage-btn" data-stage="mid">📈 Mid (5–15 yrs)</button>
+                        <button type="button" class="gate-stage-btn" data-stage="senior" style="grid-column: 1 / -1;">👑 Senior / Lead (15+ yrs)</button>
+                    </div>
+                </div>
+                <button type="button" class="gate-submit" id="gateSubmit" disabled onclick="submitGateAndRedirect()">Show My Results →</button>
+            </form>
+        </div>
+    </div>
+
     <!-- INTERACTIVE JAVASCRIPT LOGIC -->
     <script>
+        // ============================================================
+        // CONFIG
+        // ============================================================
+        const BACKEND_URL = 'https://unspoken-backend-nqvl.onrender.com';
+        const TRIAL_URL   = 'https://theunspoken.co.in/trial';
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        const state = {
+            currentQuestionType: 'intro',
+            currentMode: 'text', // Default to text for this version
+            rawBlob: null,
+            rawText: null,
+            rawDuration: 0,
+            gate: { name: '', email: '', mobile: '', stage: null }
+        };
+
+        // Helper: map question type → question_slot
+        function slotFor(questionType) {
+            return questionType === 'project' ? 'q2' : 'q1';
+        }
+
         // Mobile Navigation Toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
@@ -504,7 +728,18 @@
             });
         }
 
-        // Voice Recording Simulation (45-second cap)
+        // ============================================================
+        // MODAL CONTROLS
+        // ============================================================
+        document.querySelectorAll('[data-close]').forEach(el => {
+            el.addEventListener('click', () => {
+                document.getElementById(el.dataset.close).classList.remove('is-visible');
+            });
+        });
+
+        // ============================================================
+        // VOICE RECORDING (30-second limit)
+        // ============================================================
         const recordVoiceBtn = document.getElementById('recordVoiceBtn');
         const recordIcon = document.getElementById('recordIcon');
         const recordStatusText = document.getElementById('recordStatusText');
@@ -513,85 +748,278 @@
 
         let isRecording = false;
         let recordingInterval = null;
-        let secondsLeft = 45;
+        let secondsLeft = 30;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let audioBlob = null;
+        let recordingSeconds = 0;
 
         if (recordVoiceBtn) {
-            recordVoiceBtn.addEventListener('click', () => {
+            recordVoiceBtn.addEventListener('click', async () => {
                 if (!isRecording) {
                     // Start Recording
-                    isRecording = true;
-                    secondsLeft = 45;
-                    recordTimer.classList.remove('hidden');
-                    recordTimer.innerText = "00:45";
-                    recordVoiceBtn.classList.add('recording-active');
-                    recordIcon.className = "fa-solid fa-stop text-white animate-pulse";
-                    recordStatusText.innerText = "Stop Recording";
-                    sandboxInput.value = "";
-                    sandboxInput.placeholder = "Listening... Speak your raw response now (Max 45 seconds)...";
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ 
+                            audio: { echoCancellation: true, noiseSuppression: true } 
+                        });
+                        
+                        mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+                        audioChunks = [];
+                        recordingSeconds = 0;
+                        secondsLeft = 30;
 
-                    recordingInterval = setInterval(() => {
-                        secondsLeft--;
-                        const formattedSec = secondsLeft < 10 ? `0${secondsLeft}` : secondsLeft;
-                        recordTimer.innerText = `00:${formattedSec}`;
+                        mediaRecorder.ondataavailable = e => {
+                            if (e.data.size > 0) audioChunks.push(e.data);
+                        };
 
-                        if (secondsLeft <= 0) {
-                            stopRecordingSimulation(true);
-                        }
-                    }, 1000);
+                        mediaRecorder.onstop = () => {
+                            audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                            stream.getTracks().forEach(t => t.stop());
+                        };
 
+                        mediaRecorder.start(1000);
+                        isRecording = true;
+                        
+                        recordTimer.classList.remove('hidden');
+                        recordTimer.innerText = "00:30";
+                        recordVoiceBtn.classList.add('recording-active');
+                        recordIcon.className = "fa-solid fa-stop text-white animate-pulse";
+                        recordStatusText.innerText = "Stop Recording";
+                        sandboxInput.value = "";
+                        sandboxInput.placeholder = "Listening... Speak your raw response now (Max 30 seconds)...";
+
+                        recordingInterval = setInterval(() => {
+                            secondsLeft--;
+                            recordingSeconds++;
+                            const formattedSec = secondsLeft < 10 ? `0${secondsLeft}` : secondsLeft;
+                            recordTimer.innerText = `00:${formattedSec}`;
+
+                            if (secondsLeft <= 0) {
+                                stopRecording(true);
+                            }
+                        }, 1000);
+
+                    } catch (err) {
+                        console.error('Mic error:', err);
+                        alert('Please allow microphone access to record your answer.');
+                    }
                 } else {
                     // Stop Recording Manually
-                    stopRecordingSimulation(false);
+                    stopRecording(false);
                 }
             });
         }
 
-        function stopRecordingSimulation(autoTimedOut) {
+        function stopRecording(autoTimedOut) {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
             clearInterval(recordingInterval);
             isRecording = false;
             recordVoiceBtn.classList.remove('recording-active');
             recordIcon.className = "fa-solid fa-microphone text-rose-400";
-            recordStatusText.innerText = "Record Voice (45s Max)";
+            recordStatusText.innerText = "Record Voice (30s Max)";
             recordTimer.classList.add('hidden');
 
             const scenario = document.getElementById('sandboxQuestionType').value;
-
+            
             // Transcribe audio simulation into text area
-            sandboxInput.value = `[Voice Transcribed - 45s max duration]: When leading the team during the ${scenario.toLowerCase()} situation, we had major misalignment across operations and engineering. I stepped in, brought leads together, set daily syncs, and aligned key metrics within two weeks.`;
+            sandboxInput.value = `[Voice Transcribed - ${recordingSeconds}s duration]: When leading the team during the ${scenario} situation, we had major misalignment across operations and engineering. I stepped in, brought leads together, set daily syncs, and aligned key metrics within two weeks.`;
         }
 
-        // Sandbox Response Compressor Logic
+        // ============================================================
+        // SANDBOX SUBMIT - Triggers Backend Flow
+        // ============================================================
         const sandboxCompressBtn = document.getElementById('sandboxCompressBtn');
-        const sandboxOutputContainer = document.getElementById('sandboxOutputContainer');
-        const sandboxOutputText = document.getElementById('sandboxOutputText');
 
-        if (sandboxCompressBtn && sandboxInput && sandboxOutputContainer && sandboxOutputText) {
+        if (sandboxCompressBtn) {
             sandboxCompressBtn.addEventListener('click', () => {
                 const text = sandboxInput.value.trim();
-                const scenarioType = document.getElementById('sandboxQuestionType').value;
+                const questionType = document.getElementById('sandboxQuestionType').value;
 
-                if(!text) {
+                // Determine if we have voice or text
+                if (audioBlob && !text) {
+                    // Voice recording exists but no transcription
+                    state.rawBlob = audioBlob;
+                    state.rawText = null;
+                    state.rawDuration = recordingSeconds;
+                    state.currentQuestionType = questionType;
+                    state.currentMode = 'voice';
+                } else if (text && text.length >= 10) {
+                    // Text response
+                    state.rawBlob = null;
+                    state.rawText = text;
+                    state.rawDuration = Math.max(10, Math.round(text.split(/\s+/).length / 2.5));
+                    state.currentQuestionType = questionType;
+                    state.currentMode = 'text';
+                } else {
                     alert("Please paste a draft response or record your voice answer first.");
                     return;
                 }
 
-                sandboxCompressBtn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> Structuring Response...';
-
-                setTimeout(() => {
-                    sandboxCompressBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> <span>Compress & Structure Response</span>';
-                    sandboxOutputContainer.classList.remove('hidden');
-                    
-                    sandboxOutputText.innerHTML = `
-                        <p><strong class="text-emerald-400">[Scenario Focus]:</strong> ${scenarioType}</p>
-                        <p><strong class="text-emerald-400">[Situation & Task]:</strong> "Faced cross-functional friction and lack of clear execution ownership while managing high ambiguity."</p>
-                        <p><strong class="text-emerald-400">[Action]:</strong> "Established single-point leadership accountability, instituted rapid alignment sprints, and streamlined core tracking metrics."</p>
-                        <p><strong class="text-emerald-400">[Result]:</strong> "Eliminated project delays, aligned all key stakeholders, and improved team execution throughput by 35% within 30 days."</p>
-                    `;
-                    
-                    sandboxOutputContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }, 750);
+                // Open gate modal to collect user info
+                openGateModal();
             });
         }
+
+        // ============================================================
+        // GATE MODAL LOGIC
+        // ============================================================
+        function openGateModal() {
+            document.getElementById('gateModal').classList.add('is-visible');
+        }
+
+        document.querySelectorAll('.gate-stage-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.gate-stage-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                state.gate.stage = btn.dataset.stage;
+                checkGateReady();
+            });
+        });
+
+        document.getElementById('gateName').addEventListener('input', e => {
+            state.gate.name = e.target.value.trim();
+            checkGateReady();
+        });
+
+        document.getElementById('gateEmail').addEventListener('input', e => {
+            state.gate.email = e.target.value.trim();
+            checkGateReady();
+        });
+
+        document.getElementById('gateMobile').addEventListener('input', e => {
+            state.gate.mobile = e.target.value.replace(/\D/g, '').slice(0, 10);
+            e.target.value = state.gate.mobile;
+            checkGateReady();
+        });
+
+        function checkGateReady() {
+            const name   = document.getElementById('gateName').value.trim();
+            const email  = document.getElementById('gateEmail').value.trim();
+            const mobile = document.getElementById('gateMobile').value.replace(/\D/g, '');
+            const stage  = state.gate.stage;
+
+            const ready = name && email && mobile.length === 10 && stage;
+
+            state.gate.name   = name;
+            state.gate.email  = email;
+            state.gate.mobile = mobile;
+
+            document.getElementById('gateSubmit').disabled = !ready;
+        }
+
+        // ============================================================
+        // SUBMIT GATE → UPLOAD → CAPTURE → ANALYZE → REDIRECT
+        // ============================================================
+        async function submitGateAndRedirect() {
+            // Read directly from the DOM to avoid stale state
+            state.gate.name   = document.getElementById('gateName').value.trim();
+            state.gate.email  = document.getElementById('gateEmail').value.trim();
+            state.gate.mobile = document.getElementById('gateMobile').value.replace(/\D/g, '').slice(0, 10);
+
+            if (!state.gate.name || !state.gate.email || state.gate.mobile.length !== 10 || !state.gate.stage) {
+                alert('Please fill all fields correctly.');
+                return;
+            }
+
+            const btn = document.getElementById('gateSubmit');
+            btn.textContent = 'Uploading your response…';
+            btn.disabled = true;
+
+            try {
+                const slot = slotFor(state.currentQuestionType);
+                const promptText = document.getElementById('sandboxQuestionType').options[document.getElementById('sandboxQuestionType').selectedIndex].text;
+
+                // ─── STEP 1: Upload ───
+                const formData = new FormData();
+                if (state.currentMode === 'voice' && state.rawBlob) {
+                    formData.append('audio', state.rawBlob, 'recording.webm');
+                } else if (state.currentMode === 'text' && state.rawText) {
+                    formData.append('text', state.rawText);
+                } else {
+                    throw new Error('No audio or text to upload');
+                }
+                formData.append('question_type', state.currentQuestionType);
+                formData.append('question_slot', slot);
+                formData.append('question_prompt', promptText);
+                formData.append('mode', state.currentMode);
+                formData.append('duration_seconds', state.rawDuration || 30);
+
+                const uploadRes = await fetch(`${BACKEND_URL}/api/trial/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!uploadRes.ok) {
+                    const err = await uploadRes.json().catch(() => ({}));
+                    throw new Error(err.error || 'Upload failed');
+                }
+                const { drill_id } = await uploadRes.json();
+                console.log('✅ Drill uploaded:', drill_id, 'slot:', slot);
+
+                // ─── STEP 2: Capture ───
+                btn.textContent = 'Preparing your results…';
+
+                const leadRes = await fetch(`${BACKEND_URL}/api/trial/capture`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        drill_id,
+                        name: state.gate.name,
+                        email: state.gate.email,
+                        mobile: state.gate.mobile,
+                        stage: state.gate.stage,
+                        question_type: state.currentQuestionType,
+                        question_slot: slot,
+                        mode: state.currentMode
+                    })
+                });
+                if (!leadRes.ok) {
+                    const err = await leadRes.json().catch(() => ({}));
+                    throw new Error(err.error || 'Lead capture failed');
+                }
+                const { user_id, session_token } = await leadRes.json();
+                console.log('✅ Session created for user:', user_id);
+
+                // ─── STEP 2.5: Run the analysis ───
+                btn.textContent = 'Analyzing your response…';
+
+                const analyzeRes = await fetch(`${BACKEND_URL}/api/trial/analyze`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${session_token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ drill_id })
+                });
+                if (!analyzeRes.ok) {
+                    const err = await analyzeRes.json().catch(() => ({}));
+                    throw new Error(err.error || err.detail || `Analysis failed (${analyzeRes.status})`);
+                }
+                const analysisData = await analyzeRes.json();
+                console.log('✅ Analysis complete:', analysisData.diagnosis?.pattern_name);
+
+                // ─── STEP 3: Redirect trial user to /trial ───
+                const targetUrl = `${TRIAL_URL}?session=${encodeURIComponent(session_token)}`;
+                console.log('🔀 Redirecting to trial:', targetUrl);
+                window.location.assign(targetUrl);
+
+            } catch (err) {
+                console.error('❌ Flow failed:', err);
+                btn.textContent = 'Show My Results →';
+                btn.disabled = false;
+                alert(`Something went wrong: ${err.message}. Please try again.`);
+            }
+        }
+
+        // Health ping
+        setInterval(() => {
+            fetch(`${BACKEND_URL}/api/health`).then(r => {
+                if (r.ok) console.log('✅ Backend warm at', new Date().toLocaleTimeString());
+            }).catch(() => {});
+        }, 4 * 60 * 1000);
+
+        console.log('🚀 Landing page loaded. Ready to capture.');
     </script>
 </body>
 </html>
