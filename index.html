@@ -308,7 +308,7 @@
         }
         .status-dot.is-live { background: #F43F5E; animation: pulse-dot 1s infinite; }
 
-        /* ✅ Diagnostic Accordion */
+        /* Diagnostic Accordion */
         .diag-accordion {
             border-radius: 16px;
             overflow: hidden;
@@ -352,6 +352,67 @@
             padding: 4px 10px;
             border-radius: 999px;
         }
+
+        /* ✅ MOBILE CAROUSEL — snap scroll for practice & pricing */
+        .carousel-track {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 8px;
+            margin-left: -16px;
+            margin-right: -16px;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+        .carousel-track::-webkit-scrollbar { display: none; }
+        .carousel-track > * {
+            scroll-snap-align: start;
+            flex: 0 0 85%;
+            max-width: 340px;
+        }
+
+        /* Desktop → behave like a regular grid again */
+        @media (min-width: 768px) {
+            .carousel-track {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 2rem;
+                overflow: visible;
+                margin-left: 0;
+                margin-right: 0;
+                padding-left: 0;
+                padding-right: 0;
+                padding-bottom: 0;
+            }
+            .carousel-track > * {
+                flex: unset;
+                max-width: none;
+            }
+        }
+
+        /* Carousel hint dots (mobile only) */
+        .carousel-hint {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 12px;
+        }
+        .carousel-hint span {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: #22263D;
+        }
+        .carousel-hint span:first-child {
+            background: #7C3AED;
+            width: 20px;
+        }
+        @media (min-width: 768px) {
+            .carousel-hint { display: none; }
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-purple-500 selection:text-white">
@@ -368,7 +429,7 @@
                         The Unspoken
                         <span class="w-2 h-2 rounded-full bg-accentViolet animate-pulse"></span>
                     </span>
-                   </div>
+                </div>
             </a>
 
             <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
@@ -413,7 +474,7 @@
     </header>
 
     <!-- HERO SECTION -->
-    <section class="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden">
+    <section class="relative pt-10 pb-14 md:pt-16 md:pb-20 overflow-hidden">
         <div class="hero-glow"></div>
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             
@@ -431,14 +492,14 @@
                 Stop losing offers to poor delivery. Built for professionals.
             </p>
 
-<div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-    <a href="#sandbox" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-base px-8 py-4 rounded-2xl shadow-glow-purple hover:scale-[1.02] transition-all group">
-        <i class="fa-solid fa-flask text-white/90"></i>
-        <span>Try Interactive Demo</span>
-        <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
-    </a>
-</div>
-            <!-- Social Proof Banner -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+                <a href="#sandbox" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-base px-8 py-4 rounded-2xl shadow-glow-purple hover:scale-[1.02] transition-all group">
+                    <i class="fa-solid fa-flask text-white/90"></i>
+                    <span>Try Interactive Demo</span>
+                    <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+
             <div class="flex items-center justify-center gap-3">
                 <div class="flex -space-x-3 overflow-hidden">
                     <img class="inline-block h-10 w-10 rounded-full ring-2 ring-cardBorder object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Professional 1">
@@ -463,20 +524,18 @@
                 </div>
             </div>
 
-            <!-- ✅ CHANGE 1: Feature Metric Badges row REMOVED -->
-
         </div>
     </section>
 
     <!-- SECTION 1: INTERACTIVE SANDBOX -->
-    <section id="sandbox" class="py-20 bg-darkBg relative border-t border-cardBorder/50">
+    <section id="sandbox" class="py-14 bg-darkBg relative border-t border-cardBorder/50">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-12">
+            <div class="text-center max-w-2xl mx-auto mb-10">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold mb-3">
                     <i class="fa-solid fa-flask"></i> Interactive Sandbox
                 </div>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Your Natural Response</h2>
-                         </div>
+            </div>
 
             <div class="glass-card rounded-3xl p-6 sm:p-8 border border-cardBorder">
                 <div class="space-y-5">
@@ -528,10 +587,10 @@
         </div>
     </section>
 
-         <!-- SECTION 3: 5-POINT DIAGNOSTIC -->
-    <section id="diagnostic" class="py-20 bg-darkBg relative border-t border-cardBorder/50">
+    <!-- SECTION 3: 5-POINT DIAGNOSTIC -->
+    <section id="diagnostic" class="py-14 bg-darkBg relative border-t border-cardBorder/50">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-14">
+            <div class="text-center max-w-3xl mx-auto mb-10">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-semibold mb-3">
                     <i class="fa-solid fa-microscope"></i> Interactive Diagnostic Engine
                 </div>
@@ -541,7 +600,6 @@
 
             <div class="bg-cardBg border border-cardBorder rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
 
-                <!-- ✅ ALWAYS OPEN: Interview Prompt Scenario -->
                 <div class="bg-darkBg/90 border border-purple-500/30 rounded-2xl p-4 sm:p-5 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div class="flex items-start gap-3">
                         <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/40 text-purple-400 flex items-center justify-center shrink-0 mt-0.5">
@@ -554,7 +612,6 @@
                     </div>
                 </div>
 
-                <!-- ✅ COLLAPSIBLE: Step 1 — What You Said -->
                 <details class="diag-accordion mb-3 border border-rose-500/30">
                     <summary>
                         <span class="flex items-center gap-3 flex-wrap">
@@ -572,7 +629,6 @@
                     </div>
                 </details>
 
-                <!-- ✅ COLLAPSIBLE: Step 2 — What Got Lost -->
                 <details class="diag-accordion mb-3 border border-amber-500/40">
                     <summary>
                         <span class="flex items-center gap-3 flex-wrap">
@@ -590,7 +646,6 @@
                     </div>
                 </details>
 
-                <!-- ✅ COLLAPSIBLE: Step 3 — What They Heard -->
                 <details class="diag-accordion mb-3 border border-orange-500/40">
                     <summary>
                         <span class="flex items-center gap-3 flex-wrap">
@@ -608,7 +663,6 @@
                     </div>
                 </details>
 
-                <!-- ✅ COLLAPSIBLE: Step 4 — What to Change -->
                 <details class="diag-accordion mb-5 border border-emerald-500/40">
                     <summary>
                         <span class="flex items-center gap-3 flex-wrap">
@@ -626,7 +680,6 @@
                     </div>
                 </details>
 
-                <!-- ✅ ALWAYS OPEN: Step 5 — Natural Reframe (the payoff) -->
                 <div class="rounded-2xl p-6 border border-purple-500/40 bg-gradient-to-r from-purple-950/30 via-cardBg to-cardBg">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
@@ -645,23 +698,50 @@
                 </p>
             </div>
         </div>
-    </section>       
-    <!-- ✅ CHANGE 3: PRACTICE SYSTEM — 3 columns, visual, minimal text -->
-    <section id="practice-system" class="py-20 bg-cardBg/40 relative border-t border-cardBorder/50">
+    </section>
+
+    <!-- ✅ NEW SECTION: CTA AFTER DIAGNOSTIC -->
+    <section class="py-12 bg-darkBg border-t border-cardBorder/50">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-card rounded-3xl p-8 sm:p-10 border border-purple-500/40 bg-gradient-to-r from-purple-950/30 via-cardBg to-cardBg shadow-glow-purple text-center">
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3">
+                    Ready to reframe your other answers?
+                </h3>
+                <p class="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto mb-6 leading-relaxed">
+                    One-time setup • Instant feedback on every response
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <a href="https://theunspoken.co.in/Pricing?plan=lab"
+                       class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-base px-8 py-3.5 rounded-2xl shadow-glow-purple hover:scale-[1.02] transition-all">
+                        <span>Get Started — ₹199</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                    <a href="#pricing"
+                       class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-cardBg hover:bg-cardBorder/80 border border-cardBorder text-gray-200 hover:text-white font-medium text-base px-6 py-3.5 rounded-2xl transition-all">
+                        <span>View All Plans</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRACTICE SYSTEM -->
+    <section id="practice-system" class="py-14 bg-cardBg/40 relative border-t border-cardBorder/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="text-center max-w-3xl mx-auto mb-12">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-semibold mb-3">
                     <i class="fa-solid fa-layer-group"></i> The Practice System
                 </div>
-                   <p class="text-gray-300 mt-4 text-base sm:text-lg leading-relaxed font-normal">
+                <p class="text-gray-300 mt-4 text-base sm:text-lg leading-relaxed font-normal">
                     Practice real workplace moments—not just interview responses.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <!-- ✅ Carousel on mobile, grid on desktop -->
+            <div class="carousel-track mb-12">
                 
-                <!-- Layer 1: Real Scenarios -->
+                <!-- Layer 1 -->
                 <div class="glass-card rounded-3xl p-8 border border-cardBorder flex flex-col justify-between hover:border-purple-500/50 transition-all">
                     <div>
                         <div class="w-14 h-14 rounded-2xl bg-purple-600/20 border border-purple-500/30 text-purple-400 flex items-center justify-center text-2xl mb-6">
@@ -680,7 +760,7 @@
                     </div>
                 </div>
 
-                <!-- Layer 2: Targeted Drills -->
+                <!-- Layer 2 -->
                 <div class="glass-card rounded-3xl p-8 border border-cardBorder flex flex-col justify-between hover:border-indigo-500/50 transition-all">
                     <div>
                         <div class="w-14 h-14 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl mb-6">
@@ -699,7 +779,7 @@
                     </div>
                 </div>
 
-                <!-- Layer 3: Proven Frameworks -->
+                <!-- Layer 3 -->
                 <div class="glass-card rounded-3xl p-8 border border-cardBorder flex flex-col justify-between hover:border-emerald-500/50 transition-all">
                     <div>
                         <div class="w-14 h-14 rounded-2xl bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-2xl mb-6">
@@ -720,8 +800,11 @@
 
             </div>
 
+            <!-- Carousel hint dots (mobile only) -->
+            <div class="carousel-hint"><span></span><span></span><span></span></div>
+
             <!-- Adaptive Practice Loop -->
-            <div class="glass-card rounded-2xl p-6 sm:p-8 border border-purple-500/30 bg-gradient-to-r from-purple-950/20 via-cardBg to-darkBg text-center">
+            <div class="glass-card rounded-2xl p-6 sm:p-8 border border-purple-500/30 bg-gradient-to-r from-purple-950/20 via-cardBg to-darkBg text-center mt-12">
                 <p class="text-base sm:text-lg font-bold text-white mb-4">
                     Your practice adapts to what you need to improve.
                 </p>
@@ -743,15 +826,16 @@
         </div>
     </section>
 
-    <!-- ✅ CHANGE 4: PRICING — cleaned up bullet lists -->
-    <section id="pricing" class="py-20 bg-cardBg/40 relative border-t border-cardBorder/50">
+    <!-- PRICING -->
+    <section id="pricing" class="py-14 bg-cardBg/40 relative border-t border-cardBorder/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="text-center max-w-3xl mx-auto mb-12">
                 <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">Choose How You Want to Practice</h2>
                 <p class="text-gray-400 mt-4 text-base">Choose the level of practice that fits what you're preparing for.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- ✅ Carousel on mobile, grid on desktop -->
+            <div class="carousel-track">
              
                 <!-- Option 1: Answer Lab -->
                 <div class="glass-card rounded-3xl p-8 border border-cardBorder flex flex-col justify-between">
@@ -817,6 +901,9 @@
                     <a href="https://theunspoken.co.in/Pricing?plan=pass" class="w-full text-center bg-cardBorder hover:bg-purple-600 text-white font-semibold py-3 rounded-xl transition-all">Start Practice Pass</a>
                 </div>
             </div>
+
+            <!-- Carousel hint dots (mobile only) -->
+            <div class="carousel-hint"><span></span><span></span><span></span></div>
 
             <!-- Trust Strip -->
             <div class="w-full flex justify-center mt-10 pt-8 border-t border-cardBorder/60">
