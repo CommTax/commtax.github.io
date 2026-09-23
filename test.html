@@ -708,7 +708,7 @@
       box-shadow: 0 20px 50px rgba(0,0,0,0.05);
       margin-bottom: 24px;
       will-change: transform;
-      transform-origin: center top;
+      min-height: 480px;
       transition: box-shadow 0.3s ease;
     }
     .feature-card:last-child { margin-bottom: 0; }
@@ -1459,7 +1459,10 @@
       .sandbox-response-row { flex-direction: column; align-items: flex-start; }
 
       /* Features section — sticky stack still active on mobile */
-      .features-section { padding: 40px 0 30px; }
+      .features-section { padding: 70px 0 40px; 
+                             /* ✅ NEW: gives the stack enough scroll distance */
+      margin-bottom: 60vh;
+    }
       .features-header { margin-bottom: 32px; }
       .feature-card {
         /* keep position: sticky */
@@ -1998,65 +2001,6 @@ const state = {
   rawDuration: 0,
   gate: { name: '', email: '', stage: null }
 };
-
-// ============================================================
-// STICKY-STACK: translate each card up as the next approaches
-// Works on ALL viewport sizes (desktop + mobile)
-// ============================================================
-(function initFeatureStack() {
-  const stack = document.getElementById('featuresStack');
-  if (!stack) return;
-
-  const cards = Array.from(stack.querySelectorAll('.feature-card'));
-  if (cards.length < 2) return;
-
-  const TOP_OFFSET = () => {
-    // 90px on desktop, slightly less on mobile so more of the card is visible
-    return window.innerWidth < 768 ? 72 : 90;
-  };
-  // How much of the previous card peeks behind the next one
-  const PEEK = () => (window.innerWidth < 768 ? 14 : 20);
-
-  function update() {
-    const top = TOP_OFFSET();
-    const peek = PEEK();
-
-    for (let i = 0; i < cards.length - 1; i++) {
-      const card = cards[i];
-      const next = cards[i + 1];
-      const cardTop = card.getBoundingClientRect().top;
-      const nextTop = next.getBoundingClientRect().top;
-
-      // Only start shrinking/translating once the card is stuck at top
-      if (cardTop <= top + 2) {
-        // Distance between current card top and where the next card is about to arrive
-        const delta = Math.max(0, cardTop + card.offsetHeight - nextTop);
-        // Translate the current card up so its bottom edge disappears behind the next card
-        const translate = Math.min(card.offsetHeight - peek, delta);
-        card.style.transform = `translateY(${-translate}px)`;
-      } else {
-        card.style.transform = '';
-      }
-    }
-    // Last card never translates
-    cards[cards.length - 1].style.transform = '';
-  }
-
-  let ticking = false;
-  function onScroll() {
-    if (!ticking) {
-      window.requestAnimationFrame(() => {
-        update();
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', update);
-  update();
-})();
 
 // ============================================================
 // JOURNEY SECTION LOGIC
