@@ -454,6 +454,29 @@
         @media (min-width: 768px) {
             .carousel-hint { display: none; }
         }
+
+        /* ✅ ROTATING HERO HEADLINE */
+        .hero-headline-wrap {
+            position: relative;
+        }
+        .hero-headline-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transform: translateY(20px);
+            filter: blur(4px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+        .hero-headline-slide.is-active {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+            pointer-events: auto;
+            position: relative;
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col justify-between selection:bg-purple-500 selection:text-white">
@@ -474,7 +497,6 @@
             </a>
 
             <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-                <a href="#sandbox" class="hover:text-purple-400 transition-colors">Try It</a>
                 <a href="#practice-system" class="hover:text-purple-400 transition-colors">Practice System</a>
                 <a href="#diagnostic" class="hover:text-purple-400 transition-colors">How It Works</a>
                 <a href="/University" class="hover:text-purple-400 transition-colors">University</a>
@@ -497,8 +519,7 @@
             </div>
         </div>
 
-<div id="mobileMenu" class="hidden md:hidden bg-cardBg border-b border-cardBorder px-6 py-6 space-y-4">
-            <a href="#sandbox" class="block text-gray-300 hover:text-purple-400 font-medium">Try It</a>
+        <div id="mobileMenu" class="hidden md:hidden bg-cardBg border-b border-cardBorder px-6 py-6 space-y-4">
             <a href="#practice-system" class="block text-gray-300 hover:text-purple-400 font-medium">Practice System</a>
             <a href="#diagnostic" class="block text-gray-300 hover:text-purple-400 font-medium">How It Works</a>
             <a href="/University" class="block text-gray-300 hover:text-purple-400 font-medium">University</a>
@@ -524,13 +545,29 @@
                 <span class="text-xs sm:text-sm font-semibold text-purple-200 uppercase tracking-wide">See what got lost. Make it land.</span>
             </div>
 
-            <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-[1.12]">
-                Stop Rambling<br />
-                <span class="gradient-text">Structure Your Response</span>
-            </h1>
+            <!-- ✅ ROTATING HEADLINE -->
+            <div class="hero-headline-wrap min-h-[180px] sm:min-h-[220px] md:min-h-[260px] mb-6">
+                <h1 class="hero-headline-slide is-active text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.12]">
+                    Stop Rambling.<br />
+                    <span class="gradient-text">Structure Your Response.</span>
+                </h1>
+                <h1 class="hero-headline-slide text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.12]">
+                    Stop Being Scattered.<br />
+                    <span class="gradient-text">Make Your Ideas Flow.</span>
+                </h1>
+                <h1 class="hero-headline-slide text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.12]">
+                    Stop Being Forgettable.<br />
+                    <span class="gradient-text">Make It Memorable.</span>
+                </h1>
+                <h1 class="hero-headline-slide text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.12]">
+                    Stop Just Speaking.<br />
+                    <span class="gradient-text">Make an Impact.</span>
+                </h1>
+            </div>
 
             <p class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
-                Stop losing offers to poor delivery.  </p>
+                Stop losing offers to poor delivery.
+            </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
                 <a href="#sandbox" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-base px-8 py-4 rounded-2xl shadow-glow-purple hover:scale-[1.02] transition-all group">
@@ -1101,6 +1138,21 @@
         function slotFor(questionType) {
             return questionType === 'project' ? 'q2' : 'q1';
         }
+
+        // ============================================================
+        // ✅ ROTATING HERO HEADLINE — 4 states, loops every 3 seconds
+        // ============================================================
+        (function rotateHeadline() {
+            const slides = document.querySelectorAll('.hero-headline-slide');
+            if (!slides.length) return;
+
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('is-active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('is-active');
+            }, 3000);
+        })();
 
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
