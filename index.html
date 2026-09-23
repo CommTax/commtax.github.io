@@ -1327,6 +1327,17 @@
         <input type="email" id="gateEmail" placeholder="e.g. arun@example.com" required />
       </div>
       <div>
+        <label for="gateMobile">Mobile Number</label>
+        <input
+          type="tel"
+          id="gateMobile"
+          placeholder="e.g. +91 98765 43210"
+          inputmode="tel"
+          autocomplete="tel"
+          required
+        />
+      </div>
+      <div>
         <label>Where are you in your career?</label>
         <div class="gate-stage-options" id="gateStageOptions">
           <button type="button" class="gate-stage-btn" data-stage="student">🎓 Student</button>
@@ -1612,7 +1623,7 @@ const state = {
   rawBlob: null,
   rawText: null,
   rawDuration: 0,
-  gate: { name: '', email: '', stage: null }
+  gate: { name: '', email: '', mobile: '', stage: null }
 };
 
 // ============================================================
@@ -2180,18 +2191,28 @@ document.getElementById('gateEmail').addEventListener('input', e => {
   state.gate.email = e.target.value.trim();
   checkGateReady();
 });
+document.getElementById('gateMobile').addEventListener('input', e => {
+  state.gate.mobile = e.target.value.trim();
+  checkGateReady();
+});
 
 function checkGateReady() {
-  const ready = state.gate.name && state.gate.email && state.gate.stage;
+  const mobileDigits = (state.gate.mobile || '').replace(/\D/g, '');
+  const ready =
+    state.gate.name &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.gate.email) &&
+    mobileDigits.length >= 7 &&
+    state.gate.stage;
   document.getElementById('gateSubmit').disabled = !ready;
 }
 
 // ============================================================
-// SUBMIT GATE → UPLOAD → REDIRECT
+// SUBMIT GATE → TRIAL UPLOAD → CAPTURE → ANALYZE → REDIRECT
 // ============================================================
 async function submitGateAndRedirect() {
-  if (!state.gate.name || !state.gate.email || !state.gate.stage) {
-    alert('Please fill all fields.');
+  const mobileDigits = (state.gate.mobile || '').replace(/\D/g, '');
+  if (!state.gate.name || !state.gate.email || mobileDigits.length < 7 || !state.gate.stage) {
+    alert('Please fill all fields, including a valid mobile number.');
     return;
   }
 
@@ -2199,52 +2220,98 @@ async function submitGateAndRedirect() {
   btn.textContent = 'Uploading your response…';
   btn.disabled = true;
 
+  // Human-readable prompt text for the selected scenario
+  const QUESTION_PROMPTS = {
+    intro:   'Tell me about yourself — your background, what you do, and what drives you professionally.',
+    project: "Tell me about a current project or initiative you're leading or involved in."
+  };
+
   try {
+    // ---------- STEP 1: UPLOAD (multipart) ----------
     const formData = new FormData();
     const liveText = sandboxInput.value.trim();
 
+    let mode;
     if (liveText && liveText.length >= 10) {
       formData.append('text', liveText);
-      formData.append('mode', 'text');
+      mode = 'text';
     } else if (audioBlob && recordingSeconds >= 3) {
       formData.append('audio', audioBlob, 'recording.webm');
-      formData.append('mode', 'voice');
+      mode = 'voice';
     } else {
       throw new Error('No audio or text to upload');
     }
+
+    formData.append('mode', mode);
     formData.append('question_type', state.currentQuestionType);
+    formData.append('question_slot', state.currentQuestionType);
+    formData.append('question_prompt', QUESTION_PROMPTS[state.currentQuestionType] || '');
     formData.append('duration_seconds', state.rawDuration || 30);
 
-    const uploadRes = await fetch(`${BACKEND_URL}/api/drills/upload`, {
+    const uploadRes = await fetch(`${BACKEND_URL}/api/trial/upload`, {
       method: 'POST',
       body: formData
     });
     if (!uploadRes.ok) {
       const err = await uploadRes.json().catch(() => ({}));
-      throw new Error(err.error || 'Upload failed');
+      throw new Error(err.detail || err.error || 'Upload failed');
     }
-    const { drill_id } = await uploadRes.json();
-    console.log('✅ Drill uploaded:', drill_id);
+    const uploadData = await uploadRes.json();
+    const drill_id = uploadData.drill_id || uploadData.id || uploadData.drillId;
+    if (!drill_id) throw new Error('Backend did not return a drill_id');
+    console.log('✅ Trial upload OK → drill_id:', drill_id);
 
-    btn.textContent = 'Preparing your results…';
-    const leadRes = await fetch(`${BACKEND_URL}/api/drills/capture`, {
+    // ---------- STEP 2: CAPTURE LEAD ----------
+    btn.textContent = 'Saving your details…';
+    const captureRes = await fetch(`${BACKEND_URL}/api/trial/capture`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         drill_id,
         name: state.gate.name,
         email: state.gate.email,
+        mobile: state.gate.mobile,           // required by CapturePayload
         stage: state.gate.stage,
         question_type: state.currentQuestionType,
-        mode: state.currentMode
+        question_slot: state.currentQuestionType,
+        mode
       })
     });
-    if (!leadRes.ok) {
-      const err = await leadRes.json().catch(() => ({}));
-      throw new Error(err.error || 'Lead capture failed');
+    if (!captureRes.ok) {
+      const err = await captureRes.json().catch(() => ({}));
+      throw new Error(err.detail || err.error || 'Lead capture failed');
     }
-    const { user_id, session_token } = await leadRes.json();
-    console.log('✅ Session created for user:', user_id);
+    const captureData = await captureRes.json();
+    console.log('✅ Trial capture OK:', captureData);
+
+    // ---------- STEP 3: ANALYZE ----------
+    btn.textContent = 'Analyzing your response…';
+    const analyzeRes = await fetch(`${BACKEND_URL}/api/trial/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ drill_id })
+    });
+    if (!analyzeRes.ok) {
+      const err = await analyzeRes.json().catch(() => ({}));
+      throw new Error(err.detail || err.error || 'Analyze failed');
+    }
+    const analyzeData = await analyzeRes.json();
+    console.log('✅ Trial analyze OK:', analyzeData);
+
+    // ---------- STEP 4: REDIRECT ----------
+    const session_token =
+      analyzeData.session_token ||
+      analyzeData.sessionToken ||
+      captureData.session_token ||
+      captureData.sessionToken ||
+      analyzeData.token;
+
+    if (!session_token) {
+      const fallback = `https://theunspoken.co.in/trial?drill_id=${encodeURIComponent(drill_id)}`;
+      console.warn('⚠️ No session_token returned — using fallback:', fallback);
+      window.location.assign(fallback);
+      return;
+    }
 
     const targetUrl = `${PRODUCT_URL}?session=${encodeURIComponent(session_token)}`;
     console.log('🔀 Redirecting to product:', targetUrl);
