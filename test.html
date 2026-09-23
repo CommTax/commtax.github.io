@@ -647,7 +647,7 @@
     .sandbox-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
     /* ============================================================
-       WHAT YOU GET — Features section (sticky stack, all sizes)
+       WHAT YOU GET — Features section (sticky stack)
        ============================================================ */
     .features-section {
       padding: 70px 0 40px;
@@ -709,7 +709,7 @@
       box-shadow: 0 20px 50px rgba(0,0,0,0.06);
       margin-bottom: 24px;
       will-change: transform;
-      min-height: 480px;
+      min-height: 520px;
     }
     .feature-card:last-child { margin-bottom: 0; }
 
@@ -764,69 +764,81 @@
     }
 
     /* ============================================================
-       PREMIUM MINI PHONE MOCKUPS
+       PHONE MOCKUPS WITH REAL SCREENSHOTS
        ============================================================ */
     .feature-card-phone {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      perspective: 1200px;
+      justify-content: center;
+      gap: 28px;
       position: relative;
     }
-    .feature-card-phone::before {
-      content: '';
+
+    /* Ambient gold aura behind the phone */
+    .phone-aura {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      width: 320px;
-      height: 320px;
+      transform: translate(-50%, -70%);
+      width: 340px;
+      height: 340px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(184, 148, 60, 0.14) 0%, rgba(184, 148, 60, 0.04) 40%, transparent 70%);
+      background: radial-gradient(circle, rgba(184, 148, 60, 0.16) 0%, rgba(184, 148, 60, 0.05) 40%, transparent 70%);
       pointer-events: none;
       animation: auraFloat 7s ease-in-out infinite;
       z-index: 0;
     }
     @keyframes auraFloat {
-      0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
-      50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.08); }
+      0%, 100% { opacity: 0.7; transform: translate(-50%, -70%) scale(1); }
+      50%      { opacity: 1;   transform: translate(-50%, -70%) scale(1.08); }
     }
 
-    .mini-phone {
+    /* Phone frame — CSS bezel + notch + shadow */
+    .phone-frame {
       position: relative;
-      width: 270px;
-      height: 380px;
-      background: linear-gradient(145deg, #f5f0e8 0%, #e8e2d8 100%);
-      border-radius: 42px;
+      width: 260px;
+      height: 520px;
+      background: linear-gradient(145deg, #e8e3db 0%, #cfc9be 100%);
+      border-radius: 44px;
       padding: 10px;
       box-shadow:
-        0 40px 70px -20px rgba(26, 25, 23, 0.30),
-        0 20px 40px -10px rgba(26, 25, 23, 0.18),
-        inset 0 0 0 1.5px rgba(255, 255, 255, 0.75),
-        inset 0 -2px 8px rgba(0, 0, 0, 0.08);
-      transform: rotateY(-5deg) rotateX(2deg);
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        0 45px 80px -22px rgba(26, 25, 23, 0.35),
+        0 22px 45px -12px rgba(26, 25, 23, 0.22),
+        inset 0 0 0 1.5px rgba(255, 255, 255, 0.85),
+        inset 0 -3px 10px rgba(0, 0, 0, 0.1);
       z-index: 1;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .feature-card:hover .mini-phone {
-      transform: rotateY(0deg) rotateX(0deg) translateY(-6px);
+    .feature-card:hover .phone-frame {
+      transform: translateY(-6px);
     }
-
-    .mini-phone-dark {
-      background: linear-gradient(145deg, #2a2a30 0%, #15151a 100%);
-      box-shadow:
-        0 40px 70px -20px rgba(0, 0, 0, 0.5),
-        0 20px 40px -10px rgba(0, 0, 0, 0.35),
-        inset 0 0 0 1.5px rgba(255, 255, 255, 0.08),
-        inset 0 -2px 8px rgba(0, 0, 0, 0.4);
-    }
-    .mini-phone-light {
-      background: linear-gradient(145deg, #ffffff 0%, #eae4da 100%);
-    }
-
-    .mini-phone-notch {
+    /* Side buttons */
+    .phone-frame::before {
+      content: '';
       position: absolute;
-      top: 18px;
+      left: -2px;
+      top: 120px;
+      width: 3px;
+      height: 40px;
+      border-radius: 2px 0 0 2px;
+      background: linear-gradient(180deg, #b0b0b0, #808080);
+    }
+    .phone-frame::after {
+      content: '';
+      position: absolute;
+      left: -2px;
+      top: 180px;
+      width: 3px;
+      height: 70px;
+      border-radius: 2px 0 0 2px;
+      background: linear-gradient(180deg, #b0b0b0, #808080);
+    }
+
+    /* Notch */
+    .phone-notch {
+      position: absolute;
+      top: 16px;
       left: 50%;
       transform: translateX(-50%);
       width: 76px;
@@ -834,10 +846,9 @@
       background: #0a0a0c;
       border-radius: 20px;
       z-index: 3;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
     }
-    .mini-notch-light { background: #0a0a0c; }
-    .mini-phone-notch::after {
+    .phone-notch::after {
       content: '';
       position: absolute;
       right: 8px;
@@ -847,494 +858,72 @@
       height: 5px;
       border-radius: 50%;
       background: radial-gradient(circle, #2a2a3a 0%, #0a0a0c 100%);
-      box-shadow: inset 0 0 2px rgba(100, 100, 200, 0.4);
     }
 
-    .mini-phone-body {
-      background: linear-gradient(180deg, #fbf8f3 0%, #f4efe7 100%);
-      border-radius: 34px;
-      height: 100%;
-      padding: 46px 18px 18px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    /* Screen — holds the actual screenshot */
+    .phone-screen {
       position: relative;
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+      width: 100%;
+      height: 100%;
+      background: #000;
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
     }
-    .mini-phone-body::before {
+    .phone-screen img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    /* Callout bubble below phone */
+    .phone-callout {
+      position: relative;
+      max-width: 340px;
+      padding: 16px 22px;
+      background: linear-gradient(135deg, #1a1d2b 0%, #0f1119 100%);
+      border: 1px solid rgba(184, 148, 60, 0.35);
+      border-radius: 18px;
+      text-align: center;
+      box-shadow:
+        0 20px 40px -15px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      z-index: 2;
+    }
+    .phone-callout::before {
       content: '';
       position: absolute;
-      top: -40px;
-      right: -40px;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(184, 148, 60, 0.18) 0%, transparent 70%);
-      pointer-events: none;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 14px;
+      height: 14px;
+      background: #1a1d2b;
+      border-left: 1px solid rgba(184, 148, 60, 0.35);
+      border-top: 1px solid rgba(184, 148, 60, 0.35);
+      border-top-left-radius: 3px;
     }
-    .mini-body-dark {
-      background: linear-gradient(180deg, #0f0f12 0%, #16161a 100%);
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
-    }
-    .mini-body-dark::before {
-      background: radial-gradient(circle, rgba(184, 148, 60, 0.22) 0%, transparent 70%);
-    }
-    .mini-body-light {
-      background: linear-gradient(180deg, #fbf8f3 0%, #f4efe7 100%);
-    }
-
-    .mini-status-bar {
-      position: absolute;
-      top: 12px;
-      left: 24px;
-      right: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.55rem;
-      font-weight: 700;
-      color: var(--ink);
-      letter-spacing: 0.02em;
-      z-index: 4;
-    }
-    .mini-body-dark .mini-status-bar { color: #e8e4dc; }
-    .mini-status-dots { display: flex; gap: 2px; }
-    .mini-status-dots span {
-      width: 3px;
-      height: 3px;
-      border-radius: 50%;
-      background: currentColor;
-      opacity: 0.6;
-    }
-
-    /* Card 1 — Today's Dashboard */
-    .mini-label {
-      font-size: 0.55rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: var(--gold);
-      text-transform: uppercase;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--ink);
-      line-height: 1.2;
-      letter-spacing: -0.01em;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-day-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      position: relative;
-      z-index: 1;
-      margin-bottom: 2px;
-    }
-    .mini-day-badge {
-      font-size: 0.55rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gold);
-      background: rgba(184, 148, 60, 0.12);
-      border: 1px solid rgba(184, 148, 60, 0.3);
-      padding: 2px 7px;
-      border-radius: 20px;
-    }
-    .mini-streak {
-      font-size: 0.55rem;
-      font-weight: 700;
-      color: var(--brick-red);
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-    .mini-progress-track {
-      width: 100%;
-      height: 4px;
-      background: rgba(0, 0, 0, 0.08);
-      border-radius: 2px;
-      overflow: hidden;
-      margin: 6px 0 4px;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-progress-fill {
-      height: 100%;
-      width: 50%;
-      background: linear-gradient(90deg, var(--gold), var(--gold-dark));
-      border-radius: 2px;
-    }
-    .mini-q-card {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: 12px;
-      padding: 9px 11px;
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-      position: relative;
-      z-index: 1;
-    }
-    .mini-q-icon {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #d4a84f 0%, #a07f30 100%);
-      color: #fff;
-      font-size: 0.65rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 2px 6px rgba(184, 148, 60, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    }
-    .mini-q-body { flex: 1; min-width: 0; }
-    .mini-q-meta {
-      font-size: 0.5rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: var(--gold);
-      text-transform: uppercase;
-    }
-    .mini-q-text {
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: var(--ink);
-      line-height: 1.25;
-      margin-top: 1px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-    }
-    .mini-q-reps {
-      font-size: 0.5rem;
-      font-weight: 700;
-      color: var(--sage);
-      margin-top: 2px;
-    }
-
-    /* Card 2 — Pattern Analysis */
-    .mini-dark-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #f0ebe4;
-      line-height: 1.2;
-      letter-spacing: -0.01em;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-dark-sub {
-      font-size: 0.5rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      color: #8a8a92;
-      text-transform: uppercase;
-      margin-top: 4px;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-dark-pattern {
-      text-align: center;
-      padding: 10px 0 6px;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-dark-pattern-kicker {
-      font-size: 0.45rem;
+    .phone-callout .callout-label {
+      display: block;
+      font-size: 0.7rem;
       font-weight: 800;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: #8a8a92;
-      margin-bottom: 4px;
-    }
-    .mini-dark-pattern-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #d4a84f, #c9924a);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.15;
-      letter-spacing: -0.02em;
-    }
-    .mini-dark-row {
-      display: flex;
-      gap: 6px;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-dark-stat {
-      flex: 1;
-      background: rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(184, 148, 60, 0.22);
-      border-radius: 10px;
-      padding: 8px 6px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    }
-    .mini-dark-stat-val {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: #d4a84f;
-      line-height: 1;
-      letter-spacing: -0.02em;
-    }
-    .mini-dark-stat-label {
-      font-size: 0.42rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #8a8a92;
-      margin-top: 4px;
-    }
-    .mini-dark-bar {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-top: 6px;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-dark-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #d4a84f, #c9924a);
-      border-radius: 3px;
-    }
-
-    /* Card 3 — Drills */
-    .mini-drill-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-drill-cat {
-      font-size: 0.5rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
       color: var(--gold);
-    }
-    .mini-drill-count {
-      font-size: 0.5rem;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-    .mini-drill-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--ink);
-      line-height: 1.25;
-      margin: 2px 0 2px;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-drill-prompt {
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin: 8px 0 6px;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-drill-card {
-      font-size: 0.65rem;
-      line-height: 1.35;
-      padding: 8px 10px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1.5px solid rgba(0, 0, 0, 0.06);
-      color: var(--text-soft);
       margin-bottom: 6px;
-      position: relative;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-      z-index: 1;
     }
-    .mini-drill-card.right {
-      background: linear-gradient(135deg, rgba(107, 122, 94, 0.14) 0%, rgba(107, 122, 94, 0.2) 100%);
-      border-color: var(--sage);
-      color: var(--ink);
-      font-weight: 600;
-      padding-right: 28px;
-      box-shadow: 0 4px 12px rgba(107, 122, 94, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    }
-    .mini-drill-check {
-      position: absolute;
-      top: 50%;
-      right: 8px;
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #7a8f6c 0%, #5a6b4e 100%);
-      color: #fff;
-      font-size: 0.6rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 6px rgba(107, 122, 94, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    }
-    .mini-drill-timer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 6px;
-      padding: 6px 10px;
-      background: linear-gradient(135deg, #2c3440 0%, #1e242d 100%);
-      border-radius: 10px;
-      color: #f0ebe4;
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-drill-mic {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      color: var(--gold-light);
-    }
-    .mini-drill-mic-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #ef4444;
-      animation: miniPulse 1.6s ease-in-out infinite;
-      box-shadow: 0 0 6px rgba(239, 68, 68, 0.8);
-    }
-
-    /* Card 4 — Achievements */
-    .mini-ach-title {
+    .phone-callout .callout-text {
       font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--ink);
-      margin-bottom: 4px;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-ach-sub {
-      font-size: 0.55rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-      margin-bottom: 6px;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-ach-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-ach-badge {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      aspect-ratio: 1;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #d4a84f 0%, #a07f30 100%);
-      box-shadow: 0 4px 12px rgba(184, 148, 60, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-      position: relative;
-      overflow: hidden;
-    }
-    .mini-ach-badge::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .mini-ach-badge.locked {
-      background: rgba(0, 0, 0, 0.06);
-      box-shadow: none;
-      border: 1.5px dashed rgba(0, 0, 0, 0.12);
-    }
-    .mini-ach-badge-icon {
       font-size: 1rem;
-      line-height: 1;
-      position: relative;
-      z-index: 1;
-      color: #fff;
-    }
-    .mini-ach-badge.locked .mini-ach-badge-icon { color: var(--text-muted); }
-    .mini-ach-badge-name {
-      font-size: 0.42rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #fff;
-      margin-top: 3px;
-      text-align: center;
-      line-height: 1.1;
-      position: relative;
-      z-index: 1;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    }
-    .mini-ach-badge.locked .mini-ach-badge-name { color: var(--text-muted); text-shadow: none; }
-
-    .mini-ach-progress {
-      margin-top: 8px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, rgba(184, 148, 60, 0.12), rgba(184, 148, 60, 0.06));
-      border: 1px solid rgba(184, 148, 60, 0.28);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-      z-index: 1;
-    }
-    .mini-ach-progress-label {
-      font-size: 0.5rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--gold-darker);
-    }
-    .mini-ach-progress-count {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: var(--gold);
-      letter-spacing: -0.02em;
-    }
-
-    @keyframes miniPulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.75); }
+      font-weight: 500;
+      line-height: 1.35;
+      color: #f0ebe4;
+      letter-spacing: -0.005em;
     }
 
     /* JOURNEY */
@@ -1572,7 +1161,7 @@
       .plan-option h3 { font-size: 1.3rem; }
       .feature-card {
         grid-template-columns: 1fr;
-        gap: 24px;
+        gap: 28px;
         padding: 32px 28px;
       }
       .feature-card-phone { order: 2; }
@@ -1589,7 +1178,6 @@
       .sandbox-card { padding: 24px 20px; border-radius: 20px; }
       .sandbox-response-row { flex-direction: column; align-items: flex-start; }
 
-      /* Features section — sticky stack active on mobile too */
       .features-section {
         padding: 40px 0 30px;
         margin-bottom: 40vh;
@@ -1602,18 +1190,24 @@
         border-radius: 22px;
         margin-bottom: 16px;
         grid-template-columns: 1fr;
-        gap: 20px;
-        min-height: 420px;
+        gap: 24px;
+        min-height: 460px;
       }
       .feature-card:last-child { margin-bottom: 0; }
       .feature-card-text p { font-size: 0.9rem; }
       .feature-card-text h3 { font-size: 1.4rem; }
-      .mini-phone {
+
+      .phone-frame {
         width: 220px;
-        height: 310px;
-        transform: rotateY(-3deg) rotateX(1deg);
+        height: 440px;
+        padding: 9px;
+        border-radius: 38px;
       }
-      .feature-card-phone::before { width: 260px; height: 260px; }
+      .phone-screen { border-radius: 30px; }
+      .phone-notch { width: 66px; height: 20px; top: 14px; }
+      .phone-aura { width: 280px; height: 280px; }
+      .phone-callout { max-width: 300px; padding: 14px 18px; }
+      .phone-callout .callout-text { font-size: 0.92rem; }
 
       .gate-stage-options { grid-template-columns: 1fr; }
       .journey-section { padding: 40px 16px; margin: 20px 0; border-radius: 24px; }
@@ -1644,7 +1238,11 @@
       .plan-image-aura-wrapper img { width: 120px; height: 120px; }
       .plan-image-aura-wrapper::before { width: 170px; height: 90px; }
       .plan-image-aura-wrapper::after { width: 130px; height: 70px; }
-      .mini-phone { width: 200px; height: 290px; }
+      .phone-frame { width: 200px; height: 400px; padding: 8px; border-radius: 34px; }
+      .phone-screen { border-radius: 27px; }
+      .phone-notch { width: 60px; height: 18px; top: 12px; }
+      .phone-callout { max-width: 270px; padding: 12px 16px; }
+      .phone-callout .callout-text { font-size: 0.86rem; }
     }
   </style>
 </head>
@@ -1879,7 +1477,7 @@
   </div>
 </section>
 
-<!-- WHAT YOU GET — Features section (STICKY STACK) -->
+<!-- WHAT YOU GET — Features section with real screenshots -->
 <section class="container features-section" id="features">
   <div class="features-header">
     <span class="features-eyebrow">WHAT YOU GET</span>
@@ -1891,7 +1489,7 @@
 
   <div class="features-stack" id="featuresStack">
 
-    <!-- Card 1: Bite-Sized Practice → Today's Dashboard -->
+    <!-- Card 1: Bite-Sized Practice -->
     <div class="feature-card">
       <div class="feature-card-text">
         <h3>Bite-Sized Practice</h3>
@@ -1903,46 +1501,21 @@
         </div>
       </div>
       <div class="feature-card-phone">
-        <div class="mini-phone">
-          <div class="mini-phone-notch"></div>
-          <div class="mini-phone-body">
-            <div class="mini-status-bar">
-              <span>9:41</span>
-              <div class="mini-status-dots"><span></span><span></span><span></span></div>
-            </div>
-
-            <div class="mini-day-header">
-              <span class="mini-day-badge">DAY 12 / 28</span>
-              <span class="mini-streak">🔥 12</span>
-            </div>
-            <div class="mini-title">Today's Questions</div>
-            <div class="mini-progress-track">
-              <div class="mini-progress-fill" style="width: 50%;"></div>
-            </div>
-
-            <div class="mini-q-card">
-              <div class="mini-q-icon">1</div>
-              <div class="mini-q-body">
-                <div class="mini-q-meta">Q1 · Self-intro</div>
-                <div class="mini-q-text">Tell me about yourself.</div>
-                <div class="mini-q-reps">Rep 1 of 2 complete</div>
-              </div>
-            </div>
-
-            <div class="mini-q-card">
-              <div class="mini-q-icon" style="background: linear-gradient(135deg, #a0a0a0 0%, #6a6a6a 100%);">2</div>
-              <div class="mini-q-body">
-                <div class="mini-q-meta">Q2 · Behavioral</div>
-                <div class="mini-q-text">Tell me about a project you led.</div>
-                <div class="mini-q-reps">Not started</div>
-              </div>
-            </div>
+        <div class="phone-aura"></div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Intro.png" alt="Sprint Sized Practice — 10 minute daily micro-habits" loading="lazy" />
           </div>
+        </div>
+        <div class="phone-callout">
+          <span class="callout-label">📅 Sprint-Sized Practice</span>
+          <div class="callout-text">10-Minute daily micro-habits on the go.</div>
         </div>
       </div>
     </div>
 
-    <!-- Card 2: Question Bank → Pattern & Progress -->
+    <!-- Card 2: Question Bank -->
     <div class="feature-card">
       <div class="feature-card-text">
         <h3>Question Bank</h3>
@@ -1954,45 +1527,21 @@
         </div>
       </div>
       <div class="feature-card-phone">
-        <div class="mini-phone mini-phone-dark">
-          <div class="mini-phone-notch mini-notch-light"></div>
-          <div class="mini-phone-body mini-body-dark">
-            <div class="mini-status-bar">
-              <span>9:41</span>
-              <div class="mini-status-dots"><span></span><span></span><span></span></div>
-            </div>
-
-            <div class="mini-dark-sub">YOUR PATTERN</div>
-            <div class="mini-dark-pattern">
-              <div class="mini-dark-pattern-kicker">Based on your last 6 reps</div>
-              <div class="mini-dark-pattern-name">Rushing the Setup</div>
-            </div>
-
-            <div class="mini-dark-row">
-              <div class="mini-dark-stat">
-                <div class="mini-dark-stat-val">62%</div>
-                <div class="mini-dark-stat-label">Point-first</div>
-              </div>
-              <div class="mini-dark-stat">
-                <div class="mini-dark-stat-val">84%</div>
-                <div class="mini-dark-stat-label">Clarity</div>
-              </div>
-              <div class="mini-dark-stat">
-                <div class="mini-dark-stat-val">7s</div>
-                <div class="mini-dark-stat-label">Time-point</div>
-              </div>
-            </div>
-
-            <div class="mini-dark-sub" style="margin-top: 6px;">CLARITY TREND</div>
-            <div class="mini-dark-bar">
-              <div class="mini-dark-bar-fill" style="width: 84%;"></div>
-            </div>
+        <div class="phone-aura"></div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Pattern.png" alt="Pattern & Progress — personalized analysis of your communication pattern" loading="lazy" />
           </div>
+        </div>
+        <div class="phone-callout">
+          <span class="callout-label">📊 Pattern &amp; Progress</span>
+          <div class="callout-text">Personalized analysis of your communication pattern.</div>
         </div>
       </div>
     </div>
 
-    <!-- Card 3: Interactive Features → Drills -->
+    <!-- Card 3: Interactive Features -->
     <div class="feature-card">
       <div class="feature-card-text">
         <h3>Interactive Features</h3>
@@ -2004,45 +1553,21 @@
         </div>
       </div>
       <div class="feature-card-phone">
-        <div class="mini-phone mini-phone-light">
-          <div class="mini-phone-notch"></div>
-          <div class="mini-phone-body mini-body-light">
-            <div class="mini-status-bar">
-              <span>9:41</span>
-              <div class="mini-status-dots"><span></span><span></span><span></span></div>
-            </div>
-
-            <div class="mini-drill-header">
-              <span class="mini-drill-cat">Rambling Reduction</span>
-              <span class="mini-drill-count">6 drills</span>
-            </div>
-            <div class="mini-drill-title">Time-to-Point</div>
-            <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.4; position: relative; z-index: 1;">
-              Deliver your key recommendation in under 5 seconds.
-            </div>
-
-            <div class="mini-drill-prompt">Try it:</div>
-            <div class="mini-drill-card" style="opacity: 0.5; text-decoration: line-through;">
-              So basically we looked at the data and…
-            </div>
-            <div class="mini-drill-card right">
-              <span class="mini-drill-check">✓</span>
-              Delay the launch by two weeks.
-            </div>
-
-            <div class="mini-drill-timer">
-              <span class="mini-drill-mic">
-                <span class="mini-drill-mic-dot"></span>
-                <span>RECORDING</span>
-              </span>
-              <span>0:04 / 0:30</span>
-            </div>
+        <div class="phone-aura"></div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Activity.png" alt="Drills & Exercises — practice to reduce rambling and build clarity" loading="lazy" />
           </div>
+        </div>
+        <div class="phone-callout">
+          <span class="callout-label">⚡ Drills &amp; Exercises</span>
+          <div class="callout-text">Practice to reduce rambling and build clarity.</div>
         </div>
       </div>
     </div>
 
-    <!-- Card 4: Explore Section → Achievements -->
+    <!-- Card 4: Explore Section -->
     <div class="feature-card">
       <div class="feature-card-text">
         <h3>Explore Section</h3>
@@ -2054,37 +1579,16 @@
         </div>
       </div>
       <div class="feature-card-phone">
-        <div class="mini-phone">
-          <div class="mini-phone-notch"></div>
-          <div class="mini-phone-body">
-            <div class="mini-status-bar">
-              <span>9:41</span>
-              <div class="mini-status-dots"><span></span><span></span><span></span></div>
-            </div>
-
-            <div class="mini-ach-title">Achievements</div>
-            <div class="mini-ach-sub">Unlock badges as you practice</div>
-
-            <div class="mini-ach-grid">
-              <div class="mini-ach-badge">
-                <div class="mini-ach-badge-icon">🎯</div>
-                <div class="mini-ach-badge-name">First Rep</div>
-              </div>
-              <div class="mini-ach-badge">
-                <div class="mini-ach-badge-icon">🔥</div>
-                <div class="mini-ach-badge-name">5-Day</div>
-              </div>
-              <div class="mini-ach-badge locked">
-                <div class="mini-ach-badge-icon">⚡</div>
-                <div class="mini-ach-badge-name">Speed</div>
-              </div>
-            </div>
-
-            <div class="mini-ach-progress">
-              <span class="mini-ach-progress-label">Your Progress</span>
-              <span class="mini-ach-progress-count">2 / 5</span>
-            </div>
+        <div class="phone-aura"></div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Data.png" alt="My Reps — complete history of all your reps, transcripts, and metrics" loading="lazy" />
           </div>
+        </div>
+        <div class="phone-callout">
+          <span class="callout-label">📁 My Reps</span>
+          <div class="callout-text">Complete history of all your reps, transcripts, and metrics.</div>
         </div>
       </div>
     </div>
