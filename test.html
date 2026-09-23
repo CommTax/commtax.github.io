@@ -37,7 +37,9 @@
 
     /* BUTTONS */
     .btn-free {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       background: linear-gradient(135deg, #2c3440, #1e242d);
       color: #fff;
       font-weight: 600;
@@ -66,18 +68,6 @@
       box-shadow: 0 6px 20px rgba(184, 148, 60, 0.3);
     }
     .btn-paid:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(184, 148, 60, 0.45); }
-    .btn-ghost {
-      display: inline-block;
-      background: transparent;
-      color: var(--ink);
-      font-weight: 500;
-      padding: 12px 24px;
-      border-radius: 60px;
-      text-decoration: none;
-      border: 1px solid #d0c8bc;
-      transition: all 0.2s ease;
-    }
-    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
 
     /* NAV */
     .navbar {
@@ -110,6 +100,66 @@
     .dropdown:hover .dropdown-menu { display: block; opacity: 1; transform: translateY(0); pointer-events: auto; }
     .dropdown-menu a { display: block; padding: 10px 20px; color: var(--ink); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: background 0.2s, color 0.2s; white-space: nowrap; }
     .dropdown-menu a:hover { background: #f8f6f2; color: var(--gold); }
+
+    /* === MOBILE NAV (hamburger + drawer) === */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      flex-direction: column;
+      gap: 5px;
+      justify-content: center;
+      align-items: center;
+    }
+    .mobile-menu-btn span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--ink);
+      border-radius: 2px;
+      transition: all 0.25s ease;
+    }
+    .mobile-menu-btn.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .mobile-menu-btn.is-open span:nth-child(2) { opacity: 0; }
+    .mobile-menu-btn.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-drawer {
+      display: none;
+      flex-direction: column;
+      background: #ffffff;
+      border-top: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-light);
+      padding: 8px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 900;
+    }
+    .mobile-drawer.is-open { display: flex; }
+    .mobile-drawer a {
+      display: block;
+      padding: 14px 8px;
+      color: var(--ink);
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border-bottom: 1px solid var(--border-light);
+      transition: color 0.2s;
+    }
+    .mobile-drawer a:last-child { border-bottom: none; }
+    .mobile-drawer a:hover { color: var(--gold); }
+    .mobile-drawer-cta {
+      margin-top: 12px;
+      text-align: center;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #fff !important;
+      border-radius: 60px;
+      padding: 14px !important;
+      font-weight: 700 !important;
+      border: none !important;
+    }
+    .mobile-drawer-cta:hover { color: #fff !important; opacity: 0.95; }
 
     /* HERO */
     .hero {
@@ -438,7 +488,7 @@
     .transformations-stage .generic-line.gone { opacity: 0; filter: blur(10px); transform: translateX(-50%) translateY(-10px) scale(0.96); }
 
     /* ============================================================
-       NEW INTERACTIVE SANDBOX SECTION (light-theme restyle)
+       INTERACTIVE SANDBOX SECTION (light-theme)
        ============================================================ */
     .sandbox-section { padding: 60px 0 40px; }
     .sandbox-header { max-width: 640px; margin: 0 auto 32px; text-align: center; }
@@ -636,20 +686,7 @@
       color: var(--text-soft);
     }
 
-    /* MERGED SECTION (kept for hero badge anchors if needed) */
-    .merged-section { padding: 40px 0 20px; }
-    .merged-header { max-width: 700px; margin: 0 auto 24px; text-align: center; }
-    .merged-header .eyebrow {
-      display: inline-block; font-size: 0.55rem; font-weight: 700;
-      letter-spacing: 3px; text-transform: uppercase;
-      color: var(--gold); background: rgba(184, 148, 60, 0.1);
-      padding: 4px 18px; border-radius: 40px;
-      border: 1px solid rgba(184, 148, 60, 0.15); margin-bottom: 8px;
-    }
-    .merged-header h3 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700; line-height: 1.1; margin: 0 0 8px; }
-    .merged-header p { font-size: clamp(0.9rem, 1.2vw, 1.05rem); color: var(--text-soft); max-width: 600px; margin: 0 auto; }
-
-    /* === INTERACTIVE JOURNEY SECTION === */
+    /* === JOURNEY SECTION === */
     .journey-section {
       padding: 60px 0 40px;
       background: #f4f0ea;
@@ -895,8 +932,10 @@
       .container { padding: 0 16px; }
       .logo-img { height: 32px; }
       .logo-text { font-size: 1.2rem; }
-      .nav-links { gap: 12px; flex-wrap: wrap; }
-      .nav-links a { font-size: 0.8rem; }
+
+      /* Hide desktop nav links, show hamburger */
+      .nav-links { display: none !important; }
+      .mobile-menu-btn { display: flex; }
 
       .sandbox-section { padding: 40px 0 30px; }
       .sandbox-card { padding: 24px 20px; border-radius: 20px; }
@@ -921,6 +960,10 @@
       .tag-pass-3 { bottom: 10px; right: 10px; }
       .tag-pass-4 { bottom: 5px; left: 10px; }
     }
+    @media (min-width: 769px) {
+      .mobile-menu-btn { display: none !important; }
+      .mobile-drawer { display: none !important; }
+    }
     @media (max-width: 480px) {
       .journey-section { padding: 30px 12px; }
       .plan-image-aura-wrapper { height: 220px; }
@@ -939,6 +982,8 @@
       <img src="https://github.com/CommTax/commtax.github.io/blob/main/Mini%20Logo%20Unspoken.png?raw=true" alt="The Unspoken Logo" class="logo-img" />
       <span class="logo-text">The <span>Unspoken</span></span>
     </a>
+
+    <!-- Desktop nav links -->
     <div class="nav-links">
       <div class="dropdown">
         <a href="#">Product</a>
@@ -949,9 +994,29 @@
       </div>
       <a href="#faq">FAQ</a>
       <a href="/University">University</a>
-      <a href="#" class="btn-ghost" id="signInBtn" style="border-color:var(--gold); padding:8px 20px; font-size:0.85rem;">Sign In</a>
+      <a href="#" id="signInBtn" style="display:inline-flex; align-items:center; gap:8px; color:var(--ink); font-weight:600; font-size:0.9rem; text-decoration:none; padding:8px 16px; border-radius:60px; border:1px solid transparent; transition: all 0.2s;">
+        <i data-lucide="user" style="width:16px; height:16px; color:var(--gold);"></i>
+        <span>Log In</span>
+      </a>
     </div>
+
+    <!-- Mobile hamburger -->
+    <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle Navigation Menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+</div>
+
+<!-- Mobile drawer -->
+<div id="mobileMenu" class="mobile-drawer">
+  <a href="#">Product</a>
+  <a href="#faq">FAQ</a>
+  <a href="/University">University</a>
+  <a href="#" id="mobileSignInBtn" style="display:flex; align-items:center; gap:10px;">
+    <i data-lucide="user" style="width:16px; height:16px; color:var(--gold);"></i>
+    <span>Log In to Account</span>
+  </a>
+  <a href="https://theunspoken.co.in/Pricing" class="mobile-drawer-cta">Get Started</a>
 </div>
 
 <!-- LOGIN MODAL (OTP) -->
@@ -1004,7 +1069,7 @@
     </div>
   </div>
 </div>
-  
+
 <!-- GATE MODAL -->
 <div id="gateModal" class="modal gate-modal">
   <div class="modal-overlay" data-close="gateModal"></div>
@@ -1066,7 +1131,10 @@
     </div>
 
     <div class="hero-actions">
-      <a href="#sandbox" class="btn-free">Discover Your Pattern →</a>
+      <a href="#sandbox" class="btn-free">
+        <i data-lucide="flask-conical" style="width:18px; height:18px;"></i>
+        <span>Try Interactive Demo</span>
+      </a>
     </div>
 
     <div class="hero-badges" style="margin-top: 16px; margin-bottom: 12px;">
@@ -1091,9 +1159,7 @@
   </div>
 </section>
 
-<!-- ============================================================
-     INTERACTIVE SANDBOX (replaces old phone mockup section)
-     ============================================================ -->
+<!-- INTERACTIVE SANDBOX -->
 <section class="container sandbox-section" id="sandbox">
   <div class="sandbox-header">
     <span class="eyebrow">✦ INTERACTIVE SANDBOX</span>
@@ -1103,7 +1169,6 @@
 
   <div class="sandbox-card">
 
-    <!-- Scenario Type -->
     <div class="sandbox-field">
       <label for="sandboxQuestionType" class="sandbox-label">Select Scenario Type</label>
       <select id="sandboxQuestionType" class="sandbox-select">
@@ -1112,7 +1177,6 @@
       </select>
     </div>
 
-    <!-- Response -->
     <div class="sandbox-field">
       <div class="sandbox-response-row">
         <label for="sandboxInput" class="sandbox-label" style="margin-bottom:0;">Your Response</label>
@@ -1137,13 +1201,11 @@
       ></textarea>
     </div>
 
-    <!-- Submit -->
     <button id="sandboxCompressBtn" class="sandbox-submit">
       <span>⚡</span>
       <span>Check My Response</span>
     </button>
 
-    <!-- Output (populated by backend redirect if needed) -->
     <div id="sandboxOutputContainer" class="sandbox-output">
       <div class="sandbox-output-label">
         <span>✓</span>
@@ -1223,14 +1285,12 @@
 const BACKEND_URL = 'https://unspoken-backend-nqvl.onrender.com';
 const PRODUCT_URL = 'https://theunspoken.co.in/Product';
 
-if (typeof lucide !== 'undefined') lucide.createIcons();
-
 // ============================================================
 // STATE
 // ============================================================
 const state = {
   currentQuestionType: 'intro',
-  currentMode: 'text',   // sandbox has no mode toggle → defaults to text unless voice recorded
+  currentMode: 'text',
   rawBlob: null,
   rawText: null,
   rawDuration: 0,
@@ -1532,14 +1592,47 @@ document.querySelectorAll('[data-close]').forEach(el => {
 });
 
 // ============================================================
+// MOBILE MENU TOGGLE
+// ============================================================
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileMenuEl  = document.getElementById('mobileMenu');
+if (mobileMenuBtn && mobileMenuEl) {
+  mobileMenuBtn.addEventListener('click', () => {
+    mobileMenuEl.classList.toggle('is-open');
+    mobileMenuBtn.classList.toggle('is-open');
+  });
+  mobileMenuEl.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenuEl.classList.remove('is-open');
+      mobileMenuBtn.classList.remove('is-open');
+    });
+  });
+}
+
+// ============================================================
 // OTP LOGIN
 // ============================================================
 const LOGIN_BACKEND_URL = 'https://unspoken-backend-nqvl.onrender.com';
 
-document.getElementById('signInBtn').addEventListener('click', e => {
-  e.preventDefault();
-  openLoginModal();
-});
+// Desktop sign-in
+const signInBtn = document.getElementById('signInBtn');
+if (signInBtn) {
+  signInBtn.addEventListener('click', e => {
+    e.preventDefault();
+    openLoginModal();
+  });
+}
+
+// Mobile sign-in
+const mobileSignInBtn = document.getElementById('mobileSignInBtn');
+if (mobileSignInBtn) {
+  mobileSignInBtn.addEventListener('click', e => {
+    e.preventDefault();
+    if (mobileMenuEl) mobileMenuEl.classList.remove('is-open');
+    if (mobileMenuBtn) mobileMenuBtn.classList.remove('is-open');
+    openLoginModal();
+  });
+}
 
 function openLoginModal() {
   document.getElementById('loginStepEmail').style.display = 'block';
@@ -1629,7 +1722,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================
-// NEW SANDBOX LOGIC
+// SANDBOX LOGIC
 // ============================================================
 const sandboxInput       = document.getElementById('sandboxInput');
 const recordVoiceBtn     = document.getElementById('recordVoiceBtn');
@@ -1649,7 +1742,6 @@ let audioBlob        = null;
 let recordingSeconds = 0;
 let activeStream     = null;
 
-// Live-track textarea input
 if (sandboxInput) {
   sandboxInput.addEventListener('input', () => {
     const val = sandboxInput.value.trim();
@@ -1666,7 +1758,6 @@ if (sandboxInput) {
   });
 }
 
-// Voice recording
 if (recordVoiceBtn) {
   recordVoiceBtn.addEventListener('click', async () => {
     if (!isRecording) {
@@ -1728,13 +1819,12 @@ function stopSandboxRecording(autoTimedOut) {
   voiceBadgeText.textContent = `Voice captured (${recordingSeconds}s)`;
   voiceBadge.classList.remove('hidden');
 
-  state.rawBlob = null;  // set at submit time after blob is ready
+  state.rawBlob = null;
   state.rawText = null;
   state.rawDuration = recordingSeconds;
   state.currentMode = 'voice';
 }
 
-// Sandbox submit
 if (sandboxCompressBtn) {
   sandboxCompressBtn.addEventListener('click', () => {
     const text = sandboxInput.value.trim();
@@ -1804,7 +1894,6 @@ async function submitGateAndRedirect() {
   btn.disabled = true;
 
   try {
-    // STEP 1: Upload
     const formData = new FormData();
     const liveText = sandboxInput.value.trim();
 
@@ -1831,7 +1920,6 @@ async function submitGateAndRedirect() {
     const { drill_id } = await uploadRes.json();
     console.log('✅ Drill uploaded:', drill_id);
 
-    // STEP 2: Capture
     btn.textContent = 'Preparing your results…';
     const leadRes = await fetch(`${BACKEND_URL}/api/drills/capture`, {
       method: 'POST',
@@ -1852,7 +1940,6 @@ async function submitGateAndRedirect() {
     const { user_id, session_token } = await leadRes.json();
     console.log('✅ Session created for user:', user_id);
 
-    // STEP 3: Redirect
     const targetUrl = `${PRODUCT_URL}?session=${encodeURIComponent(session_token)}`;
     console.log('🔀 Redirecting to product:', targetUrl);
     window.location.assign(targetUrl);
@@ -1873,6 +1960,11 @@ setInterval(() => {
     if (r.ok) console.log('✅ Backend warm at', new Date().toLocaleTimeString());
   }).catch(() => {});
 }, 4 * 60 * 1000);
+
+// ============================================================
+// LUCIDE ICONS (final render pass)
+// ============================================================
+if (typeof lucide !== 'undefined') lucide.createIcons();
 
 console.log('🚀 Landing page loaded. Ready to capture.');
 </script>
