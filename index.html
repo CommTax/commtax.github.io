@@ -444,91 +444,83 @@
             .carousel-hint { display: none; }
         }
 
-        /* ✅ ROTATING HERO HEADLINE — typing animation */
+        /* ✅ HERO HEADLINE — static line 1, rotating line 2 */
         .hero-headline-wrap {
             position: relative;
-            min-height: 130px;          /* ✅ fits 28px × 2 lines + gap */
-        }
-        @media (min-width: 400px) {
-            .hero-headline-wrap { min-height: 150px; }
-        }
-        @media (min-width: 480px) {
-            .hero-headline-wrap { min-height: 170px; }
-        }
-        @media (min-width: 640px) {
-            .hero-headline-wrap { min-height: 220px; }
-        }
-        @media (min-width: 768px) {
-            .hero-headline-wrap { min-height: 260px; }
+            margin-bottom: 24px;
         }
 
-        .hero-headline-slide {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        @media (min-width: 768px) {
-            .hero-headline-slide { gap: 16px; }
-        }
-        .hero-headline-slide.is-active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .hero-headline-line {
-            font-size: 1.75rem;           /* ✅ 28px — smaller for very small phones */
+        .hero-headline-static {
+            font-size: 2rem;
             line-height: 1.15;
             font-weight: 800;
             letter-spacing: -0.02em;
             color: #ffffff;
-            white-space: nowrap;
-            overflow: hidden;
-            border-right: 0.08em solid transparent;
-            display: inline-block;
-            max-width: 100%;
-            padding-right: 0.05em;        /* keeps last char from being clipped */
-        }
-        @media (min-width: 400px) {
-            .hero-headline-line { font-size: 2rem; }        /* 32px */
+            margin: 0 0 8px;
         }
         @media (min-width: 480px) {
-            .hero-headline-line { font-size: 2.25rem; }     /* 36px */
+            .hero-headline-static { font-size: 2.5rem; }
         }
         @media (min-width: 640px) {
-            .hero-headline-line { font-size: 3.75rem; }     /* 60px */
+            .hero-headline-static { font-size: 3.75rem; }
         }
         @media (min-width: 768px) {
-            .hero-headline-line { font-size: 4.5rem; }      /* 72px */
+            .hero-headline-static { font-size: 4.5rem; }
         }
 
-        .hero-headline-slide.is-active .hero-headline-line.line-1 {
-            animation: typeIn1 1.2s steps(28, end) both,
-                       hideCaret 0s linear 1.3s forwards;
-            border-right-color: rgba(255,255,255,0.7);
+        .hero-headline-rotator {
+            position: relative;
+            height: 2.4rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .hero-headline-slide.is-active .hero-headline-line.line-2 {
-            animation: typeIn2 1.2s steps(28, end) 1.15s both,
-                       hideCaret 0s linear 2.45s forwards;
-            border-right-color: #A78BFA;
+        @media (min-width: 480px) {
+            .hero-headline-rotator { height: 3rem; }
+        }
+        @media (min-width: 640px) {
+            .hero-headline-rotator { height: 4.5rem; }
+        }
+        @media (min-width: 768px) {
+            .hero-headline-rotator { height: 5.4rem; }
         }
 
-        @keyframes typeIn1 {
-            from { max-width: 0; }
-            to   { max-width: 100%; }
+        .hero-headline-rotating-line {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            line-height: 1.15;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
         }
-        @keyframes typeIn2 {
-            from { max-width: 0; }
-            to   { max-width: 100%; }
+        @media (min-width: 480px) {
+            .hero-headline-rotating-line { font-size: 2.5rem; }
         }
-        @keyframes hideCaret {
-            to { border-right-color: transparent; }
+        @media (min-width: 640px) {
+            .hero-headline-rotating-line { font-size: 3.75rem; }
+        }
+        @media (min-width: 768px) {
+            .hero-headline-rotating-line { font-size: 4.5rem; }
+        }
+
+        .hero-headline-rotating-line.is-active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .hero-headline-rotating-line.is-leaving {
+            opacity: 0;
+            transform: translateY(-16px);
         }
     </style>
 </head>
@@ -598,24 +590,15 @@
                 <span class="text-xs sm:text-sm font-semibold text-purple-200 uppercase tracking-wide">See what got lost. Make it land.</span>
             </div>
 
-            <!-- ✅ ROTATING HEADLINE — typing animation, 4s loop -->
-            <div class="hero-headline-wrap mb-6">
-                <h1 class="hero-headline-slide is-active">
-                    <span class="hero-headline-line line-1">Stop Rambling</span>
-                    <span class="hero-headline-line line-2 gradient-text">Structure Your Response</span>
-                </h1>
-                <h1 class="hero-headline-slide">
-                    <span class="hero-headline-line line-1">Stop Being Scattered</span>
-                    <span class="hero-headline-line line-2 gradient-text">Make Your Ideas Flow</span>
-                </h1>
-                <h1 class="hero-headline-slide">
-                    <span class="hero-headline-line line-1">Stop Being Forgettable</span>
-                    <span class="hero-headline-line line-2 gradient-text">Make It Memorable</span>
-                </h1>
-                <h1 class="hero-headline-slide">
-                    <span class="hero-headline-line line-1">Stop Just Speaking</span>
-                    <span class="hero-headline-line line-2 gradient-text">Make an Impact</span>
-                </h1>
+            <!-- ✅ HERO HEADLINE — static line 1, rotating line 2 -->
+            <div class="hero-headline-wrap">
+                <h1 class="hero-headline-static">Stop Rambling.</h1>
+                <div class="hero-headline-rotator">
+                    <span class="hero-headline-rotating-line is-active gradient-text">Organize Your Thoughts.</span>
+                    <span class="hero-headline-rotating-line gradient-text">Structure Your Response.</span>
+                    <span class="hero-headline-rotating-line gradient-text">Make It Memorable.</span>
+                    <span class="hero-headline-rotating-line gradient-text">Make an Impact.</span>
+                </div>
             </div>
 
             <p class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
@@ -1187,20 +1170,30 @@
         }
 
         // ============================================================
-        // ✅ ROTATING HERO HEADLINE — typing animation, 4s loop
+        // ✅ HERO HEADLINE ROTATOR — static line 1, rotating line 2
         // ============================================================
         (function rotateHeadline() {
-            const slides = document.querySelectorAll('.hero-headline-slide');
-            if (!slides.length) return;
+            const lines = document.querySelectorAll('.hero-headline-rotating-line');
+            if (!lines.length) return;
 
             let current = 0;
-            const INTERVAL_MS = 4000;
+            const HOLD_MS = 3500;
 
             setInterval(() => {
-                slides[current].classList.remove('is-active');
-                current = (current + 1) % slides.length;
-                slides[current].classList.add('is-active');
-            }, INTERVAL_MS);
+                const leaving = lines[current];
+                leaving.classList.add('is-leaving');
+                leaving.classList.remove('is-active');
+
+                current = (current + 1) % lines.length;
+                const next = lines[current];
+                next.classList.remove('is-leaving');
+
+                void next.offsetWidth;
+
+                next.classList.add('is-active');
+
+                setTimeout(() => leaving.classList.remove('is-leaving'), 700);
+            }, HOLD_MS);
         })();
 
         // ============================================================
@@ -1281,7 +1274,6 @@
             }
         };
 
-        // Wire up the diagnostic dropdown
         document.addEventListener('DOMContentLoaded', () => {
             const sel = document.getElementById('diagScenario');
             if (!sel) return;
