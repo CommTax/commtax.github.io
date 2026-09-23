@@ -2284,11 +2284,26 @@ async function submitGateAndRedirect() {
     const captureData = await captureRes.json();
     console.log('✅ Trial capture OK:', captureData);
 
+    // Extract the session token that capture issued — analyze requires it as a bearer token
+    const captureToken =
+      captureData.session_token ||
+      captureData.sessionToken ||
+      captureData.token ||
+      captureData.access_token ||
+      captureData.accessToken;
+
+    if (!captureToken) {
+      console.warn('⚠️ capture did not return a session token. Analyze may fail with 401.', captureData);
+    }
+
     // ---------- STEP 3: ANALYZE ----------
     btn.textContent = 'Analyzing your response…';
+    const analyzeHeaders = { 'Content-Type': 'application/json' };
+    if (captureToken) analyzeHeaders['Authorization'] = `Bearer ${captureToken}`;
+
     const analyzeRes = await fetch(`${BACKEND_URL}/api/trial/analyze`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: analyzeHeaders,
       body: JSON.stringify({ drill_id })
     });
     if (!analyzeRes.ok) {
@@ -2302,9 +2317,8 @@ async function submitGateAndRedirect() {
     const session_token =
       analyzeData.session_token ||
       analyzeData.sessionToken ||
-      captureData.session_token ||
-      captureData.sessionToken ||
-      analyzeData.token;
+      analyzeData.token ||
+      captureToken; 
 
     if (!session_token) {
       const fallback = `https://theunspoken.co.in/trial?drill_id=${encodeURIComponent(drill_id)}`;
