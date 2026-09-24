@@ -425,7 +425,7 @@
             <div class="rep-tracker">
               <div class="rt-left">
                 <div class="rt-label">Reps</div>
-                <div class="rt-count" id="q1RepCount">0 <span class="rt-cap">/ 2</span></div>
+               <div class="rt-count" id="q1RepCount">0 <span class="rt-cap">reps</span></div>
                 <div class="rt-best" id="q1BestSnr">Best score: —</div>
               </div>
               <div class="rt-right">
@@ -451,7 +451,7 @@
             <div class="rep-tracker">
               <div class="rt-left">
                 <div class="rt-label">Trials</div>
-                <div class="rt-count" id="q2RepCount">0 <span class="rt-cap">/ 2</span></div>
+                <div class="rt-count" id="q2RepCount">0 <span class="rt-cap">reps</span></div>
                 <div class="rt-best" id="q2BestSnr">Best score: —</div>
               </div>
               <div class="rt-right">
@@ -729,7 +729,7 @@
     const BACKEND_URL = 'https://unspoken-backend-nqvl.onrender.com';
     const PAYWALL_URL = 'https://theunspoken.co.in/Pricing';
     const PLAN_LABEL = { sprint: 'Sprint Pass', pass: 'Practice Pass' };
-    const CAP_PER_QUESTION = 2;
+    const CAP_PER_QUESTION = Infinity;
     const VOICE_MAX_SECONDS = 90;
     const TOTAL_MAX_SECONDS = 180;
     const TEXT_MAX_WORDS = 300;
@@ -1388,21 +1388,26 @@
       const trials = which === 'q1' ? state.q1Trials : state.q2Trials;
       const valid = trials.filter(x => x.fillerDiscipline != null);
       const best = valid.length ? Math.max(...valid.map(x => x.fillerDiscipline)) : null;
-      document.getElementById(`${which}RepCount`).innerHTML = `${trials.length} <span class="rt-cap">/ ${CAP_PER_QUESTION}</span>`;
-      document.getElementById(`${which}BestSnr`).textContent = best != null ? `Best filler discipline: ${best}%` : 'Best score: —';
+
+      // No per-question cap for paid users. Show a running count only.
+      document.getElementById(`${which}RepCount`).innerHTML =
+        `${trials.length} <span class="rt-cap">${trials.length === 1 ? 'rep' : 'reps'}</span>`;
+      document.getElementById(`${which}BestSnr`).textContent =
+        best != null ? `Best filler discipline: ${best}%` : 'Best score: —';
+
       const btn = document.getElementById(`${which}RepBtn`);
-      const capReached = trials.length >= CAP_PER_QUESTION;
-      const dailyRemaining = USER.limits?.today?.remaining ?? 0;
+      // Single source of truth: the daily pool cap (flat structure after collapse)
+      const dailyRemaining = USER.limits?.remaining ?? 0;
       const dailyCapHit = dailyRemaining <= 0;
-      btn.innerHTML = capReached
-        ? `<i data-lucide="check"></i> Cap reached`
-        : dailyCapHit
-          ? `<i data-lucide="lock"></i> Daily limit reached`
-          : `<i data-lucide="mic"></i> Start Rep ${trials.length + 1}`;
-      btn.disabled = capReached || dailyCapHit;
-      btn.onclick = () => { if (!capReached && !dailyCapHit) startRep(which); };
+
+      btn.innerHTML = dailyCapHit
+        ? `<i data-lucide="lock"></i> Daily limit reached`
+        : `<i data-lucide="mic"></i> Start Rep ${trials.length + 1}`;
+      btn.disabled = dailyCapHit;
+      btn.onclick = () => { if (!dailyCapHit) startRep(which); };
+
       document.getElementById(`${which}RepsLog`).innerHTML = trials.map((tr, i) => `
-        <div class="rep-log-item"><span>Trial ${i + 1}</span><span class="rl-score">${tr.transcript ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"` : '—'}</span></div>
+        <div class="rep-log-item"><span>Rep ${i + 1}</span><span class="rl-score">${tr.transcript ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"` : '—'}</span></div>
       `).join('');
       renderIcons();
     }
@@ -2471,12 +2476,7 @@
     }
 
     function startRep(which) {
-      const trials = which === 'q1' ? state.q1Trials : state.q2Trials;
-      if (trials.length >= CAP_PER_QUESTION) {
-        alert('You\'ve reached the trial cap for this question. Try the other question or an activity.');
-        return;
-      }
-      const dailyRemaining = USER.limits?.today?.remaining ?? 0;
+      const dailyRemaining = USER.limits?.remaining ?? 0;
       if (dailyRemaining <= 0) {
         alert('You\'ve reached your daily limit. Resets at midnight.');
         return;
