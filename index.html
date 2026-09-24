@@ -2137,7 +2137,7 @@ const sandboxCompressBtn = document.getElementById('sandboxCompressBtn');
 
 let isRecording      = false;
 let recordingInterval = null;
-let secondsLeft      = 30;
+let secondsLeft      = 45;
 let mediaRecorder    = null;
 let audioChunks      = [];
 let audioBlob        = null;
@@ -2171,7 +2171,7 @@ if (recordVoiceBtn) {
         audioBlob = null;
         audioChunks = [];
         recordingSeconds = 0;
-        secondsLeft = 30;
+        secondsLeft = 45;
 
         mediaRecorder = new MediaRecorder(activeStream, { mimeType: 'audio/webm;codecs=opus' });
         mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
@@ -2184,7 +2184,7 @@ if (recordVoiceBtn) {
         isRecording = true;
 
         recordTimer.classList.remove('hidden');
-        recordTimer.innerText = '00:30';
+        recordTimer.innerText = '00:45';
         recordVoiceBtn.classList.add('recording-active');
         recordIcon.textContent = '⏹️';
         recordStatusText.innerText = 'Stop Recording';
@@ -2215,7 +2215,7 @@ function stopSandboxRecording(autoTimedOut) {
   isRecording = false;
   recordVoiceBtn.classList.remove('recording-active');
   recordIcon.textContent = '🎙️';
-  recordStatusText.innerText = 'Record Voice (30s Max)';
+  recordStatusText.innerText = 'Record Voice (45s Max)';
   recordTimer.classList.add('hidden');
 
   voiceBadgeText.textContent = `Voice captured (${recordingSeconds}s)`;
@@ -2305,7 +2305,6 @@ async function submitGateAndRedirect() {
   btn.textContent = 'Uploading your response…';
   btn.disabled = true;
 
-  // Human-readable prompt text for the selected scenario
   const QUESTION_PROMPTS = {
     intro:   'Tell me about yourself — your background, what you do, and what drives you professionally.',
     project: "Tell me about a current project or initiative you're leading or involved in."
@@ -2355,7 +2354,7 @@ async function submitGateAndRedirect() {
         drill_id,
         name: state.gate.name,
         email: state.gate.email,
-        mobile: state.gate.mobile,           // required by CapturePayload
+        mobile: state.gate.mobile,
         stage: state.gate.stage,
         question_type: state.currentQuestionType,
         question_slot: state.currentQuestionType,
@@ -2369,7 +2368,6 @@ async function submitGateAndRedirect() {
     const captureData = await captureRes.json();
     console.log('✅ Trial capture OK:', captureData);
 
-    // Extract the session token that capture issued — analyze requires it as a bearer token
     const captureToken =
       captureData.session_token ||
       captureData.sessionToken ||
@@ -2403,7 +2401,7 @@ async function submitGateAndRedirect() {
       analyzeData.session_token ||
       analyzeData.sessionToken ||
       analyzeData.token ||
-      captureToken; 
+      captureToken;
 
     if (!session_token) {
       const fallback = `${TRIAL_URL}?drill_id=${encodeURIComponent(drill_id)}`;
