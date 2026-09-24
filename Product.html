@@ -734,11 +734,6 @@
     const TOTAL_MAX_SECONDS = 180;
     const TEXT_MAX_WORDS = 300;
 
-    const PLAN_CAPS = {
-      sprint: { daily: 50,  activities: 50 },
-      pass:   { daily: 100, activities: 100 },
-    };
-
     function renderIcons() {
       if (window.lucide && typeof lucide.createIcons === 'function') {
         try { lucide.createIcons(); } catch (e) {}
@@ -1071,47 +1066,22 @@
     }
 
     async function loadDailyLimits() {
-      const isPass = (USER.plan || '').toLowerCase() === 'pass';
-      const fallbackCaps = isPass ? PLAN_CAPS.pass : PLAN_CAPS.sprint;
+      // Backend exposes only qualitative flags — never numbers.
+      const idle = { warning: false, exhausted: false, plan: USER.plan || 'sprint' };
       try {
         const res = await fetch(`${BACKEND_URL}/api/paid/limits`, {
           headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
         });
-        if (res.ok) {
-          const data = await res.json();
-          const todayCap      = data.today?.cap      ?? fallbackCaps.daily;
-          const activitiesCap = data.activities?.cap ?? fallbackCaps.activities;
-          USER.limits = {
-            today: {
-              used:      data.today?.used      ?? 0,
-              cap:       todayCap,
-              remaining: data.today?.remaining ?? Math.max(0, todayCap - (data.today?.used ?? 0)),
-            },
-            activities: {
-              used:      data.activities?.used      ?? 0,
-              cap:       activitiesCap,
-              remaining: data.activities?.remaining ?? Math.max(0, activitiesCap - (data.activities?.used ?? 0)),
-            },
-            plan: data.plan || USER.plan || 'sprint',
-          };
-          const expected = isPass ? PLAN_CAPS.pass : PLAN_CAPS.sprint;
-          if (todayCap !== expected.daily) {
-            console.warn(`⚠️ Cap mismatch: plan=${USER.plan} expected=${expected.daily} got=${todayCap}`);
-          }
-        } else {
-          USER.limits = {
-            today:      { used: 0, cap: fallbackCaps.daily,      remaining: fallbackCaps.daily },
-            activities: { used: 0, cap: fallbackCaps.activities, remaining: fallbackCaps.activities },
-            plan: USER.plan || 'sprint',
-          };
-        }
-      } catch (e) {
-        console.warn('loadDailyLimits failed — using plan fallback:', e);
+        if (!res.ok) { USER.limits = idle; return; }
+        const data = await res.json();
         USER.limits = {
-          today:      { used: 0, cap: fallbackCaps.daily,      remaining: fallbackCaps.daily },
-          activities: { used: 0, cap: fallbackCaps.activities, remaining: fallbackCaps.activities },
-          plan: USER.plan || 'sprint',
+          warning:   !!data.warning,
+          exhausted: !!data.exhausted,
+          plan:      data.plan || USER.plan || 'sprint',
         };
+      } catch (e) {
+        console.warn('loadDailyLimits failed:', e);
+        USER.limits = idle;
       }
     }
 
@@ -1389,22 +1359,21 @@
       const valid = trials.filter(x => x.fillerDiscipline != null);
       const best = valid.length ? Math.max(...valid.map(x => x.fillerDiscipline)) : null;
 
-      // No per-question cap for paid users. Show a running count only.
+      // Counter shows the running count only — never the cap.
       document.getElementById(`${which}RepCount`).innerHTML =
         `${trials.length} <span class="rt-cap">${trials.length === 1 ? 'rep' : 'reps'}</span>`;
+
       document.getElementById(`${which}BestSnr`).textContent =
         best != null ? `Best filler discipline: ${best}%` : 'Best score: —';
 
       const btn = document.getElementById(`${which}RepBtn`);
-      // Single source of truth: the daily pool cap (flat structure after collapse)
-      const dailyRemaining = USER.limits?.remaining ?? 0;
-      const dailyCapHit = dailyRemaining <= 0;
+      const exhausted = USER.limits?.exhausted ?? false;
 
-      btn.innerHTML = dailyCapHit
-        ? `<i data-lucide="lock"></i> Daily limit reached`
+      btn.innerHTML = exhausted
+        ? `<i data-lucide="lock"></i> Come back tomorrow`
         : `<i data-lucide="mic"></i> Start Rep ${trials.length + 1}`;
-      btn.disabled = dailyCapHit;
-      btn.onclick = () => { if (!dailyCapHit) startRep(which); };
+      btn.disabled = exhausted;
+      btn.onclick = () => { if (!exhausted) startRep(which); };
 
       document.getElementById(`${which}RepsLog`).innerHTML = trials.map((tr, i) => `
         <div class="rep-log-item"><span>Rep ${i + 1}</span><span class="rl-score">${tr.transcript ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"` : '—'}</span></div>
@@ -1420,27 +1389,38 @@
     function renderTodayCap() {
       const el = document.getElementById('todayCapCounter');
       if (!el) return;
-      if (!USER.limits || !USER.limits.today) { el.textContent = ''; return; }
-      const t = USER.limits.today;
-      el.textContent = `${t.used} of ${t.cap} reps used today · ${t.remaining} left · resets at midnight`;
-      if (t.remaining === 0) {
+      el.textContent = '';
+      el.style.color = '';
+      if (!USER.limits) return;
+
+      if (USER.limits.exhausted) {
         el.style.color = 'var(--accent-gold)';
-        el.textContent = `Daily limit reached (${t.used}/${t.cap}) · resets at midnight`;
-      } else {
-        el.style.color = '';
+        el.textContent = "You've reached today's practice limit. Come back tomorrow.";
+      } else if (USER.limits.warning) {
+        el.style.color = 'var(--accent-gold)';
+        el.textContent = "You've used most of today's practice allowance. Fair-use limits apply — pace yourself.";
       }
     }
 
     function renderActivitiesCap() {
       const el = document.getElementById('activitiesCapCounter');
       if (!el) return;
-      if (!USER.limits || !USER.limits.activities) { el.textContent = ''; return; }
-      const a = USER.limits.activities;
-      el.textContent = `${a.used} of ${a.cap} activity reps used today · ${a.remaining} left`;
-      el.style.color = a.remaining === 0 ? 'var(--accent-gold)' : '';
+      el.textContent = '';
+      el.style.color = '';
+      const exhausted = USER.limits?.exhausted ?? false;
+
+      if (USER.limits) {
+        if (exhausted) {
+          el.style.color = 'var(--accent-gold)';
+          el.textContent = "You've reached today's practice limit. Come back tomorrow.";
+        } else if (USER.limits.warning) {
+          el.style.color = 'var(--accent-gold)';
+          el.textContent = "You've used most of today's practice allowance.";
+        }
+      }
 
       document.querySelectorAll('.ac-start-cta').forEach(btn => {
-        if (a.remaining === 0) {
+        if (exhausted) {
           btn.disabled = true;
           btn.style.opacity = '0.5';
           btn.style.cursor = 'not-allowed';
@@ -2376,12 +2356,10 @@
       await loadDailyLimits();
       renderTodayCap();
       renderActivitiesCap();
-      const isDailyRep = (which === 'q1' || which === 'q2');
-      const relevant = isDailyRep ? USER.limits?.today : USER.limits?.activities;
-      if (!relevant || relevant.remaining <= 0) {
+      if (USER.limits?.exhausted) {
         if (voiceBtn) { voiceBtn.disabled = false; voiceBtn.textContent = 'Submit My Response →'; }
         if (textBtn) { textBtn.disabled = false; textBtn.textContent = 'Submit My Response →'; }
-        alert('You\'ve reached your daily limit. Resets at midnight.');
+        alert("You've reached today's practice limit under our fair-use policy. Come back tomorrow.");
         return;
       }
 
@@ -2475,10 +2453,9 @@
       }
     }
 
-    function startRep(which) {
-      const dailyRemaining = USER.limits?.remaining ?? 0;
-      if (dailyRemaining <= 0) {
-        alert('You\'ve reached your daily limit. Resets at midnight.');
+  function startRep(which) {
+      if (USER.limits?.exhausted) {
+        alert("You've reached today's practice limit under our fair-use policy. Come back tomorrow.");
         return;
       }
       openRecorderModal(which);
@@ -2486,9 +2463,8 @@
 
     async function startActivityFromCard(card) {
       if (!card) return;
-      const remaining = USER.limits?.activities?.remaining ?? 0;
-      if (remaining <= 0) {
-        alert('Daily activities limit reached. Resets at midnight.');
+      if (USER.limits?.exhausted) {
+        alert("You've reached today's practice limit under our fair-use policy. Come back tomorrow.");
         return;
       }
       const activity = card.dataset.activity || card.querySelector('.activity-card-title')?.textContent || 'Practice';
