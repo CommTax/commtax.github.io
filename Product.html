@@ -267,6 +267,7 @@
 
     .ob-btn { padding: 14px 32px; border-radius: 100px; border: none; background: linear-gradient(135deg, var(--primary), var(--accent-purple)); color: #FFF; font-weight: 700; font-size: 15px; cursor: pointer; font-family: inherit; box-shadow: 0 8px 24px rgba(37,99,235,0.4); animation: obFadeUp 0.5s ease forwards; opacity: 0; transition: transform 0.2s, box-shadow 0.2s; display: inline-flex; align-items: center; gap: 8px; }
     .ob-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(37,99,235,0.5); }
+    .ob-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .ob-back { margin-top: 18px; background: none; border: none; color: var(--text-muted); font-size: 13px; cursor: pointer; font-family: inherit; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px; }
     .ob-back:hover { color: var(--text-main); }
@@ -639,12 +640,42 @@
         <div class="ob-step-label">Pick your role</div>
         <h2 class="ob-question">What role are you preparing for?</h2>
         <div class="ob-pills" id="obRolePills"></div>
+        <button class="ob-back" onclick="obGoToStep('custom')" style="margin-top:20px;">
+          My role isn't listed <i data-lucide="arrow-right"></i>
+        </button>
+      </div>
+
+      <div class="ob-scene hidden" id="obSceneCustomRole">
+        <div class="ob-step-label">Tell us your role</div>
+        <h2 class="ob-question">What role are you preparing for?</h2>
+        <div style="width:100%; max-width:480px; margin-bottom:16px;">
+          <input
+            type="text"
+            id="obCustomRoleInput"
+            placeholder="e.g. Data Analyst, DevOps Engineer, Product Designer"
+            maxlength="60"
+            style="width:100%; padding:16px; border:1.5px solid var(--border-color); border-radius:12px; background:var(--bg-dark); color:var(--text-main); font-family:inherit; font-size:15px; outline:none;"
+            onfocus="this.style.borderColor='var(--accent-cyan)'"
+            onblur="this.style.borderColor='var(--border-color)'"
+            onkeydown="if(event.key==='Enter') obSubmitCustomRole()"
+          />
+        </div>
+        <button class="ob-btn" onclick="obSubmitCustomRole()">
+          Notify me when it's ready <i data-lucide="arrow-right"></i>
+        </button>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:16px; max-width:420px; line-height:1.5;">
+          We'll have your customized questions ready within 24 hours.
+          Until then, you'll practice with our general question bank.
+        </p>
+        <button class="ob-back" onclick="obGoToStep('role')">
+          <i data-lucide="arrow-left"></i> Back
+        </button>
       </div>
 
       <div class="ob-scene hidden" id="obSceneCelebrate">
         <div class="ob-trophy"><i data-lucide="trophy" style="width:80px;height:80px;stroke-width:1.4;color:var(--accent-gold);"></i></div>
         <h2 class="ob-congrats">You're all set, <span id="obCongratsName">friend</span>.</h2>
-        <p class="ob-congrats-sub">Your scenarios are personalized. Time to practice.</p>
+        <p class="ob-congrats-sub" id="obCongratsSub">Your scenarios are personalized. Time to practice.</p>
         <button class="ob-btn" onclick="obFinish()">Start practising <i data-lucide="arrow-right"></i></button>
       </div>
     </div>
@@ -864,6 +895,8 @@
         is_paid: true,
         role_family: data.role_family || null,
         role: data.role || null,
+        role_custom: data.role_custom || null,
+        role_delivered_at: data.role_delivered_at || null,
         profile_completed: !!data.profile_completed,
         limits: null,
         stats: { current_streak: 0, longest_streak: 0, completed_tasks: 0, total_tasks: 0, achievements_unlocked: 0, achievements_total: 5 }
@@ -1072,6 +1105,7 @@
     function renderAll() {
       renderHeader();
       renderProfile();
+      renderCustomRoleBanner();
       renderQuestionCards();
       renderProgressView();
       renderBitesTabs();
@@ -1084,6 +1118,52 @@
       switchView('today');
       maybeShowOnboarding();
       renderIcons();
+    }
+
+    function renderCustomRoleBanner() {
+      // Ensure the banner element exists at the top of the Today view
+      let el = document.getElementById('customRoleBanner');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'customRoleBanner';
+        el.style.cssText = `
+          display: none;
+          background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(245,158,11,0.04));
+          border: 1px solid rgba(245,158,11,0.35);
+          border-radius: 12px;
+          padding: 14px 18px;
+          margin-bottom: 4px;
+          font-size: 13px;
+          line-height: 1.5;
+          color: var(--text-main);
+        `;
+        const todayView = document.getElementById('todayView');
+        if (todayView) todayView.prepend(el);
+      }
+
+      // Show only when the user picked a custom role that hasn't been delivered
+      const show = USER
+        && USER.role === 'other'
+        && USER.role_custom
+        && !USER.role_delivered_at;
+
+      if (show) {
+        el.style.display = 'block';
+        el.innerHTML = `
+          <div style="display:flex; align-items:flex-start; gap:10px;">
+            <span style="font-size:18px; line-height:1;">⚡</span>
+            <div>
+              <strong style="color:var(--accent-gold);">Customizing your ${escapeHtml(USER.role_custom)} practice</strong>
+              <div style="color:var(--text-muted); margin-top:4px;">
+                We're building your role-specific questions. You'll be notified within 24 hours.
+                In the meantime, practice with our general bank.
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        el.style.display = 'none';
+      }
     }
 
     function renderHeader() {
@@ -1124,7 +1204,10 @@
       };
       setText('profileNameText', USER.name);
       setText('profilePlanText', PLAN_LABEL[USER.plan] || USER.plan || '—');
-      setText('profileRoleText', formatRole(USER.role));
+      const roleDisplay = USER.role === 'other' && USER.role_custom
+        ? `${USER.role_custom} (customizing)`
+        : formatRole(USER.role);
+      setText('profileRoleText', roleDisplay);
       setText('profileEnrolledText', formatEnrolledDate(USER.enrolled_at));
     }
 
@@ -1724,8 +1807,9 @@
       OB = { role: null };
       document.getElementById('obWelcomeName').textContent = USER.name || 'friend';
       document.getElementById('obCongratsName').textContent = USER.name || 'friend';
+      document.getElementById('obCongratsSub').textContent = 'Your scenarios are personalized. Time to practice.';
       obRenderRoles();
-      ['obSceneWelcome','obSceneRole','obSceneCelebrate']
+      ['obSceneWelcome','obSceneRole','obSceneCustomRole','obSceneCelebrate']
         .forEach(id => document.getElementById(id).classList.add('hidden'));
       document.getElementById('obSceneWelcome').classList.remove('hidden');
       document.getElementById('onboardingModal').classList.add('is-visible');
@@ -1733,9 +1817,14 @@
     }
 
     function obGoToStep(step) {
-      ['obSceneWelcome','obSceneRole','obSceneCelebrate']
+      ['obSceneWelcome','obSceneRole','obSceneCustomRole','obSceneCelebrate']
         .forEach(id => document.getElementById(id).classList.add('hidden'));
-      const map = { welcome: 'obSceneWelcome', role: 'obSceneRole', celebrate: 'obSceneCelebrate' };
+      const map = {
+        welcome: 'obSceneWelcome',
+        role: 'obSceneRole',
+        custom: 'obSceneCustomRole',
+        celebrate: 'obSceneCelebrate',
+      };
       const el = document.getElementById(map[step]);
       if (el) el.classList.remove('hidden');
       renderIcons();
@@ -1784,6 +1873,63 @@
       }
     }
 
+    async function obSubmitCustomRole() {
+      const input = document.getElementById('obCustomRoleInput');
+      const typed = (input?.value || '').trim();
+
+      if (typed.length < 2) {
+        alert('Please type the role you are preparing for.');
+        return;
+      }
+      if (typed.length > 60) {
+        alert('Please keep it under 60 characters.');
+        return;
+      }
+
+      const btns = document.querySelectorAll('#obSceneCustomRole .ob-btn');
+      const btn = btns[0];
+      const originalHtml = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.innerHTML = 'Saving…'; }
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/paid/profile`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SESSION_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            role: 'other',
+            role_custom: typed,
+            role_family: null,
+          }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || 'Could not save your request');
+        }
+
+        USER.role = 'other';
+        USER.role_custom = typed;
+        USER.role_family = null;
+        USER.profile_completed = true;
+        SCENARIOS_CACHE = null;
+
+        const sub = document.getElementById('obCongratsSub');
+        if (sub) {
+          sub.textContent = `We're writing questions for ${typed} right now. You'll get an email the moment they're ready — usually within 24 hours. Until then, practice with our general questions.`;
+        }
+
+        obGoToStep('celebrate');
+        obLaunchConfetti();
+      } catch (e) {
+        console.warn('Custom role save failed:', e);
+        alert(e.message || 'Network error. Please try again.');
+        if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+      }
+    }
+
     function obLaunchConfetti() {
       const layer = document.getElementById('confettiLayer');
       if (!layer) return;
@@ -1812,6 +1958,7 @@
       try { const key = `unspoken_questions_${USER.email}_${new Date().toISOString().slice(0, 10)}`; localStorage.removeItem(key); } catch (e) {}
       loadQuestionsForToday().then(() => {
         renderQuestionCards();
+        renderCustomRoleBanner();
         renderIcons();
       });
     }
@@ -2247,7 +2394,7 @@
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
-    console.log('🚀 Product page loaded — single-role onboarding, fair-use caps.');
+    console.log('🚀 Product page loaded — single-role onboarding, fair-use caps, custom-role flow.');
   </script>
 </body>
 </html>
