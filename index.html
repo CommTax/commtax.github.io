@@ -245,25 +245,18 @@
       align-items: center;
     }
     .avatar-stack .avatar {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.62rem;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 0.02em;
+      display: block;
+      object-fit: cover;
+      object-position: center;
       border: 2px solid var(--bg-cream);
       margin-left: -10px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      background: var(--bg-warm);
     }
     .avatar-stack .avatar:first-child { margin-left: 0; }
-    .avatar-1 { background: linear-gradient(135deg, #b8943c, #8a6d1f); }
-    .avatar-2 { background: linear-gradient(135deg, #4d4a44, #1a1917); }
-    .avatar-3 { background: linear-gradient(135deg, #6b7a5e, #4a5740); }
-    .avatar-4 { background: linear-gradient(135deg, #a13d2f, #7a2c22); }
     .avatar-stack .avatar-count {
       width: auto;
       min-width: 38px;
@@ -698,6 +691,56 @@
       margin-bottom: 10px;
     }
     .voice-badge.hidden { display: none; }
+        /* LIVE TRANSCRIPT */
+    .live-transcript {
+      position: relative;
+      margin-bottom: 10px;
+      padding: 14px 16px 14px 16px;
+      background: linear-gradient(135deg, #fff9ec 0%, #fdf5e4 100%);
+      border: 1.5px solid rgba(184, 148, 60, 0.3);
+      border-radius: 12px;
+      animation: liveFadeIn 0.25s ease;
+    }
+    .live-transcript.hidden { display: none; }
+    @keyframes liveFadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .live-transcript-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--brick-red);
+      margin-bottom: 8px;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--brick-red);
+      animation: livePulse 1.2s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.35; transform: scale(0.75); }
+    }
+    .live-transcript-text {
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: var(--ink);
+      min-height: 1.4em;
+      margin: 0;
+      font-style: italic;
+    }
+    .live-transcript-text:empty::before {
+      content: 'Start speaking — your words will appear here…';
+      color: #b0a8a0;
+      font-style: italic;
+    }
     .sandbox-submit {
       width: 100%;
       padding: 16px 24px;
@@ -1461,10 +1504,10 @@
 
     <div class="hero-social-proof">
       <div class="avatar-stack">
-        <span class="avatar avatar-1">P1</span>
-        <span class="avatar avatar-2">P2</span>
-        <span class="avatar avatar-3">P3</span>
-        <span class="avatar avatar-4">P4</span>
+        <img class="avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=faces" alt="Professional" loading="lazy" />
+        <img class="avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=faces" alt="Professional" loading="lazy" />
+        <img class="avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=faces" alt="Professional" loading="lazy" />
+        <img class="avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=faces" alt="Professional" loading="lazy" />
         <span class="avatar-count">+100</span>
       </div>
       <p class="social-proof-line">
@@ -1519,6 +1562,14 @@
       <div id="voiceBadge" class="voice-badge hidden">
         <span>✓</span>
         <span id="voiceBadgeText">Voice captured</span>
+      </div>
+
+      <div id="liveTranscript" class="live-transcript hidden">
+        <span class="live-transcript-label">
+          <span class="live-dot"></span>
+          Listening…
+        </span>
+        <p id="liveTranscriptText" class="live-transcript-text"></p>
       </div>
 
       <textarea
@@ -2134,6 +2185,8 @@ const recordTimer        = document.getElementById('recordTimer');
 const voiceBadge         = document.getElementById('voiceBadge');
 const voiceBadgeText     = document.getElementById('voiceBadgeText');
 const sandboxCompressBtn = document.getElementById('sandboxCompressBtn');
+const liveTranscript     = document.getElementById('liveTranscript');
+const liveTranscriptText = document.getElementById('liveTranscriptText');
 
 let isRecording      = false;
 let recordingInterval = null;
@@ -2143,6 +2196,42 @@ let audioChunks      = [];
 let audioBlob        = null;
 let recordingSeconds = 0;
 let activeStream     = null;
+let recognition      = null;
+let finalTranscript  = '';
+
+// Set up Web Speech API (live transcription while recording)
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.continuous      = true;
+  recognition.interimResults  = true;
+  recognition.lang            = 'en-IN';   // change to 'en-US' or your locale if preferred
+
+  recognition.onresult = (event) => {
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) finalTranscript += transcript + ' ';
+      else interim += transcript;
+    }
+    liveTranscriptText.textContent = (finalTranscript + interim).trim();
+  };
+
+  recognition.onerror = (event) => {
+    console.warn('Speech recognition error:', event.error);
+    // 'not-allowed' or 'service-not-allowed' — mic permission or browser blocked it
+    // 'no-speech' — user was silent, not a real error
+  };
+
+  recognition.onend = () => {
+    // If we're still recording, restart (Web Speech API stops after silence)
+    if (isRecording) {
+      try { recognition.start(); } catch (e) { /* already started */ }
+    }
+  };
+} else {
+  console.warn('⚠️ Web Speech API not supported in this browser. Live transcript disabled.');
+}
 
 if (sandboxInput) {
   sandboxInput.addEventListener('input', () => {
