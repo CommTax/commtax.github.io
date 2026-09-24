@@ -734,6 +734,11 @@
     const TOTAL_MAX_SECONDS = 180;
     const TEXT_MAX_WORDS = 300;
 
+    const PLAN_CAPS = {
+      sprint: { daily: 50,  activities: 50 },
+      pass:   { daily: 100, activities: 100 },
+    };
+
     function renderIcons() {
       if (window.lucide && typeof lucide.createIcons === 'function') {
         try { lucide.createIcons(); } catch (e) {}
@@ -1066,20 +1071,47 @@
     }
 
     async function loadDailyLimits() {
+      const isPass = (USER.plan || '').toLowerCase() === 'pass';
+      const fallbackCaps = isPass ? PLAN_CAPS.pass : PLAN_CAPS.sprint;
       try {
         const res = await fetch(`${BACKEND_URL}/api/paid/limits`, {
           headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
         });
         if (res.ok) {
           const data = await res.json();
+          const todayCap      = data.today?.cap      ?? fallbackCaps.daily;
+          const activitiesCap = data.activities?.cap ?? fallbackCaps.activities;
           USER.limits = {
-            today:      data.today      || { used: 0, cap: 10, remaining: 10 },
-            activities: data.activities || { used: 0, cap: 10, remaining: 10 },
-            plan:       data.plan       || 'sprint',
+            today: {
+              used:      data.today?.used      ?? 0,
+              cap:       todayCap,
+              remaining: data.today?.remaining ?? Math.max(0, todayCap - (data.today?.used ?? 0)),
+            },
+            activities: {
+              used:      data.activities?.used      ?? 0,
+              cap:       activitiesCap,
+              remaining: data.activities?.remaining ?? Math.max(0, activitiesCap - (data.activities?.used ?? 0)),
+            },
+            plan: data.plan || USER.plan || 'sprint',
+          };
+          const expected = isPass ? PLAN_CAPS.pass : PLAN_CAPS.sprint;
+          if (todayCap !== expected.daily) {
+            console.warn(`⚠️ Cap mismatch: plan=${USER.plan} expected=${expected.daily} got=${todayCap}`);
+          }
+        } else {
+          USER.limits = {
+            today:      { used: 0, cap: fallbackCaps.daily,      remaining: fallbackCaps.daily },
+            activities: { used: 0, cap: fallbackCaps.activities, remaining: fallbackCaps.activities },
+            plan: USER.plan || 'sprint',
           };
         }
       } catch (e) {
-        console.warn('loadDailyLimits failed:', e);
+        console.warn('loadDailyLimits failed — using plan fallback:', e);
+        USER.limits = {
+          today:      { used: 0, cap: fallbackCaps.daily,      remaining: fallbackCaps.daily },
+          activities: { used: 0, cap: fallbackCaps.activities, remaining: fallbackCaps.activities },
+          plan: USER.plan || 'sprint',
+        };
       }
     }
 
@@ -1360,7 +1392,7 @@
       document.getElementById(`${which}BestSnr`).textContent = best != null ? `Best filler discipline: ${best}%` : 'Best score: —';
       const btn = document.getElementById(`${which}RepBtn`);
       const capReached = trials.length >= CAP_PER_QUESTION;
-      const dailyRemaining = USER.limits?.today?.remaining ?? 999;
+      const dailyRemaining = USER.limits?.today?.remaining ?? 0;
       const dailyCapHit = dailyRemaining <= 0;
       btn.innerHTML = capReached
         ? `<i data-lucide="check"></i> Cap reached`
@@ -2335,6 +2367,19 @@
       const which = activeRecording.target;
       const voiceBtn = document.getElementById('recVoiceSubmit');
       const textBtn = document.getElementById('recTextSubmit');
+
+      await loadDailyLimits();
+      renderTodayCap();
+      renderActivitiesCap();
+      const isDailyRep = (which === 'q1' || which === 'q2');
+      const relevant = isDailyRep ? USER.limits?.today : USER.limits?.activities;
+      if (!relevant || relevant.remaining <= 0) {
+        if (voiceBtn) { voiceBtn.disabled = false; voiceBtn.textContent = 'Submit My Response →'; }
+        if (textBtn) { textBtn.disabled = false; textBtn.textContent = 'Submit My Response →'; }
+        alert('You\'ve reached your daily limit. Resets at midnight.');
+        return;
+      }
+
       const repMeta = {
         target: which,
         activityTitle: activeRecording.meta.title || null,
@@ -2431,7 +2476,7 @@
         alert('You\'ve reached the trial cap for this question. Try the other question or an activity.');
         return;
       }
-      const dailyRemaining = USER.limits?.today?.remaining ?? 999;
+      const dailyRemaining = USER.limits?.today?.remaining ?? 0;
       if (dailyRemaining <= 0) {
         alert('You\'ve reached your daily limit. Resets at midnight.');
         return;
@@ -2441,7 +2486,7 @@
 
     async function startActivityFromCard(card) {
       if (!card) return;
-      const remaining = USER.limits?.activities?.remaining ?? 999;
+      const remaining = USER.limits?.activities?.remaining ?? 0;
       if (remaining <= 0) {
         alert('Daily activities limit reached. Resets at midnight.');
         return;
