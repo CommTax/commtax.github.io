@@ -422,6 +422,9 @@
       .tq-top { flex-direction: column; align-items: flex-start; }
       .tq-right { align-items: flex-start; width: 100%; }
     }
+    .reflect-card { margin-top: 4px; }
+    .reflect-prompt-primary { font-size: 14.5px; font-weight: 700; color: var(--text-main); line-height: 1.5; margin-bottom: 10px; }
+    .reflect-prompt-optional-label { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-gold); margin: 12px 0 6px; }
   </style>
 </head>
 <body>
@@ -463,6 +466,7 @@
           <div class="nav-section-label">Progress</div>
           <div class="nav-item" id="navDash" onclick="switchView('dash')"><i data-lucide="bar-chart-3" class="nav-icon"></i> Pattern &amp; Progress</div>
           <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><i data-lucide="mic" class="nav-icon"></i> My Reps</div>
+          <div class="nav-item" id="navReflectionJournal" onclick="switchView('reflection-journal')"><i data-lucide="notebook-pen" class="nav-icon"></i> My Reflection Journal</div>
           <div class="nav-item" id="navBadges" onclick="switchView('badges')"><i data-lucide="trophy" class="nav-icon"></i> Achievements</div>
         </div>
 
@@ -660,30 +664,6 @@
           <div class="view-heading"><h2><i data-lucide="bar-chart-3"></i> Pattern &amp; Progress</h2><span class="vh-sub" id="dashSubtitle">Your performance across reps</span></div>
           <div class="your-analysis-card" id="yourAnalysisCard"></div>
 
-          <!-- REFLECTION SECTION -->
-          <div class="reflect-card" id="reflectCard">
-            <div class="reflect-header">
-              <div class="rh-icon"><i data-lucide="notebook-pen"></i></div>
-              <div class="rh-text">
-                <div class="rh-title">Reflect on this rep</div>
-                <div class="rh-sub">Two minutes of writing locks in what the analysis just showed you.</div>
-              </div>
-            </div>
-            <div id="reflectPrompts"></div>
-            <div class="reflect-actions">
-              <span class="reflect-counter" id="reflectCounter">0 / 1000</span>
-              <button class="reflect-save-btn" id="reflectSaveBtn" onclick="saveReflection()" disabled>
-                <i data-lucide="save"></i> Save reflection
-              </button>
-            </div>
-            <div class="reflect-journal" id="reflectJournal">
-              <div class="reflect-journal-title">Your reflection journal</div>
-              <div class="reflect-journal-list" id="reflectJournalList">
-                <div style="font-size:12px;color:var(--text-muted);">Your saved reflections will appear here.</div>
-              </div>
-            </div>
-          </div>
-
           <div class="timeline-bar">
             <span style="font-weight: 700; font-size: 14px;">PERFORMANCE OVER TIME</span>
             <div class="timeline-tabs">
@@ -713,6 +693,31 @@
             <div class="feedback-box well"><div class="feedback-title" style="color: var(--success);"><i data-lucide="circle-check"></i> What Was Going Well</div><ul class="feedback-list" id="dashWellList"><li>—</li></ul></div>
             <div class="feedback-box improve"><div class="feedback-title" style="color: var(--accent-gold);"><i data-lucide="target"></i> Your Opportunity</div><ul class="feedback-list" id="dashImproveList"><li>—</li></ul></div>
           </div>
+
+          <!-- REFLECTION SECTION — after the feedback -->
+          <div class="reflect-card" id="reflectCard">
+            <div class="reflect-header">
+              <div class="rh-icon"><i data-lucide="notebook-pen"></i></div>
+              <div class="rh-text">
+                <div class="rh-title">Reflect on this rep</div>
+                <div class="rh-sub">Two minutes of writing locks in what the analysis just showed you.</div>
+              </div>
+            </div>
+            <div id="reflectPrompts"></div>
+            <div class="reflect-actions">
+              <span class="reflect-counter" id="reflectCounter">0 / 1000</span>
+              <button class="reflect-save-btn" id="reflectSaveBtn" onclick="saveReflection()" disabled>
+                <i data-lucide="save"></i> Save reflection
+              </button>
+            </div>
+            <div class="reflect-journal" id="reflectJournal">
+              <div class="reflect-journal-title">Your reflection journal</div>
+              <div class="reflect-journal-list" id="reflectJournalList">
+                <div style="font-size:12px;color:var(--text-muted);">Your saved reflections will appear here.</div>
+              </div>
+            </div>
+          </div>
+
           <div class="dash-wide-box" id="repHistoryBox">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;"><span style="font-weight: 700; font-size: 14px;">Rep History</span><span style="font-size: 12px; color: var(--text-muted);" id="repHistoryCount">0 reps</span></div>
             <div id="repHistoryList" style="display:flex; flex-direction:column; gap:8px;"><div style="font-size:12px; color:var(--text-muted);">No reps yet — start on Today.</div></div>
@@ -800,6 +805,23 @@
               <button class="qc-action-btn" onclick="signOut()"><i data-lucide="log-out"></i> Sign Out</button>
               <a href="https://theunspoken.co.in/Pricing" class="qc-action-btn" style="text-decoration:none;"><i data-lucide="external-link"></i> Manage Plan</a>
             </div>
+          </div>
+        </section>
+
+        <section class="view-panel" id="reflectionJournalView">
+          <div class="view-heading">
+            <h2><i data-lucide="notebook-pen"></i> My Reflection Journal</h2>
+            <span class="vh-sub">Every self-reflection you've written, newest first</span>
+          </div>
+
+          <div class="question-card" style="padding:18px 22px;">
+            <div class="qc-text" style="font-size:14px;font-weight:500;color:var(--text-muted);line-height:1.6;">
+              These are the notes you've written about your own reps. Over time, this becomes your personal pattern record — the thing no other product gives you.
+            </div>
+          </div>
+
+          <div id="reflectionJournalFullList" style="display:flex; flex-direction:column; gap:14px;">
+            <div style="font-size:12px;color:var(--text-muted);">Loading your reflections…</div>
           </div>
         </section>
       </main>
@@ -1146,6 +1168,7 @@
         if (res.ok) {
           const data = await res.json();
           REFLECTIONS = data.reflections || [];
+          renderReflectionJournalView();
         }
       } catch (e) { console.warn('loadReflections failed:', e); }
     }
@@ -1312,6 +1335,7 @@
       renderActivitiesCap();
       renderReflectCard();
       renderReflectJournal();
+      renderReflectionJournalView();
       switchView('today');
       maybeShowOnboarding();
       renderIcons();
@@ -1509,60 +1533,50 @@
     }
 
     // ─── REFLECTION ─────────────────────────────────────────
-    // Build prompts purely from analysis data — no LLM call.
+    // Builds reflection prompts purely from analysis data — no LLM call.
+    // Always returns a universal primary prompt, plus at most one optional
+    // follow-up derived from the analysis.
     function buildReflectionPrompts(analysis) {
-      if (!analysis) return [];
+      if (!analysis) return { primary: '', optional: '' };
+
       const m = analysis.metrics || {};
       const s = analysis.signals || {};
-      const d = analysis.diagnosis || {};
       const g = analysis.gap || {};
-      const prompts = [];
+
+      const primary = 'What is your self-reflection on your response?';
+      let optional = '';
 
       const fillerTotal = (s.filler_words && s.filler_words.total) || 0;
-      const fillerPct   = (s.filler_words && s.filler_words.percentage) || 0;
       const ttp         = s.main_point_delay_seconds;
       const structure   = m.point_first;
       const concrete    = m.concreteness;
 
-      // Prompt 1: prefer the analysis's own "what got lost" if it exists
-      // — it's already the LLM's framing of the weakness for this rep.
       if (g.what_got_lost) {
-        prompts.push(`The analysis says: "${g.what_got_lost}" — do you agree? What were you actually trying to get across here?`);
-      } else if (fillerTotal >= 3 || fillerPct >= 3) {
-        prompts.push("Which filler word did you lean on most in this rep — and what was happening right before you reached for it?");
+        optional = `The analysis noted: "${g.what_got_lost}" Does that ring true, or did you see something different?`;
+      } else if (ttp != null && ttp > 8) {
+        optional = `Your main point arrived at ${Math.round(ttp)}s. What were you trying to establish before it — and was that setup necessary?`;
+      } else if (fillerTotal >= 3) {
+        optional = `Which filler word showed up most under pressure — and what triggered it?`;
       } else if (structure != null && structure < 70) {
-        prompts.push("If you had to give that same answer in one sentence, what would it be?");
+        optional = `If you had to give that same answer in one sentence, what would it be?`;
       } else if (concrete != null && concrete < 70) {
-        prompts.push("Which moment in your answer was vague — and what number, name, or outcome could you swap in?");
-      } else {
-        prompts.push("What is one thing you said in this rep that you'd say the same way again?");
+        optional = `Which moment in your answer was vague — and what number, name, or outcome could you swap in?`;
       }
 
-      // Prompt 2: time-to-point if it was slow
-      if (ttp != null && ttp > 8 && prompts.length < 2) {
-        prompts.push(`Your main point arrived at ${Math.round(ttp)}s. What were you trying to establish before it — and was that setup necessary?`);
-      }
-
-      // Prompt 3: filler if we haven't already covered it
-      if (prompts.length < 2 && (fillerTotal >= 3 || fillerPct >= 3)) {
-        prompts.push("Under pressure, which filler word showed up most — and what triggered it?");
-      }
-
-      return prompts.slice(0, 2);
+      return { primary, optional };
     }
 
     function renderReflectCard() {
       const wrap = document.getElementById('reflectPrompts');
       if (!wrap) return;
 
-      // Which rep are we reflecting on? The latest one.
       const allReps = [...TODAY.reps, ...state.activityTrials];
       const latest = allReps.length ? allReps[allReps.length - 1] : null;
 
       if (!latest || !latest.full) {
         wrap.innerHTML = `
           <div style="font-size:12.5px; color:var(--text-muted); line-height:1.6;">
-            Complete a rep and specific reflection prompts will appear here — tailored to what the analysis found in <em>your</em> answer.
+            Complete a rep and a self-reflection prompt will appear here — one open question, plus an optional follow-up based on what the analysis found.
           </div>`;
         const btn = document.getElementById('reflectSaveBtn');
         if (btn) btn.disabled = true;
@@ -1571,21 +1585,24 @@
         return;
       }
 
-      const prompts = buildReflectionPrompts(latest.full);
-      const responsesId = `reflectAnswers_${latest.drillId || 'x'}`;
+      const { primary, optional } = buildReflectionPrompts(latest.full);
 
       wrap.innerHTML = `
         <div class="reflect-prompt-block">
-          ${prompts.map((p, i) => `
+          <div>
+            <div class="reflect-prompt-primary">${escapeHtml(primary)}</div>
+            <textarea class="reflect-textarea" id="reflectPrimaryAnswer" placeholder="Write freely — nobody but you will read this." maxlength="1000"></textarea>
+          </div>
+          ${optional ? `
             <div>
-              <div class="reflect-prompt"><strong style="color:var(--accent-purple);">${i+1}.</strong> ${escapeHtml(p)}</div>
-              <textarea class="reflect-textarea" data-prompt-index="${i}" placeholder="Write freely — nobody but you will read this." maxlength="1000"></textarea>
+              <div class="reflect-prompt-optional-label">Optional — one more thing</div>
+              <div class="reflect-prompt">${escapeHtml(optional)}</div>
+              <textarea class="reflect-textarea" id="reflectOptionalAnswer" placeholder="Answer only if it helps." maxlength="1000"></textarea>
             </div>
-          `).join('')}
+          ` : ''}
         </div>
       `;
 
-      // Wire up counter + save-button gating
       const textareas = wrap.querySelectorAll('.reflect-textarea');
       const counter = document.getElementById('reflectCounter');
       const saveBtn = document.getElementById('reflectSaveBtn');
@@ -1617,31 +1634,102 @@
       }).join('');
     }
 
+    function renderReflectionJournalView() {
+      const list = document.getElementById('reflectionJournalFullList');
+      if (!list) return;
+      if (!REFLECTIONS.length) {
+        list.innerHTML = `
+          <div class="reflect-journal-item" style="text-align:center; padding:28px;">
+            <div style="font-size:13px; color:var(--text-muted); line-height:1.6;">
+              No reflections yet.<br/>Complete a rep and write your first self-reflection on the Pattern view.
+            </div>
+          </div>`;
+        return;
+      }
+      const groups = {};
+      for (const r of REFLECTIONS) {
+        const d = r.created_at ? new Date(r.created_at) : new Date();
+        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(r);
+      }
+      const keys = Object.keys(groups).sort().reverse();
+      const fmtHeader = (key) => {
+        const [y, m, d] = key.split('-').map(Number);
+        const dt = new Date(y, m - 1, d);
+        const today = new Date(); today.setHours(0,0,0,0);
+        const yest = new Date(); yest.setDate(yest.getDate() - 1); yest.setHours(0,0,0,0);
+        const dtMid = new Date(dt); dtMid.setHours(0,0,0,0);
+        if (dtMid.getTime() === today.getTime()) return 'Today';
+        if (dtMid.getTime() === yest.getTime()) return 'Yesterday';
+        return dt.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+      };
+      let html = '';
+      for (const key of keys) {
+        html += `<div style="margin-bottom:22px;">`;
+        html += `<div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-purple);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border-color);">${escapeHtml(fmtHeader(key))}</div>`;
+        for (const r of groups[key]) {
+          const timeStr = r.created_at ? new Date(r.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '';
+          html += `
+            <div class="reflect-journal-item" style="margin-bottom:12px;">
+              <div class="rj-meta">${escapeHtml(timeStr)}</div>
+              <div class="rj-prompt">${escapeHtml(r.prompt || '')}</div>
+              <div class="rj-answer">${escapeHtml(r.answer || '')}</div>
+            </div>`;
+        }
+        html += `</div>`;
+      }
+      list.innerHTML = html;
+    }
+
     async function saveReflection() {
       const wrap = document.getElementById('reflectPrompts');
       if (!wrap) return;
-      const textareas = wrap.querySelectorAll('.reflect-textarea');
-      const prompts = Array.from(textareas).map(ta => {
-        const container = ta.closest('div');
-        const promptEl = container ? container.querySelector('.reflect-prompt') : null;
-        // Strip the leading "1. " / "2. " prefix from the rendered prompt
-        const raw = promptEl ? promptEl.textContent.replace(/^\s*\d+\.\s*/, '').trim() : '';
-        return { prompt: raw, answer: ta.value.trim() };
-      }).filter(x => x.prompt && x.answer.length >= 3);
 
-      if (!prompts.length) { alert('Please write at least one response.'); return; }
+      const primaryTa = document.getElementById('reflectPrimaryAnswer');
+      const optionalTa = document.getElementById('reflectOptionalAnswer');
 
       const allReps = [...TODAY.reps, ...state.activityTrials];
       const latest = allReps.length ? allReps[allReps.length - 1] : null;
       const drillId = latest ? latest.drillId : null;
+      const questionPrompt = latest ? (latest.question || '') : '';
       const m = latest && latest.full ? (latest.full.metrics || {}) : {};
       const s = latest && latest.full ? (latest.full.signals || {}) : {};
 
+      const payloads = [];
+
+      if (primaryTa && primaryTa.value.trim().length >= 3) {
+        payloads.push({
+          prompt: 'What is your self-reflection on your response?',
+          answer: primaryTa.value.trim(),
+        });
+      }
+      if (optionalTa && optionalTa.value.trim().length >= 3) {
+        const optionalPromptEl = optionalTa.parentElement.querySelector('.reflect-prompt');
+        const optionalPromptText = optionalPromptEl ? optionalPromptEl.textContent.trim() : '';
+        if (optionalPromptText) {
+          payloads.push({ prompt: optionalPromptText, answer: optionalTa.value.trim() });
+        }
+      }
+
+      if (!payloads.length) {
+        alert('Please write at least a sentence before saving.');
+        return;
+      }
+
       const btn = document.getElementById('reflectSaveBtn');
+      const originalHtml = btn ? btn.innerHTML : '';
       if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
 
+      const metricSnapshot = {
+        filler_discipline: m.filler_discipline ?? null,
+        point_first: m.point_first ?? null,
+        concreteness: m.concreteness ?? null,
+        time_to_point: s.main_point_delay_seconds ?? null,
+      };
+
       try {
-        for (const p of prompts) {
+        for (const p of payloads) {
           await fetch(`${BACKEND_URL}/api/paid/reflect`, {
             method: 'POST',
             headers: {
@@ -1652,32 +1740,29 @@
               prompt: p.prompt,
               answer: p.answer,
               drill_id: drillId,
-              metric_snapshot: {
-                filler_discipline: m.filler_discipline ?? null,
-                point_first: m.point_first ?? null,
-                concreteness: m.concreteness ?? null,
-                time_to_point: s.main_point_delay_seconds ?? null,
-              },
+              question_prompt: questionPrompt,
+              metric_snapshot: metricSnapshot,
             }),
           });
         }
-        // Refresh the journal
         await loadReflections();
         renderReflectJournal();
-        // Clear textareas
-        textareas.forEach(ta => ta.value = '');
+        renderReflectionJournalView();
+
+        if (primaryTa) primaryTa.value = '';
+        if (optionalTa) optionalTa.value = '';
         const counter = document.getElementById('reflectCounter');
         if (counter) counter.textContent = '0 / 1000';
-        btn.innerHTML = '✅ Saved';
+
+        if (btn) btn.innerHTML = '✅ Saved';
         setTimeout(() => {
-          btn.innerHTML = '<i data-lucide="save"></i> Save reflection';
-          renderIcons();
+          if (btn) { btn.innerHTML = originalHtml; renderIcons(); }
           renderReflectCard();
         }, 1200);
       } catch (e) {
         console.warn('saveReflection failed:', e);
         alert('Could not save your reflection. Please try again.');
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="save"></i> Save reflection'; renderIcons(); }
+        if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; renderIcons(); }
       }
     }
 
@@ -1960,7 +2045,6 @@
       };
     }
 
-    // ─── LEARNING BITES (now inside My Learning) ─────────────
     function renderBitesTabs() {
       const tabs = document.getElementById('bitesCatTabs');
       if (!tabs) return;
@@ -2816,8 +2900,8 @@
     function switchView(key) {
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-view'));
-      const navMap = { today:'navToday', activities:'navActivities', dash:'navDash', recordings:'navRecordings', badges:'navBadges', pillars:'navPillars', learning:'navLearning', profile:'navProfile' };
-      const viewMap = { today:'todayView', activities:'activitiesView', dash:'dashView', recordings:'recordingsView', badges:'badgesView', pillars:'pillarsView', learning:'learningView', profile:'profileView' };
+      const navMap = { today:'navToday', activities:'navActivities', dash:'navDash', recordings:'navRecordings', 'reflection-journal':'navReflectionJournal', badges:'navBadges', pillars:'navPillars', learning:'navLearning', profile:'navProfile' };
+      const viewMap = { today:'todayView', activities:'activitiesView', dash:'dashView', recordings:'recordingsView', 'reflection-journal':'reflectionJournalView', badges:'badgesView', pillars:'pillarsView', learning:'learningView', profile:'profileView' };
       if (navMap[key]) document.getElementById(navMap[key]).classList.add('active');
       if (viewMap[key]) document.getElementById(viewMap[key]).classList.add('active-view');
       if (key === 'dash') { renderProgressView(); renderReflectCard(); renderReflectJournal(); }
@@ -2825,6 +2909,7 @@
       if (key === 'recordings') renderRecordingsList();
       if (key === 'profile') renderProfile();
       if (key === 'learning') { renderBitesTabs(); renderBitesGrid(); }
+      if (key === 'reflection-journal') renderReflectionJournalView();
       if (key === 'activities') {
         renderDrillsGrid();
         renderScenariosGrid();
