@@ -72,7 +72,6 @@
     .app-layout { display: flex; flex: 1; overflow: hidden; position: relative; min-height: 0; }
     .sidebar { width: 320px; background-color: var(--panel-bg); border-right: 1px solid var(--border-color); padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; z-index: 20; transition: transform 0.3s ease; flex-shrink: 0; }
     .nav-group { display: flex; flex-direction: column; gap: 4px; }
-    /* NEW: grouped sidebar */
     .nav-section { display: flex; flex-direction: column; gap: 2px; }
     .nav-section-label { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); padding: 8px 12px 4px; opacity: 0.7; }
     .nav-section + .nav-section { margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.06); }
@@ -82,8 +81,6 @@
     .nav-item .nav-icon { width: 16px; height: 16px; stroke-width: 2; flex-shrink: 0; }
     .sidebar-section { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; }
     .sidebar-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; }
-    .field-group { margin-bottom: 8px; }
-    .field-group:last-child { margin-bottom: 0; }
     label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
     select { width: 100%; background-color: var(--bg-dark); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 10px; border-radius: 6px; font-family: inherit; font-size: 12px; }
 
@@ -107,34 +104,34 @@
     .view-panel { display: none; flex-direction: column; gap: 20px; }
     .view-panel.active-view { display: flex; }
 
-    /* NEW: First-time flow guide */
-    .flow-guide {
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(139, 92, 246, 0.06));
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 14px;
-      padding: 18px 22px;
+    /* Persistent how-it-works strip (not dismissible) */
+    .how-strip {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(139, 92, 246, 0.05));
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 12px 18px;
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 18px;
-      position: relative;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--text-muted);
     }
-    .flow-guide .fg-left { flex: 1; min-width: 0; }
-    .flow-guide .fg-title { font-size: 14px; font-weight: 800; color: var(--accent-cyan); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; letter-spacing: 0.02em; }
-    .flow-guide .fg-steps { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-    .flow-guide .fg-step { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; color: var(--text-main); }
-    .flow-guide .fg-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(56, 189, 248, 0.18); color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
-    .flow-guide .fg-step strong { color: var(--accent-cyan); }
-    .flow-guide .fg-close { background: none; border: 1px solid var(--border-color); color: var(--text-muted); cursor: pointer; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .flow-guide .fg-close:hover { border-color: var(--accent-cyan); color: var(--text-main); }
-
-    /* NEW: Today step indicator */
-    .today-steps { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
-    .today-step { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--text-muted); padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); }
-    .today-step.active { color: #FFF; background: var(--primary); border-color: var(--accent-cyan); }
-    .today-step.done { color: var(--success); border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.08); }
-    .today-step .ts-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.8; }
-    .today-step-arrow { color: var(--text-muted); font-size: 11px; opacity: 0.5; }
+    .how-strip .hs-title { font-weight: 800; color: var(--accent-cyan); letter-spacing: 0.06em; text-transform: uppercase; font-size: 10px; margin-right: 4px; }
+    .how-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-color);
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .how-chip .hc-num { width: 16px; height: 16px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; background: rgba(255,255,255,0.06); }
+    .how-chip.active { color: #FFF; border-color: var(--accent-cyan); background: rgba(56,189,248,0.12); }
+    .how-chip.active .hc-num { background: var(--accent-cyan); color: #0B0F19; }
+    .how-chip.done { color: var(--success); border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08); }
+    .how-chip.done .hc-num { background: var(--success); color: #0B0F19; }
+    .how-arrow { color: var(--text-muted); opacity: 0.5; font-size: 11px; }
 
     .today-header-bar { background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(139, 92, 246, 0.10)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
     .today-header-bar .th-left h2 { font-size: 20px; margin-bottom: 4px; }
@@ -145,48 +142,63 @@
     .day-progress-bar { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; margin-top: 10px; }
     .day-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); transition: width 0.4s; }
 
-    .question-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 16px; position: relative; }
-    .qc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
-    .qc-left { flex: 1; min-width: 240px; }
-    .qc-label { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .qc-text { font-size: 17px; font-weight: 700; line-height: 1.4; }
-    .qc-meta { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
-    .qc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+    /* One-question Today card */
+    .today-q-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+    }
+    .today-q-card.done { border-color: rgba(16,185,129,0.35); }
+    .tq-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap; }
+    .tq-left { flex: 1; min-width: 240px; }
+    .tq-kicker { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .tq-question { font-size: 26px; font-weight: 800; line-height: 1.3; letter-spacing: -0.01em; }
+    .tq-question::before { content: '"'; color: var(--accent-cyan); margin-right: 2px; }
+    .tq-question::after { content: '"'; color: var(--accent-cyan); margin-left: 2px; }
+    .tq-meta { font-size: 13px; color: var(--text-muted); margin-top: 10px; line-height: 1.5; }
+    .tq-meta strong { color: var(--text-main); }
+    .tq-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
     .qc-difficulty { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
     .qc-difficulty.easy { background: rgba(16, 185, 129, 0.15); color: var(--success); }
     .qc-difficulty.medium { background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); }
     .qc-difficulty.hard { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-
-    .qc-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tq-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .qc-action-btn { padding: 6px 12px; font-size: 11px; font-weight: 700; font-family: inherit; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
     .qc-action-btn:hover { border-color: var(--accent-cyan); color: var(--text-main); background: rgba(56, 189, 248, 0.06); }
     .qc-action-btn i[data-lucide] { width: 12px; height: 12px; }
     .qc-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .qc-custom-badge { font-size: 9px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-gold); background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); padding: 3px 8px; border-radius: 6px; margin-left: 8px; vertical-align: middle; }
 
-    .rep-tracker { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-    .rep-tracker .rt-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px; }
-    .rep-tracker .rt-count { font-size: 18px; font-weight: 800; }
-    .rep-tracker .rt-cap { font-size: 13px; color: var(--text-muted); font-weight: 600; }
-    .rep-tracker .rt-best { font-size: 11px; color: var(--success); margin-top: 2px; font-weight: 600; }
+    .tq-rep-zone { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .tq-zero-state { display: flex; flex-direction: column; gap: 6px; }
+    .tq-zero-state .tz-title { font-size: 17px; font-weight: 700; line-height: 1.4; }
+    .tq-zero-state .tz-sub { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+    .tq-zero-state .tz-sub strong { color: var(--accent-cyan); }
 
-    /* NEW: zero state */
-    .rep-zero-state { display: flex; flex-direction: column; gap: 4px; }
-    .rep-zero-state .rz-title { font-size: 15px; font-weight: 700; color: var(--text-main); line-height: 1.35; }
-    .rep-zero-state .rz-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-    .rep-zero-state .rz-sub strong { color: var(--accent-cyan); font-weight: 700; }
+    .tq-done-state { display: flex; flex-direction: column; gap: 10px; }
+    .tq-done-state .td-header { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; color: var(--success); }
+    .tq-done-state .td-summary { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--text-muted); }
+    .tq-done-state .td-summary .td-metric strong { color: var(--text-main); font-weight: 700; }
 
-    .rep-btn { padding: 12px 22px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
+    .tq-cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .rep-btn { padding: 14px 26px; border-radius: 10px; font-size: 14px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
     .rep-btn:hover:not(:disabled) { background: var(--primary-hover); }
     .rep-btn:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; }
     .rep-btn.pulse { animation: repPulse 2.2s ease-in-out infinite; }
     @keyframes repPulse {
       0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
-      50% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+      50% { box-shadow: 0 0 0 12px rgba(37, 99, 235, 0); }
     }
+    .ghost-btn { padding: 14px 22px; border-radius: 10px; font-size: 13px; font-weight: 700; background: transparent; color: var(--text-main); border: 1px solid var(--border-color); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
+    .ghost-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 
-    .reps-log { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
-    .rep-log-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 10px; background: var(--bg-dark); border-radius: 6px; color: var(--text-muted); }
+    .tq-reps-log { display: flex; flex-direction: column; gap: 6px; }
+    .rep-log-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 8px 12px; background: rgba(0,0,0,0.25); border-radius: 6px; color: var(--text-muted); }
     .rep-log-item .rl-score { color: var(--success); font-weight: 700; }
 
     .view-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
@@ -208,12 +220,13 @@
     .ya-list { list-style: none; padding: 0; margin: 0; }
     .ya-list li { font-size: 12px; line-height: 1.55; padding-left: 18px; position: relative; margin-bottom: 6px; }
     .ya-list li::before { content: '—'; position: absolute; left: 0; color: var(--accent-cyan); font-weight: 700; }
-    .ya-list.wins li::before { content: '→'; color: var(--success); }
     .ya-executive { font-size: 13px; line-height: 1.6; font-weight: 600; padding: 12px 14px; background: linear-gradient(135deg, rgba(184,148,60,0.15), rgba(184,148,60,0.06)); border-left: 3px solid var(--accent-gold); border-radius: 8px; font-style: italic; }
     .ya-transcript { font-size: 13px; line-height: 1.65; color: var(--text-main); max-height: 220px; overflow-y: auto; padding: 12px 14px; background: rgba(0, 0, 0, 0.25); border-left: 3px solid var(--accent-cyan); border-radius: 8px; font-style: italic; white-space: pre-wrap; word-break: break-word; }
     .ya-transcript-empty { color: var(--text-muted); font-style: normal; font-size: 12px; }
-    .ya-footer { margin-top: 20px; display: flex; justify-content: center; }
-    .ya-btn { padding: 12px 28px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
+    .ya-footer { margin-top: 22px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .ya-btn { padding: 12px 24px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
+    .ya-btn.secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+    .ya-btn.secondary:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 
     .timeline-bar { display: flex; justify-content: space-between; align-items: center; background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
     .timeline-tabs { display: flex; gap: 8px; }
@@ -242,7 +255,7 @@
     .try-again-bar { margin-top: 12px; background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(139, 92, 246, 0.08)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
     .try-again-bar .ta-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
     .try-again-bar .ta-text strong { color: var(--text-main); }
-    .try-again-bar .ta-btn { padding: 12px 24px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
+    .try-again-bar .ta-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
     .activity-sub-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
     .sub-tab-btn { padding: 8px 14px; background-color: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
@@ -262,7 +275,6 @@
     .activity-card-prompt.hidden { display: none; }
     .activity-card-budget { font-size: 10px; font-weight: 700; color: var(--accent-gold); letter-spacing: 0.04em; margin-top: 4px; display: inline-block; }
 
-    /* NEW: Scenario type grouping */
     .scenario-group { display: flex; flex-direction: column; gap: 14px; margin-bottom: 26px; }
     .scenario-group-header { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
     .scenario-group-header .sg-icon { width: 18px; height: 18px; color: var(--accent-cyan); flex-shrink: 0; }
@@ -331,11 +343,6 @@
     .ob-back { margin-top: 18px; background: none; border: none; color: var(--text-muted); font-size: 13px; cursor: pointer; font-family: inherit; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px; }
     .ob-back:hover { color: var(--text-main); }
 
-    .ob-progress { display: flex; gap: 10px; margin-bottom: 12px; }
-    .ob-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: all 0.3s; }
-    .ob-dot.active { background: var(--accent-cyan); box-shadow: 0 0 12px rgba(56,189,248,0.6); transform: scale(1.2); }
-    .ob-dot.done { background: var(--success); }
-
     .ob-step-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); font-weight: 700; margin-bottom: 14px; }
     .ob-question { font-size: 22px; font-weight: 700; line-height: 1.35; margin-bottom: 26px; max-width: 480px; }
 
@@ -357,6 +364,7 @@
       .onboarding-stage { padding: 32px 24px 28px; }
       .ob-question { font-size: 19px; }
       .ob-pills { grid-template-columns: 1fr; }
+      .tq-question { font-size: 20px; }
     }
     @media (max-width: 900px) {
       .dash-grid { grid-template-columns: 1fr; }
@@ -367,8 +375,8 @@
       .sidebar.open { transform: translateX(0); }
       .today-header-bar { flex-direction: column; align-items: flex-start; }
       .today-header-bar .th-right { text-align: left; }
-      .qc-top { flex-direction: column; align-items: flex-start; }
-      .qc-right { align-items: flex-start; width: 100%; }
+      .tq-top { flex-direction: column; align-items: flex-start; }
+      .tq-right { align-items: flex-start; width: 100%; }
     }
   </style>
 </head>
@@ -401,7 +409,6 @@
 
     <div class="app-layout">
       <aside class="sidebar" id="appSidebar">
-        <!-- NEW: grouped navigation -->
         <div class="nav-section">
           <div class="nav-section-label">Practice</div>
           <div class="nav-item active" id="navToday" onclick="switchView('today')"><i data-lucide="house" class="nav-icon"></i> Today</div>
@@ -440,24 +447,21 @@
       </aside>
 
       <main class="main-content">
-        <!-- NEW: first-time flow guide (dismissible) -->
-        <div class="flow-guide hidden" id="flowGuide">
-          <div class="fg-left">
-            <div class="fg-title"><i data-lucide="compass" style="width:14px;height:14px;"></i> How this works — your 3-step daily loop</div>
-            <div class="fg-steps">
-              <div class="fg-step"><span class="fg-num">1</span><div><strong>Speak two answers.</strong> Today gives you two questions drawn for your role and day. Record each one for 45–90 seconds.</div></div>
-              <div class="fg-step"><span class="fg-num">2</span><div><strong>Read your pattern.</strong> Each rep returns a diagnosis: what got lost, what the listener heard, and a reframe you could actually say.</div></div>
-              <div class="fg-step"><span class="fg-num">3</span><div><strong>Rep it again.</strong> Come back tomorrow — your streak, your pattern, and your progress all compound.</div></div>
-            </div>
-          </div>
-          <button class="fg-close" onclick="dismissFlowGuide()" aria-label="Dismiss"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
+        <!-- Persistent how-it-works strip -->
+        <div class="how-strip" id="howStrip">
+          <span class="hs-title">How it works</span>
+          <span class="how-chip" id="howChip1"><span class="hc-num">1</span> Speak</span>
+          <span class="how-arrow">→</span>
+          <span class="how-chip" id="howChip2"><span class="hc-num">2</span> See your pattern</span>
+          <span class="how-arrow">→</span>
+          <span class="how-chip" id="howChip3"><span class="hc-num">3</span> Try again or Next</span>
+          <span class="how-arrow">→</span>
+          <span class="how-chip" id="howChip4"><span class="hc-num">4</span> Repeat tomorrow</span>
         </div>
 
         <section class="view-panel active-view" id="todayView">
           <div class="today-header-bar">
             <div class="th-left">
-              <!-- NEW: today step indicator -->
-              <div class="today-steps" id="todaySteps"></div>
               <h2 id="todayTrackTitle">Your Sprint</h2>
               <div class="th-sub" id="todayFocus">Loading questions…</div>
               <div class="day-progress-bar"><div class="day-progress-fill" id="dayProgressFill" style="width: 0%;"></div></div>
@@ -469,66 +473,43 @@
             </div>
           </div>
 
-          <div class="question-card" id="questionCard1">
-            <div class="qc-top">
-              <div class="qc-left">
-                <div class="qc-label"><span id="q1Label">Q1 of 2</span></div>
-                <div class="qc-text" id="q1Text">—</div>
-                <div class="qc-meta" id="q1Meta">—</div>
+          <!-- Single question card -->
+          <div class="today-q-card" id="todayCard">
+            <div class="tq-top">
+              <div class="tq-left">
+                <div class="tq-kicker" id="tqKicker">Start here</div>
+                <div class="tq-question" id="tqQuestion">—</div>
+                <div class="tq-meta" id="tqMeta">—</div>
               </div>
-              <div class="qc-right"><div class="qc-difficulty easy" id="q1Diff"><i data-lucide="star"></i> Easy</div></div>
-            </div>
-            <div class="qc-actions">
-              <button class="qc-action-btn" onclick="changeQuestion('q1')"><i data-lucide="refresh-cw"></i> Change question</button>
-              <button class="qc-action-btn" onclick="customizeQuestion('q1')"><i data-lucide="pencil-line"></i> Customize</button>
-            </div>
-            <div class="rep-tracker">
-              <div class="rt-left">
-                <!-- NEW: Reps label (was "Reps" already on Q1 — kept for consistency) -->
-                <div class="rt-label">Reps</div>
-                <div id="q1RepZeroState" class="rep-zero-state">
-                  <div class="rz-title" id="q1ZeroTitle">Your first rep is waiting.</div>
-                  <div class="rz-sub" id="q1ZeroSub">It takes <strong>45 seconds</strong>. Speak your answer out loud — the analysis will show you what landed.</div>
-                </div>
-                <div class="rt-count hidden" id="q1RepCount">0 <span class="rt-cap">reps</span></div>
-                <div class="rt-best" id="q1BestSnr">Best score: —</div>
-              </div>
-              <div class="rt-right">
-                <button class="rep-btn pulse" id="q1RepBtn" onclick="startRep('q1')"><i data-lucide="mic"></i> Start Rep 1 →</button>
+              <div class="tq-right">
+                <div class="qc-difficulty easy" id="tqDiff"><i data-lucide="star"></i> Easy</div>
               </div>
             </div>
-            <div class="reps-log" id="q1RepsLog"></div>
-          </div>
 
-          <div class="question-card" id="questionCard2">
-            <div class="qc-top">
-              <div class="qc-left">
-                <div class="qc-label"><span id="q2Label">Q2 of 2</span></div>
-                <div class="qc-text" id="q2Text">—</div>
-                <div class="qc-meta" id="q2Meta">—</div>
-              </div>
-              <div class="qc-right"><div class="qc-difficulty medium" id="q2Diff"><i data-lucide="star"></i><i data-lucide="star"></i> Medium</div></div>
+            <div class="tq-actions">
+              <button class="qc-action-btn" onclick="changeTodayQuestion()"><i data-lucide="refresh-cw"></i> Change question</button>
+              <button class="qc-action-btn" onclick="customizeTodayQuestion()"><i data-lucide="pencil-line"></i> Customize</button>
             </div>
-            <div class="qc-actions">
-              <button class="qc-action-btn" onclick="changeQuestion('q2')"><i data-lucide="refresh-cw"></i> Change question</button>
-              <button class="qc-action-btn" onclick="customizeQuestion('q2')"><i data-lucide="pencil-line"></i> Customize</button>
-            </div>
-            <div class="rep-tracker">
-              <div class="rt-left">
-                <!-- FIX: "Trials" → "Reps" -->
-                <div class="rt-label">Reps</div>
-                <div id="q2RepZeroState" class="rep-zero-state">
-                  <div class="rz-title" id="q2ZeroTitle">Your second rep is waiting.</div>
-                  <div class="rz-sub" id="q2ZeroSub">It takes <strong>90 seconds</strong>. Finish Q1 first, then come back to this one.</div>
-                </div>
-                <div class="rt-count hidden" id="q2RepCount">0 <span class="rt-cap">reps</span></div>
-                <div class="rt-best" id="q2BestSnr">Best score: —</div>
+
+            <div class="tq-rep-zone">
+              <div class="tq-zero-state" id="tqZeroState">
+                <div class="tz-title" id="tqZeroTitle">Your Day 1 rep is waiting.</div>
+                <div class="tz-sub" id="tqZeroSub">Speak your answer out loud. The analysis will show you what landed and what got lost.</div>
               </div>
-              <div class="rt-right">
-                <button class="rep-btn pulse" id="q2RepBtn" onclick="startRep('q2')"><i data-lucide="mic"></i> Start Rep 1 →</button>
+
+              <div class="tq-done-state hidden" id="tqDoneState">
+                <div class="td-header"><i data-lucide="circle-check" style="width:16px;height:16px;"></i> Rep complete</div>
+                <div class="td-summary" id="tqDoneSummary"></div>
+              </div>
+
+              <div class="tq-cta-row">
+                <button class="rep-btn pulse" id="tqStartBtn" onclick="startTodayRep()"><i data-lucide="mic"></i> Start Rep →</button>
+                <button class="ghost-btn hidden" id="tqViewPatternBtn" onclick="switchView('dash')"><i data-lucide="bar-chart-3"></i> View Pattern</button>
+                <button class="ghost-btn hidden" id="tqNextBtn" onclick="nextQuestionFromToday()"><i data-lucide="arrow-right"></i> Next question</button>
               </div>
             </div>
-            <div class="reps-log" id="q2RepsLog"></div>
+
+            <div class="tq-reps-log" id="tqRepsLog"></div>
           </div>
         </section>
 
@@ -688,7 +669,10 @@
           </div>
           <div class="try-again-bar">
             <div class="ta-text"><strong>Want to improve your score?</strong><br /><span id="taMessage">Start a rep to build your progress.</span></div>
-            <button class="ta-btn" onclick="switchView('today')"><i data-lucide="mic"></i> Try Again</button>
+            <div class="ta-actions">
+              <button class="ghost-btn" onclick="tryAgainSameQuestion()"><i data-lucide="refresh-cw"></i> Try Again</button>
+              <button class="ta-btn" onclick="nextQuestionFromToday()"><i data-lucide="arrow-right"></i> Next Question</button>
+            </div>
           </div>
         </section>
 
@@ -732,7 +716,6 @@
           </div>
         </section>
 
-        <!-- NEW: Your Profile view -->
         <section class="view-panel" id="profileView">
           <div class="view-heading"><h2><i data-lucide="user"></i> Your Profile</h2><span class="vh-sub">Account details and plan</span></div>
           <div class="question-card">
@@ -765,7 +748,7 @@
             </div>
             <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
               <button class="qc-action-btn" onclick="signOut()"><i data-lucide="log-out"></i> Sign Out</button>
-              <a href="${PAYWALL_URL}" class="qc-action-btn" style="text-decoration:none;"><i data-lucide="external-link"></i> Manage Plan</a>
+              <a href="https://theunspoken.co.in/Pricing" class="qc-action-btn" style="text-decoration:none;"><i data-lucide="external-link"></i> Manage Plan</a>
             </div>
           </div>
         </section>
@@ -779,7 +762,7 @@
     <div class="us-modal" style="max-width: 520px;">
       <button class="us-modal-close" onclick="closeCustomizeModal()" aria-label="Close"><i data-lucide="x"></i></button>
       <h2 style="font-size: 20px; margin-bottom: 6px;">Customize Question</h2>
-      <p class="us-modal-sub">Type your own question. It'll replace the current one for today.</p>
+      <p class="us-modal-sub">Type your own question. It'll replace the current one.</p>
       <label for="customizeInput" style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">Your question</label>
       <textarea id="customizeInput" placeholder="e.g., Tell me about a time you had to say no to a senior stakeholder." maxlength="280" style="width: 100%; min-height: 100px; padding: 14px 16px; border: 1.5px solid var(--border-color); border-radius: 12px; font-family: inherit; font-size: 14px; background: var(--bg-dark); color: var(--text-main); resize: vertical;"></textarea>
       <div style="text-align: right; font-size: 11px; color: var(--text-muted); margin-top: 6px;"><span id="customizeCount">0</span> / 280</div>
@@ -881,26 +864,11 @@
       const r = OB_ROLES.find(x => x.value === roleValue);
       return r ? r.family : null;
     }
-
     function formatRole(roleValue) {
       if (!roleValue) return null;
       const r = OB_ROLES.find(x => x.value === roleValue);
       return r ? r.label : roleValue;
     }
-
-    function formatRoleFamily(slug) {
-      if (!slug) return null;
-      const m = {
-        technology: 'Technology',
-        product_and_program: 'Product & Program',
-        sales_and_bd: 'Sales & BD',
-        operations: 'Operations',
-        customer_success: 'Customer Success',
-        hr_and_people: 'HR & People',
-      };
-      return m[slug] || slug;
-    }
-
     function renderIcons() {
       if (window.lucide && typeof lucide.createIcons === 'function') {
         try { lucide.createIcons(); } catch (e) {}
@@ -968,17 +936,6 @@
       ]}
     ];
 
-    const FALLBACK_SCENARIOS = [
-      { id: 'interview-questions', sprint: 'Interview Sprint', title: 'Interview Questions', desc: 'Practice real interview questions tailored to your role.', meta: '12 scenarios · Role-based', activity: 'Interview Questions', dynamic: true, question_type: 'behavioral' },
-      { id: 'group-discussion', sprint: 'GD Sprint', title: 'Group Discussion', desc: 'Learn to enter, build on, and steer a group conversation.', meta: '8 scenarios', activity: 'Group Discussion', dynamic: true, question_type: 'situational' },
-      { id: 'leadership-situations', sprint: 'Leadership Presence Sprint', title: 'Leadership Situations', desc: 'Handle the moments that define you as a leader.', meta: '10 scenarios', activity: 'Leadership Situations', question_type: 'leadership' },
-      { id: 'project-team-updates', sprint: 'Leadership Presence Sprint', title: 'Project & Team Updates', desc: 'Deliver updates, handle pushback, raise bad news.', meta: '9 scenarios', activity: 'Project & Team Updates', question_type: 'behavioral' },
-      { id: 'client-stakeholder', sprint: 'Leadership Presence Sprint', title: 'Client & Stakeholder', desc: 'Pitch ideas, handle objections, manage client relationships.', meta: '7 scenarios', activity: 'Client & Stakeholder', question_type: 'situational' },
-      { id: 'storytelling', sprint: 'Storytelling Sprint', title: 'Storytelling', desc: 'Turn a flat update or a dry fact into something memorable.', meta: '7 scenarios', activity: 'Storytelling', question_type: 'behavioral' },
-      { id: 'charisma-social', sprint: 'Charisma Sprint', title: 'Charisma & Social Presence', desc: 'Build rapport, make small talk land.', meta: '6 scenarios', activity: 'Charisma & Social Presence', question_type: 'situational' }
-    ];
-
-    // NEW: Scenario group metadata
     const SCENARIO_TYPE_META = {
       'behavioral':   { label: 'Behavioural',  icon: 'message-circle', hint: 'Tell me about a time…' },
       'situational':  { label: 'Situational',  icon: 'compass',        hint: 'What would you do if…' },
@@ -998,11 +955,14 @@
 
     let USER = null;
     let SESSION_TOKEN = null;
+    // Single active Today question + its reps
+    let TODAY = {
+      question: null,
+      reps: [],
+      nextPool: [],
+    };
     let state = {
-      q1Trials: [],
-      q2Trials: [],
       activityTrials: [],
-      questions: { q1: null, q2: null }
     };
     let CACHED_BANK = {};
     let OB = { role: null };
@@ -1010,11 +970,8 @@
     let SCENARIOS_CACHE = null;
     let CUSTOMIZE_TARGET = null;
     let ACTIVITY_OVERRIDES = {};
-    let FLOW_GUIDE_DISMISSED = false;
 
     document.addEventListener('DOMContentLoaded', () => {
-      // NEW: load flow-guide dismissal preference
-      try { FLOW_GUIDE_DISMISSED = localStorage.getItem('unspoken_flow_guide_dismissed') === '1'; } catch (e) {}
       renderIcons();
       wireGlobalListeners();
       bootstrap();
@@ -1038,14 +995,6 @@
         if (!sidebar || !sidebar.classList.contains('open') || toggle) return;
         if (!sidebar.contains(e.target)) sidebar.classList.remove('open');
       });
-    }
-
-    // NEW: dismiss handler for flow guide
-    function dismissFlowGuide() {
-      FLOW_GUIDE_DISMISSED = true;
-      try { localStorage.setItem('unspoken_flow_guide_dismissed', '1'); } catch (e) {}
-      const el = document.getElementById('flowGuide');
-      if (el) el.classList.add('hidden');
     }
 
     async function bootstrap() {
@@ -1075,7 +1024,7 @@
         const data = await res.json();
         if (!data.is_paid) return false;
         USER = buildPaidUser(data);
-        await loadQuestionsForToday();
+        await loadTodayQuestion();
         await loadDailyLimits();
         document.getElementById('bootScreen').classList.add('hidden');
         document.getElementById('mainApp').classList.remove('hidden');
@@ -1248,68 +1197,70 @@
 
     const FALLBACK_QUESTIONS = [
       { id: null, text: 'Tell me about yourself.', focus: 'Concise self-intro', target_seconds: 60, difficulty: 'easy', question_type: 'self-intro' },
-      { id: null, text: 'Walk me through a project you\'re proud of.', focus: 'Structured storytelling', target_seconds: 90, difficulty: 'medium', question_type: 'behavioral' }
+      { id: null, text: 'Walk me through a project you\'re proud of.', focus: 'Structured storytelling', target_seconds: 90, difficulty: 'medium', question_type: 'behavioral' },
     ];
 
-    async function loadQuestionsForToday() {
+    // Load today's FIRST question only. Rest go into a shuffled pool.
+    async function loadTodayQuestion() {
       await loadUserStats();
       const sprint = USER.track_id || 'interview';
       const day = USER.current_day || 1;
-      const cacheKey = `${sprint}-${day}`;
-      if (loadQuestionsCache()) return;
-      let questions = CACHED_BANK[cacheKey];
-      if (!questions) {
+      const cacheKey = `${sprint}-${day}-today`;
+      let questions = null;
+      try {
+        const raw = localStorage.getItem(cacheKey);
+        if (raw) questions = JSON.parse(raw);
+      } catch (e) {}
+      if (!questions || !questions.length) {
         try {
-          const res = await fetch(`${BACKEND_URL}/api/paid/questions`, {
+          const res = await fetch(`${BACKEND_URL}/api/paid/questions?count=2`, {
             headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
           });
           if (res.ok) {
             const data = await res.json();
             questions = data.questions || [];
-            if (questions.length) CACHED_BANK[cacheKey] = questions;
           }
-        } catch (e) { console.warn('loadQuestionsForToday failed:', e); }
+        } catch (e) { console.warn('loadTodayQuestion failed:', e); }
       }
-      if (!questions || !questions.length) { questions = FALLBACK_QUESTIONS; CACHED_BANK[cacheKey] = questions; }
-      const q1 = questions[0];
-      const q2 = questions[1] || questions[0];
-      state.questions.q1 = {
-        id: q1.id || null, text: q1.text, focus: q1.focus,
-        target_seconds: q1.target_seconds || 90, difficulty: q1.difficulty,
-        question_type: q1.question_type || 'self-intro',
-        custom: false, source: 'bank',
+      if (!questions || !questions.length) questions = FALLBACK_QUESTIONS;
+      TODAY.question = {
+        id: questions[0].id || null,
+        text: questions[0].text,
+        focus: questions[0].focus || '',
+        target_seconds: questions[0].target_seconds || 90,
+        difficulty: questions[0].difficulty || 'easy',
+        question_type: questions[0].question_type || 'self-intro',
+        custom: false,
+        source: 'bank',
       };
-      state.questions.q2 = {
-        id: q2.id || null, text: q2.text, focus: q2.focus,
-        target_seconds: q2.target_seconds || 90, difficulty: q2.difficulty,
-        question_type: q2.question_type || 'behavioral',
-        custom: false, source: 'bank',
-      };
-      saveQuestionsCache();
+      TODAY.nextPool = questions.slice(1).map(q => ({
+        id: q.id || null,
+        text: q.text,
+        focus: q.focus || '',
+        target_seconds: q.target_seconds || 90,
+        difficulty: q.difficulty || 'easy',
+        question_type: q.question_type || 'behavioral',
+        custom: false,
+        source: 'bank',
+      }));
+      try { localStorage.setItem(cacheKey, JSON.stringify(questions)); } catch (e) {}
     }
 
-    function saveQuestionsCache() {
+    function saveTodayQuestionCache() {
       try {
-        const key = `unspoken_questions_${USER.email}_${new Date().toISOString().slice(0, 10)}`;
-        localStorage.setItem(key, JSON.stringify(state.questions));
+        const sprint = USER.track_id || 'interview';
+        const day = USER.current_day || 1;
+        const cacheKey = `${sprint}-${day}-today`;
+        const all = [TODAY.question, ...(TODAY.nextPool || [])];
+        localStorage.setItem(cacheKey, JSON.stringify(all));
       } catch (e) {}
-    }
-    function loadQuestionsCache() {
-      try {
-        const key = `unspoken_questions_${USER.email}_${new Date().toISOString().slice(0, 10)}`;
-        const raw = localStorage.getItem(key);
-        if (!raw) return false;
-        const parsed = JSON.parse(raw);
-        if (parsed && parsed.q1 && parsed.q2) { state.questions = parsed; return true; }
-      } catch (e) {}
-      return false;
     }
 
     function renderAll() {
       renderHeader();
       renderProfile();
-      renderCustomRoleBanner();
-      renderQuestionCards();
+      renderTodayCard();
+      renderHowStrip();
       renderProgressView();
       renderBitesTabs();
       renderBitesGrid();
@@ -1318,88 +1269,90 @@
       renderBadges();
       renderTodayCap();
       renderActivitiesCap();
-      renderFlowGuide();
-      renderTodaySteps();
       switchView('today');
       maybeShowOnboarding();
       renderIcons();
     }
 
-    // NEW: render the flow guide banner (only when not dismissed)
-    function renderFlowGuide() {
-      const el = document.getElementById('flowGuide');
-      if (!el) return;
-      if (FLOW_GUIDE_DISMISSED) { el.classList.add('hidden'); return; }
-      // Only show for users with fewer than 1 completed rep — once they've done a rep
-      // they've understood the flow. Hide again if dismissed.
-      const hasAnyRep = (USER.stats?.completed_tasks || 0) >= 1 ||
-                        state.q1Trials.length + state.q2Trials.length + state.activityTrials.length > 0;
-      if (hasAnyRep) { el.classList.add('hidden'); return; }
-      el.classList.remove('hidden');
-    }
-
-    // NEW: today step indicator (Speak → Read pattern → Come back)
-    function renderTodaySteps() {
-      const el = document.getElementById('todaySteps');
-      if (!el) return;
-      const q1Done = state.q1Trials.length > 0;
-      const q2Done = state.q2Trials.length > 0;
-      const speakDone = q1Done && q2Done;
-      const steps = [
-        { key: 'speak',   label: 'Speak both answers', done: speakDone, active: !speakDone },
-        { key: 'pattern', label: 'Read your pattern',  done: false,     active: speakDone },
-        { key: 'return',  label: 'Come back tomorrow', done: false,     active: false },
-      ];
-      el.innerHTML = steps.map((s, i) => {
-        const cls = s.done ? 'done' : (s.active ? 'active' : '');
-        const dot = `<span class="ts-dot"></span>`;
-        const arrow = i < steps.length - 1 ? `<span class="today-step-arrow">→</span>` : '';
-        return `<div class="today-step ${cls}">${dot}${escapeHtml(s.label)}</div>${arrow}`;
-      }).join('');
-    }
-
-    function renderCustomRoleBanner() {
-      let el = document.getElementById('customRoleBanner');
-      if (!el) {
-        el = document.createElement('div');
-        el.id = 'customRoleBanner';
-        el.style.cssText = `
-          display: none;
-          background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(245,158,11,0.04));
-          border: 1px solid rgba(245,158,11,0.35);
-          border-radius: 12px;
-          padding: 14px 18px;
-          margin-bottom: 4px;
-          font-size: 13px;
-          line-height: 1.5;
-          color: var(--text-main);
-        `;
-        const todayView = document.getElementById('todayView');
-        if (todayView) todayView.prepend(el);
-      }
-
-      const show = USER
-        && USER.role === 'other'
-        && USER.role_custom
-        && !USER.role_delivered_at;
-
-      if (show) {
-        el.style.display = 'block';
-        el.innerHTML = `
-          <div style="display:flex; align-items:flex-start; gap:10px;">
-            <span style="font-size:18px; line-height:1;">⚡</span>
-            <div>
-              <strong style="color:var(--accent-gold);">Customizing your ${escapeHtml(USER.role_custom)} practice</strong>
-              <div style="color:var(--text-muted); margin-top:4px;">
-                We're building your role-specific questions. You'll be notified within 24 hours.
-                In the meantime, practice with our general bank.
-              </div>
-            </div>
-          </div>
-        `;
+    // Highlight current step in the how-strip
+    function renderHowStrip() {
+      const anyRepToday = TODAY.reps.length > 0;
+      const chip1 = document.getElementById('howChip1');
+      const chip2 = document.getElementById('howChip2');
+      const chip3 = document.getElementById('howChip3');
+      const chip4 = document.getElementById('howChip4');
+      [chip1, chip2, chip3, chip4].forEach(c => { if (c) c.className = 'how-chip'; });
+      if (!anyRepToday) {
+        if (chip1) chip1.classList.add('active');
       } else {
-        el.style.display = 'none';
+        if (chip1) chip1.classList.add('done');
+        if (chip2) chip2.classList.add('done');
+        if (chip3) chip3.classList.add('active');
       }
+    }
+
+    // Single-question Today card. Copy depends on whether a rep exists.
+    function renderTodayCard() {
+      const q = TODAY.question;
+      if (!q) return;
+      const kicker = document.getElementById('tqKicker');
+      const qEl = document.getElementById('tqQuestion');
+      const metaEl = document.getElementById('tqMeta');
+      const diffEl = document.getElementById('tqDiff');
+
+      if (TODAY.reps.length === 0) {
+        kicker.textContent = `Start here · Day ${USER.current_day}`;
+      } else {
+        kicker.textContent = `Rep complete · Day ${USER.current_day}`;
+      }
+      const badge = q.custom ? '<span class="qc-custom-badge">Custom</span>' : '';
+      qEl.innerHTML = escapeHtml(q.text) + badge;
+      metaEl.innerHTML = `Focus: <strong>${escapeHtml(q.focus || 'General')}</strong> · Target: <strong>${q.target_seconds}s</strong> · Difficulty: <strong>${capitalize(q.difficulty)}</strong>`;
+      diffEl.innerHTML = `<i data-lucide="star"></i> ${capitalize(q.difficulty)}`;
+      diffEl.className = `qc-difficulty ${q.difficulty}`;
+
+      const zero = document.getElementById('tqZeroState');
+      const done = document.getElementById('tqDoneState');
+      const startBtn = document.getElementById('tqStartBtn');
+      const viewBtn = document.getElementById('tqViewPatternBtn');
+      const nextBtn = document.getElementById('tqNextBtn');
+
+      if (TODAY.reps.length === 0) {
+        // Zero state
+        zero.classList.remove('hidden');
+        done.classList.add('hidden');
+        document.getElementById('tqZeroTitle').textContent = `Your Day ${USER.current_day} rep is waiting.`;
+        document.getElementById('tqZeroSub').innerHTML = `Speak your answer out loud for up to <strong>${q.target_seconds} seconds</strong>. The analysis will show you what landed and what got lost.`;
+        startBtn.classList.remove('hidden');
+        startBtn.classList.add('pulse');
+        startBtn.innerHTML = `<i data-lucide="mic"></i> Start Rep →`;
+        viewBtn.classList.add('hidden');
+        nextBtn.classList.add('hidden');
+      } else {
+        // Done state — show summary + Try Again + Next
+        zero.classList.add('hidden');
+        done.classList.remove('hidden');
+        const last = TODAY.reps[TODAY.reps.length - 1];
+        const parts = [];
+        if (last.fillerDiscipline != null) parts.push(`<span class="td-metric">Filler discipline <strong>${last.fillerDiscipline}</strong></span>`);
+        if (last.pointFirst != null) parts.push(`<span class="td-metric">Point-first <strong>${last.pointFirst}</strong></span>`);
+        if (last.concreteness != null) parts.push(`<span class="td-metric">Concreteness <strong>${last.concreteness}</strong></span>`);
+        document.getElementById('tqDoneSummary').innerHTML =
+          `<span class="td-metric">${TODAY.reps.length} rep${TODAY.reps.length === 1 ? '' : 's'} on this question</span>` +
+          (parts.length ? ' · ' + parts.join(' · ') : '');
+        startBtn.classList.remove('pulse');
+        startBtn.innerHTML = `<i data-lucide="refresh-cw"></i> Try Again →`;
+        startBtn.classList.remove('hidden');
+        viewBtn.classList.remove('hidden');
+        nextBtn.classList.remove('hidden');
+      }
+
+      // Reps log
+      document.getElementById('tqRepsLog').innerHTML = TODAY.reps.map((tr, i) => `
+        <div class="rep-log-item"><span>Rep ${i + 1}</span><span class="rl-score">${tr.transcript ? `"${escapeHtml(tr.transcript.slice(0, 80))}${tr.transcript.length > 80 ? '…' : ''}"` : '—'}</span></div>
+      `).join('');
+
+      renderIcons();
     }
 
     function renderHeader() {
@@ -1419,7 +1372,7 @@
       document.getElementById('headerCompleted').textContent = `${s.completed_tasks} Task${s.completed_tasks === 1 ? '' : 's'}`;
       document.getElementById('headerAchievements').textContent = `${s.achievements_unlocked} Badge${s.achievements_unlocked === 1 ? '' : 's'}`;
       document.getElementById('todayTrackTitle').textContent = isPass ? 'Today\'s Practice' : `${formatSprint(USER.track_id)} Sprint`;
-      document.getElementById('todayFocus').textContent = `Day ${USER.current_day} of ${USER.total_days} · Enrolled ${enrolledStr} · 2 questions · 2 reps each`;
+      document.getElementById('todayFocus').textContent = `Day ${USER.current_day} of ${USER.total_days} · Enrolled ${enrolledStr} · Practice as many as you like`;
       document.getElementById('dayCounter').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
       const streakEl = document.getElementById('todayStreak');
       if (streakEl) {
@@ -1431,7 +1384,6 @@
     }
 
     function renderProfile() {
-      const isPass = (USER.plan || '').toLowerCase() === 'pass';
       const setText = (id, value, muted = false) => {
         const el = document.getElementById(id);
         if (!el) return;
@@ -1445,8 +1397,6 @@
         : formatRole(USER.role);
       setText('profileRoleText', roleDisplay);
       setText('profileEnrolledText', formatEnrolledDate(USER.enrolled_at));
-
-      // NEW: dedicated profile view fields
       setText('profileViewName', USER.name);
       setText('profileViewEmail', USER.email);
       setText('profileViewPlan', PLAN_LABEL[USER.plan] || USER.plan || '—');
@@ -1455,99 +1405,10 @@
       setText('profileViewDay', `Day ${USER.current_day} of ${USER.total_days}`);
     }
 
-    function renderQuestionCards() {
-      const q1 = state.questions.q1;
-      const q2 = state.questions.q2;
-      if (q1) {
-        const badge = q1.custom ? '<span class="qc-custom-badge">Custom</span>' : '';
-        document.getElementById('q1Text').innerHTML = `"${escapeHtml(q1.text)}"${badge}`;
-        document.getElementById('q1Meta').textContent = `Focus: ${q1.focus}`;
-        document.getElementById('q1Diff').innerHTML = `<i data-lucide="star"></i> ${capitalize(q1.difficulty)}`;
-        document.getElementById('q1Diff').className = `qc-difficulty ${q1.difficulty}`;
-      }
-      if (q2) {
-        const badge = q2.custom ? '<span class="qc-custom-badge">Custom</span>' : '';
-        document.getElementById('q2Text').innerHTML = `"${escapeHtml(q2.text)}"${badge}`;
-        document.getElementById('q2Meta').textContent = `Focus: ${q2.focus}`;
-        document.getElementById('q2Diff').innerHTML = `<i data-lucide="star"></i><i data-lucide="star"></i> ${capitalize(q2.difficulty)}`;
-        document.getElementById('q2Diff').className = `qc-difficulty ${q2.difficulty}`;
-      }
-      document.getElementById('q1Label').textContent = `Q1 of 2 · Day ${USER.current_day}`;
-      document.getElementById('q2Label').textContent = `Q2 of 2 · Day ${USER.current_day}`;
-      updateQuestionCard('q1');
-      updateQuestionCard('q2');
-      renderIcons();
-    }
-
-    // NEW: dynamic zero-state copy + swapped labels
-    function updateQuestionCard(which) {
-      const trials = which === 'q1' ? state.q1Trials : state.q2Trials;
-      const valid = trials.filter(x => x.fillerDiscipline != null);
-      const best = valid.length ? Math.max(...valid.map(x => x.fillerDiscipline)) : null;
-      const q = state.questions[which];
-      const seconds = (q && q.target_seconds) ? q.target_seconds : (which === 'q1' ? 45 : 90);
-
-      // Zero-state copy
-      const zeroState = document.getElementById(`${which}RepZeroState`);
-      const repCountEl = document.getElementById(`${which}RepCount`);
-      const zeroTitle = document.getElementById(`${which}ZeroTitle`);
-      const zeroSub = document.getElementById(`${which}ZeroSub`);
-
-      if (trials.length === 0) {
-        if (zeroState) zeroState.style.display = 'flex';
-        if (repCountEl) repCountEl.classList.add('hidden');
-        if (zeroTitle && zeroSub) {
-          if (which === 'q1') {
-            zeroTitle.textContent = `Your Day ${USER.current_day} rep is waiting.`;
-            zeroSub.innerHTML = `It takes <strong>${seconds} seconds</strong>. Speak your answer out loud — the analysis will show you what landed.`;
-          } else {
-            if (state.q1Trials.length === 0) {
-              zeroTitle.textContent = `Your second rep is waiting.`;
-              zeroSub.innerHTML = `It takes <strong>${seconds} seconds</strong>. Finish Q1 first, then come back to this one.`;
-            } else {
-              zeroTitle.textContent = `Nice — Q1 is done. Here's Q2.`;
-              zeroSub.innerHTML = `It takes <strong>${seconds} seconds</strong>. Different question, same rep loop.`;
-            }
-          }
-        }
-      } else {
-        if (zeroState) zeroState.style.display = 'none';
-        if (repCountEl) {
-          repCountEl.classList.remove('hidden');
-          repCountEl.innerHTML = `${trials.length} <span class="rt-cap">${trials.length === 1 ? 'rep' : 'reps'}</span>`;
-        }
-      }
-
-      document.getElementById(`${which}BestSnr`).textContent =
-        best != null ? `Best filler discipline: ${best}%` : (trials.length === 0 ? '' : 'Best score: —');
-
-      const btn = document.getElementById(`${which}RepBtn`);
-      const exhausted = USER.limits?.exhausted ?? false;
-
-      if (trials.length === 0 && !exhausted) {
-        btn.classList.add('pulse');
-      } else {
-        btn.classList.remove('pulse');
-      }
-
-      btn.innerHTML = exhausted
-        ? `<i data-lucide="lock"></i> Come back tomorrow`
-        : (trials.length === 0
-            ? `<i data-lucide="mic"></i> Start Rep 1 →`
-            : `<i data-lucide="mic"></i> Start Rep ${trials.length + 1}`);
-      btn.disabled = exhausted;
-      btn.onclick = () => { if (!exhausted) startRep(which); };
-
-      document.getElementById(`${which}RepsLog`).innerHTML = trials.map((tr, i) => `
-        <div class="rep-log-item"><span>Rep ${i + 1}</span><span class="rl-score">${tr.transcript ? `"${escapeHtml(tr.transcript.slice(0, 60))}${tr.transcript.length > 60 ? '…' : ''}"` : '—'}</span></div>
-      `).join('');
-      renderIcons();
-    }
-
     function renderTodayProgress() {
-      const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
-      document.getElementById('dayProgressFill').style.width = `${(drills / 2) * 100}%`;
-      renderTodaySteps();
+      // Progress is now "have you done at least one rep today?" — no fixed denominator.
+      const pct = TODAY.reps.length > 0 ? 100 : 0;
+      document.getElementById('dayProgressFill').style.width = pct + '%';
     }
 
     function renderTodayCap() {
@@ -1556,7 +1417,6 @@
       el.textContent = '';
       el.style.color = '';
       if (!USER.limits) return;
-
       if (USER.limits.exhausted) {
         el.style.color = 'var(--accent-gold)';
         el.textContent = "You've reached today's practice limit. Come back tomorrow.";
@@ -1572,7 +1432,6 @@
       el.textContent = '';
       el.style.color = '';
       const exhausted = USER.limits?.exhausted ?? false;
-
       if (USER.limits) {
         if (exhausted) {
           el.style.color = 'var(--accent-gold)';
@@ -1582,16 +1441,11 @@
           el.textContent = "You've used most of today's practice allowance.";
         }
       }
-
       document.querySelectorAll('.ac-start-cta').forEach(btn => {
         if (exhausted) {
-          btn.disabled = true;
-          btn.style.opacity = '0.5';
-          btn.style.cursor = 'not-allowed';
+          btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed';
         } else {
-          btn.disabled = false;
-          btn.style.opacity = '';
-          btn.style.cursor = '';
+          btn.disabled = false; btn.style.opacity = ''; btn.style.cursor = '';
         }
       });
     }
@@ -1622,7 +1476,7 @@
     }
 
     function renderProgressView() {
-      const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
+      const allReps = [...TODAY.reps, ...state.activityTrials];
       const latest = allReps.length ? allReps[allReps.length - 1] : null;
       const m = latest && latest.full ? normalizeAnalysis(latest.full) : null;
 
@@ -1643,7 +1497,6 @@
         (m && m.gapGotLost) || 'Your credibility and authority in the first 10 seconds',
         (m && m.gapUnspoken) || 'The link between your intent and how it lands'
       ];
-
       const listenerQuestion = (m && m.listenerQuestion) || null;
       const opportunity          = (m && m.oneThingToChange)     || null;
       const recommendedStructure = (m && m.recommendedStructure) || null;
@@ -1687,19 +1540,16 @@
             <div class="ya-box-label">What Got Lost</div>
             <ul class="ya-list">${gotLost.map(g => `<li>${escapeHtml(g)}</li>`).join('')}</ul>
           </div>
-
           <div class="ya-box">
             <div class="ya-box-label">What The Listener May Hear</div>
             <div style="font-size:14px;line-height:1.6;color:var(--text-main);font-style:italic;padding:12px 14px;background:rgba(0,0,0,0.25);border-left:3px solid var(--accent-cyan);border-radius:8px;">
               ${listenerHtml}
             </div>
           </div>
-
           <div class="ya-box">
             <div class="ya-box-label">What You Said</div>
             <div class="ya-transcript">${(m && m.transcript) ? escapeHtml(m.transcript) : '<span class="ya-transcript-empty">Complete a rep to see your transcript here.</span>'}</div>
           </div>
-
           <div class="ya-box">
             <div class="ya-box-label">Your Reframe</div>
             ${execHtml}
@@ -1711,7 +1561,6 @@
             <div class="ya-box-label">Your Opportunity</div>
             ${opportunityHtml}
           </div>
-
           <div class="ya-box">
             <div class="ya-box-label">Why This Matters</div>
             ${whyHtml}
@@ -1719,8 +1568,11 @@
         </div>
 
         <div class="ya-footer">
-          <button class="ya-btn" onclick="switchView('today')">
-            <i data-lucide="mic"></i> Try Again in Today
+          <button class="ya-btn secondary" onclick="tryAgainSameQuestion()">
+            <i data-lucide="refresh-cw"></i> Try Again
+          </button>
+          <button class="ya-btn" onclick="nextQuestionFromToday()">
+            <i data-lucide="arrow-right"></i> Next Question
           </button>
         </div>
       `;
@@ -1896,7 +1748,6 @@
         oneThingToChange: c.one_thing_to_change ?? null,
         executiveVersion: r.executive_version ?? null,
         transcript: data.transcribed_text ?? '',
-
         listenerQuestion:     d.listener_question    ?? null,
         recommendedStructure: c.recommended_structure ?? null,
         whyThisMatters:       d.why_this_matters     ?? null,
@@ -2014,37 +1865,47 @@
           if (list.length) { SCENARIOS_CACHE = list; return list; }
         }
       } catch (e) { console.warn('fetchScenariosFromBackend failed:', e); }
-      SCENARIOS_CACHE = FALLBACK_SCENARIOS;
+      SCENARIOS_CACHE = [];
       return SCENARIOS_CACHE;
     }
 
-    // NEW: group scenarios by question_type
-    function groupScenariosByType(scenarios) {
-      const groups = {};
-      for (const s of scenarios) {
-        const type = (s.question_type || 'activity').toLowerCase();
-        if (!groups[type]) groups[type] = [];
-        groups[type].push(s);
-      }
-      return groups;
-    }
-
-    // NEW: render scenarios grouped by type
+    // NEW: keep one scenario per type. Change question swaps within the type.
     async function renderScenariosGrid() {
       const grid = document.getElementById('scenariosGrid');
       if (!grid) return;
       grid.innerHTML = `<div style="font-size:12px;color:var(--text-muted);padding:20px;">Loading scenarios…</div>`;
       const list = await fetchScenariosFromBackend();
-      const groups = groupScenariosByType(list);
 
-      // Render in defined order, then any leftovers
+      // Take the first scenario we see per type
+      const byType = {};
+      for (const s of list) {
+        const t = (s.question_type || 'activity').toLowerCase();
+        if (!byType[t]) byType[t] = s;
+      }
+      // Ensure some canonical types always have a card (even if backend had none)
+      const canonical = ['behavioral','situational','coaching','functional'];
+      for (const t of canonical) {
+        if (!byType[t]) {
+          byType[t] = {
+            id: `placeholder-${t}`,
+            sprint: 'Practice',
+            title: SCENARIO_TYPE_META[t]?.label || 'Practice',
+            desc: 'Tap Change question to load a live prompt for this type.',
+            meta: '1 scenario',
+            activity: SCENARIO_TYPE_META[t]?.label || 'Practice',
+            dynamic: true,
+            question_type: t,
+          };
+        }
+      }
+
       const orderedKeys = [
-        ...SCENARIO_GROUP_ORDER.filter(k => groups[k]),
-        ...Object.keys(groups).filter(k => !SCENARIO_GROUP_ORDER.includes(k)),
+        ...SCENARIO_GROUP_ORDER.filter(k => byType[k]),
+        ...Object.keys(byType).filter(k => !SCENARIO_GROUP_ORDER.includes(k)),
       ];
 
       grid.innerHTML = orderedKeys.map(type => {
-        const items = groups[type];
+        const s = byType[type];
         const meta = SCENARIO_TYPE_META[type] || SCENARIO_TYPE_META['activity'];
         return `
           <div class="scenario-group">
@@ -2052,34 +1913,31 @@
               <i data-lucide="${meta.icon}" class="sg-icon"></i>
               <span class="sg-title">${escapeHtml(meta.label)}</span>
               <span class="sg-sub">${escapeHtml(meta.hint)}</span>
-              <span class="sg-count">${items.length}</span>
+              <span class="sg-count">1</span>
             </div>
             <div class="scenario-group-grid">
-              ${items.map(s => `
-                <div class="activity-card"
-                     data-activity="${escapeHtml(s.activity || s.title || 'Scenario')}"
-                     data-type="voice"
-                     data-card-key="scenario-${escapeHtml(s.id)}"
-                     data-scenario-id="${escapeHtml(s.id)}"
-                     data-question-type="${escapeHtml(s.question_type || type)}"
-                     data-dynamic="${s.dynamic ? 'true' : 'false'}">
-                  <div>
-                    <div class="activity-card-tag">${escapeHtml(s.sprint || 'Practice')}</div>
-                    <div class="activity-card-title">${escapeHtml(s.title || 'Scenario')}</div>
-                    <div class="activity-card-desc">${escapeHtml(s.desc || s.prompt || '')}</div>
-                    <div style="font-size:10px;font-weight:700;color:var(--accent-cyan);margin-top:6px;letter-spacing:0.04em;">${escapeHtml(s.meta || '')}</div>
-                    <div class="activity-card-prompt hidden"></div>
-                  </div>
-                  <div class="activity-card-actions">
-                    <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.activity-card'))">
-                      <i data-lucide="refresh-cw"></i> Change question
-                    </button>
-                  </div>
-                  <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
-                    <i data-lucide="play"></i> Start Now
+              <div class="activity-card"
+                   data-activity="${escapeHtml(s.activity || s.title || 'Scenario')}"
+                   data-type="voice"
+                   data-card-key="scenario-${escapeHtml(type)}"
+                   data-scenario-id="${escapeHtml(s.id)}"
+                   data-question-type="${escapeHtml(type)}"
+                   data-dynamic="${s.dynamic ? 'true' : 'false'}">
+                <div>
+                  <div class="activity-card-tag">${escapeHtml(s.sprint || 'Practice')}</div>
+                  <div class="activity-card-title">${escapeHtml(s.title || meta.label)}</div>
+                  <div class="activity-card-desc">${escapeHtml(s.desc || s.prompt || meta.hint)}</div>
+                  <div class="activity-card-prompt hidden"></div>
+                </div>
+                <div class="activity-card-actions">
+                  <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.activity-card'))">
+                    <i data-lucide="refresh-cw"></i> Change question
                   </button>
                 </div>
-              `).join('')}
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
+                  <i data-lucide="play"></i> Start Now
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -2090,10 +1948,7 @@
     async function changeActivityQuestion(card) {
       if (!card) return;
       const key = card.dataset.cardKey;
-      if (!key) {
-        alert('This card cannot change questions.');
-        return;
-      }
+      if (!key) { alert('This card cannot change questions.'); return; }
       const btn = card.querySelector('.activity-card-actions .qc-action-btn') ||
                   card.querySelector('.qc-action-btn');
       const originalHtml = btn ? btn.innerHTML : '';
@@ -2126,9 +1981,7 @@
         const q = data.question;
 
         ACTIVITY_OVERRIDES[key] = {
-          text: q.text,
-          focus: q.focus,
-          bankId: q.id,
+          text: q.text, focus: q.focus, bankId: q.id,
           questionType: q.question_type || qType || 'activity',
           timeBudget: q.target_seconds || (timeBudget ? Number(timeBudget) : null),
           difficulty: q.difficulty,
@@ -2139,17 +1992,6 @@
           promptEl.innerHTML = `<span class="qc-custom-badge" style="margin-left:0;margin-right:6px;">Changed</span>"${escapeHtml(q.text)}"`;
           promptEl.classList.remove('hidden');
         }
-
-        if (q.target_seconds) {
-          let budgetEl = card.querySelector('.activity-card-budget');
-          if (!budgetEl) {
-            budgetEl = document.createElement('div');
-            budgetEl.className = 'activity-card-budget';
-            const anchor = card.querySelector('.activity-card-desc');
-            if (anchor) anchor.insertAdjacentElement('afterend', budgetEl);
-          }
-          budgetEl.textContent = `⏱ ${q.target_seconds}s budget`;
-        }
       } catch (err) {
         alert(`Couldn't fetch a new question: ${err.message}`);
       } finally {
@@ -2157,65 +1999,124 @@
       }
     }
 
-    async function changeQuestion(which) {
-      const cardId = which === 'q1' ? 'questionCard1' : 'questionCard2';
-      const btn = document.querySelector(`#${cardId} .qc-action-btn`);
-      const current = state.questions[which];
-      const excludeId = current && current.id ? current.id : null;
+    // Change the active Today question (single)
+    async function changeTodayQuestion() {
+      const btn = document.querySelector('#todayCard .qc-action-btn');
       if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader"></i> Loading…'; renderIcons(); }
+      const excludeId = TODAY.question && TODAY.question.id ? TODAY.question.id : null;
+      const qtype = TODAY.question && TODAY.question.question_type ? TODAY.question.question_type : null;
       try {
         const params = new URLSearchParams();
         if (excludeId) params.set('exclude_id', excludeId);
-        if (current && current.question_type) params.set('question_type', current.question_type);
+        if (qtype) params.set('question_type', qtype);
         const res = await fetch(`${BACKEND_URL}/api/paid/questions/next?${params}`, { headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` } });
         if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.detail || err.error || `HTTP ${res.status}`); }
         const data = await res.json();
         const q = data.question;
-        state.questions[which] = {
+        TODAY.question = {
           id: q.id, text: q.text, focus: q.focus,
           target_seconds: q.target_seconds || 90,
           difficulty: q.difficulty,
-          question_type: q.question_type || current.question_type || 'behavioral',
+          question_type: q.question_type || qtype || 'behavioral',
           custom: false, source: 'changed',
         };
-        renderQuestionCards();
-        saveQuestionsCache();
+        TODAY.reps = [];  // New question → fresh rep slate
+        saveTodayQuestionCache();
+        renderTodayCard();
+        renderHowStrip();
         renderIcons();
       } catch (err) { alert(`Couldn't fetch a new question: ${err.message}`); }
       finally { if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="refresh-cw"></i> Change question'; renderIcons(); } }
     }
 
-    function customizeQuestion(which) {
-      CUSTOMIZE_TARGET = which;
-      const current = state.questions[which];
+    // After every rep: pull next question and return to Today
+    async function nextQuestionFromToday() {
+      const excludeId = TODAY.question && TODAY.question.id ? TODAY.question.id : null;
+      const qtype = TODAY.question && TODAY.question.question_type ? TODAY.question.question_type : null;
+
+      // Prefer next pool if available
+      if (TODAY.nextPool && TODAY.nextPool.length) {
+        TODAY.question = TODAY.nextPool.shift();
+        TODAY.reps = [];
+        saveTodayQuestionCache();
+        renderTodayCard();
+        renderHowStrip();
+        switchView('today');
+        return;
+      }
+
+      // Otherwise fetch a fresh one
+      try {
+        const params = new URLSearchParams();
+        if (excludeId) params.set('exclude_id', excludeId);
+        if (qtype) params.set('question_type', qtype);
+        const res = await fetch(`${BACKEND_URL}/api/paid/questions/next?${params}`, { headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` } });
+        if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.detail || err.error || `HTTP ${res.status}`); }
+        const data = await res.json();
+        const q = data.question;
+        TODAY.question = {
+          id: q.id, text: q.text, focus: q.focus,
+          target_seconds: q.target_seconds || 90,
+          difficulty: q.difficulty,
+          question_type: q.question_type || qtype || 'behavioral',
+          custom: false, source: 'changed',
+        };
+        TODAY.reps = [];
+        saveTodayQuestionCache();
+        renderTodayCard();
+        renderHowStrip();
+        switchView('today');
+        renderIcons();
+      } catch (err) { alert(`Couldn't fetch a new question: ${err.message}`); }
+    }
+
+    // "Try Again" = keep current question, start a new rep
+    function tryAgainSameQuestion() {
+      switchView('today');
+      renderTodayCard();
+      renderIcons();
+      // Auto-scroll to the CTA
+      setTimeout(() => {
+        const el = document.getElementById('tqStartBtn');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 60);
+    }
+
+    function customizeTodayQuestion() {
+      CUSTOMIZE_TARGET = 'today';
       const modal = document.getElementById('customizeModal');
       const input = document.getElementById('customizeInput');
       const count = document.getElementById('customizeCount');
-      input.value = (current && current.custom) ? current.text : '';
+      input.value = (TODAY.question && TODAY.question.custom) ? TODAY.question.text : '';
       count.textContent = String(input.value.length);
       input.oninput = () => { count.textContent = String(input.value.length); };
       modal.classList.add('is-visible');
       renderIcons();
       setTimeout(() => input.focus(), 100);
     }
+
     function closeCustomizeModal() {
       document.getElementById('customizeModal').classList.remove('is-visible');
       CUSTOMIZE_TARGET = null;
     }
+
     function saveCustomQuestion() {
       if (!CUSTOMIZE_TARGET) return;
       const input = document.getElementById('customizeInput');
       const text = input.value.trim();
       if (text.length < 5) { alert('Please enter a longer question.'); return; }
-      state.questions[CUSTOMIZE_TARGET] = {
-        id: null, text: text, focus: 'Custom',
-        target_seconds: 90, difficulty: 'medium',
-        question_type: 'custom',
-        custom: true, source: 'custom',
-      };
+      if (CUSTOMIZE_TARGET === 'today') {
+        TODAY.question = {
+          id: null, text: text, focus: 'Custom',
+          target_seconds: 90, difficulty: 'medium',
+          question_type: 'custom', custom: true, source: 'custom',
+        };
+        TODAY.reps = [];
+        saveTodayQuestionCache();
+        renderTodayCard();
+        renderHowStrip();
+      }
       closeCustomizeModal();
-      renderQuestionCards();
-      saveQuestionsCache();
       renderIcons();
     }
 
@@ -2242,12 +2143,7 @@
     function obGoToStep(step) {
       ['obSceneWelcome','obSceneRole','obSceneCustomRole','obSceneCelebrate']
         .forEach(id => document.getElementById(id).classList.add('hidden'));
-      const map = {
-        welcome: 'obSceneWelcome',
-        role: 'obSceneRole',
-        custom: 'obSceneCustomRole',
-        celebrate: 'obSceneCelebrate',
-      };
+      const map = { welcome:'obSceneWelcome', role:'obSceneRole', custom:'obSceneCustomRole', celebrate:'obSceneCelebrate' };
       const el = document.getElementById(map[step]);
       if (el) el.classList.remove('hidden');
       renderIcons();
@@ -2265,23 +2161,16 @@
       btn.classList.add('selected');
       OB.role = btn.dataset.value;
       const family = familyForRole(OB.role);
-
       obGoToStep('celebrate');
       obLaunchConfetti();
-
       try {
         const res = await fetch(`${BACKEND_URL}/api/paid/profile`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${SESSION_TOKEN}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            role: OB.role,
-            role_family: family,
-          })
+          body: JSON.stringify({ role: OB.role, role_family: family })
         });
         if (res.ok) {
-          USER.role = OB.role;
-          USER.role_family = family;
-          USER.profile_completed = true;
+          USER.role = OB.role; USER.role_family = family; USER.profile_completed = true;
           SCENARIOS_CACHE = null;
         } else {
           const err = await res.json().catch(() => ({}));
@@ -2299,51 +2188,23 @@
     async function obSubmitCustomRole() {
       const input = document.getElementById('obCustomRoleInput');
       const typed = (input?.value || '').trim();
-
-      if (typed.length < 2) {
-        alert('Please type the role you are preparing for.');
-        return;
-      }
-      if (typed.length > 60) {
-        alert('Please keep it under 60 characters.');
-        return;
-      }
-
+      if (typed.length < 2) { alert('Please type the role you are preparing for.'); return; }
+      if (typed.length > 60) { alert('Please keep it under 60 characters.'); return; }
       const btns = document.querySelectorAll('#obSceneCustomRole .ob-btn');
       const btn = btns[0];
       const originalHtml = btn ? btn.innerHTML : '';
       if (btn) { btn.disabled = true; btn.innerHTML = 'Saving…'; }
-
       try {
         const res = await fetch(`${BACKEND_URL}/api/paid/profile`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${SESSION_TOKEN}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            role: 'other',
-            role_custom: typed,
-            role_family: null,
-          }),
+          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: 'other', role_custom: typed, role_family: null }),
         });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.detail || 'Could not save your request');
-        }
-
-        USER.role = 'other';
-        USER.role_custom = typed;
-        USER.role_family = null;
-        USER.profile_completed = true;
-        SCENARIOS_CACHE = null;
-
+        if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.detail || 'Could not save your request'); }
+        USER.role = 'other'; USER.role_custom = typed; USER.role_family = null;
+        USER.profile_completed = true; SCENARIOS_CACHE = null;
         const sub = document.getElementById('obCongratsSub');
-        if (sub) {
-          sub.textContent = `We’re customizing your practice for ${typed} right now. You’ll get an email as soon as it’s ready — usually within 24 hours. Until then, practice with our general questions.`;
-        }
-
+        if (sub) sub.textContent = `We're customizing your practice for ${typed} right now. You'll get an email as soon as it's ready — usually within 24 hours. Until then, practice with our general questions.`;
         obGoToStep('celebrate');
         obLaunchConfetti();
       } catch (e) {
@@ -2375,13 +2236,9 @@
     function obFinish() {
       document.getElementById('onboardingModal').classList.remove('is-visible');
       document.getElementById('confettiLayer').innerHTML = '';
-      state.questions.q1 = null;
-      state.questions.q2 = null;
-      CACHED_BANK = {};
-      try { const key = `unspoken_questions_${USER.email}_${new Date().toISOString().slice(0, 10)}`; localStorage.removeItem(key); } catch (e) {}
-      loadQuestionsForToday().then(() => {
-        renderQuestionCards();
-        renderCustomRoleBanner();
+      loadTodayQuestion().then(() => {
+        renderTodayCard();
+        renderHowStrip();
         renderIcons();
       });
     }
@@ -2412,17 +2269,14 @@
       if (activeRecording.timerInterval) { clearInterval(activeRecording.timerInterval); activeRecording.timerInterval = null; }
 
       let qText;
-      if (promptText === 'q1' || promptText === 'q2') {
-        activeRecording.target = promptText;
-        const q = state.questions[promptText];
+      if (promptText === 'today') {
+        activeRecording.target = 'today';
+        const q = TODAY.question;
         qText = q ? q.text : '';
         activeRecording.questionSource = q ? (q.source || 'bank') : 'bank';
         activeRecording.bankQuestionId = (q && q.source === 'bank') ? q.id : null;
-        activeRecording.questionType = (q && q.question_type)
-          || (promptText === 'q1' ? 'self-intro' : 'behavioral');
-        if (q && q.target_seconds) {
-          activeRecording.perRepCap = Number(q.target_seconds) || VOICE_MAX_SECONDS;
-        }
+        activeRecording.questionType = (q && q.question_type) || 'self-intro';
+        if (q && q.target_seconds) activeRecording.perRepCap = Number(q.target_seconds) || VOICE_MAX_SECONDS;
       } else if (opts.source === 'activity') {
         activeRecording.target = 'activity';
         qText = promptText;
@@ -2458,7 +2312,7 @@
               <span id="recTimer" style="font-size:15px;font-weight:700;min-width:50px;">0:00</span>
               <span id="recStatus" style="font-size:12px;color:var(--text-muted);flex:1;">Ready to record</span>
             </div>
-            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:10px;">Voice capped at ${activeRecording.perRepCap}s (total ≤ ${Math.round(TOTAL_MAX_SECONDS/60)} min)</div>
+            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:10px;">Voice capped at ${activeRecording.perRepCap}s</div>
             <button id="recVoiceSubmit" onclick="submitRepToBackend()" style="display:none;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;align-items:center;justify-content:center;gap:8px;">Submit My Response <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
           </div>
           <div id="recTextPane" style="display:none;">
@@ -2490,11 +2344,8 @@
       if (modal) modal.remove();
       if (activeRecording.mediaRecorder && activeRecording.mediaRecorder.state !== 'inactive') { try { activeRecording.mediaRecorder.stop(); } catch (e) {} }
       if (activeRecording.timerInterval) clearInterval(activeRecording.timerInterval);
-      activeRecording.isRecording = false;
-      activeRecording.seconds = 0;
-      activeRecording.timerInterval = null;
-      activeRecording.rawBlob = null;
-      activeRecording.rawText = null;
+      activeRecording.isRecording = false; activeRecording.seconds = 0;
+      activeRecording.timerInterval = null; activeRecording.rawBlob = null; activeRecording.rawText = null;
     }
     function setRecMode(mode) {
       activeRecording.mode = mode;
@@ -2608,11 +2459,9 @@
       if (voiceBtn) { voiceBtn.disabled = true; voiceBtn.textContent = 'Analyzing…'; }
       if (textBtn) { textBtn.disabled = true; textBtn.textContent = 'Analyzing…'; }
       try {
-        const isQ1 = which === 'q1';
-        const isQ2 = which === 'q2';
-        const slot = isQ1 ? 'q1' : isQ2 ? 'q2' : '';
-        const qtype = activeRecording.questionType
-          || (isQ1 ? 'self-intro' : isQ2 ? 'behavioral' : 'custom');
+        const isToday = which === 'today';
+        const slot = isToday ? 'today' : '';
+        const qtype = activeRecording.questionType || (isToday ? 'behavioral' : 'custom');
         const promptText = stripQuotes(repMeta.question || '');
         const formData = new FormData();
         if (repMeta.mode === 'voice' && repMeta.rawBlob) formData.append('audio', repMeta.rawBlob, 'recording.webm');
@@ -2641,7 +2490,7 @@
         const rawAnalysis = await analyzeRes.json();
         const metrics = normalizeAnalysis(rawAnalysis);
         const newRep = {
-          number: (which === 'q1' ? state.q1Trials.length : which === 'q2' ? state.q2Trials.length : state.activityTrials.length) + 1,
+          number: (which === 'today' ? TODAY.reps.length : state.activityTrials.length) + 1,
           fillerDiscipline: metrics.fillerDiscipline,
           pointFirst: metrics.pointFirst,
           concreteness: metrics.concreteness,
@@ -2652,12 +2501,11 @@
           timestamp: new Date().toISOString(),
           full: rawAnalysis
         };
-        if (which === 'q1') state.q1Trials.push(newRep);
-        else if (which === 'q2') state.q2Trials.push(newRep);
+        if (which === 'today') TODAY.reps.push(newRep);
         else state.activityTrials.push(newRep);
-        updateQuestionCard('q1');
-        updateQuestionCard('q2');
+        renderTodayCard();
         renderTodayProgress();
+        renderHowStrip();
         renderProgressView();
         await loadUserStats();
         await loadDailyLimits();
@@ -2665,11 +2513,9 @@
         renderBadges();
         renderTodayCap();
         renderActivitiesCap();
-        renderFlowGuide();
         closeRecorderModal();
-        const isTodayRep = (which === 'q1' || which === 'q2');
-        if (isTodayRep) { switchView('dash'); }
-        else { setTimeout(() => { alert(`✅ ${repMeta.activityTitle || 'Rep'} saved!`); }, 200); }
+        // Route to Pattern after every rep so the user sees the result
+        switchView('dash');
       } catch (err) {
         console.error('❌ Submit failed:', err);
         alert(`Something went wrong: ${err.message}`);
@@ -2678,12 +2524,12 @@
       }
     }
 
-    function startRep(which) {
+    function startTodayRep() {
       if (USER.limits?.exhausted) {
         alert("You've reached today's practice limit under our fair-use policy. Come back tomorrow.");
         return;
       }
-      openRecorderModal(which);
+      openRecorderModal('today');
     }
 
     async function startActivityFromCard(card) {
@@ -2727,7 +2573,7 @@
     }
     async function pickPromptForActivity(activity) {
       const sprint = USER.track_id || 'interview';
-      const questions = CACHED_BANK[`${sprint}-${USER.currentDay}`] || FALLBACK_QUESTIONS;
+      const questions = CACHED_BANK[`${sprint}-${USER.current_day}`] || FALLBACK_QUESTIONS;
       const randomActivities = ['Blind Rep', 'Daily Challenge', 'Interview Simulator'];
       if (randomActivities.includes(activity)) {
         const q = questions[Math.floor(Math.random() * questions.length)];
@@ -2751,7 +2597,7 @@
           }
         }
       } catch (e) { console.warn('Dynamic scenario fetch failed:', e); }
-      const fallbackKey = `${sprint}-${USER.currentDay}`;
+      const fallbackKey = `${sprint}-${USER.current_day}`;
       const questions = CACHED_BANK[fallbackKey] || FALLBACK_QUESTIONS;
       const q = questions[Math.floor(Math.random() * questions.length)];
       return q ? q.text : 'Tell me about yourself.';
@@ -2825,8 +2671,9 @@
     function signOut() {
       localStorage.removeItem('unspoken_paid_session');
       try {
-        const key = `unspoken_questions_${USER.email}_${new Date().toISOString().slice(0, 10)}`;
-        localStorage.removeItem(key);
+        const sprint = USER?.track_id || 'interview';
+        const day = USER?.current_day || 1;
+        localStorage.removeItem(`${sprint}-${day}-today`);
       } catch (e) {}
       window.location.href = window.location.pathname;
     }
@@ -2842,7 +2689,7 @@
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
-    console.log('🚀 Product page loaded — sidebar grouped, zero-state copy, terminology unified, scenario grouping, flow guide.');
+    console.log('🚀 Product page loaded — single-question Today, how-strip, one-per-type Scenario Library.');
   </script>
 </body>
 </html>
