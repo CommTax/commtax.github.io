@@ -72,6 +72,10 @@
     .app-layout { display: flex; flex: 1; overflow: hidden; position: relative; min-height: 0; }
     .sidebar { width: 320px; background-color: var(--panel-bg); border-right: 1px solid var(--border-color); padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; z-index: 20; transition: transform 0.3s ease; flex-shrink: 0; }
     .nav-group { display: flex; flex-direction: column; gap: 4px; }
+    /* NEW: grouped sidebar */
+    .nav-section { display: flex; flex-direction: column; gap: 2px; }
+    .nav-section-label { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); padding: 8px 12px 4px; opacity: 0.7; }
+    .nav-section + .nav-section { margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.06); }
     .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
     .nav-item:hover { background-color: var(--card-bg); color: #FFF; }
     .nav-item.active { background-color: var(--primary); color: #FFF; border-color: var(--accent-cyan); }
@@ -102,6 +106,35 @@
     .main-content { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
     .view-panel { display: none; flex-direction: column; gap: 20px; }
     .view-panel.active-view { display: flex; }
+
+    /* NEW: First-time flow guide */
+    .flow-guide {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(139, 92, 246, 0.06));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 14px;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      position: relative;
+    }
+    .flow-guide .fg-left { flex: 1; min-width: 0; }
+    .flow-guide .fg-title { font-size: 14px; font-weight: 800; color: var(--accent-cyan); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; letter-spacing: 0.02em; }
+    .flow-guide .fg-steps { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .flow-guide .fg-step { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; color: var(--text-main); }
+    .flow-guide .fg-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(56, 189, 248, 0.18); color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+    .flow-guide .fg-step strong { color: var(--accent-cyan); }
+    .flow-guide .fg-close { background: none; border: 1px solid var(--border-color); color: var(--text-muted); cursor: pointer; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .flow-guide .fg-close:hover { border-color: var(--accent-cyan); color: var(--text-main); }
+
+    /* NEW: Today step indicator */
+    .today-steps { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+    .today-step { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--text-muted); padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); }
+    .today-step.active { color: #FFF; background: var(--primary); border-color: var(--accent-cyan); }
+    .today-step.done { color: var(--success); border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.08); }
+    .today-step .ts-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.8; }
+    .today-step-arrow { color: var(--text-muted); font-size: 11px; opacity: 0.5; }
 
     .today-header-bar { background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(139, 92, 246, 0.10)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
     .today-header-bar .th-left h2 { font-size: 20px; margin-bottom: 4px; }
@@ -137,9 +170,20 @@
     .rep-tracker .rt-cap { font-size: 13px; color: var(--text-muted); font-weight: 600; }
     .rep-tracker .rt-best { font-size: 11px; color: var(--success); margin-top: 2px; font-weight: 600; }
 
+    /* NEW: zero state */
+    .rep-zero-state { display: flex; flex-direction: column; gap: 4px; }
+    .rep-zero-state .rz-title { font-size: 15px; font-weight: 700; color: var(--text-main); line-height: 1.35; }
+    .rep-zero-state .rz-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .rep-zero-state .rz-sub strong { color: var(--accent-cyan); font-weight: 700; }
+
     .rep-btn { padding: 12px 22px; border-radius: 10px; font-size: 13px; font-weight: 700; background: var(--primary); color: #FFF; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
     .rep-btn:hover:not(:disabled) { background: var(--primary-hover); }
     .rep-btn:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; }
+    .rep-btn.pulse { animation: repPulse 2.2s ease-in-out infinite; }
+    @keyframes repPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
+      50% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+    }
 
     .reps-log { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
     .rep-log-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 10px; background: var(--bg-dark); border-radius: 6px; color: var(--text-muted); }
@@ -212,12 +256,20 @@
     .activity-card-tag { font-size: 10px; font-weight: 700; color: var(--accent-purple); text-transform: uppercase; }
     .ac-start-cta { margin-top: 6px; padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--success), #059669); color: #FFF; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; font-family: inherit; }
 
-    /* NEW: activity card change-question button + prompt preview */
     .activity-card-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
     .activity-card-actions .qc-action-btn { padding: 6px 10px; font-size: 11px; }
     .activity-card-prompt { font-size: 12px; line-height: 1.55; color: var(--text-main); padding: 10px 12px; background: rgba(0,0,0,0.25); border-left: 3px solid var(--accent-cyan); border-radius: 8px; margin-top: 8px; white-space: pre-wrap; word-break: break-word; font-style: italic; }
     .activity-card-prompt.hidden { display: none; }
     .activity-card-budget { font-size: 10px; font-weight: 700; color: var(--accent-gold); letter-spacing: 0.04em; margin-top: 4px; display: inline-block; }
+
+    /* NEW: Scenario type grouping */
+    .scenario-group { display: flex; flex-direction: column; gap: 14px; margin-bottom: 26px; }
+    .scenario-group-header { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+    .scenario-group-header .sg-icon { width: 18px; height: 18px; color: var(--accent-cyan); flex-shrink: 0; }
+    .scenario-group-header .sg-title { font-size: 13px; font-weight: 800; letter-spacing: 0.06em; color: var(--text-main); text-transform: uppercase; }
+    .scenario-group-header .sg-sub { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: none; letter-spacing: 0; margin-left: 4px; }
+    .scenario-group-header .sg-count { font-size: 10px; font-weight: 700; color: var(--text-muted); background: var(--bg-dark); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 20px; margin-left: auto; }
+    .scenario-group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 
     .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
     .badge-item { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -349,26 +401,29 @@
 
     <div class="app-layout">
       <aside class="sidebar" id="appSidebar">
-        <div class="nav-group">
+        <!-- NEW: grouped navigation -->
+        <div class="nav-section">
+          <div class="nav-section-label">Practice</div>
           <div class="nav-item active" id="navToday" onclick="switchView('today')"><i data-lucide="house" class="nav-icon"></i> Today</div>
           <div class="nav-item" id="navActivities" onclick="switchView('activities')"><i data-lucide="target" class="nav-icon"></i> Activities</div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-label">Progress</div>
           <div class="nav-item" id="navDash" onclick="switchView('dash')"><i data-lucide="bar-chart-3" class="nav-icon"></i> Pattern &amp; Progress</div>
           <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><i data-lucide="mic" class="nav-icon"></i> My Reps</div>
           <div class="nav-item" id="navBadges" onclick="switchView('badges')"><i data-lucide="trophy" class="nav-icon"></i> Achievements</div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-label">Learn</div>
           <div class="nav-item" id="navPillars" onclick="switchView('pillars')"><i data-lucide="landmark" class="nav-icon"></i> Pillars</div>
           <div class="nav-item" id="navLearning" onclick="switchView('learning')"><i data-lucide="book-open" class="nav-icon"></i> My Learning</div>
         </div>
-        <hr style="border-color: var(--border-color);" />
 
-        <div class="sidebar-section">
-          <div class="sidebar-title" style="display:flex;justify-content:space-between;align-items:center;">
-            Your Profile
-            <span id="profileLockBadge" class="hidden" title="Your role is locked because you're on Sprint Pass. Upgrade to Practice Pass to switch roles." style="font-size:9px;color:var(--text-muted);font-weight:800;letter-spacing:0.08em;cursor:help;">🔒 LOCKED</span>
-          </div>
-          <div class="profile-row"><span class="profile-label">Name</span><span class="profile-value" id="profileNameText">—</span></div>
-          <div class="profile-row"><span class="profile-label">Plan</span><span class="profile-value" id="profilePlanText">—</span></div>
-          <div class="profile-row"><span class="profile-label">Role</span><span class="profile-value" id="profileRoleText">—</span></div>
-          <div class="profile-row"><span class="profile-label">Enrolled</span><span class="profile-value" id="profileEnrolledText">—</span></div>
+        <div class="nav-section">
+          <div class="nav-section-label">Account</div>
+          <div class="nav-item" id="navProfile" onclick="switchView('profile')"><i data-lucide="user" class="nav-icon"></i> Your Profile</div>
         </div>
 
         <div class="user-profile-card">
@@ -385,9 +440,24 @@
       </aside>
 
       <main class="main-content">
+        <!-- NEW: first-time flow guide (dismissible) -->
+        <div class="flow-guide hidden" id="flowGuide">
+          <div class="fg-left">
+            <div class="fg-title"><i data-lucide="compass" style="width:14px;height:14px;"></i> How this works — your 3-step daily loop</div>
+            <div class="fg-steps">
+              <div class="fg-step"><span class="fg-num">1</span><div><strong>Speak two answers.</strong> Today gives you two questions drawn for your role and day. Record each one for 45–90 seconds.</div></div>
+              <div class="fg-step"><span class="fg-num">2</span><div><strong>Read your pattern.</strong> Each rep returns a diagnosis: what got lost, what the listener heard, and a reframe you could actually say.</div></div>
+              <div class="fg-step"><span class="fg-num">3</span><div><strong>Rep it again.</strong> Come back tomorrow — your streak, your pattern, and your progress all compound.</div></div>
+            </div>
+          </div>
+          <button class="fg-close" onclick="dismissFlowGuide()" aria-label="Dismiss"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
+        </div>
+
         <section class="view-panel active-view" id="todayView">
           <div class="today-header-bar">
             <div class="th-left">
+              <!-- NEW: today step indicator -->
+              <div class="today-steps" id="todaySteps"></div>
               <h2 id="todayTrackTitle">Your Sprint</h2>
               <div class="th-sub" id="todayFocus">Loading questions…</div>
               <div class="day-progress-bar"><div class="day-progress-fill" id="dayProgressFill" style="width: 0%;"></div></div>
@@ -414,12 +484,17 @@
             </div>
             <div class="rep-tracker">
               <div class="rt-left">
+                <!-- NEW: Reps label (was "Reps" already on Q1 — kept for consistency) -->
                 <div class="rt-label">Reps</div>
-               <div class="rt-count" id="q1RepCount">0 <span class="rt-cap">reps</span></div>
+                <div id="q1RepZeroState" class="rep-zero-state">
+                  <div class="rz-title" id="q1ZeroTitle">Your first rep is waiting.</div>
+                  <div class="rz-sub" id="q1ZeroSub">It takes <strong>45 seconds</strong>. Speak your answer out loud — the analysis will show you what landed.</div>
+                </div>
+                <div class="rt-count hidden" id="q1RepCount">0 <span class="rt-cap">reps</span></div>
                 <div class="rt-best" id="q1BestSnr">Best score: —</div>
               </div>
               <div class="rt-right">
-               <button class="rep-btn" id="q1RepBtn" onclick="startRep('q1')"><i data-lucide="mic"></i> Start Rep 1</button>
+                <button class="rep-btn pulse" id="q1RepBtn" onclick="startRep('q1')"><i data-lucide="mic"></i> Start Rep 1 →</button>
               </div>
             </div>
             <div class="reps-log" id="q1RepsLog"></div>
@@ -440,12 +515,17 @@
             </div>
             <div class="rep-tracker">
               <div class="rt-left">
-                <div class="rt-label">Trials</div>
-                <div class="rt-count" id="q2RepCount">0 <span class="rt-cap">reps</span></div>
+                <!-- FIX: "Trials" → "Reps" -->
+                <div class="rt-label">Reps</div>
+                <div id="q2RepZeroState" class="rep-zero-state">
+                  <div class="rz-title" id="q2ZeroTitle">Your second rep is waiting.</div>
+                  <div class="rz-sub" id="q2ZeroSub">It takes <strong>90 seconds</strong>. Finish Q1 first, then come back to this one.</div>
+                </div>
+                <div class="rt-count hidden" id="q2RepCount">0 <span class="rt-cap">reps</span></div>
                 <div class="rt-best" id="q2BestSnr">Best score: —</div>
               </div>
               <div class="rt-right">
-                <button class="rep-btn" id="q2RepBtn" onclick="startRep('q2')"><i data-lucide="mic"></i> Start Rep 1</button>
+                <button class="rep-btn pulse" id="q2RepBtn" onclick="startRep('q2')"><i data-lucide="mic"></i> Start Rep 1 →</button>
               </div>
             </div>
             <div class="reps-log" id="q2RepsLog"></div>
@@ -509,7 +589,7 @@
                 <div>
                   <div class="activity-card-tag">Targeted Improvement</div>
                   <div class="activity-card-title">Repeat Rep</div>
-                  <div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div>
+                  <div class="activity-card-desc">Redo your lowest clarity rep to measure growth.</div>
                   <div class="activity-card-prompt hidden"></div>
                 </div>
                 <div class="activity-card-actions">
@@ -521,8 +601,8 @@
           </div>
 
           <div id="sub-scenarios" class="sub-activity-panel hidden">
-            <div id="scenariosGrid" class="sub-activity-card-grid">
-              <div style="font-size:12px;color:var(--text-muted);grid-column:1/-1;padding:20px;">Loading scenarios…</div>
+            <div id="scenariosGrid">
+              <div style="font-size:12px;color:var(--text-muted);padding:20px;">Loading scenarios…</div>
             </div>
           </div>
 
@@ -651,6 +731,44 @@
             <div class="activity-card" data-activity="The PSO Framework" data-type="content"><div><div class="activity-card-tag">3-Min Concept</div><div class="activity-card-title">The PSO Framework</div><div class="activity-card-desc">Problem → Solution → Outcome for updates and pitches.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="book-open"></i> Read</button></div>
           </div>
         </section>
+
+        <!-- NEW: Your Profile view -->
+        <section class="view-panel" id="profileView">
+          <div class="view-heading"><h2><i data-lucide="user"></i> Your Profile</h2><span class="vh-sub">Account details and plan</span></div>
+          <div class="question-card">
+            <div class="qc-label"><span>Profile</span></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:8px;">
+              <div class="ya-box">
+                <div class="ya-box-label">Name</div>
+                <div id="profileViewName" style="font-size:14px;font-weight:700;">—</div>
+              </div>
+              <div class="ya-box">
+                <div class="ya-box-label">Email</div>
+                <div id="profileViewEmail" style="font-size:13px;font-weight:600;word-break:break-all;">—</div>
+              </div>
+              <div class="ya-box">
+                <div class="ya-box-label">Plan</div>
+                <div id="profileViewPlan" style="font-size:14px;font-weight:700;">—</div>
+              </div>
+              <div class="ya-box">
+                <div class="ya-box-label">Role</div>
+                <div id="profileViewRole" style="font-size:14px;font-weight:700;">—</div>
+              </div>
+              <div class="ya-box">
+                <div class="ya-box-label">Enrolled</div>
+                <div id="profileViewEnrolled" style="font-size:13px;font-weight:600;">—</div>
+              </div>
+              <div class="ya-box">
+                <div class="ya-box-label">Sprint Day</div>
+                <div id="profileViewDay" style="font-size:13px;font-weight:600;">—</div>
+              </div>
+            </div>
+            <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="qc-action-btn" onclick="signOut()"><i data-lucide="log-out"></i> Sign Out</button>
+              <a href="${PAYWALL_URL}" class="qc-action-btn" style="text-decoration:none;"><i data-lucide="external-link"></i> Manage Plan</a>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   </div>
@@ -750,7 +868,6 @@
     const TOTAL_MAX_SECONDS = 180;
     const TEXT_MAX_WORDS = 300;
 
-    // ─── SOURCE OF TRUTH FOR ROLES ───
     const OB_ROLES = [
       { value: 'Scrum Master',        label: 'Scrum Master',        family: 'technology' },
       { value: 'Project Manager',     label: 'Project Manager',     family: 'product_and_program' },
@@ -861,6 +978,24 @@
       { id: 'charisma-social', sprint: 'Charisma Sprint', title: 'Charisma & Social Presence', desc: 'Build rapport, make small talk land.', meta: '6 scenarios', activity: 'Charisma & Social Presence', question_type: 'situational' }
     ];
 
+    // NEW: Scenario group metadata
+    const SCENARIO_TYPE_META = {
+      'behavioral':   { label: 'Behavioural',  icon: 'message-circle', hint: 'Tell me about a time…' },
+      'situational':  { label: 'Situational',  icon: 'compass',        hint: 'What would you do if…' },
+      'functional':   { label: 'Functional',   icon: 'wrench',         hint: 'How would you handle…' },
+      'coaching':     { label: 'Coaching',     icon: 'users',          hint: 'How do you handle…' },
+      'leadership':   { label: 'Leadership',   icon: 'crown',          hint: 'How did you lead…' },
+      'self-intro':   { label: 'Self Intro',   icon: 'user',           hint: 'Tell me about yourself' },
+      'negotiation':  { label: 'Negotiation',  icon: 'handshake',      hint: 'What are your expectations…' },
+      'motivational': { label: 'Motivational', icon: 'sparkles',       hint: 'Why this role?' },
+      'self-awareness': { label: 'Self-Awareness', icon: 'eye',        hint: 'What is your weakness?' },
+      'technical':    { label: 'Technical',    icon: 'code',           hint: 'Walk me through how…' },
+      'strategic':    { label: 'Strategic',    icon: 'target',         hint: 'Where do you see…' },
+      'custom':       { label: 'Custom',       icon: 'pencil-line',    hint: 'Your own question' },
+      'activity':     { label: 'General',      icon: 'layers',         hint: 'Open practice' },
+    };
+    const SCENARIO_GROUP_ORDER = ['behavioral','situational','functional','coaching','leadership','self-intro','negotiation','motivational','self-awareness','technical','strategic','custom','activity'];
+
     let USER = null;
     let SESSION_TOKEN = null;
     let state = {
@@ -874,10 +1009,12 @@
     let activeBitesCategory = 'structure';
     let SCENARIOS_CACHE = null;
     let CUSTOMIZE_TARGET = null;
-    // NEW: overrides for activity cards (Change question feature)
     let ACTIVITY_OVERRIDES = {};
+    let FLOW_GUIDE_DISMISSED = false;
 
     document.addEventListener('DOMContentLoaded', () => {
+      // NEW: load flow-guide dismissal preference
+      try { FLOW_GUIDE_DISMISSED = localStorage.getItem('unspoken_flow_guide_dismissed') === '1'; } catch (e) {}
       renderIcons();
       wireGlobalListeners();
       bootstrap();
@@ -901,6 +1038,14 @@
         if (!sidebar || !sidebar.classList.contains('open') || toggle) return;
         if (!sidebar.contains(e.target)) sidebar.classList.remove('open');
       });
+    }
+
+    // NEW: dismiss handler for flow guide
+    function dismissFlowGuide() {
+      FLOW_GUIDE_DISMISSED = true;
+      try { localStorage.setItem('unspoken_flow_guide_dismissed', '1'); } catch (e) {}
+      const el = document.getElementById('flowGuide');
+      if (el) el.classList.add('hidden');
     }
 
     async function bootstrap() {
@@ -1173,9 +1318,44 @@
       renderBadges();
       renderTodayCap();
       renderActivitiesCap();
+      renderFlowGuide();
+      renderTodaySteps();
       switchView('today');
       maybeShowOnboarding();
       renderIcons();
+    }
+
+    // NEW: render the flow guide banner (only when not dismissed)
+    function renderFlowGuide() {
+      const el = document.getElementById('flowGuide');
+      if (!el) return;
+      if (FLOW_GUIDE_DISMISSED) { el.classList.add('hidden'); return; }
+      // Only show for users with fewer than 1 completed rep — once they've done a rep
+      // they've understood the flow. Hide again if dismissed.
+      const hasAnyRep = (USER.stats?.completed_tasks || 0) >= 1 ||
+                        state.q1Trials.length + state.q2Trials.length + state.activityTrials.length > 0;
+      if (hasAnyRep) { el.classList.add('hidden'); return; }
+      el.classList.remove('hidden');
+    }
+
+    // NEW: today step indicator (Speak → Read pattern → Come back)
+    function renderTodaySteps() {
+      const el = document.getElementById('todaySteps');
+      if (!el) return;
+      const q1Done = state.q1Trials.length > 0;
+      const q2Done = state.q2Trials.length > 0;
+      const speakDone = q1Done && q2Done;
+      const steps = [
+        { key: 'speak',   label: 'Speak both answers', done: speakDone, active: !speakDone },
+        { key: 'pattern', label: 'Read your pattern',  done: false,     active: speakDone },
+        { key: 'return',  label: 'Come back tomorrow', done: false,     active: false },
+      ];
+      el.innerHTML = steps.map((s, i) => {
+        const cls = s.done ? 'done' : (s.active ? 'active' : '');
+        const dot = `<span class="ts-dot"></span>`;
+        const arrow = i < steps.length - 1 ? `<span class="today-step-arrow">→</span>` : '';
+        return `<div class="today-step ${cls}">${dot}${escapeHtml(s.label)}</div>${arrow}`;
+      }).join('');
     }
 
     function renderCustomRoleBanner() {
@@ -1265,6 +1445,14 @@
         : formatRole(USER.role);
       setText('profileRoleText', roleDisplay);
       setText('profileEnrolledText', formatEnrolledDate(USER.enrolled_at));
+
+      // NEW: dedicated profile view fields
+      setText('profileViewName', USER.name);
+      setText('profileViewEmail', USER.email);
+      setText('profileViewPlan', PLAN_LABEL[USER.plan] || USER.plan || '—');
+      setText('profileViewRole', roleDisplay);
+      setText('profileViewEnrolled', formatEnrolledDate(USER.enrolled_at));
+      setText('profileViewDay', `Day ${USER.current_day} of ${USER.total_days}`);
     }
 
     function renderQuestionCards() {
@@ -1291,23 +1479,62 @@
       renderIcons();
     }
 
+    // NEW: dynamic zero-state copy + swapped labels
     function updateQuestionCard(which) {
       const trials = which === 'q1' ? state.q1Trials : state.q2Trials;
       const valid = trials.filter(x => x.fillerDiscipline != null);
       const best = valid.length ? Math.max(...valid.map(x => x.fillerDiscipline)) : null;
+      const q = state.questions[which];
+      const seconds = (q && q.target_seconds) ? q.target_seconds : (which === 'q1' ? 45 : 90);
 
-      document.getElementById(`${which}RepCount`).innerHTML =
-        `${trials.length} <span class="rt-cap">${trials.length === 1 ? 'rep' : 'reps'}</span>`;
+      // Zero-state copy
+      const zeroState = document.getElementById(`${which}RepZeroState`);
+      const repCountEl = document.getElementById(`${which}RepCount`);
+      const zeroTitle = document.getElementById(`${which}ZeroTitle`);
+      const zeroSub = document.getElementById(`${which}ZeroSub`);
+
+      if (trials.length === 0) {
+        if (zeroState) zeroState.style.display = 'flex';
+        if (repCountEl) repCountEl.classList.add('hidden');
+        if (zeroTitle && zeroSub) {
+          if (which === 'q1') {
+            zeroTitle.textContent = `Your Day ${USER.current_day} rep is waiting.`;
+            zeroSub.innerHTML = `It takes <strong>${seconds} seconds</strong>. Speak your answer out loud — the analysis will show you what landed.`;
+          } else {
+            if (state.q1Trials.length === 0) {
+              zeroTitle.textContent = `Your second rep is waiting.`;
+              zeroSub.innerHTML = `It takes <strong>${seconds} seconds</strong>. Finish Q1 first, then come back to this one.`;
+            } else {
+              zeroTitle.textContent = `Nice — Q1 is done. Here's Q2.`;
+              zeroSub.innerHTML = `It takes <strong>${seconds} seconds</strong>. Different question, same rep loop.`;
+            }
+          }
+        }
+      } else {
+        if (zeroState) zeroState.style.display = 'none';
+        if (repCountEl) {
+          repCountEl.classList.remove('hidden');
+          repCountEl.innerHTML = `${trials.length} <span class="rt-cap">${trials.length === 1 ? 'rep' : 'reps'}</span>`;
+        }
+      }
 
       document.getElementById(`${which}BestSnr`).textContent =
-        best != null ? `Best filler discipline: ${best}%` : 'Best score: —';
+        best != null ? `Best filler discipline: ${best}%` : (trials.length === 0 ? '' : 'Best score: —');
 
       const btn = document.getElementById(`${which}RepBtn`);
       const exhausted = USER.limits?.exhausted ?? false;
 
+      if (trials.length === 0 && !exhausted) {
+        btn.classList.add('pulse');
+      } else {
+        btn.classList.remove('pulse');
+      }
+
       btn.innerHTML = exhausted
         ? `<i data-lucide="lock"></i> Come back tomorrow`
-        : `<i data-lucide="mic"></i> Start Rep ${trials.length + 1}`;
+        : (trials.length === 0
+            ? `<i data-lucide="mic"></i> Start Rep 1 →`
+            : `<i data-lucide="mic"></i> Start Rep ${trials.length + 1}`);
       btn.disabled = exhausted;
       btn.onclick = () => { if (!exhausted) startRep(which); };
 
@@ -1320,6 +1547,7 @@
     function renderTodayProgress() {
       const drills = (state.q1Trials.length > 0 ? 1 : 0) + (state.q2Trials.length > 0 ? 1 : 0);
       document.getElementById('dayProgressFill').style.width = `${(drills / 2) * 100}%`;
+      renderTodaySteps();
     }
 
     function renderTodayCap() {
@@ -1393,8 +1621,6 @@
       renderIcons();
     }
 
-    // FIX 1 + FIX 2: pattern name has no "Your", description has "Your",
-    // what_got_lost and listener_question are distinct
     function renderProgressView() {
       const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
       const latest = allReps.length ? allReps[allReps.length - 1] : null;
@@ -1404,7 +1630,6 @@
         ? `Pattern & performance based on ${allReps.length} rep${allReps.length === 1 ? '' : 's'}`
         : 'Complete a rep to unlock your pattern analysis';
 
-      // FIX 1: strip any leading "Your " from name, ensure description starts with "Your "
       let patternName = (m && m.patternName) ? m.patternName : 'The Pattern';
       patternName = String(patternName).replace(/^(your|the)\s+/i, '').trim() || 'Pattern';
       patternName = patternName.charAt(0).toUpperCase() + patternName.slice(1);
@@ -1414,7 +1639,6 @@
         patternDesc = 'Your ' + (patternDesc.charAt(0).toLowerCase() + patternDesc.slice(1));
       }
 
-      // FIX 2: got lost and listener question are separate
       const gotLost = [
         (m && m.gapGotLost) || 'Your credibility and authority in the first 10 seconds',
         (m && m.gapUnspoken) || 'The link between your intent and how it lands'
@@ -1644,7 +1868,6 @@
       renderIcons();
     }
 
-    // FIX 2 on the frontend: listenerQuestion no longer falls back to gap.unspoken_gap
     function normalizeAnalysis(data) {
       if (!data) return null;
       const m = data.metrics || {};
@@ -1674,7 +1897,6 @@
         executiveVersion: r.executive_version ?? null,
         transcript: data.transcribed_text ?? '',
 
-        // FIX 2: no more `?? g.unspoken_gap` fallback
         listenerQuestion:     d.listener_question    ?? null,
         recommendedStructure: c.recommended_structure ?? null,
         whyThisMatters:       d.why_this_matters     ?? null,
@@ -1739,8 +1961,6 @@
       renderIcons();
     }
 
-    // FIX 4a: drills now carry data-card-key and data-time-budget,
-    // and each card has a Change question button + prompt preview slot
     function renderDrillsGrid() {
       const grid = document.getElementById('drillsGrid');
       if (!grid) return;
@@ -1798,43 +2018,75 @@
       return SCENARIOS_CACHE;
     }
 
-    // FIX 4b: scenarios now carry data-card-key and a Change question button
+    // NEW: group scenarios by question_type
+    function groupScenariosByType(scenarios) {
+      const groups = {};
+      for (const s of scenarios) {
+        const type = (s.question_type || 'activity').toLowerCase();
+        if (!groups[type]) groups[type] = [];
+        groups[type].push(s);
+      }
+      return groups;
+    }
+
+    // NEW: render scenarios grouped by type
     async function renderScenariosGrid() {
       const grid = document.getElementById('scenariosGrid');
       if (!grid) return;
-      grid.innerHTML = `<div style="font-size:12px;color:var(--text-muted);grid-column:1/-1;padding:20px;">Loading scenarios…</div>`;
+      grid.innerHTML = `<div style="font-size:12px;color:var(--text-muted);padding:20px;">Loading scenarios…</div>`;
       const list = await fetchScenariosFromBackend();
-      grid.innerHTML = list.map(s => `
-        <div class="activity-card"
-             data-activity="${escapeHtml(s.activity)}"
-             data-type="voice"
-             data-card-key="scenario-${escapeHtml(s.id)}"
-             data-scenario-id="${escapeHtml(s.id)}"
-             data-question-type="${escapeHtml(s.question_type || 'activity')}"
-             data-dynamic="${s.dynamic ? 'true' : 'false'}">
-          <div>
-            <div class="activity-card-tag">${escapeHtml(s.sprint)}</div>
-            <div class="activity-card-title">${escapeHtml(s.title)}</div>
-            <div class="activity-card-desc">${escapeHtml(s.desc)}</div>
-            <div style="font-size:10px;font-weight:700;color:var(--accent-cyan);margin-top:6px;letter-spacing:0.04em;">${escapeHtml(s.meta)}</div>
-            <div class="activity-card-prompt hidden"></div>
+      const groups = groupScenariosByType(list);
+
+      // Render in defined order, then any leftovers
+      const orderedKeys = [
+        ...SCENARIO_GROUP_ORDER.filter(k => groups[k]),
+        ...Object.keys(groups).filter(k => !SCENARIO_GROUP_ORDER.includes(k)),
+      ];
+
+      grid.innerHTML = orderedKeys.map(type => {
+        const items = groups[type];
+        const meta = SCENARIO_TYPE_META[type] || SCENARIO_TYPE_META['activity'];
+        return `
+          <div class="scenario-group">
+            <div class="scenario-group-header">
+              <i data-lucide="${meta.icon}" class="sg-icon"></i>
+              <span class="sg-title">${escapeHtml(meta.label)}</span>
+              <span class="sg-sub">${escapeHtml(meta.hint)}</span>
+              <span class="sg-count">${items.length}</span>
+            </div>
+            <div class="scenario-group-grid">
+              ${items.map(s => `
+                <div class="activity-card"
+                     data-activity="${escapeHtml(s.activity || s.title || 'Scenario')}"
+                     data-type="voice"
+                     data-card-key="scenario-${escapeHtml(s.id)}"
+                     data-scenario-id="${escapeHtml(s.id)}"
+                     data-question-type="${escapeHtml(s.question_type || type)}"
+                     data-dynamic="${s.dynamic ? 'true' : 'false'}">
+                  <div>
+                    <div class="activity-card-tag">${escapeHtml(s.sprint || 'Practice')}</div>
+                    <div class="activity-card-title">${escapeHtml(s.title || 'Scenario')}</div>
+                    <div class="activity-card-desc">${escapeHtml(s.desc || s.prompt || '')}</div>
+                    <div style="font-size:10px;font-weight:700;color:var(--accent-cyan);margin-top:6px;letter-spacing:0.04em;">${escapeHtml(s.meta || '')}</div>
+                    <div class="activity-card-prompt hidden"></div>
+                  </div>
+                  <div class="activity-card-actions">
+                    <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.activity-card'))">
+                      <i data-lucide="refresh-cw"></i> Change question
+                    </button>
+                  </div>
+                  <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
+                    <i data-lucide="play"></i> Start Now
+                  </button>
+                </div>
+              `).join('')}
+            </div>
           </div>
-          <div class="activity-card-actions">
-            <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.activity-card'))">
-              <i data-lucide="refresh-cw"></i> Change question
-            </button>
-          </div>
-          <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
-            <i data-lucide="play"></i> Start Now
-          </button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
       renderIcons();
     }
 
-    // FIX 4c: changeActivityQuestion — detects constraints from the card and
-    // calls /questions/next with the right filters. Preserves the current
-    // question's tag (scenarios) and time budget (drills).
     async function changeActivityQuestion(card) {
       if (!card) return;
       const key = card.dataset.cardKey;
@@ -1882,14 +2134,12 @@
           difficulty: q.difficulty,
         };
 
-        // Show the new prompt preview inside the card
         const promptEl = card.querySelector('.activity-card-prompt');
         if (promptEl) {
           promptEl.innerHTML = `<span class="qc-custom-badge" style="margin-left:0;margin-right:6px;">Changed</span>"${escapeHtml(q.text)}"`;
           promptEl.classList.remove('hidden');
         }
 
-        // Also embed the budget if the backend returned one
         if (q.target_seconds) {
           let budgetEl = card.querySelector('.activity-card-budget');
           if (!budgetEl) {
@@ -2148,7 +2398,6 @@
       return s.trim().replace(/^["“”']+|["“”']+$/g, '').trim();
     }
 
-    // FIX 4f: accept opts.timeBudget to cap each drill's recording window
     function openRecorderModal(promptText, opts = {}) {
       activeRecording.meta = opts || {};
       activeRecording.rawBlob = null;
@@ -2416,6 +2665,7 @@
         renderBadges();
         renderTodayCap();
         renderActivitiesCap();
+        renderFlowGuide();
         closeRecorderModal();
         const isTodayRep = (which === 'q1' || which === 'q2');
         if (isTodayRep) { switchView('dash'); }
@@ -2436,7 +2686,6 @@
       openRecorderModal(which);
     }
 
-    // FIX 4e: respects ACTIVITY_OVERRIDES so a changed question carries through
     async function startActivityFromCard(card) {
       if (!card) return;
       if (USER.limits?.exhausted) {
@@ -2537,13 +2786,14 @@
     function switchView(key) {
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-view'));
-      const navMap = { today:'navToday', activities:'navActivities', dash:'navDash', recordings:'navRecordings', badges:'navBadges', pillars:'navPillars', learning:'navLearning' };
-      const viewMap = { today:'todayView', activities:'activitiesView', dash:'dashView', recordings:'recordingsView', badges:'badgesView', pillars:'pillarsView', learning:'learningView' };
+      const navMap = { today:'navToday', activities:'navActivities', dash:'navDash', recordings:'navRecordings', badges:'navBadges', pillars:'navPillars', learning:'navLearning', profile:'navProfile' };
+      const viewMap = { today:'todayView', activities:'activitiesView', dash:'dashView', recordings:'recordingsView', badges:'badgesView', pillars:'pillarsView', learning:'learningView', profile:'profileView' };
       if (navMap[key]) document.getElementById(navMap[key]).classList.add('active');
       if (viewMap[key]) document.getElementById(viewMap[key]).classList.add('active-view');
       if (key === 'dash') renderProgressView();
       if (key === 'badges') renderBadges();
       if (key === 'recordings') renderRecordingsList();
+      if (key === 'profile') renderProfile();
       if (key === 'activities') {
         renderBitesTabs();
         renderBitesGrid();
@@ -2592,7 +2842,7 @@
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
-    console.log('🚀 Product page loaded — all 4 fixes applied (pattern name/desc, listener dedup, reframe length, activity change-question).');
+    console.log('🚀 Product page loaded — sidebar grouped, zero-state copy, terminology unified, scenario grouping, flow guide.');
   </script>
 </body>
 </html>
