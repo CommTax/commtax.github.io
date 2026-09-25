@@ -212,6 +212,13 @@
     .activity-card-tag { font-size: 10px; font-weight: 700; color: var(--accent-purple); text-transform: uppercase; }
     .ac-start-cta { margin-top: 6px; padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--success), #059669); color: #FFF; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; font-family: inherit; }
 
+    /* NEW: activity card change-question button + prompt preview */
+    .activity-card-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .activity-card-actions .qc-action-btn { padding: 6px 10px; font-size: 11px; }
+    .activity-card-prompt { font-size: 12px; line-height: 1.55; color: var(--text-main); padding: 10px 12px; background: rgba(0,0,0,0.25); border-left: 3px solid var(--accent-cyan); border-radius: 8px; margin-top: 8px; white-space: pre-wrap; word-break: break-word; font-style: italic; }
+    .activity-card-prompt.hidden { display: none; }
+    .activity-card-budget { font-size: 10px; font-weight: 700; color: var(--accent-gold); letter-spacing: 0.04em; margin-top: 4px; display: inline-block; }
+
     .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
     .badge-item { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .badge-item.locked { opacity: 0.35; }
@@ -462,10 +469,54 @@
 
           <div id="sub-voice-reps" class="sub-activity-panel">
             <div class="sub-activity-card-grid">
-              <div class="activity-card" data-activity="Quick Rep" data-type="voice"><div><div class="activity-card-tag">45 Seconds · Core Habit</div><div class="activity-card-title">Quick Rep</div><div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button></div>
-              <div class="activity-card" data-activity="Challenge Rep" data-type="voice"><div><div class="activity-card-tag">90 Seconds · Pressure</div><div class="activity-card-title">Challenge Rep</div><div class="activity-card-desc">Harder workplace scenario under timed pressure.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button></div>
-              <div class="activity-card" data-activity="Blind Rep" data-type="voice"><div><div class="activity-card-tag">Instinct Test · No Prep</div><div class="activity-card-title">Blind Rep</div><div class="activity-card-desc">Random scenario revealed as recording begins.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button></div>
-              <div class="activity-card" data-activity="Repeat Rep" data-type="voice"><div><div class="activity-card-tag">Targeted Improvement</div><div class="activity-card-title">Repeat Rep</div><div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div></div><button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button></div>
+              <div class="activity-card" data-activity="Quick Rep" data-type="voice" data-card-key="voice-quick-rep">
+                <div>
+                  <div class="activity-card-tag">45 Seconds · Core Habit</div>
+                  <div class="activity-card-title">Quick Rep</div>
+                  <div class="activity-card-desc">Your chosen scenario, standard 45s timer. Instant feedback.</div>
+                  <div class="activity-card-prompt hidden"></div>
+                </div>
+                <div class="activity-card-actions">
+                  <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.activity-card'))"><i data-lucide="refresh-cw"></i> Change question</button>
+                </div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Challenge Rep" data-type="voice" data-card-key="voice-challenge-rep" data-time-budget="90">
+                <div>
+                  <div class="activity-card-tag">90 Seconds · Pressure</div>
+                  <div class="activity-card-title">Challenge Rep</div>
+                  <div class="activity-card-desc">Harder workplace scenario under timed pressure.</div>
+                  <div class="activity-card-prompt hidden"></div>
+                </div>
+                <div class="activity-card-actions">
+                  <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.activity-card'))"><i data-lucide="refresh-cw"></i> Change question</button>
+                </div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Blind Rep" data-type="voice" data-card-key="voice-blind-rep">
+                <div>
+                  <div class="activity-card-tag">Instinct Test · No Prep</div>
+                  <div class="activity-card-title">Blind Rep</div>
+                  <div class="activity-card-desc">Random scenario revealed as recording begins.</div>
+                  <div class="activity-card-prompt hidden"></div>
+                </div>
+                <div class="activity-card-actions">
+                  <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.activity-card'))"><i data-lucide="refresh-cw"></i> Change question</button>
+                </div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button>
+              </div>
+              <div class="activity-card" data-activity="Repeat Rep" data-type="voice" data-card-key="voice-repeat-rep">
+                <div>
+                  <div class="activity-card-tag">Targeted Improvement</div>
+                  <div class="activity-card-title">Repeat Rep</div>
+                  <div class="activity-card-desc">Redo your lowest SNR rep to measure growth.</div>
+                  <div class="activity-card-prompt hidden"></div>
+                </div>
+                <div class="activity-card-actions">
+                  <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.activity-card'))"><i data-lucide="refresh-cw"></i> Change question</button>
+                </div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button>
+              </div>
             </div>
           </div>
 
@@ -478,10 +529,14 @@
           <div id="sub-drills" class="sub-activity-panel hidden"><div id="drillsGrid" class="drills-container"></div></div>
 
           <div id="sub-daily-challenge" class="sub-activity-panel hidden">
-            <div class="question-card" data-activity="Daily Challenge" data-type="voice">
+            <div class="question-card" data-activity="Daily Challenge" data-type="voice" data-card-key="daily-challenge">
               <div class="qc-label"><span>Today's Global Challenge</span></div>
               <div class="qc-text" style="font-size:15px;">Handling Hostile Pushback</div>
               <div class="qc-meta">Scenario: A senior VP cuts you off mid-presentation and says "This strategy won't scale." Respond concisely in 45 seconds.</div>
+              <div class="activity-card-prompt hidden"></div>
+              <div class="activity-card-actions" style="margin-top:12px;">
+                <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.question-card'))"><i data-lucide="refresh-cw"></i> Change question</button>
+              </div>
               <button class="ac-start-cta" style="margin-top:12px;" onclick="startActivityFromCard(this.closest('.question-card'))"><i data-lucide="play"></i> Start Now</button>
             </div>
           </div>
@@ -502,10 +557,14 @@
           </div>
 
           <div id="sub-simulator" class="sub-activity-panel hidden">
-            <div class="question-card" style="border-color: var(--accent-purple);" data-activity="Interview Simulator" data-type="voice">
+            <div class="question-card" style="border-color: var(--accent-purple);" data-activity="Interview Simulator" data-type="voice" data-card-key="simulator">
               <div class="plan-badge" style="margin-bottom: 8px;">PREMIUM SIMULATION</div>
               <div class="qc-text" style="font-size:18px;">Full 5-Question End-to-End Mock Interview</div>
               <div class="qc-meta">Simulate a 15-minute high-stakes executive panel interview with dynamic follow-ups and comprehensive debrief.</div>
+              <div class="activity-card-prompt hidden"></div>
+              <div class="activity-card-actions" style="margin-top:12px;">
+                <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.question-card'))"><i data-lucide="refresh-cw"></i> Change question</button>
+              </div>
               <button class="ac-start-cta" style="margin-top:14px;" onclick="startActivityFromCard(this.closest('.question-card'))"><i data-lucide="play"></i> Start Now</button>
             </div>
           </div>
@@ -692,9 +751,6 @@
     const TEXT_MAX_WORDS = 300;
 
     // ─── SOURCE OF TRUTH FOR ROLES ───
-    // Every role the product supports. `value` is what gets stored in
-    // users.role and compared to questions.roles. `family` is stored
-    // in users.role_family and used as the fallback match tier.
     const OB_ROLES = [
       { value: 'Scrum Master',        label: 'Scrum Master',        family: 'technology' },
       { value: 'Project Manager',     label: 'Project Manager',     family: 'product_and_program' },
@@ -765,44 +821,44 @@
 
     const DRILLS_LIBRARY = [
       { category: 'Rambling Reduction', icon: 'scissors', drills: [
-        { id: 'headline', title: 'Headline Drill', desc: 'State your main point in one sentence — before you say anything else. Under 15 words.', activity: 'Headline Drill' },
-        { id: 'filler-elimination', title: 'Filler Elimination', desc: 'Speak for 30 seconds on any topic. Zero fillers.', activity: 'Filler Elimination' },
-        { id: 'one-idea-only', title: 'One Idea Only', desc: 'Answer with exactly one idea. No tangents.', activity: 'One Idea Only' },
-        { id: 'compression-ladder', title: 'Compression Ladder', desc: 'Answer the same question in 60, then 30, then 15 seconds. Same core point.', activity: 'Compression Ladder' },
-        { id: 'relevance-cut', title: 'Relevance Cut', desc: 'Mark each sentence KEEP, SUPPORT, or CUT — then re-record.', activity: 'Relevance Cut' },
-        { id: 'destination-check', title: 'Destination Check', desc: 'Type the one line you want to end on. Then record.', activity: 'Destination Check' }
+        { id: 'headline', title: 'Headline Drill', desc: 'State your main point in one sentence — before you say anything else. Under 15 words.', activity: 'Headline Drill', timeBudget: 45 },
+        { id: 'filler-elimination', title: 'Filler Elimination', desc: 'Speak for 30 seconds on any topic. Zero fillers.', activity: 'Filler Elimination', timeBudget: 45 },
+        { id: 'one-idea-only', title: 'One Idea Only', desc: 'Answer with exactly one idea. No tangents.', activity: 'One Idea Only', timeBudget: 45 },
+        { id: 'compression-ladder', title: 'Compression Ladder', desc: 'Answer the same question in 60, then 30, then 15 seconds. Same core point.', activity: 'Compression Ladder', timeBudget: 90 },
+        { id: 'relevance-cut', title: 'Relevance Cut', desc: 'Mark each sentence KEEP, SUPPORT, or CUT — then re-record.', activity: 'Relevance Cut', timeBudget: 90 },
+        { id: 'destination-check', title: 'Destination Check', desc: 'Type the one line you want to end on. Then record.', activity: 'Destination Check', timeBudget: 45 }
       ]},
       { category: 'Structure Preparation', icon: 'layout-grid', drills: [
-        { id: 'structure-pso', title: 'Structure Drill (PSO)', desc: 'Answer using Problem → Solution → Outcome. One sentence each.', activity: 'Structure Drill (PSO)' },
-        { id: 'frame-drill', title: 'Frame Drill', desc: 'Type a 3-word outline before the mic activates.', activity: 'Frame Drill' },
-        { id: 'signpost-drill', title: 'Signpost Drill', desc: 'Use explicit sequence markers — "First... Second... Finally..."', activity: 'Signpost Drill' },
-        { id: 'point-ranking', title: 'Point-Ranking Drill', desc: 'Rank 3 points by importance before recording.', activity: 'Point-Ranking Drill' },
-        { id: 'template-ladder', title: 'Template Ladder', desc: 'Answer the same prompt using PRE, SAR, and PSO.', activity: 'Template Ladder' }
+        { id: 'structure-pso', title: 'Structure Drill (PSO)', desc: 'Answer using Problem → Solution → Outcome. One sentence each.', activity: 'Structure Drill (PSO)', timeBudget: 90 },
+        { id: 'frame-drill', title: 'Frame Drill', desc: 'Type a 3-word outline before the mic activates.', activity: 'Frame Drill', timeBudget: 45 },
+        { id: 'signpost-drill', title: 'Signpost Drill', desc: 'Use explicit sequence markers — "First... Second... Finally..."', activity: 'Signpost Drill', timeBudget: 90 },
+        { id: 'point-ranking', title: 'Point-Ranking Drill', desc: 'Rank 3 points by importance before recording.', activity: 'Point-Ranking Drill', timeBudget: 90 },
+        { id: 'template-ladder', title: 'Template Ladder', desc: 'Answer the same prompt using PRE, SAR, and PSO.', activity: 'Template Ladder', timeBudget: 90 }
       ]},
       { category: 'Precision & Impact', icon: 'target', drills: [
-        { id: 'time-to-point', title: 'Time-to-Point', desc: 'Deliver your key recommendation in under 5 seconds.', activity: 'Time-to-Point' },
-        { id: 'specificity-swap', title: 'Specificity Swap', desc: 'Replace one vague phrase with a real number, name, or example.', activity: 'Specificity Swap' },
-        { id: 'close-strong', title: 'Close Strong', desc: 'End by restating your headline point in different words.', activity: 'Close Strong' },
-        { id: 'claim-example', title: 'Claim → Example', desc: 'One claim. One specific instance that proves it.', activity: 'Claim → Example' },
-        { id: 'contrast-frame-drill', title: 'Contrast Frame', desc: 'Frame as before/after.', activity: 'Contrast Frame' },
-        { id: 'jargon-swap', title: 'Jargon Swap', desc: 'Re-record one jargon phrase in plain language.', activity: 'Jargon Swap' }
+        { id: 'time-to-point', title: 'Time-to-Point', desc: 'Deliver your key recommendation in under 5 seconds.', activity: 'Time-to-Point', timeBudget: 45 },
+        { id: 'specificity-swap', title: 'Specificity Swap', desc: 'Replace one vague phrase with a real number, name, or example.', activity: 'Specificity Swap', timeBudget: 45 },
+        { id: 'close-strong', title: 'Close Strong', desc: 'End by restating your headline point in different words.', activity: 'Close Strong', timeBudget: 90 },
+        { id: 'claim-example', title: 'Claim → Example', desc: 'One claim. One specific instance that proves it.', activity: 'Claim → Example', timeBudget: 90 },
+        { id: 'contrast-frame-drill', title: 'Contrast Frame', desc: 'Frame as before/after.', activity: 'Contrast Frame', timeBudget: 90 },
+        { id: 'jargon-swap', title: 'Jargon Swap', desc: 'Re-record one jargon phrase in plain language.', activity: 'Jargon Swap', timeBudget: 45 }
       ]},
       { category: 'Delivery & Orator Training', icon: 'mic', drills: [
-        { id: 'pause-training', title: 'Pause Training', desc: 'One deliberate 1–2 second pause after your key line.', activity: 'Pause Training' },
-        { id: 'vocal-variety-drill', title: 'Vocal Variety Drill', desc: 'Same sentence 3 times — flat, slower with emphasis, rising pitch.', activity: 'Vocal Variety Drill' },
-        { id: 'breathing-reset', title: 'Breathing Reset', desc: 'One visible breath before you start speaking.', activity: 'Breathing Reset' },
-        { id: 'anchor-focus', title: 'Anchor Focus', desc: 'Keep your eyes on the on-screen anchor point.', activity: 'Anchor Focus' }
+        { id: 'pause-training', title: 'Pause Training', desc: 'One deliberate 1–2 second pause after your key line.', activity: 'Pause Training', timeBudget: 90 },
+        { id: 'vocal-variety-drill', title: 'Vocal Variety Drill', desc: 'Same sentence 3 times — flat, slower with emphasis, rising pitch.', activity: 'Vocal Variety Drill', timeBudget: 90 },
+        { id: 'breathing-reset', title: 'Breathing Reset', desc: 'One visible breath before you start speaking.', activity: 'Breathing Reset', timeBudget: 45 },
+        { id: 'anchor-focus', title: 'Anchor Focus', desc: 'Keep your eyes on the on-screen anchor point.', activity: 'Anchor Focus', timeBudget: 90 }
       ]}
     ];
 
     const FALLBACK_SCENARIOS = [
-      { id: 'interview-questions', sprint: 'Interview Sprint', title: 'Interview Questions', desc: 'Practice real interview questions tailored to your role.', meta: '12 scenarios · Role-based', activity: 'Interview Questions', dynamic: true },
-      { id: 'group-discussion', sprint: 'GD Sprint', title: 'Group Discussion', desc: 'Learn to enter, build on, and steer a group conversation.', meta: '8 scenarios', activity: 'Group Discussion', dynamic: true },
-      { id: 'leadership-situations', sprint: 'Leadership Presence Sprint', title: 'Leadership Situations', desc: 'Handle the moments that define you as a leader.', meta: '10 scenarios', activity: 'Leadership Situations' },
-      { id: 'project-team-updates', sprint: 'Leadership Presence Sprint', title: 'Project & Team Updates', desc: 'Deliver updates, handle pushback, raise bad news.', meta: '9 scenarios', activity: 'Project & Team Updates' },
-      { id: 'client-stakeholder', sprint: 'Leadership Presence Sprint', title: 'Client & Stakeholder', desc: 'Pitch ideas, handle objections, manage client relationships.', meta: '7 scenarios', activity: 'Client & Stakeholder' },
-      { id: 'storytelling', sprint: 'Storytelling Sprint', title: 'Storytelling', desc: 'Turn a flat update or a dry fact into something memorable.', meta: '7 scenarios', activity: 'Storytelling' },
-      { id: 'charisma-social', sprint: 'Charisma Sprint', title: 'Charisma & Social Presence', desc: 'Build rapport, make small talk land.', meta: '6 scenarios', activity: 'Charisma & Social Presence' }
+      { id: 'interview-questions', sprint: 'Interview Sprint', title: 'Interview Questions', desc: 'Practice real interview questions tailored to your role.', meta: '12 scenarios · Role-based', activity: 'Interview Questions', dynamic: true, question_type: 'behavioral' },
+      { id: 'group-discussion', sprint: 'GD Sprint', title: 'Group Discussion', desc: 'Learn to enter, build on, and steer a group conversation.', meta: '8 scenarios', activity: 'Group Discussion', dynamic: true, question_type: 'situational' },
+      { id: 'leadership-situations', sprint: 'Leadership Presence Sprint', title: 'Leadership Situations', desc: 'Handle the moments that define you as a leader.', meta: '10 scenarios', activity: 'Leadership Situations', question_type: 'leadership' },
+      { id: 'project-team-updates', sprint: 'Leadership Presence Sprint', title: 'Project & Team Updates', desc: 'Deliver updates, handle pushback, raise bad news.', meta: '9 scenarios', activity: 'Project & Team Updates', question_type: 'behavioral' },
+      { id: 'client-stakeholder', sprint: 'Leadership Presence Sprint', title: 'Client & Stakeholder', desc: 'Pitch ideas, handle objections, manage client relationships.', meta: '7 scenarios', activity: 'Client & Stakeholder', question_type: 'situational' },
+      { id: 'storytelling', sprint: 'Storytelling Sprint', title: 'Storytelling', desc: 'Turn a flat update or a dry fact into something memorable.', meta: '7 scenarios', activity: 'Storytelling', question_type: 'behavioral' },
+      { id: 'charisma-social', sprint: 'Charisma Sprint', title: 'Charisma & Social Presence', desc: 'Build rapport, make small talk land.', meta: '6 scenarios', activity: 'Charisma & Social Presence', question_type: 'situational' }
     ];
 
     let USER = null;
@@ -818,6 +874,8 @@
     let activeBitesCategory = 'structure';
     let SCENARIOS_CACHE = null;
     let CUSTOMIZE_TARGET = null;
+    // NEW: overrides for activity cards (Change question feature)
+    let ACTIVITY_OVERRIDES = {};
 
     document.addEventListener('DOMContentLoaded', () => {
       renderIcons();
@@ -1044,8 +1102,8 @@
     }
 
     const FALLBACK_QUESTIONS = [
-      { id: null, text: 'Tell me about yourself.', focus: 'Concise self-intro', target_seconds: 60, difficulty: 'easy' },
-      { id: null, text: 'Walk me through a project you\'re proud of.', focus: 'Structured storytelling', target_seconds: 90, difficulty: 'medium' }
+      { id: null, text: 'Tell me about yourself.', focus: 'Concise self-intro', target_seconds: 60, difficulty: 'easy', question_type: 'self-intro' },
+      { id: null, text: 'Walk me through a project you\'re proud of.', focus: 'Structured storytelling', target_seconds: 90, difficulty: 'medium', question_type: 'behavioral' }
     ];
 
     async function loadQuestionsForToday() {
@@ -1072,13 +1130,13 @@
       const q2 = questions[1] || questions[0];
       state.questions.q1 = {
         id: q1.id || null, text: q1.text, focus: q1.focus,
-        target_seconds: q1.target_seconds, difficulty: q1.difficulty,
+        target_seconds: q1.target_seconds || 90, difficulty: q1.difficulty,
         question_type: q1.question_type || 'self-intro',
         custom: false, source: 'bank',
       };
       state.questions.q2 = {
         id: q2.id || null, text: q2.text, focus: q2.focus,
-        target_seconds: q2.target_seconds, difficulty: q2.difficulty,
+        target_seconds: q2.target_seconds || 90, difficulty: q2.difficulty,
         question_type: q2.question_type || 'behavioral',
         custom: false, source: 'bank',
       };
@@ -1121,7 +1179,6 @@
     }
 
     function renderCustomRoleBanner() {
-      // Ensure the banner element exists at the top of the Today view
       let el = document.getElementById('customRoleBanner');
       if (!el) {
         el = document.createElement('div');
@@ -1141,7 +1198,6 @@
         if (todayView) todayView.prepend(el);
       }
 
-      // Show only when the user picked a custom role that hasn't been delivered
       const show = USER
         && USER.role === 'other'
         && USER.role_custom
@@ -1337,6 +1393,8 @@
       renderIcons();
     }
 
+    // FIX 1 + FIX 2: pattern name has no "Your", description has "Your",
+    // what_got_lost and listener_question are distinct
     function renderProgressView() {
       const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
       const latest = allReps.length ? allReps[allReps.length - 1] : null;
@@ -1346,15 +1404,23 @@
         ? `Pattern & performance based on ${allReps.length} rep${allReps.length === 1 ? '' : 's'}`
         : 'Complete a rep to unlock your pattern analysis';
 
-      const patternName = (m && m.patternName) ? m.patternName : 'Your Pattern';
-      const patternDesc = (m && m.patternDesc) ? m.patternDesc : 'Complete a rep to see your communication pattern.';
+      // FIX 1: strip any leading "Your " from name, ensure description starts with "Your "
+      let patternName = (m && m.patternName) ? m.patternName : 'The Pattern';
+      patternName = String(patternName).replace(/^(your|the)\s+/i, '').trim() || 'Pattern';
+      patternName = patternName.charAt(0).toUpperCase() + patternName.slice(1);
 
+      let patternDesc = (m && m.patternDesc) ? m.patternDesc : 'Complete a rep to see your communication pattern.';
+      if (patternDesc && !/^your\b/i.test(patternDesc)) {
+        patternDesc = 'Your ' + (patternDesc.charAt(0).toLowerCase() + patternDesc.slice(1));
+      }
+
+      // FIX 2: got lost and listener question are separate
       const gotLost = [
         (m && m.gapGotLost) || 'Your credibility and authority in the first 10 seconds',
-        (m && m.gapUnspoken) || 'Between your intent to sound confident and how you actually land'
+        (m && m.gapUnspoken) || 'The link between your intent and how it lands'
       ];
 
-      const listenerQuestion     = (m && m.listenerQuestion)     || null;
+      const listenerQuestion = (m && m.listenerQuestion) || null;
       const opportunity          = (m && m.oneThingToChange)     || null;
       const recommendedStructure = (m && m.recommendedStructure) || null;
       const whyThisMatters       = (m && m.whyThisMatters)       || null;
@@ -1578,6 +1644,7 @@
       renderIcons();
     }
 
+    // FIX 2 on the frontend: listenerQuestion no longer falls back to gap.unspoken_gap
     function normalizeAnalysis(data) {
       if (!data) return null;
       const m = data.metrics || {};
@@ -1600,14 +1667,15 @@
         vocabTotal: s.vocabulary?.total ?? null,
         vocabRichness: s.vocabulary?.richness ?? null,
         patternName: d.pattern_name ?? null,
-        patternDesc: d.pattern_description ?? null,
+        patternDesc: d.pattern_description ?? d.reason ?? null,
         gapGotLost: g.what_got_lost ?? null,
         gapUnspoken: g.unspoken_gap ?? null,
         oneThingToChange: c.one_thing_to_change ?? null,
         executiveVersion: r.executive_version ?? null,
         transcript: data.transcribed_text ?? '',
 
-        listenerQuestion:     d.listener_question    ?? g.unspoken_gap ?? null,
+        // FIX 2: no more `?? g.unspoken_gap` fallback
+        listenerQuestion:     d.listener_question    ?? null,
         recommendedStructure: c.recommended_structure ?? null,
         whyThisMatters:       d.why_this_matters     ?? null,
       };
@@ -1670,6 +1738,9 @@
       document.getElementById('usModal').classList.add('is-visible');
       renderIcons();
     }
+
+    // FIX 4a: drills now carry data-card-key and data-time-budget,
+    // and each card has a Change question button + prompt preview slot
     function renderDrillsGrid() {
       const grid = document.getElementById('drillsGrid');
       if (!grid) return;
@@ -1682,9 +1753,26 @@
           </div>
           <div class="drill-category-grid">
             ${cat.drills.map(d => `
-              <div class="activity-card" data-activity="${escapeHtml(d.activity)}" data-type="voice">
-                <div><div class="activity-card-tag">${escapeHtml(cat.category)}</div><div class="activity-card-title">${escapeHtml(d.title)}</div><div class="activity-card-desc">${escapeHtml(d.desc)}</div></div>
-                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))"><i data-lucide="play"></i> Start Now</button>
+              <div class="activity-card"
+                   data-activity="${escapeHtml(d.activity)}"
+                   data-type="voice"
+                   data-card-key="drill-${escapeHtml(d.id)}"
+                   data-time-budget="${escapeHtml(String(d.timeBudget || ''))}">
+                <div>
+                  <div class="activity-card-tag">${escapeHtml(cat.category)}</div>
+                  <div class="activity-card-title">${escapeHtml(d.title)}</div>
+                  <div class="activity-card-desc">${escapeHtml(d.desc)}</div>
+                  ${d.timeBudget ? `<div class="activity-card-budget">⏱ ${d.timeBudget}s budget</div>` : ''}
+                  <div class="activity-card-prompt hidden"></div>
+                </div>
+                <div class="activity-card-actions">
+                  <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.activity-card'))">
+                    <i data-lucide="refresh-cw"></i> Change question
+                  </button>
+                </div>
+                <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
+                  <i data-lucide="play"></i> Start Now
+                </button>
               </div>
             `).join('')}
           </div>
@@ -1710,6 +1798,7 @@
       return SCENARIOS_CACHE;
     }
 
+    // FIX 4b: scenarios now carry data-card-key and a Change question button
     async function renderScenariosGrid() {
       const grid = document.getElementById('scenariosGrid');
       if (!grid) return;
@@ -1719,6 +1808,7 @@
         <div class="activity-card"
              data-activity="${escapeHtml(s.activity)}"
              data-type="voice"
+             data-card-key="scenario-${escapeHtml(s.id)}"
              data-scenario-id="${escapeHtml(s.id)}"
              data-question-type="${escapeHtml(s.question_type || 'activity')}"
              data-dynamic="${s.dynamic ? 'true' : 'false'}">
@@ -1727,6 +1817,12 @@
             <div class="activity-card-title">${escapeHtml(s.title)}</div>
             <div class="activity-card-desc">${escapeHtml(s.desc)}</div>
             <div style="font-size:10px;font-weight:700;color:var(--accent-cyan);margin-top:6px;letter-spacing:0.04em;">${escapeHtml(s.meta)}</div>
+            <div class="activity-card-prompt hidden"></div>
+          </div>
+          <div class="activity-card-actions">
+            <button class="qc-action-btn" onclick="changeActivityQuestion(this.closest('.activity-card'))">
+              <i data-lucide="refresh-cw"></i> Change question
+            </button>
           </div>
           <button class="ac-start-cta" onclick="startActivityFromCard(this.closest('.activity-card'))">
             <i data-lucide="play"></i> Start Now
@@ -1734,6 +1830,81 @@
         </div>
       `).join('');
       renderIcons();
+    }
+
+    // FIX 4c: changeActivityQuestion — detects constraints from the card and
+    // calls /questions/next with the right filters. Preserves the current
+    // question's tag (scenarios) and time budget (drills).
+    async function changeActivityQuestion(card) {
+      if (!card) return;
+      const key = card.dataset.cardKey;
+      if (!key) {
+        alert('This card cannot change questions.');
+        return;
+      }
+      const btn = card.querySelector('.activity-card-actions .qc-action-btn') ||
+                  card.querySelector('.qc-action-btn');
+      const originalHtml = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader"></i> Loading…'; renderIcons(); }
+
+      const params = new URLSearchParams();
+      const activity = card.dataset.activity || '';
+      const qType = card.dataset.questionType || '';
+      const timeBudget = card.dataset.timeBudget || '';
+      const override = ACTIVITY_OVERRIDES[key];
+      const overrideBankId = override && override.bankId ? override.bankId : null;
+      const currentBankId = card.dataset.bankQuestionId || null;
+      const excludeId = overrideBankId || currentBankId;
+
+      if (activity) params.set('activity', activity);
+      if (qType) params.set('question_type', qType);
+      if (timeBudget) params.set('time_budget_seconds', timeBudget);
+      if (excludeId) params.set('exclude_id', excludeId);
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/paid/questions/next?${params.toString()}`, {
+          headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` }
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          const detail = typeof err.detail === 'string' ? err.detail : (err.error || `HTTP ${res.status}`);
+          throw new Error(detail);
+        }
+        const data = await res.json();
+        const q = data.question;
+
+        ACTIVITY_OVERRIDES[key] = {
+          text: q.text,
+          focus: q.focus,
+          bankId: q.id,
+          questionType: q.question_type || qType || 'activity',
+          timeBudget: q.target_seconds || (timeBudget ? Number(timeBudget) : null),
+          difficulty: q.difficulty,
+        };
+
+        // Show the new prompt preview inside the card
+        const promptEl = card.querySelector('.activity-card-prompt');
+        if (promptEl) {
+          promptEl.innerHTML = `<span class="qc-custom-badge" style="margin-left:0;margin-right:6px;">Changed</span>"${escapeHtml(q.text)}"`;
+          promptEl.classList.remove('hidden');
+        }
+
+        // Also embed the budget if the backend returned one
+        if (q.target_seconds) {
+          let budgetEl = card.querySelector('.activity-card-budget');
+          if (!budgetEl) {
+            budgetEl = document.createElement('div');
+            budgetEl.className = 'activity-card-budget';
+            const anchor = card.querySelector('.activity-card-desc');
+            if (anchor) anchor.insertAdjacentElement('afterend', budgetEl);
+          }
+          budgetEl.textContent = `⏱ ${q.target_seconds}s budget`;
+        }
+      } catch (err) {
+        alert(`Couldn't fetch a new question: ${err.message}`);
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; renderIcons(); }
+      }
     }
 
     async function changeQuestion(which) {
@@ -1745,14 +1916,16 @@
       try {
         const params = new URLSearchParams();
         if (excludeId) params.set('exclude_id', excludeId);
+        if (current && current.question_type) params.set('question_type', current.question_type);
         const res = await fetch(`${BACKEND_URL}/api/paid/questions/next?${params}`, { headers: { 'Authorization': `Bearer ${SESSION_TOKEN}` } });
         if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.detail || err.error || `HTTP ${res.status}`); }
         const data = await res.json();
         const q = data.question;
         state.questions[which] = {
           id: q.id, text: q.text, focus: q.focus,
-          target_seconds: q.target_seconds, difficulty: q.difficulty,
-          question_type: q.question_type || 'behavioral',
+          target_seconds: q.target_seconds || 90,
+          difficulty: q.difficulty,
+          question_type: q.question_type || current.question_type || 'behavioral',
           custom: false, source: 'changed',
         };
         renderQuestionCards();
@@ -1966,7 +2139,8 @@
     let activeRecording = {
       target: null, question: null, meta: {}, mediaRecorder: null, chunks: [],
       seconds: 0, timerInterval: null, isRecording: false, rawBlob: null, rawText: null,
-      mode: 'voice', questionSource: 'bank', bankQuestionId: null, questionType: 'self-intro'
+      mode: 'voice', questionSource: 'bank', bankQuestionId: null, questionType: 'self-intro',
+      perRepCap: VOICE_MAX_SECONDS,
     };
 
     function stripQuotes(s) {
@@ -1974,6 +2148,7 @@
       return s.trim().replace(/^["“”']+|["“”']+$/g, '').trim();
     }
 
+    // FIX 4f: accept opts.timeBudget to cap each drill's recording window
     function openRecorderModal(promptText, opts = {}) {
       activeRecording.meta = opts || {};
       activeRecording.rawBlob = null;
@@ -1984,7 +2159,9 @@
       activeRecording.chunks = [];
       activeRecording.questionSource = 'bank';
       activeRecording.bankQuestionId = null;
+      activeRecording.perRepCap = opts.timeBudget ? Number(opts.timeBudget) : VOICE_MAX_SECONDS;
       if (activeRecording.timerInterval) { clearInterval(activeRecording.timerInterval); activeRecording.timerInterval = null; }
+
       let qText;
       if (promptText === 'q1' || promptText === 'q2') {
         activeRecording.target = promptText;
@@ -1994,11 +2171,14 @@
         activeRecording.bankQuestionId = (q && q.source === 'bank') ? q.id : null;
         activeRecording.questionType = (q && q.question_type)
           || (promptText === 'q1' ? 'self-intro' : 'behavioral');
+        if (q && q.target_seconds) {
+          activeRecording.perRepCap = Number(q.target_seconds) || VOICE_MAX_SECONDS;
+        }
       } else if (opts.source === 'activity') {
         activeRecording.target = 'activity';
         qText = promptText;
-        activeRecording.questionSource = 'bank';
-        activeRecording.bankQuestionId = null;
+        activeRecording.questionSource = opts.bankQuestionId ? 'changed' : 'bank';
+        activeRecording.bankQuestionId = opts.bankQuestionId || null;
         activeRecording.questionType = opts.questionType || 'activity';
       } else {
         activeRecording.target = 'custom';
@@ -2029,7 +2209,7 @@
               <span id="recTimer" style="font-size:15px;font-weight:700;min-width:50px;">0:00</span>
               <span id="recStatus" style="font-size:12px;color:var(--text-muted);flex:1;">Ready to record</span>
             </div>
-            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:10px;">Voice capped at ${VOICE_MAX_SECONDS}s (total ≤ ${Math.round(TOTAL_MAX_SECONDS/60)} min)</div>
+            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:10px;">Voice capped at ${activeRecording.perRepCap}s (total ≤ ${Math.round(TOTAL_MAX_SECONDS/60)} min)</div>
             <button id="recVoiceSubmit" onclick="submitRepToBackend()" style="display:none;width:100%;padding:14px 20px;border-radius:100px;border:none;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;align-items:center;justify-content:center;gap:8px;">Submit My Response <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></button>
           </div>
           <div id="recTextPane" style="display:none;">
@@ -2117,7 +2297,7 @@
         activeRecording.timerInterval = setInterval(() => {
           activeRecording.seconds++;
           updateRecTimer();
-          if (activeRecording.seconds >= VOICE_MAX_SECONDS) stopRecording();
+          if (activeRecording.seconds >= activeRecording.perRepCap) stopRecording();
         }, 1000);
       } catch (err) { console.error('Mic error:', err); alert('Please allow microphone access.'); }
     }
@@ -2137,7 +2317,7 @@
       const t = document.getElementById('recTimer');
       const status = document.getElementById('recStatus');
       if (t) t.textContent = `${m}:${s.toString().padStart(2, '0')}`;
-      const remaining = VOICE_MAX_SECONDS - activeRecording.seconds;
+      const remaining = activeRecording.perRepCap - activeRecording.seconds;
       if (remaining <= 0) { if (t) t.style.color = '#EF4444'; if (status) status.textContent = 'Time up — stopping'; }
       else if (remaining <= 10) { if (t) t.style.color = '#EF4444'; if (status) status.textContent = `${remaining}s left`; }
       else if (remaining <= 20) { if (t) t.style.color = '#F59E0B'; if (status) status.textContent = `${remaining}s left`; }
@@ -2248,7 +2428,7 @@
       }
     }
 
-  function startRep(which) {
+    function startRep(which) {
       if (USER.limits?.exhausted) {
         alert("You've reached today's practice limit under our fair-use policy. Come back tomorrow.");
         return;
@@ -2256,6 +2436,7 @@
       openRecorderModal(which);
     }
 
+    // FIX 4e: respects ACTIVITY_OVERRIDES so a changed question carries through
     async function startActivityFromCard(card) {
       if (!card) return;
       if (USER.limits?.exhausted) {
@@ -2267,20 +2448,37 @@
       const isDynamic = card.dataset.dynamic === 'true';
       if (type === 'content') { openContentModal(activity); return; }
       if (type === 'text') { return; }
-      const prompt = isDynamic
-        ? await pickDynamicScenarioPrompt(activity)
-        : await pickPromptForActivity(activity);
-      const questionType = card.dataset.questionType || 'activity';
+
+      const key = card.dataset.cardKey;
+      const override = key ? ACTIVITY_OVERRIDES[key] : null;
+
+      let prompt, questionType, bankQuestionId, timeBudget;
+      if (override) {
+        prompt = override.text;
+        questionType = override.questionType;
+        bankQuestionId = override.bankId || null;
+        timeBudget = override.timeBudget || null;
+      } else if (isDynamic) {
+        prompt = await pickDynamicScenarioPrompt(activity);
+        questionType = card.dataset.questionType || 'activity';
+      } else {
+        prompt = await pickPromptForActivity(activity);
+        questionType = card.dataset.questionType || 'activity';
+      }
+      if (!timeBudget && card.dataset.timeBudget) timeBudget = Number(card.dataset.timeBudget);
+
       openRecorderModal(prompt, {
         source: 'activity',
         title: activity,
         category: activity,
         questionType: questionType,
+        bankQuestionId: bankQuestionId,
+        timeBudget: timeBudget,
       });
     }
     async function pickPromptForActivity(activity) {
       const sprint = USER.track_id || 'interview';
-      const questions = CACHED_BANK[`${sprint}-${USER.current_day}`] || FALLBACK_QUESTIONS;
+      const questions = CACHED_BANK[`${sprint}-${USER.currentDay}`] || FALLBACK_QUESTIONS;
       const randomActivities = ['Blind Rep', 'Daily Challenge', 'Interview Simulator'];
       if (randomActivities.includes(activity)) {
         const q = questions[Math.floor(Math.random() * questions.length)];
@@ -2304,7 +2502,7 @@
           }
         }
       } catch (e) { console.warn('Dynamic scenario fetch failed:', e); }
-      const fallbackKey = `${sprint}-${USER.current_day}`;
+      const fallbackKey = `${sprint}-${USER.currentDay}`;
       const questions = CACHED_BANK[fallbackKey] || FALLBACK_QUESTIONS;
       const q = questions[Math.floor(Math.random() * questions.length)];
       return q ? q.text : 'Tell me about yourself.';
@@ -2394,7 +2592,7 @@
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
-    console.log('🚀 Product page loaded — single-role onboarding, fair-use caps, custom-role flow.');
+    console.log('🚀 Product page loaded — all 4 fixes applied (pattern name/desc, listener dedup, reframe length, activity change-question).');
   </script>
 </body>
 </html>
