@@ -555,6 +555,75 @@
     .us-modal h2 { font-family: var(--font-display); font-size: 24px; margin-bottom: 6px; font-weight: 700; color: var(--ink); }
     .us-modal .us-modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 22px; }
 
+/* ── Premium score cards ── */
+.ya-section-scores {
+  background: transparent;
+  border: none;
+  border-left: none;
+  padding: 0;
+  margin-bottom: 26px;
+}
+.ya-scores-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.ya-score-card {
+  position: relative;
+  background: linear-gradient(135deg, #fff 0%, #faf6ec 100%);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.ya-score-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(184,148,60,0.12);
+}
+.ya-score-kicker {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--gold-darker);
+}
+.ya-score-value {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.ya-score-bar {
+  width: 100%;
+  height: 5px;
+  background: var(--bg-warm);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.ya-score-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+.ya-score-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-soft);
+  min-height: 36px;
+  font-style: italic;
+  font-family: var(--font-display);
+}
+@media (max-width: 640px) {
+  .ya-scores-grid { grid-template-columns: 1fr; }
+}
+
+    
     /* Onboarding */
     .onboarding-backdrop { position: fixed; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(184,148,60,0.15), rgba(250,248,245,0.98) 65%); backdrop-filter: blur(10px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
     .onboarding-backdrop.is-visible { display: flex; }
@@ -2437,6 +2506,50 @@ if (allReps.length === 0 && !LATEST_ANALYSIS) {
           <div class="ya-pattern-poetic">"${escapeHtml(arche.poetic)}"</div>
           <div class="ya-pattern-desc-hero">${escapeHtml(patternDesc || 'Your pattern is emerging.')}</div>
         </div>
+
+      cardEl.innerHTML = `
+        <div class="ya-header">
+          <span class="ya-badge"><i data-lucide="sparkles"></i> YOUR PATTERN</span>
+          <span class="ya-sub">What this rep revealed</span>
+        </div>
+
+        <div class="ya-pattern-block">
+          <div class="ya-pattern-illustration">${patternIconSvg(arche.icon, 64)}</div>
+          <div class="ya-pattern-kicker">YOUR PATTERN</div>
+          <div class="ya-pattern-name-hero">${escapeHtml(patternName || 'Unnamed')}</div>
+          <div class="ya-pattern-poetic">"${escapeHtml(arche.poetic)}"</div>
+          <div class="ya-pattern-desc-hero">${escapeHtml(patternDesc || 'Your pattern is emerging.')}</div>
+        </div>
+
+        <!-- YOUR SCORES -->
+        <div class="ya-section ya-section-scores">
+          <div class="ya-section-heading">Your Scores</div>
+          <div class="ya-scores-grid">
+            <div class="ya-score-card">
+              <div class="ya-score-kicker">Focus</div>
+              <div class="ya-score-value">${m.focusScore ?? '—'}</div>
+              <div class="ya-score-bar"><div class="ya-score-bar-fill" style="width:${m.focusScore ?? 0}%;"></div></div>
+              <div class="ya-score-note">${escapeHtml(m.focusNote || 'Complete a rep to score this.')}</div>
+            </div>
+            <div class="ya-score-card">
+              <div class="ya-score-kicker">Structure</div>
+              <div class="ya-score-value">${m.structureScore ?? '—'}</div>
+              <div class="ya-score-bar"><div class="ya-score-bar-fill" style="width:${m.structureScore ?? 0}%;"></div></div>
+              <div class="ya-score-note">${escapeHtml(m.structureNote || 'Complete a rep to score this.')}</div>
+            </div>
+            <div class="ya-score-card">
+              <div class="ya-score-kicker">Delivery</div>
+              <div class="ya-score-value">${m.deliveryScore ?? '—'}</div>
+              <div class="ya-score-bar"><div class="ya-score-bar-fill" style="width:${m.deliveryScore ?? 0}%;"></div></div>
+              <div class="ya-score-note">${escapeHtml(m.deliveryNote || 'Complete a rep to score this.')}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. What Got Lost -->
+
+
+        
         <div class="ya-grid">
           <div class="ya-box"><div class="ya-box-label">What Got Lost</div><ul class="ya-list">${gotLost.map(g => `<li>${escapeHtml(g)}</li>`).join('')}</ul></div>
           <div class="ya-box"><div class="ya-box-label">What The Listener May Hear</div><div style="font-size:14px;line-height:1.6;color:var(--ink);font-style:italic;padding:14px 16px;background:#fff;border-left:3px solid var(--gold);border-radius:10px;">${listenerHtml}</div></div>
@@ -2590,34 +2703,45 @@ if (allReps.length === 0 && !LATEST_ANALYSIS) {
       `;
     }
 
-    function normalizeAnalysis(data) {
-      if (!data) return null;
-      const m = data.metrics || {}, s = data.signals || {}, d = data.diagnosis || {}, g = data.gap || {}, c = data.coaching || {}, r = data.before_after_rewrite || {};
-      return {
-        fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
-        pointFirst: m.point_first ?? m.structure ?? null,
-        concreteness: m.concreteness ?? m.impact ?? null,
-        overallScore: m.overall_score ?? null,
-        timeToPoint: s.main_point_delay_seconds ?? null,
-        wordsPerMinute: s.words_per_minute ?? null,
-        fillerTotal: s.filler_words?.total ?? 0,
-        fillerPct: s.filler_words?.percentage ?? 0,
-        snr: s.signal_to_noise_ratio ?? null,
-        vocabUnique: s.vocabulary?.unique ?? null,
-        vocabTotal: s.vocabulary?.total ?? null,
-        vocabRichness: s.vocabulary?.richness ?? null,
-        patternName: d.pattern_name ?? null,
-        patternDesc: d.pattern_description ?? d.reason ?? null,
-        gapGotLost: g.what_got_lost ?? null,
-        gapUnspoken: g.unspoken_gap ?? null,
-        oneThingToChange: c.one_thing_to_change ?? null,
-        executiveVersion: r.executive_version ?? null,
-        transcript: data.transcribed_text ?? '',
-        listenerQuestion: d.listener_question ?? null,
-        recommendedStructure: c.recommended_structure ?? null,
-        whyThisMatters: d.why_this_matters ?? null,
-      };
-    }
+   function normalizeAnalysis(data) {
+  if (!data) return null;
+  const m = data.metrics || {}, s = data.signals || {}, d = data.diagnosis || {}, g = data.gap || {}, c = data.coaching || {}, r = data.before_after_rewrite || {};
+  return {
+    // Legacy metrics
+    fillerDiscipline: m.filler_discipline ?? m.clarity ?? null,
+    pointFirst: m.point_first ?? m.structure ?? null,
+    concreteness: m.concreteness ?? m.impact ?? null,
+    overallScore: m.overall_score ?? null,
+    timeToPoint: s.main_point_delay_seconds ?? null,
+    wordsPerMinute: s.words_per_minute ?? null,
+    fillerTotal: s.filler_words?.total ?? 0,
+    fillerPct: s.filler_words?.percentage ?? 0,
+    snr: s.signal_to_noise_ratio ?? null,
+    vocabUnique: s.vocabulary?.unique ?? null,
+    vocabTotal: s.vocabulary?.total ?? null,
+    vocabRichness: s.vocabulary?.richness ?? null,
+
+    // NEW premium scores
+    focusScore:     m.focus_score     ?? null,
+    focusNote:      m.focus_note      ?? null,
+    structureScore: m.structure_score ?? null,
+    structureNote:  m.structure_note  ?? null,
+    deliveryScore:  m.delivery_score  ?? null,
+    deliveryNote:   m.delivery_note   ?? null,
+
+    // Diagnosis
+    patternName: d.pattern_name ?? null,
+    patternDesc: d.pattern_description ?? d.reason ?? null,
+    gapGotLost: g.what_got_lost ?? null,
+    gapUnspoken: g.unspoken_gap ?? null,
+    oneThingToChange: c.one_thing_to_change ?? null,
+    executiveVersion: r.executive_version ?? null,
+    transcript: data.transcribed_text ?? '',
+    listenerQuestion: d.listener_question ?? null,
+    recommendedStructure: c.recommended_structure ?? null,
+    whyThisMatters: d.why_this_matters ?? null,
+  };
+}
 
     function renderBitesTabs() {
       const tabs = document.getElementById('bitesCatTabs');
