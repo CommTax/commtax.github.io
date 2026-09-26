@@ -142,26 +142,6 @@
     .view-panel { display: none; flex-direction: column; gap: 22px; }
     .view-panel.active-view { display: flex; }
 
-    /* ── How strip ── */
-    .how-strip {
-      background: linear-gradient(135deg, rgba(184,148,60,0.08), rgba(184,148,60,0.03));
-      border: 1px solid rgba(184,148,60,0.25); border-radius: 14px;
-      padding: 14px 20px; display: flex; align-items: center; gap: 10px;
-      flex-wrap: wrap; font-size: 12px; color: var(--text-soft);
-    }
-    .how-strip .hs-title { font-weight: 800; color: var(--gold-darker); letter-spacing: 0.1em; text-transform: uppercase; font-size: 10px; margin-right: 6px; }
-    .how-chip {
-      display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px;
-      background: #fff; border: 1px solid var(--border-soft); font-size: 11.5px;
-      font-weight: 600; color: var(--text-soft); transition: all 0.2s;
-    }
-    .how-chip .hc-num { width: 17px; height: 17px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; background: var(--bg-warm); color: var(--text-muted); }
-    .how-chip.active { color: var(--gold-darker); border-color: var(--gold); background: rgba(184,148,60,0.1); }
-    .how-chip.active .hc-num { background: var(--gold); color: #fff; }
-    .how-chip.done { color: var(--sage); border-color: rgba(107,122,94,0.4); background: rgba(107,122,94,0.08); }
-    .how-chip.done .hc-num { background: var(--sage); color: #fff; }
-    .how-arrow { color: var(--text-muted); opacity: 0.6; font-size: 12px; }
-
     /* ── Today header bar ── */
     .today-header-bar {
       background: linear-gradient(135deg, rgba(184,148,60,0.12), rgba(184,148,60,0.04));
@@ -690,18 +670,6 @@
       </aside>
 
       <main class="main-content">
-        <div class="how-strip" id="howStrip">
-          <span class="hs-title">How it works</span>
-          <span class="how-chip" id="howChip1"><span class="hc-num">1</span> Speak</span>
-          <span class="how-arrow">→</span>
-          <span class="how-chip" id="howChip2"><span class="hc-num">2</span> See your pattern</span>
-          <span class="how-arrow">→</span>
-          <span class="how-chip" id="howChip3"><span class="hc-num">3</span> Reflect + Try again</span>
-          <span class="how-arrow">→</span>
-          <span class="how-chip" id="howChip4"><span class="hc-num">4</span> Repeat tomorrow</span>
-          <span class="how-arrow">→</span>
-          <span class="how-chip" id="howChip5"><span class="hc-num">5</span> Explore Library</span>
-        </div>
 
         <!-- HOME VIEW (NEW) -->
         <section class="view-panel" id="homeView">
@@ -1602,7 +1570,6 @@
       renderHeader();
       renderProfile();
       renderTodayCard();
-      renderHowStrip();
       renderProgressView();
       renderBitesTabs();
       renderBitesGrid();
@@ -1618,24 +1585,6 @@
       switchView('today');
       maybeShowOnboarding();
       renderIcons();
-    }
-
-    function renderHowStrip() {
-      const anyRepToday = TODAY.reps.length > 0;
-      const chipIds = ['howChip1', 'howChip2', 'howChip3', 'howChip4', 'howChip5'];
-      const chips = chipIds.map(id => document.getElementById(id)).filter(Boolean);
-      chips.forEach(c => { c.className = 'how-chip'; });
-      if (!anyRepToday) {
-        if (chips[0]) chips[0].classList.add('active');
-      } else {
-        if (chips[0]) chips[0].classList.add('done');
-        if (chips[1]) chips[1].classList.add('done');
-        if (chips[2]) chips[2].classList.add('active');
-        if (USER.stats && USER.stats.current_streak > 1 && chips[3]) {
-          chips[3].classList.add('done');
-          chips[4] && chips[4].classList.add('active');
-        }
-      }
     }
 
     function renderTodayCard() {
@@ -2847,7 +2796,6 @@
         TODAY.reps = [];
         saveTodayQuestionCache();
         renderTodayCard();
-        renderHowStrip();
         renderIcons();
       } catch (err) { alert(`Couldn't fetch a new question: ${err.message}`); }
       finally { if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="refresh-cw"></i> Change question'; renderIcons(); } }
@@ -2861,7 +2809,6 @@
         TODAY.reps = [];
         saveTodayQuestionCache();
         renderTodayCard();
-        renderHowStrip();
         switchView('today');
         return;
       }
@@ -2883,7 +2830,6 @@
         TODAY.reps = [];
         saveTodayQuestionCache();
         renderTodayCard();
-        renderHowStrip();
         switchView('today');
         renderIcons();
       } catch (err) { alert(`Couldn't fetch a new question: ${err.message}`); }
@@ -2931,8 +2877,7 @@
         TODAY.reps = [];
         saveTodayQuestionCache();
         renderTodayCard();
-        renderHowStrip();
-      }
+         }
       closeCustomizeModal();
       renderIcons();
     }
@@ -3052,7 +2997,6 @@
       document.getElementById('confettiLayer').innerHTML = '';
       loadTodayQuestion().then(() => {
         renderTodayCard();
-        renderHowStrip();
         renderHome();
         renderIcons();
       });
