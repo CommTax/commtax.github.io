@@ -105,8 +105,7 @@
        NAV
        ============================================================ */
     .nav-wrap {
-      position: sticky;
-      top: 0;
+      position: relative;
       z-index: 800;
       padding: 14px 0 0;
       pointer-events: none;
@@ -1356,26 +1355,78 @@
     .modal-content h3 { font-family: var(--font-display); font-size: 1.85rem; font-weight: 700; color: var(--title-deep); margin: 0 0 8px; letter-spacing: -0.02em; }
     .modal-content > p { color: var(--text-soft); font-size: 0.95rem; margin: 0 0 20px; line-height: 1.55; }
 
-    .login-modal .modal-content { padding: 44px 40px; text-align: left; }
-    .login-modal h2 { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--title-deep); margin-bottom: 4px; letter-spacing: -0.02em; }
-    .login-subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; }
-    .login-form { display: flex; flex-direction: column; gap: 16px; }
-    .login-form label { display: block; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--label-muted); margin-bottom: 6px; }
-    .login-form input {
-      width: 100%; padding: 14px 18px; border: 1.5px solid var(--border-soft);
-      border-radius: 12px; font-size: 0.96rem; background: var(--bg-cream); font-family: inherit;
-      color: var(--ink);
-      transition: border-color 0.2s;
+    .login-modal .modal-content {
+      padding: 46px 42px;
+      text-align: left;
+      border-radius: 28px;
+      border: 1px solid var(--hairline-strong);
+      box-shadow: 0 40px 90px rgba(26,25,23,0.35), 0 0 0 1px rgba(255,255,255,0.7) inset;
+      overflow: hidden;
     }
-    .login-form input:focus { outline: none; border-color: var(--gold); background: #fff; }
+    /* Foil top border */
+    .login-modal .modal-content::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--foil);
+      opacity: 0.9;
+    }
+    .login-modal h2 {
+      font-family: var(--font-display);
+      font-size: 2.05rem;
+      font-weight: 700;
+      color: var(--title-deep);
+      margin-bottom: 6px;
+      letter-spacing: -0.022em;
+      line-height: 1.1;
+    }
+    .login-subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 26px; line-height: 1.55; }
+
+    .login-form { display: flex; flex-direction: column; gap: 16px; }
+    .login-form label {
+      display: block;
+      font-weight: 800;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--label-muted);
+      margin-bottom: 8px;
+    }
+    .login-form input {
+      width: 100%;
+      padding: 15px 18px;
+      border: 1.5px solid var(--border-soft);
+      border-radius: 14px;
+      font-size: 0.98rem;
+      background: var(--bg-cream);
+      font-family: inherit;
+      color: var(--ink);
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+    .login-form input:focus {
+      outline: none;
+      border-color: var(--gold);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(184,148,60,0.10);
+    }
     .login-submit {
       background: linear-gradient(135deg, var(--espresso), var(--obsidian));
-      color: var(--gold-light); border: 1px solid var(--hairline-strong);
-      padding: 15px; border-radius: 100px;
-      font-weight: 700; font-size: 0.98rem; cursor: pointer; margin-top: 4px;
+      color: var(--gold-light);
+      border: 1px solid var(--hairline-strong);
+      padding: 16px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 0.98rem;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      margin-top: 6px;
       font-family: inherit;
       box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 10px 26px rgba(26,21,16,0.24);
       transition: all 0.22s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
     .login-submit:hover:not(:disabled) {
       transform: translateY(-2px);
@@ -1384,6 +1435,25 @@
       color: #fff7d8;
     }
     .login-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* "Use a different email" secondary button */
+    .login-form .login-secondary {
+      background: transparent;
+      border: 1px solid var(--border-soft);
+      color: var(--text-soft);
+      padding: 13px;
+      border-radius: 100px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .login-form .login-secondary:hover {
+      border-color: var(--gold);
+      color: var(--gold-darker);
+      background: rgba(212,181,106,0.06);
+    }
 
     .gate-modal .modal-content { padding: 40px 36px; text-align: left; max-width: 460px; }
     .gate-modal h3 { font-size: 1.55rem; margin-bottom: 6px; }
@@ -1461,11 +1531,13 @@
 
     @media (max-width: 900px) {
       .mobile-bottom-nav { display: flex; }
-      .nav-wrap { padding: 12px 0 0; }
-      .navbar { padding: 10px 16px; border-radius: 60px; }
-      .logo-img { height: 30px; }
-      .logo-text { font-size: 1.15rem; }
-      body { padding-bottom: 78px; }
+      /* Hide the entire top nav on mobile */
+      .nav-wrap { display: none; }
+      body { padding-bottom: 82px; }
+      /* 5 items in bottom nav — tighter spacing */
+      .mobile-nav-item { min-width: 56px; padding: 6px 6px; }
+      .mobile-nav-item .mobile-nav-label { font-size: 9.5px; }
+      .mobile-nav-item .mobile-nav-icon { width: 21px; height: 21px; }
     }
 
     @media (max-width: 640px) {
@@ -1561,6 +1633,15 @@
         <span class="logo-text">The <span>Unspoken</span></span>
       </a>
 
+<!-- NAV (desktop only) -->
+<div class="nav-wrap">
+  <div class="container">
+    <nav class="navbar">
+      <a href="#top" class="logo-link">
+        <img src="https://github.com/CommTax/commtax.github.io/blob/main/Mini%20Logo%20Unspoken.png?raw=true" alt="The Unspoken Logo" class="logo-img" />
+        <span class="logo-text">The <span>Unspoken</span></span>
+      </a>
+
       <div class="nav-links">
         <div class="dropdown">
           <a href="#" class="nav-anchor">Product <span class="chev">▾</span></a>
@@ -1570,21 +1651,18 @@
           </div>
         </div>
         <a href="#faq" class="nav-anchor">FAQ</a>
+        <a href="#contact" class="nav-anchor">Contact</a>
         <a href="/University" class="nav-anchor">University</a>
         <a href="#" id="signInBtn" class="nav-login">
           <i data-lucide="user" style="width:15px; height:15px;"></i>
           <span>Log In</span>
         </a>
       </div>
-
-      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle Navigation Menu">
-        <span></span><span></span><span></span>
-      </button>
     </nav>
   </div>
 </div>
 
-<!-- Mobile bottom nav -->
+<!-- Mobile bottom nav (5 items) -->
 <nav class="mobile-bottom-nav" id="mobileBottomNav">
   <a href="#top" class="mobile-nav-item active" data-nav="home">
     <i data-lucide="home" class="mobile-nav-icon"></i>
@@ -1594,9 +1672,13 @@
     <i data-lucide="graduation-cap" class="mobile-nav-icon"></i>
     <span class="mobile-nav-label">University</span>
   </a>
-  <a href="https://theunspoken.co.in/Pricing" class="mobile-nav-item" data-nav="buy">
-    <i data-lucide="credit-card" class="mobile-nav-icon"></i>
-    <span class="mobile-nav-label">Buy</span>
+  <a href="https://theunspoken.co.in/Pricing" class="mobile-nav-item" data-nav="join">
+    <i data-lucide="sparkles" class="mobile-nav-icon"></i>
+    <span class="mobile-nav-label">Join</span>
+  </a>
+  <a href="#contact" class="mobile-nav-item" data-nav="contact">
+    <i data-lucide="mail" class="mobile-nav-icon"></i>
+    <span class="mobile-nav-label">Contact</span>
   </a>
   <a href="#" id="mobileAccountBtn" class="mobile-nav-item" data-nav="account">
     <i data-lucide="user" class="mobile-nav-icon"></i>
@@ -1646,7 +1728,7 @@
           />
         </div>
         <button type="button" class="login-submit" id="verifyOtpBtn" onclick="verifyLoginOtp()">Sign In →</button>
-        <button type="button" id="backToEmailBtn" onclick="backToLoginEmail()" style="background: transparent; border: 1px solid var(--border-soft); color: var(--text-soft); padding: 13px; border-radius: 100px; font-weight: 600; cursor: pointer; font-family: inherit; font-size: 0.9rem;">← Use a different email</button>
+          <button type="button" id="backToEmailBtn" onclick="backToLoginEmail()" class="login-secondary">← Use a different email</button>
       </div>
       <p style="margin-top:22px; padding-top:22px; border-top:1px solid var(--border-light); text-align:center; font-size:0.88rem; color:var(--text-muted);">
         Didn't get it? <a href="javascript:void(0)" onclick="requestLoginOtp(true)" style="color:var(--gold-darker); text-decoration:none; font-weight:700;">Resend code</a>
