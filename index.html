@@ -102,7 +102,7 @@
     }
 
     /* ============================================================
-       NAV
+       NAV (desktop only — hidden on mobile via media query)
        ============================================================ */
     .nav-wrap {
       position: relative;
@@ -183,26 +183,9 @@
     }
     .nav-login:hover { box-shadow: var(--glow-gold); transform: translateY(-1px); }
 
-    .mobile-menu-btn {
-      display: none;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 8px;
-      flex-direction: column;
-      gap: 5px;
-      justify-content: center;
-      align-items: center;
-    }
-    .mobile-menu-btn span {
-      display: block;
-      width: 22px;
-      height: 2px;
-      background: var(--ink);
-      border-radius: 2px;
-      transition: all 0.25s ease;
-    }
-
+    /* ============================================================
+       MOBILE BOTTOM NAV (5 items)
+       ============================================================ */
     .mobile-bottom-nav {
       display: none;
       position: fixed;
@@ -222,25 +205,25 @@
       flex-direction: column;
       align-items: center;
       gap: 3px;
-      padding: 6px 10px;
+      padding: 6px 6px;
       border-radius: 12px;
       cursor: pointer;
       border: none;
       background: transparent;
       font-family: inherit;
       transition: all 0.2s;
-      min-width: 60px;
+      min-width: 56px;
       text-decoration: none;
     }
     .mobile-nav-item .mobile-nav-icon {
-      width: 22px;
-      height: 22px;
+      width: 21px;
+      height: 21px;
       stroke-width: 1.8;
       color: var(--label-muted);
       transition: color 0.2s;
     }
     .mobile-nav-item .mobile-nav-label {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 600;
       color: var(--label-muted);
       letter-spacing: 0.02em;
@@ -1363,7 +1346,6 @@
       box-shadow: 0 40px 90px rgba(26,25,23,0.35), 0 0 0 1px rgba(255,255,255,0.7) inset;
       overflow: hidden;
     }
-    /* Foil top border */
     .login-modal .modal-content::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0;
@@ -1436,7 +1418,6 @@
     }
     .login-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* "Use a different email" secondary button */
     .login-form .login-secondary {
       background: transparent;
       border: 1px solid var(--border-soft);
@@ -1530,14 +1511,11 @@
     }
 
     @media (max-width: 900px) {
+      /* Bottom nav visible */
       .mobile-bottom-nav { display: flex; }
-      /* Hide the entire top nav on mobile */
+      /* Hide the entire top nav on mobile — no pill, no clutter */
       .nav-wrap { display: none; }
       body { padding-bottom: 82px; }
-      /* 5 items in bottom nav — tighter spacing */
-      .mobile-nav-item { min-width: 56px; padding: 6px 6px; }
-      .mobile-nav-item .mobile-nav-label { font-size: 9.5px; }
-      .mobile-nav-item .mobile-nav-icon { width: 21px; height: 21px; }
     }
 
     @media (max-width: 640px) {
@@ -1611,6 +1589,10 @@
       .phone-frame { width: 165px; height: 330px; padding: 6px; border-radius: 28px; }
       .phone-screen { border-radius: 22px; }
       .phone-notch { width: 50px; height: 14px; top: 11px; }
+      /* Bottom nav — 5 items on the smallest screens */
+      .mobile-nav-item { min-width: 52px; padding: 5px 4px; }
+      .mobile-nav-item .mobile-nav-label { font-size: 9px; }
+      .mobile-nav-item .mobile-nav-icon { width: 20px; height: 20px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1624,16 +1606,9 @@
 </head>
 <body id="top">
 
-<!-- NAV -->
-<div class="nav-wrap">
-  <div class="container">
-    <nav class="navbar">
-      <a href="#top" class="logo-link">
-        <img src="https://github.com/CommTax/commtax.github.io/blob/main/Mini%20Logo%20Unspoken.png?raw=true" alt="The Unspoken Logo" class="logo-img" />
-        <span class="logo-text">The <span>Unspoken</span></span>
-      </a>
-
-<!-- NAV (desktop only) -->
+<!-- ============================================================
+     NAV (desktop only — hidden on mobile via media query)
+     ============================================================ -->
 <div class="nav-wrap">
   <div class="container">
     <nav class="navbar">
@@ -1662,7 +1637,9 @@
   </div>
 </div>
 
-<!-- Mobile bottom nav (5 items) -->
+<!-- ============================================================
+     MOBILE BOTTOM NAV (5 items)
+     ============================================================ -->
 <nav class="mobile-bottom-nav" id="mobileBottomNav">
   <a href="#top" class="mobile-nav-item active" data-nav="home">
     <i data-lucide="home" class="mobile-nav-icon"></i>
@@ -1728,7 +1705,7 @@
           />
         </div>
         <button type="button" class="login-submit" id="verifyOtpBtn" onclick="verifyLoginOtp()">Sign In →</button>
-          <button type="button" id="backToEmailBtn" onclick="backToLoginEmail()" class="login-secondary">← Use a different email</button>
+        <button type="button" id="backToEmailBtn" onclick="backToLoginEmail()" class="login-secondary">← Use a different email</button>
       </div>
       <p style="margin-top:22px; padding-top:22px; border-top:1px solid var(--border-light); text-align:center; font-size:0.88rem; color:var(--text-muted);">
         Didn't get it? <a href="javascript:void(0)" onclick="requestLoginOtp(true)" style="color:var(--gold-darker); text-decoration:none; font-weight:700;">Resend code</a>
@@ -1918,7 +1895,7 @@
         <div class="phone-frame">
           <div class="phone-notch"></div>
           <div class="phone-screen">
-            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Intro.png" alt="Sprint Sized Practice — 10 minute daily micro-habits" loading="lazy" />
+            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Intro.png" alt="Sprint Sized Practice" loading="lazy" />
           </div>
         </div>
       </div>
@@ -1940,7 +1917,7 @@
         <div class="phone-frame">
           <div class="phone-notch"></div>
           <div class="phone-screen">
-            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Pattern.png" alt="Pattern & Progress — personalized analysis of your communication pattern" loading="lazy" />
+            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Pattern.png" alt="Pattern & Progress" loading="lazy" />
           </div>
         </div>
       </div>
@@ -1962,7 +1939,7 @@
         <div class="phone-frame">
           <div class="phone-notch"></div>
           <div class="phone-screen">
-            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Activity.png" alt="Drills & Exercises — practice to reduce rambling and build clarity" loading="lazy" />
+            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Activity.png" alt="Drills & Exercises" loading="lazy" />
           </div>
         </div>
       </div>
@@ -1984,7 +1961,7 @@
         <div class="phone-frame">
           <div class="phone-notch"></div>
           <div class="phone-screen">
-            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Data.png" alt="My Reps — complete history of all your reps, transcripts, and metrics" loading="lazy" />
+            <img src="https://raw.githubusercontent.com/CommTax/commtax.github.io/main/Images/Data.png" alt="My Reps" loading="lazy" />
           </div>
         </div>
       </div>
@@ -2063,7 +2040,7 @@
     <details class="faq-item">
       <summary>How is feedback generated?</summary>
       <div class="faq-answer">
-        Your response is transcribed (voice) or read directly (text), then analysed by our engine across four dimensions: <strong>Structure</strong>, <strong>Clarity</strong>, <strong>Conciseness</strong>, and <strong>Delivery</strong>. You get a pattern name, a diagnosis of what got lost, and one specific thing to change next time. No generic advice.
+        Your response is transcribed (voice) or read directly (text), then analysed by our engine across four dimensions: <strong>Structure</strong>, <strong>Clarity</strong>, <strong>Conciseness</strong>, and <strong>Delivery</strong>. You get a pattern name, a diagnosis of what got lost, and one specific thing to change next time.
       </div>
     </details>
 
