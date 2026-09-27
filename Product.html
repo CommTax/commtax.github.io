@@ -1775,7 +1775,33 @@
       }
       document.getElementById('bootScreen').classList.add('hidden');
       document.getElementById('mainApp').classList.remove('hidden');
-      renderAll();
+        // Guard each renderer so one broken piece can't kill the whole session
+  try { renderHeader(); } catch (e) { console.warn('renderHeader failed:', e); }
+  try { renderProfile(); } catch (e) { console.warn('renderProfile failed:', e); }
+  try { renderTodayCard(); } catch (e) { console.warn('renderTodayCard failed:', e); }
+  try { renderProgressView(); } catch (e) { console.warn('renderProgressView failed:', e); }
+  try { renderBitesTabs(); } catch (e) {}
+  try { renderBitesGrid(); } catch (e) {}
+  try { renderDrillsGrid(); } catch (e) {}
+  try { renderDailyChallengeGrid(); } catch (e) {}
+  try { renderScenariosGrid(); } catch (e) {}
+  try { renderBadges(); } catch (e) {}
+  try { renderTodayCap(); } catch (e) {}
+  try { renderActivitiesCap(); } catch (e) {}
+  try { renderReflectCard(); } catch (e) {}
+  try { renderReflectJournal(); } catch (e) {}
+  try { renderReflectionJournalView(); } catch (e) {}
+  try { renderHome(); } catch (e) {}
+  try { updatePlanBadges(); } catch (e) {}
+  try { switchView('home'); } catch (e) {}
+  try { maybeShowOnboarding(); } catch (e) {}
+  try { renderIcons(); } catch (e) {}
+  try { updateMobileNav(); } catch (e) {}
+
+  startStatsRefresh();
+  maybeCelebrateStreak();
+  return true;
+}
       startStatsRefresh();
       maybeCelebrateStreak();
       return true;
@@ -2159,32 +2185,61 @@
       renderIcons();
     }
 
-    function renderHeader() {
-      const s = USER.stats;
-      document.getElementById('userNameEl').textContent = USER.name;
-      document.getElementById('userAvatarEl').textContent = (USER.name || 'A').charAt(0).toUpperCase();
-      document.getElementById('userRoleEl').textContent = USER.email;
-      document.getElementById('planBadge').textContent = PLAN_LABEL[USER.plan] || 'Member';
-      const isPass = isPassPlan();
-      document.getElementById('headerTrackBadge').textContent = isPass ? (PLAN_LABEL[USER.plan] || '') : `${formatSprint(USER.track_id)} · ${PLAN_LABEL[USER.plan] || ''}`;
+ function renderHeader() {
+  const s = USER.stats;
 
-      // Update every es-value in the ticker (there are two of each — set A and set B)
-      document.querySelectorAll('[data-es="plan"]').forEach(el => el.textContent = PLAN_LABEL[USER.plan] || '—');
-      document.querySelectorAll('[data-es="day"]').forEach(el => el.textContent = `Day ${USER.current_day} / ${USER.total_days}`);
-      document.querySelectorAll('[data-es="streak"]').forEach(el => el.textContent = `${s.current_streak}${s.current_streak === 1 ? ' day' : ' days'}`);
-      document.querySelectorAll('[data-es="reps"]').forEach(el => el.textContent = `${s.completed_tasks}`);
-      document.querySelectorAll('[data-es="badges"]').forEach(el => el.textContent = `${s.achievements_unlocked}`);
+  // Header brand/user card — these still exist
+  const userNameEl = document.getElementById('userNameEl');
+  if (userNameEl) userNameEl.textContent = USER.name;
+  const avatarEl = document.getElementById('userAvatarEl');
+  if (avatarEl) avatarEl.textContent = (USER.name || 'A').charAt(0).toUpperCase();
+  const roleEl = document.getElementById('userRoleEl');
+  if (roleEl) roleEl.textContent = USER.email;
+  const planBadgeEl = document.getElementById('planBadge');
+  if (planBadgeEl) planBadgeEl.textContent = PLAN_LABEL[USER.plan] || 'Member';
 
-      document.getElementById('todayTrackTitle').textContent = isPass ? 'Today\'s Practice' : `${formatSprint(USER.track_id)} Sprint`;
-      const planBlurb = isPass ? 'Practice any moment, sharpen any skill' : `${formatSprint(USER.track_id)} Sprint · focus one outcome`;
-      document.getElementById('todayFocus').textContent = `Day ${USER.current_day} of ${USER.total_days} · ${planBlurb}`;
-      document.getElementById('dayCounter').textContent = `Day ${USER.current_day} / ${USER.total_days}`;
-      const streakEl = document.getElementById('todayStreak');
-      if (streakEl) { const span = streakEl.querySelector('span'); if (span) span.textContent = `${s.current_streak} day streak · longest ${s.longest_streak}`; }
-      const pct = Math.min(100, (USER.current_day / USER.total_days) * 100);
-      document.getElementById('dayProgressFill').style.width = pct + '%';
-    }
+  const isPass = isPassPlan();
+  const trackBadgeEl = document.getElementById('headerTrackBadge');
+  if (trackBadgeEl) {
+    trackBadgeEl.textContent = isPass
+      ? (PLAN_LABEL[USER.plan] || '')
+      : `${formatSprint(USER.track_id)} · ${PLAN_LABEL[USER.plan] || ''}`;
+  }
 
+  // Ticker values (safe — uses querySelectorAll)
+  document.querySelectorAll('[data-es="plan"]').forEach(el => el.textContent = PLAN_LABEL[USER.plan] || '—');
+  document.querySelectorAll('[data-es="day"]').forEach(el => el.textContent = `Day ${USER.current_day} / ${USER.total_days}`);
+  document.querySelectorAll('[data-es="streak"]').forEach(el => el.textContent = `${s.current_streak}${s.current_streak === 1 ? ' day' : ' days'}`);
+  document.querySelectorAll('[data-es="reps"]').forEach(el => el.textContent = `${s.completed_tasks}`);
+  document.querySelectorAll('[data-es="badges"]').forEach(el => el.textContent = `${s.achievements_unlocked}`);
+
+  // The "Today header bar" was removed — do NOT reference these:
+  // todayTrackTitle, todayFocus, dayCounter, todayStreak, dayProgressFill
+  // (They used to live in <div class="today-header-bar">.)
+
+  // If any of those elements still exist somewhere, update them safely:
+  const todayTrackTitle = document.getElementById('todayTrackTitle');
+  if (todayTrackTitle) {
+    todayTrackTitle.textContent = isPass ? "Today's Practice" : `${formatSprint(USER.track_id)} Sprint`;
+  }
+  const todayFocus = document.getElementById('todayFocus');
+  if (todayFocus) {
+    const planBlurb = isPass ? 'Practice any moment, sharpen any skill' : `${formatSprint(USER.track_id)} Sprint · focus one outcome`;
+    todayFocus.textContent = `Day ${USER.current_day} of ${USER.total_days} · ${planBlurb}`;
+  }
+  const dayCounter = document.getElementById('dayCounter');
+  if (dayCounter) dayCounter.textContent = `Day ${USER.current_day} / ${USER.total_days}`;
+  const todayStreak = document.getElementById('todayStreak');
+  if (todayStreak) {
+    const span = todayStreak.querySelector('span');
+    if (span) span.textContent = `${s.current_streak} day streak · longest ${s.longest_streak}`;
+  }
+  const dayProgressFill = document.getElementById('dayProgressFill');
+  if (dayProgressFill) {
+    const pct = Math.min(100, (USER.current_day / USER.total_days) * 100);
+    dayProgressFill.style.width = pct + '%';
+  }
+}
     function renderProfile() {
       const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value || '—'; };
       const roleDisplay = USER.role === 'other' && USER.role_custom ? `${USER.role_custom} (customizing)` : formatRole(USER.role);
