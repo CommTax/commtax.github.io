@@ -681,27 +681,9 @@
 
     .bite-card { background: var(--panel-bg); border: 1px solid var(--hairline); border-radius: 18px; padding: 0; display: flex; flex-direction: column; overflow: hidden; transition: all 0.22s; cursor: pointer; box-shadow: 0 4px 14px rgba(26,25,23,0.03); }
     .bite-card:hover { border-color: rgba(184,148,60,0.45); transform: translateY(-3px); box-shadow: var(--glow-gold-strong); }
-        .bite-card-illustration {
-      position: relative;
-      width: 100%;
-      height: 180px;
-      overflow: hidden;
-      background: linear-gradient(135deg, #fdfbf5 0%, #f6efe0 100%);
-      border-bottom: 1px solid var(--border-light);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-    }
+    .bite-card-illustration { position: relative; width: 100%; height: 180px; overflow: hidden; background: linear-gradient(135deg, #fdfbf5 0%, #f6efe0 100%); border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; padding: 14px; }
     .bite-card-illustration svg { width: 100%; height: 100%; display: block; }
-    .bite-card-illustration img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center;
-      display: block;
-      border-radius: 8px;
-    }
+    .bite-card-illustration img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; border-radius: 8px; }
     .bite-card-body { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 10px; }
     .bite-card-title { font-family: var(--font-display); font-size: 19px; font-weight: 700; color: var(--title-deep); letter-spacing: -0.01em; line-height: 1.2; }
     .bite-card-hook { font-family: var(--font-display); font-size: 13.5px; font-weight: 500; font-style: italic; color: var(--gold-darker); line-height: 1.55; }
@@ -807,6 +789,54 @@
     .us-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     .us-toast .icon { color: var(--gold-light); }
 
+    /* Mobile bottom navigation */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--panel-bg);
+      border-top: 1px solid var(--hairline);
+      padding: 8px 12px;
+      z-index: 100;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -4px 16px rgba(26,25,23,0.06);
+      backdrop-filter: blur(12px);
+    }
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      transition: all 0.2s;
+      min-width: 56px;
+    }
+    .mobile-nav-item .mobile-nav-icon {
+      width: 22px;
+      height: 22px;
+      stroke-width: 1.8;
+      color: var(--label-muted);
+      transition: color 0.2s;
+    }
+    .mobile-nav-item .mobile-nav-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--label-muted);
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .mobile-nav-item.active .mobile-nav-icon { color: var(--gold-darker); }
+    .mobile-nav-item.active .mobile-nav-label { color: var(--gold-darker); font-weight: 700; }
+    .mobile-nav-item.active { background: rgba(212,181,106,0.12); }
+
     @media (max-width: 1080px) {
       .home-grid { grid-template-columns: 1fr; }
       .home-hero { flex-direction: column; align-items: flex-start; }
@@ -826,9 +856,14 @@
       .ya-baseline-grid { grid-template-columns: 1fr; gap: 8px; }
       .ya-baseline-cell { border-right: none; border-bottom: 1px dashed rgba(184,148,60,0.22); padding-bottom: 14px; }
       .ya-baseline-cell:last-child { border-bottom: none; }
+      .mobile-bottom-nav { display: flex; }
+      .main-content { padding-bottom: 80px; }
+      /* Hide the sidebar on mobile, menu-toggle shows instead */
+      .sidebar { display: none; }
+      .menu-toggle { display: none; } /* Remove hamburger since we have bottom nav */
     }
     @media (max-width: 640px) {
-      .main-content { padding: 18px; }
+      .main-content { padding: 18px; padding-bottom: 80px; }
       .top-header { padding: 12px 16px; }
       .onboarding-stage { padding: 32px 24px 28px; }
       .ob-question { font-size: 20px; }
@@ -842,6 +877,7 @@
       .quick-stats-grid { grid-template-columns: 1fr; }
       .try-again-premium { padding: 26px 22px 26px 22px; }
       .try-again-ribbon { position: static; transform: none; margin-bottom: 12px; }
+      .exec-stat-bar { display: none; } /* Hide the ticker on small screens to save space */
     }
   </style>
 </head>
@@ -999,21 +1035,9 @@
           </div>
         </section>
 
-        <!-- TODAY VIEW -->
+        <!-- TODAY VIEW (simplified: removed the header bar as requested) -->
         <section class="view-panel" id="todayView">
-          <div class="today-header-bar">
-            <div class="th-left">
-              <h2 id="todayTrackTitle">Your Sprint</h2>
-              <div class="th-sub" id="todayFocus">Loading questions…</div>
-              <div class="day-progress-bar"><div class="day-progress-fill" id="dayProgressFill" style="width: 0%;"></div></div>
-              <div id="todayCapCounter" style="font-size:11px; color:var(--label-muted); margin-top:8px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;"></div>
-            </div>
-            <div class="th-right">
-              <div class="day-counter" id="dayCounter">Day —</div>
-              <div class="streak" id="todayStreak"><i data-lucide="flame"></i><span>—</span></div>
-            </div>
-          </div>
-
+          <!-- The header bar with "Interview Sprint / Day 11 of 28..." has been removed completely -->
           <div class="today-q-card" id="todayCard">
             <div class="tq-top">
               <div class="tq-left">
@@ -1352,6 +1376,30 @@
       </main>
     </div>
   </div>
+
+  <!-- Mobile Bottom Navigation (visible on small screens) -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav">
+    <button class="mobile-nav-item active" data-view="home" onclick="switchView('home')">
+      <i data-lucide="home" class="mobile-nav-icon"></i>
+      <span class="mobile-nav-label">Home</span>
+    </button>
+    <button class="mobile-nav-item" data-view="today" onclick="switchView('today')">
+      <i data-lucide="sun" class="mobile-nav-icon"></i>
+      <span class="mobile-nav-label">Practice</span>
+    </button>
+    <button class="mobile-nav-item" data-view="dash" onclick="switchView('dash')">
+      <i data-lucide="bar-chart-3" class="mobile-nav-icon"></i>
+      <span class="mobile-nav-label">Progress</span>
+    </button>
+    <button class="mobile-nav-item" data-view="learning" onclick="switchView('learning')">
+      <i data-lucide="book-open" class="mobile-nav-icon"></i>
+      <span class="mobile-nav-label">Learn</span>
+    </button>
+    <button class="mobile-nav-item" data-view="profile" onclick="switchView('profile')">
+      <i data-lucide="user" class="mobile-nav-icon"></i>
+      <span class="mobile-nav-label">Profile</span>
+    </button>
+  </nav>
 
   <div class="us-modal-backdrop" id="usModal"><div class="us-modal"><button class="us-modal-close" onclick="closeModal()" aria-label="Close"><i data-lucide="x"></i></button><div id="usModalContent"></div></div></div>
 
@@ -2020,6 +2068,7 @@
       switchView('home');
       maybeShowOnboarding();
       renderIcons();
+      updateMobileNav();
     }
 
     function updatePlanBadges() {
@@ -3371,6 +3420,19 @@
     function closeModal() { document.getElementById('usModal').classList.remove('is-visible'); }
 
     function toggleSidebar() { document.getElementById('appSidebar').classList.toggle('open'); }
+
+    function updateMobileNav() {
+      // Sync active state of bottom nav with current view
+      const activeView = document.querySelector('.view-panel.active-view');
+      if (!activeView) return;
+      const viewId = activeView.id;
+      const viewMap = { 'homeView': 'home', 'todayView': 'today', 'dashView': 'dash', 'learningView': 'learning', 'profileView': 'profile' };
+      const activeKey = viewMap[viewId] || 'home';
+      document.querySelectorAll('.mobile-nav-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.view === activeKey);
+      });
+    }
+
     function switchView(key) {
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-view'));
@@ -3388,6 +3450,7 @@
       if (key === 'activities') { renderDrillsGrid(); renderDailyChallengeGrid(); renderScenariosGrid(); renderActivitiesCap(); }
       if (window.innerWidth <= 900) { const sidebar = document.getElementById('appSidebar'); if (sidebar && sidebar.classList.contains('open')) sidebar.classList.remove('open'); }
       renderIcons();
+      updateMobileNav();
     }
     function switchActivitySub(key, btn) {
       document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
@@ -3847,10 +3910,7 @@
     }
     function capitalize(s) { if (!s) return ''; return s.charAt(0).toUpperCase() + s.slice(1); }
 
-    console.log('🚀 Product page loaded — Executive Dark Gold theme, ticker stat bar, hero sphere, illustrated bites.');
+    console.log('🚀 Product page loaded — Executive Dark Gold theme, ticker stat bar, hero sphere, illustrated bites. Mobile bottom nav added.');
   </script>
 </body>
 </html>
-
-  
-  
