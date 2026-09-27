@@ -1832,16 +1832,14 @@
             <div class="trend-chart-wrap" id="trendChartWrap"></div>
           </div>
 
-          <div class="dash-grid">
-            <div class="metric-box"><div class="metric-label">Focus</div><div class="metric-value" id="metricFocus">—</div><div class="metric-sub" id="metricFocusSub">—</div></div>
-            <div class="metric-box"><div class="metric-label">Structure</div><div class="metric-value" id="metricStructure">—</div><div class="metric-sub" id="metricStructureSub">—</div></div>
-            <div class="metric-box"><div class="metric-label">Delivery</div><div class="metric-value" id="metricDelivery">—</div><div class="metric-sub" id="metricDeliverySub">—</div></div>
+          <div class="dash-grid" style="grid-template-columns: 1fr 1fr;">
             <div class="metric-box"><div class="metric-label">Time-to-Point</div><div class="metric-value" id="metricTTP">—</div><div class="metric-sub" id="metricTTPSub">—</div></div>
+            <div class="metric-box"><div class="metric-label">Reps Analyzed</div><div class="metric-value" id="metricRepsCount">0</div><div class="metric-sub" id="metricRepsCountSub">All reps in this window</div></div>
           </div>
 
           <div class="dash-wide-box">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <span style="font-family:var(--font-display); font-weight:700; font-size:15px;">Clarity &amp; focus</span>
+              <span style="font-family:var(--font-display); font-weight:700; font-size:15px;">Signal vs noise</span>
               <span style="font-weight: 700; font-size: 13px;">Target: 85% · Current: <span style="color: var(--sage);" id="dashSnrValue">—</span></span>
             </div>
             <div class="snr-container">
@@ -2891,23 +2889,16 @@
         const el = document.getElementById(id); if (el) el.textContent = val;
         const elSub = document.getElementById(id + 'Sub'); if (elSub) elSub.textContent = sub || '';
       };
+      const reps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
       if (!m) {
-        ['metricFocus','metricStructure','metricDelivery','metricTTP'].forEach(id => {
-          const el = document.getElementById(id); if (el) el.textContent = '—';
-        });
-        ['metricFocusSub','metricStructureSub','metricDeliverySub','metricTTPSub'].forEach(id => {
-          const el = document.getElementById(id); if (el) el.textContent = '—';
-        });
+        set('metricTTP', '—', 'Lower is better');
+        set('metricRepsCount', `${reps.length}`, reps.length === 1 ? 'Rep analyzed' : 'Reps analyzed');
         const snrEl = document.getElementById('dashSnrValue'); if (snrEl) snrEl.textContent = '—';
         return;
       }
-      const focus = m.focusScore ?? m.fillerDiscipline;
-      const structure = m.structureScore ?? m.pointFirst;
-      const delivery = m.deliveryScore ?? m.concreteness;
-      set('metricFocus', fmt(focus, ' / 100'), m.focusNote || ((focus >= 80) ? 'Tight, on-point answer' : (focus >= 60) ? 'Some drift' : 'Rambling detected'));
-      set('metricStructure', fmt(structure, ' / 100'), m.structureNote || ((structure >= 80) ? 'Clear shape' : (structure >= 60) ? 'Emerging' : 'Unclear shape'));
-      set('metricDelivery', fmt(delivery, ' / 100'), m.deliveryNote || ((delivery >= 80) ? 'Confident and controlled' : (delivery >= 60) ? 'Solid' : 'Needs work'));
       set('metricTTP', fmt(m.timeToPoint, 's'), 'Lower is better');
+      set('metricRepsCount', `${reps.length}`, reps.length === 1 ? 'Rep analyzed' : 'Reps analyzed');
+      const focus = m.focusScore ?? m.fillerDiscipline;
       const snrEl = document.getElementById('dashSnrValue');
       if (snrEl) snrEl.textContent = fmt(focus, '%');
       const sig = document.getElementById('dashSnrSignal'); if (sig) sig.style.width = `${focus ?? 0}%`;
@@ -2976,7 +2967,6 @@
       }
       if (!baseline && m) baseline = m;
 
-      const baseTTP = (baseline && baseline.timeToPoint != null) ? `${baseline.timeToPoint}s` : '—';
       const baseFocus = (baseline && (baseline.focusScore ?? baseline.fillerDiscipline) != null) ? (baseline.focusScore ?? baseline.fillerDiscipline) : (m && (m.focusScore ?? m.fillerDiscipline) != null ? (m.focusScore ?? m.fillerDiscipline) : '—');
       const baseStructure = (baseline && (baseline.structureScore ?? baseline.pointFirst) != null) ? (baseline.structureScore ?? baseline.pointFirst) : (m && (m.structureScore ?? m.pointFirst) != null ? (m.structureScore ?? m.pointFirst) : '—');
       const baseDelivery = (baseline && (baseline.deliveryScore ?? baseline.concreteness) != null) ? (baseline.deliveryScore ?? baseline.concreteness) : (m && (m.deliveryScore ?? m.concreteness) != null ? (m.deliveryScore ?? m.concreteness) : '—');
@@ -3002,19 +2992,22 @@
         </div>
 
         <div class="ya-baseline">
-          <div class="ya-baseline-label">Your baseline</div>
+          <div class="ya-baseline-label">Your coaching scores</div>
           <div class="ya-baseline-grid">
             <div class="ya-baseline-cell">
-              <div class="ya-baseline-num">${escapeHtml(String(baseTTP))}</div>
-              <div class="ya-baseline-label-text">Time-to-Point</div>
+              <div class="ya-baseline-num">${escapeHtml(String(baseFocus))}${baseFocus !== '—' ? '<span class="ya-baseline-suffix">/100</span>' : ''}</div>
+              <div class="ya-baseline-label-text">Focus</div>
+              <div class="ya-baseline-note">${escapeHtml((m && m.focusNote) ? m.focusNote : '')}</div>
             </div>
             <div class="ya-baseline-cell">
               <div class="ya-baseline-num">${escapeHtml(String(baseStructure))}${baseStructure !== '—' ? '<span class="ya-baseline-suffix">/100</span>' : ''}</div>
               <div class="ya-baseline-label-text">Structure</div>
+              <div class="ya-baseline-note">${escapeHtml((m && m.structureNote) ? m.structureNote : '')}</div>
             </div>
             <div class="ya-baseline-cell">
               <div class="ya-baseline-num">${escapeHtml(String(baseDelivery))}${baseDelivery !== '—' ? '<span class="ya-baseline-suffix">/100</span>' : ''}</div>
               <div class="ya-baseline-label-text">Delivery</div>
+              <div class="ya-baseline-note">${escapeHtml((m && m.deliveryNote) ? m.deliveryNote : '')}</div>
             </div>
           </div>
         </div>
