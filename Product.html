@@ -2009,25 +2009,47 @@
       }
     }
 
-    async function verifyLoginOtp() {
-      const otp = document.getElementById('loginOtp').value.trim();
-      if (!otp || otp.length !== 6) return alert('Please enter the 6-digit code.');
-      const btn = document.getElementById('loginVerifyBtn');
-      btn.disabled = true; btn.textContent = 'Verifying…';
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/auth/verify-otp`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: loginEmail, otp })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'Invalid code');
-        const url = `${window.location.origin}${window.location.pathname}?session=${encodeURIComponent(data.session_token)}`;
-        window.location.assign(url);
-      } catch (err) {
-        alert(`Login failed: ${err.message}`);
-        btn.disabled = false; btn.textContent = 'Sign In →';
-      }
+async function verifyLoginOtp() {
+  const otp = document.getElementById('loginOtp').value.trim();
+  if (!otp || otp.length !== 6) return alert('Please enter the 6-digit code.');
+  const btn = document.getElementById('loginVerifyBtn');
+  btn.disabled = true; btn.textContent = 'Verifying…';
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/auth/verify-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: loginEmail, otp })
+    });
+    const data = await res.json().catch(() => ({}));
+    console.log('[OTP] verify-otp response:', res.status, data);
+
+    if (!res.ok) throw new Error(data.detail || data.error || 'Invalid code');
+    if (!data.session_token) throw new Error('Server did not return a session token.');
+
+    // 1. Save the token to localStorage FIRST
+    try {
+      localStorage.setItem('unspoken_paid_session', data.session_token);
+      console.log('[OTP] token saved to localStorage, length:', data.session_token.length);
+    } catch (e) {
+      console.error('[OTP] localStorage.setItem failed:', e);
+      throw new Error('Cannot save session — localStorage is blocked. Please enable cookies/storage.');
     }
+
+    // 2. Verify it was actually saved before navigating
+    const check = localStorage.getItem('unspoken_paid_session');
+    if (!check) throw new Error('Session save verification failed.');
+    console.log('[OTP] verified saved token matches:', check === data.session_token);
+
+    // 3. Navigate to clean URL — bootstrap() will pick it up from localStorage
+    const cleanUrl = `${window.location.origin}${window.location.pathname}`;
+    console.log('[OTP] navigating to:', cleanUrl);
+    window.location.replace(cleanUrl);
+  } catch (err) {
+    console.error('[OTP] login error:', err);
+    alert(`Login failed: ${err.message}`);
+    btn.disabled = false; btn.textContent = 'Sign In →';
+  }
+}
 
     const FALLBACK_QUESTIONS = [
       { id: null, text: 'Tell me about yourself.', focus: 'Concise self-intro', target_seconds: 60, difficulty: 'easy', question_type: 'self-intro' },
