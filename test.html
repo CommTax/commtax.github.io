@@ -148,120 +148,164 @@
     .menu-toggle { display: none; background: none; border: 1px solid var(--hairline); color: var(--ink); padding: 6px 10px; border-radius: 8px; cursor: pointer; align-items: center; justify-content: center; }
     .menu-toggle .icon { width: 18px; height: 18px; }
 
-    /* Executive Stat Bar */
-    .exec-stat-bar {
+        /* Compact static header (replaces marquee stat bar) */
+    .trial-header-right {
       display: flex;
       align-items: center;
-      background: linear-gradient(180deg, #ffffff, #faf8f5);
-      border: 1px solid var(--hairline);
-      border-radius: 100px;
-      padding: 5px 6px 5px 0;
-      box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 4px 14px rgba(26,25,23,0.04);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      max-width: 100%;
-      min-width: 0;
-      position: relative;
-      overflow: hidden;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
-    .es-scroll-track {
-      display: flex;
-      align-items: center;
-      flex: 1 1 auto;
-      min-width: 0;
-      overflow: hidden;
-      position: relative;
-      mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
-      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
-    }
-    .es-scroll-inner {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      white-space: nowrap;
-      animation: esMarquee 32s linear infinite;
-      will-change: transform;
-      padding-left: 18px;
-    }
-    @keyframes esMarquee {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-    .exec-stat-bar:hover .es-scroll-inner { animation-play-state: paused; }
-    @media (prefers-reduced-motion: reduce) {
-      .es-scroll-inner { animation: none; padding-left: 18px; }
-      .es-scroll-track { mask-image: none; -webkit-mask-image: none; overflow-x: auto; }
-    }
-    .es-item {
+    .trial-nudge {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 6px 14px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--label-muted);
-      letter-spacing: 0.01em;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .es-item .es-label {
-      font-size: 10px;
+      padding: 7px 14px;
+      border-radius: 100px;
+      background: linear-gradient(135deg, rgba(212,181,106,0.14), rgba(184,148,60,0.04));
+      border: 1px solid rgba(184,148,60,0.38);
+      font-size: 11.5px;
       font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--label-muted);
-    }
-    .es-item .es-value {
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--title-deep);
-      letter-spacing: -0.005em;
-    }
-    .es-item i[data-lucide] {
-      width: 14px;
-      height: 14px;
-      stroke-width: 1.6;
       color: var(--gold-darker);
-      flex-shrink: 0;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
     }
-    .es-item.streak i[data-lucide] { color: #8a4238; }
-    .es-item.streak .es-value { color: #8a4238; }
-    .es-item.achievements i[data-lucide] { color: var(--sage); }
-    .es-item.achievements .es-value { color: var(--sage); }
-    .es-divider {
-      width: 1px;
-      height: 20px;
-      background: linear-gradient(180deg, transparent, var(--hairline), transparent);
-      flex-shrink: 0;
-      display: inline-block;
+    .trial-nudge i[data-lucide] {
+      width: 13px;
+      height: 13px;
+      stroke-width: 2.2;
+      color: var(--gold-darker);
     }
-    .es-upgrade {
-      padding: 8px 18px;
+    .trial-nudge .tn-strong {
+      color: var(--title-deep);
+      font-weight: 800;
+    }
+    .unlock-report-btn {
+      padding: 11px 22px;
       border-radius: 100px;
       border: 1px solid var(--hairline-strong);
       background: linear-gradient(135deg, var(--espresso), var(--obsidian));
       color: var(--gold-light);
-      font-weight: 700;
-      font-size: 11px;
-      letter-spacing: 0.10em;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       cursor: pointer;
       font-family: inherit;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      margin-left: 8px;
-      margin-right: 4px;
-      transition: all 0.2s;
-      box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset;
-      flex-shrink: 0;
-      z-index: 2;
-      position: relative;
+      gap: 8px;
+      transition: all 0.22s;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 6px 18px rgba(26,21,16,0.22);
+      white-space: nowrap;
     }
-    .es-upgrade:hover { background: linear-gradient(135deg, var(--espresso-soft), var(--espresso)); box-shadow: var(--glow-gold-strong), 0 1px 0 rgba(255,255,255,0.08) inset; }
-    .es-upgrade i[data-lucide] { width: 12px; height: 12px; stroke-width: 2.2; color: var(--gold-light); }
+    .unlock-report-btn:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(135deg, var(--espresso-soft), var(--espresso));
+      box-shadow: var(--glow-gold-strong), 0 1px 0 rgba(255,255,255,0.10) inset;
+      color: #fff7d8;
+    }
+    .unlock-report-btn i[data-lucide] {
+      width: 13px;
+      height: 13px;
+      stroke-width: 2.4;
+      color: var(--gold-light);
+    }
+    @media (max-width: 900px) {
+      .trial-nudge { font-size: 10.5px; padding: 6px 11px; }
+      .unlock-report-btn { padding: 9px 16px; font-size: 10.5px; letter-spacing: 0.06em; }
+    }
+    @media (max-width: 640px) {
+      .trial-header-right { gap: 8px; }
+      .trial-nudge { display: none; }
+    }
 
+    /* NEW: What you're doing now / What makes it land — contrast block */
+    .ya-contrast {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .ya-contrast-block {
+      padding: 18px 20px;
+      border-radius: 14px;
+      border: 1px solid var(--border-light);
+      background: var(--bg-warm);
+    }
+    .ya-contrast-block.now {
+      background: linear-gradient(135deg, #fdeceb 0%, #fbded9 100%);
+      border-color: rgba(200,90,80,0.28);
+    }
+    .ya-contrast-block.land {
+      background: linear-gradient(135deg, #f2ecff 0%, #e4dbf9 100%);
+      border-color: rgba(140,110,210,0.28);
+    }
+    .ya-contrast-label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .ya-contrast-block.now .ya-contrast-label { color: var(--brick-red); }
+    .ya-contrast-block.land .ya-contrast-label { color: #6b5cbf; }
+    .ya-contrast-value {
+      font-family: var(--font-display);
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 700;
+      letter-spacing: -0.008em;
+      color: var(--title-deep);
+    }
+    .ya-contrast-value .arr {
+      color: var(--text-muted);
+      font-weight: 400;
+      margin: 0 5px;
+    }
+    @media (max-width: 640px) {
+      .ya-contrast { grid-template-columns: 1fr; gap: 10px; }
+    }
+
+    /* NEW: Scarcity strip inside analysis card */
+    .ya-scarcity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      margin-top: 6px;
+      background: linear-gradient(135deg, rgba(161,61,47,0.08), rgba(161,61,47,0.02));
+      border: 1px solid rgba(161,61,47,0.28);
+      border-radius: 14px;
+    }
+    .ya-scarcity-icon {
+      width: 32px; height: 32px;
+      border-radius: 9px;
+      background: rgba(161,61,47,0.14);
+      color: var(--brick-red);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .ya-scarcity-icon i[data-lucide] {
+      width: 15px; height: 15px; stroke-width: 2.2; color: var(--brick-red);
+    }
+    .ya-scarcity-body { flex: 1; min-width: 0; }
+    .ya-scarcity-title {
+      font-family: var(--font-display);
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--title-deep);
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+    .ya-scarcity-sub {
+      font-size: 12px;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+    .ya-scarcity-sub strong { color: var(--brick-red); font-weight: 800; }
+ 
     /* Layout */
     .app-layout { display: flex; flex: 1; overflow: hidden; position: relative; min-height: 0; }
     .sidebar { width: 320px; background-color: var(--panel-bg); border-right: 1px solid var(--hairline); padding: 16px 14px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; z-index: 20; transition: transform 0.3s ease; flex-shrink: 0; }
@@ -1035,33 +1079,16 @@
       <span class="track-badge" id="headerTrackBadge">Trial</span>
     </div>
 
-    <div class="exec-stat-bar">
-      <div class="es-scroll-track">
-        <div class="es-scroll-inner" id="esScrollInner">
-          <!-- set A -->
-          <div class="es-item"><i data-lucide="credit-card"></i><span class="es-label">Plan</span><span class="es-value" data-es="plan">Trial</span></div>
-          <span class="es-divider"></span>
-          <div class="es-item"><i data-lucide="calendar-days"></i><span class="es-label">Trials</span><span class="es-value" data-es="trials">0 / 4</span></div>
-          <span class="es-divider"></span>
-          <div class="es-item"><i data-lucide="user"></i><span class="es-label">Stage</span><span class="es-value" data-es="stage">Early Career</span></div>
-          <span class="es-divider"></span>
-          <div class="es-item"><i data-lucide="circle-check"></i><span class="es-label">Reps</span><span class="es-value" data-es="reps">0</span></div>
-          <span class="es-divider"></span>
-          <div class="es-item achievements"><i data-lucide="trophy"></i><span class="es-label">Badges</span><span class="es-value" data-es="badges">0</span></div>
-          <span class="es-divider"></span>
-          <!-- set B (duplicate for seamless loop) -->
-          <div class="es-item"><i data-lucide="credit-card"></i><span class="es-label">Plan</span><span class="es-value" data-es="plan">Trial</span></div>
-          <span class="es-divider"></span>
-          <div class="es-item"><i data-lucide="calendar-days"></i><span class="es-label">Trials</span><span class="es-value" data-es="trials">0 / 4</span></div>
-          <span class="es-divider"></span>
-          <div class="es-item"><i data-lucide="user"></i><span class="es-label">Stage</span><span class="es-value" data-es="stage">Early Career</span></div>
-          <span class="es-divider"></span>
-          <div class="es-item"><i data-lucide="circle-check"></i><span class="es-label">Reps</span><span class="es-value" data-es="reps">0</span></div>
-          <span class="es-divider"></span>
-          <div class="es-item achievements"><i data-lucide="trophy"></i><span class="es-label">Badges</span><span class="es-value" data-es="badges">0</span></div>
-          <span class="es-divider"></span>
-        </div>
-      </div>
+    <div class="trial-header-right">
+      <span class="trial-nudge" id="trialNudge">
+        <i data-lucide="zap"></i>
+        <span><span class="tn-strong" id="nudgeCount">1</span> of <span id="nudgeCap">4</span> free reps used</span>
+      </span>
+      <button class="unlock-report-btn" onclick="goToPaywall('sprint')">
+        <i data-lucide="lock"></i>
+        Unlock Full Report
+      </button>
+    </div>
       <button class="es-upgrade" onclick="goToPaywall('sprint')"><i data-lucide="star"></i> Upgrade</button>
     </div>
   </header>
@@ -2394,6 +2421,10 @@
           USER = JSON.parse(stored);
           document.getElementById('bootScreen').classList.add('hidden');
           renderAll();
+          // Land returning trial users on the diagnosis if they have one
+          if (USER.analysis) {
+            setTimeout(() => switchView('dash'), 50);
+          }
           return;
         } catch (e) { localStorage.removeItem('unspoken_trial_user'); }
       }
@@ -2469,7 +2500,8 @@
       renderBitesTabs();
       renderBitesGrid();
       renderHome();
-      switchView('home');
+      // Trial users land directly on Pattern & Progress — the diagnosis is the product.
+      switchView(USER.analysis ? 'dash' : 'today');
       renderIcons();
     }
 
@@ -2478,12 +2510,14 @@
       document.getElementById('userAvatarEl').textContent = (USER.name || 'A').charAt(0).toUpperCase();
       document.getElementById('userRoleEl').textContent = USER.email || 'Free trial';
       document.getElementById('planBadge').textContent = 'Trial';
-      const stageLabel = ({ student: 'Student', fresher: 'Fresher', early: 'Early Career', mid: 'Mid Career', senior: 'Senior / Lead' })[USER.stage] || 'Early Career';
-      document.querySelectorAll('[data-es="plan"]').forEach(el => el.textContent = 'Trial');
-      document.querySelectorAll('[data-es="trials"]').forEach(el => el.textContent = `${countTrials()} / ${USER.cap * 2}`);
-      document.querySelectorAll('[data-es="stage"]').forEach(el => el.textContent = stageLabel);
-      document.querySelectorAll('[data-es="reps"]').forEach(el => el.textContent = `${countTrials()}`);
-      document.querySelectorAll('[data-es="badges"]').forEach(el => el.textContent = '0');
+
+      // Compact header nudge
+      const used = countTrials();
+      const cap = USER.cap * 2;
+      const nudgeCount = document.getElementById('nudgeCount');
+      const nudgeCap = document.getElementById('nudgeCap');
+      if (nudgeCount) nudgeCount.textContent = used;
+      if (nudgeCap) nudgeCap.textContent = cap;
     }
 
     function onStageChange() {
@@ -3094,6 +3128,17 @@
           ${patternDesc ? `<div class="ya-pattern-desc-hero">${escapeHtml(patternDesc)}</div>` : ''}
         </div>
 
+        <div class="ya-contrast">
+          <div class="ya-contrast-block now">
+            <div class="ya-contrast-label">What your listener hears</div>
+            <div class="ya-contrast-value">Capability <span class="arr">→</span> Capability <span class="arr">→</span> Capability <span class="arr">→</span> Broad intent</div>
+          </div>
+          <div class="ya-contrast-block land">
+            <div class="ya-contrast-label">What makes it land</div>
+            <div class="ya-contrast-value">Professional theme <span class="arr">→</span> Evidence <span class="arr">→</span> Value</div>
+          </div>
+        </div>
+
         <div class="ya-baseline">
           <div class="ya-baseline-label">Your coaching scores</div>
           <div class="ya-baseline-grid">
@@ -3221,12 +3266,20 @@
           </div>
         </div>
 
+        <div class="ya-scarcity">
+          <div class="ya-scarcity-icon"><i data-lucide="alert-triangle"></i></div>
+          <div class="ya-scarcity-body">
+            <div class="ya-scarcity-title">You've used ${countTrials()} of ${USER.cap * 2} free reps.</div>
+            <div class="ya-scarcity-sub">The diagnosis is free. The fix isn't. <strong>${Math.max(0, USER.cap * 2 - countTrials())} reps left</strong> before your pattern stops showing up here.</div>
+          </div>
+        </div>
+
         <div class="ya-paid-wall">
-          <div class="ya-paid-wall-kicker">The free trial shows you the pattern once.</div>
+          <div class="ya-paid-wall-kicker">You've seen the pattern. Now change it.</div>
           <div class="ya-paid-wall-title">Sprint gives you the reps that change it.</div>
           <div class="ya-paid-wall-sub">One pattern at a time. Compared rep-over-rep. Until the old pattern stops showing up.</div>
           <button class="ya-paid-wall-cta" onclick="goToPaywall('sprint')">
-            Continue with Sprint <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+            Unlock Full Report <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
           </button>
           <div class="ya-paid-wall-alt">
             Not in interview prep right now? <a onclick="goToPaywall('pass')">Explore Practice Pass →</a>
@@ -3248,7 +3301,16 @@
         <p class="us-modal-sub">This is one version — not the only answer. The goal is the shape, not the script.</p>
         ${content}
         <p style="font-size:12.5px;color:var(--text-muted);line-height:1.6;margin-top:16px;font-style:italic;font-family:var(--font-display);">Use the structure, not the words. Your voice should stay yours.</p>
-        <div style="margin-top:22px;display:flex;justify-content:flex-end;">
+        <div style="margin-top:22px; padding:18px 20px; border-radius:14px; background:linear-gradient(135deg, rgba(212,181,106,0.12), rgba(184,148,60,0.03)); border:1px solid rgba(184,148,60,0.35); display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:200px;">
+            <div style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--title-deep); margin-bottom:2px;">Want yours?</div>
+            <div style="font-size:12px; color:var(--text-soft); line-height:1.5;">Every Sprint rep comes with a rewritten version of your answer.</div>
+          </div>
+          <button onclick="goToPaywall('sprint')" style="padding:11px 20px; border-radius:100px; border:1px solid var(--hairline-strong); background:linear-gradient(135deg, var(--espresso), var(--obsidian)); color:var(--gold-light); font-family:inherit; font-weight:700; font-size:12px; cursor:pointer; display:inline-flex; align-items:center; gap:7px; box-shadow:0 1px 0 rgba(255,255,255,0.08) inset;">
+            Unlock Full Report <i data-lucide="arrow-right" style="width:12px;height:12px;"></i>
+          </button>
+        </div>
+        <div style="margin-top:16px;display:flex;justify-content:flex-end;">
           <button class="qc-action-btn" onclick="closeModal()" style="padding:10px 20px;font-size:12px;">Got it</button>
         </div>
       `;
