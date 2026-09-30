@@ -1024,6 +1024,76 @@
       text-decoration: none;
     }
     .ya-paid-wall-alt a:hover { text-decoration: underline; }
+
+        /* Compact scorecard — one line, tappable */
+    .ya-scores-compact {
+      padding: 18px 22px;
+      margin-top: 22px;
+      margin-bottom: 22px;
+      background: linear-gradient(135deg, rgba(212,181,106,0.08), rgba(184,148,60,0.02));
+      border: 1px solid rgba(184,148,60,0.28);
+      border-radius: 16px;
+    }
+    .ya-scores-label {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--label-muted);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .ya-scores-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .ya-score-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px 8px 14px;
+      border-radius: 100px;
+      background: #fff;
+      border: 1px solid var(--border-soft);
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .ya-score-chip:hover {
+      border-color: var(--gold);
+      box-shadow: var(--glow-gold);
+      transform: translateY(-1px);
+    }
+    .ya-score-chip-label {
+      font-weight: 700;
+      color: var(--text-soft);
+    }
+    .ya-score-chip-num {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--title-deep);
+      line-height: 1;
+      min-width: 24px;
+      text-align: center;
+    }
+    .ya-score-chip-chev {
+      width: 12px;
+      height: 12px;
+      stroke-width: 2.5;
+      color: var(--gold-darker);
+      opacity: 0.7;
+      margin-left: 2px;
+    }
+    @media (max-width: 640px) {
+      .ya-scores-row { gap: 6px; }
+      .ya-score-chip { padding: 7px 10px 7px 12px; font-size: 12px; gap: 6px; }
+      .ya-score-chip-num { font-size: 17px; min-width: 20px; }
+    }
    
     /* Hero try */
     .ya-hero-try { margin-top: 8px; margin-bottom: 14px; padding: 30px 28px 26px; border-radius: 18px; background: linear-gradient(135deg, #fffdf8 0%, #fdf6e3 100%); border: 1.5px solid rgba(184,148,60,0.5); box-shadow: 0 16px 40px rgba(184,148,60,0.14), 0 1px 0 rgba(255,255,255,0.9) inset; text-align: center; position: relative; overflow: hidden; }
@@ -1774,7 +1844,7 @@
       <div class="nav-section">
         <div class="nav-section-label">Progress</div>
         <div class="nav-item" id="navDash" onclick="switchView('dash')"><i data-lucide="bar-chart-3" class="nav-icon"></i> My Pattern</div>
-        <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><i data-lucide="mic" class="nav-icon"></i> My Reps <span class="nav-preview">PREVIEW</span></div>
+        <div class="nav-item" id="navRecordings" onclick="switchView('recordings')"><i data-lucide="mic" class="nav-icon"></i> My Responses <span class="nav-preview">PREVIEW</span></div>
         <div class="nav-item" id="navReflectionJournal" onclick="switchView('reflection-journal')"><i data-lucide="notebook-pen" class="nav-icon"></i> My Reflection Journal</div>
         <div class="nav-item" id="navBadges" onclick="switchView('badges')"><i data-lucide="trophy" class="nav-icon"></i> Achievements</div>
       </div>
@@ -1919,7 +1989,7 @@
           </div>
           <div class="rep-tracker">
             <div class="rt-left">
-              <div class="rt-label">Trials</div>
+              <div class="rt-label">Responses</div>
               <div class="rt-count" id="q1RepCount">0 <span class="rt-cap">/ 2</span></div>
               <div class="rt-best" id="q1BestSnr">Best score: —</div>
             </div>
@@ -1969,7 +2039,7 @@
 
         <div class="today-summary">
           <h3>Today's Progress</h3>
-          <div class="ts-row"><span>Total trials today</span><span class="ts-val" id="tsTotalReps">0 / 4</span></div>
+          <div class="ts-row"><span>Total responses today</span><span class="ts-val" id="tsTotalReps">0 / 4</span></div>
           <div class="ts-row"><span>Time spent</span><span class="ts-val" id="tsTimeSpent">0 min</span></div>
           <div class="ts-row"><span>Best clarity</span><span class="ts-val" id="tsBestSnr">—</span></div>
           <div class="ts-row"><span>Drills unlocked</span><span class="ts-val" id="tsDrills">0 / 2</span></div>
@@ -2703,7 +2773,7 @@
               <span style="font-family:var(--font-display); font-weight:700; font-size:15px;">Rep history</span>
               <span style="font-size: 12.5px; color: var(--text-muted);" id="repHistoryCount">0 reps</span>
             </div>
-            <div id="repHistoryList" style="display:flex; flex-direction:column; gap:8px;"><div style="font-size:12.5px; color:var(--text-muted);">Your first rep is 45 seconds away.</div></div>
+            <div id="repHistoryList" style="display:flex; flex-direction:column; gap:8px;"><div style="font-size:12.5px; color:var(--text-muted);">Your first response is click away.</div></div>
           </div>
 
           <div class="try-again-premium">
@@ -2722,19 +2792,19 @@
       <!-- ============================ MY REPS ============================ -->
       <section class="view-panel" id="recordingsView">
         <div class="view-heading">
-          <h2><i data-lucide="mic"></i> My Reps</h2>
+          <h2><i data-lucide="mic"></i> My Responses</h2>
           <span class="vh-sub">Replay every practice session</span>
         </div>
 
         <div class="locked-group-heading">Your Recordings Library <span class="lg-line"></span></div>
         <div class="question-card lockable">
-          <div class="qc-label"><span>All reps — newest first</span></div>
+          <div class="qc-label"><span>All responses — newest first</span></div>
           <div class="qc-text" style="font-size: 14px; font-weight: 500; color: var(--text-muted); line-height: 1.6; font-family: var(--font-body);">
             Replay every practice session. Track your progress over time. Compare reps across days. Tag your best responses.
           </div>
           <div class="lock-overlay" onclick="goToPaywall('sprint')">
             <i data-lucide="lock" class="lock-icon"></i>
-            <div class="lock-title">My Reps Library</div>
+            <div class="lock-title">My Responses Library</div>
             <div class="lock-desc">Replay any past rep, compare across days, and measure your growth.</div>
             <button class="lock-cta">Upgrade to Unlock</button>
           </div>
@@ -3222,12 +3292,12 @@
 
       const btn = document.getElementById(`${which}RepBtn`);
       if (used >= cap) {
-        btn.textContent = '✓ Trial cap reached — upgrade to continue';
+        btn.textContent = '✓ Response cap reached — upgrade to continue';
         btn.disabled = true;
         btn.classList.add('done');
         btn.onclick = () => goToPaywall('sprint');
       } else {
-        btn.innerHTML = `<i data-lucide="mic"></i> Start Trial ${used + 1}`;
+                btn.innerHTML = `<i data-lucide="mic"></i> Start Response ${used + 1}`;
         btn.disabled = false;
         btn.classList.remove('done');
         btn.onclick = () => startRep(which);
@@ -3260,10 +3330,9 @@
       if (taMsg) {
         const remaining = trialsRemaining();
         taMsg.textContent = remaining > 0
-          ? `Same question. New shape. ${remaining} ${remaining === 1 ? 'rep' : 'reps'} remaining.`
+          ? `Same question. New shape. ${remaining} ${remaining === 1 ? 'response' : 'responses'} remaining.`
           : 'Trial cap reached — upgrade to keep changing the pattern.';
       }
-    }
 
     // ============================================================
     // HOME
@@ -3276,9 +3345,9 @@
       const sub = document.getElementById('homeSub');
       const allReps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
       if (allReps.length === 0 && !USER.analysis) {
-        if (sub) sub.textContent = `You're on a free trial · ${USER.cap * 2} reps available. Speak for 45 seconds — we'll show you exactly where your point got lost.`;
+        if (sub) sub.textContent = `You're on a free trial · ${USER.cap * 2} responses available. Speak for 45 seconds — we'll show you exactly where your point got lost.`;
       } else {
-        if (sub) sub.textContent = `You're on a free trial · ${countTrials()} of ${USER.cap * 2} reps used. Keep going — the pattern sharpens with repetition.`;
+        if (sub) sub.textContent = `You're on a free trial · ${countTrials()} of ${USER.cap * 2} responses used. Keep going — the pattern sharpens with repetition.`;
       }
       renderHomeCoaching();
       renderHomeQuickStats();
@@ -3400,7 +3469,7 @@
       const recent = allReps.slice(-3);
       const chips = recent.map((r, i) => {
         const isCurrent = (i === recent.length - 1);
-        return `<span class="focus-chip ${isCurrent ? 'focus-chip-current' : ''}"><span class="focus-chip-dot"></span> Rep ${i + 1}</span>`;
+        return `<span class="focus-chip ${isCurrent ? 'focus-chip-current' : ''}"><span class="focus-chip-dot"></span> Response ${i + 1}</span>`;
       }).join('');
       el.innerHTML = `<span class="focus-chip-strip-label">Recent shifts</span>${chips}`;
     }
@@ -3596,7 +3665,7 @@
       const count = document.getElementById('repHistoryCount');
       if (!list || !count) return;
       count.textContent = `${allReps.length} rep${allReps.length === 1 ? '' : 's'}`;
-      if (!allReps.length) { list.innerHTML = '<div style="font-size:12.5px; color:var(--text-muted);">Your first rep is 45 seconds away.</div>'; return; }
+      if (!allReps.length) { list.innerHTML = '<div style="font-size:12.5px; color:var(--text-muted);">Your first response is 45 seconds away.</div>'; return; }
       list.innerHTML = allReps.slice().reverse().map((r) => {
         const label = r.activity ? r.activity : 'Practice rep';
         const time = r.timestamp ? new Date(r.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
@@ -3962,24 +4031,40 @@
           </div>
         </div>
 
-        <div class="ya-baseline">
-          <div class="ya-baseline-label">Your coaching scores</div>
-          <div class="ya-baseline-grid">
-            <div class="ya-baseline-cell">
-              <div class="ya-baseline-num">${escapeHtml(String(baseStructure))}</div>
-              <div class="ya-baseline-label-text">Structure</div>
-              <div class="ya-baseline-note">${escapeHtml((m && m.structureNote) ? m.structureNote : 'Your biggest opportunity.')}</div>
+        <div class="ya-step ya-step-land">
+          <div class="ya-step-num">🎯</div>
+          <div class="ya-step-body">
+            <div class="ya-step-label">Make it land</div>
+            <div class="ya-step-content">${opportunityText ? escapeHtml(opportunityText) : 'Organize what you already have — you don\'t need more material.'}</div>
+            <div class="ya-framework-wrap">
+              <div class="ya-framework-pill">Point → Evidence → Value</div>
             </div>
-            <div class="ya-baseline-cell">
-              <div class="ya-baseline-num">${escapeHtml(String(baseDelivery))}</div>
-              <div class="ya-baseline-label-text">Delivery</div>
-              <div class="ya-baseline-note">${escapeHtml((m && m.deliveryNote) ? m.deliveryNote : 'Your delivery is working.')}</div>
+            <div style="text-align:center;">
+              <button class="ya-see-example" onclick="showReframeExample()">
+                See an example <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+              </button>
             </div>
-            <div class="ya-baseline-cell">
-              <div class="ya-baseline-num">${escapeHtml(String(baseFocus))}</div>
-              <div class="ya-baseline-label-text">Focus</div>
-              <div class="ya-baseline-note">${escapeHtml((m && m.focusNote) ? m.focusNote : 'A symptom of the structure gap.')}</div>
-            </div>
+          </div>
+        </div>
+
+        <div class="ya-scores-compact">
+          <div class="ya-scores-label">Your coaching scores</div>
+          <div class="ya-scores-row">
+            <button class="ya-score-chip" onclick="showScoreDetail('structure', ${JSON.stringify(baseStructure).replace(/"/g, '&quot;')})">
+              <span class="ya-score-chip-label">Structure</span>
+              <span class="ya-score-chip-num">${escapeHtml(String(baseStructure))}</span>
+              <i data-lucide="chevron-right" class="ya-score-chip-chev"></i>
+            </button>
+            <button class="ya-score-chip" onclick="showScoreDetail('delivery', ${JSON.stringify(baseDelivery).replace(/"/g, '&quot;')})">
+              <span class="ya-score-chip-label">Delivery</span>
+              <span class="ya-score-chip-num">${escapeHtml(String(baseDelivery))}</span>
+              <i data-lucide="chevron-right" class="ya-score-chip-chev"></i>
+            </button>
+            <button class="ya-score-chip" onclick="showScoreDetail('focus', ${JSON.stringify(baseFocus).replace(/"/g, '&quot;')})">
+              <span class="ya-score-chip-label">Focus</span>
+              <span class="ya-score-chip-num">${escapeHtml(String(baseFocus))}</span>
+              <i data-lucide="chevron-right" class="ya-score-chip-chev"></i>
+            </button>
           </div>
           <div class="ya-reframe">
             Your delivery is working. The bigger opportunity is <strong>how you organize your thinking.</strong>
@@ -3999,34 +4084,6 @@
           </div>
         </div>
 
-        <div class="ya-step ya-step-land">
-          <div class="ya-step-num">🎯</div>
-          <div class="ya-step-body">
-            <div class="ya-step-label">Make it land</div>
-            <div class="ya-step-content">${opportunityText ? escapeHtml(opportunityText) : 'Organize what you already have — you don\'t need more material.'}</div>
-            <div class="ya-framework-wrap">
-              <div class="ya-framework-pill">Point → Evidence → Value</div>
-            </div>
-            <div style="text-align:center;">
-              <button class="ya-see-example" onclick="showReframeExample()">
-                See an example <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="ya-stat-callout">
-          <div class="ya-stat-callout-icon"><i data-lucide="trending-up"></i></div>
-          <div class="ya-stat-callout-body">
-            <div class="ya-stat-callout-kicker">What consistent practice changes</div>
-            <div class="ya-stat-callout-headline">10 minutes a day for one month moved <span class="ya-stat-em">structure</span>, <span class="ya-stat-em">rambling</span>, and <span class="ya-stat-em">delivery</span> scores by 10%.</div>
-            <div class="ya-stat-callout-foot">Sprint is built around that cadence — one rep a day, one pattern at a time.</div>
-          </div>
-          <button class="ya-stat-callout-cta" onclick="goToPaywall('sprint')">
-            Start Sprint <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
-          </button>
-        </div>
-
         <div class="ya-hero-try">
           <div class="ya-hero-try-kicker">🔁 Fix this pattern</div>
           <div class="ya-hero-try-title">Same question. New shape. 45 seconds.</div>
@@ -4035,22 +4092,22 @@
             <i data-lucide="mic" style="width:15px;height:15px;"></i>
             Try Again →
           </button>
-          <div class="ya-hero-try-foot">Your next rep will be compared with this one.</div>
+           <div class="ya-hero-try-foot">Your next response will be compared with this one.</div>
         </div>
 
         <div class="ya-scarcity">
           <div class="ya-scarcity-icon"><i data-lucide="sparkles"></i></div>
           <div class="ya-scarcity-body">
             <div class="ya-scarcity-title">You've seen the pattern. Now change it.</div>
-            <div class="ya-scarcity-sub"><strong>${trialsRemaining()} ${trialsRemaining() === 1 ? 'rep' : 'reps'} remaining</strong> in your free trial. Sprint gives you the structured reps that change the pattern.</div>
+            <div class="ya-scarcity-sub"><strong>${trialsRemaining()} ${trialsRemaining() === 1 ? 'rep' : 'reps'} remaining</strong> in your free trial. Sprint gives you the structured practice that change the pattern.</div>
           </div>
         </div>
         <div class="ya-share-block">
           <div class="ya-share-block-icon"><i data-lucide="share-2"></i></div>
           <div class="ya-share-block-body">
             <div class="ya-share-block-kicker">Share your pattern</div>
-            <div class="ya-share-block-title">Make it yours — a card with your name, your pattern, and what it means.</div>
-            <div class="ya-share-block-sub">Download as an image. Share to WhatsApp, LinkedIn, Instagram.</div>
+            <div class="ya-share-block-title">See your pattern as a card.</div>
+            <div class="ya-share-block-sub">Download and share it anywhere.</div>
           </div>
           <button class="ya-share-block-cta" onclick="openShareModal()">
             Create my card <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
@@ -4060,7 +4117,7 @@
         <div class="ya-paid-wall">
           <div class="ya-paid-wall-kicker">Ready to change the pattern?</div>
           <div class="ya-paid-wall-title">Sprint gives you the structured reps that change it.</div>
-          <div class="ya-paid-wall-sub">One pattern at a time. Compared rep-over-rep. Until the old pattern stops showing up.</div>
+          <div class="ya-paid-wall-sub">One pattern at a time. Compared response-over-response. Until the old pattern stops showing up.</div>
           <button class="ya-paid-wall-cta" onclick="goToPaywall('sprint')">
             Start Sprint <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
           </button>
@@ -4133,6 +4190,30 @@
       document.getElementById('usModal').classList.add('is-visible');
       renderIcons();
     }
+          function showScoreDetail(dimension, score) {
+      const m = USER.analysis || {};
+      const notes = {
+        structure: { label: 'Structure', note: m.structureNote || 'Your biggest opportunity.', full: 'How clearly your answer was shaped — whether the listener could follow where it was going.' },
+        delivery:  { label: 'Delivery',  note: m.deliveryNote  || 'Your delivery is working.',  full: 'How confidently and naturally your words landed — pacing, tone, and presence.' },
+        focus:     { label: 'Focus',     note: m.focusNote     || 'A symptom of the structure gap.', full: 'How tightly your answer stayed on the point without drifting or padding.' },
+      };
+      const d = notes[dimension] || notes.structure;
+      const scoreText = (score === '—' || score === null || score === undefined) ? '—' : score;
+      document.getElementById('usModalContent').innerHTML = `
+        <h2 style="font-size:22px;margin-bottom:6px;">${escapeHtml(d.label)}</h2>
+        <p class="us-modal-sub">${escapeHtml(d.full)}</p>
+        <div style="display:flex;align-items:baseline;gap:14px;margin:20px 0;">
+          <span style="font-family:var(--font-display);font-size:52px;font-weight:700;line-height:1;color:var(--title-deep);">${escapeHtml(String(scoreText))}</span>
+          <span style="font-size:12px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--label-muted);">out of 100</span>
+        </div>
+        <div style="font-family:var(--font-display);font-size:15px;line-height:1.6;color:var(--ink);padding:16px 20px;background:#fdfbf5;border:1px solid var(--border-light);border-left:3px solid var(--gold);border-radius:12px;">${escapeHtml(d.note)}</div>
+        <div style="margin-top:22px;display:flex;justify-content:flex-end;">
+          <button class="qc-action-btn" onclick="closeModal()" style="padding:10px 20px;font-size:12px;">Close</button>
+        </div>
+      `;
+      document.getElementById('usModal').classList.add('is-visible');
+      renderIcons();
+    }
       
     // ============================================================
     // RECORDING MODAL
@@ -4177,8 +4258,8 @@
       modal.innerHTML = `
         <div style="background:var(--panel-bg);border:1px solid var(--hairline);border-radius:22px;padding:34px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 40px 80px rgba(26,25,23,0.25);">
           <button onclick="closeRecorderModal()" style="position:absolute;top:16px;right:20px;background:none;border:none;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:6px;"><i data-lucide="x" style="width:18px;height:18px;"></i></button>
-          <div style="font-size:10px;color:var(--gold-darker);font-weight:800;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;"><i data-lucide="mic" style="width:11px;height:11px;"></i> ${escapeHtml(opts.title || 'Practice Rep')}</div>
-          <div style="font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.4;margin-bottom:24px;color:var(--ink);">${escapeHtml(qText)}</div>
+                    <div style="font-size:10px;color:var(--gold-darker);font-weight:800;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;"><i data-lucide="mic" style="width:11px;height:11px;"></i> ${escapeHtml(opts.title || 'Practice Response')}</div>
+                    <div style="font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.4;margin-bottom:24px;color:var(--ink);">${escapeHtml(qText)}</div>
           <div style="display:flex;gap:8px;margin-bottom:20px;">
             <button id="recModeVoice" onclick="setRecMode('voice')" style="flex:1;padding:10px;border-radius:100px;border:1.5px solid var(--gold-dark);background:linear-gradient(135deg, var(--gold), var(--gold-dark));color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(184,148,60,0.25);"><i data-lucide="mic" style="width:13px;height:13px;"></i> Voice</button>
             <button id="recModeText" onclick="setRecMode('text')" style="flex:1;padding:10px;border-radius:100px;border:1.5px solid var(--border-soft);background:#fff;color:var(--text-soft);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;"><i data-lucide="pen-line" style="width:13px;height:13px;"></i> Type</button>
@@ -4390,7 +4471,7 @@
           const err = await analyzeRes.json().catch(() => ({}));
           const detail = err.detail || err;
           if (detail?.error === 'TRIAL_CAP_REACHED' || err.error === 'TRIAL_CAP_REACHED') {
-            alert('You\'ve reached the trial cap for this question. Upgrade to continue.');
+             alert('You\'ve reached the response cap for this question. Upgrade to continue.');
             closeRecorderModal();
             goToPaywall('sprint');
             return;
