@@ -767,10 +767,10 @@
     /* Stage panel — colored background that holds the title + stacked deck */
     .share-stage-panel {
       position: relative;
-      padding: 40px 46px 44px;
+      padding: 40px 56px 56px;
       border-radius: 32px;
       background: var(--card-bg, #f46a1f);
-      overflow: hidden;
+      overflow: visible;
       box-shadow: 0 30px 60px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.14);
     }
     /* Subtle texture over the panel */
@@ -778,6 +778,7 @@
       content: '';
       position: absolute;
       inset: 0;
+      border-radius: 32px;
       background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
       background-size: 28px 28px;
       mask-image: radial-gradient(circle at 50% 30%, black 10%, transparent 85%);
@@ -808,18 +809,6 @@
       opacity: 0.6;
       margin: 0 0 30px;
       line-height: 1.4;
-    }
-
-    @media (max-width: 520px) {
-      .share-modal-backdrop { padding: 20px 14px 40px; }
-      .share-stage-panel { padding: 28px 22px 30px; border-radius: 26px; }
-      .share-stage-title { font-size: 22px; margin-bottom: 6px; }
-      .share-stage-sub { font-size: 12px; margin-bottom: 22px; }
-      .share-card-stage { width: 86%; max-width: 100%; }
-      .share-card-stack-back2 { transform: translate(-18px, 14px) rotate(-6deg); border-radius: 26px; }
-      .share-card-stack-back { transform: translate(16px, 12px) rotate(4deg); border-radius: 26px; }
-      .share-card { border-radius: 28px; }
-      .share-card-glyph { width: 62%; margin-bottom: 18px; }
     }
 
     /* Card stage */
@@ -1276,10 +1265,12 @@
 
           <div class="share-card-traits" id="shareCardTraits"></div>
 
-          <div class="share-card-watermark">theunspoken.co.in</div>
-        </div>
-      </div>
+            <div class="share-card-watermark">theunspoken.co.in</div>
+          </div><!-- /.share-card -->
+        </div><!-- /.share-card-stage -->
       </div><!-- /.share-stage-panel -->
+
+      <div class="share-modal-actions">
 
       <div class="share-modal-actions">
         <button class="share-modal-btn primary" id="shareModalDownloadBtn" onclick="downloadShareCard()">
@@ -3335,28 +3326,6 @@
       const body = document.getElementById('shareCardBody');
       if (!stage || !body) return;
 
-      // Defensive: ensure the title + subtitle exist at the top of the modal
-      const modal = stage.closest('.share-modal');
-      if (modal) {
-        if (!modal.querySelector('.share-modal-title')) {
-          const titleEl = document.createElement('div');
-          titleEl.className = 'share-modal-title';
-          titleEl.textContent = 'My Speaking Pattern';
-          modal.insertBefore(titleEl, modal.firstChild);
-        }
-        if (!modal.querySelector('.share-modal-sub')) {
-          const subEl = document.createElement('div');
-          subEl.className = 'share-modal-sub';
-          subEl.textContent = 'Save it. Share it. Show your pattern.';
-          const titleEl = modal.querySelector('.share-modal-title');
-          if (titleEl && titleEl.nextSibling) {
-            modal.insertBefore(subEl, titleEl.nextSibling);
-          } else {
-            modal.appendChild(subEl);
-          }
-        }
-      }
-
       // Set archetype on the stage panel AND the inner card stage so CSS variables resolve everywhere
       const panel = document.getElementById('shareStagePanel');
       if (panel) panel.setAttribute('data-archetype', data.archetype);
@@ -3740,9 +3709,6 @@
             Create my card <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
           </button>
         </div>
-
-        <div class="ya-paid-wall">
-          <div class="ya-paid-wall-kicker">Ready to change the pattern?</div>
 
         <div class="ya-paid-wall">
           <div class="ya-paid-wall-kicker">Ready to change the pattern?</div>
