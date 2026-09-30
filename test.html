@@ -2153,7 +2153,7 @@
             <i data-lucide="sparkles" style="width:14px;height:14px;"></i> Coaching
           </button>
           <button class="dash-tab-btn" data-tab="analytics" onclick="switchDashTab('analytics')">
-            <i data-lucide="list" style="width:14px;height:14px;"></i> Rep History
+            <i data-lucide="activity" style="width:14px;height:14px;"></i> Analytics
           </button>
 
         <!-- ============ COACHING PANEL ============ -->
@@ -2207,24 +2207,50 @@
           </div>
         </div>
 
-        <!-- ============ ANALYTICS PANEL — simplified for trial ============ -->
+        <!-- ============ ANALYTICS PANEL — metrics + rep history, no trend chart ============ -->
         <div id="dashAnalyticsPanel" style="display:none; flex-direction:column; gap:22px;">
+          <div class="dash-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="metric-box"><div class="metric-label">Time-to-Point</div><div class="metric-value" id="metricTTP">—</div><div class="metric-sub" id="metricTTPSub">—</div></div>
+            <div class="metric-box"><div class="metric-label">Reps Analyzed</div><div class="metric-value" id="metricRepsCount">0</div><div class="metric-sub" id="metricRepsCountSub">All reps in this window</div></div>
+          </div>
+
           <div class="dash-wide-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-              <span style="font-family:var(--font-display); font-weight:700; font-size:16px;">Your reps so far</span>
-              <span style="font-size: 12.5px; color: var(--text-muted);" id="repHistoryCount">0 reps</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-family:var(--font-display); font-weight:700; font-size:15px;">Signal vs noise</span>
+              <span style="font-weight: 700; font-size: 13px;">Target: 85% · Current: <span style="color: var(--sage);" id="dashSnrValue">—</span></span>
             </div>
-            <div id="repHistoryList" style="display:flex; flex-direction:column; gap:10px;">
-              <div style="font-size:13px; color:var(--text-muted); font-style:italic; font-family:var(--font-display);">Your first rep is 45 seconds away.</div>
+            <div class="snr-container">
+              <div class="snr-bar-wrapper">
+                <div class="snr-signal" id="dashSnrSignal" style="width: 0%;"></div>
+                <div class="snr-noise" id="dashSnrNoise" style="width: 0%;"></div>
+                <div class="ghost-line" style="left: 62%;"></div>
+              </div>
+              <div class="snr-ticks"><span>0% (Fluff)</span><span>25%</span><span>50%</span><span>75% (Target)</span><span>100% (Pure Signal)</span></div>
             </div>
           </div>
 
-          <div class="try-again-bar">
-            <div class="ta-text">
-              <strong>Want to see how your pattern shifts?</strong><br />
-              <span>Do another rep and we'll show you what changed.</span>
+          <div class="feedback-grid">
+            <div class="feedback-box well"><div class="feedback-title" style="color: var(--sage);"><i data-lucide="circle-check"></i> What was going well</div><ul class="feedback-list" id="dashWellList"><li>—</li></ul></div>
+            <div class="feedback-box improve"><div class="feedback-title" style="color: var(--gold-darker);"><i data-lucide="target"></i> Your opportunity</div><ul class="feedback-list" id="dashImproveList"><li>—</li></ul></div>
+          </div>
+
+          <div class="dash-wide-box" id="repHistoryBox">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+              <span style="font-family:var(--font-display); font-weight:700; font-size:15px;">Rep history</span>
+              <span style="font-size: 12.5px; color: var(--text-muted);" id="repHistoryCount">0 reps</span>
             </div>
-            <button class="ta-btn" onclick="switchView('today')"><i data-lucide="mic"></i> Try Again →</button>
+            <div id="repHistoryList" style="display:flex; flex-direction:column; gap:8px;"><div style="font-size:12.5px; color:var(--text-muted);">Your first rep is 45 seconds away.</div></div>
+          </div>
+
+          <div class="try-again-premium">
+            <div class="try-again-ribbon"><i data-lucide="sparkles" class="icon"></i></div>
+            <div class="try-again-text">
+              <strong>Want to improve your score?</strong>
+              <span>Start a rep to build your progress.</span>
+            </div>
+            <div class="try-again-actions">
+              <button class="ghost-btn" onclick="switchView('today')"><i data-lucide="refresh-cw"></i> Try Again</button>
+            </div>
           </div>
         </div>
       </section>
@@ -3053,10 +3079,54 @@
       } else {
         if (coaching) coaching.style.display = 'none';
         if (analytics) analytics.style.display = 'flex';
+        renderProgressMetrics(USER.analysis);
+        renderFeedback(USER.analysis);
         renderRepHistory([...state.q1Trials, ...state.q2Trials, ...state.activityTrials]);
       }
       renderIcons();
     }
+          function renderProgressMetrics(m) {
+      const fmt = (v, suffix='') => (v == null ? '—' : `${v}${suffix}`);
+      const set = (id, val, sub) => {
+        const el = document.getElementById(id); if (el) el.textContent = val;
+        const elSub = document.getElementById(id + 'Sub'); if (elSub) elSub.textContent = sub || '';
+      };
+      const reps = [...state.q1Trials, ...state.q2Trials, ...state.activityTrials];
+      if (!m) {
+        set('metricTTP', '—', 'Lower is better');
+        set('metricRepsCount', `${reps.length}`, reps.length === 1 ? 'Rep analyzed' : 'Reps analyzed');
+        const snrEl = document.getElementById('dashSnrValue'); if (snrEl) snrEl.textContent = '—';
+        return;
+      }
+      set('metricTTP', fmt(m.timeToPoint, 's'), 'Lower is better');
+      set('metricRepsCount', `${reps.length}`, reps.length === 1 ? 'Rep analyzed' : 'Reps analyzed');
+      const focus = m.focusScore ?? m.fillerDiscipline;
+      const snrEl = document.getElementById('dashSnrValue');
+      if (snrEl) snrEl.textContent = fmt(focus, '%');
+      const sig = document.getElementById('dashSnrSignal'); if (sig) sig.style.width = `${focus ?? 0}%`;
+      const noise = document.getElementById('dashSnrNoise'); if (noise) noise.style.width = `${focus != null ? 100 - focus : 0}%`;
+    }
+
+    function renderFeedback(m) {
+      const strengths = [], improvements = [];
+      if (m) {
+        const focus = m.focusScore ?? m.fillerDiscipline;
+        const structure = m.structureScore ?? m.pointFirst;
+        const delivery = m.deliveryScore ?? m.concreteness;
+        if (focus != null && focus >= 70) strengths.push('Filler discipline above target');
+        if (structure != null && structure >= 70) strengths.push('Clear structure and point-first delivery');
+        if (delivery != null && delivery >= 70) strengths.push('Concrete, specific language');
+        if (m.oneThingToChange) improvements.push(m.oneThingToChange);
+        if (m.gapGotLost) improvements.push(m.gapGotLost);
+      }
+      if (!strengths.length) strengths.push('Your first strength unlocks with your first rep.');
+      if (!improvements.length) improvements.push('Your first opportunity unlocks with your first rep.');
+      const wellList = document.getElementById('dashWellList');
+      const improveList = document.getElementById('dashImproveList');
+      if (wellList) wellList.innerHTML = strengths.map(s => `<li>${escapeHtml(s)}</li>`).join('');
+      if (improveList) improveList.innerHTML = improvements.map(s => `<li>${escapeHtml(s)}</li>`).join('');
+    }
+      
     function renderRepHistory(allReps) {
       const list = document.getElementById('repHistoryList');
       const count = document.getElementById('repHistoryCount');
@@ -3962,6 +4032,8 @@
       if (key === 'dash') {
         renderProgressView();
         if (CURRENT_DASH_TAB === 'analytics') {
+          renderProgressMetrics(USER.analysis);
+          renderFeedback(USER.analysis);
           renderRepHistory([...state.q1Trials, ...state.q2Trials, ...state.activityTrials]);
         }
       }
