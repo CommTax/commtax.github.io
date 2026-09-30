@@ -764,24 +764,56 @@
       z-index: 10;
     }
     .share-modal-close:hover { background: rgba(255,255,255,0.2); }
-    .share-modal-title {
-      color: #fff;
-      font-family: var(--font-display);
-      font-size: 28px;
-      font-weight: 700;
-      text-align: center;
-      letter-spacing: -0.02em;
-      margin: 0 0 4px;
-      padding: 0 40px;
-      line-height: 1.15;
-      order: -2;
+    /* Stage panel — colored background that holds the title + stacked deck */
+    .share-stage-panel {
+      position: relative;
+      padding: 34px 22px 26px;
+      border-radius: 26px;
+      background: var(--card-bg, #f46a1f);
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.14);
     }
-    .share-modal-sub {
-      color: rgba(255,255,255,0.65);
-      font-size: 13px;
+    /* Subtle texture over the panel */
+    .share-stage-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(circle at 50% 30%, black 10%, transparent 85%);
+      -webkit-mask-image: radial-gradient(circle at 50% 30%, black 10%, transparent 85%);
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .share-stage-title {
+      position: relative;
+      z-index: 2;
+      font-family: var(--font-body);
+      font-size: 26px;
+      font-weight: 800;
       text-align: center;
-      margin: 0 0 8px;
-      order: -1;
+      letter-spacing: -0.015em;
+      color: var(--card-ink, #1a0040);
+      margin: 0 0 6px;
+      line-height: 1.15;
+    }
+    .share-stage-sub {
+      position: relative;
+      z-index: 2;
+      font-size: 12.5px;
+      font-weight: 500;
+      text-align: center;
+      color: var(--card-ink, #1a0040);
+      opacity: 0.65;
+      margin: 0 0 22px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 520px) {
+      .share-stage-panel { padding: 26px 16px 20px; border-radius: 22px; }
+      .share-stage-title { font-size: 22px; }
+      .share-stage-sub { font-size: 12px; margin-bottom: 18px; }
     }
 
     /* Card stage */
@@ -1199,13 +1231,15 @@
   <div class="share-modal-backdrop" id="shareModalBackdrop">
     <div class="share-modal">
       <button class="share-modal-close" onclick="closeShareModal()" aria-label="Close">×</button>
-      <div class="share-modal-title">My Speaking Pattern</div>
-      <div class="share-modal-sub">Save it. Share it. Show your pattern.</div>
 
-      <div class="share-card-stage" id="shareCardStage">
-        <div class="share-card-stack-back2"></div>
-        <div class="share-card-stack-back"></div>
-        <div class="share-card" id="shareCardBody">
+      <div class="share-stage-panel" data-archetype="sparkles" id="shareStagePanel">
+        <div class="share-stage-title">My Speaking Pattern</div>
+        <div class="share-stage-sub">Save it. Share it. Show your pattern.</div>
+
+        <div class="share-card-stage" id="shareCardStage">
+          <div class="share-card-stack-back2"></div>
+          <div class="share-card-stack-back"></div>
+          <div class="share-card" id="shareCardBody">
           <div class="share-card-glyph">
             <span class="share-card-star s1">
               <svg viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z"/></svg>
@@ -1235,6 +1269,7 @@
           <div class="share-card-watermark">theunspoken.co.in</div>
         </div>
       </div>
+      </div><!-- /.share-stage-panel -->
 
       <div class="share-modal-actions">
         <button class="share-modal-btn primary" id="shareModalDownloadBtn" onclick="downloadShareCard()">
@@ -3312,7 +3347,9 @@
         }
       }
 
-      // Set archetype on the stage so CSS variables resolve
+      // Set archetype on the stage panel AND the inner card stage so CSS variables resolve everywhere
+      const panel = document.getElementById('shareStagePanel');
+      if (panel) panel.setAttribute('data-archetype', data.archetype);
       stage.setAttribute('data-archetype', data.archetype);
 
       document.getElementById('shareCardName').textContent = data.patternName;
