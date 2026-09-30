@@ -3177,6 +3177,7 @@
         structureNote: m.structure_note ?? null,
         deliveryScore: m.delivery_score ?? m.concreteness ?? m.impact ?? null,
         deliveryNote: m.delivery_note ?? null,
+        reframeLine: c.reframe_line ?? m.reframe_line ?? null,
 
         overallScore: m.overall_score ?? null,
         timeToPoint: s.main_point_delay_seconds ?? null,
@@ -4019,7 +4020,11 @@
       const baseFocus = (baseline && (baseline.focusScore ?? baseline.fillerDiscipline) != null) ? (baseline.focusScore ?? baseline.fillerDiscipline) : (m && (m.focusScore ?? m.fillerDiscipline) != null ? (m.focusScore ?? m.fillerDiscipline) : '—');
       const baseStructure = (baseline && (baseline.structureScore ?? baseline.pointFirst) != null) ? (baseline.structureScore ?? baseline.pointFirst) : (m && (m.structureScore ?? m.pointFirst) != null ? (m.structureScore ?? m.pointFirst) : '—');
       const baseDelivery = (baseline && (baseline.deliveryScore ?? baseline.concreteness) != null) ? (baseline.deliveryScore ?? baseline.concreteness) : (m && (m.deliveryScore ?? m.concreteness) != null ? (m.deliveryScore ?? m.concreteness) : '—');
-
+            const REFRAME_FALLBACK = 'Your delivery is working. The bigger opportunity is how you organize your thinking.';
+      const reframeText = (m && m.reframeLine && m.reframeLine.trim().length > 8)
+        ? m.reframeLine.trim()
+        : REFRAME_FALLBACK;
+      
       const opportunityText = (m && m.oneThingToChange) ? m.oneThingToChange : null;
 
       document.getElementById('yourAnalysisCard').innerHTML = `
@@ -4089,7 +4094,7 @@
             </button>
           </div>
           <div class="ya-reframe">
-            Your delivery is working. The bigger opportunity is <strong>how you organize your thinking.</strong>
+            ${escapeHtml(reframeText)}
           </div>
         </div>
 
