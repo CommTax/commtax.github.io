@@ -3494,10 +3494,6 @@
       const gotLostText = (m && m.gapGotLost) ? m.gapGotLost : null;
       const listenerText = (m && (m.listenerQuestion || m.gapUnspoken)) ? (m.listenerQuestion || m.gapUnspoken) : null;
 
-      const transcriptHtml = (m && m.transcript)
-        ? `<div class="ya-transcript">${escapeHtml(m.transcript)}</div>`
-        : `<div class="ya-transcript-empty">No speech detected — try recording again with your microphone unmuted.</div>`;
-
       let baseline = null;
       if (allReps.length) {
         for (let i = allReps.length - 1; i >= 0; i--) {
@@ -3578,7 +3574,12 @@
           <div class="ya-step-num">📝</div>
           <div class="ya-step-body">
             <div class="ya-step-label">What you said</div>
-            ${transcriptHtml}
+            <div style="font-size:13.5px; color:var(--text-soft); line-height:1.55; margin-bottom:14px;">
+              ${(m && m.transcript) ? `"${escapeHtml(m.transcript.slice(0, 15))}${m.transcript.length > 90 ? '…' : ''}"` : 'No speech detected — try recording again with your microphone unmuted.'}
+            </div>
+            <button class="ya-see-example" style="margin-top:0;" onclick="showTranscriptModal()">
+              See full transcript <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+            </button>
           </div>
         </div>
 
@@ -3698,7 +3699,25 @@
       document.getElementById('usModal').classList.add('is-visible');
       renderIcons();
     }
+    function showTranscriptModal() {
+      const m = USER.analysis;
+      const transcript = (m && m.transcript) ? m.transcript : '';
+      const content = transcript
+        ? `<div style="font-family:var(--font-display); font-style:italic; font-size:15px; line-height:1.75; color:var(--ink); padding:22px 24px; background:#fdfbf5; border:1px solid var(--border-light); border-left:3px solid var(--gold); border-radius:12px; white-space:pre-wrap; word-break:break-word;">"${escapeHtml(transcript)}"</div>`
+        : `<div style="font-size:13.5px; color:var(--text-muted); padding:20px 24px; background:rgba(212,181,106,0.06); border-left:3px solid var(--gold); border-radius:12px;">No speech was detected in this rep. Try recording again with your microphone unmuted.</div>`;
 
+      document.getElementById('usModalContent').innerHTML = `
+        <h2 style="font-size:22px;margin-bottom:6px;">What you actually said</h2>
+        <p class="us-modal-sub">The exact words we analysed. Read it back — you'll see the pattern yourself.</p>
+        ${content}
+        <div style="margin-top:22px;display:flex;justify-content:flex-end;">
+          <button class="qc-action-btn" onclick="closeModal()" style="padding:10px 20px;font-size:12px;">Close</button>
+        </div>
+      `;
+      document.getElementById('usModal').classList.add('is-visible');
+      renderIcons();
+    }
+      
     // ============================================================
     // RECORDING MODAL
     // ============================================================
