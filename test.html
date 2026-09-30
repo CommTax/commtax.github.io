@@ -255,9 +255,49 @@
     .ts-row .ts-val { font-weight: 700; color: var(--ink); }
 
     /* Dashboard */
-    .dash-tab-toggle { display: inline-flex; gap: 4px; background: var(--bg-warm); border: 1px solid var(--hairline); border-radius: 100px; padding: 4px; width: fit-content; }
-    .dash-tab-btn { padding: 10px 22px; border-radius: 100px; border: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.18s; display: inline-flex; align-items: center; gap: 7px; }
-    .dash-tab-btn.active { background: linear-gradient(135deg, var(--espresso), var(--obsidian)); color: var(--gold-light); box-shadow: 0 4px 12px rgba(26,21,16,0.22); font-weight: 700; }
+    .dash-tab-toggle {
+      display: inline-flex;
+      gap: 4px;
+      background: var(--bg-warm);
+      border: 1px solid var(--hairline);
+      border-radius: 100px;
+      padding: 4px;
+      width: fit-content;
+      align-self: flex-start;
+      margin: 0;
+    }
+        /* Pin the toggle to the top of the scroll container */
+    #dashView > .dash-tab-toggle {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .dash-tab-btn {
+      padding: 8px 16px;
+      border-radius: 100px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dash-tab-btn i[data-lucide] { width: 13px; height: 13px; }
+    .dash-tab-btn.active {
+      background: linear-gradient(135deg, var(--espresso), var(--obsidian));
+      color: var(--gold-light);
+      box-shadow: 0 2px 8px rgba(26,21,16,0.18);
+      font-weight: 700;
+    }
+    .dash-tab-btn.active i[data-lucide] { color: var(--gold-light); }
+    .dash-tab-btn:hover:not(.active) { color: var(--ink); }
 
     .trend-card { background: var(--panel-bg); border: 1px solid var(--hairline); border-radius: 18px; padding: 24px 26px; box-shadow: 0 4px 16px rgba(26,25,23,0.03); }
     .trend-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
@@ -2144,17 +2184,18 @@
       <!-- ============================ My PATTERN ============================ -->
       <section class="view-panel active-view" id="dashView">
         <div class="view-heading">
-          <h2><i data-lucide="bar-chart-3"></i> My Pattern </h2>
+          <h2><i data-lucide="bar-chart-3"></i> My Pattern</h2>
           <span class="vh-sub" id="dashSubtitle">What your first rep revealed — and what your listener may have missed.</span>
         </div>
 
-        <div class="dash-tab-toggle" id="dashTabToggle">
+        <div class="dash-tab-toggle" id="dashTabToggle" style="margin-top:-12px;">
           <button class="dash-tab-btn active" data-tab="coaching" onclick="switchDashTab('coaching')">
-            <i data-lucide="sparkles" style="width:14px;height:14px;"></i> Coaching
+            <i data-lucide="sparkles"></i> Coaching
           </button>
           <button class="dash-tab-btn" data-tab="analytics" onclick="switchDashTab('analytics')">
-            <i data-lucide="activity" style="width:14px;height:14px;"></i> Analytics
+            <i data-lucide="activity"></i> Analytics
           </button>
+        </div>
 
         <!-- ============ COACHING PANEL ============ -->
         <div id="dashCoachingPanel" style="display:flex; flex-direction:column; gap:22px;">
